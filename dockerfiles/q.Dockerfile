@@ -28,7 +28,7 @@ RUN composer install \
 # ---------------------------------------------------------------------------
 # Stage 2: Production image
 # ---------------------------------------------------------------------------
-FROM php:8.3-cli
+FROM php:8.4-cli
 
 LABEL maintainer="Webkul <support@webkul.com>"
 LABEL org.opencontainers.image.title="UnoPim Queue Worker"
@@ -51,6 +51,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libonig-dev \
     libicu-dev \
     libgmp-dev \
+    libpq-dev \
     && docker-php-ext-configure gd \
         --with-freetype \
         --with-jpeg \
@@ -64,11 +65,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         intl \
         pcntl \
         pdo_mysql \
+        pdo_pgsql \
+        pgsql \
         zip \
     && pecl install redis-6.1.0 \
     && docker-php-ext-enable redis \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+# Align www-data with the host user so bind-mounted storage stays
+# writable on both sides (defaults keep the stock image behavior).
+ARG HOST_UID=33
+ARG HOST_GID=33
+RUN groupmod -o -g "${HOST_GID}" www-data \
+    && usermod -o -u "${HOST_UID}" -g "${HOST_GID}" www-data
 
 # PHP production configuration
 RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
@@ -78,6 +88,11 @@ COPY dockerfiles/php.ini "$PHP_INI_DIR/conf.d/unopim.ini"
 WORKDIR /var/www/html
 COPY . .
 COPY --from=composer /app/vendor ./vendor
+
+# Set permissions. The entrypoints drop to www-data via gosu, so bootstrap/cache
+# has to be owned by it before the package manifest is written on first boot.
+RUN chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
 
 # Healthcheck logic:
 #   1. If the install lock file does not exist yet, the worker is still

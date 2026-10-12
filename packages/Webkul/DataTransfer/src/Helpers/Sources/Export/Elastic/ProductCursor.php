@@ -2,6 +2,8 @@
 
 namespace Webkul\DataTransfer\Helpers\Sources\Export\Elastic;
 
+use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Log;
 use Webkul\Core\Facades\ElasticSearch;
 use Webkul\DataTransfer\Helpers\Sources\Export\Filters\ProductExportFilter;
 use Webkul\ElasticSearch\Cursor\AbstractElasticCursor;
@@ -9,13 +11,20 @@ use Webkul\ElasticSearch\Cursor\AbstractElasticCursor;
 class ProductCursor extends AbstractElasticCursor
 {
     /**
+     * `values.categories` is indexed as analyzed text, so its tokens are lowercased and a
+     * term-level `terms` lookup for a code such as "Footwear" never matches. The exact-value
+     * keyword subfield is what a category code has to be compared against.
+     */
+    private const string CATEGORY_FIELD = 'values.categories.keyword';
+
+    /**
      * Memoized bool query. The filter clauses (family/category/value-filtered ids) are identical
      * for every page of a single export run, so they are resolved once instead of re-running the
      * underlying DB queries on every search_after fetch.
      *
      * @var array|\stdClass|null
      */
-    protected $cachedBoolQuery = null;
+    protected $cachedBoolQuery;
 
     public function __construct(
         array $requestParams,
@@ -35,15 +44,17 @@ class ProductCursor extends AbstractElasticCursor
     {
         $options = self::resolveOptions($this->options);
         $filters = $requestParams['filters'] ?? [];
+        $isFirstFetch = $this->searchAfter === [];
+
         $query = [
-            'track_total_hits' => true,
+            'track_total_hits' => $isFirstFetch,
             '_source'          => false,
             'size'             => $size ?? $this->batchSize,
             'sort'             => ['id' => 'desc'],
             'stored_fields'    => [],
         ];
 
-        if (! empty($this->searchAfter)) {
+        if (! $isFirstFetch) {
             $query['search_after'] = $this->searchAfter;
         }
 
@@ -62,15 +73,18 @@ class ProductCursor extends AbstractElasticCursor
 
             $response = ElasticSearch::search($request);
             $hits = $response['hits']['hits'] ?? [];
-            $this->retrievedCount = $response['hits']['total']['value'] ?? 0;
+
+            if ($isFirstFetch) {
+                $this->retrievedCount = $response['hits']['total']['value'] ?? 0;
+            }
 
             if (! empty($hits)) {
                 $this->searchAfter = end($hits)['sort'];
 
-                return array_map(fn ($hit) => ['id' => $hit['_id']], $hits);
+                return array_map(fn (array $hit): array => ['id' => $hit['_id']], $hits);
             }
         } catch (\Throwable $e) {
-            \Log::error('Elasticsearch search error: '.$e->getMessage());
+            Log::error('Elasticsearch search error: '.$e->getMessage());
             throw $e;
         }
 
@@ -79,7 +93,7 @@ class ProductCursor extends AbstractElasticCursor
 
     protected function buildBoolQuery(array $filters): array
     {
-        $filter = app(ProductExportFilter::class);
+        $filter = resolve(ProductExportFilter::class);
 
         $clauses = [];
 
@@ -98,15 +112,15 @@ class ProductCursor extends AbstractElasticCursor
         $categoryCodes = $filter->categoryCodes($filters);
 
         if (! empty($categoryCodes)) {
-            $clauses[] = ['terms' => ['values.categories' => $categoryCodes]];
+            $clauses[] = ['terms' => [self::CATEGORY_FIELD => $categoryCodes]];
         }
 
         $range = array_filter([
-            'gte' => $filter->updatedAfter($filters),
-            'lte' => $filter->updatedBefore($filters),
-        ], fn ($bound) => ! empty($bound));
+            'gte' => $this->toElasticDate($filter->updatedAfter($filters)),
+            'lte' => $this->toElasticDate($filter->updatedBefore($filters)),
+        ], fn (?string $bound): bool => $bound !== null);
 
-        if (! empty($range)) {
+        if ($range !== []) {
             $clauses[] = ['range' => ['updated_at' => $range]];
         }
 
@@ -116,7 +130,19 @@ class ProductCursor extends AbstractElasticCursor
             $clauses[] = ['terms' => ['id' => $valueFilteredIds]];
         }
 
-        return $clauses ? ['filter' => $clauses] : [];
+        return $clauses !== [] ? ['filter' => $clauses] : [];
+    }
+
+    /**
+     * Convert a filter bound to the UTC ISO-8601 format Elasticsearch can parse.
+     */
+    protected function toElasticDate(?string $date): ?string
+    {
+        if (in_array($date, [null, '', '0'], true)) {
+            return null;
+        }
+
+        return Date::parse($date)->utc()->toIso8601ZuluString();
     }
 
     /**
@@ -124,7 +150,7 @@ class ProductCursor extends AbstractElasticCursor
      */
     protected static function resolveOptions(array $options): array
     {
-        $prefix = env('ELASTICSEARCH_INDEX_PREFIX') ?: env('APP_NAME');
+        $prefix = config('elasticsearch.prefix');
         $options['index'] = strtolower("{$prefix}_products");
         $options['sort'] ??= [];
 

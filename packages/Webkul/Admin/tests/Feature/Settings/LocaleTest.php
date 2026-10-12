@@ -1,8 +1,19 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Webkul\Core\Models\Channel;
 use Webkul\Core\Models\Locale;
 use Webkul\User\Models\Admin;
+
+/**
+ * Published passport versions restrict deleting their locale, and a demo-seeded catalog ships them.
+ */
+function keepOnlyLocale(int $localeId): void
+{
+    DB::table('publication_versions')->whereNot('locale_id', $localeId)->delete();
+
+    Locale::whereNot('id', $localeId)->delete();
+}
 
 it('should return the locale index datagrid page', function () {
     $this->loginAsAdmin();
@@ -57,7 +68,7 @@ it('should return the locale as json for edit modal', function () {
 
     $locale = Locale::factory()->create();
 
-    $this->get(route('admin.settings.locales.edit', $locale->id))
+    $this->getJson(route('admin.settings.locales.edit', $locale->id))
         ->assertOk()
         ->assertJsonFragment([
             ...$locale->toArray(),
@@ -216,7 +227,7 @@ it('should not delete the last locale', function () {
 
     Admin::whereNot('id', $user->id)->delete();
 
-    Locale::whereNot('id', $localeId)->delete();
+    keepOnlyLocale($localeId);
 
     $response = $this->delete(route('admin.settings.locales.delete', ['id' => $localeId]));
 
@@ -273,8 +284,8 @@ it('should not disable a locale linked to a channel through mass update', functi
         'indices' => [$localeId],
         'value'   => 0,
     ])
-        ->assertOk()
-        ->assertJsonFragment(['message' => trans('admin::app.settings.locales.index.update-success')]);
+        ->assertUnprocessable()
+        ->assertJsonFragment(['message' => trans('admin::app.settings.locales.index.can-not-disable-error')]);
 
     $this->assertDatabaseHas($this->getFullTableName(Locale::class), [
         'id'     => $localeId,
@@ -291,11 +302,56 @@ it('should not disable a locale linked to a user through mass update', function 
         'indices' => [$localeId],
         'value'   => 0,
     ])
-        ->assertOk()
-        ->assertJsonFragment(['message' => trans('admin::app.settings.locales.index.update-success')]);
+        ->assertUnprocessable()
+        ->assertJsonFragment(['message' => trans('admin::app.settings.locales.index.can-not-disable-error')]);
 
     $this->assertDatabaseHas($this->getFullTableName(Locale::class), [
         'id'     => $localeId,
+        'status' => 1,
+    ]);
+});
+
+it('should report the skipped locales when only some of the selection can be disabled', function () {
+    $user = $this->loginAsAdmin();
+
+    $disableableIds = Locale::where('status', 0)
+        ->where('id', '!=', $user->ui_locale_id)
+        ->limit(3)
+        ->pluck('id')
+        ->toArray();
+
+    Locale::whereIn('id', $disableableIds)->update(['status' => 1]);
+
+    $this->post(route('admin.settings.locales.mass_update'), [
+        'indices' => [$user->ui_locale_id, ...$disableableIds],
+        'value'   => 0,
+    ])
+        ->assertOk()
+        ->assertJsonFragment([
+            'message' => trans('admin::app.settings.locales.index.partial-update-success', ['count' => 1]),
+        ]);
+
+    expect(Locale::whereIn('id', $disableableIds)->where('status', 0)->count())
+        ->toBe(count($disableableIds));
+
+    $this->assertDatabaseHas($this->getFullTableName(Locale::class), [
+        'id'     => $user->ui_locale_id,
+        'status' => 1,
+    ]);
+});
+
+it('should still refuse to disable an in-use locale when the value arrives as a string', function () {
+    $user = $this->loginAsAdmin();
+
+    $this->post(route('admin.settings.locales.mass_update'), [
+        'indices' => [$user->ui_locale_id],
+        'value'   => '0',
+    ])
+        ->assertUnprocessable()
+        ->assertJsonFragment(['message' => trans('admin::app.settings.locales.index.can-not-disable-error')]);
+
+    $this->assertDatabaseHas($this->getFullTableName(Locale::class), [
+        'id'     => $user->ui_locale_id,
         'status' => 1,
     ]);
 });
@@ -324,8 +380,8 @@ it('should not delete a locale linked to a channel through mass delete', functio
     $this->post(route('admin.settings.locales.mass_delete'), [
         'indices' => [$localeId],
     ])
-        ->assertOk()
-        ->assertJsonFragment(['message' => trans('admin::app.settings.locales.index.delete-success')]);
+        ->assertStatus(400)
+        ->assertJsonFragment(['message' => trans('admin::app.settings.locales.index.can-not-delete-error')]);
 
     $this->assertDatabaseHas($this->getFullTableName(Locale::class), [
         'id'     => $localeId,
@@ -341,12 +397,36 @@ it('should not delete a locale linked to a user through mass delete', function (
     $this->post(route('admin.settings.locales.mass_delete'), [
         'indices' => [$localeId],
     ])
-        ->assertOk()
-        ->assertJsonFragment(['message' => trans('admin::app.settings.locales.index.delete-success')]);
+        ->assertStatus(400)
+        ->assertJsonFragment(['message' => trans('admin::app.settings.locales.index.can-not-delete-error')]);
 
     $this->assertDatabaseHas($this->getFullTableName(Locale::class), [
         'id'     => $localeId,
         'status' => 1,
+    ]);
+});
+
+it('should report the skipped locales when only some of the selection can be deleted', function () {
+    $user = $this->loginAsAdmin();
+
+    $deletableIds = Locale::where('status', 0)
+        ->where('id', '!=', $user->ui_locale_id)
+        ->limit(3)
+        ->pluck('id')
+        ->toArray();
+
+    $this->post(route('admin.settings.locales.mass_delete'), [
+        'indices' => [$user->ui_locale_id, ...$deletableIds],
+    ])
+        ->assertOk()
+        ->assertJsonFragment([
+            'message' => trans('admin::app.settings.locales.index.partial-delete-success', ['count' => 1]),
+        ]);
+
+    expect(Locale::whereIn('id', $deletableIds)->count())->toBe(0);
+
+    $this->assertDatabaseHas($this->getFullTableName(Locale::class), [
+        'id' => $user->ui_locale_id,
     ]);
 });
 
@@ -357,7 +437,7 @@ it('should return error when deleting the last locale through mass delete', func
 
     Admin::whereNot('id', $user->id)->delete();
 
-    Locale::whereNot('id', $localeId)->delete();
+    keepOnlyLocale($localeId);
 
     $response = $this->post(route('admin.settings.locales.mass_delete'), [
         'indices' => [$localeId],
@@ -369,4 +449,46 @@ it('should return error when deleting the last locale through mass delete', func
         'id'     => $localeId,
         'status' => 1,
     ]);
+});
+
+it('mass updates only the locales matching the filters when all matching are selected', function () {
+    $this->loginAsAdmin();
+
+    $matching = collect(range(1, 3))->map(fn (int $i) => Locale::factory()->create(['code' => 'zq_'.$i, 'status' => 0])->id)->all();
+    $other = Locale::factory()->create(['code' => 'zx_1', 'status' => 0])->id;
+
+    $this->postJson(route('admin.settings.locales.mass_update'), [
+        'select_all' => 1,
+        'filters'    => ['code' => ['zq_']],
+        'value'      => 1,
+    ])->assertOk();
+
+    expect(Locale::whereIn('id', $matching)->where('status', 1)->count())->toBe(3)
+        ->and((int) Locale::find($other)->status)->toBe(0);
+});
+
+it('mass deletes only the locales matching the filters when all matching are selected', function () {
+    $this->loginAsAdmin();
+
+    $matching = collect(range(1, 3))->map(fn (int $i) => Locale::factory()->create(['code' => 'zq_'.$i, 'status' => 0])->id)->all();
+    $other = Locale::factory()->create(['code' => 'zx_1', 'status' => 0])->id;
+
+    $this->postJson(route('admin.settings.locales.mass_delete'), [
+        'select_all' => 1,
+        'filters'    => ['code' => ['zq_']],
+    ])->assertOk();
+
+    expect(Locale::whereIn('id', $matching)->count())->toBe(0)
+        ->and(Locale::whereKey($other)->exists())->toBeTrue();
+});
+
+it('skips locales in use when all locales are selected for mass update to disabled', function () {
+    $user = $this->loginAsAdmin();
+
+    $this->postJson(route('admin.settings.locales.mass_update'), [
+        'select_all' => 1,
+        'value'      => 0,
+    ]);
+
+    expect(Locale::whereKey($user->ui_locale_id)->value('status'))->toBe(1);
 });

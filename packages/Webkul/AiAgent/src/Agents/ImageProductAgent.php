@@ -113,22 +113,16 @@ class ImageProductAgent
     {
         // If it's a URL, validate and return as-is
         if ($this->isUrl($imageSource)) {
-            if (! $this->isValidUrl($imageSource)) {
-                throw new \InvalidArgumentException('Invalid image URL: '.$imageSource);
-            }
+            throw_unless($this->isValidUrl($imageSource), \InvalidArgumentException::class, 'Invalid image URL: '.$imageSource);
 
             return $imageSource;
         }
 
         // If it's a file path, read and encode as base64
         if ($this->isFilePath($imageSource)) {
-            if (! file_exists($imageSource)) {
-                throw new \InvalidArgumentException('Image file not found: '.$imageSource);
-            }
+            throw_unless(file_exists($imageSource), \InvalidArgumentException::class, 'Image file not found: '.$imageSource);
 
-            if (! $this->isAllowedImageMime($imageSource)) {
-                throw new \InvalidArgumentException('Unsupported image format: '.$imageSource);
-            }
+            throw_unless($this->isAllowedImageMime($imageSource), \InvalidArgumentException::class, 'Unsupported image format: '.$imageSource);
 
             return $this->encodeImageToBase64($imageSource);
         }
@@ -229,9 +223,7 @@ class ImageProductAgent
     {
         $imageData = file_get_contents($filePath);
 
-        if ($imageData === false) {
-            throw new \RuntimeException('Failed to read image file: '.$filePath);
-        }
+        throw_if($imageData === false, \RuntimeException::class, 'Failed to read image file: '.$filePath);
 
         $mimeType = mime_content_type($filePath);
 

@@ -4,13 +4,6 @@ use Illuminate\Support\Facades\Validator;
 use Webkul\Core\Models\Channel;
 use Webkul\Core\Rules\Code;
 
-afterEach(function () {
-    /**
-     * Clean channels, excluding ID 1 (i.e., the default channel). A fresh instance will always have ID 1.
-     */
-    Channel::query()->whereNot('id', 1)->delete();
-});
-
 it('returns all channels', function () {
     $countOld = $channels = core()->getAllChannels()->count();
     $expectedChannel = Channel::factory()->create();
@@ -32,6 +25,11 @@ it('returns the current channel code when set via setter', function () {
 it('returns the default channel', function () {
     $expectedChannel = Channel::factory()->create();
     config()->set('app.channel', $expectedChannel->code);
+
+    // The core singleton caches the default channel at boot (overrideMailConfiguration),
+    // so drop the instance to let the freshly configured app.channel resolve.
+    app()->forgetInstance('core');
+
     $channel = core()->getDefaultChannel();
 
     expect($channel->id)->toBe($expectedChannel->id);

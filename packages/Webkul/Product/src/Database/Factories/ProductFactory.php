@@ -4,8 +4,12 @@ namespace Webkul\Product\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Webkul\Attribute\Models\AttributeFamily;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 
+/**
+ * @extends Factory<Product>
+ */
 class ProductFactory extends Factory
 {
     /**
@@ -31,8 +35,8 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         return [
-            'sku'                 => $this->faker->unique()->regexify('[A-Z]{3}[0-9]{4}'),
-            'type'                => 'simple',
+            'sku'                 => fake()->unique()->regexify('[A-Z]{3}[0-9]{4}'),
+            'type'                => ProductType::Simple->value,
             'status'              => 1,
             'attribute_family_id' => AttributeFamily::find(1)?->id ?? AttributeFamily::factory()->withMinimalAttributesForProductTypes()->create()->id,
         ];
@@ -40,15 +44,13 @@ class ProductFactory extends Factory
 
     public function withInitialValues(): ProductFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'values' => [
-                    'common' => [
-                        'sku'    => $attributes['sku'],
-                    ],
+        return $this->state(fn (array $attributes): array => [
+            'values' => [
+                'common' => [
+                    'sku'    => $attributes['sku'],
                 ],
-            ];
-        });
+            ],
+        ]);
     }
 
     /**
@@ -56,11 +58,9 @@ class ProductFactory extends Factory
      */
     public function simple(): ProductFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'type' => 'simple',
-            ];
-        });
+        return $this->state(fn (array $attributes): array => [
+            'type' => ProductType::Simple->value,
+        ]);
     }
 
     /**
@@ -68,11 +68,9 @@ class ProductFactory extends Factory
      */
     public function configurable(): ProductFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'type' => 'configurable',
-            ];
-        });
+        return $this->state(fn (array $attributes): array => [
+            'type' => ProductType::Configurable->value,
+        ]);
     }
 
     /**
@@ -80,8 +78,8 @@ class ProductFactory extends Factory
      */
     public function withConfigurableAttributes(): ProductFactory
     {
-        return $this->afterCreating(function (Product $product) {
-            if ($product->type === 'configurable') {
+        return $this->afterCreating(function (Product $product): void {
+            if ($product->type === ProductType::Configurable->value) {
                 $product->super_attributes()->attach($product->attribute_family->getConfigurableAttributes()->first());
             }
         });
@@ -92,8 +90,8 @@ class ProductFactory extends Factory
      */
     public function withVariantProduct(): ProductFactory
     {
-        return $this->afterCreating(function (Product $product) {
-            if ($product->type === 'configurable') {
+        return $this->afterCreating(function (Product $product): void {
+            if ($product->type === ProductType::Configurable->value) {
                 $product->super_attributes()->attach($product->attribute_family->getConfigurableAttributes()->first());
 
                 $attribute = $product->super_attributes->first();

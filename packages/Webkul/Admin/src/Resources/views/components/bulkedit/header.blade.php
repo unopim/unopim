@@ -1,7 +1,7 @@
 @pushOnce('scripts')
     <script type="text/x-template" id="v-spreadsheet-header-template">
         <colgroup>
-            <col style="width: 46px" id="col_0" />
+            <col class="w-[46px]" id="col_0" />
             <template v-for="(header, index) in headers" :key="'col_' + index">
                 <col :span="header.colspan" class="border dark:border-cherry-700 border-gray-200" :id="'col_' + (index + 1)" :style="{ width: (columnWidths[index] || 180) + 'px' }" />
             </template>

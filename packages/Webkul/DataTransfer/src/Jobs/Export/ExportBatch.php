@@ -3,27 +3,25 @@
 namespace Webkul\DataTransfer\Jobs\Export;
 
 use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use Webkul\DataTransfer\Helpers\Export as ExportHelper;
 use Webkul\DataTransfer\Services\JobLogger;
 
 class ExportBatch implements ShouldQueue
 {
-    use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Batchable, \Illuminate\Foundation\Queue\Queueable;
 
     public $tries = 3;
 
+    /**
+     * @var int
+     */
     public $timeout = 600;
 
     /**
      * Create a new job instance.
      *
      * @param  mixed  $exportBatch
-     * @return void
      */
     public function __construct(
         protected $exportBatch,
@@ -38,14 +36,12 @@ class ExportBatch implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $logger = JobLogger::make($this->jobTrackId);
 
-        $exportHelper = app(ExportHelper::class)
+        $exportHelper = resolve(ExportHelper::class)
             ->setExport($this->exportBatch->jobTrack)
             ->setLogger($logger)
             ->setExportBuffer($this->exportBuffer);
@@ -66,7 +62,7 @@ class ExportBatch implements ShouldQueue
         $logger->info("ExportBatch #{$this->exportBatch->id} completed.");
     }
 
-    public function failed(\Throwable $exception)
+    public function failed(\Throwable $exception): void
     {
         JobLogger::make($this->jobTrackId)->error("ExportBatch #{$this->exportBatch->id} failed: {$exception->getMessage()}", [
             'batch_id'  => $this->exportBatch->id,

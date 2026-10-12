@@ -3,12 +3,13 @@
 namespace Webkul\ElasticSearch\Observers;
 
 use Elastic\Elasticsearch\Exception\ElasticsearchException;
+use Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit;
 use Illuminate\Support\Facades\Log;
 use Webkul\Core\Facades\ElasticSearch;
 use Webkul\ElasticSearch\Indexing\Normalizer\ProductNormalizer;
 use Webkul\Product\Models\Product as Products;
 
-class Product
+class Product implements ShouldHandleEventsAfterCommit
 {
     /**
      * bool flag to manage observer functionality
@@ -51,12 +52,18 @@ class Product
         $this->indexPrefix = config('elasticsearch.prefix');
     }
 
-    public function created(Products $product)
+    public function created(Products $product): void
     {
         if (config('elasticsearch.enabled') && self::$isEnabled) {
             $productArray = $product->toArray();
 
             $productArray = $this->sanitizeProductArray($productArray);
+
+            // Index the variant's resolved (inherited) values so search and
+            // filters see attributes owned by an ancestor. Read-time inheritance.
+            if (! empty($product->parent_id)) {
+                $productArray['values'] = $product->resolvedValues();
+            }
 
             if (isset($productArray['values'])) {
                 $productArray['values'] = $this->productIndexingNormalizer->normalize($productArray['values']);
@@ -77,13 +84,19 @@ class Product
         }
     }
 
-    public function updated(Products $product)
+    public function updated(Products $product): void
     {
         if (config('elasticsearch.enabled') && self::$isEnabled) {
             try {
                 $productArray = $product->toArray();
 
                 $productArray = $this->sanitizeProductArray($productArray);
+
+                // Index the variant's resolved (inherited) values so search and
+                // filters see attributes owned by an ancestor. Read-time inheritance.
+                if (! empty($product->parent_id)) {
+                    $productArray['values'] = $product->resolvedValues();
+                }
 
                 if (isset($productArray['values'])) {
                     $productArray['values'] = $this->productIndexingNormalizer->normalize($productArray['values']);
@@ -102,7 +115,7 @@ class Product
         }
     }
 
-    public function deleted(Products $product)
+    public function deleted(Products $product): void
     {
         if (config('elasticsearch.enabled') && self::$isEnabled) {
             try {

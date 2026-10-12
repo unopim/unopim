@@ -1,11 +1,21 @@
 <?php
 
 return [
+    'samples' => [
+        'default'       => 'Voorbeeldbestand',
+        'variants'      => 'Voorbeeld met varianten',
+        'multi-locale'  => 'Meertalig voorbeeld',
+        'delete'        => 'Voorbeeld voor verwijderen',
+        'custom-fields' => 'Voorbeeld met aangepaste velden',
+        'with-images'   => 'Voorbeeld met afbeeldingen (ZIP)',
+    ],
+
     'importers' => [
         'products' => [
             'title'      => 'Producten',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => 'De eenheid ":unit" is geen geldige eenheid voor het meetkenmerk ":attribute".',
+                'errors'       => [
                     'duplicate-url-key'                        => 'URL-sleutel: \'%s\' is al gegenereerd voor een item met de SKU: \'%s\'.',
                     'invalid-attribute-family'                 => 'Ongeldige waarde voor de attribuutsetkolom (attribuutset bestaat niet?).',
                     'invalid-type'                             => 'Producttype is ongeldig of wordt niet ondersteund.',
@@ -21,6 +31,7 @@ return [
                     'not-unique-value'                         => 'De waarde van :code moet uniek zijn.',
                     'incorrect-family-for-variant'             => 'De attribuutset moet gelijk zijn aan die van het hoofdproduct.',
                     'parent-not-exist'                         => 'Het hoofdproduct bestaat niet.',
+                    'variant-structure-not-found'              => 'De variantstructuur :code bestaat niet voor deze attributenfamilie.',
                 ],
             ],
         ],
@@ -29,6 +40,82 @@ return [
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'Je kunt de hoofdcategorie die aan een kanaal is gekoppeld niet verwijderen.',
+                ],
+            ],
+        ],
+        'category-fields' => [
+            'title'      => 'Categorievelden',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'De code van het categorieveld :code is al in gebruik.',
+                    'code_not_found_to_delete' => 'De code van het categorieveld is niet gevonden om te verwijderen.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Attributen',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Attribuutcode :code is al in gebruik.',
+                    'code_not_found_to_delete'             => 'Attribuutcode niet gevonden voor verwijdering.',
+                    'code_is_system_and_cannot_be_deleted' => 'Systeemattribuut kan niet worden verwijderd.',
+                ],
+            ],
+        ],
+        'product-associations' => [
+            'title'      => 'Productassociaties',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Het veld \'%s\' is verplicht.',
+                    'self-link-not-allowed'       => 'Product \'%s\' kan niet aan zichzelf worden gekoppeld.',
+                    'sku-not-found'               => 'Product met SKU \'%s\' niet gevonden.',
+                    'related-sku-not-found'       => 'Gekoppeld product met SKU \'%s\' niet gevonden.',
+                    'association-type-not-found'  => 'Het associatietype \'%s\' bestaat niet of is inactief.',
+                    'invalid-field-value'         => 'Ongeldige waarde opgegeven voor een associatieveld.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Attribuutgroepen',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Attribuutgroepcode :code is al in gebruik.',
+                    'code_not_found_to_delete'             => 'Attribuutgroepcode niet gevonden voor verwijdering.',
+                    'code_is_system_and_cannot_be_deleted' => 'Systeemattribuutgroep kan niet worden verwijderd.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Attribuutfamilies',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Attribuutfamiliecode :code is al in gebruik.',
+                    'code_not_found_to_delete' => 'Attribuutfamiliecode niet gevonden voor verwijdering.',
+                    'invalid-attribute-group'  => 'Attribuutgroep ":code" bestaat niet.',
+                    'invalid-attribute'        => 'Attribuut ":code" bestaat niet.',
+                    'invalid-channel'          => 'Kanaal ":code" bestaat niet.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Attribuutopties',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Attribuutoptiecode :code is al in gebruik.',
+                    'code_not_found_to_delete' => 'Attribuutoptiecode niet gevonden voor verwijdering.',
+                    'locale-not-exist'         => 'Landinstelling ":code" bestaat niet.',
+                    'invalid-attribute'        => 'Attribuut ":code" bestaat niet.',
+                ],
+            ],
+        ],
+        'locales' => [
+            'title'      => 'Talen',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'De taalcode \'%s\' is al geïmporteerd in deze batch.',
+                    'code-not-found-to-delete'    => 'Taal met code \'%s\' niet gevonden in het systeem.',
+                    'invalid-status'              => 'Status moet 0 of 1 zijn (of leeg voor standaard ingeschakeld).',
+                    'channel-related-locale-root' => 'Je kunt de taal met code :code niet verwijderen omdat deze is gekoppeld aan een kanaal.',
                 ],
             ],
         ],
@@ -45,18 +132,23 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
+            'title'   => 'Valuta',
+            'filters' => [
+                'status' => 'Status',
+                'enable' => 'Inschakelen',
+                'all'    => 'Alle',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Status moet 0 of 1 zijn (of leeg voor standaard ingeschakeld).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Rollen',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -65,7 +157,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
+            'title'   => 'Gebruikers',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Actief',
+                'all'    => 'Alle',
+            ],
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -78,21 +175,25 @@ return [
     'exporters' => [
         'export-too-large' => 'Deze export is te groot om uit te voeren: naar schatting :rows rijen × :columns kolommen (~:estimated) overschrijden de beschikbare ruimte (~:available). Beperk de export door minder kanalen/talen (en attributen) te selecteren en probeer het opnieuw.',
         'fields'           => [
-            'file-format'         => 'Bestandsformaat',
-            'with-media'          => 'Met media',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Bestandsformaat',
+            'with-media'             => 'Met media',
+            'with-associations'      => 'Met koppelingen',
+            'with-associations-info' => 'Neem de verouderde SKU-lijstkolommen (up_sells, cross_sells en related_products) op in de export',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
-            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'file-name'      => 'Bestandsnaam',
+            'file-name-info' => 'Patroon voor de bestandsnaam. Plaatsaanduidingen: [code], [date], [time], [entity_type]',
+            'file-path'      => 'Bestandspad',
+            'file-path-info' => 'Patroon voor de bestandsnaam. Plaatsaanduidingen: [code], [date], [time], [entity_type]',
             'status'         => 'Status',
             'enable'         => 'Ingeschakeld',
             'all'            => 'Alle',
@@ -152,38 +253,62 @@ return [
         'categories' => [
             'title' => 'Categorieën',
         ],
+        'category-fields' => [
+            'title' => 'Categorievelden',
+        ],
+        'attributes' => [
+            'title' => 'Attributen',
+        ],
+        'product-associations' => [
+            'title' => 'Productassociaties',
+        ],
+        'attribute-groups' => [
+            'title' => 'Attribuutgroepen',
+        ],
+        'attribute-families' => [
+            'title' => 'Attribuutfamilies',
+        ],
+        'attribute-options' => [
+            'title' => 'Attribuutopties',
+        ],
+        'locales' => [
+            'title' => 'Talen',
+        ],
         'channels' => [
             'title' => 'Kanalen',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Valuta',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Rollen',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Gebruikers',
             'filters' => [
                 'status' => 'Status',
-                'active' => 'Active',
+                'active' => 'Actief',
                 'all'    => 'Alle',
             ],
         ],
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'Kolom(men) met nummer "%s" hebben lege kopteksten.',
-            'column-name-invalid'  => 'Ongeldige kolomnamen: "%s".',
-            'column-not-found'     => 'Vereiste kolommen niet gevonden: %s.',
-            'column-numbers'       => 'Het aantal kolommen komt niet overeen met het aantal rijen in de koptekst.',
-            'invalid-attribute'    => 'Koptekst bevat ongeldig(e) attribuut(en): "%s".',
-            'system'               => 'Er is een onverwachte systeemfout opgetreden.',
-            'wrong-quotes'         => 'Er worden gekrulde aanhalingstekens gebruikt in plaats van rechte aanhalingstekens.',
-            'file-empty'           => 'Het bestand is leeg of bevat geen kopregel. Upload een geldig bestand met gegevens.',
+            'column-empty-headers'   => 'Kolom(men) met nummer "%s" hebben lege kopteksten.',
+            'column-name-invalid'    => 'Ongeldige kolomnamen: "%s".',
+            'column-not-found'       => 'Vereiste kolommen niet gevonden: %s.',
+            'column-numbers'         => 'Het aantal kolommen komt niet overeen met het aantal rijen in de koptekst.',
+            'invalid-attribute'      => 'Koptekst bevat ongeldig(e) attribuut(en): "%s".',
+            'system'                 => 'Er is een onverwachte systeemfout opgetreden.',
+            'wrong-quotes'           => 'Er worden gekrulde aanhalingstekens gebruikt in plaats van rechte aanhalingstekens.',
+            'file-empty'             => 'Het bestand is leeg of bevat geen kopregel. Upload een geldig bestand met gegevens.',
+            'file-missing'           => 'Het bronbestand voor deze taak is niet gevonden. Controleer het bestandspad in het profiel en upload het bestand opnieuw.',
         ],
     ],
     'job' => [
         'started'   => 'De taak is gestart.',
         'completed' => 'Taak succesvol voltooid.',
+        'stalled'   => 'De taak reageerde langer dan :minutes minuten niet en is als mislukt gemarkeerd. De uitvoerende worker is waarschijnlijk beëindigd.',
+        'reaped'    => ':count vastgelopen taken zijn als mislukt gemarkeerd.',
     ],
 ];

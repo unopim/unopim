@@ -28,7 +28,6 @@ class Importer extends AbstractImporter
      * Permanent entity columns
      */
     protected array $validColumnNames = [
-        'id',
         'name',
         'description',
         'permission_type',
@@ -50,8 +49,6 @@ class Importer extends AbstractImporter
 
     /**
      * Create a new helper instance.
-     *
-     * @return void
      */
     public function __construct(
         protected JobTrackBatchRepository $importBatchRepository,
@@ -61,9 +58,6 @@ class Importer extends AbstractImporter
         parent::__construct($importBatchRepository);
     }
 
-    /**
-     * Initialize error templates
-     */
     protected function initErrorMessages(): void
     {
         foreach ($this->messages as $errorCode => $message) {
@@ -73,9 +67,6 @@ class Importer extends AbstractImporter
         parent::initErrorMessages();
     }
 
-    /**
-     * Validate data.
-     */
     public function validateData(): void
     {
         $this->roleStorage->init();
@@ -83,9 +74,6 @@ class Importer extends AbstractImporter
         parent::validateData();
     }
 
-    /**
-     * Validates row
-     */
     public function validateRow(array $rowData, int $rowNumber): bool
     {
         if (isset($this->validatedRows[$rowNumber])) {
@@ -105,9 +93,9 @@ class Importer extends AbstractImporter
         }
 
         $validator = Validator::make($rowData, [
-            'name'            => 'required|string',
-            'permission_type' => 'required|in:all,custom',
-            'description'     => 'nullable|string',
+            'name'            => ['required', 'string'],
+            'permission_type' => ['required', 'in:all,custom'],
+            'description'     => ['nullable', 'string'],
         ]);
 
         if ($validator->fails()) {
@@ -119,9 +107,6 @@ class Importer extends AbstractImporter
         return ! $this->errorHelper->isRowInvalid($rowNumber);
     }
 
-    /**
-     * Start the import process
-     */
     public function importBatch(JobTrackBatchContract $batch): bool
     {
         Event::dispatch('data_transfer.imports.batch.import.before', $batch);
@@ -146,9 +131,6 @@ class Importer extends AbstractImporter
         return true;
     }
 
-    /**
-     * Delete roles from current batch
-     */
     protected function deleteRoleData(JobTrackBatchContract $batch): bool
     {
         $this->roleStorage->load(Arr::pluck($batch->data, 'name'));
@@ -165,19 +147,14 @@ class Importer extends AbstractImporter
 
         $idsToDelete = array_unique($idsToDelete);
 
-        if (! empty($idsToDelete)) {
-            foreach ($idsToDelete as $id) {
-                $this->roleRepository->delete($id);
-                $this->deletedItemsCount++;
-            }
+        foreach ($idsToDelete as $id) {
+            $this->roleRepository->delete($id);
+            $this->deletedItemsCount++;
         }
 
         return true;
     }
 
-    /**
-     * Save roles from current batch
-     */
     protected function saveRoleData(JobTrackBatchContract $batch): bool
     {
         $this->roleStorage->load(Arr::pluck($batch->data, 'name'));
@@ -189,7 +166,7 @@ class Importer extends AbstractImporter
                 'name'            => EscapeFormulaOperators::unescapeValue($rowData['name']),
                 'description'     => EscapeFormulaOperators::unescapeValue($rowData['description'] ?? ''),
                 'permission_type' => $rowData['permission_type'],
-                'permissions'     => ! empty($rowData['permissions']) ? explode(',', $rowData['permissions']) : [],
+                'permissions'     => empty($rowData['permissions']) ? [] : explode(',', $rowData['permissions']),
             ];
 
             if ($id) {

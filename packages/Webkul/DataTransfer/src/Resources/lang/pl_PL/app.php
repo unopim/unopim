@@ -1,11 +1,21 @@
 <?php
 
 return [
+    'samples' => [
+        'default'       => 'Plik przykładowy',
+        'variants'      => 'Przykład wariantów',
+        'multi-locale'  => 'Przykład wielojęzyczny',
+        'delete'        => 'Przykład usuwania',
+        'custom-fields' => 'Przykład pól niestandardowych',
+        'with-images'   => 'Przykład z obrazami (ZIP)',
+    ],
+
     'importers' => [
         'products' => [
             'title'      => 'Produkty',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => 'Jednostka ":unit" nie jest prawidłową jednostką dla atrybutu pomiaru ":attribute".',
+                'errors'       => [
                     'duplicate-url-key'                        => 'Klucz URL: \'%s\' został już wygenerowany dla przedmiotu o SKU: \'%s\'.',
                     'invalid-attribute-family'                 => 'Nieprawidłowa wartość dla kolumny rodziny atrybutów (rodzina atrybutów nie istnieje?)',
                     'invalid-type'                             => 'Typ produktu jest nieprawidłowy lub nieobsługiwany',
@@ -21,6 +31,7 @@ return [
                     'not-unique-value'                         => 'Wartość :code musi być unikalna.',
                     'incorrect-family-for-variant'             => 'Rodzina musi być taka sama jak rodzina główna',
                     'parent-not-exist'                         => 'Rodzic nie istnieje.',
+                    'variant-structure-not-found'              => 'Struktura wariantów :code nie istnieje dla tej rodziny atrybutów.',
                 ],
             ],
         ],
@@ -29,6 +40,82 @@ return [
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'Nie można usunąć głównej kategorii powiązanej z kanałem',
+                ],
+            ],
+        ],
+        'category-fields' => [
+            'title'      => 'Pola kategorii',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kod pola kategorii :code jest już używany.',
+                    'code_not_found_to_delete' => 'Nie znaleziono kodu pola kategorii do usunięcia.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Atrybuty',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Kod atrybutu :code jest już w użyciu.',
+                    'code_not_found_to_delete'             => 'Nie znaleziono kodu atrybutu do usunięcia.',
+                    'code_is_system_and_cannot_be_deleted' => 'Nie można usunąć atrybutu systemowego.',
+                ],
+            ],
+        ],
+        'product-associations' => [
+            'title'      => 'Powiązania produktów',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Pole \'%s\' jest wymagane.',
+                    'self-link-not-allowed'       => 'Produkt \'%s\' nie może być powiązany sam ze sobą.',
+                    'sku-not-found'               => 'Nie znaleziono produktu o SKU \'%s\'.',
+                    'related-sku-not-found'       => 'Nie znaleziono powiązanego produktu o SKU \'%s\'.',
+                    'association-type-not-found'  => 'Typ powiązania \'%s\' nie istnieje lub jest nieaktywny.',
+                    'invalid-field-value'         => 'Podano nieprawidłową wartość dla pola powiązania.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Grupy atrybutów',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Kod grupy atrybutów :code jest już w użyciu.',
+                    'code_not_found_to_delete'             => 'Nie znaleziono kodu grupy atrybutów do usunięcia.',
+                    'code_is_system_and_cannot_be_deleted' => 'Nie można usunąć systemowej grupy atrybutów.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Rodziny atrybutów',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kod rodziny atrybutów :code jest już w użyciu.',
+                    'code_not_found_to_delete' => 'Nie znaleziono kodu rodziny atrybutów do usunięcia.',
+                    'invalid-attribute-group'  => 'Grupa atrybutów ":code" nie istnieje.',
+                    'invalid-attribute'        => 'Atrybut ":code" nie istnieje.',
+                    'invalid-channel'          => 'Kanał ":code" nie istnieje.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Opcje atrybutu',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kod opcji atrybutu :code jest już w użyciu.',
+                    'code_not_found_to_delete' => 'Nie znaleziono kodu opcji atrybutu do usunięcia.',
+                    'locale-not-exist'         => 'Ustawienia regionalne ":code" nie istnieją.',
+                    'invalid-attribute'        => 'Atrybut ":code" nie istnieje.',
+                ],
+            ],
+        ],
+        'locales' => [
+            'title'      => 'Języki',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Kod języka \'%s\' został już zaimportowany w tej partii.',
+                    'code-not-found-to-delete'    => 'Nie znaleziono języka o kodzie \'%s\' w systemie.',
+                    'invalid-status'              => 'Status musi wynosić 0 lub 1 (lub pusty dla domyślnie włączonego).',
+                    'channel-related-locale-root' => 'Nie możesz usunąć języka o kodzie :code, ponieważ jest powiązany z kanałem.',
                 ],
             ],
         ],
@@ -45,18 +132,23 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
+            'title'   => 'Waluty',
+            'filters' => [
+                'status' => 'Status',
+                'enable' => 'Włącz',
+                'all'    => 'Wszystkie',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Status musi wynosić 0 lub 1 (lub pusty dla domyślnie włączonego).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Role',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -65,7 +157,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
+            'title'   => 'Użytkownicy',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Aktywny',
+                'all'    => 'Wszystkie',
+            ],
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -78,21 +175,25 @@ return [
     'exporters' => [
         'export-too-large' => 'Ten eksport jest zbyt duży, aby go uruchomić: szacunkowo :rows wierszy × :columns kolumn (~:estimated) przekracza dostępne miejsce (~:available). Zawęź eksport, wybierając mniej kanałów/lokalizacji (i atrybutów), i spróbuj ponownie.',
         'fields'           => [
-            'file-format'         => 'Format pliku',
-            'with-media'          => 'Z multimediami',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Format pliku',
+            'with-media'             => 'Z multimediami',
+            'with-associations'      => 'Z powiązaniami',
+            'with-associations-info' => 'Uwzględnij w eksporcie starsze kolumny list SKU (up_sells, cross_sells i related_products)',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
-            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'file-name'      => 'Nazwa pliku',
+            'file-name-info' => 'Wzorzec nazwy pliku. Znaczniki: [code], [date], [time], [entity_type]',
+            'file-path'      => 'Ścieżka pliku',
+            'file-path-info' => 'Wzorzec nazwy pliku. Znaczniki: [code], [date], [time], [entity_type]',
             'status'         => 'Status',
             'enable'         => 'Włączony',
             'all'            => 'Wszystkie',
@@ -152,38 +253,62 @@ return [
         'categories' => [
             'title' => 'Kategorie',
         ],
+        'category-fields' => [
+            'title' => 'Pola kategorii',
+        ],
+        'attributes' => [
+            'title' => 'Atrybuty',
+        ],
+        'product-associations' => [
+            'title' => 'Powiązania produktów',
+        ],
+        'attribute-groups' => [
+            'title' => 'Grupy atrybutów',
+        ],
+        'attribute-families' => [
+            'title' => 'Rodziny atrybutów',
+        ],
+        'attribute-options' => [
+            'title' => 'Opcje atrybutu',
+        ],
+        'locales' => [
+            'title' => 'Języki',
+        ],
         'channels' => [
             'title' => 'Kanały',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Waluty',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Role',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Użytkownicy',
             'filters' => [
                 'status' => 'Status',
-                'active' => 'Active',
+                'active' => 'Aktywne',
                 'all'    => 'Wszystkie',
             ],
         ],
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'Kolumny numer "%s" mają puste nagłówki.',
-            'column-name-invalid'  => 'Nieprawidłowe nazwy kolumn: "%s".',
-            'column-not-found'     => 'Brak wymaganych kolumn: %s.',
-            'column-numbers'       => 'Liczba kolumn nie odpowiada liczbie wierszy w nagłówku.',
-            'invalid-attribute'    => 'Nagłówek zawiera nieprawidłowe atrybuty: "%s".',
-            'system'               => 'Wystąpił nieoczekiwany błąd systemowy.',
-            'wrong-quotes'         => 'Zastosowano krzywe cudzysłowy zamiast prostych cudzysłowów.',
-            'file-empty'           => 'Plik jest pusty lub nie zawiera wiersza nagłówkowego. Proszę przesłać prawidłowy plik z danymi.',
+            'column-empty-headers'   => 'Kolumny numer "%s" mają puste nagłówki.',
+            'column-name-invalid'    => 'Nieprawidłowe nazwy kolumn: "%s".',
+            'column-not-found'       => 'Brak wymaganych kolumn: %s.',
+            'column-numbers'         => 'Liczba kolumn nie odpowiada liczbie wierszy w nagłówku.',
+            'invalid-attribute'      => 'Nagłówek zawiera nieprawidłowe atrybuty: "%s".',
+            'system'                 => 'Wystąpił nieoczekiwany błąd systemowy.',
+            'wrong-quotes'           => 'Zastosowano krzywe cudzysłowy zamiast prostych cudzysłowów.',
+            'file-empty'             => 'Plik jest pusty lub nie zawiera wiersza nagłówkowego. Proszę przesłać prawidłowy plik z danymi.',
+            'file-missing'           => 'Nie znaleziono pliku źródłowego dla tego zadania. Sprawdź ścieżkę pliku w profilu, a następnie prześlij plik ponownie.',
         ],
     ],
     'job' => [
         'started'   => 'Rozpoczęcie pracy',
         'completed' => 'Zakończenie pracy',
+        'stalled'   => 'Zadanie przestało odpowiadać przez ponad :minutes minut i zostało oznaczone jako nieudane. Proces, który je wykonywał, prawdopodobnie został zakończony.',
+        'reaped'    => 'Oznaczono :count zatrzymanych zadań jako nieudane.',
     ],
 ];

@@ -3,7 +3,9 @@
 namespace Webkul\DataTransfer\Helpers\Exporters\Product;
 
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Event;
+use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Core\Repositories\ChannelRepository;
@@ -15,14 +17,20 @@ use Webkul\DataTransfer\Helpers\Export;
 use Webkul\DataTransfer\Helpers\Exporters\AbstractExporter;
 use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
 use Webkul\DataTransfer\Helpers\Formatters\ScopeFilterValue;
+use Webkul\DataTransfer\Helpers\Sources\Export\ProductCursor;
 use Webkul\DataTransfer\Helpers\Sources\Export\ProductSource;
 use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
 use Webkul\DataTransfer\Models\JobTrack;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
+use Webkul\Measurement\Helpers\MeasurementHelper;
+use Webkul\Product\Contracts\VariantValueResolver;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Repositories\ProductRepository;
 
 class Exporter extends AbstractExporter
 {
+    private const int ATTRIBUTE_LOOKUP_CHUNK_SIZE = 1000;
+
     /**
      * Static cache for channels/locales/currencies/attributes.
      * Shared across all ExportBatch jobs within the same worker process,
@@ -64,6 +72,11 @@ class Exporter extends AbstractExporter
     protected array $attributeMeta = [];
 
     /**
+     * Resolved once per exporter instance rather than per exported row.
+     */
+    protected ?MeasurementHelper $measurementHelper = null;
+
+    /**
      * Attribute codes selected in the export profile. When empty every
      * attribute value is exported.
      *
@@ -79,10 +92,10 @@ class Exporter extends AbstractExporter
      */
     protected $optionLabelMaps = [];
 
+    protected ?VariantValueResolver $variantValueResolver = null;
+
     /**
      * Create a new instance.
-     *
-     * @return void
      */
     public function __construct(
         protected JobTrackBatchRepository $exportBatchRepository,
@@ -94,14 +107,17 @@ class Exporter extends AbstractExporter
         parent::__construct($exportBatchRepository, $exportFileBuffer);
     }
 
+    protected function variantValueResolver(): VariantValueResolver
+    {
+        return $this->variantValueResolver ??= app(VariantValueResolver::class);
+    }
+
     /**
      * Initializes the channels and locales for the export process.
      * Uses a static in-process cache so that the DB queries run only once
      * per worker process regardless of how many ExportBatch jobs are handled.
-     *
-     * @return void
      */
-    public function initilize()
+    public function initilize(): void
     {
         if (self::$staticInitCache === null) {
             $channels = $this->channelRepository->with(['locales', 'currencies'])->all();
@@ -164,7 +180,7 @@ class Exporter extends AbstractExporter
 
     protected function applyChannelScope(array $selectedChannels): void
     {
-        if (empty($selectedChannels)) {
+        if ($selectedChannels === []) {
             return;
         }
 
@@ -178,7 +194,7 @@ class Exporter extends AbstractExporter
 
     protected function applyLocaleScope(array $selectedLocales): void
     {
-        if (empty($selectedLocales)) {
+        if ($selectedLocales === []) {
             return;
         }
 
@@ -189,7 +205,7 @@ class Exporter extends AbstractExporter
 
     protected function applyCurrencyScope(array $selectedCurrencies): void
     {
-        if (empty($selectedCurrencies)) {
+        if ($selectedCurrencies === []) {
             return;
         }
 
@@ -203,7 +219,7 @@ class Exporter extends AbstractExporter
 
     protected function isAttributeValueExported(string $code): bool
     {
-        return empty($this->selectedAttributeCodes)
+        return $this->selectedAttributeCodes === []
             || in_array($code, $this->selectedAttributeCodes, true);
     }
 
@@ -227,9 +243,80 @@ class Exporter extends AbstractExporter
         }
 
         $rows = $productCount * max(1, $this->countChannelLocalePairs());
-        $columns = max(1, $this->attributeRepository->count());
 
-        $this->guardAgainstOversizedExport($rows, $columns);
+        $this->guardAgainstOversizedExport($rows, $this->countExportedColumns());
+    }
+
+    /**
+     * Count fixed, association, and expanded attribute columns for the disk-budget estimate.
+     *
+     * A profile that selects attributes writes only those columns, so charging it for every
+     * attribute in the catalogue would reject exports that comfortably fit. The codes are read
+     * from the filters rather than from $selectedAttributeCodes because the guard runs during
+     * initializeBatches(), before initilize() has applied the scope filters.
+     */
+    protected function countExportedColumns(): int
+    {
+        $filters = $this->getFilters();
+        $selected = ScopeFilterValue::toCodes(
+            $filters[ProductExportScope::ATTRIBUTES->value] ?? null
+        );
+        $columns = count($this->getBaseFields());
+
+        if ((bool) ($filters['with_associations'] ?? false)) {
+            $columns += count($this->getAssociationColumns());
+        }
+
+        $currencyCount = null;
+
+        $query = $this->attributeRepository->getModel()->newQuery()
+            ->select('type')
+            ->selectRaw('COUNT(*) as aggregate')
+            ->whereNotIn('code', ['sku', 'status'])
+            ->groupBy('type');
+
+        foreach (array_chunk($selected, self::ATTRIBUTE_LOOKUP_CHUNK_SIZE) ?: [[]] as $codes) {
+            $attributeQuery = clone $query;
+
+            if ($codes !== []) {
+                $attributeQuery->whereIn('code', $codes);
+            }
+
+            foreach ($attributeQuery->toBase()->pluck('aggregate', 'type') as $type => $count) {
+                $columns += (int) $count * match ($type) {
+                    Attribute::MEASUREMENT_FIELD_TYPE          => 2,
+                    AttributeTypes::PRICE_ATTRIBUTE_TYPE       => $currencyCount ??= $this->countExportedCurrencies(),
+                    default                                    => 1,
+                };
+            }
+        }
+
+        return $columns;
+    }
+
+    /**
+     * Count unique currencies within the export profile's channel and currency scopes.
+     */
+    protected function countExportedCurrencies(): int
+    {
+        $filters = $this->getFilters();
+        $channelCodes = ScopeFilterValue::toCodes($filters[ProductExportScope::CHANNELS->value] ?? null);
+        $currencyCodes = ScopeFilterValue::toCodes($filters[ProductExportScope::CURRENCIES->value] ?? null);
+        $currencies = [];
+
+        foreach ($this->channelRepository->with(['currencies'])->all() as $channel) {
+            if ($channelCodes !== [] && ! in_array($channel->code, $channelCodes, true)) {
+                continue;
+            }
+
+            $currencies = array_merge($currencies, $channel->currencies->pluck('code')->all());
+        }
+
+        if ($currencyCodes !== []) {
+            $currencies = array_intersect($currencies, $currencyCodes);
+        }
+
+        return count(array_unique($currencies));
     }
 
     protected function countChannelLocalePairs(): int
@@ -241,12 +328,12 @@ class Exporter extends AbstractExporter
         $pairs = 0;
 
         foreach ($this->channelRepository->with(['locales'])->all() as $channel) {
-            if (! empty($channelCodes) && ! in_array($channel->code, $channelCodes, true)) {
+            if ($channelCodes !== [] && ! in_array($channel->code, $channelCodes, true)) {
                 continue;
             }
 
             foreach ($channel->locales as $locale) {
-                if (! empty($localeCodes) && ! in_array($locale->code, $localeCodes, true)) {
+                if ($localeCodes !== [] && ! in_array($locale->code, $localeCodes, true)) {
                     continue;
                 }
 
@@ -268,9 +355,6 @@ class Exporter extends AbstractExporter
 
         $this->prepareProducts($batch, $filePath);
 
-        /**
-         * Update export batch process state summary
-         */
         $this->updateBatchState($batch->id, Export::STATE_PROCESSED);
 
         Event::dispatch('data_transfer.exports.batch.export.after', $batch);
@@ -281,7 +365,7 @@ class Exporter extends AbstractExporter
     /**
      * {@inheritdoc}
      */
-    protected function getResults()
+    protected function getResults(): \Webkul\DataTransfer\Helpers\Sources\Export\Elastic\ProductCursor|ProductCursor
     {
         $filters = $this->getFilters();
 
@@ -333,7 +417,7 @@ class Exporter extends AbstractExporter
         }
 
         try {
-            return Carbon::parse($date);
+            return Date::parse($date);
         } catch (\Throwable) {
             return null;
         }
@@ -352,20 +436,20 @@ class Exporter extends AbstractExporter
             ->where('state', Export::STATE_COMPLETED)
             ->where('id', '!=', $this->export->id)
             ->whereNotNull('completed_at')
-            ->orderByDesc('completed_at')
+            ->latest('completed_at')
             ->value('completed_at');
 
-        return $completedAt ? Carbon::parse($completedAt) : null;
+        return $completedAt ? Date::parse($completedAt) : null;
     }
 
     protected function getItemsFromIds(array $ids)
     {
-        if (empty($ids)) {
+        if ($ids === []) {
             return [];
         }
 
         if (! $this->source) {
-            $this->source = app(ProductRepository::class);
+            $this->source = resolve(ProductRepository::class);
         }
 
         return $this->source
@@ -373,51 +457,89 @@ class Exporter extends AbstractExporter
                 'super_attributes:id,code',
                 'parent:id,sku',
                 'attribute_family:id,code',
+                'variantStructure:id,code',
             ])
             ->whereIn('id', $ids)
             ->get();
     }
 
     /**
-     * Prepare products from current batch
+     * Build the fixed product fields in their exported order.
      */
-    public function prepareProducts(JobTrackBatchContract $batch, $filePath)
+    protected function getBaseFields(array $rowData = []): array
+    {
+        return [
+            'channel'                 => null,
+            'locale'                  => null,
+            'sku'                     => $rowData['sku'] ?? null,
+            'status'                  => ($rowData['status'] ?? false) ? 'true' : 'false',
+            'type'                    => $rowData['type'] ?? null,
+            'parent'                  => $rowData['parent'] ?? null,
+            'attribute_family'        => $rowData['attribute_family']['code'] ?? null,
+            'variant_structure'       => $rowData['variant_structure'] ?? null,
+            'configurable_attributes' => $rowData === [] ? null : $this->getSuperAttributes($rowData),
+            'categories'              => $rowData === [] ? null : $this->getCategories($rowData),
+        ];
+    }
+
+    /**
+     * List the optional association columns in their exported order.
+     */
+    protected function getAssociationColumns(): array
+    {
+        return ['up_sells', 'cross_sells', 'related_products'];
+    }
+
+    /**
+     * Prepare products from current batch
+     *
+     * Legacy `up_sells`/`cross_sells`/`related_products` SKU-list columns stay opt-in (default off);
+     * the dedicated association export job is the rich, row-per-link alternative. Row data is built
+     * from model properties rather than `toArray()`, which triggers Astrotomic Translatable's
+     * `getTranslation()` for every configured locale (~8ms/product).
+     */
+    public function prepareProducts(JobTrackBatchContract $batch, $filePath): void
     {
         $flatIds = array_column($batch->data, 'id');
 
         $productsByIds = $this->getItemsFromIds($flatIds);
 
+        $mergedValuesById = $this->variantValueResolver()->resolveBatch(
+            $productsByIds->map(fn ($product) => [
+                'id'        => $product->id,
+                'parent_id' => $product->parent_id,
+                'values'    => $product->values,
+            ])
+        );
+
+        $withAssociations = (bool) ($this->getFilters()['with_associations'] ?? false);
+
         foreach ($productsByIds as $product) {
-            // Build rowData directly from model properties instead of calling toArray().
-            // Calling $product->toArray() triggers attribute_family->toArray() which invokes
-            // Astrotomic Translatable::getTranslation() for every configured locale (~8ms/product).
-            // Direct property access avoids that entirely.
-            $productValues = $product->values ?? [];
+            $productValues = $mergedValuesById[$product->id] ?? ($product->values ?? []);
 
             $rowData = [
-                'type'             => $product->type,
-                'sku'              => $product->sku,
-                'status'           => $product->status,
-                'super_attributes' => $product->type === 'configurable'
+                'type'              => $product->type,
+                'sku'               => $product->sku,
+                'status'            => $product->status,
+                'parent'            => $product->parent?->sku,
+                'variant_structure' => $product->type === ProductType::Configurable->value
+                    ? $product->variantStructure?->code
+                    : null,
+                'super_attributes' => $product->type === ProductType::Configurable->value
                     ? $product->super_attributes->toArray()
                     : [],
                 'attribute_family' => ['code' => $product->attribute_family?->code],
                 'values'           => $productValues,
             ];
 
-            $family = $product->attribute_family?->code;
-            $parentSku = $product->type === 'simple'
-                ? optional($product->parent)->sku
-                : null;
+            $baseFields = $this->getBaseFields($rowData);
+            $associationFields = [];
 
-            $sku = $product->sku;
-            $type = $product->type;
-            $status = $product->status ? 'true' : 'false';
-            $configurableAttributes = $this->getSuperAttributes($rowData);
-            $categories = $this->getCategories($rowData);
-            $upSells = $this->getAssociations($rowData, 'up_sells');
-            $crossSells = $this->getAssociations($rowData, 'cross_sells');
-            $relatedProducts = $this->getAssociations($rowData, 'related_products');
+            if ($withAssociations) {
+                foreach ($this->getAssociationColumns() as $column) {
+                    $associationFields[$column] = $this->getAssociations($rowData, $column);
+                }
+            }
 
             $commonFields = $this->getCommonFields($rowData);
             unset($commonFields['sku']);
@@ -437,38 +559,28 @@ class Exporter extends AbstractExporter
 
                     $values = $this->setAttributesValues($mergedFields, $filePath, $locale);
 
-                    $row = array_merge([
-                        'channel'                 => $channel,
-                        'locale'                  => $locale,
-                        'sku'                     => $sku,
-                        'status'                  => $status,
-                        'type'                    => $type,
-                        'parent'                  => $parentSku,
-                        'attribute_family'        => $family,
-                        'configurable_attributes' => $configurableAttributes,
-                        'categories'              => $categories,
-                        'up_sells'                => $upSells,
-                        'cross_sells'             => $crossSells,
-                        'related_products'        => $relatedProducts,
-                    ], $values);
+                    $row = array_merge($baseFields, [
+                        'channel' => $channel,
+                        'locale'  => $locale,
+                    ], $associationFields, $values);
 
                     $this->exportBuffer->write([$row]);
                 }
             }
 
+            $this->heartbeat();
+
             $this->createdItemsCount++;
         }
     }
 
-    public function getSuperAttributes($data)
+    public function getSuperAttributes(array $data): ?string
     {
         if (! isset($data['super_attributes'])) {
             return null;
         }
 
-        $configurable_attributes = array_map(function ($data) {
-            return $data['code'];
-        }, $data['super_attributes'] ?? []);
+        $configurable_attributes = array_map(fn (array $data) => $data['code'], $data['super_attributes'] ?? []);
 
         return implode(',', $configurable_attributes);
     }
@@ -570,13 +682,10 @@ class Exporter extends AbstractExporter
 
     protected function headerLocale(): ?string
     {
-        foreach ($this->channelsAndLocales as $locales) {
-            if (! empty($locales)) {
-                return $locales[0];
-            }
-        }
+        $codes = collect($this->channelsAndLocales)->flatten()->unique();
+        $configured = config('app.locale');
 
-        return null;
+        return $codes->contains($configured) ? $configured : $codes->sort()->first();
     }
 
     protected function formatDateValue(mixed $value, string $format): mixed
@@ -586,18 +695,93 @@ class Exporter extends AbstractExporter
         }
 
         try {
-            return Carbon::parse($value)->format($format);
-        } catch (\Exception $e) {
+            return Date::parse($value)->format($format);
+        } catch (\Exception) {
             return $value;
         }
     }
 
     /**
-     * Sets attribute values for a product. If an attribute is not present in the given values array,
+     * Sets attribute values for a product.
      *
-     * @return array
+     * Measurement attributes are withheld from the generic pass so it emits an
+     * empty placeholder column in its usual position, then filled in here as the
+     * amount plus a companion "<code>(unit)" column holding the unit label.
      */
-    protected function setAttributesValues(array $values, mixed $filePath, ?string $locale = null)
+    protected function setAttributesValues(array $values, mixed $filePath, ?string $locale = null): array
+    {
+        $measurementMeta = array_filter(
+            $this->attributeMeta,
+            fn (array $meta): bool => ($meta['type'] ?? null) === Attribute::MEASUREMENT_FIELD_TYPE
+        );
+
+        if ($measurementMeta === []) {
+            return $this->setNonMeasurementAttributesValues($values, $filePath, $locale);
+        }
+
+        $attributeValues = $this->setNonMeasurementAttributesValues(
+            array_diff_key($values, array_fill_keys(array_column($measurementMeta, 'code'), true)),
+            $filePath,
+            $locale
+        );
+
+        $measurementHelper = $this->measurementHelper();
+
+        foreach ($measurementMeta as $meta) {
+            $code = $meta['code'];
+
+            if (! $this->isAttributeValueExported($code)) {
+                continue;
+            }
+
+            [$amount, $unit] = $this->extractMeasurement($values[$code] ?? null);
+
+            $attributeValues[$code] = EscapeFormulaOperators::escapeValue($amount);
+
+            $attributeValues["{$code}(unit)"] = EscapeFormulaOperators::escapeValue(
+                $measurementHelper->getUnitLabel($unit, $meta['attribute'], $locale)
+            );
+        }
+
+        return $attributeValues;
+    }
+
+    /**
+     * Resolve the measurement helper lazily, so an export with no measurement
+     * attribute never builds it.
+     */
+    protected function measurementHelper(): MeasurementHelper
+    {
+        return $this->measurementHelper ??= resolve(MeasurementHelper::class);
+    }
+
+    /**
+     * Resolve the amount and unit from a stored measurement value.
+     */
+    protected function extractMeasurement(mixed $value): array
+    {
+        $data = is_array($value) ? $value : [];
+
+        if (isset($data['<all_channels>']['<all_locales>'])) {
+            $data = $data['<all_channels>']['<all_locales>'];
+        }
+
+        return [
+            $data['amount'] ?? null,
+            $data['unit'] ?? null,
+        ];
+    }
+
+    /**
+     * Sets attribute values for every non-measurement attribute.
+     *
+     * Attributes outside the profile's selection are omitted entirely rather than written as null:
+     * FlatItemBuffer derives the header from the first row's keys, so a null placeholder would keep
+     * the column in the file and contradict the "only the selected attributes are exported" promise.
+     * Every row runs this same loop with the same selection, so the key set stays identical across
+     * rows and batches, which is what the buffer's positional writes rely on.
+     */
+    protected function setNonMeasurementAttributesValues(array $values, mixed $filePath, ?string $locale = null): array
     {
         $attributeValues = [];
         $filters = $this->getFilters();
@@ -609,34 +793,24 @@ class Exporter extends AbstractExporter
         foreach ($this->attributeMeta as $meta) {
             $code = $meta['code'];
             $type = $meta['type'];
+            if ($code === 'sku') {
+                continue;
+            }
+            if ($code === 'status') {
+                continue;
+            }
 
-            if ($code === 'sku' || $code === 'status') {
+            if (! $this->isAttributeValueExported($code)) {
                 continue;
             }
 
             $isPrice = $type === AttributeTypes::PRICE_ATTRIBUTE_TYPE;
 
-            if (! $this->isAttributeValueExported($code)) {
-                if ($isPrice) {
-                    foreach ($this->currencies as $currency) {
-                        $attributeValues["{$code} ({$currency})"] = null;
-                    }
-
-                    continue;
-                }
-
-                $attributeValues[$code] = null;
-
-                continue;
-            }
-
             $rawValue = $values[$code] ?? null;
 
             if (
                 $withMedia
-                && ($type === AttributeTypes::FILE_ATTRIBUTE_TYPE
-                    || $type === AttributeTypes::IMAGE_ATTRIBUTE_TYPE
-                    || $type === AttributeTypes::GALLERY_ATTRIBUTE_TYPE)
+                && (in_array($type, [AttributeTypes::FILE_ATTRIBUTE_TYPE, AttributeTypes::IMAGE_ATTRIBUTE_TYPE, AttributeTypes::GALLERY_ATTRIBUTE_TYPE], true))
             ) {
                 $mediaPaths = (array) $rawValue;
                 foreach ($mediaPaths as $path) {
@@ -744,17 +918,15 @@ class Exporter extends AbstractExporter
 
     /**
      * Retrieves and formats the categories associated with a product.
-     *
-     * @return string|null
      */
-    protected function getCategories(array $data)
+    protected function getCategories(array $data): ?string
     {
         if (
             ! array_key_exists('values', $data)
             || ! array_key_exists('categories', $data['values'])
             || ! is_array($data['values']['categories'])
         ) {
-            return;
+            return null;
         }
 
         return implode(',', $data['values']['categories']);
@@ -762,10 +934,8 @@ class Exporter extends AbstractExporter
 
     /**
      * Retrieves and formats the associated products for a given data row and type.
-     *
-     * @return string|null
      */
-    protected function getAssociations(array $data, string $type)
+    protected function getAssociations(array $data, string $type): ?string
     {
         if (
             ! array_key_exists('values', $data)
@@ -773,7 +943,7 @@ class Exporter extends AbstractExporter
             || ! is_array($data['values']['associations'])
             || ! array_key_exists($type, $data['values']['associations'])
         ) {
-            return;
+            return null;
         }
 
         return implode(',', $data['values']['associations'][$type]) ?? null;

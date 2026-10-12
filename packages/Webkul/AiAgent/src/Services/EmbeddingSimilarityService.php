@@ -3,12 +3,15 @@
 namespace Webkul\AiAgent\Services;
 
 use Laravel\Ai\Embeddings;
+use Webkul\AiAgent\Services\VectorStore\ProductEmbeddingIndex;
 
 /**
  * Semantic similarity scoring using laravel/ai embeddings.
  */
 class EmbeddingSimilarityService
 {
+    public function __construct(protected ?ProductEmbeddingIndex $productEmbeddingIndex = null) {}
+
     /**
      * Rank documents by similarity to a query text.
      *
@@ -17,40 +20,78 @@ class EmbeddingSimilarityService
      */
     public function rank(string $query, array $documents, ?int $limit = null): array
     {
-        if (trim($query) === '' || empty($documents)) {
+        if (trim($query) === '' || $documents === []) {
             return [];
         }
 
         try {
-            $response = Embeddings::for(array_merge([$query], $documents))->generate();
+            $response = Embeddings::for(array_merge([$query], $documents))
+                ->cache()
+                ->generate();
 
             $vectors = $response->embeddings;
             $queryVector = $vectors[0] ?? null;
 
-            if (! is_array($queryVector) || empty($queryVector)) {
+            if (! is_array($queryVector) || $queryVector === []) {
                 return [];
             }
 
             $scores = [];
 
             foreach (array_slice($vectors, 1) as $index => $vector) {
-                if (! is_array($vector) || empty($vector)) {
+                if (! is_array($vector)) {
                     continue;
                 }
-
+                if ($vector === []) {
+                    continue;
+                }
                 $scores[] = [
                     'index' => $index,
                     'score' => $this->cosine($queryVector, $vector),
                 ];
             }
 
-            usort($scores, fn ($a, $b) => $b['score'] <=> $a['score']);
+            usort($scores, fn (array $a, array $b): int => $b['score'] <=> $a['score']);
 
             if (! is_null($limit)) {
-                $scores = array_slice($scores, 0, max(1, $limit));
+                return array_slice($scores, 0, max(1, $limit));
             }
 
             return $scores;
+        } catch (\Throwable) {
+            return [];
+        }
+    }
+
+    /**
+     * Rank products by similarity to a query using the persistent vector store.
+     *
+     * Runs an Elasticsearch kNN search against pre-indexed product embeddings.
+     * Returns [] when the vector store is disabled or on any failure, so
+     * callers can fall back to their existing ranking path.
+     *
+     * @return array<int, array{product_id: int, score: float}> sorted by score descending
+     */
+    public function rankProducts(string $query, ?int $limit = null, ?int $attributeFamilyId = null): array
+    {
+        $index = $this->productEmbeddingIndex ?? resolve(ProductEmbeddingIndex::class);
+
+        if (trim($query) === '' || ! $index->isEnabled()) {
+            return [];
+        }
+
+        try {
+            $response = Embeddings::for([$query])
+                ->cache()
+                ->generate();
+
+            $queryVector = $response->embeddings[0] ?? null;
+
+            if (! is_array($queryVector) || $queryVector === []) {
+                return [];
+            }
+
+            return $index->searchSimilar($queryVector, $limit ?? 10, $attributeFamilyId);
         } catch (\Throwable) {
             return [];
         }

@@ -2,21 +2,27 @@
 
 namespace Webkul\MagicAI\Services;
 
-use Laravel\Ai\AnonymousAgent;
 use Laravel\Ai\Image;
+use Laravel\Ai\Responses\AgentResponse;
+use Laravel\Ai\Responses\Data\FinishReason;
+use Laravel\Ai\Responses\ImageResponse;
+use Webkul\MagicAI\Agents\MagicContentAgent;
+use Webkul\MagicAI\Agents\TranslationAgent;
 use Webkul\MagicAI\Contracts\LLMModelInterface;
+use Webkul\MagicAI\Contracts\ReportsTruncation;
+use Webkul\MagicAI\Contracts\SupportsStructuredTranslation;
 use Webkul\MagicAI\Enums\AiProvider;
+use Webkul\MagicAI\MagicAI;
 use Webkul\MagicAI\Models\MagicAIPlatform;
+use Webkul\MagicAI\Responses\GeneratedContent;
 
 /**
  * Adapter that bridges MagicAI's LLMModelInterface with the Laravel AI SDK.
  *
- * Uses laravel/ai's AnonymousAgent for text generation and Laravel\Ai\Image
- * for image generation. Per-request provider config (api_key, api_url, extras)
- * is pushed into the runtime `ai.providers.*` config so the laravel/ai gateway
- * picks them up for the duration of the call.
+ * Provider credentials are applied through ScopedProviderConfig so they never
+ * leak across Octane requests; generation options travel on the agent itself.
  */
-class LaravelAiAdapter implements LLMModelInterface
+class LaravelAiAdapter implements LLMModelInterface, ReportsTruncation, SupportsStructuredTranslation
 {
     protected AiProvider $aiProvider;
 
@@ -25,99 +31,187 @@ class LaravelAiAdapter implements LLMModelInterface
         protected string $model,
         protected string $prompt,
         protected float $temperature = 0.7,
-        protected int $maxTokens = 1054,
+        protected int $maxTokens = MagicAI::DEFAULT_MAX_TOKENS,
         protected string $systemPrompt = '',
         protected bool $stream = false,
     ) {
         $this->aiProvider = AiProvider::from($this->platform->provider);
-        $this->configureProvider();
     }
 
     /**
-     * Push the platform's credentials and overrides into the laravel/ai
-     * runtime config under the provider's config key.
+     * The model identifier sent to the provider. Azure addresses a model by its
+     * deployment name, so a configured deployment wins over the catalogue entry.
      */
-    protected function configureProvider(): void
+    protected function modelName(): string
     {
-        $configKey = $this->aiProvider->configKey();
-
-        config([
-            "ai.providers.{$configKey}.key" => $this->platform->api_key,
-        ]);
-
-        if ($this->platform->api_url) {
-            config([
-                "ai.providers.{$configKey}.url" => $this->platform->api_url,
-            ]);
+        if ($this->aiProvider !== AiProvider::Azure) {
+            return $this->model;
         }
 
-        if ($this->platform->extras && is_array($this->platform->extras)) {
-            foreach ($this->platform->extras as $key => $value) {
-                config([
-                    "ai.providers.{$configKey}.{$key}" => $value,
-                ]);
-            }
-        }
+        $deployment = trim((string) (ProviderOverrides::decode($this->platform->extras)['deployment'] ?? ''));
+
+        return $deployment !== '' ? $deployment : $this->model;
     }
 
     /**
-     * Generate text content using laravel/ai's AnonymousAgent.
+     * The provider config overrides for this platform record.
      *
-     * Reasoning models (o-series, gpt-5*) need higher token budgets to absorb
-     * internal reasoning tokens before any visible output is produced; we
-     * surface that via the runtime provider config (max_tokens / temperature)
-     * since laravel/ai's prompt() API doesn't expose them as call-site params.
+     * @return array<string, mixed>
+     */
+    protected function providerOverrides(): array
+    {
+        $overrides = [
+            'key' => $this->platform->api_key,
+        ];
+
+        if ($this->aiProvider === AiProvider::Concentrate) {
+            $overrides['url'] = $this->platform->api_url ?: $this->aiProvider->defaultUrl();
+        } elseif ($this->aiProvider === AiProvider::Custom) {
+            // Never fall back to the global openai-compatible env URL — that
+            // would send this platform's API key to an unrelated host.
+            if (! $this->platform->api_url) {
+                throw new \RuntimeException(
+                    trans('admin::app.configuration.platform.message.custom-api-url-required')
+                );
+            }
+
+            $overrides['url'] = $this->platform->api_url;
+        } elseif ($this->platform->api_url) {
+            $overrides['url'] = $this->platform->api_url;
+        }
+
+        return ProviderOverrides::build($overrides, $this->platform->extras);
+    }
+
+    /**
+     * Generate text content using the MagicContentAgent.
      */
     public function ask(): string
     {
-        $isReasoningModel = $this->isReasoningModel($this->model);
-        $configKey = $this->aiProvider->configKey();
-
-        // Reasoning models need bigger headroom; everyone else uses the caller's maxTokens.
-        $effectiveMaxTokens = $isReasoningModel ? max($this->maxTokens, 16000) : $this->maxTokens;
-
-        config([
-            "ai.providers.{$configKey}.max_tokens" => $effectiveMaxTokens,
-        ]);
-
-        // Reasoning models reject `temperature` (only the default 1.0 is allowed).
-        if (! $isReasoningModel) {
-            config([
-                "ai.providers.{$configKey}.temperature" => $this->temperature,
-            ]);
-        }
-
-        $agent = new AnonymousAgent(
-            instructions: $this->systemPrompt,
-            messages: [],
-            tools: [],
-        );
-
-        $response = $agent->prompt(
-            $this->prompt,
-            provider: $this->aiProvider->toLab(),
-            model: $this->model,
-            timeout: 120,
-        );
-
-        return $response->text;
+        return $this->askResult()->text;
     }
 
     /**
-     * OpenAI's reasoning models (o-series, gpt-5*) reject `temperature` and
-     * benefit from larger max_tokens because internal reasoning consumes
-     * tokens before any visible output is produced.
+     * Generate text content, reporting whether the model was cut off by the
+     * token ceiling.
+     */
+    public function askResult(): GeneratedContent
+    {
+        $response = ScopedProviderConfig::run(
+            $this->aiProvider->configKey(),
+            $this->providerOverrides(),
+            fn (): AgentResponse => $this->contentAgent()->prompt(
+                $this->prompt,
+                provider: $this->aiProvider->toLab(),
+                model: $this->modelName(),
+                timeout: 120,
+            ),
+        );
+
+        return new GeneratedContent(
+            text: self::dropDanglingMarkup($response->text),
+            truncated: self::hitTokenCeiling($response),
+        );
+    }
+
+    /**
+     * Whether the provider stopped on the token ceiling rather than finishing.
+     */
+    public static function hitTokenCeiling(AgentResponse $response): bool
+    {
+        return $response->steps->last()?->finishReason === FinishReason::Length;
+    }
+
+    /**
+     * A generation cut mid-tag leaves an unterminated `<...` that the editor
+     * would render as stray text, so the fragment is dropped.
+     */
+    public static function dropDanglingMarkup(string $text): string
+    {
+        return rtrim((string) preg_replace('/<[^<>]*$/', '', $text));
+    }
+
+    /**
+     * Translate the configured prompt via structured output.
+     */
+    public function translate(): string
+    {
+        $agent = new TranslationAgent(systemPrompt: $this->systemPrompt);
+
+        $response = ScopedProviderConfig::run(
+            $this->aiProvider->configKey(),
+            $this->providerOverrides(),
+            fn (): AgentResponse => $agent->prompt(
+                $this->prompt,
+                provider: $this->aiProvider->toLab(),
+                model: $this->modelName(),
+                timeout: 120,
+            ),
+        );
+
+        // Providers without real JSON-schema support (DeepSeek, Ollama, some
+        // OpenAI-compatible endpoints) may ignore the schema; fall back to
+        // the raw reply, which the prompt constrains to translated HTML.
+        $translated = $response['translated_html'] ?? null;
+
+        if (! is_string($translated) || trim($translated) === '') {
+            $translated = $response->text;
+        }
+
+        return trim((string) $translated);
+    }
+
+    /**
+     * Build the content agent, giving reasoning models the token headroom
+     * they need and omitting the temperature they reject.
+     */
+    protected function contentAgent(): MagicContentAgent
+    {
+        $isReasoningModel = $this->isReasoningModel($this->model);
+
+        return new MagicContentAgent(
+            systemPrompt: $this->systemPrompt,
+            temperature: $isReasoningModel || $this->rejectsSamplingParameters($this->model) ? null : $this->temperature,
+            maxTokens: $isReasoningModel ? max($this->maxTokens, 16000) : $this->maxTokens,
+        );
+    }
+
+    /**
+     * Determine if the model is an OpenAI reasoning model (o-series, gpt-5*).
      */
     protected function isReasoningModel(string $model): bool
     {
-        return (bool) preg_match('/^chat-latest|^o[1-9]|^o[1-9]-|^gpt-5/i', $model);
+        $model = strtolower($model);
+
+        // gpt-5-chat* models accept temperature and are not reasoning models.
+        if (str_starts_with($model, 'gpt-5-chat')) {
+            return false;
+        }
+
+        return (bool) preg_match('/^chat-latest|^o[1-9]\b|^o[1-9]-|^gpt-5/', $model);
     }
 
     /**
-     * Generate images using laravel/ai's Image::of() static API.
+     * Determine if the model is a Claude model that rejects `temperature`.
      *
-     * Provider-specific options (n, size, quality, response_format) are
-     * pushed into the runtime config so the gateway picks them up.
+     * Claude 3.x, Haiku 4.x and Opus/Sonnet up to 4.6 accept sampling
+     * parameters, including dated, Vertex (`@`) and Bedrock (`-v1:0`) ids;
+     * newer Claude models return a 400, so any other Claude model omits
+     * them rather than failing on the next release.
+     */
+    protected function rejectsSamplingParameters(string $model): bool
+    {
+        $model = strtolower($model);
+
+        if (! preg_match('/(^|[.\/:])claude-/', $model)) {
+            return false;
+        }
+
+        return ! preg_match('/claude-(3|haiku-4|(opus|sonnet)-4(-[0-6])?(-\d{8})?(-v\d+(:\d+)?)?(@|$))/', $model);
+    }
+
+    /**
+     * Generate images using laravel/ai's Image API.
      *
      * @param  array<string, mixed>  $options
      * @return array<int, array{url: string}>
@@ -126,27 +220,8 @@ class LaravelAiAdapter implements LLMModelInterface
     {
         if (! $this->aiProvider->supportsImages()) {
             throw new \RuntimeException(
-                "Provider '{$this->aiProvider->label()}' does not support image generation. Use OpenAI, Gemini, or xAI."
+                trans('admin::app.configuration.platform.message.images-unsupported', ['provider' => $this->aiProvider->label()])
             );
-        }
-
-        $configKey = $this->aiProvider->configKey();
-
-        $providerOptions = array_filter([
-            'n'       => isset($options['n']) ? (int) $options['n'] : null,
-            'quality' => $options['quality'] ?? null,
-        ]);
-
-        // DALL-E defaults to returning a hosted URL; force base64 so the
-        // frontend can apply the image without an extra fetch and so the image
-        // survives OpenAI's URL expiration window. gpt-image-1 always returns
-        // base64 and rejects this param, so only set it for dall-e-*.
-        if (str_starts_with($this->model, 'dall-e')) {
-            $providerOptions['response_format'] = 'b64_json';
-        }
-
-        foreach ($providerOptions as $key => $value) {
-            config(["ai.providers.{$configKey}.{$key}" => $value]);
         }
 
         $pending = Image::of($this->prompt)
@@ -156,26 +231,27 @@ class LaravelAiAdapter implements LLMModelInterface
             $pending->size($options['size']);
         }
 
-        $response = $pending->generate(
-            provider: $this->aiProvider->toLab(),
-            model: $this->model,
+        if (! empty($options['quality'])) {
+            $pending->quality($options['quality']);
+        }
+
+        $response = ScopedProviderConfig::run(
+            $this->aiProvider->configKey(),
+            $this->providerOverrides(),
+            fn (): ImageResponse => $pending->generate(
+                provider: $this->aiProvider->toLab(),
+                model: $this->modelName(),
+            ),
         );
 
         $images = [];
 
         foreach ($response->images as $image) {
-            // Providers return either base64 (gpt-image-1) or a hosted URL
-            // (DALL-E default). Frontend needs a usable URL — prefer base64
-            // data URL, fall back to URL.
-            $base64 = $image->base64 ?? null;
-            $url = $image->url ?? null;
-            $mimeType = $image->mimeType ?? 'image/png';
-
-            if (! empty($base64)) {
-                $images[] = ['url' => sprintf('data:%s;base64,%s', $mimeType, $base64)];
-            } elseif (! empty($url)) {
-                $images[] = ['url' => $url];
+            if ($image->image === '') {
+                continue;
             }
+
+            $images[] = ['url' => sprintf('data:%s;base64,%s', $image->mime(), $image->image)];
         }
 
         return $images;

@@ -95,17 +95,6 @@ class AttributeFamilyDataGrid extends DataGrid
             ]);
         }
 
-        if (bouncer()->hasPermission('catalog.families.copy')) {
-            $this->addAction([
-                'method' => 'GET',
-                'title'  => trans('admin::app.catalog.families.index.datagrid.copy'),
-                'icon'   => 'icon-copy',
-                'url'    => function ($row) {
-                    return route('admin.catalog.families.copy', $row->id);
-                },
-            ]);
-        }
-
         if (bouncer()->hasPermission('catalog.families.delete')) {
             $this->addAction([
                 'icon'   => 'icon-delete',

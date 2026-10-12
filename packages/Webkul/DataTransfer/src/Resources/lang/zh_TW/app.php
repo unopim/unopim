@@ -1,11 +1,21 @@
 <?php
 
 return [
+    'samples' => [
+        'default'       => '範例檔案',
+        'variants'      => '變體範例',
+        'multi-locale'  => '多語系範例',
+        'delete'        => '刪除範例',
+        'custom-fields' => '自訂欄位範例',
+        'with-images'   => '含圖片的範例 (ZIP)',
+    ],
+
     'importers' => [
         'products' => [
             'title'      => '產品',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => '單位「:unit」不是測量屬性「:attribute」的有效單位。',
+                'errors'       => [
                     'duplicate-url-key'                        => 'URL 鍵: \'%s\' 已經為 SKU: \'%s\' 的項目生成。',
                     'invalid-attribute-family'                 => '屬性家族的列值無效 (屬性家族不存在?)',
                     'invalid-type'                             => '產品類型無效或不支持',
@@ -21,6 +31,7 @@ return [
                     'not-unique-value'                         => '值 :code 必須唯一。',
                     'incorrect-family-for-variant'             => '家族應與主家族相同',
                     'parent-not-exist'                         => '父類別不存在。',
+                    'variant-structure-not-found'              => '該屬性族不存在變體結構 :code。',
                 ],
             ],
         ],
@@ -29,6 +40,82 @@ return [
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => '無法刪除與渠道相關的根分類',
+                ],
+            ],
+        ],
+        'category-fields' => [
+            'title'      => '分類欄位',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => '分類欄位代碼 :code 已被使用。',
+                    'code_not_found_to_delete' => '找不到要刪除的分類欄位代碼。',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => '屬性',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => '屬性代碼 :code 已被使用。',
+                    'code_not_found_to_delete'             => '未找到要刪除的屬性代碼。',
+                    'code_is_system_and_cannot_be_deleted' => '無法刪除系統屬性。',
+                ],
+            ],
+        ],
+        'product-associations' => [
+            'title'      => '產品關聯',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => '「%s」欄位為必填項目。',
+                    'self-link-not-allowed'       => '產品「%s」不能與自身建立關聯。',
+                    'sku-not-found'               => '找不到 SKU 為「%s」的產品。',
+                    'related-sku-not-found'       => '找不到 SKU 為「%s」的關聯產品。',
+                    'association-type-not-found'  => '關聯類型「%s」不存在或未啟用。',
+                    'invalid-field-value'         => '關聯欄位提供了無效的值。',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => '屬性組',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => '屬性組代碼 :code 已被使用。',
+                    'code_not_found_to_delete'             => '未找到要刪除的屬性組代碼。',
+                    'code_is_system_and_cannot_be_deleted' => '無法刪除系統屬性組。',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => '屬性族',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => '屬性族代碼 :code 已被使用。',
+                    'code_not_found_to_delete' => '未找到要刪除的屬性族代碼。',
+                    'invalid-attribute-group'  => '屬性組“:code”不存在。',
+                    'invalid-attribute'        => '屬性“:code”不存在。',
+                    'invalid-channel'          => '渠道“:code”不存在。',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => '屬性選項',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => '屬性選項代碼 :code 已被使用。',
+                    'code_not_found_to_delete' => '未找到要刪除的屬性選項代碼。',
+                    'locale-not-exist'         => '區域設置“:code”不存在。',
+                    'invalid-attribute'        => '屬性“:code”不存在。',
+                ],
+            ],
+        ],
+        'locales' => [
+            'title'      => '語言',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => '語言代碼 \'%s\' 已在此批次中匯入。',
+                    'code-not-found-to-delete'    => '系統中找不到代碼為 \'%s\' 的語言。',
+                    'invalid-status'              => '狀態必須為 0 或 1（或留空表示預設啟用）。',
+                    'channel-related-locale-root' => '無法刪除代碼為 :code 的語言，因為它與某個渠道相關聯。',
                 ],
             ],
         ],
@@ -45,18 +132,23 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
+            'title'   => '貨幣',
+            'filters' => [
+                'status' => '狀態',
+                'enable' => '啟用',
+                'all'    => '全部',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => '狀態必須為 0 或 1（或留空表示預設啟用）。',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => '角色',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -65,7 +157,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
+            'title'   => '用戶',
+            'filters' => [
+                'status' => '狀態',
+                'active' => '活躍',
+                'all'    => '全部',
+            ],
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -78,21 +175,25 @@ return [
     'exporters' => [
         'export-too-large' => '此匯出過大，無法執行：預計 :rows 列 × :columns 欄（~:estimated）超出可用空間（~:available）。請選擇較少的渠道/語系（與屬性）以縮小匯出範圍，然後重試。',
         'fields'           => [
-            'file-format'         => '檔案格式',
-            'with-media'          => '包含媒體',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => '檔案格式',
+            'with-media'             => '包含媒體',
+            'with-associations'      => '包含關聯',
+            'with-associations-info' => '在匯出中包含舊版 up_sells、cross_sells、related_products SKU 清單欄位',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
-            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'file-name'      => '檔案名稱',
+            'file-name-info' => '檔案名稱範本。可用變數：[code], [date], [time], [entity_type]',
+            'file-path'      => '文件路徑',
+            'file-path-info' => '檔案名稱範本。可用變數：[code], [date], [time], [entity_type]',
             'status'         => '狀態',
             'enable'         => '啟用',
             'all'            => '全部',
@@ -152,38 +253,62 @@ return [
         'categories' => [
             'title' => '分類',
         ],
+        'category-fields' => [
+            'title' => '分類欄位',
+        ],
+        'attributes' => [
+            'title' => '屬性',
+        ],
+        'product-associations' => [
+            'title' => '產品關聯',
+        ],
+        'attribute-groups' => [
+            'title' => '屬性組',
+        ],
+        'attribute-families' => [
+            'title' => '屬性族',
+        ],
+        'attribute-options' => [
+            'title' => '屬性選項',
+        ],
+        'locales' => [
+            'title' => '語言',
+        ],
         'channels' => [
             'title' => '渠道',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => '貨幣',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => '角色',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => '用戶',
             'filters' => [
                 'status' => '狀態',
-                'active' => 'Active',
+                'active' => '啟用',
                 'all'    => '全部',
             ],
         ],
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => '列數 "%s" 的標題為空。',
-            'column-name-invalid'  => '無效的列名稱: "%s".',
-            'column-not-found'     => '找不到需要的列: %s.',
-            'column-numbers'       => '列數量不匹配標題的行數。',
-            'invalid-attribute'    => '標題包含無效屬性: "%s".',
-            'system'               => '發生了一個意外的系統錯誤。',
-            'wrong-quotes'         => '使用了弓形引號而不是直引號。',
-            'file-empty'           => '檔案為空或不包含標題列。請上傳包含資料的有效檔案。',
+            'column-empty-headers'   => '列數 "%s" 的標題為空。',
+            'column-name-invalid'    => '無效的列名稱: "%s".',
+            'column-not-found'       => '找不到需要的列: %s.',
+            'column-numbers'         => '列數量不匹配標題的行數。',
+            'invalid-attribute'      => '標題包含無效屬性: "%s".',
+            'system'                 => '發生了一個意外的系統錯誤。',
+            'wrong-quotes'           => '使用了弓形引號而不是直引號。',
+            'file-empty'             => '檔案為空或不包含標題列。請上傳包含資料的有效檔案。',
+            'file-missing'           => '找不到此工作的來源檔案。請檢查設定檔中的檔案路徑，然後重新上傳檔案。',
         ],
     ],
     'job' => [
         'started'   => '任務已開始',
         'completed' => '任務已完成',
+        'stalled'   => '此工作超過 :minutes 分鐘沒有回應，已標記為失敗。執行它的工作程序很可能已被終止。',
+        'reaped'    => '已將 :count 個停滯的工作標記為失敗。',
     ],
 ];

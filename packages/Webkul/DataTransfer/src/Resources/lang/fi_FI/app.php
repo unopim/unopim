@@ -1,11 +1,21 @@
 <?php
 
 return [
+    'samples' => [
+        'default'       => 'Mallitiedosto',
+        'variants'      => 'Muunnelmaesimerkki',
+        'multi-locale'  => 'Monikielinen esimerkki',
+        'delete'        => 'Poistoesimerkki',
+        'custom-fields' => 'Mukautettujen kenttien esimerkki',
+        'with-images'   => 'Esimerkki kuvien kanssa (ZIP)',
+    ],
+
     'importers' => [
         'products' => [
             'title'      => 'Tuotteet',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => 'Yksikkö ":unit" ei ole kelvollinen yksikkö mittausmääritteelle ":attribute".',
+                'errors'       => [
                     'duplicate-url-key'                        => 'URL-avain: \'%s\' on jo luotu tuotteelle, jonka SKU on: \'%s\'.',
                     'invalid-attribute-family'                 => 'Virheellinen arvo attribuuttiperheen sarakkeelle (attribuuttiperhe ei ehkä ole olemassa?)',
                     'invalid-type'                             => 'Tuotetyyppi on virheellinen tai ei tuettu',
@@ -21,6 +31,7 @@ return [
                     'not-unique-value'                         => ':code-arvon on oltava ainutlaatuinen.',
                     'incorrect-family-for-variant'             => 'Perheen on oltava sama kuin vanhemman perhe',
                     'parent-not-exist'                         => 'Vanhempaa ei ole olemassa.',
+                    'variant-structure-not-found'              => 'Varianttirakennetta :code ei ole tälle attribuuttiperheelle.',
                 ],
             ],
         ],
@@ -29,6 +40,82 @@ return [
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'Et voi poistaa juurikategoriaa, joka on liitetty kanavaan',
+                ],
+            ],
+        ],
+        'category-fields' => [
+            'title'      => 'Kategoriakentät',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kategoriakentän koodi :code on jo käytössä.',
+                    'code_not_found_to_delete' => 'Kategoriakentän koodia ei löytynyt poistamista varten.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Attribuutit',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Attribuuttikoodi :code on jo käytössä.',
+                    'code_not_found_to_delete'             => 'Attribuuttikoodia ei löytynyt poistettavaksi.',
+                    'code_is_system_and_cannot_be_deleted' => 'Järjestelmäattribuuttia ei voi poistaa.',
+                ],
+            ],
+        ],
+        'product-associations' => [
+            'title'      => 'Tuoteyhdistelmät',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Kenttä \'%s\' on pakollinen.',
+                    'self-link-not-allowed'       => 'Tuotetta \'%s\' ei voi yhdistää itseensä.',
+                    'sku-not-found'               => 'Tuotetta SKU-koodilla \'%s\' ei löytynyt.',
+                    'related-sku-not-found'       => 'Liittyvää tuotetta SKU-koodilla \'%s\' ei löytynyt.',
+                    'association-type-not-found'  => 'Yhdistelmätyyppiä \'%s\' ei ole olemassa tai se ei ole aktiivinen.',
+                    'invalid-field-value'         => 'Yhdistelmäkentälle annettiin virheellinen arvo.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Attribuuttiryhmät',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Attribuuttiryhmän koodi :code on jo käytössä.',
+                    'code_not_found_to_delete'             => 'Attribuuttiryhmän koodia ei löytynyt poistettavaksi.',
+                    'code_is_system_and_cannot_be_deleted' => 'Järjestelmäattribuuttiryhmää ei voi poistaa.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Attribuuttiperheet',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Attribuuttiperheen koodi :code on jo käytössä.',
+                    'code_not_found_to_delete' => 'Attribuuttiperheen koodia ei löytynyt poistettavaksi.',
+                    'invalid-attribute-group'  => 'Attribuuttiryhmää ":code" ei ole olemassa.',
+                    'invalid-attribute'        => 'Attribuuttia ":code" ei ole olemassa.',
+                    'invalid-channel'          => 'Kanavaa ":code" ei ole olemassa.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Attribuuttivaihtoehdot',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Attribuuttivaihtoehdon koodi :code on jo käytössä.',
+                    'code_not_found_to_delete' => 'Attribuuttivaihtoehdon koodia ei löytynyt poistettavaksi.',
+                    'locale-not-exist'         => 'Kieltä ":code" ei ole olemassa.',
+                    'invalid-attribute'        => 'Attribuuttia ":code" ei ole olemassa.',
+                ],
+            ],
+        ],
+        'locales' => [
+            'title'      => 'Kielet',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Kielikoodi \'%s\' on jo tuotu tässä erässä.',
+                    'code-not-found-to-delete'    => 'Kieltä koodilla \'%s\' ei löytynyt järjestelmästä.',
+                    'invalid-status'              => 'Tilan tulee olla 0 tai 1 (tai tyhjä oletuksena käytössä).',
+                    'channel-related-locale-root' => 'Et voi poistaa kieltä koodilla :code, koska se on liitetty kanavaan.',
                 ],
             ],
         ],
@@ -45,18 +132,23 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
+            'title'   => 'Valuutat',
+            'filters' => [
+                'status' => 'Tila',
+                'enable' => 'Käytössä',
+                'all'    => 'Kaikki',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Tilan tulee olla 0 tai 1 (tai tyhjä oletuksena käytössä).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Roolit',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -65,7 +157,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
+            'title'   => 'Käyttäjät',
+            'filters' => [
+                'status' => 'Tila',
+                'active' => 'Aktiivinen',
+                'all'    => 'Kaikki',
+            ],
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -78,21 +175,25 @@ return [
     'exporters' => [
         'export-too-large' => 'Tämä vienti on liian suuri suoritettavaksi: arvioidut :rows riviä × :columns saraketta (~:estimated) ylittävät käytettävissä olevan tilan (~:available). Rajaa vientiä valitsemalla vähemmän kanavia/kieliä (ja attribuutteja) ja yritä uudelleen.',
         'fields'           => [
-            'file-format'         => 'Tiedostomuoto',
-            'with-media'          => 'Median kanssa',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Tiedostomuoto',
+            'with-media'             => 'Median kanssa',
+            'with-associations'      => 'Liitoksineen',
+            'with-associations-info' => 'Sisällytä vanhat SKU-luettelosarakkeet (up_sells, cross_sells ja related_products) vientiin',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
-            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'file-name'      => 'Tiedostonimi',
+            'file-name-info' => 'Tiedostonimen malli. Paikkamerkit: [code], [date], [time], [entity_type]',
+            'file-path'      => 'Tiedostopolku',
+            'file-path-info' => 'Tiedostonimen malli. Paikkamerkit: [code], [date], [time], [entity_type]',
             'status'         => 'Tila',
             'enable'         => 'Käytössä',
             'all'            => 'Kaikki',
@@ -152,38 +253,62 @@ return [
         'categories' => [
             'title' => 'Kategoriat',
         ],
+        'category-fields' => [
+            'title' => 'Kategoriakentät',
+        ],
+        'attributes' => [
+            'title' => 'Attribuutit',
+        ],
+        'product-associations' => [
+            'title' => 'Tuoteyhdistelmät',
+        ],
+        'attribute-groups' => [
+            'title' => 'Attribuuttiryhmät',
+        ],
+        'attribute-families' => [
+            'title' => 'Attribuuttiperheet',
+        ],
+        'attribute-options' => [
+            'title' => 'Attribuuttivaihtoehdot',
+        ],
+        'locales' => [
+            'title' => 'Kielet',
+        ],
         'channels' => [
             'title' => 'Kanavat',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Valuutat',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Roolit',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Käyttäjät',
             'filters' => [
                 'status' => 'Tila',
-                'active' => 'Active',
+                'active' => 'Aktiivinen',
                 'all'    => 'Kaikki',
             ],
         ],
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'Sarakkeiden numero "%s" otsikot ovat tyhjät.',
-            'column-name-invalid'  => 'Virheelliset sarakkeen nimet: "%s".',
-            'column-not-found'     => 'Vaadittuja sarakkeita ei löytynyt: %s.',
-            'column-numbers'       => 'Sarakkeiden määrä ei vastaa otsikoiden rivien määrää.',
-            'invalid-attribute'    => 'Otsikko sisältää virheellisiä attribuutteja: "%s".',
-            'system'               => 'Odottamaton järjestelmävirhe tapahtui.',
-            'wrong-quotes'         => 'Käyrät lainausmerkit käytetty suoran lainausmerkin sijaan.',
-            'file-empty'           => 'Tiedosto on tyhjä tai siinä ei ole otsikkoriviä. Lataa kelvollinen tiedosto, jossa on tietoja.',
+            'column-empty-headers'   => 'Sarakkeiden numero "%s" otsikot ovat tyhjät.',
+            'column-name-invalid'    => 'Virheelliset sarakkeen nimet: "%s".',
+            'column-not-found'       => 'Vaadittuja sarakkeita ei löytynyt: %s.',
+            'column-numbers'         => 'Sarakkeiden määrä ei vastaa otsikoiden rivien määrää.',
+            'invalid-attribute'      => 'Otsikko sisältää virheellisiä attribuutteja: "%s".',
+            'system'                 => 'Odottamaton järjestelmävirhe tapahtui.',
+            'wrong-quotes'           => 'Käyrät lainausmerkit käytetty suoran lainausmerkin sijaan.',
+            'file-empty'             => 'Tiedosto on tyhjä tai siinä ei ole otsikkoriviä. Lataa kelvollinen tiedosto, jossa on tietoja.',
+            'file-missing'           => 'Tämän työn lähdetiedostoa ei löytynyt. Tarkista profiilin tiedostopolku ja lataa tiedosto uudelleen.',
         ],
     ],
     'job' => [
         'started'   => 'Työn suoritus aloitettiin',
         'completed' => 'Työn suoritus saatiin päätökseen',
+        'stalled'   => 'Työ lakkasi vastaamasta yli :minutes minuutin ajan ja merkittiin epäonnistuneeksi. Sen suoritusprosessi todennäköisesti keskeytyi.',
+        'reaped'    => ':count jumittunutta työtä merkittiin epäonnistuneiksi.',
     ],
 ];

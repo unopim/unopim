@@ -7,10 +7,17 @@ use Webkul\Product\Models\Product;
 it('should return the magic ai configuration page', function () {
     $this->loginAsAdmin();
 
-    $this->get(route('admin.configuration.edit', ['general', 'magic_ai']))
+    $this->get(route('admin.magic_ai.settings.index'))
         ->assertOk()
         ->assertSeeText(trans('admin::app.configuration.index.general.magic-ai.title'))
         ->assertSeeText(trans('admin::app.configuration.index.general.magic-ai.settings.title'));
+});
+
+it('should redirect the legacy magic ai configuration url to the new settings page', function () {
+    $this->loginAsAdmin();
+
+    $this->get(route('admin.configuration.edit', ['general', 'magic_ai']))
+        ->assertRedirect(route('admin.magic_ai.settings.index'));
 });
 
 it('should save and update the settings for magic ai', function () {

@@ -6,44 +6,31 @@
         @lang('admin::app.catalog.products.edit.title')
     </x-slot>
 
+    <x-slot:pageHeader>
+        {!! view_render_event('unopim.admin.catalog.product.edit.actions.before', ['product' => $product]) !!}
+
+        <x-admin::layouts.edit-page-header
+            :title="trans('admin::app.catalog.products.edit.title') . ' | SKU: ' . $product->sku"
+            :back-url="route('admin.catalog.products.index')"
+            :back-label="trans('admin::app.account.edit.back-btn')"
+            :sticky="false"
+        >
+            <x-slot:beforeActions>
+                {!! view_render_event('unopim.pdf.product.edit.actions.before', ['product' => $product]) !!}
+            </x-slot>
+        </x-admin::layouts.edit-page-header>
+    </x-slot>
+
     {!! view_render_event('unopim.admin.catalog.product.edit.before', ['product' => $product]) !!}
     <x-admin::graphs.radial-progress />
 
     <x-admin::form
+        id="product-edit-form"
         method="PUT"
         enctype="multipart/form-data"
+        ajax
     >
-        {!! view_render_event('unopim.admin.catalog.product.edit.actions.before', ['product' => $product]) !!}
-
         <input type="hidden" name="sku" value="{{ $product->sku }}">
-
-        <!-- Page Header -->
-        <div class="sticky top-[60px] z-10 bg-white dark:bg-cherry-800 -mx-4 px-4 pb-2.5 pt-1">
-            <div class="flex gap-4 justify-between items-center max-sm:flex-wrap">
-                <div class="grid gap-1.5">
-                    <p class="text-xl text-gray-800 dark:text-slate-50 font-bold leading-6">
-                        @lang('admin::app.catalog.products.edit.title') | SKU: {{ $product->sku }}
-                    </p>
-                </div>
-
-                <div class="flex gap-x-2.5 items-center">
-                    {!! view_render_event('unopim.pdf.product.edit.actions.before', ['product' => $product]) !!}
-
-                    <!-- Back Button -->
-                    <a
-                        href="{{ route('admin.catalog.products.index') }}"
-                        class="transparent-button"
-                    >
-                        @lang('admin::app.account.edit.back-btn')
-                    </a>
-
-                    <!-- Save Button -->
-                    <button class="primary-button">
-                        @lang('admin::app.catalog.products.edit.save-btn')
-                    </button>
-                </div>
-            </div>
-        </div>
 
         @php
             $channels = core()->getAllChannels();
@@ -59,14 +46,12 @@
 
         <div class="flex  gap-4 justify-between items-center mt-7 max-md:flex-wrap">
             <div class="flex gap-x-1 items-center">
-                <!-- Channel Switcher -->
                 <x-admin::dropdown>
-                    <!-- Dropdown Toggler -->
                     <x-slot:toggle>
                         <button
                         type="button"
                             class="
-                            flex gap-x-1 items-center px-1 py-1.5 border-2 border-transparent rounded-md font-semibold whitespace-nowrap cursor-pointer marker:shadow appearance-none transition-all hover:!bg-violet-50 dark:hover:!bg-cherry-900 text-gray-600 dark:!text-slate-50"
+                            flex gap-x-1 items-center px-1 py-1.5 border-2 border-transparent rounded-md font-semibold whitespace-nowrap cursor-pointer marker:shadow appearance-none transition-all hover:!bg-primary-50 dark:hover:!bg-cherry-900 text-gray-600 dark:!text-slate-50"
                         >
                             <span class="icon-channel   text-2xl"></span>
 
@@ -78,12 +63,11 @@
                         </button>
                     </x-slot>
 
-                    <!-- Dropdown Content -->
                     <x-slot:content class="!p-0">
                         @foreach ($channels as $channel)
                             <a
                                 href="?{{ Arr::query(['channel' => $channel->code, 'locale' => $currentLocale?->code]) }}"
-                                class="flex gap-2.5 px-5 py-2 text-base cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800 dark:text-white"
+                                class="flex gap-2.5 px-5 py-2 text-base cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800 dark:text-white"
                             >
                             {{ ! empty($channel->name) ? $channel->name : '[' . $channel->code . ']' }}
                             </a>
@@ -91,13 +75,11 @@
                     </x-slot>
                 </x-admin::dropdown>
 
-                <!-- Locale Switcher -->
                 <x-admin::dropdown>
-                    <!-- Dropdown Toggler -->
                     <x-slot:toggle>
                         <button
                             type="button"
-                            class="flex gap-x-1 items-center px-1 py-1.5 border-2 border-transparent rounded-md font-semibold whitespace-nowrap cursor-pointer marker:shadow appearance-none transition-all hover:!bg-violet-50 dark:hover:!bg-cherry-900 text-gray-600 dark:!text-slate-50 "
+                            class="flex gap-x-1 items-center px-1 py-1.5 border-2 border-transparent rounded-md font-semibold whitespace-nowrap cursor-pointer marker:shadow appearance-none transition-all hover:!bg-primary-50 dark:hover:!bg-cherry-900 text-gray-600 dark:!text-slate-50 "
                         >
                             <span class="icon-language text-2xl"></span>
 
@@ -109,12 +91,11 @@
                         </button>
                     </x-slot>
 
-                    <!-- Dropdown Content -->
                     <x-slot:content class="!p-0">
                         @foreach ($currentChannel->locales->sortBy('name') as $locale)
                             <a
                                 href="?{{ Arr::query(['channel' => $currentChannel->code, 'locale' => $locale->code]) }}"
-                                class="flex gap-2.5 px-5 py-2 text-base cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800 dark:text-white {{ $locale->code == $currentLocale?->code ? 'bg-gray-100 dark:bg-cherry-800' : ''}}"
+                                class="flex gap-2.5 px-5 py-2 text-base cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800 dark:text-white {{ $locale->code == $currentLocale?->code ? 'bg-gray-100 dark:bg-cherry-800' : ''}}"
                             >
                                 {{ $locale->name }}
                             </a>
@@ -122,63 +103,7 @@
                     </x-slot>
                 </x-admin::dropdown>
 
-                @if (isset($score['score']))
-                    <!-- Completeness Dropdown -->
-                    <x-admin::dropdown>
-                        <x-slot:toggle>
-                            <button
-                                type="button"
-                                class="flex gap-x-2 items-center px-1 py-1.5 border-2 border-transparent rounded-md font-semibold whitespace-nowrap cursor-pointer appearance-none transition-all hover:bg-violet-50 dark:hover:bg-cherry-900 text-gray-600 dark:text-slate-50"
-                            >
-                                <span class="icon-activity text-2xl"></span>
-
-                                <div class="font-semibold text-gray-600 dark:text-white">
-                                    <span class="text-xl">% </span> @lang('completeness::app.catalog.products.edit.completeness.title')
-                                </div>
-
-                                <span class="inline-flex items-center px-2 py-1 rounded-md text-sm font-semibold bg-violet-700 text-white">
-                                    {{ $score['score'].'%' }}
-                                </span>
-                            </button>
-                        </x-slot>
-
-                        <!-- Dropdown Content -->
-                        <x-slot:content class="!p-0">
-                            <div class="p-2">
-                                <div class="p-2 font-semibold border-b dark:border-cherry-800">
-                                    <v-radial-progress
-                                        :score="{{ $averageScore }}"
-                                        label="{{ trans('completeness::app.catalog.products.edit.completeness.title') }}"
-                                        sub-title="{{ trans('completeness::app.catalog.products.edit.completeness.subtitle') }}"
-                                        :radius="16"
-                                    />
-                                </div>
-
-                                {{-- Per-locale completeness --}}
-                                @foreach ($currentChannel->locales->sortBy('name') as $locale)
-                                    @php
-                                        $localeScore = $scores[$locale->id] ?? null;
-                                    @endphp
-
-                                    <div class="p-2 text-sm dark:border-cherry-800">
-                                        @if (! is_null($localeScore))
-                                            <v-radial-progress :score="{{ $localeScore['score'] }}" :label="'{{ $locale->name }}'" :radius="14" />
-                                        @else
-                                            <div class="text-sm text-gray-400 italic">{{ $locale->name }}: N/A</div>
-                                        @endif
-                                    </div>
-                                @endforeach
-                            </div>
-                        </x-slot>
-                    </x-admin::dropdown>
-                @endif
-
-                @if ($score['missing_count'] ?? false)
-                    <div class="text-gray-600 dark:text-white ltr:ml-2.5">
-                        <span class="inline-block w-3 h-3 rounded-full bg-yellow-500"></span>
-                        {{ $score['missing_count'] }} @lang('completeness::app.catalog.products.edit.required-attributes')
-                    </div>
-                @endif
+                @include('admin::catalog.products.edit.completeness-indicator')
             </div>
 
             @include('admin::catalog.products.edit.more-actions.index')
@@ -186,80 +111,136 @@
 
         {!! view_render_event('unopim.admin.catalog.product.edit.actions.after', ['product' => $product]) !!}
 
-        <!-- body content -->
         {!! view_render_event('unopim.admin.catalog.product.edit.form.before', ['product' => $product]) !!}
 
+        @php
+            $variantHiddenCodes = $variantFieldLocks['hidden'] ?? [];
+        @endphp
         <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
             <div class="left-column flex flex-col gap-2 flex-1 max-xl:flex-auto">
-                @foreach ($product->attribute_family->familyGroups()->orderBy('position')->get() as $group)
-                    {!! view_render_event('unopim.admin.catalog.product.edit.form.column_before', ['product' => $product]) !!}
+                @php
+                    $renderedAttributeCodes = [];
+                @endphp
 
-                        @php
-                            $customAttributes = $product->getEditableAttributes($group);
+                @foreach ($renderGroups as $group)
+                    @php
+                        $groupAttributeSet = ($groupAttributes[$group->id] ?? null)
+                            ?: $product->getEditableAttributes($group);
 
-                            $groupLabel = $group->name;
-                            $groupLabel = empty($groupLabel) ? "[{$group->code}]" : $groupLabel;
-                        @endphp
+                        if (! $groupAttributeSet instanceof \Illuminate\Support\Collection) {
+                            $groupAttributeSet = $groupAttributeSet->get();
+                        }
 
-                        @if (count($customAttributes))
-                            <div class="flex flex-col gap-2">
+                        /**
+                         * The same attribute may be assigned to several of the
+                         * family's groups; every copy renders the same input name,
+                         * so only the first occurrence may be editable.
+                         */
+                        $groupAttributeSet = $groupAttributeSet
+                            ->reject(fn ($attribute) => in_array($attribute->code, $renderedAttributeCodes, true))
+                            ->values();
 
-                                {!! view_render_event('unopim.admin.catalog.product.edit.form.' . $group->code . '.before', ['product' => $product]) !!}
+                        $renderedAttributeCodes = array_merge(
+                            $renderedAttributeCodes,
+                            $groupAttributeSet->pluck('code')->all()
+                        );
+                    @endphp
 
-                                <div class="relative p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
-                                    <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
-                                        {{ $groupLabel }}
-                                    </p>
-
-                                    <x-admin::products.dynamic-attribute-fields
-                                        :fields="$customAttributes"
-                                        :fieldValues="$product->values"
-                                        :currentLocaleCode="$currentLocale->code"
-                                        :currentChannelCode="$currentChannel->code"
-                                        :channelCurrencies="$currentChannel->currencies"
-                                        :variantFields="$product?->parent ? $product->parent->super_attributes->pluck('code')->toArray() : []"
-                                        :completeness-attributes="$requiredAttributes"
-                                        fieldsWrapper="values"
-                                    >
-                                    </x-admin::products.dynamic-attribute-fields>
-
-                                </div>
-
-                                {!! view_render_event('unopim.admin.catalog.product.edit.form.' . $group->code . '.after', ['product' => $product]) !!}
-                                <!-- Product Type View Blade File -->
-                            </div>
-                        @endif
-
-                        
-
-                    {!! view_render_event('unopim.admin.catalog.product.edit.form.column_after', ['product' => $product]) !!}
+                    @include('admin::catalog.products.edit.attribute-group-panel', [
+                        'group'              => $group,
+                        'customAttributes'   => $groupAttributeSet,
+                        'variantHiddenCodes' => $variantHiddenCodes,
+                    ])
                 @endforeach
+
+                @if ($nextGroupId ?? null)
+                    @include('admin::catalog.products.edit.attribute-group-loader', [
+                        'productId'   => $product->id,
+                        'nextGroupId' => $nextGroupId,
+                    ])
+                @endif
             </div>
-            <div class="right-column flex flex-col gap-2 w-[360px] max-w-full max-sm:w-full">
-                <!-- Product Info View Blade File -->
-                @include('admin::catalog.products.edit.product-info')
+            @include('admin::catalog.products.edit.section-store')
+            <x-admin::layouts.side-rail
+                :navigation-title="trans('admin::app.catalog.products.edit.navigation')"
+                :info-title="trans('admin::app.catalog.products.edit.product-info.title')"
+            >
+                <x-slot:navigation>
+                    @if ($variantTree ?? null)
+                        <v-variant-axis-nav></v-variant-axis-nav>
+                    @endif
 
-                <!-- Categories View Blade File -->
-                @include('admin::catalog.products.edit.categories', ['currentLocaleCode' => $currentLocale?->code, 'productCategories' => $product->values['categories'] ?? []])
+                    @include('admin::catalog.products.edit.categories', ['currentLocaleCode' => $currentLocale?->code, 'productCategories' => $product->resolvedValues()['categories'] ?? []])
 
-                @includeIf('admin::catalog.products.edit.types.' . $product->type)
+                    @if ($variantTree ?? null)
+                        {!! view_render_event('unopim.admin.catalog.product.edit.form.types.' . $product->type . '.before', ['product' => $product]) !!}
 
-                <!-- Related, Cross Sells, Up Sells View Blade File -->
-                @include('admin::catalog.products.edit.links', [
-                    'upSellAssociations'    => $product->values['associations']['up_sells'] ?? [],
-                    'crossSellAssociations' => $product->values['associations']['cross_sells'] ?? [],
-                    'relatedAssociations'   => $product->values['associations']['related_products'] ?? [],
-                ])
+                        {!! view_render_event('unopim.admin.catalog.product.edit.form.types.' . $product->type . '.after', ['product' => $product]) !!}
+                    @else
+                        @includeIf('admin::catalog.products.edit.types.' . $product->type)
+                    @endif
 
-                <!-- Include Product Type Additional Blade Files If Any -->
-                @foreach ($product->getTypeInstance()->getAdditionalViews() as $view)
-                    @includeIf($view)
-                @endforeach
-            </div>
+                    @include('admin::catalog.products.edit.links', [
+                        'associationTypes'      => $associationTypes,
+                        'upSellAssociations'    => $product->values['associations']['up_sells'] ?? [],
+                        'crossSellAssociations' => $product->values['associations']['cross_sells'] ?? [],
+                        'relatedAssociations'   => $product->values['associations']['related_products'] ?? [],
+                    ])
+
+                    @foreach ($product->getTypeInstance()->getAdditionalViews() as $view)
+                        @includeIf($view)
+                    @endforeach
+                </x-slot>
+
+                <x-slot:info>
+                    @include('admin::catalog.products.edit.product-info')
+                </x-slot>
+            </x-admin::layouts.side-rail>
         </div>
+
+        @if ($variantTree ?? null)
+            @include('admin::catalog.products.edit.variant-inheritance-editor', ['variantTree' => $variantTree])
+        @endif
 
         {!! view_render_event('unopim.admin.catalog.product.edit.form.after', ['product' => $product]) !!}
     </x-admin::form>
 
     {!! view_render_event('unopim.admin.catalog.product.edit.after', ['product' => $product]) !!}
+
+    @pushOnce('scripts')
+        <script>
+            (function () {
+                const update = () => {
+                    const header = document.querySelector('.js-sticky-header');
+
+                    if (! header) {
+                        return;
+                    }
+
+                    const scrolled = window.scrollY > 0;
+
+                    header.classList.toggle('bg-white', scrolled);
+                    header.classList.toggle('shadow-md', scrolled);
+                };
+
+                if (window.__stickyProductHeader) {
+                    window.removeEventListener('scroll', window.__stickyProductHeader);
+                }
+
+                window.__stickyProductHeader = update;
+
+                window.addEventListener('scroll', update, { passive: true });
+
+                document.addEventListener('unopim:navigate:before', function cleanup() {
+                    window.removeEventListener('scroll', window.__stickyProductHeader);
+
+                    window.__stickyProductHeader = null;
+
+                    document.removeEventListener('unopim:navigate:before', cleanup);
+                });
+
+                setTimeout(update, 300);
+            })();
+        </script>
+    @endPushOnce
 </x-admin::layouts.with-history>

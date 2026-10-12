@@ -1,26 +1,25 @@
 <?php
 
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 use Webkul\Webhook\Jobs\SendProductWebhook;
 use Webkul\Webhook\Services\WebhookService;
 
 beforeEach(function () {
-    DB::table('webhook_settings')->updateOrInsert(
-        ['field' => 'webhook_url'],
-        ['value' => 'https://1.1.1.1/hook', 'updated_at' => now(), 'created_at' => now()]
-    );
-
-    DB::table('webhook_settings')->updateOrInsert(
-        ['field' => 'webhook_active'],
-        ['value' => '1', 'updated_at' => now(), 'created_at' => now()]
-    );
-});
-
-afterEach(function () {
-    DB::table('webhook_settings')->whereIn('field', ['webhook_url', 'webhook_active'])->delete();
+    $this->withoutMiddleware(PreventRequestForgery::class);
+    DB::table('webhooks')->delete();
+    DB::table('webhooks')->insert([
+        'name'       => 'Create Test',
+        'url'        => 'https://1.1.1.1/hook',
+        'is_active'  => 1,
+        'events'     => json_encode(['product.created', 'product.updated']),
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
 });
 
 it('dispatches SendProductWebhook with the created event and the new product sku in changes.added', function () {
@@ -29,7 +28,7 @@ it('dispatches SendProductWebhook with the created event and the new product sku
     Bus::fake([SendProductWebhook::class]);
 
     $data = Product::factory()->definition();
-    $data['type'] = 'simple';
+    $data['type'] = ProductType::Simple->value;
 
     $this->post(route('admin.catalog.products.store'), $data)
         ->assertOk()
@@ -53,21 +52,19 @@ it('dispatches SendProductWebhook with the created event and the new product sku
         return $eventTypeProp->getValue($job) === 'created'
             && $productIdProp->getValue($job) === $createdProduct->id
             && ($changes['added']['sku'] ?? null) === $createdProduct->sku
-            && ($changes['added']['type'] ?? null) === 'simple';
+            && ($changes['added']['type'] ?? null) === ProductType::Simple->value;
     });
 });
 
 it('does not dispatch SendProductWebhook when the webhook is inactive', function () {
     $this->loginAsAdmin();
 
-    DB::table('webhook_settings')
-        ->where('field', 'webhook_active')
-        ->update(['value' => '0']);
+    DB::table('webhooks')->update(['is_active' => 0]);
 
     Bus::fake([SendProductWebhook::class]);
 
     $data = Product::factory()->definition();
-    $data['type'] = 'simple';
+    $data['type'] = ProductType::Simple->value;
 
     $this->post(route('admin.catalog.products.store'), $data)
         ->assertOk();
@@ -81,7 +78,7 @@ it('passes the dispatching admin id into the SendProductWebhook job', function (
     Bus::fake([SendProductWebhook::class]);
 
     $data = Product::factory()->definition();
-    $data['type'] = 'simple';
+    $data['type'] = ProductType::Simple->value;
 
     $this->post(route('admin.catalog.products.store'), $data)
         ->assertOk();

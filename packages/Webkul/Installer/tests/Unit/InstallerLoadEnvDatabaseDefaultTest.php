@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\OutputStyle;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -14,7 +15,7 @@ describe('Installer::loadEnvConfigAtRuntime DB default override (issue #797)', f
         // would race against sibling workers in parallel mode (and against
         // anything else in this PHP process that reads .env), which is
         // exactly what bit us when this test was first written.
-        $cmd = new class extends Installer
+        $cmd = new #[Signature('unopim:install {--skip-env-check} {--skip-admin-creation} {--with-demo-data} {--with-packages=}')] class extends Installer
         {
             protected static function getEnvAtRuntime(string $key): string|bool
             {

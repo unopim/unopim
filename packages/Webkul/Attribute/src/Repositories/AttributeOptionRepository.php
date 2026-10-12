@@ -18,7 +18,7 @@ class AttributeOptionRepository extends Repository
      */
     public function model(): string
     {
-        return 'Webkul\Attribute\Contracts\AttributeOption';
+        return AttributeOption::class;
     }
 
     /**
@@ -43,7 +43,6 @@ class AttributeOptionRepository extends Repository
 
     /**
      * @param  int  $id
-     * @param  string  $attribute
      * @return AttributeOption
      */
     public function update(array $data, $id)
@@ -68,10 +67,21 @@ class AttributeOptionRepository extends Repository
 
         $totalSortedOptions = count($optionIds) - 1;
 
+        // Restrict reorder to this attribute's own options so a crafted request can't touch other attributes' sort_order.
+        $allowedIds = $this->model->newQuery()
+            ->whereIn('id', $optionIds)
+            ->where('attribute_id', $attributeId)
+            ->pluck('id')
+            ->flip();
+
         try {
             DB::beginTransaction();
 
             foreach ($optionIds as $index => $optionId) {
+                if (! $allowedIds->has($optionId)) {
+                    continue;
+                }
+
                 Event::dispatch('catalog.attribute.option.update.before', $optionId);
 
                 $sortOrder = $direction === 'down'
@@ -96,11 +106,9 @@ class AttributeOptionRepository extends Repository
     }
 
     /**
-     * @param  array  $data
      * @param  int  $optionId
-     * @return void
      */
-    public function uploadSwatchImage($data, $optionId)
+    public function uploadSwatchImage(array $data, $optionId): void
     {
         if (empty($data['swatch_value'])) {
             return;

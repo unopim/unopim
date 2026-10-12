@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Webkul\AiAgent\Chat\ChatContext;
@@ -19,6 +20,7 @@ use Webkul\DataTransfer\Repositories\JobInstancesRepository;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
 use Webkul\DataTransfer\Services\JobLogger;
+use Webkul\DataTransfer\Support\FormulaGuard;
 
 class ExportProducts implements PimTool
 {
@@ -143,7 +145,7 @@ class ExportProducts implements PimTool
      */
     public function buildFilters(ChatContext $context, ?string $skus, string $status, ?string $category, string $format): array
     {
-        $skuList = array_values(array_filter(array_map('trim', explode(',', (string) $skus))));
+        $skuList = array_values(array_filter(array_map(trim(...), explode(',', (string) $skus))));
 
         return [
             'file_format' => $format === 'xlsx' ? 'Xlsx' : 'Csv',
@@ -187,7 +189,7 @@ class ExportProducts implements PimTool
             'allowed_errors'      => 0,
             'field_separator'     => ',',
             'file_path'           => '',
-            'meta'                => $jobInstance->toJson(),
+            'meta'                => $jobInstance->toArray(),
             'job_instances_id'    => $jobInstance->id,
             'user_id'             => auth()->guard('admin')->id(),
             'created_at'          => now(),
@@ -220,8 +222,8 @@ class ExportProducts implements PimTool
             return $products;
         }
 
-        return $products->filter(function ($product) use ($filters) {
-            $values = json_decode($product->values, true) ?? [];
+        return $products->filter(function ($product) use ($filters): bool {
+            $values = json_decode((string) $product->values, true) ?? [];
 
             return in_array($filters['category'], $values['categories'] ?? [], true);
         })->values();
@@ -237,7 +239,7 @@ class ExportProducts implements PimTool
         ];
 
         foreach ($products as $product) {
-            $values = json_decode($product->values, true) ?? [];
+            $values = json_decode((string) $product->values, true) ?? [];
             $channelLocaleValues = $values['channel_locale_specific'][$context->channel][$context->locale] ?? [];
             $commonValues = $values['common'] ?? [];
 
@@ -245,7 +247,7 @@ class ExportProducts implements PimTool
 
             if (isset($channelLocaleValues['price']) && is_array($channelLocaleValues['price'])) {
                 $price = implode(', ', array_map(
-                    fn ($currency, $amount) => "{$currency}: {$amount}",
+                    fn ($currency, $amount): string => "{$currency}: {$amount}",
                     array_keys($channelLocaleValues['price']),
                     $channelLocaleValues['price']
                 ));
@@ -273,7 +275,7 @@ class ExportProducts implements PimTool
         $stream = fopen('php://temp', 'w+');
 
         foreach ($rows as $row) {
-            fputcsv($stream, $row);
+            fputcsv($stream, array_map(FormulaGuard::escape(...), $row), escape: '\\');
         }
 
         rewind($stream);
@@ -285,6 +287,9 @@ class ExportProducts implements PimTool
 
     /**
      * Write the generated XLSX to the public storage disk.
+     *
+     * Only formula-shaped values are pinned to text; everything else keeps the binder's
+     * type detection so numbers stay numbers.
      */
     public function writeXlsx(string $relativePath, array $rows): void
     {
@@ -293,7 +298,15 @@ class ExportProducts implements PimTool
 
         foreach ($rows as $rowIndex => $row) {
             foreach ($row as $colIndex => $value) {
-                $sheet->setCellValue([$colIndex + 1, $rowIndex + 1], $value);
+                $coordinate = [$colIndex + 1, $rowIndex + 1];
+
+                if (is_string($value) && FormulaGuard::isFormula($value)) {
+                    $sheet->setCellValueExplicit($coordinate, $value, DataType::TYPE_STRING);
+
+                    continue;
+                }
+
+                $sheet->setCellValue($coordinate, $value);
             }
         }
 
@@ -333,7 +346,7 @@ class ExportProducts implements PimTool
 
         $this->jobTrackBatchRepository->create([
             'state'        => ExportHelper::STATE_PROCESSED,
-            'data'         => $products->pluck('id')->map(fn ($id) => ['id' => $id])->values()->all(),
+            'data'         => $products->pluck('id')->map(fn ($id): array => ['id' => $id])->values()->all(),
             'summary'      => $summary,
             'job_track_id' => $jobTrackId,
         ]);

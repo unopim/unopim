@@ -53,6 +53,7 @@
 
                                     <v-async-select-handler
                                         name="filtered_attributes"
+                                        id="filtered_attributes"
                                         multiple="true"
                                         v-bind="field"
                                         :onselect="false"

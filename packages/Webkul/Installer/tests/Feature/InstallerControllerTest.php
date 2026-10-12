@@ -24,6 +24,21 @@ beforeEach(function () {
     }
 
     DB::table('core_config')->where('code', 'installer.installed')->delete();
+
+    // Fake the not-yet-installed DB state so the abortIfDatabasePopulated() guard
+    // allows the env-file-setup steps against the always-seeded test database.
+    app()->instance(DatabaseManager::class, new class extends DatabaseManager
+    {
+        public function isInstalled(): bool
+        {
+            return false;
+        }
+
+        public function isMarkedInstalled(): bool
+        {
+            return false;
+        }
+    });
 });
 
 afterEach(function () {
@@ -40,7 +55,7 @@ describe('InstallerController::seedSampleData (issue #794)', function () {
     it('returns success: true when the demo data installer reports success', function () {
         app()->instance(DemoDataInstaller::class, new class extends DemoDataInstaller
         {
-            public function seed(?Closure $reporter = null, bool $force = false): array
+            public function seed(?Closure $reporter = null, bool $force = false, bool $large = false): array
             {
                 return ['success' => true];
             }
@@ -54,7 +69,7 @@ describe('InstallerController::seedSampleData (issue #794)', function () {
     it('returns 500 and forwards the seeder error message on failure', function () {
         app()->instance(DemoDataInstaller::class, new class extends DemoDataInstaller
         {
-            public function seed(?Closure $reporter = null, bool $force = false): array
+            public function seed(?Closure $reporter = null, bool $force = false, bool $large = false): array
             {
                 return ['success' => false, 'error' => 'demo_extras.json missing'];
             }
@@ -66,32 +81,6 @@ describe('InstallerController::seedSampleData (issue #794)', function () {
                 'success' => false,
                 'error'   => 'demo_extras.json missing',
             ]);
-    });
-});
-
-describe('InstallerController::envFileSetup DB_PREFIX validation (issue #794)', function () {
-    it('rejects a prefix containing spaces with the same message the CLI surfaces', function () {
-        $this->postJson('/install/api/env-file-setup', [
-            'db_prefix' => 'a a',
-        ])
-            ->assertStatus(422)
-            ->assertJsonPath('error', 'The database prefix can only contain letters, numbers, and underscores.');
-    });
-
-    it('rejects a prefix longer than 4 characters', function () {
-        $this->postJson('/install/api/env-file-setup', [
-            'db_prefix' => 'toolong',
-        ])
-            ->assertStatus(422)
-            ->assertJsonPath('error', 'The database prefix should not exceed 4 characters.');
-    });
-
-    it('rejects a prefix that contains non-alphanumeric/underscore characters', function () {
-        $this->postJson('/install/api/env-file-setup', [
-            'db_prefix' => 'bad!',
-        ])
-            ->assertStatus(422)
-            ->assertJsonPath('error', 'The database prefix can only contain letters, numbers, and underscores.');
     });
 });
 

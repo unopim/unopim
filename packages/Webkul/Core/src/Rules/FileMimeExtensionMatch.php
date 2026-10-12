@@ -7,6 +7,7 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Http\File;
 use Illuminate\Http\UploadedFile;
 use Symfony\Component\Mime\MimeTypes;
+use Webkul\Core\Helpers\MediaMimeTypes;
 
 class FileMimeExtensionMatch implements ValidationRule
 {
@@ -25,33 +26,39 @@ class FileMimeExtensionMatch implements ValidationRule
 
         $mimeType = $value->getMimeType();
 
-        $mimeTypes = MimeTypes::getDefault()->getMimeTypes($extension);
+        $normalizedExtension = self::normalizeExtension($extension);
 
-        if (empty($mimeTypes)) {
+        $mimeTypes = MimeTypes::getDefault()->getMimeTypes($normalizedExtension);
+
+        if ($mimeTypes === []) {
             $fail(trans('core::validation.file-mime-extension-mismatch', ['extension' => $extension, 'mimeType' => $mimeType]));
 
             return;
         }
 
-        if (strtolower($extension) === 'jpeg') {
-            $extension = 'jpg';
-        }
-
-        if (! (in_array($mimeType, $mimeTypes) && $value->guessExtension() === strtolower($extension))) {
+        if (! in_array($mimeType, $mimeTypes, true) || self::normalizeExtension($value->guessExtension() ?? '') !== $normalizedExtension) {
             $fail(trans('core::validation.file-mime-extension-mismatch', ['extension' => $extension, 'mimeType' => $mimeType]));
 
             return;
         }
     }
 
+    public static function normalizeExtension(string $extension): string
+    {
+        return MediaMimeTypes::normalizeExtension($extension);
+    }
+
     /**
      * Check that the given value is a valid file instance.
      *
      * @param  mixed  $value
-     * @return bool
      */
-    public function isValidFileInstance($value)
+    public function isValidFileInstance($value): bool
     {
-        return ($value instanceof UploadedFile && $value->isValid()) || $value instanceof File;
+        if ($value instanceof UploadedFile && $value->isValid()) {
+            return true;
+        }
+
+        return $value instanceof File;
     }
 }

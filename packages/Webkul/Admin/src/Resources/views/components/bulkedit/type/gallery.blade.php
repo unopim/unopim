@@ -1,7 +1,6 @@
 @pushOnce('scripts')
   <script type="text/x-template" id="v-spreadsheet-gallery-template">
     <div class="w-full h-full flex items-center gap-1.5 px-1">
-      <!-- Thumbnail count -->
       <div v-if="imageList.length" class="flex-shrink-0 flex items-center gap-0.5">
         <div class="w-6 h-6 rounded overflow-hidden border border-gray-200 dark:border-cherry-700">
           <img
@@ -17,21 +16,20 @@
         ref="input"
         type="text"
         :name="`${entityId}_${column.code}`"
-        v-bind="field"
         class="flex-1 min-w-0 text-xs text-gray-600 dark:text-gray-300 bg-transparent truncate focus:outline-none"
         readonly
       />
 
-      <div class="flex items-center gap-0.5 flex-shrink-0">
+      <div v-if="! locked" class="flex items-center gap-0.5 flex-shrink-0">
         <span
           v-if="imageList.length"
           @click="preview"
-          class="cursor-pointer text-gray-400 hover:text-violet-600 dark:hover:text-violet-400 text-base icon-view"
+          class="cursor-pointer text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 text-base icon-view"
         ></span>
 
         <span
           @click="triggerUpload"
-          class="cursor-pointer text-gray-400 hover:text-violet-600 dark:hover:text-violet-400 text-base icon-edit"
+          class="cursor-pointer text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 text-base icon-edit"
         ></span>
       </div>
 
@@ -44,7 +42,6 @@
         @change="onFileChange"
       />
 
-      <!-- Preview handled by editor-level overlay via emitter -->
     </div>
   </script>
 
@@ -57,7 +54,8 @@
         modelValue: Array,
         entityId: Number,
         column: Object,
-        attribute: Object
+        attribute: Object,
+        locked: Boolean
       },
 
       data() {
@@ -131,7 +129,7 @@
               console.error('Upload error:', error);
               this.$emitter.emit('add-flash', {
                 type: 'warning',
-                message: error?.response?.data?.message || "@lang('admin::app.catalog.products.bulk-edit.img-fail')",
+                message: error?.response?.data?.message || @json(trans('admin::app.catalog.products.bulk-edit.img-fail')),
               });
             });
         },
@@ -146,7 +144,10 @@
 
         preview() {
           if (this.imageList.length) {
-            this.$emitter.emit('preview-image', this.baseUrl + this.imageList[0]);
+            this.$emitter.emit('preview-image', {
+              url: this.baseUrl + this.imageList[0],
+              fileName: this.imageList[0].split('/').pop(),
+            });
           }
         },
 

@@ -1,6 +1,7 @@
 <?php
 
 use Webkul\MagicAI\MagicAI;
+use Webkul\MagicAI\Responses\GeneratedContent;
 use Webkul\MagicAI\Services\Prompt\Prompt;
 
 it('content endpoint returns 403 when user lacks ai-agent permission', function () {
@@ -10,6 +11,16 @@ it('content endpoint returns 403 when user lacks ai-agent permission', function 
         'model'  => 'gpt-4o-mini',
         'prompt' => 'Describe a product.',
     ])->assertStatus(403);
+});
+
+it('image endpoint returns 403 when user lacks ai-agent permission', function () {
+    $this->loginWithPermissions();
+
+    $this->postJson(route('admin.magic_ai.image'), [
+        'model'  => 'dall-e-3',
+        'prompt' => 'Generate a product image.',
+        'size'   => '1024x1024',
+    ])->assertForbidden();
 });
 
 it('content endpoint is accessible to user with ai-agent permission', function () {
@@ -32,7 +43,7 @@ it('content endpoint is accessible to user with ai-agent permission', function (
     $mock->shouldReceive('setMaxTokens')->andReturnSelf();
     $mock->shouldReceive('setSystemPrompt')->andReturnSelf();
     $mock->shouldReceive('setPrompt')->andReturnSelf();
-    $mock->shouldReceive('ask')->andReturn('Generated content.');
+    $mock->shouldReceive('askResult')->andReturn(new GeneratedContent('Generated content.'));
     app()->instance('magic_ai', $mock);
 
     $this->postJson(route('admin.magic_ai.content'), [

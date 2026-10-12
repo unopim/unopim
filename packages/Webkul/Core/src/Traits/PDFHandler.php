@@ -11,10 +11,8 @@ trait PDFHandler
 {
     /**
      * Download PDF.
-     *
-     * @return Response
      */
-    protected function downloadPDF(string $html, ?string $fileName = null)
+    protected function downloadPDF(string $html, ?string $fileName = null): Response
     {
         if (is_null($fileName)) {
             $fileName = Str::random(32);
@@ -32,7 +30,7 @@ trait PDFHandler
      *
      * @return string
      */
-    protected function adjustArabicAndPersianContent(string $html)
+    protected function adjustArabicAndPersianContent(string $html): string|array
     {
         $arabic = new Arabic;
 

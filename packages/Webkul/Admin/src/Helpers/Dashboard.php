@@ -13,13 +13,16 @@ use Webkul\Admin\Helpers\Reporting\Channel;
 use Webkul\Admin\Helpers\Reporting\Currency;
 use Webkul\Admin\Helpers\Reporting\Locale;
 use Webkul\Admin\Helpers\Reporting\Product;
+use Webkul\Product\Enums\ProductType;
 
 class Dashboard
 {
     /**
-     * Cache TTL in seconds (5 minutes).
+     * Cache TTL in seconds. Must exceed the runtime of the catalog-wide
+     * queries below, or the entry expires before the value arrives and the
+     * cache can never warm. Use `unopim:dashboard:refresh` for fresher data.
      */
-    protected const CACHE_TTL = 300;
+    protected const CACHE_TTL = 3600;
 
     /**
      * Cache keys that depend on product data.
@@ -55,6 +58,25 @@ class Dashboard
         foreach (self::PRODUCT_CACHE_KEYS as $key) {
             Cache::forget($key);
         }
+    }
+
+    /**
+     * Invalidate the catalog totals cache (categories + products) so the
+     * dashboard reflects a category create/update/delete immediately.
+     */
+    public static function invalidateCatalogCache(): void
+    {
+        Cache::forget('dashboard.total_catalogs');
+    }
+
+    /**
+     * Invalidate the configuration totals cache (attributes, attribute groups,
+     * attribute families, locales, channels, currencies) so the dashboard
+     * reflects a change to any of those immediately.
+     */
+    public static function invalidateConfigurationCache(): void
+    {
+        Cache::forget('dashboard.total_configurations');
     }
 
     /**
@@ -97,9 +119,6 @@ class Dashboard
     public function getProductStats()
     {
         return Cache::remember('dashboard.product_stats', self::CACHE_TTL, function () {
-            // Single query for type + status using conditional aggregation.
-            // Note: `status` may be stored as tinyint (MySQL) or boolean (PostgreSQL).
-            // Use CAST to SIGNED/INTEGER for cross-database compatibility.
             $castType = DB::getDriverName() === 'pgsql' ? 'INTEGER' : 'SIGNED';
             $stats = DB::table('products')
                 ->select(
@@ -131,17 +150,14 @@ class Dashboard
                 ->where('updated_at', '>=', $startDate)
                 ->whereColumn('updated_at', '!=', 'created_at')
                 ->groupBy(DB::raw('DATE(updated_at)'))
-                ->get()
                 ->pluck('count', 'date');
 
             $creationRaw = DB::table('products')
                 ->select(DB::raw('DATE(created_at) as date'), DB::raw('COUNT(*) as count'))
                 ->where('created_at', '>=', $startDate)
                 ->groupBy(DB::raw('DATE(created_at)'))
-                ->get()
                 ->pluck('count', 'date');
 
-            // Fill missing days with 0
             $created = [];
             $updated = [];
 
@@ -151,17 +167,12 @@ class Dashboard
                 $updated[$date] = (int) ($updateTrends[$date] ?? 0);
             }
 
-            // Quick insights
             $newThisWeek = DB::table('products')
                 ->where('created_at', '>=', $startDate)
                 ->count();
 
-            // Variants live on `products.parent_id` (a child product row
-            // pointing at its configurable parent), NOT in `product_relations`
-            // — that table is reserved for related/up-sell links. Counting
-            // via product_relations always returned 0 (Internal-679).
             $withVariants = DB::table('products as parents')
-                ->where('parents.type', 'configurable')
+                ->where('parents.type', ProductType::Configurable->value)
                 ->whereExists(function ($query) {
                     $query->select(DB::raw(1))
                         ->from('products as variants')
@@ -177,7 +188,6 @@ class Dashboard
                     ->avg('avg_completeness_score');
             }
 
-            // Enrichment velocity
             $enrichedThisWeek = 0;
             $enrichedLastWeek = 0;
 
@@ -351,7 +361,6 @@ class Dashboard
         $jobSummary = DB::table('job_track')
             ->select('state', DB::raw('COUNT(*) as count'))
             ->groupBy('state')
-            ->get()
             ->pluck('count', 'state')
             ->toArray();
 

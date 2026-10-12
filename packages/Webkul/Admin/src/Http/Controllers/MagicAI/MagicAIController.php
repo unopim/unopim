@@ -8,11 +8,15 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\MagicAI\MagicPromptGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Http\Requests\MagicAI\ContentGenerationRequest;
+use Webkul\Admin\Http\Requests\MagicAI\ImageGenerationRequest;
+use Webkul\Admin\Http\Requests\MagicAI\MagicPromptRequest;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Category\Repositories\CategoryFieldRepository;
 use Webkul\MagicAI\Facades\MagicAI;
 use Webkul\MagicAI\Jobs\SaveTranslatedAllAttributesJob;
 use Webkul\MagicAI\Jobs\SaveTranslatedDataJob;
+use Webkul\MagicAI\MagicAI as MagicAIService;
 use Webkul\MagicAI\Models\MagicAISystemPrompt;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
 use Webkul\MagicAI\Repository\MagicAISystemPromptRepository;
@@ -24,6 +28,13 @@ use Webkul\Product\Repositories\ProductRepository;
 
 class MagicAIController extends Controller
 {
+    /**
+     * Rich-text (WYSIWYG textarea) flag per attribute code, resolved once per request.
+     *
+     * @var array<string, bool>
+     */
+    protected array $richTextFields = [];
+
     public function __construct(
         protected ProductRepository $productRepository,
         protected AttributeRepository $attributeRepository,
@@ -34,9 +45,6 @@ class MagicAIController extends Controller
         protected Prompt $promptService,
     ) {}
 
-    /**
-     * Get the AI model API.
-     */
     public function model(): JsonResponse
     {
         try {
@@ -79,9 +87,6 @@ class MagicAIController extends Controller
         }
     }
 
-    /**
-     * Get the AI available model.
-     */
     public function availableModel(): JsonResponse
     {
         return new JsonResponse([
@@ -118,7 +123,13 @@ class MagicAIController extends Controller
         }
 
         return new JsonResponse([
-            'platforms' => $platforms,
+            'platforms'      => $platforms,
+            'system_prompts' => $this->magicAiSystemPromptRepository->getModel()->newQuery()
+                ->select(['id', 'title', 'tone', 'is_enabled', 'max_tokens', 'temperature'])
+                ->orderByDesc('is_enabled')
+                ->orderBy('id')
+                ->get()
+                ->all(),
         ]);
     }
 
@@ -153,16 +164,11 @@ class MagicAIController extends Controller
     /**
      * Generate AI content.
      */
-    public function content(): JsonResponse
+    public function content(ContentGenerationRequest $request): JsonResponse
     {
         if (! bouncer()->hasPermission('ai-agent')) {
             return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
         }
-
-        $this->validate(request(), [
-            'model'  => 'required',
-            'prompt' => 'required',
-        ]);
 
         try {
             $locale = core()->getRequestedLocaleCode();
@@ -177,7 +183,7 @@ class MagicAIController extends Controller
             if ($systemPromptText !== null) {
                 $toneText = $systemPromptText;
                 $temperature = (float) ($temperature ?? 0.7);
-                $maxTokens = (int) ($maxTokens ?? 1054);
+                $maxTokens = (int) ($maxTokens ?: MagicAIService::defaultMaxTokens());
             } else {
                 $toneData = MagicAISystemPrompt::where('id', $tone)->first(['tone', 'temperature', 'max_tokens']);
 
@@ -188,17 +194,18 @@ class MagicAIController extends Controller
                 } else {
                     $toneText = '';
                     $temperature = (float) ($temperature ?? 0.7);
-                    $maxTokens = (int) ($maxTokens ?? 1054);
+                    $maxTokens = (int) ($maxTokens ?: MagicAIService::defaultMaxTokens());
                 }
             }
 
             $prompt .= "\n\nGenerated content should be in {$locale}.";
 
-            $prompt = $this->promptService->getPrompt(
-                $prompt,
-                request()->input('resource_id'),
-                request()->input('resource_type')
-            );
+            $resourceId = $request->validated('resource_id');
+            $resourceType = $request->validated('resource_type');
+
+            if ($resourceId !== null && $resourceType !== null) {
+                $prompt = $this->promptService->getPrompt($prompt, (int) $resourceId, $resourceType);
+            }
 
             $magicAi = $this->resolvePlatform();
 
@@ -208,10 +215,11 @@ class MagicAIController extends Controller
                 ->setMaxTokens($maxTokens)
                 ->setSystemPrompt($toneText)
                 ->setPrompt($prompt)
-                ->ask();
+                ->askResult();
 
             return new JsonResponse([
-                'content' => $response,
+                'content'   => $response->text,
+                'truncated' => $response->truncated,
             ]);
         } catch (\Exception $e) {
             report($e);
@@ -219,7 +227,7 @@ class MagicAIController extends Controller
             $message = $e->getMessage();
 
             if (str_contains($message, 'cURL error 28') || str_contains($message, 'timed out')) {
-                $message = 'The AI response is taking longer than expected. Please try again.';
+                $message = trans('admin::app.configuration.platform.message.ai-response-timeout');
             }
 
             return new JsonResponse([
@@ -231,27 +239,35 @@ class MagicAIController extends Controller
     /**
      * Generate an image.
      */
-    public function image(): JsonResponse
+    public function image(ImageGenerationRequest $request): JsonResponse
     {
-        $this->validate(request(), [
-            'prompt' => 'required|string',
-            'model'  => 'required|string',
-            'size'   => 'required|in:1024x1024,1024x1792,1792x1024',
-        ]);
+        if (! bouncer()->hasPermission('ai-agent')) {
+            return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], JsonResponse::HTTP_FORBIDDEN);
+        }
+
+        $validated = $request->validated();
 
         try {
-            $prompt = $this->promptService->getPrompt(
-                request()->input('prompt'),
-                request()->input('resource_id'),
-                request()->input('resource_type')
-            );
+            $prompt = $validated['prompt'];
 
-            $options = request()->only(['n', 'size', 'quality']);
+            if (isset($validated['resource_id'], $validated['resource_type'])) {
+                $prompt = $this->promptService->getPrompt(
+                    $prompt,
+                    $validated['resource_id'],
+                    $validated['resource_type']
+                );
+            }
+
+            $options = array_filter([
+                'n'       => $validated['n'] ?? null,
+                'size'    => $validated['size'],
+                'quality' => $validated['quality'] ?? null,
+            ], fn (mixed $value): bool => $value !== null);
 
             $magicAi = $this->resolvePlatform();
 
             $images = $magicAi
-                ->setModel(request()->input('model'))
+                ->setModel($validated['model'])
                 ->setPrompt($prompt)
                 ->images($options);
 
@@ -302,17 +318,9 @@ class MagicAIController extends Controller
         return view('admin::configuration.magic-ai-prompt.index');
     }
 
-    public function store(): JsonResponse
+    public function store(MagicPromptRequest $request): JsonResponse
     {
-        $this->validate(request(), [
-            'prompt'    => 'required',
-            'title'     => 'required',
-            'type'      => 'required',
-            'purpose'   => 'required|in:text_generation,image_generation,translation',
-            'tone'      => 'nullable',
-        ]);
-
-        $data = request()->only([
+        $data = $request->only([
             'prompt',
             'title',
             'type',
@@ -327,30 +335,27 @@ class MagicAIController extends Controller
         ]);
     }
 
-    public function edit(int $id): JsonResponse
+    public function edit(int $id): View|JsonResponse
     {
         $prompt = $this->magicPromptRepository->findOrFail($id);
+
+        if (! request()->expectsJson()) {
+            return view('admin::configuration.magic-ai-prompt.edit', compact('prompt'));
+        }
 
         return new JsonResponse([
             'data' => $prompt,
         ]);
     }
 
-    public function update(): JsonResponse
+    public function update(MagicPromptRequest $request): JsonResponse
     {
-        $this->validate(request(), [
-            'prompt'    => 'required',
-            'title'     => 'required',
-            'type'      => 'required',
-            'purpose'   => 'required|in:text_generation,image_generation,translation',
-            'tone'      => 'nullable',
-        ]);
-
-        $data = request()->only(['prompt', 'title', 'type', 'purpose', 'tone']);
+        $data = $request->only(['prompt', 'title', 'type', 'purpose', 'tone']);
         $this->magicPromptRepository->update($data, request()->id);
 
         return new JsonResponse([
-            'message' => trans('admin::app.configuration.prompt.message.update-success'),
+            'message'      => trans('admin::app.configuration.prompt.message.update-success'),
+            'redirect_url' => route('admin.magic_ai.prompt.index'),
         ]);
     }
 
@@ -377,16 +382,20 @@ class MagicAIController extends Controller
             return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
         }
 
-        $productId = request()->resource_id;
-        $product = $this->productRepository->find($productId);
-        $productData = $product->toArray();
-        $locale = core()->getRequestedLocaleCode();
-        $channel = core()->getRequestedChannelCode();
-        $arr = ProductValueMapperFacade::getChannelLocaleSpecificFields($productData, $channel, $locale);
+        $product = $this->productRepository->find(request()->resource_id);
+
+        $values = ProductValueMapperFacade::getScopedFields(
+            $product->toArray(),
+            core()->getRequestedChannelCode(),
+            core()->getRequestedLocaleCode()
+        );
+
+        $field = request()->field;
+        $sourceData = $values[$field] ?? null;
 
         return new JsonResponse([
-            'isTranslatable' => ! empty($arr) && array_key_exists(request()->field, $arr),
-            'sourceData'     => ! empty($arr) && array_key_exists(request()->field, $arr) ? $arr[request()->field] : null,
+            'isTranslatable' => $this->isFieldTranslatable($field, $sourceData),
+            'sourceData'     => $sourceData,
         ]);
     }
 
@@ -403,7 +412,7 @@ class MagicAIController extends Controller
         $magicAi = $this->resolveTranslationPlatform();
 
         foreach ($targetLocales as $locale) {
-            $p = "Translate @$field into $locale. Preserve the original HTML structure (every <p>, <br>, list and inline tag). Return only the translated HTML, with no commentary, no wrapper, and no extra text.";
+            $p = $this->translationInstruction($field, $locale);
             $prompt = $this->promptService->getPrompt(
                 $p,
                 request()->input('resource_id'),
@@ -412,14 +421,12 @@ class MagicAIController extends Controller
 
             $response = $magicAi
                 ->setModel(request()->input('model'))
-                ->setPrompt($prompt)
-                ->ask();
-            preg_match_all('/<p\b[^>]*>.*?<\/p>/s', $response, $matches);
+                ->setPrompt($prompt, $this->isRichTextField($field) ? 'tinymce' : 'text')
+                ->translate();
 
-            $value = empty($matches[0]) ? trim($response) : implode('', $matches[0]);
             $translatedData[] = [
                 'locale'  => $locale,
-                'content' => $value,
+                'content' => $this->cleanTranslation($field, $response),
             ];
         }
 
@@ -450,28 +457,33 @@ class MagicAIController extends Controller
             return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
         }
 
-        $productId = request()->resource_id;
-        $product = $this->productRepository->find($productId);
-        $productData = $product->toArray();
-        $locale = core()->getRequestedLocaleCode();
-        $channel = core()->getRequestedChannelCode();
-        $arr = ProductValueMapperFacade::getChannelLocaleSpecificFields($productData, $channel, $locale);
-        $sourceField = explode(',', request()->input('attributes'));
+        $product = $this->productRepository->find(request()->resource_id);
+
+        $values = ProductValueMapperFacade::getScopedFields(
+            $product->toArray(),
+            core()->getRequestedChannelCode(),
+            core()->getRequestedLocaleCode()
+        );
+
         $result = [];
 
-        foreach ($sourceField as $field) {
-            if (! empty($arr) && array_key_exists($field, $arr)) {
-                $attribute = $this->attributeRepository->where('code', $field)->first();
+        foreach (explode(',', request()->input('attributes')) as $field) {
+            $sourceData = $values[$field] ?? null;
 
-                $result[$field] = [
-                    'fieldLabel'     => $attribute->name,
-                    'fieldName'      => $field,
-                    'isTranslatable' => ! empty($arr) && array_key_exists($field, $arr),
-                    'sourceData'     => ! empty($arr) && array_key_exists($field, $arr) ? $arr[$field] : null,
-                    'translatedData' => null,
-                    'type'           => $attribute->type,
-                ];
+            if (! $this->isFieldTranslatable($field, $sourceData)) {
+                continue;
             }
+
+            $attribute = $this->attributeRepository->findOneByField('code', $field);
+
+            $result[$field] = [
+                'fieldLabel'     => $attribute->name,
+                'fieldName'      => $field,
+                'isTranslatable' => true,
+                'sourceData'     => $sourceData,
+                'translatedData' => null,
+                'type'           => $attribute->type,
+            ];
         }
 
         return $result;
@@ -504,7 +516,7 @@ class MagicAIController extends Controller
             foreach ($attributes as $key => $attribute) {
                 $field = $attribute['fieldName'];
 
-                $p = "Translate @$field into $locale. Preserve the original HTML structure (every <p>, <br>, list and inline tag). Return only the translated HTML, with no commentary, no wrapper, and no extra text.";
+                $p = $this->translationInstruction($field, $locale);
 
                 $prompt = $this->promptService->getPrompt(
                     $p,
@@ -514,15 +526,12 @@ class MagicAIController extends Controller
 
                 $response = $magicAi
                     ->setModel(request()->input('model'))
-                    ->setPrompt($prompt)
-                    ->ask();
-
-                preg_match_all('/<p\b[^>]*>.*?<\/p>/s', $response, $matches);
-                $value = empty($matches[0]) ? trim($response) : implode('', $matches[0]);
+                    ->setPrompt($prompt, $this->isRichTextField($field) ? 'tinymce' : 'text')
+                    ->translate();
 
                 $translatedDataForLocale[$field] = [
                     'field'   => $field,
-                    'content' => $value,
+                    'content' => $this->cleanTranslation($field, $response),
                 ];
             }
 
@@ -548,9 +557,66 @@ class MagicAIController extends Controller
     }
 
     /**
+     * Whether the attribute is edited in the rich-text editor and so holds HTML.
+     */
+    protected function isRichTextField(string $field): bool
+    {
+        if (! array_key_exists($field, $this->richTextFields)) {
+            $attribute = $this->attributeRepository->findOneByField('code', $field);
+
+            $this->richTextFields[$field] = $attribute?->type === 'textarea' && (bool) $attribute->enable_wysiwyg;
+        }
+
+        return $this->richTextFields[$field];
+    }
+
+    /**
+     * Translation instruction: keep the markup of rich-text fields, plain text otherwise.
+     */
+    protected function translationInstruction(string $field, string $locale): string
+    {
+        return $this->isRichTextField($field)
+            ? "Translate @$field into $locale. Preserve the original HTML structure (every <p>, <br>, list and inline tag). Return only the translated HTML, with no commentary, no wrapper, and no extra text."
+            : "Translate @$field into $locale. It is plain text: keep its punctuation, separators and line breaks exactly, and do not add HTML tags, Markdown or quotes. Return only the translated text, with no commentary.";
+    }
+
+    /**
+     * Trim the response and, for plain fields, drop any markup the model still added.
+     *
+     * Only known formatting tags are removed, not everything strip_tags() would take,
+     * so a literal "<" in plain text survives.
+     */
+    protected function cleanTranslation(string $field, string $response): string
+    {
+        if ($this->isRichTextField($field)) {
+            return trim($response);
+        }
+
+        $text = preg_replace('#</(p|div|li|h[1-6])>\s*|<br\s*/?>#i', "\n", $response);
+
+        $text = preg_replace('#</?(p|div|span|ul|ol|li|h[1-6]|strong|em|b|i|u)\b[^>]*>#i', '', $text);
+
+        return trim(html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+    }
+
+    /**
+     * A field is translatable only when it holds a scalar value in the source scope and is localizable.
+     */
+    protected function isFieldTranslatable(string $field, mixed $sourceData): bool
+    {
+        if ($sourceData === null || $sourceData === '' || is_array($sourceData)) {
+            return false;
+        }
+
+        $attribute = $this->attributeRepository->findOneByField('code', $field);
+
+        return (bool) $attribute?->value_per_locale;
+    }
+
+    /**
      * Resolve the platform from request or use default.
      */
-    protected function resolvePlatform(): \Webkul\MagicAI\MagicAI
+    protected function resolvePlatform(): MagicAIService
     {
         $platformId = request()->input('platform_id');
 
@@ -570,7 +636,7 @@ class MagicAIController extends Controller
     /**
      * Resolve the translation platform from config or fall back to default.
      */
-    protected function resolveTranslationPlatform(): \Webkul\MagicAI\MagicAI
+    protected function resolveTranslationPlatform(): MagicAIService
     {
         $requestPlatformId = request()->input('platform_id');
 
@@ -592,7 +658,7 @@ class MagicAIController extends Controller
      * config or stale request id) fall back to the default platform so
      * the user is never blocked by a dangling reference.
      */
-    protected function setPlatformOrDefault(int $platformId): \Webkul\MagicAI\MagicAI
+    protected function setPlatformOrDefault(int $platformId): MagicAIService
     {
         try {
             return MagicAI::setPlatformId($platformId);

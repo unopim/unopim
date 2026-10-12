@@ -13,7 +13,7 @@
 @if ($hasTranslateAction)
 @pushOnce('scripts')
     <script type="text/x-template" id="v-custom-dropdown-template">
-        <div class="relative inline-block text-left">
+        <div class="relative inline-block text-left ltr:mr-11 rtl:ml-11">
             <span
                 class="text-gray-700 dark:text-slate-50 cursor-pointer flex p-2 w-full items-center"
                 @click="toggleDropdown"
@@ -25,7 +25,7 @@
 
             <div
                 v-if="isOpen"
-                class="absolute right-0.5 top-0.8 w-36 max-sm:left-1/2 bg-white dark:bg-cherry-900 shadow-lg z-[10001] text-gray-700 border-2 border-violet-100 dark:border-cherry-800 min-h[110px] rounded-md"
+                class="absolute right-0.5 top-0.8 w-36 max-sm:left-1/2 bg-white dark:bg-cherry-900 shadow-lg z-[10001] text-gray-700 border-2 border-primary-100 dark:border-cherry-800 min-h[110px] rounded-md"
             >
                 <ul class="text-gray-700 rounded">
                     {!! view_render_event('unopim.admin.catalog.product.edit.more-actions.list.before', ['product' => $product]) !!}

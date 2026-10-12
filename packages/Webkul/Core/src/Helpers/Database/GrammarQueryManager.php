@@ -13,16 +13,21 @@ class GrammarQueryManager
 
     public static function getGrammar(?string $driver = null): Grammar
     {
-        $driver = $driver ?? DB::getDriverName();
+        $driver ??= DB::getDriverName();
 
         if (isset(static::$instances[$driver])) {
             return static::$instances[$driver];
         }
 
+        /**
+         * MariaDB speaks the MySQL dialect but Laravel reports it under its own
+         * driver name, so it has to be matched alongside `mysql` rather than
+         * falling through to the failure arm.
+         */
         static::$instances[$driver] = match ($driver) {
-            'pgsql' => new PostgresGrammar,
-            'mysql' => new MySQLGrammar,
-            default => throw new \RuntimeException("Unsupported DB driver: {$driver}")
+            'pgsql'            => new PostgresGrammar,
+            'mysql', 'mariadb' => new MySQLGrammar,
+            default            => throw new \RuntimeException("Unsupported DB driver: {$driver}")
         };
 
         return static::$instances[$driver];

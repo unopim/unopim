@@ -25,8 +25,6 @@ class Storage
 
     /**
      * Create a new helper instance.
-     *
-     * @return void
      */
     public function __construct(
         protected AdminRepository $adminRepository,
@@ -55,7 +53,7 @@ class Storage
         $query = $this->adminRepository->query()
             ->select(['id', 'email']);
 
-        if (! empty($emails)) {
+        if ($emails !== []) {
             $query->whereIn('email', $emails);
         }
 

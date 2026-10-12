@@ -67,7 +67,6 @@ describe('Role Exporter', function () {
         );
         $exporter->setExport($jobTrack);
 
-        // Mock buffer to avoid file system operations in unit test
         $buffer = mock(FlatItemBuffer::class);
         $buffer->shouldReceive('write')->once();
 

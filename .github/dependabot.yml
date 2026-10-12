@@ -1,17 +1,26 @@
 # Dependabot configuration
 # https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+#
+# Major dependency bumps are breaking, so they target `master`, the next-major
+# integration branch. The current release line `3.x` only accepts minor and
+# patch bumps. Dependabot reads this file from the default branch only.
 
 version: 2
 updates:
-  # Composer (PHP) — backend deps
+  # Composer (PHP) — current release line: minor + patch only
   - package-ecosystem: "composer"
     directory: "/"
+    target-branch: "3.x"
     schedule:
       interval: "weekly"
       day: "monday"
       time: "06:00"
       timezone: "Asia/Kolkata"
     open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
     labels:
       - "dependencies"
       - "php"
@@ -29,15 +38,43 @@ updates:
       dev-dependencies:
         dependency-type: "development"
 
-  # npm — Playwright e2e tests
+  # Composer (PHP) — next major: breaking bumps only
+  - package-ecosystem: "composer"
+    directory: "/"
+    target-branch: "master"
+    schedule:
+      interval: "monthly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Asia/Kolkata"
+    open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-minor"
+          - "version-update:semver-patch"
+    labels:
+      - "dependencies"
+      - "php"
+      - "breaking"
+    commit-message:
+      prefix: "chore(deps-major)"
+      include: "scope"
+
+  # npm — Playwright e2e tests, current release line
   - package-ecosystem: "npm"
     directory: "/tests/e2e-pw"
+    target-branch: "3.x"
     schedule:
       interval: "weekly"
       day: "monday"
       time: "06:00"
       timezone: "Asia/Kolkata"
     open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
     labels:
       - "dependencies"
       - "javascript"
@@ -51,18 +88,70 @@ updates:
           - "@playwright/*"
           - "playwright"
 
-  # GitHub Actions
+  # npm — Playwright e2e tests, next major
+  - package-ecosystem: "npm"
+    directory: "/tests/e2e-pw"
+    target-branch: "master"
+    schedule:
+      interval: "monthly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Asia/Kolkata"
+    open-pull-requests-limit: 3
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-minor"
+          - "version-update:semver-patch"
+    labels:
+      - "dependencies"
+      - "javascript"
+      - "e2e"
+      - "breaking"
+    commit-message:
+      prefix: "chore(deps-e2e-major)"
+      include: "scope"
+
+  # GitHub Actions — current release line
   - package-ecosystem: "github-actions"
     directory: "/"
+    target-branch: "3.x"
     schedule:
       interval: "weekly"
       day: "monday"
       time: "06:00"
       timezone: "Asia/Kolkata"
     open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
     labels:
       - "dependencies"
       - "ci"
     commit-message:
       prefix: "chore(ci)"
       include: "scope"
+
+  # GitHub Actions — next major
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    target-branch: "master"
+    schedule:
+      interval: "monthly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Asia/Kolkata"
+    open-pull-requests-limit: 3
+    labels:
+      - "dependencies"
+      - "ci"
+      - "breaking"
+    commit-message:
+      prefix: "chore(ci-major)"
+      include: "scope"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-minor"
+          - "version-update:semver-patch"

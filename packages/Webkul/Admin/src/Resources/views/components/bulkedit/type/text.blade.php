@@ -4,7 +4,6 @@
             ref="input"
             type="text"
             :name="`${entityId}_${column.code}`"
-            v-bind="field"
             class="w-full h-full text-sm text-gray-600 dark:text-gray-300 transition-all  focus:border-gray-400 dark:focus:border-gray-400 bg-transparent dark:border-gray-600"
             @blur="update"
         />
@@ -133,21 +132,21 @@
                             const isValid = !isNaN(val) && !Number.isNaN(parseFloat(val));
                             return {
                                 valid: isValid,
-                                message: isValid ? null : "@lang('admin::app.catalog.products.bulk-edit.validation.decimal')",
+                                message: isValid ? null : @json(trans('admin::app.catalog.products.bulk-edit.validation.decimal')),
                             };
                         },
                         number(val) {
                             const isValid = Number.isInteger(Number(val));
                             return {
                                 valid: isValid,
-                                message: isValid ? null : "@lang('admin::app.catalog.products.bulk-edit.validation.number')",
+                                message: isValid ? null : @json(trans('admin::app.catalog.products.bulk-edit.validation.number')),
                             };
                         },
                         email(val) {
                             const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
                             return {
                                 valid: isValid,
-                                message: isValid ? null : "@lang('admin::app.catalog.products.bulk-edit.validation.email')",
+                                message: isValid ? null : @json(trans('admin::app.catalog.products.bulk-edit.validation.email')),
                             };
                         },
                         url(val) {
@@ -157,7 +156,7 @@
                             } catch {
                                 return {
                                     valid: false,
-                                    message: "@lang('admin::app.catalog.products.bulk-edit.validation.url')",
+                                    message: @json(trans('admin::app.catalog.products.bulk-edit.validation.url')),
                                 };
                             }
                         },
@@ -178,14 +177,14 @@
                             if (!isCustomValid) {
                                 result = {
                                     valid: false,
-                                    message: "@lang('admin::app.catalog.products.bulk-edit.validation.regex')",
+                                    message: @json(trans('admin::app.catalog.products.bulk-edit.validation.regex')),
                                 };
                             }
                         } catch (e) {
                             console.error('Invalid custom regex:', regex);
                             result = {
                                 valid: false,
-                                message: "@lang('admin::app.catalog.products.bulk-edit.validation.invalid-pattern')",
+                                message: @json(trans('admin::app.catalog.products.bulk-edit.validation.invalid-pattern')),
                             };
                         }
                     }

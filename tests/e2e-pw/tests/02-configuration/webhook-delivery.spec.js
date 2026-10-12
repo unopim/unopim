@@ -1,26 +1,14 @@
 const http = require('http');
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo } = require('../../utils/helpers');
+const { clickSave, navigateTo } = require('../../utils/helpers');
 
-// Real end-to-end proof that product updates reach an external webhook.
-// Uses a local HTTP server spun up inside the test process to capture
-// incoming webhook POSTs — no external service dependency.
-//
-// The earlier bug: bulk edit + mass status never POSTed, because the queued
-// BulkProductUpdate job skipped the event dispatch and ProductComparer
-// dropped status diffs when the old value was 0.
-//
-// This spec exercises the bulk-edit path end-to-end. The single edit, mass
-// status and REST API paths are covered by deterministic Pest feature tests
-// (ProductBulkEditTest, ProductTest, ApiProductTest).
+// E2E proof that bulk-edit product updates reach an external webhook via a local capture server.
+// Regression: queued BulkProductUpdate skipped event dispatch; ProductComparer dropped status diffs when old=0.
 
 const WAIT_MS = 20000;
 const POLL_MS = 300;
 
-/**
- * Spin up a lightweight HTTP server that collects every incoming request.
- * Returns { url, requests, close }.
- */
+// Local HTTP server that records every incoming request. Returns { url, requests, close }.
 function createLocalWebhookServer() {
   const requests = [];
 
@@ -40,8 +28,7 @@ function createLocalWebhookServer() {
       });
     });
 
-    // Listen on a random available port on all interfaces so the Laravel
-    // app (running on 127.0.0.1:8000) can reach it.
+    // Random port on all interfaces so the app on 127.0.0.1 can reach it.
     server.listen(0, '0.0.0.0', () => {
       const port = server.address().port;
       resolve({
@@ -55,9 +42,6 @@ function createLocalWebhookServer() {
   });
 }
 
-/**
- * Poll the local requests array until a match is found or timeout.
- */
 async function waitForRequest(requests, matcher = () => true) {
   const deadline = Date.now() + WAIT_MS;
   while (Date.now() < deadline) {
@@ -75,42 +59,44 @@ async function getCsrfToken(context) {
   return decodeURIComponent(xsrf.value);
 }
 
+// Create an active webhook subscribed to product.updated via the index create modal.
 async function configureWebhook(adminPage, url) {
   await navigateTo(adminPage, 'webhook');
-  await adminPage.locator('input[name="webhook_url"]').fill(url);
+  await adminPage.getByRole('button', { name: 'Create Webhook' }).click();
+  await adminPage.locator('input[name="name"]').waitFor({ state: 'visible', timeout: 15000 });
+  await adminPage.locator('input[name="name"]').fill(`E2E Delivery ${Date.now()}`);
+  await adminPage.locator('input[name="url"]').fill(url);
 
-  const toggle = adminPage.locator('label[for="webhook_active"]');
-  const checkbox = adminPage.locator('input[name="webhook_active"]');
-  const isChecked = await checkbox.isChecked().catch(() => false);
-  if (!isChecked) await toggle.click();
+  const events = adminPage.locator('.multiselect').filter({ has: adminPage.locator('input[name="events"]') });
+  await events.locator('.multiselect__tags').click();
+  await events.locator('.multiselect__option', { hasText: 'Product Updated' }).first().click();
 
-  await adminPage.getByRole('button', { name: 'Save' }).click();
-  await expect(
-    adminPage.locator('#app').getByText('Webhook settings saved successfully'),
-  ).toBeVisible();
+  await Promise.all([
+    adminPage.waitForURL(/\/webhook\/edit\/\d+/, { timeout: 20000 }).catch(() => {}),
+    adminPage.getByRole('button', { name: 'Save', exact: true }).last().click(),
+  ]);
 }
 
+// Remove every webhook so each run starts clean (afterEach cleanup).
 async function disableWebhook(adminPage) {
   await navigateTo(adminPage, 'webhook');
-  const checkbox = adminPage.locator('input[name="webhook_active"]');
-  const isChecked = await checkbox.isChecked().catch(() => false);
-  if (isChecked) {
-    await adminPage.locator('label[for="webhook_active"]').click();
-    await adminPage.getByRole('button', { name: 'Save' }).click();
-    await expect(
-      adminPage.locator('#app').getByText('Webhook settings saved successfully'),
-    ).toBeVisible();
+  for (let i = 0; i < 10; i++) {
+    const del = adminPage.locator('span[title="Delete"]').first();
+    if (!(await del.isVisible({ timeout: 3000 }).catch(() => false))) {
+      break;
+    }
+    await del.click();
+    await adminPage.getByRole('button', { name: 'Delete' }).click();
+    await adminPage.waitForTimeout(800);
   }
 }
 
-// Wipe every row in the webhook log datagrid. Other specs (e.g.
-// webhook.spec.js:101) assert "No Records Available" on the log page, so
-// this spec must leave the log empty.
+// Wipe webhook log rows; other specs assert "No Records Available" so leave the log empty.
 async function clearWebhookLogs(adminPage) {
   const result = await adminPage.evaluate(async () => {
     const csrf = document.querySelector('meta[name="csrf-token"]')?.content || '';
 
-    const listing = await fetch('/admin/webhook/logs', {
+    const listing = await fetch('/admin/configuration/webhook/logs', {
       credentials: 'same-origin',
       headers: {
         'X-Requested-With': 'XMLHttpRequest',
@@ -125,7 +111,7 @@ async function clearWebhookLogs(adminPage) {
 
     if (ids.length === 0) return { ok: true, deleted: 0 };
 
-    const del = await fetch('/admin/webhook/logs/mass-delete', {
+    const del = await fetch('/admin/configuration/webhook/logs/mass-delete', {
       method:      'POST',
       credentials: 'same-origin',
       headers: {
@@ -145,9 +131,7 @@ async function clearWebhookLogs(adminPage) {
 }
 
 async function getFirstProductId(adminPage) {
-  // Navigate first so the browser context owns the admin session, then
-  // call the datagrid AJAX endpoint from inside the page (cookies, CSRF,
-  // and XHR detection are all handled natively by fetch in-page).
+  // Navigate first so the page owns the session; in-page fetch then carries cookies/CSRF/XHR natively.
   await adminPage.goto('/admin/catalog/products', { waitUntil: 'domcontentloaded' });
 
   const json = await adminPage.evaluate(async () => {
@@ -171,8 +155,7 @@ async function getFirstProductId(adminPage) {
   }
 
   const record = Array.isArray(json?.records) ? json.records[0] : null;
-  // DataGrid records use `product_id` for the PK; fall back to other
-  // common names in case the grid evolves.
+  // DataGrid PK is product_id; fall back to other names if the grid evolves.
   const id = record?.product_id ?? record?.id ?? record?.record_id;
   if (!id) {
     throw new Error(
@@ -186,9 +169,7 @@ test.describe('Product webhook delivery — bulk edit E2E', () => {
   let webhookServer;
 
   test.afterEach(async ({ adminPage }) => {
-    // Leave the system in the same state the test found it: disable the
-    // webhook toggle and wipe any log rows this run created, so other
-    // specs that assume an empty log / disabled webhook still pass.
+    // Restore state: disable webhook + wipe log rows so specs expecting empty log/disabled webhook pass.
     await disableWebhook(adminPage).catch(() => {});
     await clearWebhookLogs(adminPage).catch(() => {});
 
@@ -199,6 +180,13 @@ test.describe('Product webhook delivery — bulk edit E2E', () => {
   });
 
   test('bulk edit save dispatches a webhook POST for each updated product', async ({ adminPage }) => {
+    // SafeWebhookUrl only allows loopback; app must run same-host (serve), not Docker :8024 which can't reach host 127.0.0.1.
+    const appUrl = process.env.BASE_URL || 'http://127.0.0.1:8000';
+    test.skip(
+      ! /\/\/(127\.0\.0\.1|localhost)[:/]/.test(appUrl),
+      'Requires the app on the test-host loopback (same-host serve) with WEBHOOK_ALLOW_LOOPBACK=true.',
+    );
+
     webhookServer = await createLocalWebhookServer();
 
     await configureWebhook(adminPage, webhookServer.url);
@@ -207,11 +195,7 @@ test.describe('Product webhook delivery — bulk edit E2E', () => {
 
     const token = await getCsrfToken(adminPage.context());
 
-    // The webhook only fires when the bulk save produces an actual audit
-    // diff — sending an empty payload (or the existing value) skips the
-    // SQL UPDATE entirely, so WebhookService::getProductChangesForWebhook
-    // returns nothing and no POST happens. Rotating the SKU to a unique
-    // value guarantees a diff and, consequently, a webhook delivery.
+    // Webhook fires only on a real audit diff; rotate SKU to a unique value to guarantee an UPDATE and delivery.
     const newSku = `webhook-test-${Date.now()}`;
     const saveResponse = await adminPage.request.post(
       '/admin/catalog/products/bulkedit/save',

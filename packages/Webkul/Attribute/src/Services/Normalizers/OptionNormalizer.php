@@ -26,7 +26,7 @@ class OptionNormalizer extends AbstractNormalizer implements AttributeNormalizer
     {
         if (in_array($attribute?->type, [Attribute::SELECT_FIELD_TYPE, Attribute::MULTISELECT_FIELD_TYPE, Attribute::CHECKBOX_FIELD_TYPE])) {
             return implode(',', $this->getOptions(
-                is_array($data) ? $data : explode(',', $data),
+                is_array($data) ? $data : explode(',', (string) $data),
                 $attribute,
                 $options
             ));
@@ -40,7 +40,7 @@ class OptionNormalizer extends AbstractNormalizer implements AttributeNormalizer
      */
     protected function getOptions(array $data, ?AttributeContract $attribute, array $options = []): array
     {
-        if (! $attribute || empty($data)) {
+        if (! $attribute || $data === []) {
             return [];
         }
 

@@ -2,6 +2,8 @@
 
 namespace Webkul\Admin\Http\Controllers\Settings\DataTransfer;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 use Webkul\Admin\Http\Controllers\Controller;
@@ -126,24 +128,36 @@ class ExportFilterController extends Controller
     {
         $this->ensureExportPermission();
 
-        $options = $this->attributeFamilyRepository->with('translations')->all()->map(fn ($family) => [
-            'code'  => $family->code,
-            'label' => $family->name ?? $family->code,
-        ])->values();
-
-        return $this->respondWithOptions($options);
+        return $this->respondWithPaginatedOptions(
+            $this->attributeFamilyRepository->getModel()->newQuery()->with('translations')->orderBy('id'),
+            fn ($family) => [
+                'code'  => $family->code,
+                'label' => $family->name ?? $family->code,
+            ],
+            fn (Builder $query, string $search) => $query->where(
+                fn ($builder) => $builder->whereTranslationLike('name', '%'.$search.'%')
+                    ->orWhere('code', 'LIKE', '%'.$search.'%')
+            ),
+        );
     }
 
     public function categories(): JsonResponse
     {
         $this->ensureExportPermission();
 
-        $options = $this->categoryRepository->all()->map(fn ($category) => [
-            'code'  => $category->code,
-            'label' => $category->name ?? $category->code,
-        ])->values();
+        $locale = core()->getRequestedLocaleCode();
 
-        return $this->respondWithOptions($options);
+        return $this->respondWithPaginatedOptions(
+            $this->categoryRepository->getModel()->newQuery()->orderBy('id'),
+            fn ($category) => [
+                'code'  => $category->code,
+                'label' => $category->additional_data['locale_specific'][$locale]['name'] ?? '['.$category->code.']',
+            ],
+            fn (Builder $query, string $search) => $query->where(
+                fn ($builder) => $builder->where('additional_data->locale_specific->'.$locale.'->name', 'LIKE', '%'.$search.'%')
+                    ->orWhere('code', 'LIKE', '%'.$search.'%')
+            ),
+        );
     }
 
     protected function mapAttributes(Collection $attributes): array
@@ -185,6 +199,46 @@ class ExportFilterController extends Controller
             ->unique('code')
             ->sortBy('code')
             ->values();
+    }
+
+    /**
+     * Same option contract as {@see respondWithOptions()}, but selection, search
+     * and paging all happen in SQL. Catalogue-sized tables — categories and
+     * attribute families run to six figures — must never be hydrated in full
+     * just to hand back a page of twenty options.
+     *
+     * @param  callable(Model): array{code: string, label: string}  $mapper
+     * @param  callable(Builder, string): mixed  $search
+     */
+    protected function respondWithPaginatedOptions(Builder $query, callable $mapper, callable $search): JsonResponse
+    {
+        $identifiers = request('identifiers');
+
+        if (! empty($identifiers['values'])) {
+            $values = is_array($identifiers['values'])
+                ? $identifiers['values']
+                : explode(',', (string) $identifiers['values']);
+
+            return new JsonResponse([
+                'options'  => $query->whereIn('code', $values)->get()->map($mapper)->values(),
+                'page'     => self::DEFAULT_PAGE,
+                'lastPage' => self::DEFAULT_PAGE,
+            ]);
+        }
+
+        if (($term = trim((string) request('query', ''))) !== '') {
+            $search($query, $term);
+        }
+
+        $page = max(self::DEFAULT_PAGE, (int) request('page', self::DEFAULT_PAGE));
+
+        $paginator = $query->paginate(self::PER_PAGE, ['*'], 'page', $page);
+
+        return new JsonResponse([
+            'options'  => collect($paginator->items())->map($mapper)->values(),
+            'page'     => $paginator->currentPage(),
+            'lastPage' => max(self::DEFAULT_PAGE, $paginator->lastPage()),
+        ]);
     }
 
     protected function respondWithOptions(Collection $options): JsonResponse

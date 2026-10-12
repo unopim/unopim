@@ -50,6 +50,6 @@ class TextDescriptionAgent extends BaseAgent
             return "Generate product descriptions for:\n\n".$details;
         }
 
-        return 'Generate compelling product descriptions for: '.(string) $input;
+        return 'Generate compelling product descriptions for: '.$input;
     }
 }

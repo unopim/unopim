@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('category_field_options', function (Blueprint $table) {
+        Schema::create('category_field_options', function (Blueprint $table): void {
             $table->increments('id');
             $table->string('code')->nullable();
             $table->integer('sort_order')->nullable();

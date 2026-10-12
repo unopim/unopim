@@ -1,11 +1,21 @@
 <?php
 
 return [
+    'samples' => [
+        'default'       => 'Exempelfil',
+        'variants'      => 'Exempel med varianter',
+        'multi-locale'  => 'Flerspråkigt exempel',
+        'delete'        => 'Exempel på borttagning',
+        'custom-fields' => 'Exempel med anpassade fält',
+        'with-images'   => 'Exempel med bilder (ZIP)',
+    ],
+
     'importers' => [
         'products' => [
             'title'      => 'Produkter',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => 'Enheten ":unit" är inte en giltig enhet för mätattributet ":attribute".',
+                'errors'       => [
                     'duplicate-url-key'                        => 'URL-suffix: \'%s\' har redan skapats för en artikel med SKU: \'%s\'.',
                     'invalid-attribute-family'                 => 'Ogiltigt värde för attributfamiljens kolumn (attributfamiljen finns inte?)',
                     'invalid-type'                             => 'Produktens typ är ogiltig eller inte stöds',
@@ -21,6 +31,7 @@ return [
                     'not-unique-value'                         => 'Värdet :code måste vara unikt.',
                     'incorrect-family-for-variant'             => 'Familjen måste vara samma som huvudfamiljen',
                     'parent-not-exist'                         => 'Föräldern finns inte.',
+                    'variant-structure-not-found'              => 'Variantstrukturen :code finns inte för denna attributfamilj.',
                 ],
             ],
         ],
@@ -29,6 +40,82 @@ return [
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'Du kan inte radera rotkategorin som är associerad med en kanal',
+                ],
+            ],
+        ],
+        'category-fields' => [
+            'title'      => 'Kategorifält',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kategorifältskod :code används redan.',
+                    'code_not_found_to_delete' => 'Kategorifältskod hittades inte för borttagning.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Attribut',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Attributkoden :code används redan.',
+                    'code_not_found_to_delete'             => 'Attributkoden för borttagning hittades inte.',
+                    'code_is_system_and_cannot_be_deleted' => 'Systemattributet kan inte tas bort.',
+                ],
+            ],
+        ],
+        'product-associations' => [
+            'title'      => 'Produktassociationer',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Fältet \'%s\' är obligatoriskt.',
+                    'self-link-not-allowed'       => 'Produkten \'%s\' kan inte kopplas till sig själv.',
+                    'sku-not-found'               => 'Produkt med SKU \'%s\' hittades inte.',
+                    'related-sku-not-found'       => 'Relaterad produkt med SKU \'%s\' hittades inte.',
+                    'association-type-not-found'  => 'Associationstypen \'%s\' finns inte eller är inaktiv.',
+                    'invalid-field-value'         => 'Ogiltigt värde angavs för ett associationsfält.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Attributgrupper',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Attributgruppskoden :code används redan.',
+                    'code_not_found_to_delete'             => 'Attributgruppskoden för borttagning hittades inte.',
+                    'code_is_system_and_cannot_be_deleted' => 'Systemattributgruppen kan inte tas bort.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Attributfamiljer',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Attributfamiljkoden :code används redan.',
+                    'code_not_found_to_delete' => 'Attributfamiljkoden för borttagning hittades inte.',
+                    'invalid-attribute-group'  => 'Attributgruppen ":code" existerar inte.',
+                    'invalid-attribute'        => 'Attributet ":code" existerar inte.',
+                    'invalid-channel'          => 'Kanalen ":code" existerar inte.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Attributalternativ',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Attributalternativkoden :code används redan.',
+                    'code_not_found_to_delete' => 'Attributalternativkoden för borttagning hittades inte.',
+                    'locale-not-exist'         => 'Språkinställningen ":code" existerar inte.',
+                    'invalid-attribute'        => 'Attributet ":code" existerar inte.',
+                ],
+            ],
+        ],
+        'locales' => [
+            'title'      => 'Språk',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Språkkoden \'%s\' har redan importerats i denna batch.',
+                    'code-not-found-to-delete'    => 'Språk med koden \'%s\' hittades inte i systemet.',
+                    'invalid-status'              => 'Status måste vara 0 eller 1 (eller tom för standard aktiverad).',
+                    'channel-related-locale-root' => 'Du kan inte ta bort språket med kod :code eftersom det är kopplat till en kanal.',
                 ],
             ],
         ],
@@ -45,18 +132,23 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
+            'title'   => 'Valutor',
+            'filters' => [
+                'status' => 'Status',
+                'enable' => 'Aktivera',
+                'all'    => 'Alla',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Status måste vara 0 eller 1 (eller tom för standard aktiverad).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Roller',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -65,7 +157,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
+            'title'   => 'Användare',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Aktiv',
+                'all'    => 'Alla',
+            ],
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -78,21 +175,25 @@ return [
     'exporters' => [
         'export-too-large' => 'Den här exporten är för stor för att köras: uppskattade :rows rader × :columns kolumner (~:estimated) överskrider det tillgängliga utrymmet (~:available). Begränsa exporten genom att välja färre kanaler/språk (och attribut) och försök igen.',
         'fields'           => [
-            'file-format'         => 'Filformat',
-            'with-media'          => 'Med media',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Filformat',
+            'with-media'             => 'Med media',
+            'with-associations'      => 'Med kopplingar',
+            'with-associations-info' => 'Inkludera de gamla SKU-listkolumnerna (up_sells, cross_sells och related_products) i exporten',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
-            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'file-name'      => 'Filnamn',
+            'file-name-info' => 'Mönster för filnamn. Platshållare: [code], [date], [time], [entity_type]',
+            'file-path'      => 'Fil Sökväg',
+            'file-path-info' => 'Mönster för filnamn. Platshållare: [code], [date], [time], [entity_type]',
             'status'         => 'Status',
             'enable'         => 'Aktiverad',
             'all'            => 'Alla',
@@ -152,38 +253,62 @@ return [
         'categories' => [
             'title' => 'Kategorier',
         ],
+        'category-fields' => [
+            'title' => 'Kategorifält',
+        ],
+        'attributes' => [
+            'title' => 'Attribut',
+        ],
+        'product-associations' => [
+            'title' => 'Produktassociationer',
+        ],
+        'attribute-groups' => [
+            'title' => 'Attributgrupper',
+        ],
+        'attribute-families' => [
+            'title' => 'Attributfamiljer',
+        ],
+        'attribute-options' => [
+            'title' => 'Attributalternativ',
+        ],
+        'locales' => [
+            'title' => 'Språk',
+        ],
         'channels' => [
             'title' => 'Kanaler',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Valutor',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Roller',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Användare',
             'filters' => [
                 'status' => 'Status',
-                'active' => 'Active',
+                'active' => 'Aktiv',
                 'all'    => 'Alla',
             ],
         ],
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'Kolumner med nummer "%s" har tomma rubriker.',
-            'column-name-invalid'  => 'Ogiltiga kolumnnamn: "%s".',
-            'column-not-found'     => 'Krävda kolumner hittades inte: %s.',
-            'column-numbers'       => 'Antalet kolumner överensstämmer inte med antalet rader i rubriken.',
-            'invalid-attribute'    => 'Rubriken innehåller ogiltiga attribut: "%s".',
-            'system'               => 'Ett oväntat systemfel inträffade.',
-            'wrong-quotes'         => 'Krokiga citattecken användes i stället för raka citattecken.',
-            'file-empty'           => 'Filen är tom eller innehåller ingen rubrikrad. Vänligen ladda upp en giltig fil med data.',
+            'column-empty-headers'   => 'Kolumner med nummer "%s" har tomma rubriker.',
+            'column-name-invalid'    => 'Ogiltiga kolumnnamn: "%s".',
+            'column-not-found'       => 'Krävda kolumner hittades inte: %s.',
+            'column-numbers'         => 'Antalet kolumner överensstämmer inte med antalet rader i rubriken.',
+            'invalid-attribute'      => 'Rubriken innehåller ogiltiga attribut: "%s".',
+            'system'                 => 'Ett oväntat systemfel inträffade.',
+            'wrong-quotes'           => 'Krokiga citattecken användes i stället för raka citattecken.',
+            'file-empty'             => 'Filen är tom eller innehåller ingen rubrikrad. Vänligen ladda upp en giltig fil med data.',
+            'file-missing'           => 'Källfilen för det här jobbet kunde inte hittas. Kontrollera filsökvägen i profilen och ladda upp filen igen.',
         ],
     ],
     'job' => [
         'started'   => 'Jobbutförande påbörjades',
         'completed' => 'Jobbutförande slutfört',
+        'stalled'   => 'Jobbet slutade svara i mer än :minutes minuter och markerades som misslyckat. Processen som körde det avbröts sannolikt.',
+        'reaped'    => ':count fastnade jobb markerades som misslyckade.',
     ],
 ];

@@ -2,6 +2,7 @@
 
 use Webkul\MagicAI\MagicAI;
 use Webkul\MagicAI\Models\MagicPrompt;
+use Webkul\MagicAI\Responses\GeneratedContent;
 use Webkul\MagicAI\Services\Prompt\Prompt;
 
 beforeEach(function () {
@@ -27,7 +28,7 @@ describe('content endpoint', function () {
         $mock->shouldReceive('setMaxTokens')->andReturnSelf();
         $mock->shouldReceive('setSystemPrompt')->andReturnSelf();
         $mock->shouldReceive('setPrompt')->andReturnSelf();
-        $mock->shouldReceive('ask')->once()->andReturn('Generated description.');
+        $mock->shouldReceive('askResult')->once()->andReturn(new GeneratedContent('Generated description.'));
         $this->app->instance('magic_ai', $mock);
 
         $this->postJson(route('admin.magic_ai.content'), [
@@ -57,6 +58,18 @@ describe('content endpoint', function () {
             ->assertJsonValidationErrors(['prompt']);
     });
 
+    it('rejects image counts and quality values outside the provider-safe limits', function () {
+        $this->postJson(route('admin.magic_ai.image'), [
+            'model'   => 'dall-e-3',
+            'prompt'  => 'a prompt',
+            'size'    => '1024x1024',
+            'n'       => 1000,
+            'quality' => 'unlimited',
+        ])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['n', 'quality']);
+    });
+
     it('returns a friendly message when the provider times out', function () {
         $mock = Mockery::mock(MagicAI::class);
         $mock->shouldReceive('useDefault')->andReturnSelf();
@@ -66,7 +79,7 @@ describe('content endpoint', function () {
         $mock->shouldReceive('setMaxTokens')->andReturnSelf();
         $mock->shouldReceive('setSystemPrompt')->andReturnSelf();
         $mock->shouldReceive('setPrompt')->andReturnSelf();
-        $mock->shouldReceive('ask')->andThrow(new RuntimeException('cURL error 28: Operation timed out'));
+        $mock->shouldReceive('askResult')->andThrow(new RuntimeException('cURL error 28: Operation timed out'));
         $this->app->instance('magic_ai', $mock);
 
         $this->postJson(route('admin.magic_ai.content'), [
@@ -89,7 +102,7 @@ describe('content endpoint', function () {
         $mock->shouldReceive('setMaxTokens')->andReturnSelf();
         $mock->shouldReceive('setSystemPrompt')->andReturnSelf();
         $mock->shouldReceive('setPrompt')->andReturnSelf();
-        $mock->shouldReceive('ask')->andThrow(new RuntimeException('Invalid API key'));
+        $mock->shouldReceive('askResult')->andThrow(new RuntimeException('Invalid API key'));
         $this->app->instance('magic_ai', $mock);
 
         $this->postJson(route('admin.magic_ai.content'), [

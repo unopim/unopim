@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Console\Attributes\Signature;
 use Laravel\Prompts\Key;
 use Laravel\Prompts\Prompt;
 use Webkul\Installer\Console\Commands\Installer;
@@ -71,7 +72,7 @@ describe('PreselectedSearchValue', function () {
 
 describe('Installer::getEnvChoiceDefault', function () {
     $resolve = function (string $envValue, array $choices): ?string {
-        $cmd = new class extends Installer
+        $cmd = new #[Signature('unopim:install {--skip-env-check} {--skip-admin-creation} {--with-demo-data} {--with-packages=}')] class extends Installer
         {
             public static string $stubValue = '';
 

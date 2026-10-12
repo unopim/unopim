@@ -49,12 +49,7 @@ class ImageUploadStep implements PipelineStageContract
     {
         $imageSource = $payload->context['imageSource'] ?? null;
 
-        if (empty($imageSource)) {
-            throw new PipelineException(
-                'ImageUploadStep: imageSource is required in payload context.',
-                self::class,
-            );
-        }
+        throw_if(empty($imageSource), PipelineException::class, 'ImageUploadStep: imageSource is required in payload context.', self::class);
 
         [$imageType, $imageContent, $mimeType, $byteSize] = $this->normalise($imageSource);
 
@@ -82,9 +77,7 @@ class ImageUploadStep implements PipelineStageContract
     protected function normalise(string $source): array
     {
         if ($this->isUrl($source)) {
-            if (filter_var($source, FILTER_VALIDATE_URL) === false) {
-                throw new PipelineException("ImageUploadStep: invalid URL — $source", self::class);
-            }
+            throw_if(filter_var($source, FILTER_VALIDATE_URL) === false, PipelineException::class, "ImageUploadStep: invalid URL — $source", self::class);
 
             return ['url', $source, 'image/jpeg', 0];
         }

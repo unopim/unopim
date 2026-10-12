@@ -8,7 +8,6 @@ it('should accept a comma-separated models string when creating a platform (Issu
     $response = $this->postJson(route('admin.magic_ai.platform.store'), [
         'label'    => 'Models String '.uniqid(),
         'provider' => 'openai',
-        'api_url'  => 'https://example.test',
         'api_key'  => 'sk-test',
         'models'   => 'gpt-4,gpt-4o-mini',
         'status'   => 1,

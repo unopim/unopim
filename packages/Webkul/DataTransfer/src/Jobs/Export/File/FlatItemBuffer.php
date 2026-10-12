@@ -26,7 +26,7 @@ class FlatItemBuffer extends FileBuffer implements BufferInterface
      */
     protected $headerLabels = [];
 
-    public function initialize($directory, $fileName, $options = [])
+    public function initialize($directory, ?string $fileName, array $options = []): static
     {
         $this->count = 0;
 
@@ -48,7 +48,7 @@ class FlatItemBuffer extends FileBuffer implements BufferInterface
     /**
      * {@inheritdoc}
      */
-    public function addData($items)
+    public function addData($items): void
     {
         foreach ($items as $item) {
             if (! $this->headerWritten) {
@@ -73,7 +73,7 @@ class FlatItemBuffer extends FileBuffer implements BufferInterface
         return array_map(fn ($key) => $this->headerLabels[$key] ?? $key, $keys);
     }
 
-    public function writerClose()
+    public function writerClose(): void
     {
         $this->writer->close();
     }

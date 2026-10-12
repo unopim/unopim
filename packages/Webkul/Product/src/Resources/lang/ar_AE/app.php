@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'acl' => [
+        'variant-structures' => 'بنى المتغيرات',
+    ],
 
     'datagrid' => [
         'copy-of-slug'                  => 'نسخة من-:value',
@@ -13,7 +16,9 @@ return [
     ],
 
     'type'     => [
-        'configurable' => 'قابلة للتكوين',
-        'simple'       => 'بسيطة',
+        'configurable'  => 'قابلة للتكوين',
+        'simple'        => 'بسيطة',
+        'variant-group' => 'مجموعة المتغيرات',
+        'variant_group' => 'مجموعة المتغيرات',
     ],
 ];

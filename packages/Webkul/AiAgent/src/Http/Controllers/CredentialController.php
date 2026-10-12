@@ -2,6 +2,7 @@
 
 namespace Webkul\AiAgent\Http\Controllers;
 
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\View\View;
@@ -18,9 +19,7 @@ class CredentialController extends Controller
         protected AiApiClient $apiClient,
     ) {
         $this->middleware(function ($request, $next) {
-            if (! bouncer()->hasPermission('ai-agent.credentials')) {
-                abort(403, trans('ai-agent::app.common.unauthorized'));
-            }
+            abort_unless(bouncer()->hasPermission('ai-agent.credentials'), 403, trans('ai-agent::app.common.unauthorized'));
 
             return $next($request);
         });
@@ -34,7 +33,7 @@ class CredentialController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            return app(CredentialDataGrid::class)->toJson();
+            return resolve(CredentialDataGrid::class)->toJson();
         }
 
         return view('ai-agent::credentials.index');
@@ -45,7 +44,7 @@ class CredentialController extends Controller
      *
      * @return View
      */
-    public function create()
+    public function create(): Factory|\Illuminate\Contracts\View\View
     {
         return view('ai-agent::credentials.create');
     }
@@ -68,11 +67,11 @@ class CredentialController extends Controller
      *
      * @return View
      */
-    public function edit(int $id)
+    public function edit(int $id): Factory|\Illuminate\Contracts\View\View
     {
         $credential = $this->credentialRepository->findOrFail($id);
 
-        return view('ai-agent::credentials.edit', compact('credential'));
+        return view('ai-agent::credentials.edit', ['credential' => $credential]);
     }
 
     /**
@@ -80,12 +79,36 @@ class CredentialController extends Controller
      */
     public function update(CredentialForm $request, int $id): JsonResponse
     {
-        $this->credentialRepository->update($request->validated(), $id);
+        $this->credentialRepository->update($this->resolveApiKey($request->validated(), $id), $id);
 
         return new JsonResponse([
             'redirect_url' => route('ai-agent.credentials.index'),
             'message'      => trans('ai-agent::app.credentials.update-success'),
         ]);
+    }
+
+    /**
+     * Keep the stored key when the submitted value is the masked placeholder, so
+     * editing a credential without retyping the key never overwrites or clears it.
+     *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    protected function resolveApiKey(array $data, ?int $id): array
+    {
+        $apiKey = $data['apiKey'] ?? null;
+
+        if ($apiKey && preg_match('/^\*+$/', $apiKey)) {
+            $original = $id ? $this->credentialRepository->find($id)?->apiKey : null;
+
+            if ($original) {
+                $data['apiKey'] = $original;
+            } else {
+                unset($data['apiKey']);
+            }
+        }
+
+        return $data;
     }
 
     /**
@@ -114,7 +137,7 @@ class CredentialController extends Controller
      */
     public function testConnection(CredentialForm $request): JsonResponse
     {
-        $data = $request->validated();
+        $data = $this->resolveApiKey($request->validated(), $request->integer('id') ?: null);
         $config = CredentialConfig::fromModel($data);
 
         $this->apiClient->configure($config);

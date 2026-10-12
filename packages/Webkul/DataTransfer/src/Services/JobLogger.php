@@ -14,13 +14,11 @@ class JobLogger
     {
         $path = storage_path("logs/{$folderName}/{$jobId}/{$fileName}.log");
 
-        $logger = Log::build([
+        return Log::build([
             'driver' => 'single',
             'path'   => $path,
             'level'  => $level,
         ]);
-
-        return $logger;
     }
 
     /**

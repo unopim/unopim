@@ -4,10 +4,13 @@ namespace Webkul\Admin\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Webkul\Core\Rules\Sku;
+use Webkul\Core\Traits\MergesUploadedFiles;
 use Webkul\Product\Repositories\ProductRepository;
 
 class ProductForm extends FormRequest
 {
+    use MergesUploadedFiles;
+
     /**
      * Rules.
      *
@@ -41,7 +44,11 @@ class ProductForm extends FormRequest
      */
     public function rules()
     {
-        $product = $this->productRepository->find($this->id);
+        /**
+         * A product deleted while its edit page was still open would otherwise
+         * fatal here on a null instance rather than reporting it as gone.
+         */
+        $product = $this->productRepository->findOrFail($this->id);
 
         $this->rules = $product->getTypeInstance()->getTypeValidationRules();
 
@@ -51,8 +58,28 @@ class ProductForm extends FormRequest
         return $this->rules;
     }
 
+    /**
+     * Get custom attribute names for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        $attributes = [];
+
+        $position = 0;
+
+        foreach (array_keys((array) $this->input('variants', [])) as $variantKey) {
+            $attributes["variants.{$variantKey}.sku"] = trans('admin::app.catalog.products.index.variant-sku-label', ['position' => ++$position]);
+        }
+
+        return $attributes;
+    }
+
     public function prepareForValidation()
     {
+        $this->mergeUploadedFilesIntoInput();
+
         if (isset($this->uniqueFields['values.common.sku']) || isset($this->values['common']['sku'])) {
             $this->merge([
                 'sku' => $this->values['common']['sku'],

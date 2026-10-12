@@ -42,6 +42,21 @@ class ProductComparer
             }
         }
 
+        $hasOldSku = is_array($oldValues) && array_key_exists('sku', $oldValues);
+        $hasNewSku = is_array($newValues) && array_key_exists('sku', $newValues);
+
+        if ($hasOldSku || $hasNewSku) {
+            $old = $hasOldSku ? $oldValues['sku'] : null;
+            $new = $hasNewSku ? $newValues['sku'] : null;
+
+            if ($old !== $new) {
+                $diff['changed']['sku'] = [
+                    'old' => $old,
+                    'new' => $new,
+                ];
+            }
+        }
+
         return $diff;
     }
 
@@ -180,11 +195,11 @@ class ProductComparer
             $removed = array_diff($oldSection, $newSection);
             $added = array_diff($newSection, $oldSection);
 
-            if (! empty($removed)) {
+            if ($removed !== []) {
                 $diff['removed'][$sectionName] = array_values($removed);
             }
 
-            if (! empty($added)) {
+            if ($added !== []) {
                 $diff['added'][$sectionName] = array_values($added);
             }
 

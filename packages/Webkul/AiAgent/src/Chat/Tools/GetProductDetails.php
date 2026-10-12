@@ -43,7 +43,7 @@ class GetProductDetails implements PimTool
                 }
 
                 $sku = $request->string('sku')->toString() ?: null;
-                $productId = $request->has('product_id') ? (int) $request->get('product_id') : null;
+                $productId = $request->has('product_id') ? $request->integer('product_id') : null;
 
                 $product = null;
 
@@ -57,7 +57,7 @@ class GetProductDetails implements PimTool
                     return json_encode(['error' => 'Product not found']);
                 }
 
-                $values = json_decode($product->values, true) ?? [];
+                $values = json_decode((string) $product->values, true) ?? [];
                 $family = DB::table('attribute_families')
                     ->where('id', $product->attribute_family_id)
                     ->value('code');

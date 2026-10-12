@@ -10,15 +10,18 @@ use Illuminate\Support\Str;
 use Webkul\Attribute\Contracts\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Core\Eloquent\Repository;
+use Webkul\Core\Traits\HtmlPurifier;
 
 class AttributeRepository extends Repository
 {
+    use HtmlPurifier;
+
+    const BOOLEAN_FIELDS = ['is_required', 'is_unique', 'enable_wysiwyg', 'is_filterable', 'ai_translate'];
+
     protected $attributes = [];
 
     /**
      * Create a new repository instance.
-     *
-     * @return void
      */
     public function __construct(
         protected AttributeOptionRepository $attributeOptionRepository,
@@ -78,7 +81,7 @@ class AttributeRepository extends Repository
             $data['is_filterable'] = 1;
         }
 
-        $attribute->update($validatedData);
+        $attribute->update($this->withoutUnchangedFlags($validatedData, $attribute));
 
         if (in_array($attribute->type, ['select', 'multiselect', 'checkbox']) && isset($data['options'])) {
             foreach ($data['options'] as $optionId => $optionInputs) {
@@ -86,16 +89,13 @@ class AttributeRepository extends Repository
                     if (empty($optionInputs['code'])) {
                         $optionInputs['code'] = 'option_'.strtolower(Str::random(8));
                     }
-
                     $this->attributeOptionRepository->create(array_merge([
                         'attribute_id' => $attribute->id,
                     ], $optionInputs));
+                } elseif ($optionInputs['isDelete'] == 'true') {
+                    $this->attributeOptionRepository->delete($optionId);
                 } else {
-                    if ($optionInputs['isDelete'] == 'true') {
-                        $this->attributeOptionRepository->delete($optionId);
-                    } else {
-                        $this->attributeOptionRepository->update($optionInputs, $optionId);
-                    }
+                    $this->attributeOptionRepository->update($optionInputs, $optionId);
                 }
             }
         }
@@ -104,12 +104,31 @@ class AttributeRepository extends Repository
     }
 
     /**
-     * Validate user input.
+     * Postgres hands these columns back as PHP booleans, so submitting the same
+     * flag as 0/1 reads as dirty and rewrites the row — plus an audit entry —
+     * on every save, even a label-only one.
      *
-     * @param  array  $data
-     * @return array
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
      */
-    public function validateUserInput($data)
+    private function withoutUnchangedFlags(array $data, Attribute $attribute): array
+    {
+        foreach (self::BOOLEAN_FIELDS as $field) {
+            if (
+                array_key_exists($field, $data)
+                && (int) $attribute->{$field} === (int) $data[$field]
+            ) {
+                unset($data[$field]);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Validate user input.
+     */
+    public function validateUserInput(array $data): array
     {
         if (isset($data['type']) && $data['type'] !== 'text') {
             unset($data['is_unique']);
@@ -117,10 +136,18 @@ class AttributeRepository extends Repository
 
         // Cast boolean fields to 0/1 — unchecked checkboxes send null/empty
         // which violates PostgreSQL NOT NULL constraints.
-        foreach (['is_required', 'is_unique', 'enable_wysiwyg', 'is_filterable', 'ai_translate'] as $boolField) {
+        foreach (self::BOOLEAN_FIELDS as $boolField) {
             if (array_key_exists($boolField, $data)) {
                 $data[$boolField] = (int) (bool) $data[$boolField];
             }
+        }
+
+        if (
+            ($data['type'] ?? null) === 'textarea'
+            && ! empty($data['enable_wysiwyg'])
+            && ! empty($data['default_value'])
+        ) {
+            $data['default_value'] = $this->purifyText($data['default_value']);
         }
 
         return $data;
@@ -183,30 +210,26 @@ class AttributeRepository extends Repository
 
     /**
      * Get partials.
-     *
-     * @return array
      */
-    public function getPartial()
+    public function getPartial(): array
     {
         $attributes = $this->model->all();
 
         $trimmed = [];
 
-        foreach ($attributes as $key => $attribute) {
-            if (
-                $attribute->code != 'tax_category_id'
-                && (
-                    in_array($attribute->type, ['select', 'multiselect'])
-                    || $attribute->code == 'sku'
-                )
-            ) {
-                array_push($trimmed, [
+        foreach ($attributes as $attribute) {
+            if ($attribute->code != 'tax_category_id'
+            && (
+                in_array($attribute->type, ['select', 'multiselect'])
+                || $attribute->code == 'sku'
+            )) {
+                $trimmed[] = [
                     'id'      => $attribute->id,
                     'name'    => $attribute->admin_name,
                     'type'    => $attribute->type,
                     'code'    => $attribute->code,
                     'options' => $attribute->options,
-                ]);
+                ];
             }
         }
 
@@ -255,16 +278,16 @@ class AttributeRepository extends Repository
 
         $query = DB::table('attributes')
             ->select($resolvedColumns)
-            ->leftJoin('attribute_translations as attribute_name', function ($join) {
+            ->leftJoin('attribute_translations as attribute_name', function ($join): void {
                 $join->on('attribute_name.attribute_id', '=', 'attributes.id')
                     ->where('attribute_name.locale', '=', core()->getRequestedLocaleCode());
             })
-            ->where(function ($query) use ($search) {
+            ->where(function (\Illuminate\Contracts\Database\Query\Builder $query) use ($search): void {
                 $query->where('attributes.code', 'LIKE', '%'.$search.'%')
                     ->orWhere('attribute_name.name', 'LIKE', '%'.$search.'%');
             });
 
-        if ($excludeTypes) {
+        if ($excludeTypes !== []) {
             $query->whereNotIn('attributes.type', $excludeTypes);
         }
 

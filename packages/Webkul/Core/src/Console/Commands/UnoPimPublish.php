@@ -2,26 +2,16 @@
 
 namespace Webkul\Core\Console\Commands;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Webkul\Core\Providers\CoreServiceProvider;
 use Webkul\Product\Providers\ProductServiceProvider;
 
+#[Description('Publish the available assets')]
+#[Signature('unopim:publish { --force : Overwrite any existing files }')]
 class UnoPimPublish extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'unopim:publish { --force : Overwrite any existing files }';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Publish the available assets';
-
     /**
      * List of providers.
      *
@@ -43,10 +33,8 @@ class UnoPimPublish extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $this->publishAllPackages();
     }
@@ -56,7 +44,7 @@ class UnoPimPublish extends Command
      */
     public function publishAllPackages(): void
     {
-        collect($this->providers)->each(function ($provider) {
+        collect($this->providers)->each(function (array $provider): void {
             $this->publishPackage($provider);
         });
     }

@@ -1,11 +1,21 @@
 <?php
 
 return [
+    'samples' => [
+        'default'       => 'Жишээ файл',
+        'variants'      => 'Хувилбарын жишээ',
+        'multi-locale'  => 'Олон хэлний жишээ',
+        'delete'        => 'Устгах жишээ',
+        'custom-fields' => 'Тусгай талбарын жишээ',
+        'with-images'   => 'Зурагтай жишээ (ZIP)',
+    ],
+
     'importers' => [
         'products' => [
             'title'      => 'Бүтээгдэхүүн',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => '":unit" нэгж нь ":attribute" хэмжих шинж чанарын хувьд хүчинтэй нэгж биш байна.',
+                'errors'       => [
                     'duplicate-url-key'                        => 'URL түлхүүр: \'%s\' SKU-тай зүйлд аль хэдийн үүсгэгдсэн: \'%s\'.',
                     'invalid-attribute-family'                 => 'Атрибутын гэр бүлийн баганын утга буруу байна (атрибутын гэр бүл байхгүй юу?)',
                     'invalid-type'                             => 'Бүтээгдэхүүний төрөл буруу эсвэл дэмжигдээгүй байна',
@@ -21,6 +31,7 @@ return [
                     'not-unique-value'                         => ':code утга нь өвөрмөц байх ёстой.',
                     'incorrect-family-for-variant'             => 'Гэр бүл нь эцэг эхтэй ижил байх ёстой',
                     'parent-not-exist'                         => 'Эцэг эх нь байхгүй.',
+                    'variant-structure-not-found'              => 'Энэ шинж чанарын бүлэгт :code хувилбарын бүтэц байхгүй байна.',
                 ],
             ],
         ],
@@ -29,6 +40,82 @@ return [
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'Та сувагтай холбоотой үндсэн категорийг устгах боломжгүй',
+                ],
+            ],
+        ],
+        'category-fields' => [
+            'title'      => 'Ангиллын талбарууд',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Ангиллын талбарын код :code аль хэдийн ашиглагдаж байна.',
+                    'code_not_found_to_delete' => 'Устгах ангиллын талбарын код олдсонгүй.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Шинж чанарууд',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Шиж чанарын код :code аль хэдийн ашиглагдаж байна.',
+                    'code_not_found_to_delete'             => 'Устгах шинж чанарын код олдсонгүй.',
+                    'code_is_system_and_cannot_be_deleted' => 'Системийн шинж чанарыг устгах боломжгүй.',
+                ],
+            ],
+        ],
+        'product-associations' => [
+            'title'      => 'Бүтээгдэхүүний холбоо',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => '\'%s\' талбарыг бөглөх шаардлагатай.',
+                    'self-link-not-allowed'       => '\'%s\' бүтээгдэхүүнийг өөртэй нь холбох боломжгүй.',
+                    'sku-not-found'               => 'SKU \'%s\' бүхий бүтээгдэхүүн олдсонгүй.',
+                    'related-sku-not-found'       => 'SKU \'%s\' бүхий холбогдох бүтээгдэхүүн олдсонгүй.',
+                    'association-type-not-found'  => '\'%s\' холбооны төрөл байхгүй эсвэл идэвхгүй байна.',
+                    'invalid-field-value'         => 'Холбооны талбарт буруу утга оруулсан байна.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Шинж чанарын бүлгүүд',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Шиж чанарын бүлгийн код :code аль хэдийн ашиглагдаж байна.',
+                    'code_not_found_to_delete'             => 'Устгах шинж чанарын бүлгийн код олдсонгүй.',
+                    'code_is_system_and_cannot_be_deleted' => 'Системийн шинж чанарын бүлгийг устгах боломжгүй.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Шинж чанарын бүлгэмүүд',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Шиж чанарын бүлгэмийн код :code аль хэдийн ашиглагдаж байна.',
+                    'code_not_found_to_delete' => 'Устгах шинж чанарын бүлгэмийн код олдсонгүй.',
+                    'invalid-attribute-group'  => '":code" шинж чанарын бүлэг байхгүй байна.',
+                    'invalid-attribute'        => '":code" шинж чанар байхгүй байна.',
+                    'invalid-channel'          => '":code" суваг байхгүй байна.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Шинж чанарын сонголтууд',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Шиж чанарын сонголтын код :code аль хэдийн ашиглагдаж байна.',
+                    'code_not_found_to_delete' => 'Устгах шинж чанарын сонголтын код олдсонгүй.',
+                    'locale-not-exist'         => '":code" хэл байхгүй байна.',
+                    'invalid-attribute'        => '":code" шинж чанар байхгүй байна.',
+                ],
+            ],
+        ],
+        'locales' => [
+            'title'      => 'Хэлүүд',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Хэлний код \'%s\' энэ багцад аль хэдийн импортлогдсон байна.',
+                    'code-not-found-to-delete'    => 'Код \'%s\' бүхий хэл системд олдсонгүй.',
+                    'invalid-status'              => 'Төлөв 0 эсвэл 1 байх ёстой (эсвэл анхдагчаар идэвхжүүлэхийн тулд хоосон).',
+                    'channel-related-locale-root' => 'Та :code кодтой хэлийг устгах боломжгүй, учир нь энэ нь сувагтай холбоотой.',
                 ],
             ],
         ],
@@ -45,18 +132,23 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
+            'title'   => 'Валютууд',
+            'filters' => [
+                'status' => 'Төлөв',
+                'enable' => 'Идэвхтэй',
+                'all'    => 'Бүгд',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Төлөв 0 эсвэл 1 байх ёстой (эсвэл анхдагчаар идэвхжүүлэхийн тулд хоосон).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Дүрээ',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -65,7 +157,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
+            'title'   => 'Хэрэглэгчид',
+            'filters' => [
+                'status' => 'Төлөв',
+                'active' => 'Идэвхтэй',
+                'all'    => 'Бүгд',
+            ],
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -78,21 +175,25 @@ return [
     'exporters' => [
         'export-too-large' => 'Энэ экспорт хэт том тул ажиллуулах боломжгүй: ойролцоогоор :rows мөр × :columns багана (~:estimated) нь боломжтой зайнаас (~:available) хэтэрсэн байна. Цөөн суваг/хэл (болон шинж чанар) сонгож экспортыг багасгаад дахин оролдоно уу.',
         'fields'           => [
-            'file-format'         => 'Файлын формат',
-            'with-media'          => 'Медиатай',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Файлын формат',
+            'with-media'             => 'Медиатай',
+            'with-associations'      => 'Холбоотой',
+            'with-associations-info' => 'Экспортод хуучин up_sells, cross_sells, related_products SKU-жагсаалтын баганыг оруулна',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
-            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'file-name'      => 'Файлын нэр',
+            'file-name-info' => 'Файлын нэрийн загвар. Орлуулах тэмдэглэгээ: [code], [date], [time], [entity_type]',
+            'file-path'      => 'Файлын зам',
+            'file-path-info' => 'Файлын нэрийн загвар. Орлуулах тэмдэглэгээ: [code], [date], [time], [entity_type]',
             'status'         => 'Төлөв',
             'enable'         => 'Идэвхтэй',
             'all'            => 'Бүгд',
@@ -134,7 +235,7 @@ return [
                     'disable' => 'Идэвхгүй',
                     'all'     => 'Бүгд',
                 ],
-                'sku'              => 'SKU',
+                'sku'              => 'Уран жимс',
                 'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
                 'identifiers'      => 'Танигчид',
                 'identifiers-info' => 'Зөвхөн тэдгээр бүтээгдэхүүнийг экспортлохын тулд мөр бүрт нэг SKU / танигч буулгана уу. Бүх бүтээгдэхүүнийг экспортлохын тулд хоосон үлдээнэ үү.',
@@ -152,38 +253,62 @@ return [
         'categories' => [
             'title' => 'Ангилал',
         ],
+        'category-fields' => [
+            'title' => 'Ангиллын талбарууд',
+        ],
+        'attributes' => [
+            'title' => 'Шинж чанарууд',
+        ],
+        'product-associations' => [
+            'title' => 'Бүтээгдэхүүний холбоо',
+        ],
+        'attribute-groups' => [
+            'title' => 'Шинж чанарын бүлгүүд',
+        ],
+        'attribute-families' => [
+            'title' => 'Шинж чанарын бүлгэмүүд',
+        ],
+        'attribute-options' => [
+            'title' => 'Шинж чанарын сонголтууд',
+        ],
+        'locales' => [
+            'title' => 'Хэлүүд',
+        ],
         'channels' => [
             'title' => 'Сувгууд',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Валютууд',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Дүрээ',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Хэрэглэгчид',
             'filters' => [
                 'status' => 'Төлөв',
-                'active' => 'Active',
+                'active' => 'Идэвхтэй',
                 'all'    => 'Бүгд',
             ],
         ],
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => '"%s" дугаартай баганын толгой хоосон байна.',
-            'column-name-invalid'  => 'Баганын нэр буруу: "%s".',
-            'column-not-found'     => 'Шаардлагатай баганууд олдсонгүй: %s.',
-            'column-numbers'       => 'Баганын тоо толгойн мөрийн тоотой тохирохгүй байна.',
-            'invalid-attribute'    => 'Толгой хэсэгт хүчингүй атрибут(ууд) агуулагдаж байна: "%s".',
-            'system'               => 'Гэнэтийн системийн алдаа гарлаа.',
-            'wrong-quotes'         => 'Шулуун ишлэлийн оронд буржгар ишлэл ашигласан.',
-            'file-empty'           => 'Файл хоосон эсвэл толгой мөр агуулаагүй байна. Өгөгдөл бүхий зөв файл байршуулна уу.',
+            'column-empty-headers'   => '"%s" дугаартай баганын толгой хоосон байна.',
+            'column-name-invalid'    => 'Баганын нэр буруу: "%s".',
+            'column-not-found'       => 'Шаардлагатай баганууд олдсонгүй: %s.',
+            'column-numbers'         => 'Баганын тоо толгойн мөрийн тоотой тохирохгүй байна.',
+            'invalid-attribute'      => 'Толгой хэсэгт хүчингүй атрибут(ууд) агуулагдаж байна: "%s".',
+            'system'                 => 'Гэнэтийн системийн алдаа гарлаа.',
+            'wrong-quotes'           => 'Шулуун ишлэлийн оронд буржгар ишлэл ашигласан.',
+            'file-empty'             => 'Файл хоосон эсвэл толгой мөр агуулаагүй байна. Өгөгдөл бүхий зөв файл байршуулна уу.',
+            'file-missing'           => 'Энэ ажлын эх файл олдсонгүй. Профайл дахь файлын замыг шалгаад файлаа дахин байршуулна уу.',
         ],
     ],
     'job' => [
         'started'   => 'Ажлын гүйцэтгэл эхэлсэн',
         'completed' => 'Ажлын гүйцэтгэл дууссан',
+        'stalled'   => 'Ажил :minutes минутаас удаан хариу өгөөгүй тул амжилтгүй гэж тэмдэглэв. Гүйцэтгэж байсан процесс тасалдсан байх магадлалтай.',
+        'reaped'    => 'Гацсан :count ажлыг амжилтгүй гэж тэмдэглэв.',
     ],
 ];

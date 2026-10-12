@@ -17,7 +17,7 @@ namespace Webkul\AiAgent\DTOs;
  *   ConfidenceScoreStep  → confidence
  *   CreateProductDraftStep → productId
  */
-final class ImageProductContext
+final readonly class ImageProductContext
 {
     /**
      * @param  string|null  $imagePath  Resolved local path or remote URL of the image.
@@ -30,14 +30,14 @@ final class ImageProductContext
      * @param  int|string|null  $productId  ID of the product draft created in the final stage.
      */
     public function __construct(
-        public readonly ?string $imagePath = null,
-        public readonly ?string $detectedProduct = null,
-        public readonly array $attributes = [],
-        public readonly ?string $category = null,
-        public readonly array $enrichment = [],
-        public readonly array $confidence = [],
-        public readonly ?string $rawAiResponse = null,
-        public readonly int|string|null $productId = null,
+        public ?string $imagePath = null,
+        public ?string $detectedProduct = null,
+        public array $attributes = [],
+        public ?string $category = null,
+        public array $enrichment = [],
+        public array $confidence = [],
+        public ?string $rawAiResponse = null,
+        public int|string|null $productId = null,
     ) {}
 
     // -------------------------------------------------------------------------
@@ -197,7 +197,7 @@ final class ImageProductContext
      */
     public function overallConfidence(): float
     {
-        if (empty($this->confidence)) {
+        if ($this->confidence === []) {
             return 0.0;
         }
 
@@ -213,7 +213,7 @@ final class ImageProductContext
     public function lowConfidenceFields(float $threshold = 0.6): array
     {
         return array_keys(
-            array_filter($this->confidence, fn (float $score) => $score < $threshold),
+            array_filter($this->confidence, fn (float $score): bool => $score < $threshold),
         );
     }
 
@@ -233,7 +233,7 @@ final class ImageProductContext
      */
     public function requiresReview(float $threshold = 0.6): bool
     {
-        return ! empty($this->lowConfidenceFields($threshold));
+        return $this->lowConfidenceFields($threshold) !== [];
     }
 
     // -------------------------------------------------------------------------
@@ -253,7 +253,7 @@ final class ImageProductContext
             attributes: (array) ($data['attributes'] ?? []),
             category: isset($data['category']) ? (string) $data['category'] : null,
             enrichment: (array) ($data['enrichment'] ?? []),
-            confidence: array_map('floatval', (array) ($data['confidence'] ?? [])),
+            confidence: array_map(floatval(...), (array) ($data['confidence'] ?? [])),
             rawAiResponse: isset($data['raw_ai_response']) ? (string) $data['raw_ai_response'] : null,
             productId: $data['product_id'] ?? null,
         );

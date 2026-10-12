@@ -6,16 +6,19 @@ use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Validation\ValidationException;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Core\Eloquent\Repository;
 use Webkul\Product\Contracts\Product;
+use Webkul\Product\Contracts\VariantStructurePlanner as VariantStructurePlannerContract;
+use Webkul\Product\Services\VariantStructurePlanner;
+use Webkul\Product\Type\AbstractType;
 
 class ProductRepository extends Repository
 {
     /**
      * Create a new repository instance.
-     *
-     * @return void
      */
     public function __construct(
         protected AttributeRepository $attributeRepository,
@@ -29,7 +32,7 @@ class ProductRepository extends Repository
      */
     public function model(): string
     {
-        return 'Webkul\Product\Contracts\Product';
+        return Product::class;
     }
 
     /**
@@ -39,11 +42,9 @@ class ProductRepository extends Repository
      */
     public function create(array $data)
     {
-        $typeInstance = app(config('product_types.'.$data['type'].'.class'));
+        $typeInstance = resolve(config('product_types.'.$data['type'].'.class'));
 
-        $product = $typeInstance->create($data);
-
-        return $product;
+        return $typeInstance->create($data);
     }
 
     /**
@@ -84,16 +85,71 @@ class ProductRepository extends Repository
 
     /**
      * Updates the status of product.
+     *
+     * Dirty state is compared as booleans because PostgreSQL hydrates the
+     * status column as true/false while MySQL hydrates 1/0.
      */
     public function updateStatus(bool $status, int $id): Product
     {
         $product = $this->findOrFail($id);
 
+        $product->wasDirtyOnUpdate = ((bool) $product->status) !== $status;
+
         $product->status = (int) $status;
 
-        $product->save();
+        if ($product->wasDirtyOnUpdate) {
+            $product->save();
+        }
 
         return $product;
+    }
+
+    /**
+     * Delete the given products as one unit, so a failure part way leaves every product in place.
+     *
+     * One transaction also means one durable commit for the chunk instead of several per product.
+     * The after events wait for that commit, so their listeners never queue work against rows that may roll back.
+     *
+     * @param  array<int>  $productIds
+     */
+    public function massDelete(array $productIds): void
+    {
+        Event::defer(fn () => DB::transaction(function () use ($productIds): void {
+            foreach ($productIds as $productId) {
+                $product = $this->find($productId);
+
+                if (! isset($product)) {
+                    continue;
+                }
+
+                Event::dispatch('catalog.product.delete.before', $productId);
+
+                $this->delete($productId);
+
+                Event::dispatch('catalog.product.delete.after', $productId);
+            }
+        }), ['catalog.product.delete.after']);
+    }
+
+    /**
+     * Update the status of the given products as one unit, so a failure part way leaves every status unchanged.
+     *
+     * One transaction also means one durable commit for the chunk instead of several per product.
+     * The after events wait for that commit, so their listeners never queue work against rows that may roll back.
+     *
+     * @param  array<int>  $productIds
+     */
+    public function massUpdateStatus(array $productIds, bool $status): void
+    {
+        Event::defer(fn () => DB::transaction(function () use ($productIds, $status): void {
+            foreach ($productIds as $productId) {
+                Event::dispatch('catalog.product.update.before', $productId);
+
+                $product = $this->updateStatus($status, $productId);
+
+                Event::dispatch('catalog.product.update.after', $product);
+            }
+        }), ['catalog.product.update.after']);
     }
 
     /**
@@ -112,34 +168,47 @@ class ProductRepository extends Repository
             throw new \Exception(trans('product::app.datagrid.variant-already-exist-message'));
         }
 
-        return DB::transaction(function () use ($product) {
-            $copiedProduct = $product->getTypeInstance()->copy();
-
-            return $copiedProduct;
-        });
+        return DB::transaction(fn () => $product->getTypeInstance()->copy());
     }
 
     /**
      * Checks variant configurable attributes uniqueness according to configurable product
+     *
+     * Each key of `$configAttributes` is concatenated into a `values->common->…` JSON
+     * path, and the Postgres grammar wraps a path segment without escaping it, so a key
+     * is rejected here unless it has the plain `^\w+$` attribute-code shape the core Code
+     * rule enforces — before the query is built, so a hostile key never reaches the grammar.
+     *
+     * @throws \InvalidArgumentException
      */
-    public function isUniqueVariantForProduct(string|int $productId, array $configAttributes, ?string $sku = null, string|int|null $variantId = ''): bool
+    public function isUniqueVariantForProduct(string|int $productId, array $configAttributes, ?string $sku = null, string|int|null $variantId = '', ?string $type = null): bool
     {
+        foreach (array_keys($configAttributes) as $variantAttribute) {
+            if (! preg_match('/^[A-Za-z0-9_]+$/', (string) $variantAttribute)) {
+                throw new \InvalidArgumentException('Malformed variant attribute code supplied to the variant uniqueness check.');
+            }
+        }
+
         $query = $this->where('parent_id', $productId);
 
-        foreach ($configAttributes as $variantAttribute => $value) {
-            $query = $query->where('values->common->'.$variantAttribute, $value);
+        if ($type !== null) {
+            $query = $query->where('type', $type);
         }
 
-        if (! empty($variantId)) {
-            $query = $query->where('id', '<>', $variantId);
-        }
+        $query = $query->where(function ($subQuery) use ($configAttributes, $sku) {
+            $subQuery->where(function ($attrQuery) use ($configAttributes) {
+                foreach ($configAttributes as $variantAttribute => $value) {
+                    $attrQuery->where('values->common->'.$variantAttribute, $value);
+                }
+            });
 
-        if ($sku) {
-            $query = $query->orWhere('sku', $sku);
-
-            if (! empty($variantId)) {
-                $query = $query->where('id', '<>', $variantId);
+            if ($sku) {
+                $subQuery->orWhere('sku', $sku);
             }
+        });
+
+        if (! in_array($variantId, ['', '0', 0], true)) {
+            $query = $query->where('id', '<>', $variantId);
         }
 
         try {
@@ -149,6 +218,112 @@ class ProductRepository extends Repository
 
             return false;
         }
+    }
+
+    /**
+     * Guard a variant-level write: reject a change to an ancestor-owned attribute,
+     * allow an own-level one. An own-axis rename runs the duplicate check and the
+     * persist closure in one locked transaction, so a concurrent rename cannot slip
+     * between check and write. {@see AbstractType::update()} skips a root configurable.
+     *
+     * @return array<string, mixed>
+     */
+    public function guardVariantLevelWrite(Product $product, array $submittedCommon, ?\Closure $onGuarded = null, ?VariantStructurePlannerContract $planner = null): array
+    {
+        $planner ??= resolve(VariantStructurePlanner::class);
+
+        $structure = $planner->structureFor($product);
+
+        if (! $structure) {
+            if ($onGuarded) {
+                $onGuarded();
+            }
+
+            return $submittedCommon;
+        }
+
+        $resolved = $product->resolvedValues()['common'] ?? [];
+
+        $ownAxisCodes = array_values(array_filter(
+            $planner->allAxisCodes($structure),
+            fn (string $code): bool => $planner->ownsAtOwnLevel($product, $code)
+        ));
+
+        $violations = [];
+        $renamed = [];
+
+        foreach ($submittedCommon as $code => $newValue) {
+            if ($code === 'sku') {
+                continue;
+            }
+
+            if (! $planner->ownsAtOwnLevel($product, $code)) {
+                $currentValue = $resolved[$code] ?? null;
+
+                if (! $this->variantValueEquals($newValue, $currentValue)) {
+                    $violations[] = $code;
+                }
+
+                continue;
+            }
+
+            if (in_array($code, $ownAxisCodes, true)) {
+                $currentOwnValue = $product->values['common'][$code] ?? null;
+
+                if (! $this->variantValueEquals($newValue, $currentOwnValue)) {
+                    $renamed[$code] = $newValue;
+                }
+            }
+        }
+
+        if ($violations !== []) {
+            throw ValidationException::withMessages([
+                'immutable' => [trans('admin::app.catalog.products.immutable-fields', ['fields' => implode(', ', $violations)])],
+            ]);
+        }
+
+        if ($renamed === [] || ! $product->parent_id) {
+            if ($onGuarded) {
+                $onGuarded();
+            }
+
+            return $submittedCommon;
+        }
+
+        $newTuple = array_merge(
+            array_intersect_key($product->values['common'] ?? [], array_flip($ownAxisCodes)),
+            $renamed
+        );
+
+        DB::transaction(function () use ($product, $newTuple, $onGuarded): void {
+            $this->getModel()::query()->whereKey($product->parent_id)->lockForUpdate()->exists();
+
+            if (! $this->isUniqueVariantForProduct($product->parent_id, $newTuple, null, $product->id, $product->type)) {
+                throw ValidationException::withMessages([
+                    'axis' => [trans('admin::app.catalog.products.edit.types.configurable.variant-given-exists', ['variants' => json_encode($newTuple)])],
+                ]);
+            }
+
+            if ($onGuarded) {
+                $onGuarded();
+            }
+        });
+
+        return $submittedCommon;
+    }
+
+    /**
+     * Compares two variant attribute values for equality, normalizing array values
+     * (e.g. multiselect) via JSON encoding instead of a naive string cast, which
+     * would otherwise collapse any two arrays to the literal string "Array".
+     */
+    private function variantValueEquals(mixed $a, mixed $b): bool
+    {
+        if (is_array($a) || is_array($b)) {
+            return json_encode($a) === json_encode($b);
+        }
+
+        return (string) $a === (string) $b;
     }
 
     /**
@@ -174,7 +349,7 @@ class ProductRepository extends Repository
 
         if (! $product) {
             throw (new ModelNotFoundException)->setModel(
-                get_class($this->model), $slug
+                $this->model::class, $slug
             );
         }
 
@@ -219,7 +394,7 @@ class ProductRepository extends Repository
         return $query->paginate($limit);
     }
 
-    public function queryBuilderFromDatabase($params)
+    public function queryBuilderFromDatabase($params): array
     {
         $query = $this->with([
             'attribute_family',
@@ -227,26 +402,25 @@ class ProductRepository extends Repository
             'super_attributes',
             'variants',
         ])->scopeQuery(function ($query) use ($params) {
-            $prefix = DB::getTablePrefix();
-
-            // Check if distinct is actually required here
-            $qb = $query
-                ->select('products.*')
-                ->leftJoin('products as variants', DB::raw('COALESCE('.$prefix.'variants.parent_id, '.$prefix.'variants.id)'), '=', 'products.id');
+            $qb = $query->select('products.*');
 
             if (! empty($params['type'])) {
                 $qb->where('products.type', $params['type']);
             }
 
             if (! empty($params['sku'])) {
-                $qb->where('products.sku', 'like', '%'.$params['sku'].'%');
+                $qb->where('products.sku', 'like', '%'.addcslashes($params['sku'], '\\%_').'%');
+            }
+
+            if (! empty($params['ids'])) {
+                $qb->whereIn('products.id', array_filter((array) $params['ids'], 'is_numeric'));
             }
 
             if (! empty($params['skipSku'])) {
                 $qb->whereNotIn('products.sku', is_string($params['skipSku']) ? [$params['skipSku']] : $params['skipSku']);
             }
 
-            return $qb->groupBy('products.id');
+            return $qb;
         });
 
         return [$query];
@@ -272,9 +446,8 @@ class ProductRepository extends Repository
      * Returns product's super attribute with options.
      *
      * @param  Product  $product
-     * @return Collection
      */
-    public function getSuperAttributes($product)
+    public function getSuperAttributes($product): array
     {
         $superAttributes = [];
 

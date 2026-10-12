@@ -2,6 +2,7 @@
 
 namespace Webkul\ElasticSearch\Client\Fake;
 
+use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\ClientInterface;
 use Elastic\Elasticsearch\Response\Elasticsearch;
 use Elastic\Elasticsearch\Traits\ClientEndpointsTrait;
@@ -17,10 +18,6 @@ class FakeElasticClient implements ClientInterface
     use ClientEndpointsTrait;
     use EndpointTrait;
     use NamespaceTrait;
-
-    protected $transport;
-
-    protected $logger;
 
     /**
      * Specify is the request is asyncronous
@@ -43,12 +40,9 @@ class FakeElasticClient implements ClientInterface
     protected array $namespace;
 
     public function __construct(
-        $transport,
-        $logger
+        protected $transport,
+        protected $logger
     ) {
-        $this->transport = $transport;
-        $this->logger = $logger;
-
         $this->defaultTransportSettings($this->transport);
     }
 
@@ -73,7 +67,7 @@ class FakeElasticClient implements ClientInterface
      */
     protected function defaultTransportSettings($transport): void
     {
-        $transport->setUserAgent('elasticsearch-php', self::VERSION);
+        $transport->setUserAgent('elasticsearch-php', Client::VERSION);
     }
 
     /**
@@ -135,8 +129,6 @@ class FakeElasticClient implements ClientInterface
      */
     public function sendRequest(RequestInterface $request)
     {
-        $result = new Elasticsearch;
-
-        return $result;
+        return new Elasticsearch;
     }
 }

@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'acl' => [
+        'variant-structures' => 'Estructuras de variantes',
+    ],
+
     'datagrid' => [
         'copy-of-slug'                  => 'copia-de-:value',
         'copy-of'                       => 'Copia de :value',
@@ -10,7 +14,9 @@ return [
         'product-can-not-be-copied' => 'Los productos de tipo :type no se pueden copiar',
     ],
     'type' => [
-        'configurable' => 'Configurable',
-        'simple'       => 'Simple',
+        'configurable'  => 'Configurable',
+        'simple'        => 'Simple',
+        'variant-group' => 'Grupo de variantes',
+        'variant_group' => 'Grupo de variantes',
     ],
 ];

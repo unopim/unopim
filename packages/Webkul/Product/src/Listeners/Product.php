@@ -2,14 +2,13 @@
 
 namespace Webkul\Product\Listeners;
 
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Repositories\ProductRepository;
 
 class Product
 {
     /**
      * Create a new listener instance.
-     *
-     * @return void
      */
     public function __construct(
         protected ProductRepository $productRepository,
@@ -19,13 +18,12 @@ class Product
      * Returns parents bundle product ids associated with simple product
      *
      * @param  \Webkul\Product\Contracts\Product  $product
-     * @return array
      */
-    public function getAllRelatedProductIds($product)
+    public function getAllRelatedProductIds($product): array
     {
         $productIds = [$product->id];
 
-        if ($product->type == 'simple') {
+        if ($product->type == ProductType::Simple->value) {
             if ($product->parent_id) {
                 $productIds[] = $product->parent_id;
             }
@@ -33,7 +31,7 @@ class Product
             $productIds = array_merge(
                 $productIds,
             );
-        } elseif ($product->type == 'configurable') {
+        } elseif ($product->type == ProductType::Configurable->value) {
             $productIds = [
                 ...$product->variants->pluck('id')->toArray(),
                 ...$productIds,

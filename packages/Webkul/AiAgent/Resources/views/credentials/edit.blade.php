@@ -124,7 +124,7 @@
                                         type="password"
                                         name="apiKey"
                                         rules="required"
-                                        value="{{ old('apiKey') ?: $credential->apiKey }}"
+                                        value="{{ old('apiKey') ?: ($credential->getRawOriginal('apiKey') ? '********' : '') }}"
                                         :label="trans('ai-agent::app.credentials.fields.api-key')"
                                         :placeholder="trans('ai-agent::app.credentials.fields.api-key-placeholder')"
                                     />
@@ -154,12 +154,7 @@
 
                         <!-- Right sidebar -->
                         <div class="flex flex-col gap-2 w-[360px] max-w-full max-sm:w-full">
-                            <x-admin::accordion>
-                                <x-slot:header>
-                                    <p class="p-2.5 text-base text-gray-800 dark:text-white font-semibold">
-                                        @lang('ai-agent::app.credentials.settings')
-                                    </p>
-                                </x-slot:header>
+                            <x-admin::accordion :title="trans('ai-agent::app.credentials.settings')">
 
                                 <x-slot:content>
                                     <!-- Status -->
@@ -217,7 +212,7 @@
                                 this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
 
                                 if (response.data.redirect_url) {
-                                    window.location.href = response.data.redirect_url;
+                                    this.$navigate(response.data.redirect_url);
                                 }
                             })
                             .catch((error) => {

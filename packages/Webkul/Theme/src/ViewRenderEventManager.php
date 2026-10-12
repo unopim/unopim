@@ -60,19 +60,16 @@ class ViewRenderEventManager
      * Add templates for render
      *
      * @param  string  $template
-     * @return void
      */
-    public function addTemplate($template)
+    public function addTemplate($template): void
     {
-        array_push($this->templates, $template);
+        $this->templates[] = $template;
     }
 
     /**
      * Renders templates
-     *
-     * @return string
      */
-    public function render()
+    public function render(): string
     {
         $string = '';
 

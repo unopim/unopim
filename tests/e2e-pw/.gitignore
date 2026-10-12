@@ -1,15 +1,17 @@
 # Playwright
 node_modules/
-/test-results/
+/test-results*/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
-/.state/
+/.state*/
 /.playwright-mcp/
+/shots/
 
 # Local credentials (keep .env.example for reference)
 .api-config.json
+.api-*.json
 .env
 
 # Editor / OS noise

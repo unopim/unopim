@@ -8,6 +8,9 @@ use Webkul\Core\Models\Channel;
 use Webkul\Core\Models\Currency;
 use Webkul\Core\Models\Locale;
 
+/**
+ * @extends Factory<Channel>
+ */
 class ChannelFactory extends Factory
 {
     /**
@@ -35,7 +38,7 @@ class ChannelFactory extends Factory
     public function definition(): array
     {
         return [
-            'code'              => $code = $this->faker->unique()->word(),
+            'code'              => $code = fake()->unique()->word(),
             'root_category_id'  => Category::whereIsRoot()->first()->id,
         ];
     }

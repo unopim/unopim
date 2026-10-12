@@ -9,13 +9,12 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Catalog\CategoryFieldDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
-use Webkul\Admin\Http\Requests\MassDestroyRequest;
-use Webkul\Admin\Http\Requests\MassUpdateRequest;
+use Webkul\Admin\Http\Requests\CategoryFieldForm;
+use Webkul\Admin\Http\Requests\SelectableMassDestroyRequest;
+use Webkul\Admin\Http\Requests\SelectableMassUpdateRequest;
 use Webkul\Category\Repositories\CategoryFieldRepository;
 use Webkul\Category\Repositories\CategoryRepository;
-use Webkul\Category\Rules\NotSupportedFields;
 use Webkul\Core\Repositories\LocaleRepository;
-use Webkul\Core\Rules\Code;
 
 class CategoryFieldController extends Controller
 {
@@ -55,17 +54,17 @@ class CategoryFieldController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(): RedirectResponse
+    public function store(CategoryFieldForm $request): RedirectResponse|JsonResponse
     {
-        $this->validate(request(), [
-            'code'     => ['required', 'unique:category_fields,code', new Code, new NotSupportedFields],
-            'type'     => 'required',
-            'status'   => 'required',
-            'position' => 'required|min:0',
-            'section'  => 'required',
-        ]);
+        $requestData = array_merge([
+            'status'   => 1,
+            'position' => 0,
+            'section'  => 'left',
+        ], request()->all());
 
-        $requestData = request()->all();
+        if (($requestData['validation'] ?? null) === 'none') {
+            $requestData['validation'] = null;
+        }
 
         Event::dispatch('catalog.category_field.create.before');
 
@@ -75,7 +74,7 @@ class CategoryFieldController extends Controller
 
         session()->flash('success', trans('admin::app.catalog.category_fields.create-success'));
 
-        return redirect()->route('admin.catalog.category_fields.index');
+        return redirect()->route('admin.catalog.category_fields.edit', $attribute->id);
     }
 
     /**
@@ -102,17 +101,9 @@ class CategoryFieldController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(int $id): RedirectResponse
+    public function update(CategoryFieldForm $request, int $id): RedirectResponse
     {
-        $this->validate(request(), [
-            'code'     => ['required', 'unique:category_fields,code,'.$id, new Code],
-            'type'     => 'required',
-            'status'   => 'required',
-            'position' => 'required',
-            'section'  => 'required',
-        ]);
-
-        $requestData = request()->except(['code', 'type', 'value_per_locale', 'is_unique']);
+        $requestData = request()->except(['code', 'type', '_options_dirty']);
 
         Event::dispatch('catalog.category_field.update.before', $id);
 
@@ -160,9 +151,9 @@ class CategoryFieldController extends Controller
     /**
      * Remove the specified resources from database.
      */
-    public function massDestroy(MassDestroyRequest $massDestroyRequest): JsonResponse
+    public function massDestroy(SelectableMassDestroyRequest $massDestroyRequest): JsonResponse
     {
-        $indices = $massDestroyRequest->input('indices');
+        $indices = $massDestroyRequest->selectedIds(CategoryFieldDataGrid::class);
         $delete = false;
 
         foreach ($indices as $index) {
@@ -194,9 +185,9 @@ class CategoryFieldController extends Controller
     /**
      * Updates the status of category fields
      */
-    public function massUpdate(MassUpdateRequest $massUpdateRequest): JsonResponse
+    public function massUpdate(SelectableMassUpdateRequest $massUpdateRequest): JsonResponse
     {
-        $categoryFieldIds = $massUpdateRequest->input('indices');
+        $categoryFieldIds = $massUpdateRequest->selectedIds(CategoryFieldDataGrid::class);
 
         $value = $massUpdateRequest->input('value');
 

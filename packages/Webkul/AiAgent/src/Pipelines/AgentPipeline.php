@@ -36,7 +36,7 @@ class AgentPipeline
      */
     public function process(AgentPayload $payload): AgentPayload
     {
-        return app(Pipeline::class)
+        return resolve(Pipeline::class)
             ->send($payload)
             ->through($this->stages)
             ->via('handle')

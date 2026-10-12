@@ -49,7 +49,7 @@ class VerifyProduct implements PimTool
                     return json_encode(['error' => "Product not found: {$sku}"]);
                 }
 
-                $values = json_decode($product->values, true) ?? [];
+                $values = json_decode((string) $product->values, true) ?? [];
                 $common = $values['common'] ?? [];
                 $channelLocale = $values['channel_locale_specific'][$this->context->channel][$this->context->locale] ?? [];
                 $categories = $values['categories'] ?? [];
@@ -68,7 +68,7 @@ class VerifyProduct implements PimTool
                 if (empty($description)) {
                     $issues[] = 'Missing description';
                     $score -= 15;
-                } elseif (mb_strlen($description) < 50) {
+                } elseif (mb_strlen((string) $description) < 50) {
                     $issues[] = 'Description is very short (< 50 chars)';
                     $score -= 5;
                 }
@@ -126,7 +126,7 @@ class VerifyProduct implements PimTool
                         'sku'           => $sku,
                         'quality_score' => $score,
                         'quality_level' => $quality,
-                        'issues'        => empty($issues) ? null : $issues,
+                        'issues'        => $issues === [] ? null : $issues,
                         'filled_fields' => $filledFields,
                         'categories'    => $categories,
                         'has_image'     => ! empty($common['image']),

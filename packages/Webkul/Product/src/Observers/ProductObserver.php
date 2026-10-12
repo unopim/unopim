@@ -2,18 +2,18 @@
 
 namespace Webkul\Product\Observers;
 
+use Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Product\Contracts\Product;
 
-class ProductObserver
+class ProductObserver implements ShouldHandleEventsAfterCommit
 {
     /**
      * Handle the Product "deleted" event.
      *
      * @param  Product  $product
-     * @return void
      */
-    public function deleted($product)
+    public function deleted($product): void
     {
         Storage::deleteDirectory('product/'.$product->id);
     }

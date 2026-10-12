@@ -1,6 +1,14 @@
-@props(['isMultiRow' => false])
+@props([
+    'isMultiRow' => false,
+    'compact' => false,
+])
 
-<v-datagrid {{ $attributes }}>
+<x-admin::form.fields.load :types="['text', 'number', 'category-tree']" />
+
+<v-datagrid
+    compact="{{ $compact ? 'true' : 'false' }}"
+    {{ $attributes }}
+>
     <x-admin::shimmer.datagrid :isMultiRow="$isMultiRow" />
 
     {{ $slot }}
@@ -11,7 +19,7 @@
         type="text/x-template"
         id="v-datagrid-template"
     >
-        <div>
+        <div :class="[{'compact-datagrid': isCompact()}, toolbarLayout['is-stacked'] ? 'pb-20' : '']">
             <x-admin::datagrid.toolbar />
 
             <div class="flex mt-4">
@@ -59,11 +67,15 @@
         app.component('v-datagrid', {
             template: '#v-datagrid-template',
 
-            props: ['src', 'filterAttributesSrc'],
+            props: ['src', 'filterAttributesSrc', 'viewsSrc', 'scopeChannel', 'scopeLocale', 'compact', 'storageKey'],
 
             data() {
                 return {
                     isLoading: false,
+
+                    isMassActionPending: false,
+
+                    isSelectingAllMatching: false,
 
                     priceValue: '',
 
@@ -77,6 +89,34 @@
 
                     activeFilterIndices: [],
 
+                    expandedFilter: null,
+
+                    savedViews: [],
+
+                    viewScope: null,
+
+                    appliedViewId: null,
+
+                    appliedViewLabel: null,
+
+                    appliedViewShared: false,
+
+                    appliedViewOwner: false,
+
+                    viewName: '',
+
+                    viewShared: false,
+
+                    viewSnapshot: null,
+
+                    defaultPerPage: 10,
+
+                    viewSearch: '',
+
+                    viewSearchTimer: null,
+
+                    viewsLoading: false,
+
                     showFilterPicker: false,
 
                     filterPickerSearch: '',
@@ -85,6 +125,8 @@
 
                     addedFilterColumns: {},
 
+                    attributeConditions: {},
+
                     filterPickerPage: 1,
 
                     filterPickerLastPage: 1,
@@ -92,6 +134,8 @@
                     filterPickerLoading: false,
 
                     filterPickerSearchTimer: null,
+
+                    toolbarWidth: 0,
 
                     available: {
                         id: null,
@@ -113,6 +157,8 @@
                                 mode: 'none',
 
                                 action: null,
+
+                                allMatching: false,
                             },
 
                             indices: [],
@@ -147,20 +193,151 @@
             mounted() {
                 this.boot();
 
+                if (this.viewsSrc) {
+                    this.loadViews();
+                }
+
                 this._onShareLinkChanged = () => this.get();
                 this.$emitter.on('share-link-changed', this._onShareLinkChanged);
+
+                this.observeToolbar();
+            },
+
+            updated() {
+                this.observeToolbar();
             },
 
             beforeUnmount() {
+                this._toolbarObserver?.disconnect();
+                this.syncBottomBarClass(false);
+
                 if (this._onShareLinkChanged) {
                     this.$emitter.off('share-link-changed', this._onShareLinkChanged);
                 }
             },
 
+            computed: {
+                /**
+                 * Persisted state is keyed by this rather than `src` so two grids on
+                 * the same endpoint can keep their own filters — a picker embedded in
+                 * a modal would otherwise inherit whatever the listing page applied.
+                 * Defaults to `src`, leaving already-stored entries matching.
+                 */
+                stateKey() {
+                    return this.storageKey || this.src;
+                },
+
+                /**
+                 * The toolbar has to stay on one line beside anything that narrows the
+                 * page (the docked Agentic PIM panel, a split view), so its density is
+                 * driven by its own measured width rather than the viewport's.
+                 */
+                toolbarLayout() {
+                    if (! this.toolbarWidth) {
+                        return {};
+                    }
+
+                    if (this.toolbarWidth < 460) {
+                        return {
+                            'is-stacked':   true,
+                            'is-compact':   true,
+                            'is-condensed': true,
+                            'is-tight':     true,
+                        };
+                    }
+
+                    return {
+                        'is-compact':   this.toolbarWidth < 1200,
+                        'is-condensed': this.toolbarWidth < 1000,
+                        'is-tight':     this.toolbarWidth < 760,
+                    };
+                },
+
+                filterFields() {
+                    const types = {
+                        string:  'text',
+                        integer: 'number',
+                    };
+
+                    return (this.available.columns ?? []).reduce((fields, column) => {
+                        fields[column.index] = {
+                            name:        column.index,
+                            type:        types[column.type] ?? 'text',
+                            label:       column.filter_label ?? column.label,
+                            placeholder: column.filter_label ?? column.label,
+                            options:     [],
+                            async:       false,
+                        };
+
+                        return fields;
+                    }, {});
+                },
+
+                isPageFullySelected() {
+                    return this.applied.massActions.meta.mode === 'all'
+                        && this.available.records.length > 0;
+                },
+
+                isAllMatchingSelected() {
+                    const total = this.available.meta?.total ?? 0;
+
+                    return total > 0 && (
+                        this.applied.massActions.meta.allMatching
+                        || this.applied.massActions.indices.length >= total
+                    );
+                },
+
+                selectedCount() {
+                    return this.applied.massActions.meta.allMatching
+                        ? (this.available.meta?.total ?? 0)
+                        : this.applied.massActions.indices.length;
+                },
+
+                canSelectAllMatching() {
+                    return this.isPageFullySelected
+                        && ! this.isAllMatchingSelected
+                        && (this.available.meta?.last_page ?? 1) > 1;
+                },
+            },
+
             watch: {
+                toolbarLayout: {
+                    handler(layout) {
+                        this.syncBottomBarClass(!! layout['is-stacked']);
+                    },
+
+                    immediate: true,
+                },
+
+                /**
+                 * Unticking any row on the page leaves "all matching" mode, falling back to the
+                 * rows still ticked.
+                 */
                 'applied.massActions.indices': {
                     handler() {
+                        if (
+                            this.applied.massActions.meta.allMatching
+                            && this.available.records.some(record => ! this.applied.massActions.indices.includes(record[this.available.meta.primary_column]))
+                        ) {
+                            this.applied.massActions.meta.allMatching = false;
+                        }
+
                         this.setCurrentSelectionMode();
+                    },
+
+                    deep: true,
+                },
+
+                /**
+                 * Selected ids survive pagination and sorting, but a new search or filter
+                 * gives a different result set, so a stale selection would keep the mass
+                 * action bar (and its count) in place over records that no longer match.
+                 */
+                'applied.filters': {
+                    handler() {
+                        if (this.applied.massActions.indices.length) {
+                            this.clearMassSelection();
+                        }
                     },
 
                     deep: true,
@@ -175,9 +352,54 @@
 
                     this.filterPickerSearchTimer = setTimeout(() => this.loadFilterAttributes(true), 300);
                 },
+
+                viewSearch() {
+                    clearTimeout(this.viewSearchTimer);
+
+                    this.viewSearchTimer = setTimeout(() => this.loadViews(), 300);
+                },
             },
 
             methods: {
+                /**
+                 * Track the toolbar's own width. The element is only in the DOM once the
+                 * grid has loaded, so re-attach whenever the render swaps it out.
+                 */
+                observeToolbar() {
+                    const toolbar = this.$refs.toolbar;
+
+                    if (! toolbar || toolbar === this._toolbarElement) {
+                        return;
+                    }
+
+                    this._toolbarObserver?.disconnect();
+                    this._toolbarElement = toolbar;
+
+                    if (typeof ResizeObserver === 'undefined') {
+                        this.toolbarWidth = toolbar.clientWidth;
+
+                        return;
+                    }
+
+                    this._toolbarObserver = new ResizeObserver(([entry]) => {
+                        this.toolbarWidth = Math.round(entry.contentRect.width);
+                    });
+
+                    this._toolbarObserver.observe(toolbar);
+                },
+
+                /**
+                 * The Agentic PIM floating button is fixed to the same corner as the
+                 * phone-width toolbar bar; this body class lifts it clear of the bar.
+                 */
+                syncBottomBarClass(isOpen) {
+                    document.body.classList.toggle('datagrid-bar-open', isOpen);
+                },
+
+                isCompact() {
+                    return this.compact === true || this.compact === 'true';
+                },
+
                 /**
                  * Initialization: This function checks for any previously saved filters in local storage and applies them as needed.
                  *
@@ -197,7 +419,7 @@
                     }
 
                     if (datagrids?.length) {
-                        const currentDatagrid = datagrids.find(({ src }) => src === this.src);
+                        const currentDatagrid = datagrids.find(({ src }) => src === this.stateKey);
 
                         if (currentDatagrid) {
                             this.applied.pagination = currentDatagrid.applied.pagination;
@@ -212,9 +434,16 @@
                                 this.activeFilterIndices = currentDatagrid.activeFilterIndices;
                             }
 
-                            if (currentDatagrid.defaultFilterIndices?.length) {
-                                this.defaultFilterIndices = currentDatagrid.defaultFilterIndices;
-                            }
+                            this.addedFilterColumns = currentDatagrid.addedFilterColumns ?? {};
+
+                            this.appliedViewId = currentDatagrid.appliedViewId ?? null;
+                            this.appliedViewLabel = currentDatagrid.appliedViewLabel ?? null;
+                            this.appliedViewShared = currentDatagrid.appliedViewShared ?? false;
+                            this.appliedViewOwner = currentDatagrid.appliedViewOwner ?? false;
+                            this.viewSnapshot = currentDatagrid.viewSnapshot ?? null;
+                            this.viewScope = currentDatagrid.viewScope ?? null;
+
+                            // derived from the columns, so never restored from storage
 
                             if (urlParams.has('search')) {
                                 let searchAppliedColumn = this.findAppliedColumn('all');
@@ -243,24 +472,8 @@
                             per_page: this.applied.pagination.perPage,
                         },
 
-                        sort: {},
-
-                        filters: {},
+                        ...this.queryParams(),
                     };
-
-                    if (
-                        this.applied.sort.column &&
-                        this.applied.sort.order
-                    ) {
-                        params.sort = this.applied.sort;
-                    }
-
-                    this.applied.filters.columns.forEach(column => {
-                        params.filters[column.index] = column.value;
-                    });
-
-                    params.managedColumns = this.available.meta?.managedColumn?.columns;
-                    params.manageableColumn = this.available.meta?.managedColumn?.columns;
 
                     this.isLoading = true;
 
@@ -286,6 +499,17 @@
                                 managedColumns
                             } = response.data;
 
+                            /**
+                             * Guard against malformed responses (e.g. an auth redirect returning HTML instead of
+                             * the datagrid JSON). Without a valid columns array the filter-initialisation below
+                             * throws `Cannot read properties of undefined (reading 'filter')` and breaks the page.
+                             */
+                            if (! Array.isArray(columns)) {
+                                this.isLoading = false;
+
+                                return;
+                            }
+
                             this.available.id = id;
 
                             this.available.columns = columns;
@@ -296,6 +520,10 @@
                                         this.available.columns.push(col);
                                     }
                                 });
+
+                                this.activeFilterIndices = this.activeFilterIndices.filter(
+                                    index => this.available.columns.some(col => col.index === index)
+                                );
                             }
 
                             this.available.actions = actions;
@@ -304,21 +532,32 @@
 
                             this.available.records = records;
 
+                            if (this.applied.massActions.meta.allMatching) {
+                                this.addPageToSelection();
+                            }
+
                             this.available.meta = meta;
 
                             this.available.searchPlaceholder = search_placeholder;
 
+                            const declaredFilters = this.available.meta?.default_filters;
+
+                            const defaultFilterColumns = Array.isArray(declaredFilters)
+                                ? declaredFilters.filter(
+                                    index => this.available.columns.some(col => col.index === index && col.filterable)
+                                )
+                                : this.available.columns
+                                    .filter(col => col.filterable && col.visible !== false && col.default_filter !== false)
+                                    .map(col => col.index);
+
                             // Initialize active filters on first load
                             if (this.activeFilterIndices.length === 0) {
-                                this.activeFilterIndices = this.available.columns
-                                    .filter(col => col.filterable && col.visible !== false)
-                                    .map(col => col.index);
+                                this.activeFilterIndices = [...defaultFilterColumns];
                             }
 
-                            // Track default filter indices so they cannot be removed
                             if (this.defaultFilterIndices.length === 0) {
                                 this.defaultFilterIndices = this.available.columns
-                                    .filter(col => col.filterable && col.visible !== false)
+                                    .filter(col => defaultFilterColumns.includes(col.index) && col.removable_filter !== true)
                                     .map(col => col.index);
                             }
 
@@ -335,6 +574,8 @@
                                 this.applied.filters.columns = this.applied.filters.columns.filter(column => column.index === 'all' || (filterableColumns.includes(column.index)));
                             }
 
+                            this.syncAttributeConditions();
+
                             this.setCurrentSelectionMode();
 
                             this.updateDatagrids();
@@ -345,11 +586,50 @@
                             */
                             this.$emitter.emit('change-datagrid', {
                                 available: this.available,
-                                applied: this.applied
+                                applied: this.applied,
+                                resolveSelection: (action = {}) => this.resolveSelection(action),
                             });
 
                             this.isLoading = false;
                         });
+                },
+
+                /**
+                 * Sort, filter and scope params describing the current result set, shared by the
+                 * listing request and by mass actions that target every matching record.
+                 *
+                 * @returns {object}
+                 */
+                queryParams() {
+                    let params = {
+                        sort: {},
+
+                        filters: {},
+                    };
+
+                    if (
+                        this.applied.sort.column &&
+                        this.applied.sort.order
+                    ) {
+                        params.sort = this.applied.sort;
+                    }
+
+                    this.applied.filters.columns.forEach(column => {
+                        params.filters[column.index] = column.value;
+                    });
+
+                    if (this.viewScope?.channel) {
+                        params.channel = this.viewScope.channel;
+                    }
+
+                    if (this.viewScope?.locale) {
+                        params.locale = this.viewScope.locale;
+                    }
+
+                    params.managedColumns = this.available.meta?.managedColumn?.columns;
+                    params.manageableColumn = this.available.meta?.managedColumn?.columns;
+
+                    return params;
                 },
 
                 /**
@@ -509,7 +789,11 @@
                 },
 
                 runFilters() {
+                    this.applied.pagination.page = 1;
+
                     this.get();
+
+                    this.autosaveAppliedView();
                 },
 
                 applyFilter(column, requestedValue, additional = {}) {
@@ -644,6 +928,48 @@
                 managedColumns(columns) {
                     this.available.meta.managedColumn.columns = columns;
                     this.get();
+
+                    this.autosaveAppliedView();
+                },
+
+                autosaveAppliedView() {
+                    if (! this.appliedViewId || ! this.appliedViewOwner || ! this.viewsSrc) {
+                        return;
+                    }
+
+                    const signature = this.dirtySignature();
+
+                    if (signature === this.viewSnapshot) {
+                        return;
+                    }
+
+                    const name = this.appliedViewLabel;
+
+                    this.$axios.post(this.viewsSrc, {
+                        name: name,
+                        is_shared: this.appliedViewShared,
+                        payload: this.currentViewPayload(),
+                    })
+                        .then(response => {
+                            const saved = response.data.view;
+
+                            this.appliedViewId = saved?.id ?? this.appliedViewId;
+                            this.viewSnapshot = signature;
+
+                            const cached = this.savedViews.find(view => view.id === this.appliedViewId);
+
+                            if (cached && saved) {
+                                cached.payload = saved.payload;
+                            }
+
+                            this.updateDatagrids();
+                        })
+                        .catch(error => {
+                            this.$emitter.emit('add-flash', {
+                                type: 'error',
+                                message: error.response?.data?.message ?? '',
+                            });
+                        });
                 },
 
                 //================================================================
@@ -728,6 +1054,24 @@
                     return appliedColumn?.value ?? [];
                 },
 
+                setAppliedColumnValues(column, values) {
+                    if (! values.length) {
+                        this.applied.filters.columns = this.applied.filters.columns.filter(
+                            appliedColumn => appliedColumn.index !== column.index
+                        );
+
+                        return;
+                    }
+
+                    let appliedColumn = this.findAppliedColumn(column.index);
+
+                    if (appliedColumn) {
+                        appliedColumn.value = values;
+                    } else {
+                        this.applied.filters.columns.push({ index: column.index, value: values });
+                    }
+                },
+
                 removeAppliedColumnValue(columnIndex, appliedColumnValue) {
                     let appliedColumn = this.findAppliedColumn(columnIndex);
 
@@ -745,6 +1089,8 @@
                     this.applied.filters.columns = this.applied.filters.columns.filter(column => column.index !== columnIndex);
 
                     this.get();
+
+                    this.autosaveAppliedView();
                 },
 
                 //================================================================
@@ -801,6 +1147,101 @@
                     }
                 },
 
+                /**
+                 * Select every record matching the current filters/search across all pages. No ids
+                 * are fetched: mass actions that support it receive the grid's filters instead, so
+                 * the selection is not capped by what the browser can hold.
+                 *
+                 * @returns {void}
+                 */
+                selectAllMatching() {
+                    this.addPageToSelection();
+
+                    this.applied.massActions.meta.allMatching = true;
+                },
+
+                addPageToSelection() {
+                    this.available.records.forEach(record => {
+                        const id = record[this.available.meta.primary_column];
+
+                        if (! this.applied.massActions.indices.includes(id)) {
+                            this.applied.massActions.indices.push(id);
+                        }
+                    });
+                },
+
+                /**
+                 * Resolve the request payload describing the selection for a mass action. In "all
+                 * matching" mode, actions that support it get the grid's filters; any other action
+                 * falls back to the id list resolved server-side. Empty sort and filter values are
+                 * dropped: the listing's query string never carries them, and in a JSON body the grid
+                 * rejects an empty sort and turns an empty search into a filter matching nothing.
+                 *
+                 * @param {object} action
+                 * @returns {Promise<object>}
+                 */
+                resolveSelection(action) {
+                    if (! this.applied.massActions.meta.allMatching) {
+                        return Promise.resolve({ indices: this.applied.massActions.indices });
+                    }
+
+                    if (action.supportsSelectAll) {
+                        const { sort, filters, ...params } = this.queryParams();
+
+                        const appliedFilters = Object.fromEntries(
+                            Object.entries(filters).filter(([, value]) => ! Array.isArray(value) || value.length)
+                        );
+
+                        return Promise.resolve({
+                            ...params,
+                            ...(Object.keys(appliedFilters).length ? { filters: appliedFilters } : {}),
+                            select_all: 1,
+                        });
+                    }
+
+                    this.isSelectingAllMatching = true;
+
+                    const truncationMessage = action.warnTruncation ? this.selectionTruncationMessage(action) : null;
+
+                    if (truncationMessage) {
+                        this.$emitter.emit('add-flash', { type: 'warning', message: truncationMessage });
+                    }
+
+                    return this.$axios
+                        .get(this.src, { params: { ...this.queryParams(), mass_action_ids: 1 } })
+                        .then(response => ({ indices: response.data?.ids ?? [] }))
+                        .finally(() => {
+                            this.isSelectingAllMatching = false;
+                        });
+                },
+
+                /**
+                 * Warning shown when "all matching" is selected but the action can only receive the
+                 * id list, which the server caps.
+                 *
+                 * @param {object} action
+                 * @returns {string|null}
+                 */
+                selectionTruncationMessage(action) {
+                    const limit = this.available.meta?.mass_action_id_limit;
+
+                    const total = this.available.meta?.total ?? 0;
+
+                    if (! this.applied.massActions.meta.allMatching || action.supportsSelectAll || ! limit || total <= limit) {
+                        return null;
+                    }
+
+                    return "@lang('admin::app.components.datagrid.index.selection-truncated')"
+                        .replace(':limit', limit)
+                        .replace(':total', total);
+                },
+
+                clearMassSelection() {
+                    this.applied.massActions.indices = [];
+                    this.applied.massActions.meta.mode = 'none';
+                    this.applied.massActions.meta.allMatching = false;
+                },
+
                 validateMassAction() {
                     if (! this.applied.massActions.indices.length) {
                         this.$emitter.emit('add-flash', { type: 'warning', message: "@lang('admin::app.components.datagrid.index.no-records-selected')" });
@@ -853,69 +1294,94 @@
                         modalEvent = modal;
                     }
 
+                    const truncationMessage = this.selectionTruncationMessage(action);
+
+                    if (truncationMessage && modal) {
+                        this.$emitter.emit('add-flash', { type: 'warning', message: truncationMessage });
+                    }
+
                     this.$emitter.emit(modalEvent, {
+                        ...(truncationMessage && ! modal ? { message: truncationMessage } : {}),
                         agree: (data) => {
-                            switch (method) {
-                                case 'post':
-                                case 'put':
-                                case 'patch':
-                                    this.$axios[method](action.url, {
-                                            indices: this.applied.massActions.indices,
-                                            value: this.applied.massActions.value,
-                                            filter: data
-                                        })
-                                        .then(response => {
-                                            if (response.data.redirect && actionType === 'redirect') {
-                                                window.location.href = response.data.redirect;
-                                                return;
-                                            }
+                            const value = this.applied.massActions.value;
 
-                                            this.$emitter.emit('add-flash', {
-                                                type: 'success',
-                                                message: response.data.message
-                                            });
+                            this.resolveSelection(action).then(selection => this.sendMassAction(action, method, actionType, selection, value, data));
 
-                                            this.get();
-                                        })
-                                        .catch((error) => {
-                                            this.$emitter.emit('add-flash', {
-                                                type: 'error',
-                                                message: error.response.data.message
-                                            });
-                                        });
-
-                                    break;
-
-                                case 'delete':
-                                    this.$axios[method](action.url, {
-                                            indices: this.applied.massActions.indices
-                                        })
-                                        .then(response => {
-                                            this.$emitter.emit('add-flash', {
-                                                type: 'success',
-                                                message: response.data.message
-                                            });
-
-                                            this.get();
-                                        })
-                                        .catch((error) => {
-                                            this.$emitter.emit('add-flash', {
-                                                type: 'error',
-                                                message: error.response.data.message
-                                            });
-                                        });
-
-                                    break;
-
-                                default:
-                                    console.error('Method not supported.');
-
-                                    break;
-                            }
-
-                            this.applied.massActions.indices = [];
+                            this.clearMassSelection();
                         }
                     });
+                },
+
+                sendMassAction(action, method, actionType, selection, value, data) {
+                    if (this.isMassActionPending) {
+                        return;
+                    }
+
+                    this.isMassActionPending = true;
+
+                    switch (method) {
+                        case 'post':
+                        case 'put':
+                        case 'patch':
+                            this.$axios[method](action.url, {
+                                    ...selection,
+                                    value: value,
+                                    filter: data
+                                })
+                                .then(response => {
+                                    if (response.data.redirect && actionType === 'redirect') {
+                                        this.$navigate(response.data.redirect);
+                                        return;
+                                    }
+
+                                    this.$emitter.emit('add-flash', {
+                                        type: 'success',
+                                        message: response.data.message
+                                    });
+
+                                    this.get();
+                                })
+                                .catch((error) => {
+                                    this.$emitter.emit('add-flash', {
+                                        type: 'error',
+                                        message: error.response?.data?.message
+                                    });
+                                })
+                                .finally(() => {
+                                    this.isMassActionPending = false;
+                                });
+
+                            break;
+
+                        case 'delete':
+                            this.$axios[method](action.url, selection)
+                                .then(response => {
+                                    this.$emitter.emit('add-flash', {
+                                        type: 'success',
+                                        message: response.data.message
+                                    });
+
+                                    this.get();
+                                })
+                                .catch((error) => {
+                                    this.$emitter.emit('add-flash', {
+                                        type: 'error',
+                                        message: error.response?.data?.message
+                                    });
+                                })
+                                .finally(() => {
+                                    this.isMassActionPending = false;
+                                });
+
+                            break;
+
+                        default:
+                            this.isMassActionPending = false;
+
+                            console.error('Method not supported.');
+
+                            break;
+                    }
                 },
 
                 //=======================================================================================
@@ -940,18 +1406,24 @@
                     }
 
                     if (datagrids?.length) {
-                        const currentDatagrid = datagrids.find(({ src }) => src === this.src);
+                        const currentDatagrid = datagrids.find(({ src }) => src === this.stateKey);
 
                         if (currentDatagrid) {
                             datagrids = datagrids.map(datagrid => {
-                                if (datagrid.src === this.src) {
+                                if (datagrid.src === this.stateKey) {
                                     return {
                                         ...datagrid,
                                         requestCount: ++datagrid.requestCount,
                                         available: this.available,
                                         applied: appliedForStorage,
                                         activeFilterIndices: this.activeFilterIndices,
-                                        defaultFilterIndices: this.defaultFilterIndices,
+                                        addedFilterColumns: this.addedFilterColumns,
+                                        appliedViewId: this.appliedViewId,
+                                        appliedViewLabel: this.appliedViewLabel,
+                                        appliedViewShared: this.appliedViewShared,
+                                        appliedViewOwner: this.appliedViewOwner,
+                                        viewSnapshot: this.viewSnapshot,
+                                        viewScope: this.viewScope,
                                     };
                                 }
 
@@ -979,12 +1451,18 @@
                     }
 
                     return {
-                        src: this.src,
+                        src: this.stateKey,
                         requestCount: 0,
                         available: this.available,
                         applied: appliedForStorage,
                         activeFilterIndices: this.activeFilterIndices,
-                        defaultFilterIndices: this.defaultFilterIndices,
+                        addedFilterColumns: this.addedFilterColumns,
+                        appliedViewId: this.appliedViewId,
+                        appliedViewLabel: this.appliedViewLabel,
+                        appliedViewShared: this.appliedViewShared,
+                        appliedViewOwner: this.appliedViewOwner,
+                        viewSnapshot: this.viewSnapshot,
+                        viewScope: this.viewScope,
                     };
                 },
 
@@ -1030,7 +1508,11 @@
 
                     switch (method) {
                         case 'get':
-                            window.location.href = action.url;
+                            if (window.unopim && typeof window.unopim.visit === 'function') {
+                                window.unopim.visit(action.url);
+                            } else {
+                                window.location.href = action.url;
+                            }
 
                             break;
 
@@ -1056,7 +1538,7 @@
                                     this.$axios[method](action.url)
                                         .then(response => {
                                             if (response.data.redirect_url) {
-                                                window.location.href = response.data.redirect_url;
+                                                this.$navigate(response.data.redirect_url);
 
                                                 return;
                                             }
@@ -1107,10 +1589,344 @@
                     document.body.removeChild(textarea);
                 },
 
-                getActiveFilterColumns() {
-                    return this.available.columns.filter(
-                        col => col.filterable && this.activeFilterIndices.includes(col.index)
+                filterLabel(column) {
+                    return column.filter_label ?? column.label;
+                },
+
+                currentViewSignature() {
+                    return JSON.stringify(this.currentViewPayload());
+                },
+
+                /**
+                 * Signature of the applied filter values, the column selection and the
+                 * scope. Paging, sorting or opening an empty filter row must NOT read as
+                 * "unsaved changes" against an applied saved filter; the columns must,
+                 * since a saved filter carries them and restores them when cleared.
+                 */
+                dirtySignature() {
+                    const filters = this.applied.filters.columns
+                        .filter(column => column.index !== 'all' && (column.value?.length ?? 0) > 0)
+                        .map(column => ({ index: column.index, value: column.value }))
+                        .sort((a, b) => a.index.localeCompare(b.index));
+
+                    return JSON.stringify({
+                        filters,
+                        columns: this.available.meta?.managedColumn?.columns ?? [],
+                        channel: this.viewScope?.channel ?? this.scopeChannel ?? null,
+                        locale: this.viewScope?.locale ?? this.scopeLocale ?? null,
+                    });
+                },
+
+                hasUnsavedFilters() {
+                    if (this.appliedViewId) {
+                        return ! this.appliedViewOwner && this.dirtySignature() !== this.viewSnapshot;
+                    }
+
+                    return this.hasAppliedFilters();
+                },
+
+                appliedFilterCount() {
+                    return this.applied.filters.columns.filter(
+                        column => column.index !== 'all' && (column.value?.length ?? 0) > 0
+                    ).length;
+                },
+
+                hasAppliedFilters() {
+                    return this.appliedFilterCount() > 0;
+                },
+
+                clearAllFilters() {
+                    if (! this.hasAppliedFilters() && ! this.appliedViewId) {
+                        this.closeSavedFilters();
+
+                        return;
+                    }
+
+                    this.applied.filters.columns = this.applied.filters.columns.filter(
+                        column => column.index === 'all'
                     );
+
+                    this.attributeConditions = {};
+
+                    const hadView = !! this.appliedViewId;
+
+                    this.appliedViewId = null;
+                    this.appliedViewLabel = null;
+                    this.appliedViewShared = false;
+                    this.appliedViewOwner = false;
+                    this.viewSnapshot = null;
+
+                    if (hadView) {
+                        this.resetGridLayout();
+                    }
+
+                    this.applied.pagination.page = 1;
+
+                    this.closeSavedFilters();
+
+                    this.get();
+                },
+
+                resetGridLayout() {
+                    if (this.available.meta?.managedColumn) {
+                        this.available.meta.managedColumn.columns = undefined;
+                    }
+
+                    this.activeFilterIndices = [];
+                    this.addedFilterColumns = {};
+                    this.applied.sort = { column: null, order: null };
+                    this.applied.pagination.perPage = this.defaultPerPage;
+                    this.viewScope = null;
+                },
+
+                closeSavedFilters() {
+                    const dropdown = this.$refs.savedFilters;
+
+                    if (dropdown) {
+                        dropdown.isActive = false;
+                    }
+                },
+
+                loadViews() {
+                    this.viewsLoading = true;
+
+                    this.$axios.get(this.viewsSrc, { params: { query: this.viewSearch } })
+                        .then(response => {
+                            this.savedViews = response.data.views ?? [];
+                        })
+                        .catch(() => {
+                            this.savedViews = [];
+                        })
+                        .finally(() => {
+                            this.viewsLoading = false;
+                        });
+                },
+
+                activeViewId() {
+                    return this.hasUnsavedFilters() ? null : this.appliedViewId;
+                },
+
+                appliedViewName() {
+                    if (! this.activeViewId()) {
+                        return '@lang('admin::app.components.datagrid.filters.saved-filters.title')';
+                    }
+
+                    /**
+                     * Prefer the cached name so searching the dropdown (which replaces the
+                     * savedViews list with a filtered set) can't blank the toolbar label.
+                     */
+                    return this.appliedViewLabel
+                        ?? this.savedViews.find(view => view.id === this.appliedViewId)?.name
+                        ?? '@lang('admin::app.components.datagrid.filters.saved-filters.title')';
+                },
+
+                applyView(view) {
+                    const payload = view.payload ?? {};
+
+                    this.attributeConditions = {};
+
+                    this.applied.filters.columns = (payload.filters ?? []).map(column => ({
+                        index: column.index,
+                        value: column.value,
+                    }));
+
+                    if (! this.findAppliedColumn('all')) {
+                        this.applied.filters.columns.push({ index: 'all', value: [] });
+                    }
+
+                    this.activeFilterIndices = [...(payload.activeFilterIndices ?? [])];
+
+                    this.applied.sort = {
+                        column: payload.sort?.column ?? null,
+                        order: payload.sort?.order ?? null,
+                    };
+
+                    this.applied.pagination.page = 1;
+                    this.applied.pagination.perPage = payload.perPage ?? this.applied.pagination.perPage;
+
+                    if (this.available.meta?.managedColumn) {
+                        this.available.meta.managedColumn.columns = payload.columns ?? [];
+                    }
+
+                    this.viewScope = {
+                        channel: payload.channel ?? null,
+                        locale: payload.locale ?? null,
+                    };
+
+                    this.appliedViewId = view.id;
+                    this.appliedViewLabel = view.name;
+                    this.appliedViewShared = !! view.is_shared;
+                    this.appliedViewOwner = !! view.is_owner;
+                    this.viewSnapshot = this.dirtySignature();
+
+                    this.closeSavedFilters();
+
+                    this.get();
+                },
+
+                currentViewPayload() {
+                    return {
+                        filters: this.applied.filters.columns.map(column => ({
+                            index: column.index,
+                            value: column.value,
+                        })),
+                        activeFilterIndices: [...this.activeFilterIndices],
+                        columns: this.available.meta?.managedColumn?.columns ?? [],
+                        sort: {
+                            column: this.applied.sort.column ?? null,
+                            order: this.applied.sort.order ?? null,
+                        },
+                        perPage: this.applied.pagination.perPage,
+                        channel: this.viewScope?.channel ?? this.scopeChannel ?? null,
+                        locale: this.viewScope?.locale ?? this.scopeLocale ?? null,
+                    };
+                },
+
+                saveView() {
+                    if (! this.viewName.trim()) {
+                        return;
+                    }
+
+                    const name = this.viewName.trim();
+
+                    this.$axios.post(this.viewsSrc, {
+                        name: name,
+                        is_shared: this.viewShared,
+                        payload: this.currentViewPayload(),
+                    })
+                        .then(response => {
+                            this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
+
+                            this.appliedViewId = response.data.view?.id ?? null;
+                            this.appliedViewLabel = response.data.view?.name ?? name;
+                            this.appliedViewShared = !! response.data.view?.is_shared;
+                            this.appliedViewOwner = true;
+                            this.viewSnapshot = this.dirtySignature();
+                            this.viewName = '';
+                            this.viewShared = false;
+
+                            this.updateDatagrids();
+
+                            this.closeSavedFilters();
+
+                            this.loadViews();
+                        })
+                        .catch(error => {
+                            this.$emitter.emit('add-flash', {
+                                type: 'error',
+                                message: error.response?.data?.message ?? '',
+                            });
+                        });
+                },
+
+                deleteView(view) {
+                    this.$emitter.emit('open-delete-modal', {
+                        agree: () => this.destroyView(view),
+                    });
+                },
+
+                destroyView(view) {
+                    this.$axios.delete(`${this.viewsSrc}/${view.id}`)
+                        .then(response => {
+                            this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
+
+                            if (this.appliedViewId === view.id) {
+                                this.clearAllFilters();
+                            }
+
+                            this.loadViews();
+                        })
+                        .catch(error => {
+                            this.$emitter.emit('add-flash', {
+                                type: 'error',
+                                message: error.response?.data?.message ?? '',
+                            });
+                        });
+                },
+
+                isFilterExpanded(columnIndex) {
+                    return this.expandedFilter === columnIndex;
+                },
+
+                toggleFilterEditor(columnIndex) {
+                    this.expandedFilter = this.isFilterExpanded(columnIndex) ? null : columnIndex;
+                },
+
+                filterHasValue(column) {
+                    if (this.isAttributeFilter(column)) {
+                        return !! this.findAppliedColumn(column.index);
+                    }
+
+                    return this.hasAnyAppliedColumnValues(column.index);
+                },
+
+                filterSummary(column) {
+                    if (! this.filterHasValue(column)) {
+                        return '';
+                    }
+
+                    if (this.isAttributeFilter(column)) {
+                        return this.attributeConditionSummary(column);
+                    }
+
+                    return this.appliedValuesSummary(column, this.getAppliedColumnValues(column.index));
+                },
+
+                collapsedSummary(column) {
+                    return this.filterHasValue(column)
+                        ? this.filterSummary(column)
+                        : '@lang('admin::app.components.datagrid.filters.no-value')';
+                },
+
+                attributeConditionSummary(column) {
+                    const condition = this.attributeCondition(column.index);
+                    const control = this.attributeValueControl(column);
+
+                    const parts = [this.attributeOperatorLabel(column)];
+
+                    if (column.type === 'price' && condition.currency) {
+                        parts.push(this.attributeCurrencyLabel(column));
+                    }
+
+                    if (control === 'boolean') {
+                        parts.push(this.attributeValueLabel(column));
+                    } else if (control !== 'none') {
+                        parts.push(Array.isArray(condition.value) ? condition.value.join(', ') : condition.value);
+                    }
+
+                    if (this.hasConditionValue(condition.value2)) {
+                        parts.push('–', condition.value2);
+                    }
+
+                    return parts.filter(part => `${part ?? ''}`.length).join(' ');
+                },
+
+                appliedValuesSummary(column, values) {
+                    if (column.type === 'boolean') {
+                        return values
+                            .map(value => column.options?.find(option => option.value == value)?.label ?? value)
+                            .join(', ');
+                    }
+
+                    if (column.type === 'dropdown') {
+                        if (column.options?.type === 'basic') {
+                            return values
+                                .map(value => column.options.params.options.find(option => option.value == value)?.label ?? value)
+                                .join(', ');
+                        }
+
+                        return '@lang('admin::app.components.datagrid.filters.values-selected')'.replace(':count', values.length);
+                    }
+
+                    return values
+                        .map(value => Array.isArray(value) ? value.filter(Boolean).join(' – ') : value)
+                        .join(', ');
+                },
+
+                getActiveFilterColumns() {
+                    return this.activeFilterIndices
+                        .map(index => this.available.columns.find(col => col.index === index && col.filterable))
+                        .filter(Boolean);
                 },
 
                 getInactiveFilterColumns() {
@@ -1128,21 +1944,39 @@
                 },
 
                 filterPickerList() {
-                    if (this.filterAttributesSrc) {
-                        return this.pickerOptions.filter(col => ! this.activeFilterIndices.includes(col.index));
-                    }
-
                     const search = this.filterPickerSearch.toLowerCase();
 
-                    return this.getInactiveFilterColumns().filter(col => ! search || col.label.toLowerCase().includes(search));
+                    const matchesSearch = col => ! search || this.filterLabel(col).toLowerCase().includes(search);
+
+                    const local = this.getInactiveFilterColumns().filter(matchesSearch);
+
+                    if (! this.filterAttributesSrc) {
+                        return local;
+                    }
+
+                    const localIndices = local.map(col => col.index);
+
+                    return local.concat(
+                        this.pickerOptions.filter(
+                            col => ! this.activeFilterIndices.includes(col.index) && ! localIndices.includes(col.index)
+                        )
+                    );
                 },
 
                 toggleFilterPicker() {
                     this.showFilterPicker = ! this.showFilterPicker;
                     this.filterPickerSearch = '';
 
-                    if (this.showFilterPicker && this.filterAttributesSrc) {
-                        this.loadFilterAttributes(true);
+                    if (this.showFilterPicker) {
+                        if (this.filterAttributesSrc) {
+                            this.loadFilterAttributes(true);
+                        }
+
+                        this.$nextTick(() => {
+                            this.$refs.filterPicker?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+                            this.$refs.filterPickerSearchInput?.focus({ preventScroll: true });
+                        });
                     }
                 },
 
@@ -1168,6 +2002,228 @@
                     this.showFilterPicker = false;
 
                     this.addActiveFilter(column.index);
+
+                    this.expandedFilter = column.index;
+
+                    this.syncAttributeConditions();
+                },
+
+                isAttributeFilter(column) {
+                    return !! column.attribute_type
+                        && ! this.defaultFilterIndices.includes(column.index);
+                },
+
+                attributeCondition(columnIndex) {
+                    if (! this.attributeConditions[columnIndex]) {
+                        this.attributeConditions[columnIndex] = {
+                            operator: '',
+                            value:    '',
+                            value2:   '',
+                            currency: '',
+                        };
+                    }
+
+                    return this.attributeConditions[columnIndex];
+                },
+
+                attributeOperators(column) {
+                    return column.operators ?? [];
+                },
+
+                attributeValueControl(column) {
+                    const condition = this.attributeCondition(column.index);
+
+                    const operator = this.attributeOperators(column)
+                        .find(operator => operator.value === condition.operator);
+
+                    return operator ? operator.control : 'text';
+                },
+
+                attributeValueSpansRow(column) {
+                    return column.type === 'price'
+                        || ['options', 'number_range', 'date_range'].includes(this.attributeValueControl(column));
+                },
+
+                attributeOperatorSpansRow(column) {
+                    return column.type !== 'price' && this.attributeValueControl(column) === 'none';
+                },
+
+                attributeValueOptions(column) {
+                    return Array.isArray(column.options) ? column.options : (column.options?.params?.options ?? []);
+                },
+
+                treeSelectionCount(column) {
+                    const value = this.attributeCondition(column.index).value;
+
+                    return Array.isArray(value) ? value.length : 0;
+                },
+
+                treeSelectionLabel(column) {
+                    const count = this.treeSelectionCount(column);
+
+                    return count
+                        ? @json(trans('admin::app.components.datagrid.filters.values-selected')).replace(':count', count)
+                        : @json(trans('admin::app.components.datagrid.filters.select'));
+                },
+
+                setAttributeTreeValue(column, codes) {
+                    this.attributeCondition(column.index).value = Array.isArray(codes)
+                        ? codes.filter(Boolean)
+                        : [];
+
+                    this.applyAttributeCondition(column);
+                },
+
+                setAttributeOptionValue(column, event) {
+                    let parsed = null;
+
+                    try {
+                        parsed = event ? JSON.parse(event) : null;
+                    } catch (error) {
+                        parsed = null;
+                    }
+
+                    this.attributeCondition(column.index).value = Array.isArray(parsed)
+                        ? parsed.map(option => option?.code ?? option).filter(Boolean)
+                        : [];
+
+                    this.applyAttributeCondition(column);
+                },
+
+                attributeOptionValue(column) {
+                    const value = this.attributeCondition(column.index).value;
+
+                    return Array.isArray(value) ? value.join(',') : `${value ?? ''}`;
+                },
+
+                attributeOperatorLabel(column) {
+                    const condition = this.attributeCondition(column.index);
+
+                    return this.attributeOperators(column)
+                        .find(operator => operator.value === condition.operator)?.label ?? '';
+                },
+
+                attributeCurrencyLabel(column) {
+                    const condition = this.attributeCondition(column.index);
+
+                    return this.attributeValueOptions(column)
+                        .find(option => option.value === condition.currency)?.label ?? '';
+                },
+
+                attributeValueLabel(column) {
+                    const condition = this.attributeCondition(column.index);
+
+                    return this.attributeValueOptions(column)
+                        .find(option => `${option.value}` === `${condition.value}`)?.label ?? '';
+                },
+
+                setAttributeCurrency(column, currency) {
+                    this.attributeCondition(column.index).currency = currency;
+
+                    this.applyAttributeCondition(column);
+                },
+
+                setAttributeConditionValue(column, key, value) {
+                    this.attributeCondition(column.index)[key] = value;
+
+                    this.applyAttributeCondition(column);
+                },
+
+                setAttributeValue(column, value) {
+                    this.attributeCondition(column.index).value = value;
+
+                    this.applyAttributeCondition(column);
+                },
+
+                syncAttributeConditions() {
+                    (this.available.columns ?? []).forEach(column => {
+                        if (! this.isAttributeFilter(column)) {
+                            return;
+                        }
+
+                        const condition = this.attributeCondition(column.index);
+                        const applied = this.findAppliedColumn(column.index)?.value?.[0];
+
+                        if (applied && typeof applied === 'object') {
+                            condition.operator = applied.operator ?? '';
+                            condition.value    = applied.value ?? '';
+                            condition.value2   = applied.value2 ?? '';
+                            condition.currency = applied.currency ?? '';
+                        }
+
+                        if (! condition.operator) {
+                            condition.operator = this.attributeOperators(column)[0]?.value ?? '';
+                        }
+                    });
+                },
+
+                setAttributeOperator(column, operator) {
+                    const condition = this.attributeCondition(column.index);
+                    const previous = this.attributeValueControl(column);
+
+                    condition.operator = operator;
+
+                    if (this.attributeValueControl(column) !== previous) {
+                        condition.value = '';
+                        condition.value2 = '';
+                    }
+
+                    this.applyAttributeCondition(column);
+                },
+
+                hasConditionValue(value) {
+                    return Array.isArray(value) ? value.length > 0 : `${value ?? ''}`.length > 0;
+                },
+
+                isConditionComplete(column, condition, control) {
+                    if (! condition.operator) {
+                        return false;
+                    }
+
+                    if (column.type === 'price' && ! condition.currency) {
+                        return false;
+                    }
+
+                    if (control === 'none') {
+                        return true;
+                    }
+
+                    if (control === 'number_range' || control === 'date_range') {
+                        return this.hasConditionValue(condition.value) && this.hasConditionValue(condition.value2);
+                    }
+
+                    return this.hasConditionValue(condition.value);
+                },
+
+                applyAttributeCondition(column) {
+                    const condition = this.attributeCondition(column.index);
+                    const control = this.attributeValueControl(column);
+
+                    this.applied.filters.columns = this.applied.filters.columns.filter(
+                        appliedColumn => appliedColumn.index !== column.index
+                    );
+
+                    if (! this.isConditionComplete(column, condition, control)) {
+                        return;
+                    }
+
+                    const payload = {
+                        operator: condition.operator,
+                        value:    control === 'none' ? '' : condition.value,
+                    };
+
+                    if (control === 'number_range' || control === 'date_range') {
+                        payload.value2 = condition.value2;
+                    }
+
+                    if (column.type === 'price') {
+                        payload.currency = condition.currency;
+                    }
+
+                    this.applied.filters.columns.push({
+                        index: column.index,
+                        value: [payload],
+                    });
                 },
 
                 loadFilterAttributes(reset = false) {

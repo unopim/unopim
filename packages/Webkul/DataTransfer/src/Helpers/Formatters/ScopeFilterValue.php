@@ -19,7 +19,7 @@ class ScopeFilterValue
         }
 
         return Collection::wrap($value)
-            ->map(fn ($item) => is_array($item) ? ($item['code'] ?? null) : trim((string) $item))
+            ->map(fn ($item): mixed => is_array($item) ? ($item['code'] ?? null) : trim((string) $item))
             ->filter()
             ->unique()
             ->values()

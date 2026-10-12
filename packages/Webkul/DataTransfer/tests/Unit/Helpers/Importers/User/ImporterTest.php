@@ -3,7 +3,6 @@
 namespace Webkul\DataTransfer\Tests\Unit\Helpers\Importers\User;
 
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Webkul\Core\Models\Locale;
 use Webkul\DataTransfer\Helpers\Error;
 use Webkul\DataTransfer\Helpers\Import;
@@ -19,7 +18,6 @@ describe('User Importer', function () {
     beforeEach(function () {
         $this->loginAsAdmin();
 
-        // Ensure we have a role and locale
         $this->role = Role::first() ?: Role::create(['name' => 'Administrator', 'permission_type' => 'all']);
         $this->locale = Locale::first() ?: Locale::create(['code' => 'en_US', 'name' => 'English']);
     });
@@ -39,7 +37,7 @@ describe('User Importer', function () {
         $source->shouldReceive('valid')->andReturn(false);
         $importer->setSource($source);
 
-        $importer->validateData(); // Initialize storage
+        $importer->validateData();
 
         $validRow = [
             'name'            => 'Test User',
@@ -53,10 +51,10 @@ describe('User Importer', function () {
         expect($importer->validateRow($validRow, 1))->toBeTrue();
 
         $invalidRow = [
-            'name'            => '', // name required
-            'email'           => 'invalid-email', // invalid email
+            'name'            => '',
+            'email'           => 'invalid-email',
             'role_name'       => 'Some Role',
-            'permission_type' => 'invalid', // invalid permission type
+            'permission_type' => 'invalid',
         ];
 
         expect($importer->validateRow($invalidRow, 2))->toBeFalse();
@@ -90,7 +88,7 @@ describe('User Importer', function () {
         $source->shouldReceive('valid')->andReturn(false);
         $importer->setSource($source);
 
-        $importer->validateData(); // Initialize storage
+        $importer->validateData();
 
         $batch = JobTrackBatch::factory()->create([
             'job_track_id' => $jobTrack->id,
@@ -99,7 +97,6 @@ describe('User Importer', function () {
 
         $importer->importBatch($batch);
 
-        // Assert role created
         $this->assertDatabaseHas('roles', [
             'name'            => $roleName,
             'permission_type' => 'custom',
@@ -108,7 +105,6 @@ describe('User Importer', function () {
         $role = Role::where('name', $roleName)->first();
         expect($role->permissions)->toEqual(['dashboard', 'catalog.products']);
 
-        // Assert user created with new role
         foreach ($usersData as $userData) {
             $this->assertDatabaseHas('admins', [
                 'email'   => $userData['email'],
@@ -160,7 +156,6 @@ describe('User Importer', function () {
 
         $importer->importBatch($batch);
 
-        // Assert role updated
         $role->refresh();
         expect($role->permission_type)->toBe('custom');
         expect($role->permissions)->toEqual(['catalog.categories']);

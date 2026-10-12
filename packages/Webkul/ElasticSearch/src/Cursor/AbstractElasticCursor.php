@@ -20,7 +20,7 @@ abstract class AbstractElasticCursor
 
     protected ?array $items = null;
 
-    abstract protected function fetchNextBatch();
+    abstract protected function fetchNextBatch(array $requestParams = [], ?int $size = null): array;
 
     public function next(): void
     {
@@ -60,7 +60,7 @@ abstract class AbstractElasticCursor
             $this->rewind();
         }
 
-        return ! empty($this->items);
+        return $this->items !== null && $this->items !== [];
     }
 
     public function count(): int

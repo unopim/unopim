@@ -19,23 +19,22 @@ class CoreConfigRepository extends Repository
      */
     public function model(): string
     {
-        return 'Webkul\Core\Contracts\CoreConfig';
+        return CoreConfig::class;
     }
 
     /**
      * Create.
-     *
-     * @return CoreConfig
      */
-    public function create(array $data)
+    public function create(array $data): void
     {
         Event::dispatch('core.configuration.save.before');
 
         $channel = $locale = null;
 
-        if ((isset($data['locale']) && $data['locale']) || (isset($data['channel']) && $data['channel'])) {
-            $locale = $data['locale'] ?? null;
-            $channel = $data['channel'] ?? null;
+        // Strip scope keys even when null, else a null channel/locale reaches array-typed recursiveArray() and fatals.
+        if (array_key_exists('locale', $data) || array_key_exists('channel', $data)) {
+            $locale = ($data['locale'] ?? null) ?: null;
+            $channel = ($data['channel'] ?? null) ?: null;
 
             unset($data['locale'], $data['channel']);
         }
@@ -46,19 +45,15 @@ class CoreConfigRepository extends Repository
             foreach ($recursiveData as $fieldName => $value) {
                 $field = core()->getConfigField($fieldName);
 
-                // For null values, use the field's default_value if available, otherwise store an empty
-                // string so explicitly cleared fields (e.g. deselected multiselects) are persisted.
+                // Fall back to default_value, else empty string so explicitly cleared fields are persisted.
                 if (is_null($value)) {
-                    if (isset($field['default_value']) && $field['default_value'] !== '') {
-                        $value = $field['default_value'];
-                    } else {
-                        $value = '';
-                    }
+                    $value = isset($field['default_value']) && $field['default_value'] !== '' ? $field['default_value'] : '';
                 }
 
-                if (($field['type'] ?? null) === 'password' && preg_match('/^\*+$/', $value)) {
+                if (($field['type'] ?? null) === 'password' && is_string($value) && preg_match('/^\*+$/', $value)) {
                     $original = core()->getConfigData($fieldName);
-                    if (strlen($value) === strlen($original)) {
+
+                    if (! is_null($original)) {
                         $value = $original;
                     }
                 }
@@ -73,7 +68,7 @@ class CoreConfigRepository extends Repository
                     $value = request()->file($fieldName)->store('configuration');
                 }
 
-                if (! count($coreConfigValue)) {
+                if (count($coreConfigValue) === 0) {
                     parent::create([
                         'code'         => $fieldName,
                         'value'        => $value,
@@ -109,9 +104,8 @@ class CoreConfigRepository extends Repository
      *
      * @param  array  $items
      * @param  string  $searchTerm
-     * @return array
      */
-    public function search($items, $searchTerm, $path = [])
+    public function search($items, $searchTerm, $path = []): array
     {
         $results = [];
 
@@ -122,15 +116,11 @@ class CoreConfigRepository extends Repository
                 stripos($title, $searchTerm) !== false
                 && count($path)
             ) {
-                if (isset($path[1])) {
-                    $queryParam = $path[1]['key'];
-                } else {
-                    $queryParam = $configuration['key'];
-                }
+                $queryParam = isset($path[1]) ? $path[1]['key'] : $configuration['key'];
 
                 $results[] = [
                     'title' => implode(' > ', [...Arr::pluck($path, 'title'), $title]),
-                    'url'   => route('admin.configuration.index', Str::replace('.', '/', $queryParam)),
+                    'url'   => route('admin.configuration.edit', Str::replace('.', '/', $queryParam)),
                 ];
             }
 
@@ -138,9 +128,9 @@ class CoreConfigRepository extends Repository
                 ! empty($configuration['children'])
                 || ! empty($configuration['fields'])
             ) {
-                $children = ! empty($configuration['children'])
-                    ? $configuration['children']
-                    : $configuration['fields'];
+                $children = empty($configuration['children'])
+                    ? $configuration['fields']
+                    : $configuration['children'];
 
                 $tempPath = array_merge($path, [[
                     'key'   => $configuration['key'] ?? null,
@@ -201,14 +191,12 @@ class CoreConfigRepository extends Repository
      * @param  array  $array
      * @return int
      */
-    public function countDim($array)
+    public function countDim($array): int|float
     {
         if (is_array(reset($array))) {
-            $return = $this->countDim(reset($array)) + 1;
-        } else {
-            $return = 1;
+            return $this->countDim(reset($array)) + 1;
         }
 
-        return $return;
+        return 1;
     }
 }

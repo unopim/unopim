@@ -1,0 +1,10 @@
+code,locale,name,attribute_group,attributes,completeness
+demo_family,en_US,"Demo Family",general,sku,default
+demo_family,en_US,"Demo Family",general,name,default
+demo_family,en_US,"Demo Family",general,url_key,default
+demo_family,en_US,"Demo Family",general,material,default
+demo_family,en_US,"Demo Family",description,description,default
+demo_family,en_US,"Demo Family",description,short_description,default
+demo_family,en_US,"Demo Family",description,care_instructions,
+demo_family,en_US,"Demo Family",price,price,default
+demo_family,en_US,"Demo Family",media,image,

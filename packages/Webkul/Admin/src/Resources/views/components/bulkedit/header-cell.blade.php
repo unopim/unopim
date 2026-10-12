@@ -9,7 +9,7 @@
                 <span class="truncate">@{{ label }}</span>
             </div>
             <div
-                class="absolute right-[-4px] top-0 w-[10px] h-full cursor-[col-resize] select-none z-10 hover:bg-violet-400/50"
+                class="absolute right-[-4px] top-0 w-[10px] h-full cursor-[col-resize] select-none z-10 hover:bg-primary-400/50"
                 @mousedown="startResize($event)"
                 title="@lang('admin::app.catalog.products.bulk-edit.resize-column')"
             ></div>

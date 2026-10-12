@@ -1,11 +1,21 @@
 <?php
 
 return [
+    'samples' => [
+        'default'       => 'Eksempelfil',
+        'variants'      => 'Eksempel med varianter',
+        'multi-locale'  => 'Eksempel med flere sprog',
+        'delete'        => 'Eksempel på sletning',
+        'custom-fields' => 'Eksempel med brugerdefinerede felter',
+        'with-images'   => 'Eksempel med billeder (ZIP)',
+    ],
+
     'importers' => [
         'products' => [
             'title'      => 'Produkter',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => 'Enheden ":unit" er ikke en gyldig enhed for måleattributten ":attribute".',
+                'errors'       => [
                     'duplicate-url-key'                        => 'URL nøgle: \'%s\' blev allerede genereret for en vare med SKU: \'%s\'.',
                     'invalid-attribute-family'                 => 'Ugyldig værdi for attributfamilie kolonne (attributfamilien eksisterer ikke?)',
                     'invalid-type'                             => 'Produkttypen er ugyldig eller ikke understøttet',
@@ -21,6 +31,7 @@ return [
                     'not-unique-value'                         => 'Værdien :code skal være unik.',
                     'incorrect-family-for-variant'             => 'Familien skal være den samme som forældrefamilien',
                     'parent-not-exist'                         => 'Forælderen findes ikke.',
+                    'variant-structure-not-found'              => 'Variantstrukturen :code findes ikke for denne attributfamilie.',
                 ],
             ],
         ],
@@ -29,6 +40,82 @@ return [
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'Du kan ikke slette rodkategorien, der er knyttet til en kanal',
+                ],
+            ],
+        ],
+        'category-fields' => [
+            'title'      => 'Kategorifelter',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kategorifeltskode :code er allerede i brug.',
+                    'code_not_found_to_delete' => 'Kategorifeltskode blev ikke fundet til sletning.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Attributter',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Attributkoden :code er allerede i brug.',
+                    'code_not_found_to_delete'             => 'Attributkode blev ikke fundet til sletning.',
+                    'code_is_system_and_cannot_be_deleted' => 'Systemattribut kan ikke slettes.',
+                ],
+            ],
+        ],
+        'product-associations' => [
+            'title'      => 'Produktassociationer',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Feltet \'%s\' er påkrævet.',
+                    'self-link-not-allowed'       => 'Produktet \'%s\' kan ikke tilknyttes sig selv.',
+                    'sku-not-found'               => 'Produkt med SKU \'%s\' blev ikke fundet.',
+                    'related-sku-not-found'       => 'Relateret produkt med SKU \'%s\' blev ikke fundet.',
+                    'association-type-not-found'  => 'Associationstypen \'%s\' findes ikke eller er inaktiv.',
+                    'invalid-field-value'         => 'Ugyldig værdi angivet for et associationsfelt.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Attributgrupper',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Attributgruppekoden :code er allerede i brug.',
+                    'code_not_found_to_delete'             => 'Attributgruppekode blev ikke fundet til sletning.',
+                    'code_is_system_and_cannot_be_deleted' => 'Systemattributgruppe kan ikke slettes.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Attributfamilier',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Attributfamiliekoden :code er allerede i brug.',
+                    'code_not_found_to_delete' => 'Attributfamiliekode blev ikke fundet til sletning.',
+                    'invalid-attribute-group'  => 'Attributgruppen ":code" findes ikke.',
+                    'invalid-attribute'        => 'Attributten ":code" findes ikke.',
+                    'invalid-channel'          => 'Kanalen ":code" findes ikke.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Attributindstillinger',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Attributindstillingskoden :code er allerede i brug.',
+                    'code_not_found_to_delete' => 'Attributindstillingskode blev ikke fundet til sletning.',
+                    'locale-not-exist'         => 'Sprog ":code" findes ikke.',
+                    'invalid-attribute'        => 'Attributten ":code" findes ikke.',
+                ],
+            ],
+        ],
+        'locales' => [
+            'title'      => 'Sprog',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Sprogkoden \'%s\' er allerede importeret i denne batch.',
+                    'code-not-found-to-delete'    => 'Sprog med koden \'%s\' blev ikke fundet i systemet.',
+                    'invalid-status'              => 'Status skal være 0 eller 1 (eller tom for standard aktiveret).',
+                    'channel-related-locale-root' => 'Du kan ikke slette sproget med koden :code, da det er knyttet til en kanal.',
                 ],
             ],
         ],
@@ -45,18 +132,23 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
+            'title'   => 'Valutaer',
+            'filters' => [
+                'status' => 'Status',
+                'enable' => 'Aktiver',
+                'all'    => 'Alle',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Status skal være 0 eller 1 (eller tom for standard aktiveret).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Roller',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -65,7 +157,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
+            'title'   => 'Brugere',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Aktiv',
+                'all'    => 'Alle',
+            ],
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -78,21 +175,25 @@ return [
     'exporters' => [
         'export-too-large' => 'Denne eksport er for stor til at køre: anslået :rows rækker × :columns kolonner (~:estimated) overstiger den tilgængelige plads (~:available). Indsnævr eksporten ved at vælge færre kanaler/sprog (og attributter), og prøv igen.',
         'fields'           => [
-            'file-format'         => 'Filformat',
-            'with-media'          => 'Med medier',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Filformat',
+            'with-media'             => 'Med medier',
+            'with-associations'      => 'Med tilknytninger',
+            'with-associations-info' => 'Inkluder de gamle SKU-listekolonner (up_sells, cross_sells og related_products) i eksporten',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
-            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'file-name'      => 'Filnavn',
+            'file-name-info' => 'Mønster for filnavn. Pladsholdere: [code], [date], [time], [entity_type]',
+            'file-path'      => 'Filsti',
+            'file-path-info' => 'Mønster for filnavn. Pladsholdere: [code], [date], [time], [entity_type]',
             'status'         => 'Status',
             'enable'         => 'Aktiveret',
             'all'            => 'Alle',
@@ -152,38 +253,62 @@ return [
         'categories' => [
             'title' => 'Kategorier',
         ],
+        'category-fields' => [
+            'title' => 'Kategorifelter',
+        ],
+        'attributes' => [
+            'title' => 'Attributter',
+        ],
+        'product-associations' => [
+            'title' => 'Produktassociationer',
+        ],
+        'attribute-groups' => [
+            'title' => 'Attributgrupper',
+        ],
+        'attribute-families' => [
+            'title' => 'Attributfamilier',
+        ],
+        'attribute-options' => [
+            'title' => 'Attributindstillinger',
+        ],
+        'locales' => [
+            'title' => 'Sprog',
+        ],
         'channels' => [
             'title' => 'Kanaler',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Valutaer',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Roller',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Brugere',
             'filters' => [
                 'status' => 'Status',
-                'active' => 'Active',
+                'active' => 'Aktiv',
                 'all'    => 'Alle',
             ],
         ],
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'Kolonnenummer "%s" har tomme overskrifter.',
-            'column-name-invalid'  => 'Ugyldige kolonnenavne: "%s".',
-            'column-not-found'     => 'Krævede kolonner findes ikke: %s.',
-            'column-numbers'       => 'Antallet af kolonner svarer ikke til antallet af rækker i overskriften.',
-            'invalid-attribute'    => 'Overskriften indeholder ugyldige attributter: "%s".',
-            'system'               => 'En uventet systemfejl opstod.',
-            'wrong-quotes'         => 'Korte citationstegn blev brugt i stedet for lige citationstegn.',
-            'file-empty'           => 'Filen er tom eller indeholder ingen headerrække. Upload venligst en gyldig fil med data.',
+            'column-empty-headers'   => 'Kolonnenummer "%s" har tomme overskrifter.',
+            'column-name-invalid'    => 'Ugyldige kolonnenavne: "%s".',
+            'column-not-found'       => 'Krævede kolonner findes ikke: %s.',
+            'column-numbers'         => 'Antallet af kolonner svarer ikke til antallet af rækker i overskriften.',
+            'invalid-attribute'      => 'Overskriften indeholder ugyldige attributter: "%s".',
+            'system'                 => 'En uventet systemfejl opstod.',
+            'wrong-quotes'           => 'Korte citationstegn blev brugt i stedet for lige citationstegn.',
+            'file-empty'             => 'Filen er tom eller indeholder ingen headerrække. Upload venligst en gyldig fil med data.',
+            'file-missing'           => 'Kildefilen til dette job blev ikke fundet. Kontrollér filstien i profilen, og upload filen igen.',
         ],
     ],
     'job' => [
         'started'   => 'Job udførelsen startet',
         'completed' => 'Job udførelsen afsluttet',
+        'stalled'   => 'Jobbet holdt op med at svare i mere end :minutes minutter og blev markeret som mislykket. Arbejdsprocessen blev sandsynligvis afbrudt.',
+        'reaped'    => ':count fastlåste job blev markeret som mislykkede.',
     ],
 ];

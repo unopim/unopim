@@ -2,7 +2,7 @@ const { test, expect } = require('../../utils/fixtures');
 
 test.describe('UnoPim Magic AI — Default platform must be enabled (Issue #755)', () => {
   test('API rejects a disabled platform being marked as default with 422', async ({ adminPage }) => {
-    await adminPage.goto('/admin/magic-ai/platform', { waitUntil: 'networkidle' });
+    await adminPage.goto('/admin/magic-ai/platforms', { waitUntil: 'networkidle' });
 
     const label = 'Disabled Default ' + Date.now();
 
@@ -13,14 +13,14 @@ test.describe('UnoPim Magic AI — Default platform must be enabled (Issue #755)
       const form = new URLSearchParams({
         label,
         provider:   'openai',
-        api_url:    'https://example.test',
+        api_url:    'https://1.1.1.1',
         api_key:    'sk-test-key',
         models:     'gpt-test',
         is_default: '1',
         status:     '0',
       });
 
-      const res = await fetch('/admin/magic-ai/platform', {
+      const res = await fetch('/admin/magic-ai/platforms', {
         method:      'POST',
         credentials: 'same-origin',
         headers: {

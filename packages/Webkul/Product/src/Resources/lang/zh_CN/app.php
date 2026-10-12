@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'acl' => [
+        'variant-structures' => '变体结构',
+    ],
 
     'datagrid' => [
         'copy-of-slug'                  => '副本-:value',
@@ -13,7 +16,9 @@ return [
     ],
 
     'type'     => [
-        'configurable' => '可配置',
-        'simple'       => '简单',
+        'configurable'  => '可配置',
+        'simple'        => '简单',
+        'variant-group' => '变体组',
+        'variant_group' => '变体组',
     ],
 ];

@@ -17,12 +17,9 @@ class HandleFamilyAttributeChanges
     /**
      * Handle the event when attributes are changed in a family.
      */
-    public function handle(array $added, array $removed, int $familyId)
+    public function handle(array $added, array $removed, int $familyId): void
     {
-        $removedAttributes = $removed ?? [];
-        $familyId = $familyId ?? null;
-
-        if (empty($removedAttributes) || empty($familyId)) {
+        if ($removed === [] || $familyId === 0) {
             return;
         }
 
@@ -41,7 +38,7 @@ class HandleFamilyAttributeChanges
                 Log::error($e);
             }
 
-            BulkProductCompletenessJob::dispatch([], $familyId);
+            dispatch(new BulkProductCompletenessJob([], $familyId));
         }
     }
 }

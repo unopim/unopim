@@ -54,9 +54,8 @@ class LocaleRepository extends Repository
      * Delete.
      *
      * @param  int  $id
-     * @return void
      */
-    public function delete($id)
+    public function delete($id): void
     {
         Event::dispatch('core.locale.delete.before', $id);
 
@@ -87,10 +86,8 @@ class LocaleRepository extends Repository
 
     /**
      * This function returns a query builder instance for further manipulation of the Locale model.
-     *
-     * @return Builder
      */
-    public function queryBuilder()
+    public function queryBuilder(): static
     {
         return $this;
     }

@@ -12,7 +12,7 @@ use Webkul\User\Models\Admin;
  * this context so it can access the current product, locale, uploaded
  * files, etc. without coupling to the HTTP layer.
  */
-final class ChatContext
+final readonly class ChatContext
 {
     /**
      * @param  string  $message  The user's text message
@@ -30,19 +30,19 @@ final class ChatContext
      * @param  Admin|null  $user  The authenticated admin user (for ACL checks)
      */
     public function __construct(
-        public readonly string $message,
-        public readonly array $history,
-        public readonly ?int $productId,
-        public readonly ?string $productSku,
-        public readonly ?string $productName,
-        public readonly string $locale,
-        public readonly string $channel,
-        public readonly MagicAIPlatform $platform,
-        public readonly string $model = '',
-        public readonly array $uploadedImagePaths = [],
-        public readonly array $uploadedFilePaths = [],
-        public readonly ?string $currentPage = null,
-        public readonly ?Admin $user = null,
+        public string $message,
+        public array $history,
+        public ?int $productId,
+        public ?string $productSku,
+        public ?string $productName,
+        public string $locale,
+        public string $channel,
+        public MagicAIPlatform $platform,
+        public string $model = '',
+        public array $uploadedImagePaths = [],
+        public array $uploadedFilePaths = [],
+        public ?string $currentPage = null,
+        public ?Admin $user = null,
     ) {
         // Validate locale and channel to prevent SQL injection in JSON_EXTRACT paths.
         if (! preg_match('/^[a-zA-Z0-9_-]+$/', $locale)) {
@@ -59,7 +59,7 @@ final class ChatContext
      */
     public function hasPermission(string $permission): bool
     {
-        if (! $this->user) {
+        if (! $this->user instanceof Admin) {
             return false;
         }
 
@@ -83,7 +83,7 @@ final class ChatContext
      */
     public function hasImages(): bool
     {
-        return ! empty($this->uploadedImagePaths);
+        return $this->uploadedImagePaths !== [];
     }
 
     /**
@@ -91,7 +91,7 @@ final class ChatContext
      */
     public function hasFiles(): bool
     {
-        return ! empty($this->uploadedFilePaths);
+        return $this->uploadedFilePaths !== [];
     }
 
     /**

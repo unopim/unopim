@@ -9,7 +9,6 @@ use Webkul\DataTransfer\Models\JobTrack;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 
 it('exports all currencies when status filter is set to all', function () {
-    // Mock currencies
     Currency::factory()->create(['code' => 'USD', 'status' => 1]);
     Currency::factory()->create(['code' => 'EUR', 'status' => 0]);
 
@@ -39,7 +38,6 @@ it('exports all currencies when status filter is set to all', function () {
     $exporter->setSource(app(CurrencyRepository::class));
     $exporter->setExport($jobTrack);
 
-    // Reflection to call protected getResults
     $reflection = new ReflectionClass($exporter);
     $method = $reflection->getMethod('getResults');
     $method->setAccessible(true);
@@ -53,7 +51,6 @@ it('exports all currencies when status filter is set to all', function () {
 });
 
 it('exports only enabled currencies when status filter is set to enable', function () {
-    // Ensure we have a clean state for this test if needed, or just check the subset
     Currency::query()->delete();
     Currency::factory()->create(['code' => 'USD', 'status' => 1]);
     Currency::factory()->create(['code' => 'EUR', 'status' => 0]);

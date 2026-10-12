@@ -14,6 +14,7 @@ use Webkul\AiAgent\DTOs\ImageProductContext;
 use Webkul\AiAgent\Http\Client\AiApiClient;
 use Webkul\AiAgent\Services\EnrichmentService;
 use Webkul\MagicAI\Enums\AiProvider;
+use Webkul\Product\Repositories\ProductRepository;
 
 class GenerateContent implements PimTool
 {
@@ -67,7 +68,7 @@ class GenerateContent implements PimTool
                     return json_encode(['error' => "Product not found: {$sku}"]);
                 }
 
-                $values = json_decode($product->values, true) ?? [];
+                $values = json_decode((string) $product->values, true) ?? [];
                 $common = $values['common'] ?? [];
                 $channelLocale = $values['channel_locale_specific'][$this->context->channel][$this->context->locale] ?? [];
 
@@ -75,14 +76,14 @@ class GenerateContent implements PimTool
                 // content present in another locale (e.g. en_US) does not falsely mark
                 // this locale as already filled.
                 $ctx = new ImageProductContext(
-                    attributes: $channelLocale,
                     detectedProduct: $common['product_type'] ?? null,
+                    attributes: $channelLocale,
                     category: ($values['categories'][0] ?? null),
                 );
 
                 try {
                     // Configure API client with the platform from this chat session
-                    $apiClient = app(AiApiClient::class);
+                    $apiClient = resolve(AiApiClient::class);
                     $apiClient->configure(new CredentialConfig(
                         id: $this->context->platform->id,
                         label: $this->context->platform->label,
@@ -105,18 +106,18 @@ class GenerateContent implements PimTool
 
                     $generated = $enriched->enrichment;
 
-                    if (empty($generated)) {
+                    if ($generated === []) {
                         return json_encode(['info' => 'All content fields are already filled.']);
                     }
 
                     // Auto-apply the generated content to the product
-                    $productValues = json_decode($product->values, true) ?? [];
+                    $productValues = json_decode((string) $product->values, true) ?? [];
 
                     foreach ($generated as $key => $value) {
                         $productValues['channel_locale_specific'][$this->context->channel][$this->context->locale][$key] = $value;
                     }
 
-                    $repo = app('Webkul\Product\Repositories\ProductRepository');
+                    $repo = resolve(ProductRepository::class);
                     $repo->updateWithValues(['values' => $productValues], $product->id);
 
                     return json_encode([

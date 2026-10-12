@@ -43,31 +43,21 @@ abstract class AbstractJob
     protected JobTrackContract $job;
 
     /**
-     * Error helper instance.
-     */
-    protected Error $errorHelper;
-
-    /**
      * Job-specific logger.
      */
     protected LoggerInterface $jobLogger;
 
-    /**
-     * Repository instances.
-     */
-    protected JobTrackRepository $jobTrackRepository;
-
-    protected JobTrackBatchRepository $jobTrackBatchRepository;
-
     public function __construct(
-        JobTrackRepository $jobTrackRepository,
-        JobTrackBatchRepository $jobTrackBatchRepository,
-        Error $errorHelper
-    ) {
-        $this->jobTrackRepository = $jobTrackRepository;
-        $this->jobTrackBatchRepository = $jobTrackBatchRepository;
-        $this->errorHelper = $errorHelper;
-    }
+        /**
+         * Repository instances.
+         */
+        protected JobTrackRepository $jobTrackRepository,
+        protected JobTrackBatchRepository $jobTrackBatchRepository,
+        /**
+         * Error helper instance.
+         */
+        protected Error $errorHelper
+    ) {}
 
     public function setJob(JobTrackContract $job): self
     {

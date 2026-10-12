@@ -2,6 +2,7 @@
 
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\DataTransfer\Helpers\Sources\Export\Elastic\ProductCursor;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 
 function buildBoolQuery(array $filters): array
@@ -23,14 +24,14 @@ it('restricts to the ids matching the sku filter', function () {
 
     $matched = Product::create([
         'sku'                 => 'ES-SKU-1',
-        'type'                => 'simple',
+        'type'                => ProductType::Simple->value,
         'status'              => 1,
         'attribute_family_id' => $family->id,
     ]);
 
     Product::create([
         'sku'                 => 'ES-SKU-2',
-        'type'                => 'simple',
+        'type'                => ProductType::Simple->value,
         'status'              => 1,
         'attribute_family_id' => $family->id,
     ]);
@@ -50,10 +51,18 @@ it('builds a status term clause', function () {
     ]);
 });
 
+it('matches category codes against the exact-value keyword subfield', function () {
+    expect(buildBoolQuery(['categories' => ['Footwear', 'Outerwear']]))->toBe([
+        'filter' => [
+            ['terms' => ['values.categories.keyword' => ['Footwear', 'Outerwear']]],
+        ],
+    ]);
+});
+
 it('builds an updated_at range clause', function () {
     expect(buildBoolQuery(['updated_after' => '2026-01-01 00:00:00']))->toBe([
         'filter' => [
-            ['range' => ['updated_at' => ['gte' => '2026-01-01 00:00:00']]],
+            ['range' => ['updated_at' => ['gte' => '2026-01-01T00:00:00Z']]],
         ],
     ]);
 });
@@ -66,7 +75,7 @@ it('builds an updated_at range clause with both bounds', function () {
 
     expect(buildBoolQuery($filters))->toBe([
         'filter' => [
-            ['range' => ['updated_at' => ['gte' => '2026-01-01 00:00:00', 'lte' => '2026-02-20 23:59:59']]],
+            ['range' => ['updated_at' => ['gte' => '2026-01-01T00:00:00Z', 'lte' => '2026-02-20T23:59:59Z']]],
         ],
     ]);
 });
@@ -74,7 +83,7 @@ it('builds an updated_at range clause with both bounds', function () {
 it('builds an updated_at range clause with only an upper bound', function () {
     expect(buildBoolQuery(['updated_before' => '2026-02-20 23:59:59']))->toBe([
         'filter' => [
-            ['range' => ['updated_at' => ['lte' => '2026-02-20 23:59:59']]],
+            ['range' => ['updated_at' => ['lte' => '2026-02-20T23:59:59Z']]],
         ],
     ]);
 });

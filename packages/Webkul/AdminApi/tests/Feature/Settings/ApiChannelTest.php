@@ -52,9 +52,11 @@ it('should return the channel using the code', function () {
 
 it('should return the message when code does not exists', function () {
     $this->withHeaders($this->headers)->json('GET', route('admin.api.channels.get', ['code' => 'abcxyz']))
-        ->assertBadRequest()
+        ->assertNotFound()
+        ->assertJsonPath('success', false)
         ->assertJsonStructure([
-            'error',
+            'success',
+            'message',
         ]);
 });
 

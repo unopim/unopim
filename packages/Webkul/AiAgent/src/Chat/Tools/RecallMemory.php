@@ -2,12 +2,14 @@
 
 namespace Webkul\AiAgent\Chat\Tools;
 
+use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\DB;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
+use Webkul\AiAgent\Support\MemoryScope;
 
 class RecallMemory implements PimTool
 {
@@ -40,7 +42,7 @@ class RecallMemory implements PimTool
 
                 $qb = DB::table('ai_agent_memories')
                     ->select('scope', 'key', 'value', 'updated_at')
-                    ->where(function ($q) {
+                    ->where(function (Builder $q): void {
                         $q->whereNull('expires_at')
                             ->orWhere('expires_at', '>', now());
                     });
@@ -50,19 +52,22 @@ class RecallMemory implements PimTool
                 }
 
                 // Include user-specific and global memories
-                $qb->where(function ($q) {
+                $qb->where(function (Builder $q): void {
                     $q->whereNull('user_id')
                         ->orWhere('user_id', $this->context->user?->id);
                 });
 
+                // Channel-scoped memories: own channel plus legacy null-channel rows
+                MemoryScope::apply($qb, $this->context->channel);
+
                 if ($search) {
-                    $qb->where(function ($q) use ($search) {
+                    $qb->where(function (Builder $q) use ($search): void {
                         $q->where('key', 'like', "%{$search}%")
                             ->orWhere('value', 'like', "%{$search}%");
                     });
                 }
 
-                $memories = $qb->orderByDesc('updated_at')->limit(20)->get();
+                $memories = $qb->latest('updated_at')->limit(20)->get();
 
                 return json_encode([
                     'total'    => $memories->count(),

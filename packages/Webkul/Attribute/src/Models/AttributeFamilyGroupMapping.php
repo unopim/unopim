@@ -2,6 +2,8 @@
 
 namespace Webkul\Attribute\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Webkul\Attribute\Contracts\AttributeFamilyGroupMapping as AttributeFamilyGroupMappingContract;
@@ -10,21 +12,19 @@ use Webkul\HistoryControl\Interfaces\PresentableHistoryInterface;
 use Webkul\HistoryControl\Presenters\AttributeFamilyPresenter;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 
+#[Fillable([
+    'attribute_family_id',
+    'attribute_group_id',
+    'position',
+])]
+#[WithoutTimestamps]
 class AttributeFamilyGroupMapping extends Model implements AttributeFamilyGroupMappingContract, HistoryContract, PresentableHistoryInterface
 {
     use HasFactory;
     use HistoryTrait;
 
-    public $timestamps = false;
-
     /** Tags for History */
     protected $historyTags = ['attributeFamily'];
-
-    protected $fillable = [
-        'attribute_family_id',
-        'attribute_group_id',
-        'position',
-    ];
 
     /**
      * Get the attributes that owns the attribute group.

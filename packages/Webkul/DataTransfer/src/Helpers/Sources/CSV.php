@@ -2,7 +2,6 @@
 
 namespace Webkul\DataTransfer\Helpers\Sources;
 
-use Illuminate\Support\Facades\Storage;
 use Webkul\DataTransfer\Rules\SeparatorTypes;
 
 class CSV extends AbstractSource
@@ -24,25 +23,23 @@ class CSV extends AbstractSource
 
     /**
      * Create a new helper instance.
-     *
-     * @return void
      */
     public function __construct(
         string $filePath,
         protected string $delimiter = ','
     ) {
-        $detectedSeparator = self::checkSeparator(Storage::disk('private')->path($filePath));
+        $path = self::resolveReadablePath($filePath);
+
+        $detectedSeparator = self::checkSeparator($path);
 
         if ($detectedSeparator === null) {
             throw new \LogicException(trans('data_transfer::app.validation.errors.file-empty'));
         }
 
-        if ($detectedSeparator != $delimiter) {
-            throw new \LogicException("Separator '{$delimiter}' is not supported in the provided file.");
-        }
+        throw_if($detectedSeparator !== $delimiter, \LogicException::class, "Separator '{$delimiter}' is not supported in the provided file.");
 
         try {
-            $this->reader = fopen(Storage::disk('private')->path($filePath), 'r');
+            $this->reader = fopen($path, 'r');
 
             /**
              * Set a larger read buffer for better I/O performance on large files.
@@ -50,17 +47,15 @@ class CSV extends AbstractSource
              */
             if (is_resource($this->reader)) {
                 stream_set_read_buffer($this->reader, 65536);
+
+                $this->skipUtf8Bom();
             }
 
-            $headerRow = $this->normalizeColumnNames(
-                fgetcsv($this->reader, $this->maxLineLength, $delimiter) ?: []
-            );
+            $headerRow = fgetcsv($this->reader, $this->maxLineLength, $delimiter, escape: '\\');
 
             if (
-                $headerRow === false
-                || $headerRow === null
-                || $headerRow === [null]
-                || count(array_filter($headerRow, fn ($v) => $v !== null && $v !== '')) === 0
+                in_array($headerRow, [false, null, [null]], true)
+                || count(array_filter($headerRow, fn ($v): bool => $v !== null && $v !== '')) === 0
             ) {
                 throw new \LogicException(trans('data_transfer::app.validation.errors.file-empty'));
             }
@@ -70,7 +65,7 @@ class CSV extends AbstractSource
             $this->totalColumns = count($this->columnNames);
         } catch (\LogicException $e) {
             throw $e;
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             throw new \LogicException("Unable to open file: '{$filePath}'");
         }
     }
@@ -80,6 +75,10 @@ class CSV extends AbstractSource
      */
     public static function checkSeparator(string $filePath): ?string
     {
+        if (! is_file($filePath) || ! is_readable($filePath)) {
+            return null;
+        }
+
         $handle = fopen($filePath, 'r');
         if ($handle === false) {
             return null;
@@ -104,8 +103,6 @@ class CSV extends AbstractSource
 
     /**
      * Close file handle
-     *
-     * @return void
      */
     public function __destruct()
     {
@@ -121,11 +118,11 @@ class CSV extends AbstractSource
      */
     protected function getNextRow(): array
     {
-        $parsed = fgetcsv($this->reader, $this->maxLineLength, $this->delimiter);
+        $parsed = fgetcsv($this->reader, $this->maxLineLength, $this->delimiter, escape: '\\');
 
-        if (is_array($parsed) && count($parsed) != $this->totalColumns) {
+        if (is_array($parsed) && count($parsed) !== $this->totalColumns) {
             foreach ($parsed as $element) {
-                if ($element && strpos($element, "'") !== false) {
+                if ($element && str_contains($element, "'")) {
                     $this->foundWrongQuoteFlag = true;
 
                     break;
@@ -145,28 +142,18 @@ class CSV extends AbstractSource
     {
         rewind($this->reader);
 
+        $this->skipUtf8Bom();
+
         parent::rewind();
     }
 
     /**
-     * Normalize header names for compatibility with external CSV generators.
+     * Move the reader past a leading UTF-8 BOM so it never reaches the first column name.
      */
-    protected function normalizeColumnNames(array $columnNames): array
+    protected function skipUtf8Bom(): void
     {
-        if (! empty($columnNames[0]) && is_string($columnNames[0])) {
-            $columnNames[0] = $this->stripUtf8Bom($columnNames[0]);
+        if (fread($this->reader, strlen(self::UTF8_BOM)) !== self::UTF8_BOM) {
+            rewind($this->reader);
         }
-
-        return $columnNames;
-    }
-
-    /**
-     * Remove a UTF-8 BOM from the beginning of a string.
-     */
-    protected function stripUtf8Bom(string $value): string
-    {
-        return str_starts_with($value, self::UTF8_BOM)
-            ? substr($value, 3)
-            : $value;
     }
 }

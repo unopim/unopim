@@ -2,6 +2,8 @@
 
 namespace Webkul\AiAgent\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,6 +12,18 @@ use Webkul\AiAgent\Contracts\AgentExecution as AgentExecutionContract;
 use Webkul\HistoryControl\Interfaces\PresentableHistoryInterface;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 
+#[Fillable([
+    'agentId',
+    'credentialId',
+    'instruction',
+    'output',
+    'tokensUsed',
+    'executionTimeMs',
+    'status',
+    'error',
+    'extras',
+])]
+#[Table(name: 'ai_agent_executions')]
 class AgentExecution extends Model implements AgentExecutionContract, AuditableContract, PresentableHistoryInterface
 {
     use HasFactory, HistoryTrait;
@@ -20,39 +34,6 @@ class AgentExecution extends Model implements AgentExecutionContract, AuditableC
      * @var array
      */
     protected $historyTags = ['ai-agent-execution'];
-
-    /**
-     * @var string
-     */
-    protected $table = 'ai_agent_executions';
-
-    /**
-     * Fillable attributes.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'agentId',
-        'credentialId',
-        'instruction',
-        'output',
-        'tokensUsed',
-        'executionTimeMs',
-        'status',
-        'error',
-        'extras',
-    ];
-
-    /**
-     * Casts.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'extras'          => 'array',
-        'tokensUsed'      => 'integer',
-        'executionTimeMs' => 'integer',
-    ];
 
     /**
      * Fields excluded from history audit.
@@ -74,6 +55,8 @@ class AgentExecution extends Model implements AgentExecutionContract, AuditableC
 
     /**
      * Get the agent that owns this execution.
+     *
+     * @return BelongsTo<Agent, $this>
      */
     public function agent(): BelongsTo
     {
@@ -82,6 +65,8 @@ class AgentExecution extends Model implements AgentExecutionContract, AuditableC
 
     /**
      * Get the credential used for this execution.
+     *
+     * @return BelongsTo<Credential, $this>
      */
     public function credential(): BelongsTo
     {
@@ -94,5 +79,17 @@ class AgentExecution extends Model implements AgentExecutionContract, AuditableC
     public static function getPresenters(): array
     {
         return [];
+    }
+
+    /**
+     * Casts.
+     */
+    protected function casts(): array
+    {
+        return [
+            'extras'          => 'array',
+            'tokensUsed'      => 'integer',
+            'executionTimeMs' => 'integer',
+        ];
     }
 }

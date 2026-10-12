@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
+const { clickSave, navigateTo, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
  * Helper: Create a locale via the modal.
@@ -7,7 +7,9 @@ const { navigateTo, searchInDataGrid, clickSaveAndExpect } = require('../../util
 async function createLocale(adminPage, code, enableStatus = true) {
   await navigateTo(adminPage, 'locales');
   await adminPage.getByRole('button', { name: 'Create Locale' }).click();
-  await adminPage.getByRole('textbox', { name: 'Code', exact: true }).fill(code);
+  // The Code label carries an ISO-639 hint link, which pulls the anchor's
+  // title into the label's accessible name and breaks an exact-name match.
+  await adminPage.locator('input[name="code"]').fill(code);
   if (enableStatus) {
     await adminPage.locator('label[for="status"]').click();
   }
@@ -47,18 +49,18 @@ test.describe('Locale Management', () => {
   test('Create locale with empty Code shows validation error', async ({ adminPage }) => {
     await navigateTo(adminPage, 'locales');
     await adminPage.getByRole('button', { name: 'Create Locale' }).click();
-    await adminPage.getByRole('textbox', { name: 'Code', exact: true }).fill('');
+    await adminPage.locator('input[name="code"]').fill('');
     await adminPage.locator('label[for="status"]').click();
-    await adminPage.getByRole('button', { name: 'Save Locale' }).click();
+    await clickSave(adminPage, 'Save Locale');
     await expect(adminPage.locator('#app').getByText(/The Code field is required/i)).toBeVisible();
   });
 
   test('Create locale with existing Code shows error', async ({ adminPage }) => {
     await navigateTo(adminPage, 'locales');
     await adminPage.getByRole('button', { name: 'Create Locale' }).click();
-    await adminPage.getByRole('textbox', { name: 'Code', exact: true }).fill('en_US');
+    await adminPage.locator('input[name="code"]').fill('en_US');
     await adminPage.locator('label[for="status"]').click();
-    await adminPage.getByRole('button', { name: 'Save Locale' }).click();
+    await clickSave(adminPage, 'Save Locale');
     await expect(adminPage.locator('#app').getByText(/The code has already been taken/i)).toBeVisible();
   });
 

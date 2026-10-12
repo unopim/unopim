@@ -25,7 +25,7 @@
 
             <span
                 :class="[
-                    'icon-radio-normal mr-1 text-2xl rounded-md peer-checked:icon-radio-selected peer-checked:text-violet-700',
+                    'icon-radio-normal mr-1 text-2xl rounded-md peer-checked:icon-radio-selected peer-checked:text-primary-700',
                     isCurrentCategory ? 'cursor-not-allowed' : 'cursor-pointer'
                 ]"
             ></span>

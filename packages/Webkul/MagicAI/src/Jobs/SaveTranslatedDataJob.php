@@ -2,70 +2,59 @@
 
 namespace Webkul\MagicAI\Jobs;
 
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Queue\Queueable;
+use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Services\ProductValueMapper;
 
 class SaveTranslatedDataJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
-    protected $productId;
-
-    protected $translatedData;
-
-    protected $channel;
-
-    protected $field;
+    use Queueable;
 
     /**
      * Create a new job instance.
      */
-    public function __construct($productId, $translatedData, $channel, $field)
-    {
-        $this->productId = $productId;
-        $this->translatedData = $translatedData;
-        $this->channel = $channel;
-        $this->field = $field;
-    }
+    public function __construct(protected $productId, protected $translatedData, protected $channel, protected $field) {}
 
     /**
      * Execute the job.
      */
-    public function handle(ProductRepository $productRepository)
-    {
+    public function handle(
+        ProductRepository $productRepository,
+        AttributeRepository $attributeRepository,
+        ProductValueMapper $productValueMapper
+    ): void {
+        $attribute = $attributeRepository->findOneByField('code', $this->field);
+
+        if (! $attribute) {
+            return;
+        }
+
         $product = $productRepository->find($this->productId);
-        $data = $product->values;
+        $values = $product->values ?? [];
+        $replace = (bool) core()->getConfigData('general.magic_ai.translation.replace');
 
         foreach ($this->translatedData as $transData) {
             $locale = $transData['locale'];
-            $value = $transData['content'];
 
-            if (! isset($data['channel_locale_specific'])) {
-                $data['channel_locale_specific'] = [];
+            if (
+                ! $replace
+                && $productValueMapper->getScopedValue($values, $attribute, $this->channel, $locale) !== null
+            ) {
+                continue;
             }
 
-            if (! isset($data['channel_locale_specific'][$this->channel])) {
-                $data['channel_locale_specific'][$this->channel] = [];
-            }
-
-            $existingData = $data['channel_locale_specific'][$this->channel][$locale] ?? [];
-
-            if (core()->getConfigData('general.magic_ai.translation.replace') == 1) {
-                $existingData[$this->field] = $value;
-            } else {
-                if (! isset($existingData[$this->field])) {
-                    $existingData[$this->field] = $value;
-                }
-            }
-
-            $data['channel_locale_specific'][$this->channel][$locale] = $existingData;
+            $values = $productValueMapper->setScopedValue(
+                $values,
+                $attribute,
+                $this->channel,
+                $locale,
+                $transData['content']
+            );
         }
 
-        $product->values = $data;
+        $product->values = $values;
         $product->save();
     }
 }

@@ -7,9 +7,7 @@ test.beforeEach(async ({ adminPage }) => {
   await navigateTo(adminPage, 'dashboard');
 });
 
-// ═════════════════════════════════════════════════
 // SECTION 1: Header & Navigation
-// ═════════════════════════════════════════════════
 
 test('1.1 - Header shows UnoPim logo linking to dashboard', async ({ adminPage }) => {
   const logoLink = adminPage.getByRole('link', { name: 'UnoPim' });
@@ -18,7 +16,6 @@ test('1.1 - Header shows UnoPim logo linking to dashboard', async ({ adminPage }
 });
 
 test('1.2 - Header shows dark mode toggle icon', async ({ adminPage }) => {
-  // Dark mode icon is either icon-dark or icon-light
   const darkIcon = adminPage.locator('.icon-dark, .icon-light');
   await expect(darkIcon.first()).toBeVisible();
 });
@@ -33,15 +30,12 @@ test('1.4 - Header shows admin profile avatar button', async ({ adminPage }) => 
 });
 
 test('1.5 - Header shows hamburger menu icon (for responsive)', async ({ adminPage }) => {
-  // Hamburger menu is hidden on desktop but exists in DOM
+  // Hamburger is hidden on desktop but exists in the DOM.
   const hamburger = adminPage.locator('.icon-menu');
-  // It should exist in the DOM (hidden on desktop via CSS class "hidden")
   expect(await hamburger.count()).toBeGreaterThanOrEqual(1);
 });
 
-// ═════════════════════════════════════════════════
 // SECTION 2: Welcome & Quick Actions
-// ═════════════════════════════════════════════════
 
 test('2.1 - Shows welcome greeting with admin name', async ({ adminPage }) => {
   await expect(adminPage.getByText(/Welcome back/)).toBeVisible();
@@ -62,18 +56,16 @@ test('2.3 - Shows Create Product quick action button', async ({ adminPage }) => 
 test('2.4 - Shows Import Data quick action link with icon', async ({ adminPage }) => {
   const link = adminPage.getByRole('link', { name: 'Import Data' });
   await expect(link).toBeVisible();
-  await expect(link).toHaveAttribute('href', /\/admin\/settings\/data-transfer\/imports/);
+  await expect(link).toHaveAttribute('href', /\/admin\/data-transfer\/imports/);
 });
 
 test('2.5 - Shows Export Data quick action link with icon', async ({ adminPage }) => {
   const link = adminPage.getByRole('link', { name: 'Export Data' });
   await expect(link).toBeVisible();
-  await expect(link).toHaveAttribute('href', /\/admin\/settings\/data-transfer\/exports/);
+  await expect(link).toHaveAttribute('href', /\/admin\/data-transfer\/exports/);
 });
 
-// ═════════════════════════════════════════════════
 // SECTION 3: Catalog Overview
-// ═════════════════════════════════════════════════
 
 test('3.1 - Shows Catalog Overview section heading', async ({ adminPage }) => {
   await expect(adminPage.getByText('Catalog Overview')).toBeVisible();
@@ -105,9 +97,7 @@ test('3.5 - Total Categories card links to categories catalog page', async ({ ad
   await expect(link).toHaveAttribute('href', /\/admin\/catalog\/categories/);
 });
 
-// ═════════════════════════════════════════════════
 // SECTION 4: Catalog Structure
-// ═════════════════════════════════════════════════
 
 test('4.1 - Shows Catalog Structure section heading', async ({ adminPage }) => {
   await expect(adminPage.getByText('Catalog Structure')).toBeVisible();
@@ -127,16 +117,16 @@ test('4.3 - Total Attributes links to attributes page', async ({ adminPage }) =>
 });
 
 test('4.4 - Total Groups card shows icon and numeric count', async ({ adminPage }) => {
-  const link = adminPage.getByRole('link', { name: /Total Groups Total Groups/ });
+  const link = adminPage.getByRole('link', { name: /Total Attribute Groups Total Attribute Groups/ });
   await expect(link).toBeVisible();
-  await expect(link.locator('img[title="Total Groups"]')).toBeVisible();
+  await expect(link.locator('img[title="Total Attribute Groups"]')).toBeVisible();
   const numberText = await link.locator('p.text-3xl').innerText();
   expect(numberText.trim()).toMatch(/^\d+$/);
 });
 
 test('4.5 - Total Groups links to attribute groups page', async ({ adminPage }) => {
-  const link = adminPage.getByRole('link', { name: /Total Groups Total Groups/ });
-  await expect(link).toHaveAttribute('href', /\/admin\/catalog\/attributegroups/);
+  const link = adminPage.getByRole('link', { name: /Total Attribute Groups/ });
+  await expect(link).toHaveAttribute('href', /\/admin\/catalog\/attribute-groups/);
 });
 
 test('4.6 - Total Families card shows icon and numeric count', async ({ adminPage }) => {
@@ -149,7 +139,7 @@ test('4.6 - Total Families card shows icon and numeric count', async ({ adminPag
 
 test('4.7 - Total Families links to families page', async ({ adminPage }) => {
   const link = adminPage.getByRole('link', { name: /Total Families Total Families/ });
-  await expect(link).toHaveAttribute('href', /\/admin\/catalog\/families/);
+  await expect(link).toHaveAttribute('href', /\/admin\/catalog\/attribute-families/);
 });
 
 test('4.8 - Total Locales card shows icon and numeric count', async ({ adminPage }) => {
@@ -191,15 +181,13 @@ test('4.13 - Total Channels links to channels settings page', async ({ adminPage
   await expect(link).toHaveAttribute('href', /\/admin\/settings\/channels/);
 });
 
-// ═════════════════════════════════════════════════
 // SECTION 5: Needs Attention
-// ═════════════════════════════════════════════════
 
 test('5.1 - Shows Needs Attention section with red indicator', async ({ adminPage }) => {
-  // Wait for dashboard AJAX to settle — Product Statistics always renders after AJAX
+  // Wait for dashboard AJAX to settle — Product Statistics renders after AJAX.
   await adminPage.getByText('No products yet.').or(adminPage.locator('a:has-text("Total Products")')).first().waitFor({ state: 'visible', timeout: 15000 });
 
-  // Needs Attention is conditionally rendered — only appears when there are actionable issues
+  // Needs Attention renders conditionally — only when there are actionable issues.
   const needsAttention = adminPage.getByText('Needs Attention');
   const isVisible = await needsAttention.isVisible().catch(() => false);
   test.skip(!isVisible, 'No attention items in current environment — section hidden by design');
@@ -207,24 +195,19 @@ test('5.1 - Shows Needs Attention section with red indicator', async ({ adminPag
 });
 
 test('5.2 - Needs Attention shows unenriched products count with link', async ({ adminPage }) => {
-  // Wait for dashboard AJAX to settle
   await adminPage.getByText('No products yet.').or(adminPage.locator('a:has-text("Total Products")')).first().waitFor({ state: 'visible', timeout: 15000 });
 
-  // Needs Attention is conditionally rendered — only appears when there are actionable issues
   const link = adminPage.getByRole('link', { name: /Unenriched Products/ });
   const isVisible = await link.isVisible().catch(() => false);
   test.skip(!isVisible, 'No unenriched products in current environment');
 
   await expect(link).toHaveAttribute('href', /\/admin\/catalog\/products/);
 
-  // Should display a number before "Unenriched Products"
   const text = await link.innerText();
   expect(text).toMatch(/\d+\s+Unenriched Products/);
 });
 
-// ═════════════════════════════════════════════════
 // SECTION 6: Analytics — Product Statistics
-// ═════════════════════════════════════════════════
 
 test('6.1 - Shows Analytics section heading', async ({ adminPage }) => {
   await expect(adminPage.getByText('Analytics')).toBeVisible();
@@ -273,7 +256,6 @@ test('6.7 - Product Type Distribution shows type breakdown with counts and perce
   const emptyVisible = await emptyState.isVisible().catch(() => false);
   test.skip(emptyVisible, 'No products in current environment');
 
-  // Should show at least one product type (simple or configurable) with count and percentage
   const simpleType = adminPage.getByText('simple');
   const configurableType = adminPage.getByText('configurable');
 
@@ -282,7 +264,6 @@ test('6.7 - Product Type Distribution shows type breakdown with counts and perce
 
   expect(simpleVisible || configurableVisible).toBe(true);
 
-  // Percentage format like (94%) should be visible
   await expect(adminPage.getByText(/\(\d+%\)/).first()).toBeVisible();
 });
 
@@ -323,7 +304,6 @@ test('6.12 - Total Products card links to products page (unfiltered)', async ({ 
   const emptyState = adminPage.getByText('No products yet.');
   const emptyVisible = await emptyState.isVisible().catch(() => false);
   test.skip(emptyVisible, 'No products in current environment');
-  // Total Products card links to unfiltered product listing
   const totalCard = adminPage.locator('a', { has: adminPage.getByText('Total Products') }).first();
   const href = await totalCard.getAttribute('href');
   expect(href).toMatch(/\/admin\/catalog\/products$/);
@@ -361,20 +341,16 @@ test('6.15 - Clicking Inactive card navigates to product listing with status fil
   const inactiveCard = adminPage.locator('a', { has: adminPage.getByText('Inactive') }).first();
   await inactiveCard.click();
 
-  // Should navigate to products page with status filter
   await expect(adminPage).toHaveURL(/\/admin\/catalog\/products\?filters\[status\]\[\]=0/);
 });
 
-// ═════════════════════════════════════════════════
 // SECTION 7: Analytics — Product Activity Chart
-// ═════════════════════════════════════════════════
 
 test('7.1 - Shows Product Activity (Last 7 Days) chart heading', async ({ adminPage }) => {
   await expect(adminPage.getByText('Product Activity (Last 7 Days)')).toBeVisible();
 });
 
 test('7.2 - Product Activity chart shows Created legend', async ({ adminPage }) => {
-  // Created legend in the chart header
   await expect(adminPage.getByText('Created').first()).toBeVisible();
 });
 
@@ -405,15 +381,12 @@ test('7.5 - Product Activity chart shows date numbers for each day', async ({ ad
   const noActivity = adminPage.getByText(/no.*activity|no.*products/i);
   test.skip(await noActivity.isVisible().catch(() => false), 'No product activity in current environment');
 
-  // Each day column has a date number beneath the day name
-  // Check that at least some date numbers are visible (they're two-digit numbers)
   const dateNumbers = adminPage.locator('p').filter({ hasText: /^\d{1,2}$/ });
   const count = await dateNumbers.count();
   expect(count).toBeGreaterThanOrEqual(7);
 });
 
 test('7.6 - Product Activity shows Created and Updated totals summary', async ({ adminPage }) => {
-  // Summary line shows "Created: X" and "Updated: Y"
   await expect(adminPage.getByText(/Created:\s*\d+/).first()).toBeVisible();
   await expect(adminPage.getByText(/Updated:\s*\d+/).first()).toBeVisible();
 });
@@ -429,16 +402,12 @@ test('7.8 - Product Activity bars show created/updated counts per day', async ({
   const noActivity = adminPage.getByText(/no.*activity|no.*products/i);
   test.skip(await noActivity.isVisible().catch(() => false), 'No product activity in current environment');
 
-  // Each bar column shows values like "0 / 0" or "18 / 15"
   const slashSeparators = adminPage.locator('text=/');
   const count = await slashSeparators.count();
-  // Should have 7 slash separators (one per day)
   expect(count).toBeGreaterThanOrEqual(7);
 });
 
-// ═════════════════════════════════════════════════
 // SECTION 8: Completeness
-// ═════════════════════════════════════════════════
 
 test('8.1 - Shows Completeness section heading', async ({ adminPage }) => {
   const heading = adminPage.getByText('Completeness', { exact: true });
@@ -446,8 +415,9 @@ test('8.1 - Shows Completeness section heading', async ({ adminPage }) => {
   await expect(heading).toBeVisible();
 });
 
-test('8.2 - Completeness shows channel name (Default)', async ({ adminPage }) => {
-  await expect(adminPage.getByRole('heading', { name: 'Default' })).toBeVisible();
+test('8.2 - Completeness shows channel name (Master Catalog)', async ({ adminPage }) => {
+  // The `default` channel's demo display name is "Master Catalog" (its code stays `default`).
+  await expect(adminPage.getByRole('heading', { name: 'Master Catalog' })).toBeVisible();
 });
 
 test('8.3 - Completeness shows improvement suggestion text', async ({ adminPage }) => {
@@ -461,12 +431,10 @@ test('8.3 - Completeness shows improvement suggestion text', async ({ adminPage 
 });
 
 test('8.4 - Completeness shows locale names with progress percentage', async ({ adminPage }) => {
-  // Should show locale names like "English (United States)" with a percentage
   const englishLocale = adminPage.getByText('English (United States)').first();
   await englishLocale.scrollIntoViewIfNeeded();
   await expect(englishLocale).toBeVisible();
 
-  // Percentage should be visible near the locale
   await expect(adminPage.getByText(/\d+%/).first()).toBeVisible();
 });
 
@@ -475,16 +443,12 @@ test('8.5 - Completeness shows multiple locale entries', async ({ adminPage }) =
   const noProducts = adminPage.getByText('No products yet.');
   test.skip(await noProducts.isVisible().catch(() => false), 'No products in current environment');
 
-  // Each locale should have a percentage display
   const percentages = adminPage.getByText(/\d+%/);
   const count = await percentages.count();
-  // Should have at least 1 locale entry with percentage
   expect(count).toBeGreaterThanOrEqual(1);
 });
 
-// ═════════════════════════════════════════════════
 // SECTION 9: Channel Readiness
-// ═════════════════════════════════════════════════
 
 test('9.1 - Shows Channel Readiness section heading', async ({ adminPage }) => {
   const heading = adminPage.getByText('Channel Readiness');
@@ -495,33 +459,28 @@ test('9.1 - Shows Channel Readiness section heading', async ({ adminPage }) => {
 test('9.2 - Channel Readiness shows data or empty state message', async ({ adminPage }) => {
   const emptyMsg = adminPage.getByText('No completeness data available yet.');
   await emptyMsg.scrollIntoViewIfNeeded().catch(() => {});
-  // Either shows completeness data or the empty state message
   const emptyVisible = await emptyMsg.isVisible().catch(() => false);
   if (emptyVisible) {
     await expect(emptyMsg).toBeVisible();
   }
-  // If channel readiness data exists, the empty message won't show
 });
 
-// ═════════════════════════════════════════════════
 // SECTION 10: Operations — Recent Activity
-// ═════════════════════════════════════════════════
 
 test('10.1 - Shows Operations section heading', async ({ adminPage }) => {
   await adminPage.waitForLoadState('networkidle');
-  const heading = adminPage.getByText('Operations');
+  const heading = adminPage.getByText('Operations', { exact: true });
   await heading.scrollIntoViewIfNeeded();
   await expect(heading).toBeVisible();
 });
 
 test('10.2 - Shows Recent Activity card heading', async ({ adminPage }) => {
-  const heading = adminPage.getByText('Recent Activity');
+  const heading = adminPage.getByText('Recent Activity', { exact: true });
   await heading.scrollIntoViewIfNeeded();
   await expect(heading).toBeVisible();
 });
 
 test('10.3 - Recent Activity entries show user name, action, and entity', async ({ adminPage }) => {
-  // Activity entries show text like "Example updated product #1783"
   const entries = adminPage.getByText(/Example\s+(created|updated|deleted)\s+/i);
   const count = await entries.count();
 
@@ -532,7 +491,6 @@ test('10.3 - Recent Activity entries show user name, action, and entity', async 
 });
 
 test('10.4 - Recent Activity entries show relative timestamps', async ({ adminPage }) => {
-  // Timestamps like "27 minutes ago", "1 hour ago", etc.
   const timestamps = adminPage.getByText(/\d+\s+(second|minute|hour|day|week|month)s?\s+ago/);
   const count = await timestamps.count();
 
@@ -546,46 +504,38 @@ test('10.4 - Recent Activity entries show relative timestamps', async ({ adminPa
 });
 
 test('10.5 - Recent Activity entries show entity type badges', async ({ adminPage }) => {
-  // Entity type badges like "product", "category"
   const productBadge = adminPage.getByText('product', { exact: true });
   const categoryBadge = adminPage.getByText('category', { exact: true });
 
   const productVisible = await productBadge.first().isVisible().catch(() => false);
   const categoryVisible = await categoryBadge.first().isVisible().catch(() => false);
 
-  // At least one type badge should be visible if there's activity
   if (!productVisible && !categoryVisible) {
-    // No activity at all — also valid
+    // No activity at all — also valid.
     expect(true).toBe(true);
   }
 });
 
-// ═════════════════════════════════════════════════
 // SECTION 11: Operations — Data Transfer
-// ═════════════════════════════════════════════════
 
 test('11.1 - Shows Data Transfer card heading', async ({ adminPage }) => {
-  // Data Transfer card inside main content area (not sidebar nav)
-  const dataTransferHeading = adminPage.locator('main p, [class*="content"] p, .grid p').filter({ hasText: 'Data Transfer' });
-  await dataTransferHeading.first().scrollIntoViewIfNeeded();
-  await expect(dataTransferHeading.first()).toBeVisible();
+  // Target the visible heading; a hidden sidebar/shimmer <p> also matched and never scrolled.
+  const dataTransferHeading = adminPage.locator('p:visible', { hasText: 'Data Transfer' });
+  await expect(dataTransferHeading.first()).toBeVisible({ timeout: 15000 });
 });
 
 test('11.2 - Data Transfer shows job entries or empty state message', async ({ adminPage }) => {
   const noJobs = adminPage.getByText('No recent import/export jobs found.');
   await noJobs.scrollIntoViewIfNeeded().catch(() => {});
-  // Either shows job entries or empty state
   const emptyVisible = await noJobs.isVisible().catch(() => false);
   if (emptyVisible) {
     await expect(noJobs).toBeVisible();
   }
 });
 
-// ═════════════════════════════════════════════════
 // SECTION 12: Open Agenting PIM Button
 // (uses adminPageWithWidget — the widget is hidden
 //  by default in the standard adminPage fixture)
-// ═════════════════════════════════════════════════
 
 test('12.1 - Shows "Open Agenting PIM" floating action button', async ({ adminPageWithWidget }) => {
   await navigateTo(adminPageWithWidget, 'dashboard');
@@ -595,9 +545,7 @@ test('12.1 - Shows "Open Agenting PIM" floating action button', async ({ adminPa
   await expect(agentBtn).toBeVisible();
 });
 
-// ═════════════════════════════════════════════════
 // SECTION 13: Quick Action Link Navigation
-// ═════════════════════════════════════════════════
 
 test('13.1 - Create Product link navigates to products page', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: 'Create Product' }).click();
@@ -606,12 +554,12 @@ test('13.1 - Create Product link navigates to products page', async ({ adminPage
 
 test('13.2 - Import Data link navigates to imports page', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: 'Import Data' }).click();
-  await expect(adminPage).toHaveURL(/\/admin\/settings\/data-transfer\/imports/);
+  await expect(adminPage).toHaveURL(/\/admin\/data-transfer\/imports/);
 });
 
 test('13.3 - Export Data link navigates to exports page', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: 'Export Data' }).click();
-  await expect(adminPage).toHaveURL(/\/admin\/settings\/data-transfer\/exports/);
+  await expect(adminPage).toHaveURL(/\/admin\/data-transfer\/exports/);
 });
 
 });

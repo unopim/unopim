@@ -1,3 +1,3 @@
-id,name,email,status,role_name,permission_type,permissions,timezone,ui_locale_code
-2,User,user@example.com,active,Administrator,all,,UTC,en_US
-3,Editor,editor@example.com,active,Editor,custom,"dashboard,catalog.products",UTC,en_US
+name,email,status,role_name,permission_type,permissions,timezone,ui_locale_code
+User,user@example.com,active,Administrator,all,,UTC,en_US
+Editor,editor@example.com,active,Editor,custom,"dashboard,catalog.products",UTC,en_US

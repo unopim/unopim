@@ -8,28 +8,20 @@ namespace Webkul\ElasticSearch;
  */
 class ElasticSearchQuery
 {
-    /** @var array */
-    private $excludeConditions = [];
+    private array $excludeConditions = [];
 
-    /** @var array */
-    private $filterConditions = [];
+    private array $filterConditions = [];
 
-    /** @var array */
-    private $orConditions = [];
+    private array $orConditions = [];
 
-    /** @var array */
-    private $includeConditions = [];
+    private array $includeConditions = [];
 
-    /** @var array */
-    private $sortingConditions = [];
+    private array $sortingConditions = [];
 
-    /** @var array */
-    private $aggregationConditions = [];
+    private array $aggregationConditions = [];
 
     /**
      * Add a `must_not` clause to the query.
-     *
-     * @return $this
      */
     public function whereNot(array $clause): self
     {
@@ -40,8 +32,6 @@ class ElasticSearchQuery
 
     /**
      * Add a `filter` clause to the query.
-     *
-     * @return $this
      */
     public function where(array $clause): self
     {
@@ -52,8 +42,6 @@ class ElasticSearchQuery
 
     /**
      * Add a `should` clause to the query.
-     *
-     * @return $this
      */
     public function orWhere(array $clause): self
     {
@@ -64,8 +52,6 @@ class ElasticSearchQuery
 
     /**
      * Add a `must` clause to the query.
-     *
-     * @return $this
      */
     public function must(array $clause): self
     {
@@ -76,8 +62,6 @@ class ElasticSearchQuery
 
     /**
      * Add a `sort` clause to the query.
-     *
-     * @return $this
      */
     public function orderBy(array $sort): self
     {
@@ -96,8 +80,6 @@ class ElasticSearchQuery
 
     /**
      * Add an aggregation (facet) clause to the query.
-     *
-     * @return $this
      */
     public function addAggregation(string $name, string $field): self
     {
@@ -113,28 +95,28 @@ class ElasticSearchQuery
     {
         $searchQuery = [];
 
-        if (! empty($this->filterConditions)) {
+        if ($this->filterConditions !== []) {
             $searchQuery['query']['constant_score']['filter']['bool']['filter'] = $this->filterConditions;
         }
 
-        if (! empty($this->includeConditions)) {
+        if ($this->includeConditions !== []) {
             $searchQuery['query']['constant_score']['filter']['bool']['must'] = $this->includeConditions;
         }
 
-        if (! empty($this->excludeConditions)) {
+        if ($this->excludeConditions !== []) {
             $searchQuery['query']['constant_score']['filter']['bool']['must_not'] = $this->excludeConditions;
         }
 
-        if (! empty($this->orConditions)) {
+        if ($this->orConditions !== []) {
             $searchQuery['query']['constant_score']['filter']['bool']['should'] = $this->orConditions;
             $searchQuery['query']['constant_score']['filter']['bool']['minimum_should_match'] = 1;
         }
 
-        if (! empty($this->sortingConditions)) {
+        if ($this->sortingConditions !== []) {
             $searchQuery['sort'] = $this->sortingConditions;
         }
 
-        if (! empty($this->aggregationConditions)) {
+        if ($this->aggregationConditions !== []) {
             $searchQuery['aggs'] = $this->aggregationConditions;
         }
 

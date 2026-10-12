@@ -1,9 +1,11 @@
 <?php
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 
 beforeEach(function () {
@@ -13,7 +15,7 @@ beforeEach(function () {
 it('should return the list of all configurable products', function () {
     $product = Product::factory()->configurable()->create();
 
-    $response = $this->withHeaders($this->headers)->json('GET', route('admin.api.configrable_products.index'))
+    $this->withHeaders($this->headers)->json('GET', route('admin.api.configrable_products.index'))
         ->assertOK()
         ->assertJsonStructure([
             'data' => [
@@ -41,7 +43,13 @@ it('should return the list of all configurable products', function () {
                 'prev',
             ],
         ])
-        ->assertJsonFragment(['total' => Product::where('type', 'configurable')->count()])
+        ->assertJsonFragment(['total' => Product::whereIn('type', ProductType::VARIANT_PARENT_VALUES)->count()]);
+
+    $response = $this->withHeaders($this->headers)
+        ->json('GET', route('admin.api.configrable_products.index', [
+            'filters' => json_encode(['sku' => [['operator' => '=', 'value' => $product->sku]]]),
+        ]))
+        ->assertOK()
         ->json('data');
 
     $product->refresh();
@@ -80,6 +88,7 @@ it('should return the configurable product by code', function () {
         'values'           => $product->values,
         'super_attributes' => $product->super_attributes()->pluck('code')->toArray(),
         'variants'         => [],
+        'associations'     => [],
     ];
 
     foreach ($product->variants as $variant) {
@@ -109,6 +118,7 @@ it('should return the configurable product by code', function () {
             'values',
             'super_attributes',
             'variants',
+            'associations',
         ])
         ->json();
 
@@ -120,7 +130,7 @@ it('should return error message when creating variant product non existing paren
 
     $productData = [
         'parent' => 'not_existing_product1_1',
-        'type'   => 'simple',
+        'type'   => ProductType::Simple->value,
         'family' => AttributeFamily::first()->code,
         'values' => [
             'common' => [
@@ -147,7 +157,7 @@ it('should return error message when creating variant product without super attr
 
     $productData = [
         'parent' => $configurableProduct->sku,
-        'type'   => 'simple',
+        'type'   => ProductType::Simple->value,
         'family' => $configurableProduct->attribute_family->code,
         'values' => [
             'common' => [
@@ -180,7 +190,7 @@ it('should create a variant product successfully', function () {
 
     $productData = [
         'parent' => $configurableProduct->sku,
-        'type'   => 'simple',
+        'type'   => ProductType::Simple->value,
         'family' => $configurableProduct->attribute_family->code,
         'values' => [
             'common' => [
@@ -342,6 +352,36 @@ it('should store the price attribute value when updating configurable product', 
     $product->refresh();
 
     $this->assertEquals($value, $product->values['common'][$attributeCode] ?? '');
+});
+
+it('fires catalog.product.update.after exactly once when updating a configurable product', function () {
+    $attribute = Attribute::factory()->create(['value_per_locale' => false, 'value_per_channel' => false, 'type' => 'text']);
+
+    $product = Product::factory()->configurable()->create();
+
+    $family = AttributeFamily::where('id', $product->attribute_family_id)->first();
+
+    $family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
+
+    Event::fake(['catalog.product.update.after']);
+
+    $updatedproduct = [
+        'sku'    => $product->sku,
+        'parent' => null,
+        'family' => $family->code,
+        'values' => [
+            'common' => [
+                'sku'            => $product->sku,
+                $attribute->code => 'changed-value',
+            ],
+        ],
+    ];
+
+    $this->withHeaders($this->headers)
+        ->json('PUT', route('admin.api.configrable_products.update', ['code' => $updatedproduct['sku']]), $updatedproduct)
+        ->assertStatus(200);
+
+    Event::assertDispatchedTimes('catalog.product.update.after', 1);
 });
 
 it('should store the boolean attribute value when updating configurable product', function () {

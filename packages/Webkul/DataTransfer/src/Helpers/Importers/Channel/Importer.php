@@ -66,8 +66,6 @@ class Importer extends AbstractImporter
 
     /**
      * Create a new helper instance.
-     *
-     * @return void
      */
     public function __construct(
         protected JobTrackBatchRepository $importBatchRepository,
@@ -81,9 +79,6 @@ class Importer extends AbstractImporter
         $this->initLocalesAndCurrencies();
     }
 
-    /**
-     * Initialize Product error templates
-     */
     protected function initErrorMessages(): void
     {
         foreach ($this->messages as $errorCode => $message) {
@@ -93,18 +88,12 @@ class Importer extends AbstractImporter
         parent::initErrorMessages();
     }
 
-    /**
-     * Initialize locales and currencies
-     */
     protected function initLocalesAndCurrencies(): void
     {
         $this->activeLocales = $this->localeRepository->getActiveLocales()->pluck('id', 'code')->toArray();
         $this->activeCurrencies = $this->currencyRepository->getActiveCurrencies()->pluck('id', 'code')->toArray();
     }
 
-    /**
-     * Validates row
-     */
     public function validateRow(array $rowData, int $rowNumber): bool
     {
         if (isset($this->validatedRows[$rowNumber])) {
@@ -124,12 +113,12 @@ class Importer extends AbstractImporter
         }
 
         $validator = Validator::make($rowData, [
-            'code'          => 'required|string',
-            'name'          => 'required|string',
-            'locale'        => 'required|string',
-            'root_category' => 'required|string',
-            'locales'       => 'required|string',
-            'currencies'    => 'required|string',
+            'code'          => ['required', 'string'],
+            'name'          => ['required', 'string'],
+            'locale'        => ['required', 'string'],
+            'root_category' => ['required', 'string'],
+            'locales'       => ['required', 'string'],
+            'currencies'    => ['required', 'string'],
         ]);
 
         if ($validator->fails()) {
@@ -153,7 +142,7 @@ class Importer extends AbstractImporter
             $this->skipRow($rowNumber, self::ERROR_ROOT_CATEGORY_NOT_FOUND, 'root_category', trans($this->messages[self::ERROR_ROOT_CATEGORY_NOT_FOUND]));
         }
 
-        $locales = array_map('trim', explode(',', $rowData['locales']));
+        $locales = array_map(trim(...), explode(',', $rowData['locales']));
         foreach ($locales as $locale) {
             if (! isset($this->activeLocales[$locale])) {
                 $this->skipRow($rowNumber, self::ERROR_LOCALE_NOT_FOUND, 'locales', trans($this->messages[self::ERROR_LOCALE_NOT_FOUND]));
@@ -162,7 +151,7 @@ class Importer extends AbstractImporter
             }
         }
 
-        $currencies = array_map('trim', explode(',', $rowData['currencies']));
+        $currencies = array_map(trim(...), explode(',', $rowData['currencies']));
         foreach ($currencies as $currency) {
             if (! isset($this->activeCurrencies[$currency])) {
                 $this->skipRow($rowNumber, self::ERROR_CURRENCY_NOT_FOUND, 'currencies', trans($this->messages[self::ERROR_CURRENCY_NOT_FOUND]));
@@ -174,9 +163,6 @@ class Importer extends AbstractImporter
         return ! $this->errorHelper->isRowInvalid($rowNumber);
     }
 
-    /**
-     * Start the import process
-     */
     public function importBatch(JobTrackBatchContract $batch): bool
     {
         Event::dispatch('data_transfer.imports.batch.import.before', $batch);
@@ -201,9 +187,6 @@ class Importer extends AbstractImporter
         return true;
     }
 
-    /**
-     * Delete channels from current batch
-     */
     protected function deleteChannelData(JobTrackBatchContract $batch): bool
     {
         foreach ($batch->data as $rowData) {
@@ -218,7 +201,7 @@ class Importer extends AbstractImporter
                     Event::dispatch('core.channel.delete.after', $channel->id);
 
                     $this->deletedItemsCount++;
-                } catch (\Exception $e) {
+                } catch (\Exception) {
                     // skip deleting if it fails due to constraint
                 }
             }
@@ -227,9 +210,6 @@ class Importer extends AbstractImporter
         return true;
     }
 
-    /**
-     * Save channel from current batch
-     */
     protected function saveChannelData(JobTrackBatchContract $batch): bool
     {
         $channelsData = [];
@@ -262,14 +242,14 @@ class Importer extends AbstractImporter
             }
 
             $localeIds = [];
-            foreach (array_map('trim', explode(',', $data['locales'])) as $localeCode) {
+            foreach (array_map(trim(...), explode(',', $data['locales'])) as $localeCode) {
                 if (isset($this->activeLocales[$localeCode])) {
                     $localeIds[] = $this->activeLocales[$localeCode];
                 }
             }
 
             $currencyIds = [];
-            foreach (array_map('trim', explode(',', $data['currencies'])) as $currencyCode) {
+            foreach (array_map(trim(...), explode(',', $data['currencies'])) as $currencyCode) {
                 if (isset($this->activeCurrencies[$currencyCode])) {
                     $currencyIds[] = $this->activeCurrencies[$currencyCode];
                 }
@@ -282,7 +262,7 @@ class Importer extends AbstractImporter
                 'currencies'       => $currencyIds,
             ];
 
-            foreach ($this->activeLocales as $localeCode => $id) {
+            foreach (array_keys($this->activeLocales) as $localeCode) {
                 if (isset($data[$localeCode])) {
                     $payload[$localeCode] = [
                         'name' => $data[$localeCode]['name'],

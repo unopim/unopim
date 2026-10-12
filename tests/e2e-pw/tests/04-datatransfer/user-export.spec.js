@@ -12,7 +12,7 @@ async function createExport(adminPage, code, format = 'CSV') {
   await adminPage.locator('input[name="filters[file_format]"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').click();
   await adminPage.getByRole('option', { name: format }).locator('span').first().click();
   
-  await clickSaveAndExpect(adminPage, 'Save Export', /Export created successfully/i);
+  await clickSaveAndExpect(adminPage, 'Save changes', /Export created successfully/i);
 }
 
 async function deleteExport(adminPage, code) {
@@ -34,7 +34,6 @@ test.describe('User Export Jobs', () => {
     const code = `user-csv-${uid}`;
     await createExport(adminPage, code, 'CSV');
 
-    // Cleanup
     await deleteExport(adminPage, code);
   });
 });

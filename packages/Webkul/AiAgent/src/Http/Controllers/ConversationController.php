@@ -15,9 +15,7 @@ class ConversationController extends Controller
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
-            if (! bouncer()->hasPermission('ai-agent.general')) {
-                abort(403, trans('ai-agent::app.common.unauthorized'));
-            }
+            abort_unless(bouncer()->hasPermission('ai-agent.general'), 403, trans('ai-agent::app.common.unauthorized'));
 
             return $next($request);
         });
@@ -32,7 +30,7 @@ class ConversationController extends Controller
 
         $conversations = DB::table('ai_agent_conversations')
             ->where('user_id', $userId)
-            ->orderByDesc('updated_at')
+            ->latest('updated_at')
             ->limit(50)
             ->get(['id', 'title', 'metadata', 'created_at', 'updated_at']);
 
@@ -56,8 +54,7 @@ class ConversationController extends Controller
         }
 
         $messages = DB::table('ai_agent_messages')
-            ->where('conversation_id', $id)
-            ->orderBy('created_at')
+            ->where('conversation_id', $id)->oldest()
             ->get(['role', 'content', 'tool_calls', 'tokens_used', 'created_at']);
 
         return new JsonResponse([
@@ -72,10 +69,10 @@ class ConversationController extends Controller
     public function store(Request $request): JsonResponse
     {
         $request->validate([
-            'title'              => 'nullable|string|max:255',
-            'messages'           => 'required|array',
-            'messages.*.role'    => 'required|in:user,assistant,system',
-            'messages.*.content' => 'required|string',
+            'title'              => ['nullable', 'string', 'max:255'],
+            'messages'           => ['required', 'array'],
+            'messages.*.role'    => ['required', 'in:user,assistant,system'],
+            'messages.*.content' => ['required', 'string'],
         ]);
 
         $userId = auth()->guard('admin')->id();
@@ -88,7 +85,7 @@ class ConversationController extends Controller
             'updated_at' => now(),
         ]);
 
-        $messages = collect($request->input('messages'))->map(fn ($m) => [
+        $messages = collect($request->input('messages'))->map(fn ($m): array => [
             'conversation_id' => $conversationId,
             'role'            => $m['role'],
             'content'         => $m['content'],

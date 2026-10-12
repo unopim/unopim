@@ -38,7 +38,7 @@
 
     <x-admin::form.control-group>
         <div class="inline-flex justify-between w-full">
-            <x-admin::form.control-group.label :for="$fieldName">
+            <x-admin::form.control-group.label :for="form_control_id($fieldName)">
                 {{ $fieldLabel }} 
 
                 @if ($field->is_required)
@@ -121,9 +121,11 @@
                     <input type="hidden" name="{{ $fieldName }}" value="">
                 @endIf
 
-                <x-admin::media.images
+                <x-admin::media.image
                     name="{{ $fieldName }}"
                     ::class="[errors && errors['{{ $fieldName }}'] ? 'border !border-red-600 hover:border-red-600' : '']"
+                    :allow-download="true"
+                    :full-preview="true"
                     :id="$field->code"
                     ::rules="{{ $field->getValidationsField() }}"
                     :uploaded-images="! empty($value) ? [$savedImage] : []"
@@ -152,6 +154,7 @@
 
                 <x-admin::media.files
                     type="video"
+                    :allow-download="true"
                     :id="$field->code"
                     :name="$fieldName"
                     ::rules="{{ $field->getValidationsField() }}"

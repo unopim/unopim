@@ -4,7 +4,7 @@ namespace Webkul\Product\Builders;
 
 use Webkul\Attribute\Services\AttributeService;
 use Webkul\ElasticSearch\AbstractFilterableQueryBuilder as ElasticSearchAbstractFilterableQueryBuilder;
-use Webkul\ElasticSearch\Facades\ElasticSearchQuery;
+use Webkul\ElasticSearch\ElasticSearchQuery;
 use Webkul\Product\Filter\FilterManager;
 use Webkul\Product\Traits\ProductQueryFilter;
 
@@ -14,8 +14,11 @@ class ElasticProductQueryBuilder extends ElasticSearchAbstractFilterableQueryBui
 
     public function __construct(
         protected AttributeService $attributeService,
-        protected FilterManager $filterManager
-    ) {}
+        protected FilterManager $filterManager,
+        ?ElasticSearchQuery $elasticSearchQuery = null,
+    ) {
+        parent::__construct($elasticSearchQuery);
+    }
 
     /**
      * Add a filter condition on an attribute
@@ -26,11 +29,11 @@ class ElasticProductQueryBuilder extends ElasticSearchAbstractFilterableQueryBui
         $operator,
         $value,
         array $context
-    ) {
+    ): static {
         $locale = $attribute->value_per_locale ? ($context['locale'] ?? null) : null;
         $channel = $attribute->value_per_channel ? ($context['channel'] ?? null) : null;
 
-        $filter->setQueryManager(new ElasticSearchQuery);
+        $filter->setQueryManager($this->elasticSearchQuery);
 
         if (! $filter->isOperatorAllowed($operator)) {
             throw new \InvalidArgumentException(
@@ -56,8 +59,8 @@ class ElasticProductQueryBuilder extends ElasticSearchAbstractFilterableQueryBui
         $operator,
         $value,
         array $context
-    ) {
-        $filter->setQueryManager(new ElasticSearchQuery);
+    ): static {
+        $filter->setQueryManager($this->elasticSearchQuery);
 
         $filter->applyUnfilteredFilter($attribute, $operator, $value, $context);
 

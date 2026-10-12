@@ -2,10 +2,8 @@
 
 namespace Webkul\DataTransfer\Helpers\Sources;
 
-use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\RichText\RichText;
 
 class Excel extends AbstractSource
 {
@@ -21,13 +19,13 @@ class Excel extends AbstractSource
 
     /**
      * Create a new helper instance.
-     *
-     * @return void
      */
     public function __construct(string $filePath)
     {
+        $path = self::resolveReadablePath($filePath);
+
         try {
-            $factory = IOFactory::load(Storage::disk('private')->path($filePath));
+            $factory = IOFactory::load($path);
 
             $this->reader = $factory->getActiveSheet();
 
@@ -44,7 +42,7 @@ class Excel extends AbstractSource
             $this->columnNames = $headerRow;
         } catch (\LogicException $e) {
             throw $e;
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             throw new \LogicException("Unable to open file: '{$filePath}'");
         }
     }
@@ -54,15 +52,16 @@ class Excel extends AbstractSource
      */
     protected function getNextRow(): array|bool
     {
-        for ($column = 1; $column <= $this->totalColumns; $column++) {
-            $value = $this->reader->getCellByColumnAndRow($column, $this->currentRowNumber)->getValue();
+        $rowData = [];
 
-            $rowData[] = $value instanceof RichText ? $value->getPlainText() : $value;
+        for ($column = 1; $column <= $this->totalColumns; $column++) {
+            $cellValue = $this->reader->getCellByColumnAndRow($column, $this->currentRowNumber)->getValue();
+            $rowData[] = $cellValue !== null ? (string) $cellValue : null;
         }
 
         $filteredRowData = array_filter($rowData);
 
-        if (empty($filteredRowData)) {
+        if ($filteredRowData === []) {
             return false;
         }
 

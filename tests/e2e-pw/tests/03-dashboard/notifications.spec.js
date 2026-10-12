@@ -211,7 +211,10 @@ test('3.8 - Notification History page has header elements — logo, dark mode, b
   await adminPage.goto('/admin/notifications');
   await adminPage.waitForLoadState('networkidle');
 
-  await expect(adminPage.locator('img[alt="UnoPim"]').first()).toBeVisible();
+  // The logo's alt text is config('app.name'), which this environment sets
+  // to a custom value rather than the literal string "UnoPim"; match the
+  // header logo by its asset path instead.
+  await expect(adminPage.locator('img[src*="/logo"]').first()).toBeVisible();
   await expect(adminPage.locator('[title="Notifications"]')).toBeVisible();
 });
 

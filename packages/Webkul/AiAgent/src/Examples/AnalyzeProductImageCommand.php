@@ -2,6 +2,8 @@
 
 namespace Webkul\AiAgent\Examples;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Webkul\AiAgent\Agents\ImageProductAgent;
 use Webkul\AiAgent\Repositories\AgentRepository;
@@ -16,22 +18,10 @@ use Webkul\AiAgent\Repositories\CredentialRepository;
  * Usage:
  *   php artisan ai-agent:analyze-image https://example.com/product.jpg --agent-id=1 --credential-id=1 --async
  */
+#[Description('Analyze a product image using AI Agent')]
+#[Signature('ai-agent:analyze-image {imageUrl} {--agent-id=1} {--credential-id=1} {--async}')]
 class AnalyzeProductImageCommand extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'ai-agent:analyze-image {imageUrl} {--agent-id=1} {--credential-id=1} {--async}';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Analyze a product image using AI Agent';
-
     /**
      * Execute the console command.
      */
@@ -78,7 +68,7 @@ class AnalyzeProductImageCommand extends Command
                 return self::SUCCESS;
             }
 
-            $this->withProgressBar(1, function () use ($imageAgent, $imageUrl, $agentId, $credentialId) {
+            $this->withProgressBar(1, function () use ($imageAgent, $imageUrl, $agentId, $credentialId): void {
                 $imageAgent->analyze(
                     imageSource: $imageUrl,
                     agentId: $agentId,

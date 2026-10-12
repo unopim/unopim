@@ -3,50 +3,64 @@
 namespace Webkul\MagicAI\Models;
 
 use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Webkul\MagicAI\Contracts\MagicAIPlatform as MagicAIPlatformContract;
+use Webkul\MagicAI\Database\Factories\MagicAIPlatformFactory;
 
+#[Fillable([
+    'label',
+    'provider',
+    'api_url',
+    'api_key',
+    'models',
+    'extras',
+    'is_default',
+    'status',
+])]
+#[Hidden([
+    'api_key',
+])]
+#[Table(name: 'magic_ai_platforms')]
 class MagicAIPlatform extends Model implements MagicAIPlatformContract
 {
-    protected $table = 'magic_ai_platforms';
+    use HasFactory;
 
-    protected $fillable = [
-        'label',
-        'provider',
-        'api_url',
-        'api_key',
-        'models',
-        'extras',
-        'is_default',
-        'status',
-    ];
-
-    protected $casts = [
-        'extras'     => 'array',
-        'is_default' => 'boolean',
-        'status'     => 'boolean',
-        'api_key'    => 'encrypted',
-    ];
-
-    protected $hidden = [
-        'api_key',
-    ];
+    protected static function newFactory(): Factory
+    {
+        return MagicAIPlatformFactory::new();
+    }
 
     protected static function booted()
     {
-        static::saving(function ($model) {
+        static::saving(function ($model): void {
             if ($model->is_default) {
                 static::where('id', '!=', $model->id ?? 0)->update(['is_default' => false]);
             }
         });
     }
 
-    public function scopeActive($query)
+    /**
+     * @param  Builder<static>  $query
+     */
+    #[Scope]
+    protected function active($query)
     {
         return $query->where('status', true);
     }
 
-    public function scopeDefault($query)
+    /**
+     * @param  Builder<static>  $query
+     */
+    #[Scope]
+    protected function default($query)
     {
         return $query->where('is_default', true);
     }
@@ -82,8 +96,19 @@ class MagicAIPlatform extends Model implements MagicAIPlatformContract
     /**
      * Get the list of models as an array.
      */
-    public function getModelListAttribute(): array
+    protected function modelList(): Attribute
     {
-        return array_map('trim', explode(',', $this->models));
+        return Attribute::make(get: fn (): array => array_map(trim(...), explode(',', $this->models)));
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'extras'     => 'array',
+            'is_default' => 'boolean',
+            'is_managed' => 'boolean',
+            'status'     => 'boolean',
+            'api_key'    => 'encrypted',
+        ];
     }
 }

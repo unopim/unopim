@@ -14,6 +14,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Psr\Log\LoggerInterface;
 use Webkul\DataTransfer\Contracts\JobTrack as JobTrackContract;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
+use Webkul\DataTransfer\Helpers\Concerns\TracksJobHeartbeat;
 use Webkul\DataTransfer\Helpers\Importers\AbstractImporter;
 use Webkul\DataTransfer\Helpers\Sources\AbstractSource;
 use Webkul\DataTransfer\Helpers\Sources\CSV as CSVSource;
@@ -24,6 +25,8 @@ use Webkul\DataTransfer\Services\JobLogger;
 
 class Import
 {
+    use TracksJobHeartbeat;
+
     /**
      * Import state for pending import
      */
@@ -128,8 +131,6 @@ class Import
 
     /**
      * Create a new helper instance.
-     *
-     * @return void
      */
     public function __construct(
         protected JobTrackRepository $jobTrackRepository,
@@ -175,10 +176,8 @@ class Import
 
     /**
      * Returns error helper instance.
-     *
-     * @return Error
      */
-    public function getErrorHelper()
+    public function getErrorHelper(): Error
     {
         return $this->errorHelper;
     }
@@ -209,7 +208,14 @@ class Import
 
         $this->setImport($import);
 
+        $this->heartbeat(force: true);
+
         return $this;
+    }
+
+    protected function getHeartbeatTrack(): mixed
+    {
+        return $this->import ?? null;
     }
 
     /**
@@ -220,11 +226,20 @@ class Import
         $state = self::STATE_VALIDATED;
 
         try {
-            $source = $this->getSource();
+            $entityType = $this->resolveEntityType($this->import->jobInstance->entity_type);
 
-            $typeImporter = $this->getTypeImporter()->setSource($source);
-            $typeImporter->validateData();
-        } catch (\Exception $e) {
+            if (config('importers.'.$entityType.'.has_file_options')) {
+                $source = $this->getSource();
+
+                if (! $source) {
+                    throw new \RuntimeException('The import source file is missing or unreadable, so this job cannot be validated.');
+                }
+
+                $this->getTypeImporter()->setSource($source)->validateData();
+            } else {
+                $this->getTypeImporter()->validateData();
+            }
+        } catch (\Throwable $e) {
             $state = self::STATE_FAILED;
             $this->errorHelper->addError(
                 AbstractImporter::ERROR_CODE_SYSTEM_EXCEPTION,
@@ -243,7 +258,7 @@ class Import
             'error_file_path'      => $this->uploadErrorReport(),
         ];
 
-        if ($this->getProcessedRowsCount() === 0 && empty($this->getFormattedErrors())) {
+        if ($this->getProcessedRowsCount() === 0 && $this->getFormattedErrors() === []) {
             $updatedData['state'] = self::STATE_COMPLETED;
             $updatedData['summary'] = [
                 'created' => 0,
@@ -256,7 +271,7 @@ class Import
 
         $this->setImport($import);
 
-        if ($state == self::STATE_FAILED) {
+        if ($state === self::STATE_FAILED) {
             Event::dispatch('data_transfer.import.validate.state_failed', $import);
         }
 
@@ -272,11 +287,7 @@ class Import
             return false;
         }
 
-        if ($this->import->processed_rows_count <= $this->import->invalid_rows_count) {
-            return false;
-        }
-
-        return true;
+        return $this->import->processed_rows_count > $this->import->invalid_rows_count;
     }
 
     /**
@@ -284,14 +295,8 @@ class Import
      */
     public function isErrorLimitExceeded(): bool
     {
-        if (
-            $this->import->validation_strategy == self::VALIDATION_STRATEGY_STOP_ON_ERROR
-            && $this->import->errors_count > $this->import->allowed_errors
-        ) {
-            return true;
-        }
-
-        return false;
+        return $this->import->validation_strategy == self::VALIDATION_STRATEGY_STOP_ON_ERROR
+        && $this->import->errors_count > $this->import->allowed_errors;
     }
 
     /**
@@ -305,18 +310,12 @@ class Import
             $typeImporter = $this->getTypeImporter();
             $typeImporter->queue = $queue;
             $typeImporter->importData($importBatch);
+
+            DB::commit();
         } catch (\Exception $e) {
-            /**
-             * Rollback transaction
-             */
             DB::rollBack();
 
             throw $e;
-        } finally {
-            /**
-             * Commit transaction
-             */
-            DB::commit();
         }
 
         return true;
@@ -333,18 +332,12 @@ class Import
             $typeImporter = $this->getTypeImporter();
 
             $typeImporter->linkData($importBatch);
+
+            DB::commit();
         } catch (\Exception $e) {
-            /**
-             * Rollback transaction
-             */
             DB::rollBack();
 
             throw $e;
-        } finally {
-            /**
-             * Commit transaction
-             */
-            DB::commit();
         }
 
         return true;
@@ -361,18 +354,12 @@ class Import
             $typeImporter = $this->getTypeImporter();
 
             $typeImporter->indexData($importBatch);
+
+            DB::commit();
         } catch (\Exception $e) {
-            /**
-             * Rollback transaction
-             */
             DB::rollBack();
 
             throw $e;
-        } finally {
-            /**
-             * Commit transaction
-             */
-            DB::commit();
         }
 
         return true;
@@ -395,6 +382,8 @@ class Import
         $import = $this->jobTrackRepository->update($data, $this->import->id);
 
         $this->setImport($import);
+
+        $this->heartbeat(force: true);
 
         Event::dispatch('data_transfer.imports.started', $import);
     }
@@ -585,11 +574,7 @@ class Import
 
         foreach ($this->errorHelper->getAllErrorsGroupedByCode() as $groupedErrors) {
             foreach ($groupedErrors as $errorMessage => $rowNumbers) {
-                if (! empty($rowNumbers)) {
-                    $errors[] = 'Row(s) '.implode(', ', $rowNumbers).': '.$errorMessage;
-                } else {
-                    $errors[] = $errorMessage;
-                }
+                $errors[] = empty($rowNumbers) ? $errorMessage : 'Row(s) '.implode(', ', $rowNumbers).': '.$errorMessage;
             }
         }
 
@@ -604,14 +589,14 @@ class Import
         /**
          * Return null if there are no errors
          */
-        if (! $this->errorHelper->getErrorsCount()) {
+        if ($this->errorHelper->getErrorsCount() === 0) {
             return null;
         }
 
         /**
          * Return null if there are no invalid rows
          */
-        if (! $this->errorHelper->getInvalidRowsCount()) {
+        if ($this->errorHelper->getInvalidRowsCount() === 0) {
             return null;
         }
 
@@ -640,7 +625,7 @@ class Import
         while ($source->valid()) {
             try {
                 $rowData = $source->current();
-            } catch (\InvalidArgumentException $e) {
+            } catch (\InvalidArgumentException) {
                 $source->next();
 
                 continue;
@@ -672,6 +657,8 @@ class Import
             case 'xls':
                 $writer = new Xls($spreadsheet);
 
+                break;
+
             case 'xlsx':
                 $writer = new Xlsx($spreadsheet);
 
@@ -682,6 +669,7 @@ class Import
         }
         $errorFilePath = 'imports/'.time().'-error-report.'.$fileType;
 
+        Storage::disk('private')->makeDirectory('imports');
         $writer->save(Storage::disk('private')->path($errorFilePath));
 
         return $errorFilePath;

@@ -3,47 +3,48 @@
 namespace Webkul\DataTransfer\Jobs\Export;
 
 use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Queue\Queueable;
 use Webkul\DataTransfer\Helpers\Export as ExportHelper;
 use Webkul\DataTransfer\Services\JobLogger;
 
 class ExportTrackBatch implements ShouldQueue
 {
     use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
     use Queueable;
-    use SerializesModels;
 
-    protected $exportBatch;
+    public const MAX_TIMEOUT = 86400;
 
     public $tries = 3;
 
-    public $timeout = 300; // Adjust as needed
+    public $timeout = 300;
 
     /**
      * Create a new job instance.
      *
+     * Supervises every batch of the export, so its timeout has to scale with
+     * the catalog the way ExportBatch's already does. A fixed 300s expires
+     * mid-run on a large export, and the three retries then re-enter a job
+     * that cannot finish either — leaving the batches orphaned as pending.
+     *
+     * Capped at a day: beyond that the worker is stuck, not slow, and an
+     * uncapped row-derived timeout would disable stuck-job detection outright.
+     *
      * @param  mixed  $exportBatch
-     * @return void
      */
-    public function __construct($exportBatch)
+    public function __construct(protected $exportBatch)
     {
-        $this->exportBatch = $exportBatch;
+        $count = (int) ($exportBatch->summary['total'] ?? $exportBatch->totalCount ?? 0);
+
+        $this->timeout = min(max(3600, $count), self::MAX_TIMEOUT);
     }
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
-        $exportHelper = app(ExportHelper::class);
+        $exportHelper = resolve(ExportHelper::class);
 
         $logger = JobLogger::make($this->exportBatch->id);
 
@@ -98,10 +99,10 @@ class ExportTrackBatch implements ShouldQueue
             default => ExportHelper::STATE_COMPLETED,
         };
         // Gather stats
-        $stats = $exportHelper->stats($state);
+        $exportHelper->stats($state);
     }
 
-    public function failed(\Throwable $exception)
+    public function failed(\Throwable $exception): void
     {
         $logger = JobLogger::make($this->exportBatch->id);
 

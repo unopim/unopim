@@ -1,0 +1,10 @@
+code,type,locale,name,enable_wysiwyg,section,position,status,is_required,is_unique,validation,regex_pattern,value_per_locale
+name,text,de_DE,Name,0,left,0,1,1,0,,,1
+name,text,en_US,Name,0,left,0,1,1,0,,,1
+name,text,fr_FR,Nom,0,left,0,1,1,0,,,1
+description,textarea,de_DE,Beschreibung,1,left,1,1,0,0,,,1
+description,textarea,en_US,Description,1,left,1,1,0,0,,,1
+description,textarea,fr_FR,Description,1,left,1,1,0,0,,,1
+abc,boolean,de_DE,,0,left,2,1,0,0,,,0
+abc,boolean,en_US,abc,0,left,2,1,0,0,,,0
+abc,boolean,fr_FR,,0,left,2,1,0,0,,,0

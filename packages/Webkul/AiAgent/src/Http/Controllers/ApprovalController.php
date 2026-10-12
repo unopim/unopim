@@ -5,6 +5,7 @@ namespace Webkul\AiAgent\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
+use Webkul\Product\Repositories\ProductRepository;
 
 /**
  * Manages the approval queue for AI-generated changes.
@@ -18,9 +19,7 @@ class ApprovalController extends Controller
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
-            if (! bouncer()->hasPermission('ai-agent.approvals')) {
-                abort(403, trans('ai-agent::app.common.unauthorized'));
-            }
+            abort_unless(bouncer()->hasPermission('ai-agent.approvals'), 403, trans('ai-agent::app.common.unauthorized'));
 
             return $next($request);
         });
@@ -34,7 +33,7 @@ class ApprovalController extends Controller
         $pending = DB::table('ai_agent_changesets as c')
             ->leftJoin('admins as a', 'a.id', '=', 'c.user_id')
             ->where('c.status', 'pending')
-            ->orderByDesc('c.created_at')
+            ->latest('c.created_at')
             ->select(
                 'c.id', 'c.description', 'c.affected_count',
                 'c.changes', 'c.created_at',
@@ -43,7 +42,7 @@ class ApprovalController extends Controller
             ->limit(100)
             ->get()
             ->map(function ($row) {
-                $row->changes = json_decode($row->changes, true);
+                $row->changes = json_decode((string) $row->changes, true);
 
                 return $row;
             });
@@ -65,12 +64,12 @@ class ApprovalController extends Controller
             return new JsonResponse(['error' => 'Changeset not found or already processed'], 404);
         }
 
-        $changes = json_decode($changeset->changes, true) ?? [];
+        $changes = json_decode((string) $changeset->changes, true) ?? [];
         $applied = 0;
 
         // Apply the queued change based on its type
         $type = $changes['type'] ?? 'unknown';
-        $repo = app('Webkul\Product\Repositories\ProductRepository');
+        $repo = resolve(ProductRepository::class);
 
         if ($type === 'create_product' && ! empty($changes['data'])) {
             $product = $repo->create($changes['data']['create'] ?? []);

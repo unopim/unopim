@@ -21,29 +21,22 @@ class JobInstancesRepository extends Repository
      */
     protected function normalizeData(array $data): array
     {
-        $driver = DB::getDriverName();
+        if (isset($data['allowed_errors']) && $data['allowed_errors'] === '') {
+            $data['allowed_errors'] = 0;
+        }
 
-        switch ($driver) {
-            case 'pgsql':
-
-                if (isset($data['allowed_errors']) && $data['allowed_errors'] === '') {
-                    $data['allowed_errors'] = 0;
+        /**
+         * PostgreSQL rejects an empty string where MySQL and MariaDB coerce it,
+         * so only the nullable paths are driver-specific. Testing for pgsql and
+         * letting every other driver fall through keeps a newly added driver
+         * working rather than silently unnormalised.
+         */
+        if (DB::getDriverName() === 'pgsql') {
+            foreach (['file_path', 'images_directory_path'] as $column) {
+                if (isset($data[$column]) && $data[$column] === '') {
+                    $data[$column] = null;
                 }
-
-                if (isset($data['file_path']) && $data['file_path'] === '') {
-                    $data['file_path'] = null;
-                }
-                if (isset($data['images_directory_path']) && $data['images_directory_path'] === '') {
-                    $data['images_directory_path'] = null;
-                }
-                break;
-
-            case 'mysql':
-
-                if (isset($data['allowed_errors']) && $data['allowed_errors'] === '') {
-                    $data['allowed_errors'] = 0;
-                }
-                break;
+            }
         }
 
         return $data;

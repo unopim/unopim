@@ -29,28 +29,28 @@ test('Goes to Attribute Page under Catalog', async ({ adminPage }) => {
 
 test('Goes to Attribute Group Page under Catalog', async ({ adminPage }) => {
   await navigateTo(adminPage, 'attributeGroups');
-  await expect(adminPage).toHaveURL(/\/admin\/catalog\/attributegroups/);
+  await expect(adminPage).toHaveURL(/\/admin\/catalog\/attribute-groups/);
 });
 
 test('Goes to Attribute Families Page under Catalog', async ({ adminPage }) => {
   await navigateTo(adminPage, 'attributeFamilies');
-  await expect(adminPage).toHaveURL(/\/admin\/catalog\/families/);
+  await expect(adminPage).toHaveURL(/\/admin\/catalog\/attribute-families/);
 });
 
 test('Goes to Job Tracker under Data Transfer', async ({ adminPage }) => {
-  await adminPage.goto('/admin/settings/data-transfer/tracker', { waitUntil: 'domcontentloaded' });
+  await adminPage.goto('/admin/data-transfer/job-tracker', { waitUntil: 'domcontentloaded' });
   await adminPage.waitForLoadState('networkidle');
-  await expect(adminPage).toHaveURL(/\/admin\/settings\/data-transfer\/tracker/);
+  await expect(adminPage).toHaveURL(/\/admin\/data-transfer\/job-tracker/);
 });
 
 test('Goes to Import under Data Transfer', async ({ adminPage }) => {
   await navigateTo(adminPage, 'imports');
-  await expect(adminPage).toHaveURL(/\/admin\/settings\/data-transfer\/imports/);
+  await expect(adminPage).toHaveURL(/\/admin\/data-transfer\/imports/);
 });
 
 test('Goes to Export under Data Transfer', async ({ adminPage }) => {
   await navigateTo(adminPage, 'exports');
-  await expect(adminPage).toHaveURL(/\/admin\/settings\/data-transfer\/exports/);
+  await expect(adminPage).toHaveURL(/\/admin\/data-transfer\/exports/);
 });
 
 test('Goes to Locales Page under Settings', async ({ adminPage }) => {
@@ -79,13 +79,13 @@ test('Goes to Roles Page under Settings', async ({ adminPage }) => {
 });
 
 test('Goes to Magic AI Page under Configuration', async ({ adminPage }) => {
-  await adminPage.goto('/admin/magic-ai/platform', { waitUntil: 'domcontentloaded' });
+  await adminPage.goto('/admin/magic-ai/platforms', { waitUntil: 'domcontentloaded' });
   await adminPage.waitForLoadState('networkidle');
-  await expect(adminPage).toHaveURL(/\/admin\/magic-ai\/platform/);
+  await expect(adminPage).toHaveURL(/\/admin\/magic-ai\/platforms/);
 });
 
 test('Goes to Integrations Page under Configuration', async ({ adminPage }) => {
   await navigateTo(adminPage, 'integrations');
-  await expect(adminPage).toHaveURL(/\/admin\/integrations\/api-keys/);
+  await expect(adminPage).toHaveURL(/\/admin\/configuration\/integrations/);
 });
 });

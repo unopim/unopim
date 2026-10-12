@@ -2,6 +2,9 @@
 
 namespace Webkul\Product\Services;
 
+use Webkul\Attribute\Contracts\Attribute;
+use Webkul\Product\Type\AbstractType;
+
 class ProductValueMapper
 {
     /**
@@ -73,19 +76,91 @@ class ProductValueMapper
     }
 
     /**
-     * Retrieves and formats the categories associated with a product.
+     * Retrieves every field visible in the given scope, with the more specific buckets winning.
      *
-     *
-     * @return string|null
+     * @return array<string, mixed>
      */
-    public function getCategories(array $data)
+    public function getScopedFields(array $data, string $channel, string $locale): array
+    {
+        return array_merge(
+            $this->getCommonFields($data),
+            $this->getLocaleSpecificFields($data, $locale),
+            $this->getChannelSpecificFields($data, $channel),
+            $this->getChannelLocaleSpecificFields($data, $channel, $locale)
+        );
+    }
+
+    /**
+     * Path inside the product `values` array where the attribute is stored for the given scope.
+     *
+     * @return list<string>
+     */
+    public function getScopePath(Attribute $attribute, string $channel, string $locale): array
+    {
+        return match (true) {
+            (bool) $attribute->value_per_channel && (bool) $attribute->value_per_locale => [AbstractType::CHANNEL_LOCALE_VALUES_KEY, $channel, $locale],
+            (bool) $attribute->value_per_channel                                        => [AbstractType::CHANNEL_VALUES_KEY, $channel],
+            (bool) $attribute->value_per_locale                                         => [AbstractType::LOCALE_VALUES_KEY, $locale],
+            default                                                                     => [AbstractType::COMMON_VALUES_KEY],
+        };
+    }
+
+    /**
+     * Reads the attribute value from the bucket its scope dictates.
+     *
+     * @param  array<string, mixed>  $values  the product `values` array
+     */
+    public function getScopedValue(array $values, Attribute $attribute, string $channel, string $locale): mixed
+    {
+        $bucket = $values;
+
+        foreach ($this->getScopePath($attribute, $channel, $locale) as $segment) {
+            if (! is_array($bucket) || ! array_key_exists($segment, $bucket)) {
+                return null;
+            }
+
+            $bucket = $bucket[$segment];
+        }
+
+        return is_array($bucket) ? ($bucket[$attribute->code] ?? null) : null;
+    }
+
+    /**
+     * Writes the attribute value into the bucket its scope dictates.
+     *
+     * @param  array<string, mixed>  $values  the product `values` array
+     * @return array<string, mixed>
+     */
+    public function setScopedValue(array $values, Attribute $attribute, string $channel, string $locale, mixed $value): array
+    {
+        $bucket = &$values;
+
+        foreach ($this->getScopePath($attribute, $channel, $locale) as $segment) {
+            if (! isset($bucket[$segment]) || ! is_array($bucket[$segment])) {
+                $bucket[$segment] = [];
+            }
+
+            $bucket = &$bucket[$segment];
+        }
+
+        $bucket[$attribute->code] = $value;
+
+        unset($bucket);
+
+        return $values;
+    }
+
+    /**
+     * Retrieves and formats the categories associated with a product.
+     */
+    public function getCategories(array $data): ?string
     {
         if (
             ! array_key_exists('values', $data)
             || ! array_key_exists('categories', $data['values'] ?? [])
             || ! is_array($data['values']['categories'])
         ) {
-            return;
+            return null;
         }
 
         return implode(',', $data['values']['categories']);
@@ -93,11 +168,8 @@ class ProductValueMapper
 
     /**
      * Retrieves and formats the associated products for a given data row and type.
-     *
-     *
-     * @return string|null
      */
-    public function getAssociations(array $data, string $type)
+    public function getAssociations(array $data, string $type): ?string
     {
         if (
             ! array_key_exists('values', $data)
@@ -105,7 +177,7 @@ class ProductValueMapper
             || ! is_array($data['values']['associations'])
             || ! array_key_exists($type, $data['values']['associations'])
         ) {
-            return;
+            return null;
         }
 
         return implode(',', $data['values']['associations'][$type]) ?? null;

@@ -1,11 +1,21 @@
 <?php
 
 return [
+    'samples' => [
+        'default'       => '示例文件',
+        'variants'      => '变体示例',
+        'multi-locale'  => '多语言示例',
+        'delete'        => '删除示例',
+        'custom-fields' => '自定义字段示例',
+        'with-images'   => '含图片的示例 (ZIP)',
+    ],
+
     'importers' => [
         'products' => [
             'title'      => '产品',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => '单位 ":unit" 不是测量属性 ":attribute" 的有效单位。',
+                'errors'       => [
                     'duplicate-url-key'                        => 'URL 密钥：已为 SKU 为“%s”的商品生成了“%s”。',
                     'invalid-attribute-family'                 => '属性系列列的值无效（属性系列不存在？）',
                     'invalid-type'                             => '产品类型无效或不受支持',
@@ -21,6 +31,7 @@ return [
                     'not-unique-value'                         => ':code 值必须是唯一的。',
                     'incorrect-family-for-variant'             => '家庭必须与父母家庭相同',
                     'parent-not-exist'                         => '父级不存在。',
+                    'variant-structure-not-found'              => '该属性族不存在变体结构 :code。',
                 ],
             ],
         ],
@@ -29,6 +40,82 @@ return [
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => '您无法删除与频道关联的根类别',
+                ],
+            ],
+        ],
+        'category-fields' => [
+            'title'      => '分类字段',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => '分类字段代码 :code 已被使用。',
+                    'code_not_found_to_delete' => '未找到用于删除的分类字段代码。',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => '属性',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => '属性代码 :code 已被使用。',
+                    'code_not_found_to_delete'             => '未找到要删除的属性代码。',
+                    'code_is_system_and_cannot_be_deleted' => '无法删除系统属性。',
+                ],
+            ],
+        ],
+        'product-associations' => [
+            'title'      => '产品关联',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => '\'%s\' 字段为必填项。',
+                    'self-link-not-allowed'       => '产品 \'%s\' 不能与自身关联。',
+                    'sku-not-found'               => '未找到 SKU 为 \'%s\' 的产品。',
+                    'related-sku-not-found'       => '未找到 SKU 为 \'%s\' 的关联产品。',
+                    'association-type-not-found'  => '关联类型 \'%s\' 不存在或未启用。',
+                    'invalid-field-value'         => '关联字段提供了无效的值。',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => '属性组',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => '属性组代码 :code 已被使用。',
+                    'code_not_found_to_delete'             => '未找到要删除的属性组代码。',
+                    'code_is_system_and_cannot_be_deleted' => '无法删除系统属性组。',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => '属性族',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => '属性族代码 :code 已被使用。',
+                    'code_not_found_to_delete' => '未找到要删除的属性族代码。',
+                    'invalid-attribute-group'  => '属性组“:code”不存在。',
+                    'invalid-attribute'        => '属性“:code”不存在。',
+                    'invalid-channel'          => '渠道“:code”不存在。',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => '属性选项',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => '属性选项代码 :code 已被使用。',
+                    'code_not_found_to_delete' => '未找到要删除的属性选项代码。',
+                    'locale-not-exist'         => '区域设置“:code”不存在。',
+                    'invalid-attribute'        => '属性“:code”不存在。',
+                ],
+            ],
+        ],
+        'locales' => [
+            'title'      => '语言',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => '语言代码 \'%s\' 已在此批次中导入。',
+                    'code-not-found-to-delete'    => '系统中未找到代码为 \'%s\' 的语言。',
+                    'invalid-status'              => '状态必须为 0 或 1（或留空表示默认启用）。',
+                    'channel-related-locale-root' => '无法删除代码为 :code 的语言，因为它与某个渠道关联。',
                 ],
             ],
         ],
@@ -45,18 +132,23 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
+            'title'   => '货币',
+            'filters' => [
+                'status' => '状态',
+                'enable' => '启用',
+                'all'    => '全部',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => '状态必须为 0 或 1（或留空表示默认启用）。',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => '角色',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -65,7 +157,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
+            'title'   => '用户',
+            'filters' => [
+                'status' => '状态',
+                'active' => '活跃',
+                'all'    => '全部',
+            ],
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -78,21 +175,25 @@ return [
     'exporters' => [
         'export-too-large' => '此导出过大，无法运行：预计 :rows 行 × :columns 列（~:estimated）超出了可用空间（~:available）。请通过选择更少的渠道/区域（和属性）来缩小导出范围，然后重试。',
         'fields'           => [
-            'file-format'         => '文件格式',
-            'with-media'          => '包含媒体',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => '文件格式',
+            'with-media'             => '包含媒体',
+            'with-associations'      => '包含关联',
+            'with-associations-info' => '在导出中包含旧版 up_sells、cross_sells、related_products SKU 列表列',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
-            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'file-name'      => '文件名',
+            'file-name-info' => '文件名模板。可用变量：[code], [date], [time], [entity_type]',
+            'file-path'      => '文件路径',
+            'file-path-info' => '文件名模板。可用变量：[code], [date], [time], [entity_type]',
             'status'         => '状态',
             'enable'         => '启用',
             'all'            => '全部',
@@ -134,7 +235,7 @@ return [
                     'disable' => '禁用',
                     'all'     => '全部',
                 ],
-                'sku'              => 'SKU',
+                'sku'              => 'sku',
                 'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
                 'identifiers'      => '标识符',
                 'identifiers-info' => '每行粘贴一个 SKU / 标识符，仅导出这些产品。留空则导出所有产品。',
@@ -152,38 +253,62 @@ return [
         'categories' => [
             'title' => '类别',
         ],
+        'category-fields' => [
+            'title' => '分类字段',
+        ],
+        'attributes' => [
+            'title' => '属性',
+        ],
+        'product-associations' => [
+            'title' => '产品关联',
+        ],
+        'attribute-groups' => [
+            'title' => '属性组',
+        ],
+        'attribute-families' => [
+            'title' => '属性族',
+        ],
+        'attribute-options' => [
+            'title' => '属性选项',
+        ],
+        'locales' => [
+            'title' => '语言',
+        ],
         'channels' => [
             'title' => '渠道',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => '货币',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => '角色',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => '用户',
             'filters' => [
                 'status' => '状态',
-                'active' => 'Active',
+                'active' => '启用',
                 'all'    => '全部',
             ],
         ],
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => '列号“%s”的标题为空。',
-            'column-name-invalid'  => '无效的列名：“%s”。',
-            'column-not-found'     => '未找到所需的列：%s。',
-            'column-numbers'       => '列数与标题中的行数不对应。',
-            'invalid-attribute'    => '标头包含无效属性：“%s”。',
-            'system'               => '发生意外的系统错误。',
-            'wrong-quotes'         => '使用弯引号代替直引号。',
-            'file-empty'           => '文件为空或不包含标题行。请上传包含数据的有效文件。',
+            'column-empty-headers'   => '列号“%s”的标题为空。',
+            'column-name-invalid'    => '无效的列名：“%s”。',
+            'column-not-found'       => '未找到所需的列：%s。',
+            'column-numbers'         => '列数与标题中的行数不对应。',
+            'invalid-attribute'      => '标头包含无效属性：“%s”。',
+            'system'                 => '发生意外的系统错误。',
+            'wrong-quotes'           => '使用弯引号代替直引号。',
+            'file-empty'             => '文件为空或不包含标题行。请上传包含数据的有效文件。',
+            'file-missing'           => '找不到此作业的源文件。请检查配置中的文件路径，然后重新上传文件。',
         ],
     ],
     'job' => [
         'started'   => '作业执行开始',
         'completed' => '作业执行完成',
+        'stalled'   => '该任务超过 :minutes 分钟没有响应，已标记为失败。执行它的工作进程很可能已被终止。',
+        'reaped'    => '已将 :count 个停滞的任务标记为失败。',
     ],
 ];

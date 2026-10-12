@@ -12,9 +12,6 @@ use Webkul\ElasticSearch\Enums\FilterOperators;
  */
 class BooleanFilter extends AbstractDatabaseAttributeFilter implements FilterContract
 {
-    /**
-     * @param  array  $supportedProperties
-     */
     public function __construct(
         array $supportedAttributeTypes = [Attribute::BOOLEAN_FIELD_TYPE],
         array $allowedOperators = [FilterOperators::IN, FilterOperators::EQUAL]
@@ -30,13 +27,11 @@ class BooleanFilter extends AbstractDatabaseAttributeFilter implements FilterCon
         $attribute,
         $operator,
         $value,
-        $locale = null,
-        $channel = null,
-        $options = []
-    ) {
-        if ($this->queryBuilder === null) {
-            throw new \LogicException('The search query builder is not initialized in the filter.');
-        }
+        ?string $locale = null,
+        ?string $channel = null,
+        array $options = []
+    ): static {
+        throw_if($this->queryBuilder === null, \LogicException::class, 'The search query builder is not initialized in the filter.');
 
         $attributePath = $this->getScopedAttributePath($attribute, $locale, $channel);
 
@@ -46,23 +41,17 @@ class BooleanFilter extends AbstractDatabaseAttributeFilter implements FilterCon
 
         $searchPath .= ' '.$grammar->getRegexOperator().' ?';
 
-        switch ($operator) {
-            case FilterOperators::IN:
-                $this->queryBuilder->whereRaw(
-                    $searchPath,
-                    $this->formatBooleanValue($value)
-                );
-
-                break;
-
-            case FilterOperators::EQUAL:
-                $this->queryBuilder->whereRaw(
-                    $searchPath,
-                    $this->formatBooleanValue($value),
-                );
-
-                break;
-        }
+        match ($operator) {
+            FilterOperators::IN => $this->queryBuilder->whereRaw(
+                $searchPath,
+                $this->formatBooleanValue($value)
+            ),
+            FilterOperators::EQUAL => $this->queryBuilder->whereRaw(
+                $searchPath,
+                $this->formatBooleanValue($value),
+            ),
+            default => $this,
+        };
 
         return $this;
     }
@@ -71,7 +60,7 @@ class BooleanFilter extends AbstractDatabaseAttributeFilter implements FilterCon
     {
         return [
             is_array($value)
-                ? implode('|', array_map(fn ($val) => ($val == '1' ? 'true' : 'false'), $value))
+                ? implode('|', array_map(fn ($val): string => ($val == '1' ? 'true' : 'false'), $value))
                 : ($value == '1' ? 'true' : 'false'),
         ];
     }

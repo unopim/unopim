@@ -3,24 +3,16 @@
 use Illuminate\Http\Client\Factory;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
+use Webkul\MagicAI\Gateways\OpenAiImageGateway;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Services\LaravelAiAdapter;
 
-beforeEach(fn () => $this->markTestSkipped('Pending rewrite for laravel/ai 0.7 — request body shapes differ from Prism. See follow-up issue.'));
-
-/**
- * Verifies LaravelAiAdapter sends only explicitly-set image options to OpenAI.
- *
- * Regression test for issue #699 — Laravel AI SDK was hardcoding
- * `quality: auto` and `moderation: low` for all OpenAI models, which
- * DALL-E 2 and DALL-E 3 reject as unknown parameters.
- */
 beforeEach(function () {
     $this->platform = MagicAIPlatform::create([
         'label'    => 'Test OpenAI',
         'provider' => 'openai',
         'api_key'  => 'sk-test',
-        'models'   => json_encode(['dall-e-2', 'dall-e-3', 'gpt-image-1']),
+        'models'   => json_encode(['dall-e-2', 'dall-e-3', 'gpt-image-1', 'chatgpt-image-latest']),
         'status'   => true,
     ]);
 
@@ -78,7 +70,7 @@ it('sends quality parameter when explicitly provided', function () {
     });
 });
 
-it('does not send moderation to gpt-image models when not explicitly set', function () {
+it('sends moderation instead of response_format to gpt-image models', function () {
     (new LaravelAiAdapter(
         platform: $this->platform,
         model: 'gpt-image-1',
@@ -89,7 +81,8 @@ it('does not send moderation to gpt-image models when not explicitly set', funct
         $body = json_decode($request->body(), true);
 
         return $body['model'] === 'gpt-image-1'
-            && ! array_key_exists('moderation', $body);
+            && ($body['moderation'] ?? null) === 'low'
+            && ! array_key_exists('response_format', $body);
     });
 });
 
@@ -148,7 +141,7 @@ it('does NOT send response_format for gpt-image-1 (always returns base64 and rej
     });
 });
 
-it('forwards the n parameter when explicitly set', function () {
+it('ignores an n option, which the image builder has no way to forward', function () {
     (new LaravelAiAdapter(
         platform: $this->platform,
         model: 'dall-e-2',
@@ -158,7 +151,7 @@ it('forwards the n parameter when explicitly set', function () {
     Http::assertSent(function (Request $request) {
         $body = json_decode($request->body(), true);
 
-        return ($body['n'] ?? null) === 5;
+        return ! array_key_exists('n', $body);
     });
 });
 
@@ -176,8 +169,7 @@ it('does NOT send n when not explicitly provided (lets provider use its default)
     });
 });
 
-it('returns the hosted URL when the provider response has no base64 (DALL-E url-mode fallback)', function () {
-    // Replace the beforeEach-registered fake (b64_json) with a URL-only response.
+it('returns nothing when the provider answers with a hosted URL instead of base64', function () {
     Http::swap(new Factory);
     Http::fake([
         '*' => Http::response([
@@ -193,6 +185,43 @@ it('returns the hosted URL when the provider response has no base64 (DALL-E url-
         prompt: 'a red apple',
     ))->images(['size' => '1024x1024']);
 
-    expect($images)->toHaveCount(1)
-        ->and($images[0]['url'])->toBe('https://example.com/dalle-image.png');
+    expect($images)->toBe([]);
 });
+
+it('sends moderation instead of response_format to chatgpt-image models', function () {
+    (new LaravelAiAdapter(
+        platform: $this->platform,
+        model: 'chatgpt-image-latest',
+        prompt: 'a red apple',
+    ))->images(['size' => '1024x1024']);
+
+    Http::assertSent(function (Request $request) {
+        $body = json_decode($request->body(), true);
+
+        return $body['model'] === 'chatgpt-image-latest'
+            && ($body['moderation'] ?? null) === 'low'
+            && ! array_key_exists('response_format', $body);
+    });
+});
+
+it('still returns a usable image for a chatgpt-image model', function () {
+    $images = (new LaravelAiAdapter(
+        platform: $this->platform,
+        model: 'chatgpt-image-latest',
+        prompt: 'a red apple',
+    ))->images(['size' => '1024x1024']);
+
+    expect($images)->toHaveCount(1)
+        ->and($images[0]['url'])->toStartWith('data:image/png;base64,');
+});
+
+it('treats every gpt-image naming variant as returning base64 by default', function (string $model, bool $expected) {
+    expect(OpenAiImageGateway::returnsBase64ByDefault($model))->toBe($expected);
+})->with([
+    ['gpt-image-1', true],
+    ['gpt-image-1-mini', true],
+    ['gpt-image-1.5', true],
+    ['chatgpt-image-latest', true],
+    ['dall-e-2', false],
+    ['dall-e-3', false],
+]);

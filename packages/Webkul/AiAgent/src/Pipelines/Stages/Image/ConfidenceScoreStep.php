@@ -64,12 +64,7 @@ class ConfidenceScoreStep implements PipelineStageContract
     {
         $enriched = $payload->metadata['enrichedAttributes'] ?? null;
 
-        if (! is_array($enriched)) {
-            throw new PipelineException(
-                'ConfidenceScoreStep: enrichedAttributes is missing — EnrichmentStep must run first.',
-                self::class,
-            );
-        }
+        throw_unless(is_array($enriched), PipelineException::class, 'ConfidenceScoreStep: enrichedAttributes is missing — EnrichmentStep must run first.', self::class);
 
         $threshold = (float) ($payload->context['confidenceThreshold'] ?? 0.6);
         $enrichedKeys = (array) ($payload->metadata['enrichedKeys'] ?? []);
@@ -91,8 +86,8 @@ class ConfidenceScoreStep implements PipelineStageContract
             }
         }
 
-        $overall = empty($scores) ? 0.0 : array_sum($scores) / count($scores);
-        $requiresReview = ! empty($lowConfidence);
+        $overall = $scores === [] ? 0.0 : array_sum($scores) / count($scores);
+        $requiresReview = $lowConfidence !== [];
 
         $ctx = ImageProductContext::fromArray($payload->metadata['imageContext'] ?? [])
             ->withConfidence($scores);
@@ -141,7 +136,7 @@ class ConfidenceScoreStep implements PipelineStageContract
      */
     protected function qualityFactor(mixed $value): float
     {
-        if ($value === null || $value === '' || $value === []) {
+        if (in_array($value, [null, '', []], true)) {
             return 0.0;
         }
 

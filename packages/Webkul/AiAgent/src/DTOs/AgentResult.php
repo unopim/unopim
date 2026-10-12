@@ -5,7 +5,7 @@ namespace Webkul\AiAgent\DTOs;
 /**
  * Immutable result DTO returned after an agent execution completes.
  */
-final class AgentResult
+final readonly class AgentResult
 {
     /**
      * @param  bool  $success  Whether the execution succeeded
@@ -16,12 +16,12 @@ final class AgentResult
      * @param  string|null  $error  Error message if failed
      */
     public function __construct(
-        public readonly bool $success,
-        public readonly string $output = '',
-        public readonly array $data = [],
-        public readonly array $metadata = [],
-        public readonly int $tokensUsed = 0,
-        public readonly ?string $error = null,
+        public bool $success,
+        public string $output = '',
+        public array $data = [],
+        public array $metadata = [],
+        public int $tokensUsed = 0,
+        public ?string $error = null,
     ) {}
 
     /**
@@ -54,8 +54,8 @@ final class AgentResult
     {
         return new self(
             success: false,
-            error: $error,
             metadata: $metadata,
+            error: $error,
         );
     }
 

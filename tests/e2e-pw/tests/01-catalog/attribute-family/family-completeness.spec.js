@@ -1,0 +1,88 @@
+const { test, expect } = require('../../../utils/family-fixtures');
+const { generateUid } = require('../../../utils/helpers');
+const { createFamily, deleteFamilyByCode, gotoTab, saveFamilyEdit, assignAttributesToGroup, withFamilyPage } = require('../../../utils/family-helpers');
+
+/**
+ * A family carrying the axis attributes the tab needs. Built by assigning them to
+ * the scaffolded General group: cloning a seeded family copies every mapping it holds.
+ */
+async function createLightFamily(page, code) {
+  const family = await createFamily(page, code);
+  await assignAttributesToGroup(page, ['color', 'size']);
+  await saveFamilyEdit(page);
+  return family;
+}
+
+// Family create/save round-trips run 20-30s against a full catalogue; the default per-test budget is too tight.
+test.describe.configure({ timeout: 300_000 });
+
+test.describe.serial('Attribute Family — Completeness tab', () => {
+  let family;
+
+  test.beforeAll(async ({ browser }) => {
+    family = await withFamilyPage(browser, (page) => createLightFamily(page, `famcmp_${generateUid()}`));
+  });
+
+  test.afterAll(async ({ browser }) => {
+    await withFamilyPage(browser, (page) => deleteFamilyByCode(page, family.code).catch(() => {}));
+  });
+
+  test('completeness tab renders datagrid with attributes', async ({ adminPage }) => {
+    const page = adminPage;
+    await gotoTab(page, family.id, 'completeness');
+    await expect(page.locator('#app').getByText('Required in Channels').first())
+      .toBeVisible({ timeout: 25000 });
+    await expect(page.locator('.multiselect').first()).toBeVisible();
+    await expect(page.getByRole('textbox', { name: 'Search' }).first()).toBeVisible();
+  });
+
+  test('set a channel requirement on a row shows success toast', async ({ adminPage }) => {
+    const page = adminPage;
+    await gotoTab(page, family.id, 'completeness');
+
+    await page.locator('input[name="channel_requirements"]').first().waitFor({ state: 'attached', timeout: 25000 });
+    // Grid re-creates row nodes on each notification poll (never "stable"); drive vue-multiselect's select synchronously so the re-render can't interleave.
+    await page.waitForTimeout(1500);
+
+    const updateSaved = page.waitForResponse(
+      (r) => r.url().includes('/completeness-settings/update') && r.request().method() === 'POST',
+      { timeout: 20000 },
+    );
+
+    const selected = await page.evaluate(async () => {
+      const control = document.querySelector('input[name="channel_requirements"]')?.closest('.multiselect');
+      if (! control) {
+        return false;
+      }
+
+      control.querySelector('.multiselect__input')?.focus();
+      await new Promise((resolve) => setTimeout(resolve, 400));
+
+      const option = control.querySelector('.multiselect__option');
+      if (! option) {
+        return false;
+      }
+
+      ['mousedown', 'mouseup', 'click'].forEach((type) => {
+        option.dispatchEvent(new MouseEvent(type, { bubbles: true }));
+      });
+
+      return true;
+    });
+    expect(selected).toBe(true);
+
+    await updateSaved;
+    await expect(page.locator('#app').getByText(/Completeness updated successfully/i).first())
+      .toBeVisible({ timeout: 20000 });
+  });
+
+  test('completeness search filters the grid', async ({ adminPage }) => {
+    const page = adminPage;
+    await gotoTab(page, family.id, 'completeness');
+    const search = page.getByRole('textbox', { name: 'Search' }).first();
+    await search.fill('sku');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(1500);
+    await expect(page.locator('#app').getByText(/sku/i).first()).toBeVisible();
+  });
+});

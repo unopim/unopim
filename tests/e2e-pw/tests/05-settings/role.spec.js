@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
  * Helper: Create an "All" permission role via the UI.
@@ -12,7 +12,7 @@ async function createAdminRole(adminPage, name, description = 'Full access role'
   await adminPage.getByRole('option', { name: 'All' }).locator('span').first().click();
   await adminPage.getByRole('textbox', { name: 'Name' }).fill(name);
   await adminPage.getByRole('textbox', { name: 'Description' }).fill(description);
-  await clickSaveAndExpect(adminPage, 'Save Role', /Roles Created Successfully/i);
+  await clickSaveAndExpect(adminPage, 'Save changes', /Roles Created Successfully/i);
 }
 
 /**
@@ -33,7 +33,7 @@ async function createCustomRole(adminPage, name, description, permissions = ['Da
   await adminPage.getByRole('textbox', { name: 'Name' }).fill(name);
   await adminPage.getByRole('textbox', { name: 'Description' }).fill(description);
 
-  await clickSaveAndExpect(adminPage, 'Save Role', /Roles Created Successfully/i);
+  await clickSaveAndExpect(adminPage, 'Save changes', /Roles Created Successfully/i);
 }
 
 /**
@@ -72,7 +72,7 @@ test.describe('Role Management', () => {
     await adminPage.getByRole('option', { name: 'Custom' }).locator('span').first().click();
     await adminPage.getByRole('textbox', { name: 'Name' }).fill('Test Role');
     await adminPage.getByRole('textbox', { name: 'Description' }).fill('Test description');
-    await adminPage.getByRole('button', { name: 'Save Role' }).click();
+    await clickSave(adminPage, 'Save Role');
     await expect(adminPage.locator('#app').getByText(/The Permissions field is required/i)).toBeVisible();
   });
 
@@ -83,11 +83,11 @@ test.describe('Role Management', () => {
     await adminPage.getByRole('option', { name: 'All' }).locator('span').first().click();
     await adminPage.getByRole('textbox', { name: 'Name' }).fill('');
     await adminPage.getByRole('textbox', { name: 'Description' }).fill('Test description');
-    await adminPage.getByRole('button', { name: 'Save Role' }).click();
+    await clickSave(adminPage, 'Save Role');
     await expect(adminPage.locator('#app').getByText(/The Name field is required/i)).toBeVisible();
   });
 
-  test('Create role with empty Description shows validation error', async ({ adminPage }) => {
+  test('Create role without a Description succeeds; description is optional', async ({ adminPage }) => {
     const uid = generateUid();
     await navigateTo(adminPage, 'roles');
     await adminPage.getByRole('link', { name: 'Create Role' }).click();
@@ -95,8 +95,8 @@ test.describe('Role Management', () => {
     await adminPage.getByRole('option', { name: 'All' }).locator('span').first().click();
     await adminPage.getByRole('textbox', { name: 'Name' }).fill(`${uid} Role`);
     await adminPage.getByRole('textbox', { name: 'Description' }).fill('');
-    await adminPage.getByRole('button', { name: 'Save Role' }).click();
-    await expect(adminPage.locator('#app').getByText(/The Description field is required/i)).toBeVisible();
+    await clickSave(adminPage, 'Save Role');
+    await expect(adminPage.locator('#app').getByText(/created successfully/i)).toBeVisible();
   });
 
   test('Create role with all required fields empty shows all validation errors', async ({ adminPage }) => {
@@ -106,10 +106,9 @@ test.describe('Role Management', () => {
     await adminPage.getByRole('option', { name: 'Custom' }).locator('span').first().click();
     await adminPage.getByRole('textbox', { name: 'Name' }).fill('');
     await adminPage.getByRole('textbox', { name: 'Description' }).fill('');
-    await adminPage.getByRole('button', { name: 'Save Role' }).click();
+    await clickSave(adminPage, 'Save Role');
     await expect(adminPage.locator('#app').getByText(/The Permissions field is required/i)).toBeVisible();
     await expect(adminPage.locator('#app').getByText(/The Name field is required/i)).toBeVisible();
-    await expect(adminPage.locator('#app').getByText(/The Description field is required/i)).toBeVisible();
   });
 
   // --- CRUD Tests: Administrator (All permissions) role ---
@@ -143,7 +142,7 @@ test.describe('Role Management', () => {
     await row.locator('span[title="Edit"]').first().click();
     await adminPage.waitForLoadState('networkidle');
     await adminPage.getByRole('textbox', { name: 'Description' }).fill('Updated full access of UnoPim');
-    await clickSaveAndExpect(adminPage, 'Save Role', /Roles is updated successfully/i);
+    await clickSaveAndExpect(adminPage, 'Save changes', /Roles is updated successfully/i);
 
     // Cleanup
     await deleteRole(adminPage, roleName);
@@ -192,7 +191,7 @@ test.describe('Role Management', () => {
     const categoriesLabel = adminPage.locator('label').filter({ hasText: 'Categories' }).locator('span').first();
     await categoriesLabel.waitFor({ state: 'visible', timeout: 10000 });
     await categoriesLabel.click();
-    await clickSaveAndExpect(adminPage, 'Save Role', /Roles is updated successfully/i);
+    await clickSaveAndExpect(adminPage, 'Save changes', /Roles is updated successfully/i);
 
     // Cleanup
     await deleteRole(adminPage, roleName);

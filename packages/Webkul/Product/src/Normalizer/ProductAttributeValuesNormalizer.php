@@ -2,8 +2,10 @@
 
 namespace Webkul\Product\Normalizer;
 
+use Webkul\Attribute\Contracts\Attribute;
 use Webkul\Attribute\Services\AttributeService;
 use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
+use Webkul\Measurement\Helpers\MeasurementHelper;
 use Webkul\Product\Type\AbstractType;
 
 /**
@@ -25,6 +27,8 @@ class ProductAttributeValuesNormalizer
     {
         $values = [];
 
+        $measurementHelper = null;
+
         if (empty($options['locale'])) {
             $options['locale'] = core()->getRequestedLocaleCode();
         }
@@ -32,12 +36,25 @@ class ProductAttributeValuesNormalizer
         foreach ($attributeValues as $attributeCode => $value) {
             $attribute = $this->attributeService->findAttributeByCode($attributeCode);
 
-            if (! $attribute) {
+            if (! $attribute instanceof Attribute) {
+                continue;
+            }
+
+            if ($attribute->type === 'measurement' && 'true' == ($options['forExport'] ?? '')) {
+                [$amount, $unit] = $this->getMeasurementAmountAndUnit($value);
+
+                $measurementHelper ??= resolve(MeasurementHelper::class);
+
+                $values[$attributeCode] = EscapeFormulaOperators::escapeValue($amount);
+                $values["{$attributeCode}(unit)"] = EscapeFormulaOperators::escapeValue(
+                    $measurementHelper->getUnitLabel($unit, $attribute, $options['locale'] ?? null)
+                );
+
                 continue;
             }
 
             if ($attribute->type == 'price' && 'true' == ($options['forExport'] ?? '')) {
-                $value = ! is_array($value) ? [] : $value;
+                $value = is_array($value) ? $value : [];
 
                 foreach ($value as $currency => $price) {
                     $values["{$attributeCode} ({$currency})"] = $price;
@@ -57,11 +74,39 @@ class ProductAttributeValuesNormalizer
     }
 
     /**
+     * Extract the amount and unit from a stored measurement value, unwrapping the
+     * <all_channels>/<all_locales> envelope and accepting a JSON string.
+     */
+    protected function getMeasurementAmountAndUnit(mixed $value): array
+    {
+        if (is_string($value)) {
+            $decodedValue = json_decode($value, true);
+
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $value = $decodedValue;
+            }
+        }
+
+        if (! is_array($value)) {
+            return [null, null];
+        }
+
+        if (isset($value['<all_channels>']['<all_locales>'])) {
+            $value = $value['<all_channels>']['<all_locales>'];
+        }
+
+        return [
+            $value['amount'] ?? $value['value'] ?? null,
+            $value['unit'] ?? null,
+        ];
+    }
+
+    /**
      * Normalize association values for export
      */
     public function normalizeAssociations(array $associationValues, array $options = []): array
     {
-        if (empty($associationValues)) {
+        if ($associationValues === []) {
             return [];
         }
 

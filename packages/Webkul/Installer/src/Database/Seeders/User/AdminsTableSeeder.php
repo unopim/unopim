@@ -12,19 +12,16 @@ class AdminsTableSeeder extends Seeder
 {
     /**
      * Seed the application's database.
-     *
-     * @param  array  $parameters
-     * @return void
      */
-    public function run($parameters = [])
+    public function run(array $parameters = []): void
     {
 
         $adminEmail = ($parameters['admin_email'] ?? '')
-            ?: env('INSTALLER_ADMIN_EMAIL')
+            ?: config('installer.admin.email')
             ?: 'admin@example.com';
 
         $providedPassword = ($parameters['admin_password'] ?? '')
-            ?: env('INSTALLER_ADMIN_PASSWORD')
+            ?: config('installer.admin.password')
             ?: '';
 
         $adminPassword = $providedPassword ?: Str::random(20);
@@ -73,12 +70,8 @@ class AdminsTableSeeder extends Seeder
             ."password: {$password}\n\n"
             ."Log in once, rotate the password, then delete this file.\n";
 
-        if (file_put_contents($path, $body, LOCK_EX) === false) {
-            throw new \RuntimeException(
-                "Unable to write initial admin credentials to {$path}. ".
-                'Set INSTALLER_ADMIN_PASSWORD and retry installation.'
-            );
-        }
+        throw_if(file_put_contents($path, $body, LOCK_EX) === false, \RuntimeException::class, "Unable to write initial admin credentials to {$path}. ".
+        'Set INSTALLER_ADMIN_PASSWORD and retry installation.');
 
         @chmod($path, 0600);
 

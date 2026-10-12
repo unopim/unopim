@@ -57,7 +57,7 @@ class ManageOptions implements PimTool
 
                 if ($action === 'list') {
                     $opts = DB::table('attribute_options as ao')
-                        ->leftJoin('attribute_option_translations as aot', function ($join) use ($context) {
+                        ->leftJoin('attribute_option_translations as aot', function ($join) use ($context): void {
                             $join->on('aot.attribute_option_id', '=', 'ao.id')
                                 ->where('aot.locale', '=', $context->locale);
                         })
@@ -70,7 +70,7 @@ class ManageOptions implements PimTool
                 }
 
                 if ($action === 'add' && $options) {
-                    $items = array_map('trim', explode(',', $options));
+                    $items = array_map(trim(...), explode(',', $options));
                     $added = [];
                     $maxSort = (int) DB::table('attribute_options')
                         ->where('attribute_id', $attribute->id)

@@ -16,7 +16,7 @@ class CategoryAdditionalDataMapper
             return [];
         }
 
-        if (! array_key_exists('additional_data', $data) || ! array_key_exists('common', $data['additional_data'])) {
+        if (! array_key_exists('common', $data['additional_data'])) {
             return [];
         }
 
@@ -35,7 +35,7 @@ class CategoryAdditionalDataMapper
             return [];
         }
 
-        if (! array_key_exists('additional_data', $data) || ! array_key_exists('locale_specific', $data['additional_data'])) {
+        if (! array_key_exists('locale_specific', $data['additional_data'])) {
             return [];
         }
 

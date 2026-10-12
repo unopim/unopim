@@ -2,21 +2,28 @@
 
 use Webkul\AdminApi\Models\Apikey;
 
-it('should display the magic ai tab if has permission', function () {
+it('should display the magic ai settings page if has permission', function () {
     $this->loginAsAdmin();
 
-    $this->get(route('admin.configuration.edit', ['general', 'magic_ai']))
+    $this->get(route('admin.magic_ai.settings.index'))
         ->assertOk()
         ->assertSeeText(trans('admin::app.configuration.index.general.magic-ai.title'))
         ->assertSeeText(trans('admin::app.configuration.index.general.magic-ai.settings.title'));
 });
 
-it('should not display the magic ai tab if does not have permission', function () {
+it('should not display the magic ai settings page if does not have permission', function () {
     $this->loginWithPermissions();
 
-    $this->get(route('admin.configuration.edit', ['general', 'magic_ai']))
+    $this->get(route('admin.magic_ai.settings.index'))
         ->assertStatus(403)
         ->assertDontSeeText(trans('admin::app.configuration.index.general.magic-ai.settings.title'));
+});
+
+it('should redirect the legacy magic ai configuration deep link to the relocated settings page', function () {
+    $this->loginAsAdmin();
+
+    $this->get(route('admin.configuration.edit', ['general', 'magic_ai']))
+        ->assertRedirect(route('admin.magic_ai.settings.index'));
 });
 
 it('should display the integration index page if has permission', function () {

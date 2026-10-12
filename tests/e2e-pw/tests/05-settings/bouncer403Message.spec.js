@@ -1,5 +1,8 @@
 const { test, expect } = require('../../utils/fixtures');
 const { navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
+const path = require('path');
+
+const ADMIN_STATE = path.resolve(__dirname, '../..', process.env.PW_STATE_DIR || '.state', 'admin-auth.json');
 
 /**
  * Helper: Create a custom role with no permissions via the UI.
@@ -18,7 +21,7 @@ async function createEmptyRole(adminPage, roleName) {
   await adminPage.getByRole('textbox', { name: 'Name' }).fill(roleName);
   await adminPage.getByRole('textbox', { name: 'Description' }).fill('Test role with minimal permissions for 403 message test');
 
-  await clickSaveAndExpect(adminPage, 'Save Role', /Roles Created Successfully/i);
+  await clickSaveAndExpect(adminPage, 'Save changes', /Roles Created Successfully/i);
 }
 
 /**
@@ -30,10 +33,12 @@ async function createEmptyRole(adminPage, roleName) {
 async function stripRolePermissions(adminPage, roleName, baseURL) {
   await navigateTo(adminPage, 'roles');
   await searchInDataGrid(adminPage, roleName);
+  // The datagrid Edit action is a <span> that navigates asynchronously,
+  // so wait for the edit URL explicitly instead of relying on networkidle.
   await adminPage.locator('span[title="Edit"]').first().click();
-  await adminPage.waitForLoadState('networkidle').catch(() => {});
+  await adminPage.waitForURL(/\/roles\/edit\/\d+/, { timeout: 15000 });
 
-  const roleId = adminPage.url().match(/\/(\d+)$/)?.[1];
+  const roleId = adminPage.url().match(/\/edit\/(\d+)/)?.[1];
   if (!roleId) return;
 
   // Use fetch() inside the browser context so the request carries the admin
@@ -68,27 +73,13 @@ async function createUserWithRole(adminPage, { name, email, password, roleName }
   await adminPage.waitForLoadState('networkidle');
 
   await adminPage.getByRole('textbox', { name: 'Name' }).fill(name);
-  await adminPage.getByRole('textbox', { name: 'email@example.com' }).fill(email);
+  await adminPage.getByPlaceholder('email@example.com').fill(email);
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).fill(password);
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).fill(password);
 
-  // Select UI Locale
-  const localeMultiselect = adminPage.locator('.multiselect').filter({ has: adminPage.locator('input[name="ui_locale_id"]') });
-  await localeMultiselect.locator('.multiselect__tags').click();
-  await adminPage.waitForTimeout(300);
-  const localeOption = adminPage.getByRole('option', { name: 'English (United States)' }).first();
-  await localeOption.waitFor({ state: 'visible', timeout: 10000 });
-  await localeOption.click();
-
-  // Select Timezone
-  const tzMultiselect = adminPage.locator('.multiselect').filter({ has: adminPage.locator('input[name="timezone"]') });
-  await tzMultiselect.locator('.multiselect__tags').click();
-  await adminPage.waitForTimeout(300);
-  await adminPage.keyboard.type('UTC');
-  await adminPage.waitForTimeout(500);
-  const tzOption = adminPage.getByRole('option', { name: /UTC/ }).first();
-  await tzOption.waitFor({ state: 'visible', timeout: 10000 });
-  await tzOption.click();
+  // UI locale, catalog locale, default channel and timezone controls only
+  // render once editing an existing user (`v-if="isUpdating"`); the create
+  // modal only asks for name, email, password and role.
 
   // Select the specific role
   const roleMultiselect = adminPage.locator('.multiselect').filter({ has: adminPage.locator('input[name="role_id"]') });
@@ -153,7 +144,7 @@ test.describe('Bouncer 403 Error Message', () => {
 
     // Step 1: As admin, create a role with minimal permissions and a user
     const adminContext = await browser.newContext({
-      storageState: require('path').resolve(__dirname, '../../.state/admin-auth.json'),
+      storageState: ADMIN_STATE,
     });
     const adminPage = await adminContext.newPage();
 
@@ -206,7 +197,7 @@ test.describe('Bouncer 403 Error Message', () => {
 
     // Step 4: Cleanup as admin
     const cleanupContext = await browser.newContext({
-      storageState: require('path').resolve(__dirname, '../../.state/admin-auth.json'),
+      storageState: ADMIN_STATE,
     });
     const cleanupPage = await cleanupContext.newPage();
 

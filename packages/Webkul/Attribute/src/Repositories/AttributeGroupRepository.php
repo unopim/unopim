@@ -3,6 +3,7 @@
 namespace Webkul\Attribute\Repositories;
 
 use Illuminate\Database\Eloquent\Builder;
+use Webkul\Attribute\Contracts\AttributeGroup;
 use Webkul\Core\Eloquent\Repository;
 
 class AttributeGroupRepository extends Repository
@@ -12,7 +13,7 @@ class AttributeGroupRepository extends Repository
      */
     public function model(): string
     {
-        return 'Webkul\Attribute\Contracts\AttributeGroup';
+        return AttributeGroup::class;
     }
 
     /**

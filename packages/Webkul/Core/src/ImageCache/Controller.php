@@ -6,6 +6,7 @@ use Closure;
 use Exception;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Request;
 
 class Controller extends BaseController
 {
@@ -41,15 +42,11 @@ class Controller extends BaseController
     {
         $templateConfig = $this->getTemplate($template);
 
-        if (! $templateConfig) {
-            abort(404, 'Template not found.');
-        }
+        abort_unless($templateConfig, 404, 'Template not found.');
 
         $path = $this->getImagePath($filename);
 
-        if (! file_exists($path)) {
-            abort(404, 'Image not found.');
-        }
+        abort_unless(file_exists($path), 404, 'Image not found.');
 
         try {
             $image = image_manager()->read($path);
@@ -112,9 +109,7 @@ class Controller extends BaseController
 
         $data = @file_get_contents($url, false, $context);
 
-        if ($data === false) {
-            throw new Exception('Unable to fetch from URL: '.$url);
-        }
+        throw_if($data === false, Exception::class, 'Unable to fetch from URL: '.$url);
 
         return $data;
     }
@@ -126,9 +121,7 @@ class Controller extends BaseController
     {
         $path = $this->getImagePath($filename);
 
-        if (! file_exists($path)) {
-            abort(404, 'Image not found.');
-        }
+        abort_unless(file_exists($path), 404, 'Image not found.');
 
         $content = file_get_contents($path);
 
@@ -142,9 +135,7 @@ class Controller extends BaseController
     {
         $path = $this->getImagePath($filename);
 
-        if (! file_exists($path)) {
-            abort(404, 'Image not found.');
-        }
+        abort_unless(file_exists($path), 404, 'Image not found.');
 
         $content = file_get_contents($path);
         $response = $this->buildResponse($content);
@@ -156,38 +147,44 @@ class Controller extends BaseController
 
     /**
      * Get the full image path from the filename.
+     *
+     * The route pattern permits "." and "/", so an unconstrained join would let
+     * "../../.env" escape the media roots and serve any file the process can read.
+     * Every candidate is therefore resolved and confirmed to sit inside its root.
      */
     protected function getImagePath(string $filename): string
     {
-        $paths = config('imagecache.paths', []);
+        $roots = array_merge(
+            array_map(fn ($path): string => (string) $path, config('imagecache.paths', [])),
+            [storage_path('app/public'), public_path(), public_path('storage')]
+        );
 
-        foreach ($paths as $basePath) {
-            $fullPath = rtrim($basePath, '/').'/'.ltrim($filename, '/');
+        $relative = ltrim(str_replace('\\', '/', $filename), '/');
 
-            if (file_exists($fullPath)) {
-                return $fullPath;
+        if (in_array('..', explode('/', $relative), true)) {
+            return '';
+        }
+
+        foreach ($roots as $root) {
+            $candidate = rtrim($root, '/').'/'.$relative;
+
+            if (! is_file($candidate)) {
+                continue;
+            }
+
+            $resolved = realpath($candidate);
+            $resolvedRoot = realpath($root);
+
+            if ($resolved === false || $resolvedRoot === false) {
+                continue;
+            }
+
+            if (str_starts_with($resolved, rtrim($resolvedRoot, '/').'/')) {
+                return $resolved;
             }
         }
 
-        $storagePath = storage_path('app/public/'.$filename);
-
-        if (file_exists($storagePath)) {
-            return $storagePath;
-        }
-
-        $publicPath = public_path($filename);
-
-        if (file_exists($publicPath)) {
-            return $publicPath;
-        }
-
-        $storagePublicPath = public_path('storage/'.$filename);
-
-        if (file_exists($storagePublicPath)) {
-            return $storagePublicPath;
-        }
-
-        return $storagePath;
+        return storage_path('app/public/'.$relative);
     }
 
     /**
@@ -207,7 +204,7 @@ class Controller extends BaseController
     {
         $mime = finfo_buffer(finfo_open(FILEINFO_MIME_TYPE), $content);
         $eTag = md5($content);
-        $notModified = isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] === $eTag;
+        $notModified = isset($_SERVER['HTTP_IF_NONE_MATCH']) && Request::server('HTTP_IF_NONE_MATCH') === $eTag;
         $statusCode = $notModified ? 304 : 200;
         $responseContent = $notModified ? null : $content;
         $maxAge = ($this->template === 'logo' ? 10080 : (int) config('imagecache.lifetime', 43200)) * 60;

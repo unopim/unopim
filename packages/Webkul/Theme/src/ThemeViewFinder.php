@@ -25,17 +25,15 @@ class ThemeViewFinder extends FileViewFinder
 
             try {
                 return $this->findInPaths($view, $paths);
-            } catch (\Exception $e) {
-                if ($namespace !== 'shop') {
-                    if (strpos($view, 'shop.') !== false) {
-                        $view = str_replace('shop.', 'shop.'.Themes::current()->code.'.', $view);
-                    }
+            } catch (\Exception) {
+                if ($namespace !== 'shop' && str_contains($view, 'shop.')) {
+                    $view = str_replace('shop.', 'shop.'.Themes::current()->code.'.', $view);
                 }
 
                 return $this->findInPaths($view, $paths);
             }
         } else {
-            $themes = app('themes');
+            $themes = resolve('themes');
 
             $themes->set(config('themes.admin-default'));
 
@@ -43,11 +41,9 @@ class ThemeViewFinder extends FileViewFinder
 
             try {
                 return $this->findInPaths($view, $paths);
-            } catch (\Exception $e) {
-                if ($namespace != 'admin') {
-                    if (strpos($view, 'admin.') !== false) {
-                        $view = str_replace('admin.', 'admin.'.Themes::current()->code.'.', $view);
-                    }
+            } catch (\Exception) {
+                if ($namespace != 'admin' && str_contains($view, 'admin.')) {
+                    $view = str_replace('admin.', 'admin.'.Themes::current()->code.'.', $view);
                 }
 
                 return $this->findInPaths($view, $paths);
@@ -83,9 +79,8 @@ class ThemeViewFinder extends FileViewFinder
      *
      * @param  string  $namespace
      * @param  string|array  $hints
-     * @return void
      */
-    public function replaceNamespace($namespace, $hints)
+    public function replaceNamespace($namespace, $hints): void
     {
         $this->hints[$namespace] = (array) $hints;
 
@@ -96,9 +91,7 @@ class ThemeViewFinder extends FileViewFinder
         ) {
             $searchPaths = array_diff($this->paths, Themes::getLaravelViewPaths());
 
-            $addPaths = array_map(function ($path) use ($namespace) {
-                return base_path().'/'."$path/$namespace";
-            }, $searchPaths);
+            $addPaths = array_map(fn (string $path): string => base_path().'/'."$path/$namespace", $searchPaths);
 
             $this->prependNamespace($namespace, $addPaths);
         }
@@ -108,9 +101,8 @@ class ThemeViewFinder extends FileViewFinder
      * Set the array of paths where the views are being searched.
      *
      * @param  array  $paths
-     * @return void
      */
-    public function setPaths($paths)
+    public function setPaths($paths): void
     {
         $this->paths = $paths;
 

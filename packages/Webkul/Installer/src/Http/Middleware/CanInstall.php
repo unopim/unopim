@@ -19,12 +19,10 @@ class CanInstall
     {
         if (Str::contains($request->getPathInfo(), '/install')) {
             if ($this->isInstallationCompleted()) {
-                return redirect()->route('admin.dashboard.index');
+                return to_route('admin.dashboard.index');
             }
-        } else {
-            if (! $this->isAlreadyInstalled()) {
-                return redirect()->route('installer.index');
-            }
+        } elseif (! $this->isAlreadyInstalled()) {
+            return to_route('installer.index');
         }
 
         return $next($request);
@@ -47,7 +45,7 @@ class CanInstall
             return true;
         }
 
-        return app(DatabaseManager::class)->isMarkedInstalled();
+        return resolve(DatabaseManager::class)->isMarkedInstalled();
     }
 
     /**
@@ -61,6 +59,6 @@ class CanInstall
             return true;
         }
 
-        return app(DatabaseManager::class)->isInstalled();
+        return resolve(DatabaseManager::class)->isInstalled();
     }
 }

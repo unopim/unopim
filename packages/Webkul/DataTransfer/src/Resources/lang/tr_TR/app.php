@@ -1,11 +1,21 @@
 <?php
 
 return [
+    'samples' => [
+        'default'       => 'Örnek dosya',
+        'variants'      => 'Varyant örneği',
+        'multi-locale'  => 'Çok dilli örnek',
+        'delete'        => 'Silme örneği',
+        'custom-fields' => 'Özel alan örneği',
+        'with-images'   => 'Görsellerle örnek (ZIP)',
+    ],
+
     'importers' => [
         'products' => [
             'title'      => 'Ürünler',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => '":unit" birimi, ":attribute" ölçüm özelliği için geçerli bir birim değil.',
+                'errors'       => [
                     'duplicate-url-key'                        => 'URL anahtar: \'%s\' SKU: \'%s\' için zaten bir öğe için oluşturuldu.',
                     'invalid-attribute-family'                 => 'Attribut ailesinin kolonundaki değer geçersiz (attribut ailesi mevcut değil mi?)',
                     'invalid-type'                             => 'Ürün türü geçersiz veya desteklenmiyor',
@@ -21,6 +31,7 @@ return [
                     'not-unique-value'                         => 'Değer :code benzersiz olmalıdır.',
                     'incorrect-family-for-variant'             => 'Aile ana aile ile aynı olmalıdır',
                     'parent-not-exist'                         => 'Baba yok.',
+                    'variant-structure-not-found'              => 'Bu öznitelik ailesi için :code varyant yapısı mevcut değil.',
                 ],
             ],
         ],
@@ -29,6 +40,82 @@ return [
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'Bir kanal ile ilişkilendirilen kök kategoriyi silemezsiniz',
+                ],
+            ],
+        ],
+        'category-fields' => [
+            'title'      => 'Kategori Alanları',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kategori alan kodu :code zaten kullanımda.',
+                    'code_not_found_to_delete' => 'Silmek için kategori alan kodu bulunamadı.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Nitelikler',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Nitelik kodu :code zaten kullanımda.',
+                    'code_not_found_to_delete'             => 'Silinecek nitelik kodu bulunamadı.',
+                    'code_is_system_and_cannot_be_deleted' => 'Sistem niteliği silinemez.',
+                ],
+            ],
+        ],
+        'product-associations' => [
+            'title'      => 'Ürün İlişkilendirmeleri',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => '\'%s\' alanı zorunludur.',
+                    'self-link-not-allowed'       => '\'%s\' ürünü kendisiyle ilişkilendirilemez.',
+                    'sku-not-found'               => 'SKU \'%s\' olan ürün bulunamadı.',
+                    'related-sku-not-found'       => 'SKU \'%s\' olan ilişkili ürün bulunamadı.',
+                    'association-type-not-found'  => '\'%s\' ilişki türü mevcut değil veya pasif.',
+                    'invalid-field-value'         => 'İlişki alanı için geçersiz bir değer girildi.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Nitelik Grupları',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Nitelik grup kodu :code zaten kullanımda.',
+                    'code_not_found_to_delete'             => 'Silinecek nitelik grup kodu bulunamadı.',
+                    'code_is_system_and_cannot_be_deleted' => 'Sistem nitelik grubu silinemez.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Nitelik Aileleri',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Nitelik ailesi kodu :code zaten kullanımda.',
+                    'code_not_found_to_delete' => 'Silinecek nitelik ailesi kodu bulunamadı.',
+                    'invalid-attribute-group'  => 'Nitelik grubu ":code" mevcut değil.',
+                    'invalid-attribute'        => 'Nitelik ":code" mevcut değil.',
+                    'invalid-channel'          => 'Kanal ":code" mevcut değil.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Nitelik Seçenekleri',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Nitelik seçenek kodu :code zaten kullanımda.',
+                    'code_not_found_to_delete' => 'Silinecek nitelik seçenek kodu bulunamadı.',
+                    'locale-not-exist'         => 'Yerel ":code" mevcut değil.',
+                    'invalid-attribute'        => 'Nitelik ":code" mevcut değil.',
+                ],
+            ],
+        ],
+        'locales' => [
+            'title'      => 'Diller',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Dil kodu \'%s\' bu partide zaten içe aktarılmış.',
+                    'code-not-found-to-delete'    => 'Sistemde \'%s\' koduna sahip dil bulunamadı.',
+                    'invalid-status'              => 'Durum 0 veya 1 olmalıdır (veya varsayılan etkin için boş).',
+                    'channel-related-locale-root' => ':code koduna sahip dili silemezsiniz çünkü bir kanala bağlıdır.',
                 ],
             ],
         ],
@@ -45,18 +132,23 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
+            'title'   => 'Mga Pera',
+            'filters' => [
+                'status' => 'Durum',
+                'enable' => 'Etkin',
+                'all'    => 'Tümü',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Durum 0 veya 1 olmalıdır (veya varsayılan etkin için boş).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Roller',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -65,7 +157,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
+            'title'   => 'Kullanıcılar',
+            'filters' => [
+                'status' => 'Durum',
+                'active' => 'Aktif',
+                'all'    => 'Tümü',
+            ],
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -78,21 +175,25 @@ return [
     'exporters' => [
         'export-too-large' => 'Bu dışa aktarma çalıştırılamayacak kadar büyük: tahmini :rows satır × :columns sütun (~:estimated) kullanılabilir alanı (~:available) aşıyor. Daha az kanal/yerel (ve öznitelik) seçerek dışa aktarmayı daraltın ve tekrar deneyin.',
         'fields'           => [
-            'file-format'         => 'Dosya biçimi',
-            'with-media'          => 'Medya ile',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Dosya biçimi',
+            'with-media'             => 'Medya ile',
+            'with-associations'      => 'İlişkilendirmelerle',
+            'with-associations-info' => 'Eski up_sells, cross_sells ve related_products SKU liste sütunlarını dışa aktarıma dahil et',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
-            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'file-name'      => 'Dosya Adı',
+            'file-name-info' => 'Dosya adı şablonu. Yer tutucular: [code], [date], [time], [entity_type]',
+            'file-path'      => 'Dosya Yolu',
+            'file-path-info' => 'Dosya adı şablonu. Yer tutucular: [code], [date], [time], [entity_type]',
             'status'         => 'Durum',
             'enable'         => 'Etkin',
             'all'            => 'Tümü',
@@ -152,38 +253,62 @@ return [
         'categories' => [
             'title' => 'Kategoriler',
         ],
+        'category-fields' => [
+            'title' => 'Kategori Alanları',
+        ],
+        'attributes' => [
+            'title' => 'Nitelikler',
+        ],
+        'product-associations' => [
+            'title' => 'Ürün İlişkilendirmeleri',
+        ],
+        'attribute-groups' => [
+            'title' => 'Nitelik Grupları',
+        ],
+        'attribute-families' => [
+            'title' => 'Nitelik Aileleri',
+        ],
+        'attribute-options' => [
+            'title' => 'Nitelik Seçenekleri',
+        ],
+        'locales' => [
+            'title' => 'Diller',
+        ],
         'channels' => [
             'title' => 'Kanallar',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Mga Pera',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Roller',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Kullanıcılar',
             'filters' => [
                 'status' => 'Durum',
-                'active' => 'Active',
+                'active' => 'Aktif',
                 'all'    => 'Tümü',
             ],
         ],
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'Kolon numarası "%s" için boş başlıklar vardır.',
-            'column-name-invalid'  => 'Geçersiz kolon adları: "%s".',
-            'column-not-found'     => 'Gerekli kolonlar bulunamadı: %s.',
-            'column-numbers'       => 'Kolon sayısı, başlıktaki satır sayısı ile uyumsuz.',
-            'invalid-attribute'    => 'Başlık geçersiz attribute(s) içeriyor: "%s".',
-            'system'               => 'Beklenmeyen bir sistem hatası oluştu.',
-            'wrong-quotes'         => 'Kıvrık tırnaklar, doğru tırnaklar yerine kullanıldı.',
-            'file-empty'           => 'Dosya boş veya başlık satırı içermiyor. Lütfen veri içeren geçerli bir dosya yükleyin.',
+            'column-empty-headers'   => 'Kolon numarası "%s" için boş başlıklar vardır.',
+            'column-name-invalid'    => 'Geçersiz kolon adları: "%s".',
+            'column-not-found'       => 'Gerekli kolonlar bulunamadı: %s.',
+            'column-numbers'         => 'Kolon sayısı, başlıktaki satır sayısı ile uyumsuz.',
+            'invalid-attribute'      => 'Başlık geçersiz attribute(s) içeriyor: "%s".',
+            'system'                 => 'Beklenmeyen bir sistem hatası oluştu.',
+            'wrong-quotes'           => 'Kıvrık tırnaklar, doğru tırnaklar yerine kullanıldı.',
+            'file-empty'             => 'Dosya boş veya başlık satırı içermiyor. Lütfen veri içeren geçerli bir dosya yükleyin.',
+            'file-missing'           => 'Bu iş için kaynak dosya bulunamadı. Profildeki dosya yolunu kontrol edin, ardından dosyayı yeniden yükleyin.',
         ],
     ],
     'job' => [
         'started'   => 'İş yürütme başlatıldı',
         'completed' => 'İş yürütme tamamlandı',
+        'stalled'   => 'İş :minutes dakikadan uzun süre yanıt vermedi ve başarısız olarak işaretlendi. Onu çalıştıran işlem büyük olasılıkla sonlandırıldı.',
+        'reaped'    => ':count takılı kalan iş başarısız olarak işaretlendi.',
     ],
 ];

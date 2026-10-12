@@ -3,24 +3,29 @@
 return [
     [
         'key'   => 'configuration.webhook',
-        'name'  => 'webhook::app.acl.webhook.index',
-        'route' => 'webhook.settings.index',
+        'name'  => 'webhook::app.components.layouts.sidebar.menu.webhook.name',
+        'route' => 'webhook.index',
         'sort'  => 3,
     ], [
-        'key'   => 'configuration.webhook.settings',
-        'name'  => 'webhook::app.acl.settings.index',
-        'route' => 'webhook.settings.index',
+        'key'   => 'configuration.webhook.create',
+        'name'  => 'webhook::app.acl.webhook.create',
+        'route' => 'webhook.store',
         'sort'  => 1,
     ], [
-        'key'   => 'configuration.webhook.settings.update',
-        'name'  => 'webhook::app.acl.settings.update',
-        'route' => 'webhook.settings.store',
-        'sort'  => 1,
+        'key'   => 'configuration.webhook.edit',
+        'name'  => 'webhook::app.acl.webhook.edit',
+        'route' => 'webhook.update',
+        'sort'  => 2,
+    ], [
+        'key'   => 'configuration.webhook.delete',
+        'name'  => 'webhook::app.acl.webhook.delete',
+        'route' => 'webhook.delete',
+        'sort'  => 3,
     ], [
         'key'   => 'configuration.webhook.logs',
         'name'  => 'webhook::app.acl.logs.index',
         'route' => 'webhook.logs.index',
-        'sort'  => 2,
+        'sort'  => 4,
     ], [
         'key'   => 'configuration.webhook.logs.view',
         'name'  => 'webhook::app.acl.logs.view',
@@ -36,5 +41,25 @@ return [
         'name'  => 'webhook::app.acl.logs.mass-delete',
         'route' => 'webhook.logs.mass_delete',
         'sort'  => 3,
+    ], [
+        'key'   => 'configuration.webhook.edit',
+        'name'  => 'webhook::app.acl.webhook.edit',
+        'route' => 'webhook.edit',
+        'sort'  => 2,
+    ], [
+        'key'   => 'configuration.webhook.edit',
+        'name'  => 'webhook::app.acl.webhook.edit',
+        'route' => 'webhook.test',
+        'sort'  => 2,
+    ], [
+        'key'   => 'configuration.webhook.delete',
+        'name'  => 'webhook::app.acl.webhook.delete',
+        'route' => 'webhook.mass_delete',
+        'sort'  => 3,
+    ], [
+        'key'   => 'configuration.webhook.logs',
+        'name'  => 'webhook::app.acl.logs.index',
+        'route' => 'webhook.logs.for-webhook',
+        'sort'  => 4,
     ],
 ];

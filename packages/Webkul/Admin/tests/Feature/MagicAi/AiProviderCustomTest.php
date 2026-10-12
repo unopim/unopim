@@ -4,24 +4,19 @@ use Illuminate\Support\Facades\Http;
 use Laravel\Ai\Enums\Lab;
 use Webkul\MagicAI\Enums\AiProvider;
 
-it('exposes a Custom case routed through the Groq config namespace', function () {
+it('exposes a Custom case routed through the openai-compatible config namespace', function () {
     expect(AiProvider::Custom->value)->toBe('custom');
     expect(AiProvider::Custom->label())->toBe('Custom (OpenAI-compatible)');
     expect(AiProvider::Custom->defaultUrl())->toBe('');
-    // Custom shares the groq config namespace so api_url overrides land
-    // where laravel/ai's OpenAI-compatible gateway (which posts to
-    // /chat/completions) reads.
-    expect(AiProvider::Custom->configKey())->toBe('groq');
+    expect(AiProvider::Custom->configKey())->toBe('openai-compatible');
     expect(AiProvider::Custom->supportsImages())->toBeFalse();
 });
 
-it('maps Custom to Lab::Groq for laravel/ai routing', function () {
-    // Custom platforms use the OpenAI-compatible chat-completions endpoint;
-    // laravel/ai's Groq gateway is the one that posts to /chat/completions
-    // (OpenAI's own gateway posts to /responses instead). Mapping Custom to
-    // Groq + supplying a runtime api_url override lets Cerebras / Together /
-    // Fireworks / Perplexity / DeepInfra etc. work out of the box.
-    expect(AiProvider::Custom->toLab())->toBe(Lab::Groq);
+it('maps Custom to Lab::OpenAICompatible for laravel/ai routing', function () {
+    // Custom platforms (Cerebras, Together, Fireworks, Perplexity, DeepInfra,
+    // etc.) implement OpenAI's /chat/completions endpoint, which laravel/ai's
+    // dedicated OpenAI-compatible driver speaks.
+    expect(AiProvider::Custom->toLab())->toBe(Lab::OpenAICompatible);
 });
 
 it('lists the Custom provider in the dropdown options payload', function () {
@@ -41,10 +36,9 @@ it('returns an empty model list for Custom when no api_url is supplied', functio
 it('surfaces the upstream Cerebras-style 402 body when Test Connection fails on a Custom platform', function () {
     $this->loginAsAdmin();
 
-    // Intercept the chat-completions call Prism makes via Laravel's HTTP
-    // client and return a Cerebras-style 402 with the error message at the
-    // top level of the JSON body (NOT nested under "error.message"). This
-    // is the exact shape that triggered the original "Unknown error" bug.
+    // Cerebras-style 402 with the error message at the top level of the JSON
+    // body (NOT nested under "error.message") — the exact shape that
+    // triggered the original "Unknown error" bug.
     Http::fake([
         '*/chat/completions' => Http::response([
             'message' => 'Payment required to access this resource. Visit your billing tab.',
@@ -61,30 +55,25 @@ it('surfaces the upstream Cerebras-style 402 body when Test Connection fails on 
         'models'   => 'llama3.1-8b',
     ]);
 
-    // laravel/ai 0.7 raises InsufficientCreditsException for HTTP 402 from
-    // OpenAI-compatible providers; AiErrorResolver maps that to HTTP 402
-    // (Payment Required) instead of the generic 400 the legacy Prism flow
-    // produced. Accept either so the test survives upstream changes.
     expect($response->status())->toBeIn([400, 402]);
     $body = $response->json();
 
     expect($body['success'])->toBeFalse();
-    // The clean upstream message must reach the user — no "Unknown error",
-    // no leaked "Groq Error" prefix, and the actual Cerebras text included.
     expect(
         str_contains($body['message'], 'insufficient credits')
         || str_contains($body['message'], 'Payment required to access this resource')
     )->toBeTrue();
     expect($body['message'])->not->toContain('Unknown error');
+    expect($body['message'])->not->toContain('OpenAI-compatible Error');
     expect($body['message'])->not->toContain('Groq Error');
 });
 
-it('rewrites a leaked Groq Error prefix to Custom Provider Error for Custom platforms', function () {
+it('rewrites a leaked gateway error prefix to Custom Provider Error for Custom platforms', function () {
     $this->loginAsAdmin();
 
-    // Force the message Prism produces to contain the literal "Groq Error"
-    // prefix (the resolver leaves it intact when the upstream body has no
-    // recognisable JSON to extract).
+    // A non-JSON upstream body leaves the gateway's own "OpenAI-compatible
+    // Error" prefix intact; the controller must rewrite it so the message
+    // reflects the user's selected provider.
     Http::fake([
         '*/chat/completions' => Http::response('non-json server crash output', 500),
     ]);
@@ -97,5 +86,27 @@ it('rewrites a leaked Groq Error prefix to Custom Provider Error for Custom plat
     ]);
 
     $body = $response->json();
+    expect($body['message'])->not->toContain('OpenAI-compatible Error');
     expect($body['message'])->not->toContain('Groq Error');
+});
+
+it('does not leak Custom platform credentials into config after the test call', function () {
+    $this->loginAsAdmin();
+
+    Http::fake([
+        '*/chat/completions' => Http::response(['choices' => [['message' => ['role' => 'assistant', 'content' => 'OK']]]], 200),
+    ]);
+
+    $originalKey = config('ai.providers.openai-compatible.key');
+    $originalUrl = config('ai.providers.openai-compatible.url');
+
+    $this->postJson(route('admin.magic_ai.platform.test'), [
+        'provider' => AiProvider::Custom->value,
+        'api_key'  => 'csk-secret-key-1234567890',
+        'api_url'  => 'https://api.cerebras.ai/v1',
+        'models'   => 'llama3.1-8b',
+    ]);
+
+    expect(config('ai.providers.openai-compatible.key'))->toBe($originalKey);
+    expect(config('ai.providers.openai-compatible.url'))->toBe($originalUrl);
 });

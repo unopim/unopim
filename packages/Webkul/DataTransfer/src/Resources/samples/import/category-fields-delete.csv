@@ -1,0 +1,3 @@
+code,type,locale,name
+is_featured,boolean,en_US,Featured
+banner_note,text,en_US,"Banner Note"

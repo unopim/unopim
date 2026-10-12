@@ -2,6 +2,21 @@
 
 return [
     'seeders' => [
+        'demo' => [
+            'spec-sheet' => [
+                'title'             => '產品資料表',
+                'lede'              => '展示目錄的參考規格。除非產品頁面另有說明，否則數值適用於此產品系列的所有產品。',
+                'family-code'       => '系列代碼',
+                'compliance'        => '合規性',
+                'compliance-value'  => '已取得 CE 標示；RoHS 與 REACH 聲明可應要求提供。',
+                'spare-parts'       => '備品',
+                'spare-parts-value' => '耗損零件自最後生產日期起備貨十年。',
+                'packaging'         => '包裝',
+                'packaging-value'   => '無塑膠包裝，FSC 認證紙板，使用無礦物油油墨印製。',
+                'footer'            => '由 UnoPim 產生，僅供展示。',
+            ],
+        ],
+
         'attribute' => [
             'attribute-families' => [
                 'default' => '預設',
@@ -99,6 +114,110 @@ return [
             ],
         ],
     ],
+    'upgrade' => [
+        'title'                 => 'UnoPim 升級',
+        'complete'              => '升級完成。應用程式已重新上線。',
+        'aborted'               => '升級已中止。未變更任何內容。',
+        'confirm'               => '應用程式將進入維護模式並遷移資料庫。是否繼續？',
+        'dry-run-complete'      => '試執行完成。未變更任何內容。',
+        'preflight-failed'      => ':count 項檢查未通過。升級未啟動，且未變更任何內容。',
+        'preflight-failed-hint' => '請解決上述項目後重新執行指令。先前的版本仍在處理流量。',
+        'verify-failed'         => ':count 項驗證未通過。應用程式維持在維護模式。',
+        'migrate-failed'        => '遷移失敗：:error',
+        'step-failed'           => ':command 步驟失敗，結束代碼 :code。',
+        'phase'                 => [
+            'preflight' => '第 1/5 階段 — 前置檢查',
+            'drift'     => '第 2/5 階段 — 設定差異',
+            'sizing'    => '第 3/5 階段 — 維護時段估算',
+            'execute'   => '第 4/5 階段 — 遷移',
+            'verify'    => '第 5/5 階段 — 驗證',
+        ],
+
+        'checks'                => [
+            'php-version'                => 'PHP 版本',
+            'php-version-detail'         => '需要 :required，實際為 :found',
+            'php-version-remedy'         => '請先將 PHP 升級至 :required 或更新版本再繼續。',
+            'extensions'                 => 'PHP 擴充套件',
+            'extensions-remedy'          => '請安裝缺少的擴充套件並重新啟動 PHP-FPM。',
+            'database'                   => '資料庫連線',
+            'database-detail'            => ':driver，資料庫 :database，前綴 :prefix',
+            'database-remedy'            => '請檢查 .env 檔案中的資料庫認證資訊。',
+            'source-version'             => '已安裝版本',
+            'source-version-detail'      => ':version 或更新',
+            'source-version-unsupported' => '早於 :version',
+            'source-version-remedy'      => '請先升級至 :version，然後重新執行此指令。',
+            'pending-migrations'         => '待執行的遷移',
+            'pending-migrations-detail'  => '待執行 :count 項',
+            'pending-migrations-none'    => '無 — 資料庫已是最新',
+            'pending-migrations-remedy'  => '無法讀取遷移資料表。請檢查資料庫權限。',
+            'active-jobs'                => '匯入與匯出作業',
+            'active-jobs-detail'         => ':count 項仍在執行',
+            'active-jobs-remedy'         => '請等待執行中的作業結束，或停止佇列工作程序，然後重新執行指令。',
+            'writable-paths'             => '可寫入目錄',
+            'writable-paths-remedy'      => '請將上述目錄的寫入權限授予網頁伺服器使用者。',
+            'disk-space'                 => '磁碟空間',
+            'disk-space-detail'          => '可用 :free，需要 :required',
+            'disk-space-unknown'         => '無法判定',
+            'disk-space-remedy'          => '請釋放磁碟空間；若資料庫已由其他方式備份，可使用 --skip-backup。',
+        ],
+
+        'drift'                 => [
+            'none'        => '未偵測到設定差異。',
+            'no-previous' => '未指定先前版本的目錄，因此無法比對設定檔與 Composer 相依套件。請使用 --from=/path/to/old/release 取得完整報告。',
+            'env-missing' => '本版本新增，但您的 .env 中缺少的環境變數：',
+            'env-removed' => '本版本已移除，但您的 .env 中仍設定的環境變數：',
+            'config'      => '與先前版本不同的設定檔。請重新套用您的本機修改：',
+            'composer'    => '您自行加入，但本版本中缺少的 Composer 相依套件：',
+            'manual'      => '這些檔案屬於您。請在恢復流量前手動合併 —— 升級永遠不會覆寫它們。',
+        ],
+
+        'sizing'                => [
+            'table'           => '資料表',
+            'rows'            => '列數',
+            'pending'         => '將執行 :count 項遷移。',
+            'window'          => '預估維護時段：約 :minutes 分鐘。',
+            'nothing-pending' => '沒有待執行的遷移。',
+            'irreversible'    => '下列遷移會改寫資料且無法還原。只有回復資料庫備份才能退回：',
+        ],
+
+        'backup'                => [
+            'created'            => '資料庫備份已寫入 :path',
+            'skipped'            => '已略過資料庫備份。繼續之前請確認您擁有可回復的備份。',
+            'failed'             => '資料庫備份失敗：:error',
+            'empty'              => '資料庫備份為空，已捨棄。',
+            'abort'              => '由於沒有通過驗證的備份，升級已停止。未變更任何內容。',
+            'unsupported-driver' => '沒有適用於 :driver 驅動程式的備份指令。',
+        ],
+
+        'verify'                => [
+            'table-missing'          => '已略過，資料表不存在',
+            'associations'           => '商品關聯',
+            'associations-none'      => '沒有需要遷移的舊關聯',
+            'associations-detail'    => '已遷移 :legacy 項商品中的 :migrated 項',
+            'associations-remedy'    => '找到舊的關聯資料，但未遷移任何內容。請回復備份並回報此問題。',
+            'robot-users'            => 'API 整合的擁有者',
+            'robot-users-detail'     => ':count 項整合仍屬於個人',
+            'robot-users-remedy'     => '請重新執行遷移，或於管理後台重新指派這些整合。',
+            'category-bounds'        => '分類樹完整性',
+            'category-bounds-detail' => ':count 個分類節點的界限值無效',
+            'category-bounds-remedy' => '請在恢復流量前重建分類樹。',
+            'scrubbed-audits'        => '認證資訊清除',
+            'scrubbed-audits-detail' => ':count 筆稽核紀錄仍含有認證資訊',
+            'scrubbed-audits-remedy' => '請在恢復流量前重新執行遷移。這些紀錄會外洩已儲存的認證資訊。',
+        ],
+
+        'restore'               => [
+            'heading' => '升級未完成。應用程式處於維護模式。',
+            'body'    => '回復方式：回復資料庫備份，將網頁伺服器指回先前的版本目錄，並在該目錄執行「php artisan up」。',
+        ],
+
+        'reindex'               => [
+
+            'too-large' => '已忽略 --with-reindex：:count 項商品超過即時重建的 :limit 項商品上限。',
+            'deferred'  => '未重建 Elasticsearch 索引。在 :count 項商品的規模下，此作業耗時長於升級本身，完成前搜尋會改用資料庫。網站恢復後請執行：',
+        ],
+    ],
+
     'installer' => [
         'index' => [
             'create-administrator' => [
@@ -145,6 +264,8 @@ return [
             'environment-configuration' => [
                 'allowed-currencies'  => '允許的貨幣',
                 'allowed-locales'     => '允許的地區',
+                'app-key-missing'     => '找不到 .env 檔案，且伺服器環境中未設定 APP_KEY。安裝程式從不寫入環境設定 — 請手動建立 .env（複製 .env.example），或在主機面板中設定這些變數，然後再試一次。',
+                'env-readonly-note'   => '這些值是從您的伺服器環境（.env）讀取的。安裝程式從不寫入環境設定 — 如需變更任何內容，請編輯 .env 檔案（或主機面板中的變數），然後重新載入此頁面。',
                 'application-name'    => '應用名稱',
                 'unopim'              => 'UnoPim',
                 'chinese-yuan'        => '人民幣 (CNY)',
@@ -197,7 +318,7 @@ return [
                 'turkish-lira'        => '土耳其里拉 (TRY)',
                 'ukrainian-hryvnia'   => '烏克蘭格里夫納 (UAH)',
                 'usd'                 => '美元 (USD)',
-                'warning-message'     => '警告！這些配置為永久設定，無法更改。',
+                'warning-message'     => '您在此處選擇的語言環境和貨幣將成為通路和管理員帳戶的初始預設值。您可以隨時在管理設定中啟用更多語言環境和貨幣，或變更這些預設值。',
             ],
             'installation-processing' => [
                 'unopim'      => '正在安裝 UnoPim',
@@ -221,6 +342,8 @@ return [
                 'package-installed'  => '✓ :label 已安裝',
                 'package-failed'     => '✗ :label 失敗：:message',
                 'package-manual'     => '! :label 無法在此伺服器上自動安裝（無 shell 存取權限）。請在具有 shell 存取權限的機器上執行此命令：',
+                'install-failed'     => '✗ 安裝失敗。請查看 storage/logs/laravel.log 了解詳情。',
+                'stream-interrupted' => '! 與安裝程式的連線已中斷。安裝可能仍在完成中 — 請稍候片刻，然後重新載入此頁面。',
             ],
             'installation-completed' => [
                 'admin-panel'               => '管理面板',

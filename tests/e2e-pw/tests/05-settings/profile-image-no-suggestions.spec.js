@@ -8,8 +8,9 @@ test.describe('Profile Image AI Generation - No @ Suggestions (Issue #701)', () 
       await adminPage.waitForLoadState('load', { timeout: 10000 }).catch(() => {});
     });
 
-    // Verify we're on the My Account page — use the heading text
-    await expect(adminPage.locator('p.text-xl').getByText('My Account')).toBeVisible({ timeout: 10000 });
+    // Verify we're on the My Account page — the title now renders through
+    // x-admin::page-header (<h1>), so match the heading role.
+    await expect(adminPage.getByRole('heading', { name: 'My Account' })).toBeVisible({ timeout: 10000 });
 
     // Click the "Add Image" area to trigger the image upload options
     const addImageArea = adminPage.locator('text=Add Image').first();

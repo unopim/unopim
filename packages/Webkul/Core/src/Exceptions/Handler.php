@@ -4,7 +4,6 @@ namespace Webkul\Core\Exceptions;
 
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Http\Exceptions\PostTooLargeException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -13,6 +12,18 @@ use Throwable;
 
 class Handler extends ExceptionHandler
 {
+    private const array RENDERABLE_STATUS_CODES = [
+        JsonResponse::HTTP_UNAUTHORIZED,
+        JsonResponse::HTTP_FORBIDDEN,
+        JsonResponse::HTTP_NOT_FOUND,
+        JsonResponse::HTTP_METHOD_NOT_ALLOWED,
+        JsonResponse::HTTP_REQUEST_ENTITY_TOO_LARGE,
+        419,
+        JsonResponse::HTTP_TOO_MANY_REQUESTS,
+        JsonResponse::HTTP_INTERNAL_SERVER_ERROR,
+        JsonResponse::HTTP_SERVICE_UNAVAILABLE,
+    ];
+
     /**
      * Register the exception handling callbacks for the application.
      */
@@ -29,20 +40,23 @@ class Handler extends ExceptionHandler
         $this->handleValidationException();
 
         $this->handleServerException();
-
-        $this->handlePostTooLargeException();
     }
 
     /**
-     * Render an exception into an HTTP response.
+     * Framework hook invoked before renderable callbacks. Overridden so an
+     * unauthenticated API request always gets a JSON 401 (regardless of
+     * APP_DEBUG or the Accept header) instead of the framework default, which
+     * redirects to the nonexistent `login` route and 500s.
      */
-    public function render($request, Throwable $exception)
+    protected function unauthenticated($request, AuthenticationException $exception)
     {
-        if ($exception instanceof PostTooLargeException) {
-            return response()->view('admin::errors.index', ['errorCode' => JsonResponse::HTTP_REQUEST_ENTITY_TOO_LARGE]);
+        if ($request->wantsJson() || $this->isApiRequest($request)) {
+            return response()->json([
+                'error' => trans('admin::app.errors.401.message'),
+            ], JsonResponse::HTTP_UNAUTHORIZED);
         }
 
-        return parent::render($request, $exception);
+        return redirect()->guest(route('admin.session.create'));
     }
 
     /**
@@ -67,23 +81,32 @@ class Handler extends ExceptionHandler
     private function handleHttpException(): void
     {
         $this->renderable(function (HttpException $exception, Request $request) {
-            $errorCode = in_array($exception->getStatusCode(), [
-                JsonResponse::HTTP_UNAUTHORIZED,
-                JsonResponse::HTTP_FORBIDDEN,
-                JsonResponse::HTTP_NOT_FOUND,
-                JsonResponse::HTTP_TOO_MANY_REQUESTS,
-                JsonResponse::HTTP_INTERNAL_SERVER_ERROR,
-                JsonResponse::HTTP_SERVICE_UNAVAILABLE,
-            ]) ? $exception->getStatusCode() : JsonResponse::HTTP_INTERNAL_SERVER_ERROR;
+            $status = $exception->getStatusCode();
+
+            /**
+             * Only the listed codes have error-page copy; anything else borrows the
+             * generic 500 wording. The response still carries the thrown status, so
+             * an `abort(422, ...)` stays a client error instead of reading as a crash.
+             */
+            $errorCode = in_array($status, self::RENDERABLE_STATUS_CODES, true)
+                ? $status
+                : JsonResponse::HTTP_INTERNAL_SERVER_ERROR;
+
+            $headers = $exception->getHeaders();
 
             if ($request->wantsJson() || $this->isApiRequest($request)) {
+                $message = $exception->getMessage();
+
                 return response()->json([
                     'error'       => trans("admin::app.errors.{$errorCode}.title"),
-                    'description' => trans("admin::app.errors.{$errorCode}.description"),
-                ], $errorCode);
+                    // Only 422 aborts carry a translated, user-facing reason; other statuses keep the generic copy.
+                    'description' => $status === JsonResponse::HTTP_UNPROCESSABLE_ENTITY && $message !== ''
+                        ? $message
+                        : trans("admin::app.errors.{$errorCode}.description"),
+                ], $status, $headers);
             }
 
-            return response()->view('admin::errors.index', compact('errorCode'));
+            return response()->view('admin::errors.index', ['errorCode' => $errorCode], $status, $headers);
         });
     }
 
@@ -102,7 +125,7 @@ class Handler extends ExceptionHandler
                 ], $errorCode);
             }
 
-            return response()->view('admin::errors.index', compact('errorCode'));
+            return response()->view('admin::errors.index', ['errorCode' => $errorCode]);
         });
     }
 
@@ -111,28 +134,7 @@ class Handler extends ExceptionHandler
      */
     private function handleValidationException(): void
     {
-        $this->renderable(function (ValidationException $exception, Request $request) {
-            return parent::convertValidationExceptionToResponse($exception, $request);
-        });
-    }
-
-    /**
-     * Handle postTooLarge Exception exceptions.
-     */
-    private function handlePostTooLargeException(): void
-    {
-        $this->renderable(function (PostTooLargeException $exception, Request $request) {
-            $errorCode = JsonResponse::HTTP_REQUEST_ENTITY_TOO_LARGE;
-
-            if ($request->wantsJson() || $this->isApiRequest($request)) {
-                return response()->json([
-                    'message'   => trans('admin::app.errors.413.title'),
-                    'errorCode' => $errorCode,
-                ], $errorCode);
-            }
-
-            return response()->view('admin::errors.index', compact('errorCode'));
-        });
+        $this->renderable(fn (ValidationException $exception, Request $request) => parent::convertValidationExceptionToResponse($exception, $request));
     }
 
     /**
@@ -140,6 +142,10 @@ class Handler extends ExceptionHandler
      */
     private function isApiRequest(Request $request): bool
     {
-        return $request->is('api/*') || $request->is('*/api/*');
+        if ($request->is('api/*')) {
+            return true;
+        }
+
+        return $request->is('*/api/*');
     }
 }

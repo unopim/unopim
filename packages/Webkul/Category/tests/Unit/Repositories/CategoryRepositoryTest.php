@@ -237,6 +237,45 @@ it('excludes a specific category from paginated child results', function () {
     expect($result['total'])->toBe(1);
 });
 
+it('returns only the ancestor path from getTreeBranchToParent', function () {
+    $root = Category::whereIsRoot()->first();
+    $parent = Category::factory()->create(['parent_id' => $root->id]);
+    $category = Category::factory()->create(['parent_id' => $parent->id]);
+
+    $branch = $this->categoryRepository->getTreeBranchToParent($category);
+
+    expect($branch)->toHaveCount(1);
+    expect($branch->first()->id)->toBe($root->id);
+    expect($branch->first()->children->pluck('id')->all())->toBe([$parent->id]);
+    expect($branch->first()->children->first()->children)->toHaveCount(0);
+});
+
+it('does not load the siblings of the categories along the branch to parent', function () {
+    $root = Category::whereIsRoot()->first();
+    $parent = Category::factory()->create(['parent_id' => $root->id]);
+    $category = Category::factory()->create(['parent_id' => $parent->id]);
+
+    $uncle = Category::factory()->create(['parent_id' => $root->id]);
+    $sibling = Category::factory()->create(['parent_id' => $parent->id]);
+
+    $branch = $this->categoryRepository->getTreeBranchToParent($category);
+
+    $ids = collect($branch)->flatMap(fn ($node) => [
+        $node->id,
+        ...$node->children->pluck('id'),
+    ]);
+
+    expect($ids)->not->toContain($uncle->id);
+    expect($ids)->not->toContain($sibling->id);
+    expect($ids)->not->toContain($category->id);
+});
+
+it('returns null from getTreeBranchToParent for a root category', function () {
+    $root = Category::whereIsRoot()->first();
+
+    expect($this->categoryRepository->getTreeBranchToParent($root))->toBeNull();
+});
+
 it('returns expected structure from getPartial', function () {
     $category = Category::factory()->create();
 

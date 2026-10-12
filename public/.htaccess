@@ -6,6 +6,9 @@
 
     RewriteEngine On
 
+    # Public uploads must never be interpreted as server-side or active HTML content.
+    RewriteRule ^storage/.*\.(php[0-9]?|phtml|pht|phar|html?|shtml|xhtml)$ - [F,L,NC]
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]

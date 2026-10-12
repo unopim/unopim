@@ -17,12 +17,7 @@ class ScopeMiddleware
     {
         $acl = $this->getAclForCurrentRoute();
 
-        if ($acl) {
-            if (! $this->hasPermission($acl)) {
-                return response()->json(['error' => 'This action is unauthorized'], 403);
-            }
-        } elseif ($this->isMutatingRequest($request)) {
-
+        if (! $acl || ! $this->hasPermission($acl)) {
             return response()->json(['error' => 'This action is unauthorized'], 403);
         }
 
@@ -30,36 +25,27 @@ class ScopeMiddleware
     }
 
     /**
-     * Determine whether the request uses a state-changing HTTP method.
-     */
-    protected function isMutatingRequest(Request $request): bool
-    {
-        return in_array($request->getMethod(), ['POST', 'PUT', 'PATCH', 'DELETE'], true);
-    }
-
-    /**
      * Checks if user allowed or not for certain action
      *
      * @param  string  $permission
-     * @return void
      */
-    public function hasPermission($permission)
+    public function hasPermission($permission): bool
     {
-        if (
-            auth()->guard('api')->check()
-            && auth()->guard('api')->user()->apiKey->permission_type == 'all'
-        ) {
-            return true;
-        } else {
-            if (
-                ! auth()->guard('api')->check()
-                || ! auth()->guard('api')->user()->apiKey->hasPermission($permission)
-            ) {
-                return false;
-            }
+        $user = auth()->guard('api')->check() ? auth()->guard('api')->user() : null;
+
+        if (! $user || ! $user->apiKey) {
+            return false;
         }
 
-        return true;
+        if ($user->apiKey->revoked || ! $user->status) {
+            return false;
+        }
+
+        if ($user->apiKey->permission_type == 'all') {
+            return true;
+        }
+
+        return (bool) $user->apiKey->hasPermission($permission);
     }
 
     /**
@@ -75,6 +61,10 @@ class ScopeMiddleware
             return;
         }
 
-        return $acl->roles[str_replace('.get', '.index', Route::currentRouteName())] ?? null;
+        $routeName = Route::currentRouteName();
+
+        return $acl->roles[$routeName]
+            ?? $acl->roles[str_replace('.get', '.index', $routeName)]
+            ?? null;
     }
 }

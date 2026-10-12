@@ -112,7 +112,7 @@ class AttributeConditionOperators
         $map = [];
 
         foreach (self::KNOWN_TYPES as $type) {
-            $map[$type] = array_map(fn ($operator) => [
+            $map[$type] = array_map(fn (string $operator): array => [
                 'value'   => $operator,
                 'label'   => trans('admin::app.settings.data-transfer.exports.create.operators.'.$operator),
                 'control' => self::valueControl($type, $operator),

@@ -11,15 +11,14 @@ class View
      * Returns the visible custom attributes
      *
      * @param  Product  $product
-     * @return void|array
      */
-    public function getAdditionalData($product)
+    public function getAdditionalData($product): array
     {
         $data = [];
 
         $attributes = $product->attribute_family->customAttributes()->get();
 
-        $attributeOptionRepository = app(AttributeOptionRepository::class);
+        $attributeOptionRepository = resolve(AttributeOptionRepository::class);
 
         foreach ($attributes as $attribute) {
             $value = $product->{$attribute->code};
@@ -43,7 +42,7 @@ class View
                 ) {
                     $labels = [];
 
-                    $attributeOptions = $attributeOptionRepository->findWhereIn('id', explode(',', $value));
+                    $attributeOptions = $attributeOptionRepository->findWhereIn('id', explode(',', (string) $value));
 
                     foreach ($attributeOptions as $attributeOption) {
                         if ($label = $attributeOption->label) {

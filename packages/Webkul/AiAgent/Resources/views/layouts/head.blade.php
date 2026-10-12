@@ -1,1 +1,0 @@
-{{-- AI Agent head injection --}}

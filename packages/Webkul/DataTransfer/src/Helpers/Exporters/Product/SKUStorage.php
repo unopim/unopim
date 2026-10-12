@@ -10,7 +10,7 @@ class SKUStorage
     /**
      * Delimiter for SKU information
      */
-    private const DELIMITER = '|';
+    private const string DELIMITER = '|';
 
     /**
      * Items contains SKU as key and product information as value
@@ -29,8 +29,6 @@ class SKUStorage
 
     /**
      * Create a new helper instance.
-     *
-     * @return void
      */
     public function __construct(protected ProductRepository $productRepository) {}
 
@@ -49,7 +47,7 @@ class SKUStorage
      */
     public function load(array $skus = []): void
     {
-        if (empty($skus)) {
+        if ($skus === []) {
             $products = $this->productRepository->all($this->selectColumns);
         } else {
             $products = $this->productRepository->findWhereIn('sku', $skus, $this->selectColumns);
@@ -109,11 +107,7 @@ class SKUStorage
      */
     public function getByType(string $type): ?array
     {
-        $result = Arr::where($this->items, function (string $row, string $key) use ($type) {
-            return str_contains($row, '|'.$type.'|');
-        });
-
-        return $result;
+        return Arr::where($this->items, fn (string $row, string $key): bool => str_contains($row, '|'.$type.'|'));
     }
 
     /**
@@ -121,6 +115,6 @@ class SKUStorage
      */
     public function isEmpty(): int
     {
-        return empty($this->items);
+        return $this->items === [];
     }
 }

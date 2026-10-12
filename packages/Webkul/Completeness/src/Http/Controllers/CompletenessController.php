@@ -23,6 +23,10 @@ class CompletenessController extends Controller
 
         $totalProductCount = $this->productRepository->count();
 
+        $scoredCounts = $this->scoreRepository->countProductsWithCompletenessByChannel();
+        $channelAverages = $this->scoreRepository->getAverageScoresByChannel();
+        $localeAverages = $this->scoreRepository->getAverageScoresByChannelAndLocale();
+
         foreach ($channels as $channel) {
             $channelCode = $channel->code;
             $channelId = $channel->id;
@@ -32,21 +36,17 @@ class CompletenessController extends Controller
                 $channelName = "[$channelCode]";
             }
             $data[$channelCode] = [
-                'product_count'        => number_format($this->scoreRepository->countProductsWithCompletenessCalculated($channelId)),
+                'product_count'        => number_format($scoredCounts[$channelId] ?? 0),
                 'total_products_count' => number_format($totalProductCount),
             ];
 
             foreach ($channel->locales as $locale) {
                 $localeName = $locale->name;
 
-                $avgScore = $this->scoreRepository->getAverageScore($channelId, $locale->id);
-
-                $data[$channelCode]['locales'][$localeName] = round($avgScore ?? 0);
+                $data[$channelCode]['locales'][$localeName] = round($localeAverages[$channelId][$locale->id] ?? 0);
             }
 
-            $averageChannelScore = $this->scoreRepository->getAverageScore($channelId);
-
-            $data[$channelCode]['average'] = round($averageChannelScore ?? 0);
+            $data[$channelCode]['average'] = round($channelAverages[$channelId] ?? 0);
             $data[$channelCode]['name'] = $channelName;
         }
 

@@ -2,6 +2,7 @@
 
 namespace Webkul\AiAgent\Http\Controllers;
 
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\View\View;
@@ -21,11 +22,11 @@ class GenerateController extends Controller
      *
      * @return View
      */
-    public function index()
+    public function index(): Factory|\Illuminate\Contracts\View\View
     {
         $credentials = $this->credentialRepository->getActiveList();
 
-        return view('ai-agent::generate.index', compact('credentials'));
+        return view('ai-agent::generate.index', ['credentials' => $credentials]);
     }
 
     /**

@@ -54,7 +54,10 @@ return [
 
         'stack' => [
             'driver'            => 'stack',
-            'channels'          => explode(',', env('LOG_STACK', 'single')),
+            'channels'          => array_values(array_filter(array_map(
+                trim(...),
+                explode(',', (string) env('LOG_STACK', 'single'))
+            ), strlen(...))),
             'ignore_exceptions' => false,
         ],
 

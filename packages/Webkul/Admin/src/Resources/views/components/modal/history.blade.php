@@ -50,7 +50,7 @@
                                 <button
                                     type="button"
                                     @click="closeModal"
-                                    class="icon-cancel text-3xl cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800 hover:rounded-md"
+                                    class="icon-cancel text-3xl cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800 hover:rounded-md"
                                 >
                                 </button>
                             </div>
@@ -79,7 +79,7 @@
                                         <table class="w-full">
                                             <!-- Table Header -->
                                             <thead>
-                                                <tr class="bg-gray-100 dark:bg-cherry-800">
+                                                <tr class="bg-gray-100 dark:bg-cherry-700">
                                                     <th class="py-2 px-4 text-left">
                                                         <span>@{{ nameLabel }}</span>
                                                     </th>
@@ -87,7 +87,7 @@
                                                         <span class="text-red-500">@{{ oldValueLabel }}</span>
                                                     </th>
                                                     <th class="py-2 px-4 text-left">
-                                                        <span class="text-violet-700">@{{ newValueLabel }}</span>
+                                                        <span class="text-primary-700">@{{ newValueLabel }}</span>
                                                     </th>
                                                 </tr>
                                             </thead>
@@ -109,7 +109,7 @@
                                                     <tr v-for="history in versionHistory" :key="history.id" class="border-t dark:border-gray-800">
                                                         <td class="py-2 px-4">@{{ history.name }}</td>
                                                         <td class="py-2 px-4 text-red-500  word-break">@{{ history.old }}</td>
-                                                        <td class="py-2 px-4 text-violet-700 word-break">@{{ history.new }}</td>
+                                                        <td class="py-2 px-4 text-primary-700 word-break">@{{ history.new }}</td>
                                                     </tr>
                                                 </template>
                                             </tbody>
@@ -170,6 +170,12 @@
                 this.registerGlobalEvents();
             },
 
+            beforeUnmount() {
+                if (this.isOpen) {
+                    window.unlockBodyScroll();
+                }
+            },
+
             watch: {
                 isOpen(newValue) {
                     if (newValue === true) {
@@ -202,9 +208,11 @@
 
                     closeModal = () => {},
                 }) {
-                    this.isOpen = true;
+                    if (! this.isOpen) {
+                        window.lockBodyScroll();
+                    }
 
-                    document.body.style.overflow = 'hidden';
+                    this.isOpen = true;
 
                     this.title = title;
 
@@ -230,9 +238,11 @@
                 },
 
                 closeModal() {
-                    this.isOpen = false;
+                    if (this.isOpen) {
+                        window.unlockBodyScroll();
+                    }
 
-                    document.body.style.overflow = 'auto';
+                    this.isOpen = false;
 
                     this.closeModalCallback();
                 },

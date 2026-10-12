@@ -9,6 +9,8 @@ use Webkul\Core\Repositories\CurrencyRepository;
 
 class CurrencyDataSource extends ApiDataSource
 {
+    protected ?string $structureCacheGroup = 'currencies';
+
     /**
      * Create a new DataSource instance.
      *

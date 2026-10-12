@@ -12,11 +12,11 @@ use OpenSpout\Writer\XLSX\Writer as XlsxWriter;
 
 final class SpoutWriterFactory
 {
-    public const XLS = 'Xls';
+    public const string XLS = 'Xls';
 
-    public const CSV = 'Csv';
+    public const string CSV = 'Csv';
 
-    public const XLSX = 'Xlsx';
+    public const string XLSX = 'Xlsx';
 
     /**
      * @throws \InvalidArgumentException

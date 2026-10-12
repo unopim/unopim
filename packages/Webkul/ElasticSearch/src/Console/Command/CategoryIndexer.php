@@ -2,28 +2,23 @@
 
 namespace Webkul\ElasticSearch\Console\Command;
 
-use Carbon\Carbon;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Webkul\Category\Models\Category;
 use Webkul\Core\Facades\ElasticSearch;
 
+#[Description('Index all categories into Elasticsearch')]
+#[Signature('unopim:category:index')]
 class CategoryIndexer extends Command
 {
     const BATCH_SIZE = 10000;
 
-    protected $signature = 'unopim:category:index';
-
-    protected $description = 'Index all categories into Elasticsearch';
-
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    public function handle()
+    public function handle(): void
     {
         if (config('elasticsearch.enabled')) {
             $indexPrefix = config('elasticsearch.prefix');
@@ -58,7 +53,7 @@ class CategoryIndexer extends Command
                     if (
                         (
                             isset($elasticCategory[$category->id])
-                            && $elasticCategory[$category->id] != Carbon::parse($category->updated_at)->setTimezone('UTC')->format('Y-m-d\TH:i:s.u\Z')
+                            && $elasticCategory[$category->id] != Date::parse($category->updated_at)->setTimezone('UTC')->format('Y-m-d\TH:i:s.u\Z')
                         )
                         || ! isset($elasticCategory[$category->id])
                     ) {
@@ -95,20 +90,11 @@ class CategoryIndexer extends Command
 
                 $this->info('Checking for stale categories to delete...');
 
-                $elasticCategoryIds = collect(ElasticSearch::search([
-                    'index' => $categoryIndex,
-                    'body'  => [
-                        '_source' => false,
-                        'query'   => [
-                            'match_all' => new \stdClass,
-                        ],
-                        'size' => 1000000000,
-                    ],
-                ])['hits']['hits'])->pluck('_id')->map(fn ($id) => (int) $id)->toArray();
+                $elasticCategoryIds = $this->allIndexedIds($categoryIndex);
 
                 $categoriesToDelete = array_diff($elasticCategoryIds, $dbCategoryIds);
 
-                if (! empty($categoriesToDelete)) {
+                if ($categoriesToDelete !== []) {
                     $this->info('Deleting stale categories from Elasticsearch...');
                     $deleteProgressBar = new ProgressBar($this->output, count($categoriesToDelete));
                     $deleteProgressBar->start();
@@ -182,7 +168,61 @@ class CategoryIndexer extends Command
         }
     }
 
-    public function getCategoryUpdates($categoryIndex, $command = null)
+    /**
+     * Every document id in the index, read in pages via point-in-time.
+     *
+     * A single unbounded search returns the whole index in one response, which
+     * the client permits only because it raises max_result_window globally;
+     * the response then has to fit in PHP's memory limit.
+     *
+     * @return array<int, int>
+     */
+    protected function allIndexedIds(string $categoryIndex): array
+    {
+        $pit = ElasticSearch::openPointInTime(['index' => $categoryIndex, 'keep_alive' => '5m'])['id'];
+        $searchAfter = null;
+        $ids = [];
+
+        try {
+            while (true) {
+                $body = [
+                    '_source' => false,
+                    'query'   => ['match_all' => new \stdClass],
+                    'size'    => self::BATCH_SIZE,
+                    'sort'    => [['_shard_doc' => 'asc']],
+                    'pit'     => ['id' => $pit, 'keep_alive' => '5m'],
+                ];
+
+                if ($searchAfter !== null) {
+                    $body['search_after'] = $searchAfter;
+                }
+
+                $hits = ElasticSearch::search(['body' => $body])['hits']['hits'];
+
+                if ($hits === []) {
+                    break;
+                }
+
+                $searchAfter = $hits[array_key_last($hits)]['sort'];
+
+                foreach ($hits as $hit) {
+                    $ids[] = (int) $hit['_id'];
+                }
+            }
+        } finally {
+            try {
+                ElasticSearch::closePointInTime(['body' => ['id' => $pit]]);
+            } catch (\Throwable) {
+            }
+        }
+
+        return $ids;
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public function getCategoryUpdates($categoryIndex, $command = null): array
     {
         $scrollSize = 10000;
         $elasticCategory = [];

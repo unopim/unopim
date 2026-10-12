@@ -1,6 +1,8 @@
 <?php
 
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Hash;
 use Webkul\Installer\Console\Commands\Installer;
 use Webkul\User\Models\Admin;
 
@@ -92,10 +94,10 @@ it('should ask for password if password option is not provided in the command', 
         ->assertExitCode(0);
 });
 
-it('should ask for password if password length is less than 6 in the command', function () {
+it('should ask for password if password length is less than the configured minimum', function () {
     $this->artisan('unopim:user:create', [
         '--name'      => 'New User',
-        '--password'  => 'pass',
+        '--password'  => str_repeat('a', config('admin.auth.password_min') - 1),
         '--email'     => 'new.user@example.com',
         '--ui_locale' => 'en_US',
         '--timezone'  => 'UTC',
@@ -120,6 +122,31 @@ it('should create an admin user with command', function () {
         'name'  => 'John Cena',
         'email' => 'john.cena@example.com',
     ]);
+});
+
+it('should not expose the password after creating a user', function () {
+    $password = 'Adm#13$X';
+
+    $this->artisan('unopim:user:create', [
+        '--name'      => 'Secure User',
+        '--email'     => 'secure.user@example.com',
+        '--password'  => $password,
+        '--ui_locale' => 'en_US',
+        '--timezone'  => 'UTC',
+        '--admin'     => true,
+    ])
+        ->expectsOutput(trans('admin::app.settings.users.create-success'))
+        ->doesntExpectOutputToContain('use the following credentials')
+        ->doesntExpectOutputToContain('Email:')
+        ->doesntExpectOutputToContain('Password:')
+        ->doesntExpectOutputToContain($password)
+        ->assertSuccessful();
+
+    $user = Admin::query()
+        ->where('email', 'secure.user@example.com')
+        ->firstOrFail();
+
+    expect(Hash::check($password, $user->password))->toBeTrue();
 });
 
 it('should create a user with command', function () {
@@ -176,7 +203,12 @@ it('should ask for name if invalid user name given in the command', function () 
 
 it('should validate database prefix in unopim:install command', function () {
     $this->app->extend(Installer::class, function ($service) {
-        return new class extends Installer
+        // An anonymous subclass doesn't inherit the parent's #[Signature], so restate it to register a name.
+        return new #[Signature('unopim:install
+            { --skip-env-check : Skip env check. }
+            { --skip-admin-creation : Skip admin creation. }
+            { --with-demo-data : Seed sample products and demo data. }
+            { --with-packages= : Comma-separated optional packages to install (dam, shopify, bagisto). }')] class extends Installer
         {
             public function call($command, array $arguments = [], $output = null)
             {
@@ -192,12 +224,10 @@ it('should validate database prefix in unopim:install command', function () {
             { /* Mute */
             }
 
-            public function handle()
+            public function handle(): void
             {
                 // Ensure prompts occur even if .env exists
                 $this->askForDatabaseDetails();
-
-                return 0;
             }
         };
     });

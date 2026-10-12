@@ -9,7 +9,7 @@ use Webkul\Product\Repositories\ProductRepository;
 
 class ProductPrompt extends AbstractPrompt
 {
-    private static $instance;
+    private static ?ProductPrompt $instance = null;
 
     public function __construct(
         protected ProductRepository $productRepository,
@@ -21,8 +21,8 @@ class ProductPrompt extends AbstractPrompt
      */
     public static function getInstance(): ProductPrompt
     {
-        if (self::$instance === null) {
-            self::$instance = new self(app(ProductRepository::class), app(AttributeRepository::class));
+        if (! self::$instance instanceof ProductPrompt) {
+            self::$instance = new self(resolve(ProductRepository::class), resolve(AttributeRepository::class));
         }
 
         return self::$instance;
@@ -73,9 +73,7 @@ class ProductPrompt extends AbstractPrompt
 
     public function searchStringWithAt($string)
     {
-        $matches = Str::matchAll('/@\w+/', $string)->toArray();
-
-        return $matches;
+        return Str::matchAll('/@\w+/', $string)->toArray();
     }
 
     public function getProductById($productId)

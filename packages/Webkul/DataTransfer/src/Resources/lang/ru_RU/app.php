@@ -1,11 +1,21 @@
 <?php
 
 return [
+    'samples' => [
+        'default'       => 'Пример файла',
+        'variants'      => 'Пример вариантов',
+        'multi-locale'  => 'Многоязычный пример',
+        'delete'        => 'Пример удаления',
+        'custom-fields' => 'Пример пользовательских полей',
+        'with-images'   => 'Пример с изображениями (ZIP)',
+    ],
+
     'importers' => [
         'products' => [
             'title'      => 'Продукты',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => 'Единица ":unit" не является допустимой единицей для атрибута измерения ":attribute".',
+                'errors'       => [
                     'duplicate-url-key'                        => 'Ключ URL: \'%s\' уже был создан для элемента с SKU: \'%s\'.',
                     'invalid-attribute-family'                 => 'Недопустимое значение для столбца семейства атрибутов (семейство атрибутов не существует?)',
                     'invalid-type'                             => 'Тип продукта недействителен или не поддерживается.',
@@ -21,6 +31,7 @@ return [
                     'not-unique-value'                         => 'Значение :code должно быть уникальным.',
                     'incorrect-family-for-variant'             => 'Семья должна быть такой же, как родительская семья.',
                     'parent-not-exist'                         => 'Родителя не существует.',
+                    'variant-structure-not-found'              => 'Структура вариантов :code не существует для этого семейства атрибутов.',
                 ],
             ],
         ],
@@ -29,6 +40,82 @@ return [
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'Вы не можете удалить корневую категорию, связанную с каналом.',
+                ],
+            ],
+        ],
+        'category-fields' => [
+            'title'      => 'Поля категории',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Код поля категории :code уже используется.',
+                    'code_not_found_to_delete' => 'Код поля категории не найден для удаления.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Атрибуты',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Код атрибута :code уже используется.',
+                    'code_not_found_to_delete'             => 'Код атрибута для удаления не найден.',
+                    'code_is_system_and_cannot_be_deleted' => 'Системный атрибут не может быть удален.',
+                ],
+            ],
+        ],
+        'product-associations' => [
+            'title'      => 'Связи товаров',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Поле \'%s\' обязательно для заполнения.',
+                    'self-link-not-allowed'       => 'Товар \'%s\' не может быть связан сам с собой.',
+                    'sku-not-found'               => 'Товар с артикулом (SKU) \'%s\' не найден.',
+                    'related-sku-not-found'       => 'Связанный товар с артикулом (SKU) \'%s\' не найден.',
+                    'association-type-not-found'  => 'Тип связи \'%s\' не существует или неактивен.',
+                    'invalid-field-value'         => 'Указано недопустимое значение для поля связи.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Группы атрибутов',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Код группы атрибутов :code уже используется.',
+                    'code_not_found_to_delete'             => 'Код группы атрибутов для удаления не найден.',
+                    'code_is_system_and_cannot_be_deleted' => 'Системная группа атрибутов не может быть удалена.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Семейства атрибутов',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Код семейства атрибутов :code уже используется.',
+                    'code_not_found_to_delete' => 'Код семейства атрибутов для удаления не найден.',
+                    'invalid-attribute-group'  => 'Группа атрибутов ":code" не существует.',
+                    'invalid-attribute'        => 'Атрибут ":code" не существует.',
+                    'invalid-channel'          => 'Канал ":code" не существует.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Параметры атрибутов',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Код параметра атрибута :code уже используется.',
+                    'code_not_found_to_delete' => 'Код параметра атрибута для удаления не найден.',
+                    'locale-not-exist'         => 'Локаль ":code" не существует.',
+                    'invalid-attribute'        => 'Атрибут ":code" не существует.',
+                ],
+            ],
+        ],
+        'locales' => [
+            'title'      => 'Языки',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Код языка \'%s\' уже импортирован в этой партии.',
+                    'code-not-found-to-delete'    => 'Язык с кодом \'%s\' не найден в системе.',
+                    'invalid-status'              => 'Статус должен быть 0 или 1 (или пустым для включения по умолчанию).',
+                    'channel-related-locale-root' => 'Вы не можете удалить язык с кодом :code, так как он связан с каналом.',
                 ],
             ],
         ],
@@ -45,18 +132,23 @@ return [
             ],
         ],
         'currencies' => [
-            'title'      => 'Currencies',
+            'title'   => 'Валюты',
+            'filters' => [
+                'status' => 'Статус',
+                'enable' => 'Включено',
+                'all'    => 'Все',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
                     'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
-                    'invalid-status'              => 'Status must be 0 or 1 (or empty for default enabled).',
+                    'invalid-status'              => 'Статус должен быть 0 или 1 (или пустым для включения по умолчанию).',
                     'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
                 ],
             ],
         ],
         'roles' => [
-            'title'      => 'Roles',
+            'title'      => 'Роли',
             'validation' => [
                 'errors' => [
                     'duplicate-name'           => 'Duplicate role name found.',
@@ -65,7 +157,12 @@ return [
             ],
         ],
         'users' => [
-            'title'      => 'Users',
+            'title'   => 'Пользователи',
+            'filters' => [
+                'status' => 'Статус',
+                'active' => 'Активный',
+                'all'    => 'Все',
+            ],
             'validation' => [
                 'errors' => [
                     'email-not-found-to-delete' => 'User with specified email not found to delete.',
@@ -78,21 +175,25 @@ return [
     'exporters' => [
         'export-too-large' => 'Этот экспорт слишком велик для выполнения: примерно :rows строк × :columns столбцов (~:estimated) превышают доступное пространство (~:available). Сократите экспорт, выбрав меньше каналов/локалей (и атрибутов), и повторите попытку.',
         'fields'           => [
-            'file-format'         => 'Формат файла',
-            'with-media'          => 'С медиафайлами',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Формат файла',
+            'with-media'             => 'С медиафайлами',
+            'with-associations'      => 'С ассоциациями',
+            'with-associations-info' => 'Включить в экспорт устаревшие столбцы списков SKU (up_sells, cross_sells и related_products)',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'File Path',
-            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'file-name'      => 'Имя файла',
+            'file-name-info' => 'Шаблон имени файла. Подстановки: [code], [date], [time], [entity_type]',
+            'file-path'      => 'Путь к файлу',
+            'file-path-info' => 'Шаблон имени файла. Подстановки: [code], [date], [time], [entity_type]',
             'status'         => 'Статус',
             'enable'         => 'Включён',
             'all'            => 'Все',
@@ -134,7 +235,7 @@ return [
                     'disable' => 'Отключён',
                     'all'     => 'Все',
                 ],
-                'sku'              => 'SKU',
+                'sku'              => 'Sku',
                 'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
                 'identifiers'      => 'Идентификаторы',
                 'identifiers-info' => 'Вставьте по одному SKU / идентификатору в строке, чтобы экспортировать только эти товары. Оставьте пустым, чтобы экспортировать все товары.',
@@ -152,38 +253,62 @@ return [
         'categories' => [
             'title' => 'Категории',
         ],
+        'category-fields' => [
+            'title' => 'Поля категории',
+        ],
+        'attributes' => [
+            'title' => 'Атрибуты',
+        ],
+        'product-associations' => [
+            'title' => 'Связи товаров',
+        ],
+        'attribute-groups' => [
+            'title' => 'Группы атрибутов',
+        ],
+        'attribute-families' => [
+            'title' => 'Семейства атрибутов',
+        ],
+        'attribute-options' => [
+            'title' => 'Параметры атрибутов',
+        ],
+        'locales' => [
+            'title' => 'Языки',
+        ],
         'channels' => [
             'title' => 'Каналы',
         ],
         'currencies' => [
-            'title' => 'Currencies',
+            'title' => 'Валюты',
         ],
         'roles' => [
-            'title' => 'Roles',
+            'title' => 'Роли',
         ],
         'users' => [
-            'title'   => 'Users',
+            'title'   => 'Пользователи',
             'filters' => [
                 'status' => 'Статус',
-                'active' => 'Active',
+                'active' => 'Активные',
                 'all'    => 'Все',
             ],
         ],
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'Столбцы с номером «%s» имеют пустые заголовки.',
-            'column-name-invalid'  => 'Недопустимые имена столбцов: «%s».',
-            'column-not-found'     => 'Обязательные столбцы не найдены: %s.',
-            'column-numbers'       => 'Количество столбцов не соответствует количеству строк в заголовке.',
-            'invalid-attribute'    => 'Заголовок содержит недопустимые атрибуты: "%s".',
-            'system'               => 'Произошла непредвиденная системная ошибка.',
-            'wrong-quotes'         => 'Вместо прямых кавычек используются фигурные кавычки.',
-            'file-empty'           => 'Файл пуст или не содержит строку заголовка. Пожалуйста, загрузите корректный файл с данными.',
+            'column-empty-headers'   => 'Столбцы с номером «%s» имеют пустые заголовки.',
+            'column-name-invalid'    => 'Недопустимые имена столбцов: «%s».',
+            'column-not-found'       => 'Обязательные столбцы не найдены: %s.',
+            'column-numbers'         => 'Количество столбцов не соответствует количеству строк в заголовке.',
+            'invalid-attribute'      => 'Заголовок содержит недопустимые атрибуты: "%s".',
+            'system'                 => 'Произошла непредвиденная системная ошибка.',
+            'wrong-quotes'           => 'Вместо прямых кавычек используются фигурные кавычки.',
+            'file-empty'             => 'Файл пуст или не содержит строку заголовка. Пожалуйста, загрузите корректный файл с данными.',
+            'file-missing'           => 'Исходный файл для этого задания не найден. Проверьте путь к файлу в профиле и загрузите файл заново.',
         ],
     ],
     'job' => [
         'started'   => 'Выполнение задания началось',
         'completed' => 'Выполнение задания завершено',
+        'stalled'   => 'Задание не отвечало более :minutes минут и было помечено как неудачное. Скорее всего, выполнявший его процесс был завершён.',
+        'reaped'    => 'Помечено :count зависших заданий как неудачные.',
     ],
 ];

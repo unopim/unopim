@@ -16,6 +16,10 @@ class NoCacheMiddleware
     {
         $response = $next($request);
 
+        if (str_contains((string) $response->headers->get('Cache-Control'), 'public')) {
+            return $response;
+        }
+
         $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
         $response->headers->set('Pragma', 'no-cache');
         $response->headers->set('Expires', '0');

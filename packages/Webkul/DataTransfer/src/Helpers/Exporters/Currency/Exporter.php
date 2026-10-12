@@ -11,10 +11,8 @@ class Exporter extends AbstractExporter
 {
     /**
      * Initializes the channels and locales for the export process.
-     *
-     * @return void
      */
-    public function initilize()
+    public function initilize(): void
     {
         $this->initializeFileBuffer();
     }
@@ -32,9 +30,6 @@ class Exporter extends AbstractExporter
 
         $this->exportBuffer->write($currencies);
 
-        /**
-         * Update export batch process state summary
-         */
         $this->updateBatchState($batch->id, Export::STATE_PROCESSED);
 
         Event::dispatch('data_transfer.exports.batch.export.after', $batch);
@@ -60,10 +55,8 @@ class Exporter extends AbstractExporter
 
     /**
      * Prepare currencies from current batch
-     *
-     * @return array
      */
-    public function prepareCurrencies(JobTrackBatchContract $batch)
+    public function prepareCurrencies(JobTrackBatchContract $batch): array
     {
         $currencies = [];
 

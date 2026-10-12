@@ -2,7 +2,7 @@
     $darkModePreference = request()->cookie('dark_mode', 'auto');
 @endphp
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}" dir="ltr" class="{{ $darkModePreference === 'dark' || $darkModePreference === '1' ? 'dark' : '' }}">
+<html lang="{{ app()->getLocale() }}" dir="{{ in_array(app()->getLocale(), ['ar_AE']) ? 'rtl' : 'ltr' }}" class="{{ $darkModePreference === 'dark' || $darkModePreference === '1' ? 'dark' : '' }}">
     <head>
         <title>{{ $title ?? '' }}</title>
 
@@ -10,6 +10,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="base-url" content="{{ rtrim(config('app.url'), '/') }}">
+        <meta name="admin-url" content="{{ trim(parse_url(url(config('app.admin_url')), PHP_URL_PATH), '/') }}">
         <meta name="currency-code" content="{{ core()->getBaseCurrencyCode() }}">
         <meta http-equiv="content-language" content="{{ app()->getLocale() }}">
 
@@ -36,22 +37,6 @@
 
         @unoPimVite(['src/Resources/assets/css/app.css', 'src/Resources/assets/js/app.js'])
 
-        <link
-            href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
-            rel="stylesheet"
-        />
-
-        <link
-            href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap"
-            rel="stylesheet"
-        />
-
-        <link
-            href="https://fonts.googleapis.com/css2?family=Inter&display=swap"
-            rel="stylesheet"
-        />
-        
-        <!-- <link rel="preload" as="image" href="{{ url('cache/logo/pim.png') }}"> -->
 
         @if ($favicon = core()->getConfigData('general.design.admin_logo.favicon'))
             <link
@@ -75,51 +60,42 @@
             {!! core()->getConfigData('general.content.custom_scripts.custom_css') !!}
         </style>
 
-        {{-- When the promo bar is present, offset the fixed header/sidebar by its height so the left menu is not cut. --}}
-        <style>
-            body:has(#unopim-promo-bar) .unopim-header { top: 3rem; }
-            body:has(#unopim-promo-bar) #unopim-sidebar { top: 6.5rem; }
-            body:has(#unopim-promo-bar) #unopim-sidebar-scroll { height: calc(100vh - 148px); }
-        </style>
-
         {!! view_render_event('unopim.admin.layout.head') !!}
     </head>
 
-    <body class="h-full bg-violet-50 bg-opacity-30 dark:bg-cherry-800 font-inter" style="font-family: inter;">
+    <body class="h-screen overflow-hidden bg-unopim-primary-soft bg-primary-50 bg-opacity-30 dark:bg-cherry-800 font-inter" style="font-family: inter;">
         {!! view_render_event('unopim.admin.layout.body.before') !!}
 
-        <div id="app" class="h-full">
-            <!-- Flash Message Blade Component -->
+        <div id="app" class="flex flex-col h-screen">
             <x-admin::flash-group />
 
-            <!-- Confirm Modal Blade Component -->
+            <x-admin::modal.history />
+
             <x-admin::modal.confirm />
 
             {!! view_render_event('unopim.admin.layout.content.before') !!}
 
-            <!-- Page Header Blade Component -->
             <x-admin::layouts.header />
 
             <div
-                class="flex gap-4 group/container {{ (request()->cookie('sidebar_collapsed') ?? 0) ? 'sidebar-collapsed' : 'sidebar-not-collapsed' }}"
+                class="flex flex-1 min-h-0 group/container {{ (request()->cookie('sidebar_collapsed') ?? 1) ? 'sidebar-collapsed' : 'sidebar-not-collapsed' }}"
                 ref="appLayout"
             >
-                <!-- Page Sidebar Blade Component -->
                 <x-admin::layouts.sidebar />
 
-                <div class="flex-1 max-w-full px-4 pt-3 pb-6 bg-transparent dark:bg-cherry-800 ltr:pl-[286px] rtl:pr-[286px] max-lg:!px-4 transition-all duration-300 group-[.sidebar-collapsed]/container:ltr:pl-[85px] group-[.sidebar-collapsed]/container:rtl:pr-[85px]">
-                    <!-- Added dynamic tabs for third level menus  -->
+                <main id="main-content" class="flex-1 min-w-0 overflow-y-auto overflow-x-hidden px-4 pt-3 pb-6 bg-transparent dark:bg-cherry-800 transition-all duration-300">
                     @if (! request()->routeIs('admin.configuration.index'))
                         <x-admin::layouts.tabs />
                     @endif
 
-                    <!-- Page Content Blade Component -->
                     {{ $slot }}
-                </div>
+                </main>
             </div>
 
             {!! view_render_event('unopim.admin.layout.content.after') !!}
         </div>
+
+        <x-admin::layouts.acl-watcher />
 
         {!! view_render_event('unopim.admin.layout.body.after') !!}
 

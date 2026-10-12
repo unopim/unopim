@@ -12,12 +12,16 @@ use Webkul\ElasticSearch\QueryString;
  */
 class TextFilter extends AbstractDatabaseAttributeFilter
 {
-    /**
-     * @param  array  $supportedProperties
-     */
     public function __construct(
         array $supportedAttributeTypes = [Attribute::TEXT_TYPE, Attribute::TEXTAREA_TYPE, Attribute::SELECT_FIELD_TYPE, Attribute::MULTISELECT_FIELD_TYPE, Attribute::IMAGE_ATTRIBUTE_TYPE, Attribute::FILE_ATTRIBUTE_TYPE, Attribute::CHECKBOX_FIELD_TYPE, Attribute::GALLERY_ATTRIBUTE_TYPE],
-        array $allowedOperators = [FilterOperators::IN, FilterOperators::CONTAINS]
+        array $allowedOperators = [
+            FilterOperators::IN,
+            FilterOperators::NOT_IN,
+            FilterOperators::CONTAINS,
+            FilterOperators::EQUAL,
+            FilterOperators::IS_EMPTY,
+            FilterOperators::IS_NOT_EMPTY,
+        ]
     ) {
         $this->supportedAttributeTypes = $supportedAttributeTypes;
         $this->allowedOperators = $allowedOperators;
@@ -30,13 +34,11 @@ class TextFilter extends AbstractDatabaseAttributeFilter
         $attribute,
         $operator,
         $value,
-        $locale = null,
-        $channel = null,
-        $options = []
-    ) {
-        if ($this->queryBuilder === null) {
-            throw new \LogicException('The search query builder is not initialized in the filter.');
-        }
+        ?string $locale = null,
+        ?string $channel = null,
+        array $options = []
+    ): static {
+        throw_if($this->queryBuilder === null, \LogicException::class, 'The search query builder is not initialized in the filter.');
 
         $attributePath = $this->getScopedAttributePath($attribute, $locale, $channel);
 
@@ -44,29 +46,33 @@ class TextFilter extends AbstractDatabaseAttributeFilter
 
         $searchPath = $grammar->jsonExtract($this->getSearchTablePath($options), ...$attributePath);
 
-        switch ($operator) {
-            case FilterOperators::IN:
-                $this->queryBuilder->whereRaw(
-                    $searchPath.' '.$grammar->getRegexOperator().' ?',
-                    is_array($value) ? implode('|', $value) : $value
-                );
+        match ($operator) {
+            FilterOperators::IN => $this->queryBuilder->whereRaw(
+                $searchPath.' '.$grammar->getRegexOperator().' ?',
+                is_array($value) ? implode('|', $value) : $value
+            ),
+            FilterOperators::CONTAINS => $this->queryBuilder->where(function ($query) use ($searchPath, $value): void {
+                foreach ($value as $val) {
+                    $escapedValue = strtolower(QueryString::escapeValue($val));
 
-                break;
-
-            case FilterOperators::CONTAINS:
-                $this->queryBuilder->where(function ($query) use ($searchPath, $value) {
-                    foreach ($value as $val) {
-                        $escapedValue = strtolower(QueryString::escapeValue($val));
-
-                        $query->orWhereRaw(
-                            "LOWER($searchPath) LIKE ?",
-                            "%$escapedValue%"
-                        );
-                    }
-                });
-
-                break;
-        }
+                    $query->orWhereRaw(
+                        "LOWER($searchPath) LIKE ?",
+                        "%$escapedValue%"
+                    );
+                }
+            }),
+            FilterOperators::NOT_IN => $this->queryBuilder->whereRaw(
+                $searchPath.' NOT '.$grammar->getRegexOperator().' ?',
+                is_array($value) ? implode('|', $value) : $value
+            ),
+            FilterOperators::EQUAL => $this->queryBuilder->whereRaw(
+                "LOWER($searchPath) = ?",
+                strtolower((string) $this->scalarValue($value))
+            ),
+            FilterOperators::IS_EMPTY     => $this->queryBuilder->whereRaw("COALESCE($searchPath, '') = ''"),
+            FilterOperators::IS_NOT_EMPTY => $this->queryBuilder->whereRaw("COALESCE($searchPath, '') != ''"),
+            default                       => $this,
+        };
 
         return $this;
     }

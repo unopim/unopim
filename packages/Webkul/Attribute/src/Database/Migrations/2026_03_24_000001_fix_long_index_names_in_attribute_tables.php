@@ -66,7 +66,7 @@ return new class extends Migration
 
             // Old long name exists — rename it
             if (in_array($oldName, $indexNames)) {
-                Schema::table($table, function (Blueprint $t) use ($oldName, $newName) {
+                Schema::table($table, function (Blueprint $t) use ($oldName, $newName): void {
                     $t->renameIndex($oldName, $newName);
                 });
             }

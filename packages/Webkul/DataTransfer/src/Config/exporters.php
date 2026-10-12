@@ -1,12 +1,39 @@
 <?php
 
+use Webkul\Attribute\Repositories\AttributeFamilyRepository;
+use Webkul\Attribute\Repositories\AttributeGroupRepository;
+use Webkul\Attribute\Repositories\AttributeOptionRepository;
+use Webkul\Attribute\Repositories\AttributeRepository;
+use Webkul\Category\Repositories\CategoryFieldRepository;
+use Webkul\Category\Repositories\CategoryRepository;
+use Webkul\Core\Repositories\ChannelRepository;
+use Webkul\Core\Repositories\CurrencyRepository;
+use Webkul\Core\Repositories\LocaleRepository;
+use Webkul\DataTransfer\Enums\ProductFilter;
+use Webkul\DataTransfer\Helpers\Exporters\Product\Exporter;
+use Webkul\DataTransfer\Validators\JobInstances\Export\AttributeFamilyJobValidator;
+use Webkul\DataTransfer\Validators\JobInstances\Export\AttributeGroupJobValidator;
+use Webkul\DataTransfer\Validators\JobInstances\Export\AttributeJobValidator;
+use Webkul\DataTransfer\Validators\JobInstances\Export\AttributeOptionJobValidator;
+use Webkul\DataTransfer\Validators\JobInstances\Export\CategoryFieldJobValidator;
+use Webkul\DataTransfer\Validators\JobInstances\Export\CategoryJobValidator;
+use Webkul\DataTransfer\Validators\JobInstances\Export\ChannelJobValidator;
+use Webkul\DataTransfer\Validators\JobInstances\Export\CurrencyJobValidator;
+use Webkul\DataTransfer\Validators\JobInstances\Export\LocaleJobValidator;
+use Webkul\DataTransfer\Validators\JobInstances\Export\ProductJobValidator;
+use Webkul\DataTransfer\Validators\JobInstances\Export\RoleJobValidator;
+use Webkul\DataTransfer\Validators\JobInstances\Export\UserJobValidator;
+use Webkul\Product\Repositories\ProductRepository;
+use Webkul\User\Repositories\AdminRepository;
+use Webkul\User\Repositories\RoleRepository;
+
 return [
     'products' => [
         'title'       => 'data_transfer::app.exporters.products.title',
-        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\Product\Exporter',
-        'source'      => 'Webkul\Product\Repositories\ProductRepository',
-        'sample_path' => 'data-transfer/samples/products.csv',
-        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\ProductJobValidator',
+        'exporter'    => Exporter::class,
+        'source'      => ProductRepository::class,
+        'sample_path' => 'data-transfer/samples/import/products.csv',
+        'validator'   => ProductJobValidator::class,
         'filters'     => [
             'fields' => [
                 [
@@ -30,6 +57,12 @@ return [
                 ], [
                     'name'     => 'with_media',
                     'title'    => 'data_transfer::app.exporters.fields.with-media',
+                    'required' => false,
+                    'type'     => 'boolean',
+                ], [
+                    'name'     => 'with_associations',
+                    'title'    => 'data_transfer::app.exporters.fields.with-associations',
+                    'info'     => 'data_transfer::app.exporters.fields.with-associations-info',
                     'required' => false,
                     'type'     => 'boolean',
                 ], [
@@ -67,8 +100,8 @@ return [
                     ],
                 ], [
                     'name'        => 'file_path',
-                    'title'       => 'data_transfer::app.exporters.fields.file-path',
-                    'info'        => 'data_transfer::app.exporters.fields.file-path-info',
+                    'title'       => 'data_transfer::app.exporters.fields.file-name',
+                    'info'        => 'data_transfer::app.exporters.fields.file-name-info',
                     'required'    => false,
                     'type'        => 'text',
                     'placeholder' => '[code]_[date]',
@@ -93,6 +126,7 @@ return [
                     'list_route' => 'admin.settings.data_transfer.exports.filters.locales',
                     'track_by'   => 'code',
                     'label_by'   => 'label',
+                    'depends_on' => ['field' => 'channels', 'as' => 'channels'],
                 ], [
                     'name'       => 'currencies',
                     'title'      => 'data_transfer::app.exporters.products.filters.currencies',
@@ -103,6 +137,7 @@ return [
                     'list_route' => 'admin.settings.data_transfer.exports.filters.currencies',
                     'track_by'   => 'code',
                     'label_by'   => 'label',
+                    'depends_on' => ['field' => 'channels', 'as' => 'channels'],
                 ], [
                     'name'       => 'attributes',
                     'title'      => 'data_transfer::app.exporters.products.filters.attributes',
@@ -221,6 +256,14 @@ return [
                     'required'   => false,
                     'type'       => 'tags',
                     'full_width' => true,
+                ], [
+                    'name'         => 'custom_attributes',
+                    'required'     => false,
+                    'type'         => 'attribute-conditions',
+                    'full_width'   => true,
+                    'async'        => true,
+                    'list_route'   => 'admin.settings.data_transfer.exports.filters.attributes',
+                    'query_params' => ['exclude' => [ProductFilter::SKU->value]],
                 ],
             ],
         ],
@@ -228,10 +271,10 @@ return [
 
     'categories' => [
         'title'       => 'data_transfer::app.exporters.categories.title',
-        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\Category\Exporter',
-        'source'      => 'Webkul\Category\Repositories\CategoryRepository',
-        'sample_path' => 'data-transfer/samples/categories.csv',
-        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\CategoryJobValidator',
+        'exporter'    => Webkul\DataTransfer\Helpers\Exporters\Category\Exporter::class,
+        'source'      => CategoryRepository::class,
+        'sample_path' => 'data-transfer/samples/export/categories.csv',
+        'validator'   => CategoryJobValidator::class,
         'filters'     => [
             'fields' => [
                 [
@@ -262,12 +305,243 @@ return [
         ],
     ],
 
+    'category-fields' => [
+        'title'       => 'data_transfer::app.exporters.category-fields.title',
+        'exporter'    => Webkul\DataTransfer\Helpers\Exporters\CategoryField\Exporter::class,
+        'source'      => CategoryFieldRepository::class,
+        'sample_path' => 'data-transfer/samples/import/category-fields.csv',
+        'validator'   => CategoryFieldJobValidator::class,
+        'filters'     => [
+            'fields' => [
+                [
+                    'name'       => 'file_format',
+                    'title'      => 'data_transfer::app.exporters.fields.file-format',
+                    'type'       => 'select',
+                    'required'   => true,
+                    'validation' => 'required',
+                    'options'    => [
+                        [
+                            'value' => 'Csv',
+                            'label' => 'CSV',
+                        ], [
+                            'value' => 'Xls',
+                            'label' => 'XLS',
+                        ], [
+                            'value' => 'Xlsx',
+                            'label' => 'XLSX',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
+
+    'attributes' => [
+        'title'       => 'data_transfer::app.exporters.attributes.title',
+        'exporter'    => Webkul\DataTransfer\Helpers\Exporters\Attribute\Exporter::class,
+        'source'      => AttributeRepository::class,
+        'sample_path' => 'data-transfer/samples/import/attributes.csv',
+        'validator'   => AttributeJobValidator::class,
+        'filters'     => [
+            'fields' => [
+                [
+                    'name'       => 'file_format',
+                    'title'      => 'data_transfer::app.exporters.fields.file-format',
+                    'type'       => 'select',
+                    'required'   => true,
+                    'validation' => 'required',
+                    'options'    => [
+                        [
+                            'value' => 'Csv',
+                            'label' => 'CSV',
+                        ], [
+                            'value' => 'Xls',
+                            'label' => 'XLS',
+                        ], [
+                            'value' => 'Xlsx',
+                            'label' => 'XLSX',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
+
+    'product-associations' => [
+        'title'       => 'data_transfer::app.exporters.product-associations.title',
+        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\ProductAssociation\Exporter',
+        'source'      => 'Webkul\Product\Repositories\ProductAssociationRepository',
+        'sample_path' => 'data-transfer/samples/export/product-associations.csv',
+        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\ProductAssociationJobValidator',
+        'filters'     => [
+            'fields' => [
+                [
+                    'name'       => 'file_format',
+                    'title'      => 'data_transfer::app.exporters.fields.file-format',
+                    'type'       => 'select',
+                    'required'   => true,
+                    'validation' => 'required',
+                    'options'    => [
+                        [
+                            'value' => 'Csv',
+                            'label' => 'CSV',
+                        ], [
+                            'value' => 'Xls',
+                            'label' => 'XLS',
+                        ], [
+                            'value' => 'Xlsx',
+                            'label' => 'XLSX',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
+
+    'attribute-groups' => [
+        'title'       => 'data_transfer::app.exporters.attribute-groups.title',
+        'exporter'    => Webkul\DataTransfer\Helpers\Exporters\AttributeGroup\Exporter::class,
+        'source'      => AttributeGroupRepository::class,
+        'sample_path' => 'data-transfer/samples/import/attribute-groups.csv',
+        'validator'   => AttributeGroupJobValidator::class,
+        'filters'     => [
+            'fields' => [
+                [
+                    'name'       => 'file_format',
+                    'title'      => 'data_transfer::app.exporters.fields.file-format',
+                    'type'       => 'select',
+                    'required'   => true,
+                    'validation' => 'required',
+                    'options'    => [
+                        [
+                            'value' => 'Csv',
+                            'label' => 'CSV',
+                        ], [
+                            'value' => 'Xls',
+                            'label' => 'XLS',
+                        ], [
+                            'value' => 'Xlsx',
+                            'label' => 'XLSX',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
+
+    'attribute-families' => [
+        'title'       => 'data_transfer::app.exporters.attribute-families.title',
+        'exporter'    => Webkul\DataTransfer\Helpers\Exporters\AttributeFamily\Exporter::class,
+        'source'      => AttributeFamilyRepository::class,
+        'sample_path' => 'data-transfer/samples/import/attribute-families.csv',
+        'validator'   => AttributeFamilyJobValidator::class,
+        'filters'     => [
+            'fields' => [
+                [
+                    'name'       => 'file_format',
+                    'title'      => 'data_transfer::app.exporters.fields.file-format',
+                    'type'       => 'select',
+                    'required'   => true,
+                    'validation' => 'required',
+                    'options'    => [
+                        [
+                            'value' => 'Csv',
+                            'label' => 'CSV',
+                        ], [
+                            'value' => 'Xls',
+                            'label' => 'XLS',
+                        ], [
+                            'value' => 'Xlsx',
+                            'label' => 'XLSX',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
+
+    'attribute-options' => [
+        'title'       => 'data_transfer::app.exporters.attribute-options.title',
+        'exporter'    => Webkul\DataTransfer\Helpers\Exporters\AttributeOption\Exporter::class,
+        'source'      => AttributeOptionRepository::class,
+        'sample_path' => 'data-transfer/samples/import/attribute-options.csv',
+        'validator'   => AttributeOptionJobValidator::class,
+        'filters'     => [
+            'fields' => [
+                [
+                    'name'       => 'file_format',
+                    'title'      => 'data_transfer::app.exporters.fields.file-format',
+                    'type'       => 'select',
+                    'required'   => true,
+                    'validation' => 'required',
+                    'options'    => [
+                        [
+                            'value' => 'Csv',
+                            'label' => 'CSV',
+                        ], [
+                            'value' => 'Xls',
+                            'label' => 'XLS',
+                        ], [
+                            'value' => 'Xlsx',
+                            'label' => 'XLSX',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
+
+    'locales' => [
+        'title'       => 'data_transfer::app.exporters.locales.title',
+        'exporter'    => Webkul\DataTransfer\Helpers\Exporters\Locale\Exporter::class,
+        'source'      => LocaleRepository::class,
+        'sample_path' => 'data-transfer/samples/import/locales.csv',
+        'validator'   => LocaleJobValidator::class,
+        'filters'     => [
+            'fields' => [
+                [
+                    'name'       => 'file_format',
+                    'title'      => 'data_transfer::app.exporters.fields.file-format',
+                    'type'       => 'select',
+                    'required'   => true,
+                    'validation' => 'required',
+                    'options'    => [
+                        [
+                            'value' => 'Csv',
+                            'label' => 'CSV',
+                        ], [
+                            'value' => 'Xls',
+                            'label' => 'XLS',
+                        ], [
+                            'value' => 'Xlsx',
+                            'label' => 'XLSX',
+                        ],
+                    ],
+                ], [
+                    'name'     => 'status',
+                    'title'    => 'data_transfer::app.exporters.fields.status',
+                    'required' => false,
+                    'type'     => 'select',
+                    'options'  => [
+                        [
+                            'label' => 'data_transfer::app.exporters.fields.enable',
+                            'value' => 'enable',
+                        ], [
+                            'label' => 'data_transfer::app.exporters.fields.all',
+                            'value' => 'all',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
+
     'channels' => [
         'title'       => 'data_transfer::app.exporters.channels.title',
-        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\Channel\Exporter',
-        'source'      => 'Webkul\Core\Repositories\ChannelRepository',
-        'sample_path' => 'data-transfer/samples/channels.csv',
-        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\ChannelJobValidator',
+        'exporter'    => Webkul\DataTransfer\Helpers\Exporters\Channel\Exporter::class,
+        'source'      => ChannelRepository::class,
+        'sample_path' => 'data-transfer/samples/import/channels.csv',
+        'validator'   => ChannelJobValidator::class,
         'filters'     => [
             'fields' => [
                 [
@@ -295,10 +569,10 @@ return [
 
     'currencies' => [
         'title'       => 'data_transfer::app.exporters.currencies.title',
-        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\Currency\Exporter',
-        'source'      => 'Webkul\Core\Repositories\CurrencyRepository',
-        'sample_path' => 'data-transfer/samples/currencies.csv',
-        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\CurrencyJobValidator',
+        'exporter'    => Webkul\DataTransfer\Helpers\Exporters\Currency\Exporter::class,
+        'source'      => CurrencyRepository::class,
+        'sample_path' => 'data-transfer/samples/import/currencies.csv',
+        'validator'   => CurrencyJobValidator::class,
         'filters'     => [
             'fields' => [
                 [
@@ -340,10 +614,10 @@ return [
 
     'roles' => [
         'title'       => 'data_transfer::app.exporters.roles.title',
-        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\Role\Exporter',
-        'source'      => 'Webkul\User\Repositories\RoleRepository',
-        'sample_path' => 'data-transfer/samples/roles.csv',
-        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\RoleJobValidator',
+        'exporter'    => Webkul\DataTransfer\Helpers\Exporters\Role\Exporter::class,
+        'source'      => RoleRepository::class,
+        'sample_path' => 'data-transfer/samples/import/roles.csv',
+        'validator'   => RoleJobValidator::class,
         'filters'     => [
             'fields' => [
                 [
@@ -371,10 +645,10 @@ return [
 
     'users' => [
         'title'       => 'data_transfer::app.exporters.users.title',
-        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\User\Exporter',
-        'source'      => 'Webkul\User\Repositories\AdminRepository',
-        'sample_path' => 'data-transfer/samples/users.csv',
-        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\UserJobValidator',
+        'exporter'    => Webkul\DataTransfer\Helpers\Exporters\User\Exporter::class,
+        'source'      => AdminRepository::class,
+        'sample_path' => 'data-transfer/samples/import/users.csv',
+        'validator'   => UserJobValidator::class,
         'filters'     => [
             'fields' => [
                 [
