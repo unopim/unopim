@@ -15,7 +15,7 @@ beforeEach(function () {
 it('should return the list of all configurable products', function () {
     $product = Product::factory()->configurable()->create();
 
-    $response = $this->withHeaders($this->headers)->json('GET', route('admin.api.configrable_products.index'))
+    $this->withHeaders($this->headers)->json('GET', route('admin.api.configrable_products.index'))
         ->assertOK()
         ->assertJsonStructure([
             'data' => [
@@ -43,7 +43,13 @@ it('should return the list of all configurable products', function () {
                 'prev',
             ],
         ])
-        ->assertJsonFragment(['total' => Product::where('type', ProductType::Configurable->value)->count()])
+        ->assertJsonFragment(['total' => Product::whereIn('type', ProductType::VARIANT_PARENT_VALUES)->count()]);
+
+    $response = $this->withHeaders($this->headers)
+        ->json('GET', route('admin.api.configrable_products.index', [
+            'filters' => json_encode(['sku' => [['operator' => '=', 'value' => $product->sku]]]),
+        ]))
+        ->assertOK()
         ->json('data');
 
     $product->refresh();

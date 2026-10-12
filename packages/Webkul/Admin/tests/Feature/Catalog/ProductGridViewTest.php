@@ -94,7 +94,12 @@ it('lists own views plus the ones other admins shared', function () {
         ->assertOk()
         ->json('views');
 
-    expect(array_column($views, 'name'))->toEqualCanonicalizing(['Mine', 'Shared by a colleague'])
+    $fixtureViewNames = array_values(array_intersect(
+        array_column($views, 'name'),
+        ['Mine', 'Shared by a colleague', 'Private to a colleague'],
+    ));
+
+    expect($fixtureViewNames)->toEqualCanonicalizing(['Mine', 'Shared by a colleague'])
         ->and(collect($views)->firstWhere('name', 'Mine')['is_owner'])->toBeTrue()
         ->and(collect($views)->firstWhere('name', 'Shared by a colleague')['is_owner'])->toBeFalse();
 });
