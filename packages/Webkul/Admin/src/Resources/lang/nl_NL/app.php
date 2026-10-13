@@ -1581,9 +1581,11 @@ return [
                     'zip-upload-success'  => 'ZIP succesvol geüpload en uitgepakt.',
                     'zip-upload-error'    => 'Uploaden van ZIP mislukt. Probeer het opnieuw.',
                     'invalid-zip'         => 'Het geüploade bestand is geen geldig ZIP-archief.',
-                    'zip-upload-or'       => 'of upload een ZIP met afbeeldingen',
-                    'zip-click-upload'    => 'Klik om een ZIP met afbeeldingen te uploaden',
+                    'zip-upload-or'       => 'of upload een ZIP met afbeeldingen en documenten',
+                    'zip-click-upload'    => 'Klik om een ZIP met afbeeldingen en documenten te uploaden',
                     'zip-files-extracted' => 'bestanden uitgepakt',
+                    'zip-files-skipped'   => 'bestanden overgeslagen (niet-ondersteund type, ongeldige inhoud of te groot):',
+                    'zip-accepted-types'  => 'Geaccepteerd in de ZIP: :types',
                     'zip-drop-hint'       => 'Klik of sleep en laat een ZIP-bestand hier vallen',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MAX. 2MB)',
                     'images-directory'    => 'Afbeeldingenmap',
@@ -1705,6 +1707,7 @@ return [
                 'setup-queue-error'          => 'Wijzig je wachtrijdriver naar "database" of "redis" om het importproces te starten.',
                 'update-success'             => 'Import succesvol bijgewerkt.',
                 'zip-upload-success'         => 'ZIP succesvol geüpload en uitgepakt.',
+                'zip-upload-partial'         => 'ZIP geüpload. :extracted bestanden uitgepakt, :skipped overgeslagen. Alleen deze bestandstypen worden geaccepteerd: :types.',
             ],
             'exports' => [
                 'create' => [

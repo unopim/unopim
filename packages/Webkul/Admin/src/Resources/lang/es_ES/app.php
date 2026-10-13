@@ -1580,9 +1580,11 @@ return [
                     'zip-upload-success'  => 'ZIP subido y extraído correctamente.',
                     'zip-upload-error'    => 'Error al subir el ZIP. Inténtelo de nuevo.',
                     'invalid-zip'         => 'El archivo subido no es un archivo ZIP válido.',
-                    'zip-upload-or'       => 'o suba un ZIP de imágenes',
-                    'zip-click-upload'    => 'Haga clic para subir un ZIP de imágenes',
+                    'zip-upload-or'       => 'o suba un ZIP de imágenes y documentos',
+                    'zip-click-upload'    => 'Haga clic para subir un ZIP de imágenes y documentos',
                     'zip-files-extracted' => 'archivos extraídos',
+                    'zip-files-skipped'   => 'archivos omitidos (tipo no admitido, contenido no válido o demasiado grandes):',
+                    'zip-accepted-types'  => 'Aceptado en el ZIP: :types',
                     'zip-drop-hint'       => 'Haga clic o arrastre y suelte un archivo ZIP aquí',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MÁX. 2MB)',
                     'images-directory'    => 'Camino',
@@ -1704,6 +1706,7 @@ return [
                 'setup-queue-error'          => 'Cambie su controlador de cola a "base de datos" o "redis" para comenzar el proceso de importación.',
                 'update-success'             => 'Importar actualizado con éxito.',
                 'zip-upload-success'         => 'ZIP subido y extraído correctamente.',
+                'zip-upload-partial'         => 'ZIP subido. :extracted archivos extraídos, :skipped omitidos. Solo se aceptan estos tipos de archivo: :types.',
             ],
             'exports' => [
                 'create' => [

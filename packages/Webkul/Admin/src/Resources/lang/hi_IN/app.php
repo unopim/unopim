@@ -1580,9 +1580,11 @@ return [
                     'zip-upload-success'  => 'ZIP सफलतापूर्वक अपलोड और निकाला गया।',
                     'zip-upload-error'    => 'ZIP अपलोड करने में विफल। कृपया पुनः प्रयास करें।',
                     'invalid-zip'         => 'अपलोड की गई फ़ाइल एक वैध ZIP संग्रह नहीं है।',
-                    'zip-upload-or'       => 'या छवियों का ZIP अपलोड करें',
-                    'zip-click-upload'    => 'छवियों का ZIP अपलोड करने के लिए क्लिक करें',
+                    'zip-upload-or'       => 'या छवियों और दस्तावेज़ों का ZIP अपलोड करें',
+                    'zip-click-upload'    => 'छवियों और दस्तावेज़ों का ZIP अपलोड करने के लिए क्लिक करें',
                     'zip-files-extracted' => 'फ़ाइलें निकाली गईं',
+                    'zip-files-skipped'   => 'फ़ाइलें छोड़ी गईं (असमर्थित प्रकार, अमान्य सामग्री या बहुत बड़ी):',
+                    'zip-accepted-types'  => 'ZIP में स्वीकार्य: :types',
                     'zip-drop-hint'       => 'यहाँ क्लिक करें या ZIP फ़ाइल खींचें और छोड़ें',
                     'file-upload-info'    => 'CSV, XLSX, JSON (अधिकतम 2MB)',
                     'images-directory'    => 'पथ',
@@ -1704,6 +1706,7 @@ return [
                 'setup-queue-error'          => 'आयात प्रक्रिया शुरू करने के लिए कृपया अपने कतार ड्राइवर को "डेटाबेस" या "रेडिस" में बदलें।',
                 'update-success'             => 'सफलतापूर्वक अपडेट किया गया आयात।',
                 'zip-upload-success'         => 'ZIP सफलतापूर्वक अपलोड और निकाला गया।',
+                'zip-upload-partial'         => 'ZIP अपलोड हो गया। :extracted फ़ाइलें निकाली गईं, :skipped छोड़ी गईं। केवल ये फ़ाइल प्रकार स्वीकार्य हैं: :types।',
             ],
             'exports' => [
                 'create' => [

@@ -1677,9 +1677,11 @@ return [
                     'zip-upload-success'  => 'ZIP uploaded and extracted successfully.',
                     'zip-upload-error'    => 'Failed to upload ZIP. Please try again.',
                     'invalid-zip'         => 'The uploaded file is not a valid ZIP archive.',
-                    'zip-upload-or'       => 'or upload a ZIP of images',
-                    'zip-click-upload'    => 'Click to upload a ZIP of images',
+                    'zip-upload-or'       => 'or upload a ZIP of images and documents',
+                    'zip-click-upload'    => 'Click to upload a ZIP of images and documents',
                     'zip-files-extracted' => 'files extracted',
+                    'zip-files-skipped'   => 'files skipped (unsupported type, invalid content or too large):',
+                    'zip-accepted-types'  => 'Accepted in the ZIP: :types',
                     'zip-drop-hint'       => 'Click or drag & drop a ZIP file here',
                     'images-directory'    => 'Path',
                     'process-in-queue'    => 'Process In Queue',
@@ -1806,6 +1808,7 @@ return [
                 'setup-queue-error'          => 'Please change your queue driver to "database" or "redis" to start the import process.',
                 'update-success'             => 'Import updated successfully.',
                 'zip-upload-success'         => 'ZIP uploaded and extracted successfully.',
+                'zip-upload-partial'         => 'ZIP uploaded. :extracted files extracted, :skipped skipped. Only these file types are accepted: :types.',
             ],
 
             'exports' => [

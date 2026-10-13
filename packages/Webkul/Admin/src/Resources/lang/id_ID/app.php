@@ -1580,9 +1580,11 @@ return [
                     'zip-upload-success'  => 'ZIP berhasil diunggah dan diekstrak.',
                     'zip-upload-error'    => 'Gagal mengunggah ZIP. Silakan coba lagi.',
                     'invalid-zip'         => 'File yang diunggah bukan arsip ZIP yang valid.',
-                    'zip-upload-or'       => 'atau unggah ZIP berisi gambar',
-                    'zip-click-upload'    => 'Klik untuk mengunggah ZIP berisi gambar',
+                    'zip-upload-or'       => 'atau unggah ZIP berisi gambar dan dokumen',
+                    'zip-click-upload'    => 'Klik untuk mengunggah ZIP berisi gambar dan dokumen',
                     'zip-files-extracted' => 'file diekstrak',
+                    'zip-files-skipped'   => 'file dilewati (jenis tidak didukung, konten tidak valid, atau terlalu besar):',
+                    'zip-accepted-types'  => 'Diterima dalam ZIP: :types',
                     'zip-drop-hint'       => 'Klik atau seret dan lepaskan file ZIP di sini',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MAKS. 2MB)',
                     'images-directory'    => 'Jalur',
@@ -1704,6 +1706,7 @@ return [
                 'setup-queue-error'          => 'Harap ubah driver antrian Anda menjadi "basis data" atau "redis" untuk memulai proses impor.',
                 'update-success'             => 'Impor berhasil diperbarui.',
                 'zip-upload-success'         => 'ZIP berhasil diunggah dan diekstrak.',
+                'zip-upload-partial'         => 'ZIP diunggah. :extracted file diekstrak, :skipped dilewati. Hanya jenis file berikut yang diterima: :types.',
             ],
             'exports' => [
                 'create' => [

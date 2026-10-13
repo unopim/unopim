@@ -1580,9 +1580,11 @@ return [
                     'zip-upload-success'  => 'ZIP успішно завантажено та розпаковано.',
                     'zip-upload-error'    => 'Не вдалося завантажити ZIP. Спробуйте знову.',
                     'invalid-zip'         => 'Завантажений файл не є дійсним архівом ZIP.',
-                    'zip-upload-or'       => 'або завантажте ZIP із зображеннями',
-                    'zip-click-upload'    => 'Натисніть, щоб завантажити ZIP із зображеннями',
+                    'zip-upload-or'       => 'або завантажте ZIP із зображеннями та документами',
+                    'zip-click-upload'    => 'Натисніть, щоб завантажити ZIP із зображеннями та документами',
                     'zip-files-extracted' => 'файлів розпаковано',
+                    'zip-files-skipped'   => 'файлів пропущено (непідтримуваний тип, недійсний вміст або завеликий розмір):',
+                    'zip-accepted-types'  => 'Допустимо в ZIP: :types',
                     'zip-drop-hint'       => 'Натисніть або перетягніть ZIP файл сюди',
                     'file-upload-info'    => 'CSV, XLSX, JSON (МАКС. 2 МБ)',
                     'images-directory'    => 'Шлях',
@@ -1704,6 +1706,7 @@ return [
                 'setup-queue-error'          => 'Будь ласка, змініть драйвер черги на "database" або "redis", щоб розпочати процес імпорту.',
                 'update-success'             => 'Імпорт успішно оновлено.',
                 'zip-upload-success'         => 'ZIP успішно завантажено та розпаковано.',
+                'zip-upload-partial'         => 'ZIP завантажено. Видобуто файлів: :extracted, пропущено: :skipped. Приймаються лише такі типи файлів: :types.',
             ],
             'exports' => [
                 'create' => [

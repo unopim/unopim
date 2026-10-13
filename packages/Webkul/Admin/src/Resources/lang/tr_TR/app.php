@@ -1580,9 +1580,11 @@ return [
                     'zip-upload-success'  => 'ZIP başarıyla yüklendi ve çıkartıldı.',
                     'zip-upload-error'    => 'ZIP yüklenemedi. Lütfen tekrar deneyin.',
                     'invalid-zip'         => 'Yüklenen dosya geçerli bir ZIP arşivi değil.',
-                    'zip-upload-or'       => 'veya bir ZIP dosyası ile görsel yükleyin',
-                    'zip-click-upload'    => 'Görsel ZIP dosyası yüklemek için tıklayın',
+                    'zip-upload-or'       => 'veya görsel ve belgelerden oluşan bir ZIP dosyası yükleyin',
+                    'zip-click-upload'    => 'Görsel ve belge ZIP dosyası yüklemek için tıklayın',
                     'zip-files-extracted' => 'dosya çıkartıldı',
+                    'zip-files-skipped'   => 'dosya atlandı (desteklenmeyen tür, geçersiz içerik veya çok büyük):',
+                    'zip-accepted-types'  => 'ZIP içinde kabul edilenler: :types',
                     'zip-drop-hint'       => 'Buraya bir ZIP dosyasını tıklayın veya sürükleyip bırakın',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MAKS. 2MB)',
                     'images-directory'    => 'Yol',
@@ -1704,6 +1706,7 @@ return [
                 'setup-queue-error'          => 'İçe aktarma sürecini başlatmak için lütfen kuyruk sürücünüzü "database" veya "redis" olarak değiştirin.',
                 'update-success'             => 'İçe aktarma başarıyla güncellendi.',
                 'zip-upload-success'         => 'ZIP başarıyla yüklendi ve çıkartıldı.',
+                'zip-upload-partial'         => 'ZIP yüklendi. :extracted dosya çıkarıldı, :skipped atlandı. Yalnızca şu dosya türleri kabul edilir: :types.',
             ],
             'exports' => [
                 'create' => [

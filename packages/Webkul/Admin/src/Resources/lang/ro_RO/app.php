@@ -1581,9 +1581,11 @@ return [
                     'zip-upload-success'  => 'ZIP încărcat și extras cu succes.',
                     'zip-upload-error'    => 'Încărcarea ZIP a eșuat. Vă rugăm să încercați din nou.',
                     'invalid-zip'         => 'Fișierul încărcat nu este o arhivă ZIP validă.',
-                    'zip-upload-or'       => 'sau încărcați un ZIP cu imagini',
-                    'zip-click-upload'    => 'Faceți clic pentru a încărca un ZIP cu imagini',
+                    'zip-upload-or'       => 'sau încărcați un ZIP cu imagini și documente',
+                    'zip-click-upload'    => 'Faceți clic pentru a încărca un ZIP cu imagini și documente',
                     'zip-files-extracted' => 'fișiere extrase',
+                    'zip-files-skipped'   => 'fișiere omise (tip neacceptat, conținut nevalid sau prea mari):',
+                    'zip-accepted-types'  => 'Acceptat în ZIP: :types',
                     'zip-drop-hint'       => 'Click sau trageți și plasați un fișier ZIP aici',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MAX. 2MB)',
                     'images-directory'    => 'Cale',
@@ -1705,6 +1707,7 @@ return [
                 'setup-queue-error'          => 'Vă rugăm să schimbați driverul cozii la "database" sau "redis" pentru a începe procesul de import.',
                 'update-success'             => 'Import actualizat cu succes.',
                 'zip-upload-success'         => 'ZIP încărcat și extras cu succes.',
+                'zip-upload-partial'         => 'ZIP încărcat. :extracted fișiere extrase, :skipped omise. Sunt acceptate doar aceste tipuri de fișiere: :types.',
             ],
             'exports' => [
                 'create' => [

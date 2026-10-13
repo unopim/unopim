@@ -1581,9 +1581,11 @@ return [
                     'zip-upload-success'  => 'ZIP lastet opp og pakket ut vellykket.',
                     'zip-upload-error'    => 'Opplasting av ZIP mislyktes. Vennligst prøv igjen.',
                     'invalid-zip'         => 'Den opplastede filen er ikke et gyldig ZIP-arkiv.',
-                    'zip-upload-or'       => 'eller last opp en ZIP med bilder',
-                    'zip-click-upload'    => 'Klikk for å laste opp en ZIP med bilder',
+                    'zip-upload-or'       => 'eller last opp en ZIP med bilder og dokumenter',
+                    'zip-click-upload'    => 'Klikk for å laste opp en ZIP med bilder og dokumenter',
                     'zip-files-extracted' => 'filer pakket ut',
+                    'zip-files-skipped'   => 'filer hoppet over (type som ikke støttes, ugyldig innhold eller for store):',
+                    'zip-accepted-types'  => 'Akseptert i ZIP-filen: :types',
                     'zip-drop-hint'       => 'Klikk eller dra & slipp en ZIP-fil her',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MAKS. 2MB)',
                     'images-directory'    => 'Sti',
@@ -1705,6 +1707,7 @@ return [
                 'setup-queue-error'          => 'Vennligst endre kødriveren din til "database" eller "redis" for å starte importprosessen.',
                 'update-success'             => 'Import oppdatert vellykket.',
                 'zip-upload-success'         => 'ZIP lastet opp og pakket ut vellykket.',
+                'zip-upload-partial'         => 'ZIP lastet opp. :extracted filer pakket ut, :skipped hoppet over. Bare disse filtypene aksepteres: :types.',
             ],
             'exports' => [
                 'create' => [

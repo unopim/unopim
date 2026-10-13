@@ -1580,9 +1580,11 @@ return [
                     'zip-upload-success'  => 'ZIP のアップロードと展開が完了しました。',
                     'zip-upload-error'    => 'ZIP のアップロードに失敗しました。もう一度お試しください。',
                     'invalid-zip'         => 'アップロードされたファイルは有効な ZIP アーカイブではありません。',
-                    'zip-upload-or'       => 'または画像の ZIP をアップロード',
-                    'zip-click-upload'    => 'クリックして画像の ZIP をアップロード',
+                    'zip-upload-or'       => 'または画像とドキュメントの ZIP をアップロード',
+                    'zip-click-upload'    => 'クリックして画像とドキュメントの ZIP をアップロード',
                     'zip-files-extracted' => 'ファイルが展開されました',
+                    'zip-files-skipped'   => '件のファイルをスキップしました（未対応の形式、無効な内容、またはサイズ超過）:',
+                    'zip-accepted-types'  => 'ZIP内で受け付けるもの: :types',
                     'zip-drop-hint'       => 'クリックするかZIPファイルをここにドラッグ＆ドロップ',
                     'file-upload-info'    => 'CSV, XLSX, JSON（最大2MB）',
                     'images-directory'    => 'パス',
@@ -1704,6 +1706,7 @@ return [
                 'setup-queue-error'          => 'インポート プロセスを開始するには、キュー ドライバーを「database」または「redis」に変更してください。',
                 'update-success'             => 'インポートが正常に更新されました。',
                 'zip-upload-success'         => 'ZIP のアップロードと展開が完了しました。',
+                'zip-upload-partial'         => 'ZIPをアップロードしました。:extracted 件のファイルを抽出し、:skipped 件をスキップしました。次のファイル形式のみ使用できます: :types。',
             ],
             'exports' => [
                 'create' => [

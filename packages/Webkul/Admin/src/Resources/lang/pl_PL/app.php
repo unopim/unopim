@@ -1581,9 +1581,11 @@ return [
                     'zip-upload-success'  => 'ZIP przesłano i rozpakowano pomyślnie.',
                     'zip-upload-error'    => 'Nie udało się przesłać ZIP. Spróbuj ponownie.',
                     'invalid-zip'         => 'Przesłany plik nie jest prawidłowym archiwum ZIP.',
-                    'zip-upload-or'       => 'lub prześlij ZIP ze zdjęciami',
-                    'zip-click-upload'    => 'Kliknij, aby przesłać ZIP ze zdjęciami',
+                    'zip-upload-or'       => 'lub prześlij ZIP ze zdjęciami i dokumentami',
+                    'zip-click-upload'    => 'Kliknij, aby przesłać ZIP ze zdjęciami i dokumentami',
                     'zip-files-extracted' => 'pliki rozpakowane',
+                    'zip-files-skipped'   => 'plików pominięto (nieobsługiwany typ, nieprawidłowa zawartość lub zbyt duży rozmiar):',
+                    'zip-accepted-types'  => 'Akceptowane w ZIP: :types',
                     'zip-drop-hint'       => 'Kliknij lub przeciągnij i upuść plik ZIP tutaj',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MAKS. 2MB)',
                     'images-directory'    => 'Ścieżka',
@@ -1705,6 +1707,7 @@ return [
                 'setup-queue-error'          => 'Proszę zmienić sterownik kolejki na "database" lub "redis", aby rozpocząć proces importu.',
                 'update-success'             => 'Import został pomyślnie zaktualizowany.',
                 'zip-upload-success'         => 'ZIP przesłano i rozpakowano pomyślnie.',
+                'zip-upload-partial'         => 'Przesłano ZIP. Wyodrębniono plików: :extracted, pominięto: :skipped. Akceptowane są tylko te typy plików: :types.',
             ],
             'exports' => [
                 'create' => [

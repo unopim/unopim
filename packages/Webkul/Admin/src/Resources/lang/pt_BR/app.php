@@ -1581,9 +1581,11 @@ return [
                     'zip-upload-success'  => 'ZIP enviado e extraído com sucesso.',
                     'zip-upload-error'    => 'Falha ao enviar o ZIP. Tente novamente.',
                     'invalid-zip'         => 'O arquivo enviado não é um arquivo ZIP válido.',
-                    'zip-upload-or'       => 'ou envie um ZIP de imagens',
-                    'zip-click-upload'    => 'Clique para enviar um ZIP de imagens',
+                    'zip-upload-or'       => 'ou envie um ZIP de imagens e documentos',
+                    'zip-click-upload'    => 'Clique para enviar um ZIP de imagens e documentos',
                     'zip-files-extracted' => 'arquivos extraídos',
+                    'zip-files-skipped'   => 'arquivos ignorados (tipo não suportado, conteúdo inválido ou muito grandes):',
+                    'zip-accepted-types'  => 'Aceito no ZIP: :types',
                     'zip-drop-hint'       => 'Clique ou arraste e solte um arquivo ZIP aqui',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MÁX. 2MB)',
                     'images-directory'    => 'Caminho',
@@ -1705,6 +1707,7 @@ return [
                 'setup-queue-error'          => 'Por favor, altere seu driver de fila para "database" ou "redis" para iniciar o processo de importação.',
                 'update-success'             => 'Importação atualizada com sucesso.',
                 'zip-upload-success'         => 'ZIP enviado e extraído com sucesso.',
+                'zip-upload-partial'         => 'ZIP enviado. :extracted arquivos extraídos, :skipped ignorados. Somente estes tipos de arquivo são aceitos: :types.',
             ],
             'exports' => [
                 'create' => [

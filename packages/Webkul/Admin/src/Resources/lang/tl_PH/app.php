@@ -1580,9 +1580,11 @@ return [
                     'zip-upload-success'  => 'Matagumpay na na-upload at na-extract ang ZIP.',
                     'zip-upload-error'    => 'Nabigong mag-upload ng ZIP. Mangyaring subukan muli.',
                     'invalid-zip'         => 'Ang na-upload na file ay hindi wastong ZIP archive.',
-                    'zip-upload-or'       => 'o mag-upload ng ZIP ng mga larawan',
-                    'zip-click-upload'    => 'I-click upang mag-upload ng ZIP ng mga larawan',
+                    'zip-upload-or'       => 'o mag-upload ng ZIP ng mga larawan at dokumento',
+                    'zip-click-upload'    => 'I-click upang mag-upload ng ZIP ng mga larawan at dokumento',
                     'zip-files-extracted' => 'mga file na na-extract',
+                    'zip-files-skipped'   => 'na file ang nilaktawan (hindi suportadong uri, di-wastong nilalaman, o masyadong malaki):',
+                    'zip-accepted-types'  => 'Tinatanggap sa ZIP: :types',
                     'zip-drop-hint'       => 'I-click o i-drag & drop ang isang ZIP file dito',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MAX. 2MB)',
                     'images-directory'    => 'Landas',
@@ -1704,6 +1706,7 @@ return [
                 'setup-queue-error'          => 'Mangyaring baguhin ang iyong queue driver sa "database" o "redis" upang simulan ang proseso ng pag-import.',
                 'update-success'             => 'Matagumpay na na-update ang pag-import.',
                 'zip-upload-success'         => 'Matagumpay na na-upload at na-extract ang ZIP.',
+                'zip-upload-partial'         => 'Na-upload ang ZIP. :extracted file ang na-extract, :skipped ang nilaktawan. Ang mga sumusunod na uri ng file lamang ang tinatanggap: :types.',
             ],
             'exports' => [
                 'create' => [

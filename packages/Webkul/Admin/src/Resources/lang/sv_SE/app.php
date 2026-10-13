@@ -1580,9 +1580,11 @@ return [
                     'zip-upload-success'  => 'ZIP uppladdad och extraherad framgångsrikt.',
                     'zip-upload-error'    => 'Uppladdning av ZIP misslyckades. Vänligen försök igen.',
                     'invalid-zip'         => 'Den uppladdade filen är inte ett giltigt ZIP-arkiv.',
-                    'zip-upload-or'       => 'eller ladda upp en ZIP med bilder',
-                    'zip-click-upload'    => 'Klicka för att ladda upp en ZIP med bilder',
+                    'zip-upload-or'       => 'eller ladda upp en ZIP med bilder och dokument',
+                    'zip-click-upload'    => 'Klicka för att ladda upp en ZIP med bilder och dokument',
                     'zip-files-extracted' => 'filer extraherade',
+                    'zip-files-skipped'   => 'filer hoppades över (typ som inte stöds, ogiltigt innehåll eller för stora):',
+                    'zip-accepted-types'  => 'Accepteras i ZIP-filen: :types',
                     'zip-drop-hint'       => 'Klicka eller dra & släpp en ZIP-fil här',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MAX. 2 MB)',
                     'images-directory'    => 'Sökväg',
@@ -1704,6 +1706,7 @@ return [
                 'setup-queue-error'          => 'Vänligen ändra din ködrivrutin till "databas" eller "redis" för att starta importprocessen.',
                 'update-success'             => 'Importen uppdaterades framgångsrikt.',
                 'zip-upload-success'         => 'ZIP uppladdad och extraherad framgångsrikt.',
+                'zip-upload-partial'         => 'ZIP uppladdad. :extracted filer extraherade, :skipped överhoppade. Endast dessa filtyper accepteras: :types.',
             ],
             'exports' => [
                 'create' => [

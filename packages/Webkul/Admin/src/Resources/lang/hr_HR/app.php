@@ -1580,9 +1580,11 @@ return [
                     'zip-upload-success'  => 'ZIP uspješno učitan i raspakiran.',
                     'zip-upload-error'    => 'Učitavanje ZIP-a nije uspjelo. Pokušajte ponovo.',
                     'invalid-zip'         => 'Učitana datoteka nije valjana ZIP arhiva.',
-                    'zip-upload-or'       => 'ili učitajte ZIP sa slikama',
-                    'zip-click-upload'    => 'Kliknite za učitavanje ZIP-a sa slikama',
+                    'zip-upload-or'       => 'ili učitajte ZIP sa slikama i dokumentima',
+                    'zip-click-upload'    => 'Kliknite za učitavanje ZIP-a sa slikama i dokumentima',
                     'zip-files-extracted' => 'datoteka raspakirano',
+                    'zip-files-skipped'   => 'datoteka preskočeno (nepodržana vrsta, nevažeći sadržaj ili prevelika):',
+                    'zip-accepted-types'  => 'Prihvaćeno u ZIP-u: :types',
                     'zip-drop-hint'       => 'Kliknite ili povucite i ispustite ZIP datoteku ovdje',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MAKS. 2MB)',
                     'images-directory'    => 'Putanja',
@@ -1704,6 +1706,7 @@ return [
                 'setup-queue-error'          => 'Molimo promijenite svoj red vozača na "bazu podataka" ili "redis" kako biste započeli proces uvoza.',
                 'update-success'             => 'Uvoz uspješno ažuriran.',
                 'zip-upload-success'         => 'ZIP uspješno učitan i raspakiran.',
+                'zip-upload-partial'         => 'ZIP učitan. :extracted datoteka raspakirano, :skipped preskočeno. Prihvaćene su samo ove vrste datoteka: :types.',
             ],
             'exports' => [
                 'create' => [
