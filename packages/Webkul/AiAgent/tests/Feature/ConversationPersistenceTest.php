@@ -18,9 +18,11 @@ function historyMessage(string $id, string $content = 'Saved reply'): array
 }
 
 it('disables every conversation endpoint by default without changing stored history', function () {
+    app()->setLocale('fr_FR');
     expect(config('ai-agent.history.enabled'))->toBeFalse();
     $count = DB::table('ai_agent_conversations')->count();
-    $this->getJson(route('ai-agent.conversations.index'))->assertForbidden();
+    $this->getJson(route('ai-agent.conversations.index'))->assertForbidden()
+        ->assertJsonPath('message', trans('ai-agent::app.common.unauthorized'));
     $this->getJson(route('ai-agent.conversations.show', 1))->assertForbidden();
     $this->deleteJson(route('ai-agent.conversations.destroy', 1))->assertForbidden();
     $this->postJson(route('ai-agent.conversations.store'), ['messages' => [historyMessage('reply')]])->assertForbidden();
