@@ -104,7 +104,7 @@ class ProductEmbeddingIndex
     /**
      * Bulk upsert embedding documents keyed by product id.
      *
-     * @param  array<int, array{product_id: int, sku: ?string, content_hash: string, embedding: array<int, float>}>  $documents
+     * @param  array<int, array{product_id: int, sku: ?string, attribute_family_id?: ?int, content_hash: string, embedding: array<int, float>}>  $documents
      * @return array<int, int> product ids that failed to index
      */
     public function bulkUpsert(array $documents): array
@@ -133,19 +133,64 @@ class ProductEmbeddingIndex
             ];
         }
 
+        return $this->sendBulk($payload, 'index');
+    }
+
+    /**
+     * Partially update stored documents' attribute family without touching
+     * their embeddings, repairing documents indexed before the family was stored.
+     *
+     * @param  array<int, ?int>  $attributeFamilyIds  attribute family id keyed by product id
+     * @return array<int, int> product ids that failed to update
+     */
+    public function bulkUpdateAttributeFamilies(array $attributeFamilyIds): array
+    {
+        if ($attributeFamilyIds === []) {
+            return [];
+        }
+
+        $payload = ['body' => []];
+
+        foreach ($attributeFamilyIds as $productId => $attributeFamilyId) {
+            $payload['body'][] = [
+                'update' => [
+                    '_index' => $this->indexName(),
+                    '_id'    => $productId,
+                ],
+            ];
+
+            $payload['body'][] = [
+                'doc' => [
+                    'attribute_family_id' => $attributeFamilyId,
+                    'updated_at'          => now()->toIso8601String(),
+                ],
+            ];
+        }
+
+        return $this->sendBulk($payload, 'update');
+    }
+
+    /**
+     * Send a bulk request and collect the product ids whose action failed.
+     *
+     * @param  array{body: array<int, array<string, mixed>>}  $payload
+     * @return array<int, int>
+     */
+    protected function sendBulk(array $payload, string $action): array
+    {
         $response = ElasticSearch::bulk($payload);
 
         $failedIds = [];
 
         if (! empty($response['errors'])) {
             foreach ($response['items'] ?? [] as $item) {
-                if (isset($item['index']['error'])) {
-                    $failedIds[] = (int) $item['index']['_id'];
+                if (isset($item[$action]['error'])) {
+                    $failedIds[] = (int) $item[$action]['_id'];
                 }
             }
 
             if ($failedIds !== []) {
-                Log::channel('elasticsearch')->error('Failed to index product embeddings in '.$this->indexName().' index.', [
+                Log::channel('elasticsearch')->error('Failed to '.$action.' product embeddings in '.$this->indexName().' index.', [
                     'product_ids' => $failedIds,
                 ]);
             }
@@ -182,6 +227,21 @@ class ProductEmbeddingIndex
      */
     public function existingContentHashes(array $productIds): array
     {
+        return array_map(
+            fn (array $document): string => $document['content_hash'],
+            $this->existingDocuments($productIds),
+        );
+    }
+
+    /**
+     * Fetch the stored content hash and attribute family for the given product
+     * ids, so unchanged products skip re-embedding and stale metadata is repaired.
+     *
+     * @param  array<int, int>  $productIds
+     * @return array<int, array{content_hash: string, attribute_family_id: ?int}> keyed by product id
+     */
+    public function existingDocuments(array $productIds): array
+    {
         if ($productIds === []) {
             return [];
         }
@@ -190,7 +250,7 @@ class ProductEmbeddingIndex
             $response = ElasticSearch::search([
                 'index' => $this->indexName(),
                 'body'  => [
-                    '_source' => ['content_hash'],
+                    '_source' => ['content_hash', 'attribute_family_id'],
                     'query'   => [
                         'ids' => ['values' => array_values(array_map(intval(...), $productIds))],
                     ],
@@ -205,13 +265,18 @@ class ProductEmbeddingIndex
             throw $e;
         }
 
-        $hashes = [];
+        $documents = [];
 
         foreach ($response['hits']['hits'] ?? [] as $hit) {
-            $hashes[(int) $hit['_id']] = (string) ($hit['_source']['content_hash'] ?? '');
+            $attributeFamilyId = $hit['_source']['attribute_family_id'] ?? null;
+
+            $documents[(int) $hit['_id']] = [
+                'content_hash'        => (string) ($hit['_source']['content_hash'] ?? ''),
+                'attribute_family_id' => $attributeFamilyId !== null ? (int) $attributeFamilyId : null,
+            ];
         }
 
-        return $hashes;
+        return $documents;
     }
 
     /**

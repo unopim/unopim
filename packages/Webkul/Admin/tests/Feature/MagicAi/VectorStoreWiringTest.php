@@ -1,12 +1,17 @@
 <?php
 
+use Laravel\Ai\Embeddings;
 use Laravel\Ai\Tools\Request;
+use Webkul\Admin\Tests\Support\InMemoryEmbeddingElasticSearch;
 use Webkul\Admin\Tests\Support\WiringFakeEmbeddingService;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Tools\CategoryTree;
 use Webkul\AiAgent\Chat\Tools\EstimateTokens;
 use Webkul\AiAgent\Chat\Tools\FindSimilarProducts;
+use Webkul\AiAgent\Jobs\IndexProductEmbeddingsJob;
 use Webkul\AiAgent\Services\EmbeddingSimilarityService;
+use Webkul\AiAgent\Services\VectorStore\ProductEmbeddingDocumentBuilder;
+use Webkul\AiAgent\Services\VectorStore\ProductEmbeddingIndex;
 use Webkul\Category\Models\Category;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\Product\Models\Product;
@@ -71,6 +76,34 @@ it('falls back to in-memory ranking when the vector store returns nothing', func
 
     expect($result['source'] ?? null)->toBeNull();
     expect($result['total'])->toBeGreaterThan(0);
+});
+
+it('finds same-family products through the vector store by default for a sku lookup', function () {
+    $admin = $this->loginAsAdmin();
+
+    $source = Product::factory()->simple()->withInitialValues()->create();
+    $sibling = Product::factory()->simple()->withInitialValues()->create([
+        'attribute_family_id' => $source->attribute_family_id,
+    ]);
+
+    config(['ai-agent.vector_store.enabled' => true, 'elasticsearch.enabled' => true]);
+
+    $es = (new InMemoryEmbeddingElasticSearch)->install();
+
+    Embeddings::fake([[array_fill(0, 8, 0.5)], [array_fill(0, 8, 0.5)]]);
+
+    (new IndexProductEmbeddingsJob([$sibling->id]))->handle(new ProductEmbeddingIndex, new ProductEmbeddingDocumentBuilder);
+
+    $result = json_decode(
+        app(FindSimilarProducts::class)
+            ->register(buildWiringChatContext($admin))
+            ->handle(new Request(['sku' => $source->sku])),
+        true,
+    );
+
+    expect(end($es->searchBodies)['knn']['filter'])->toBe(['term' => ['attribute_family_id' => (int) $source->attribute_family_id]])
+        ->and($result['source'] ?? null)->toBe('vector_store')
+        ->and(array_column($result['products'], 'sku'))->toContain($sibling->sku);
 });
 
 it('prunes category branches by relevance when a relevance_query is given', function () {
