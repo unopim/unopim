@@ -5,6 +5,53 @@ use Illuminate\Support\Facades\Storage;
 use Webkul\DataTransfer\Helpers\Sources\CSV;
 
 describe('CSV Source Optimizations', function () {
+    it('removes UTF-8 BOM from first header column', function () {
+        $csvContent = "\xEF\xBB\xBFchannel;locale;sku\n";
+        $csvContent .= "default;de_DE;sku-1\n";
+
+        Storage::disk('private')->put('test-csv-bom-header.csv', $csvContent);
+
+        $source = new CSV('test-csv-bom-header.csv', ';');
+
+        expect($source->getColumnNames())->toBe(['channel', 'locale', 'sku']);
+
+        $source->rewind();
+        $row = $source->current();
+
+        expect($row['channel'])->toBe('default');
+        expect($row['locale'])->toBe('de_DE');
+        expect($row['sku'])->toBe('sku-1');
+
+        Storage::disk('private')->delete('test-csv-bom-header.csv');
+    });
+
+    it('removes UTF-8 BOM before a quoted first header column', function () {
+        Storage::disk('private')->put('test-csv-bom-quoted.csv', "\xEF\xBB\xBF\"sku\",\"name\"\n\"sku-1\",\"Battery\"\n");
+
+        $source = new CSV('test-csv-bom-quoted.csv', ',');
+
+        expect($source->getColumnNames())->toBe(['sku', 'name']);
+
+        $source->rewind();
+
+        expect($source->current())->toBe(['sku' => 'sku-1', 'name' => 'Battery']);
+
+        $source->rewind();
+
+        expect($source->current())->toBe(['sku' => 'sku-1', 'name' => 'Battery']);
+
+        Storage::disk('private')->delete('test-csv-bom-quoted.csv');
+    });
+
+    it('still rejects a file that holds only a UTF-8 BOM', function () {
+        Storage::disk('private')->put('test-csv-bom-only.csv', "\xEF\xBB\xBF");
+
+        expect(fn () => new CSV('test-csv-bom-only.csv', ','))
+            ->toThrow(LogicException::class, trans('data_transfer::app.validation.errors.file-empty'));
+
+        Storage::disk('private')->delete('test-csv-bom-only.csv');
+    });
+
     it('reads CSV files with unlimited line length', function () {
         /** Create a test CSV with a row longer than 4096 bytes */
         $longValue = str_repeat('abcdefghij', 500); // 5000 chars

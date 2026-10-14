@@ -7,6 +7,11 @@ use Webkul\DataTransfer\Rules\SeparatorTypes;
 class CSV extends AbstractSource
 {
     /**
+     * UTF-8 BOM bytes.
+     */
+    protected const UTF8_BOM = "\xEF\xBB\xBF";
+
+    /**
      * CSV reader
      */
     protected mixed $reader;
@@ -42,6 +47,8 @@ class CSV extends AbstractSource
              */
             if (is_resource($this->reader)) {
                 stream_set_read_buffer($this->reader, 65536);
+
+                $this->skipUtf8Bom();
             }
 
             $headerRow = fgetcsv($this->reader, $this->maxLineLength, $delimiter, escape: '\\');
@@ -135,6 +142,18 @@ class CSV extends AbstractSource
     {
         rewind($this->reader);
 
+        $this->skipUtf8Bom();
+
         parent::rewind();
+    }
+
+    /**
+     * Move the reader past a leading UTF-8 BOM so it never reaches the first column name.
+     */
+    protected function skipUtf8Bom(): void
+    {
+        if (fread($this->reader, strlen(self::UTF8_BOM)) !== self::UTF8_BOM) {
+            rewind($this->reader);
+        }
     }
 }

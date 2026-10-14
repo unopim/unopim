@@ -129,7 +129,9 @@ class TrackerController extends Controller
     }
 
     /**
-     * Download
+     * Download the file a job wrote, or an archive of its folder.
+     *
+     * The public disk is still checked because jobs tracked by earlier releases stored their files there.
      */
     public function download(int $id)
     {
@@ -139,10 +141,12 @@ class TrackerController extends Controller
 
         $jobTrack = $this->jobTrackRepository->findOrFail($id);
 
-        $disk = Storage::disk('private');
+        foreach (filled($jobTrack->file_path) ? ['private', 'public'] : [] as $diskName) {
+            $disk = Storage::disk($diskName);
 
-        if ($disk->fileExists($jobTrack->file_path)) {
-            return $disk->download($jobTrack->file_path);
+            if ($disk->fileExists($jobTrack->file_path)) {
+                return $disk->download($jobTrack->file_path);
+            }
         }
 
         return $this->archiveJobFiles($jobTrack);
@@ -168,6 +172,10 @@ class TrackerController extends Controller
      */
     protected function archiveJobFiles(JobTrackContract $jobTrack): mixed
     {
+        if (blank($jobTrack->file_path)) {
+            abort(404, trans('admin::app.settings.data-transfer.tracker.nothing-to-archive'));
+        }
+
         $zip = new ZipArchive;
 
         // Slug the parts and basename the result so a job code containing "../"
