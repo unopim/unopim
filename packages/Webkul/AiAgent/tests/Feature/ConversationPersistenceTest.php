@@ -1,0 +1,102 @@
+<?php
+
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Schema;
+use Webkul\User\Models\Admin;
+use Webkul\User\Models\Role;
+
+beforeEach(function () {
+    Http::preventStrayRequests();
+    $this->owner = Admin::factory()->create(['role_id' => Role::factory()->create(['permission_type' => 'all'])->id]);
+    $this->actingAs($this->owner, 'admin');
+});
+
+function historyMessage(string $id, string $content = 'Saved reply'): array
+{
+    return ['message_id' => $id, 'role' => 'assistant', 'content' => $content];
+}
+
+it('disables every conversation endpoint by default without changing stored history', function () {
+    expect(config('ai-agent.history.enabled'))->toBeFalse();
+    $count = DB::table('ai_agent_conversations')->count();
+    $this->getJson(route('ai-agent.conversations.index'))->assertForbidden();
+    $this->getJson(route('ai-agent.conversations.show', 1))->assertForbidden();
+    $this->deleteJson(route('ai-agent.conversations.destroy', 1))->assertForbidden();
+    $this->postJson(route('ai-agent.conversations.store'), ['messages' => [historyMessage('reply')]])->assertForbidden();
+    expect(DB::table('ai_agent_conversations')->count())->toBe($count);
+});
+
+it('persists structured results after an extension opts in and scopes access to their owner', function () {
+    config(['ai-agent.history.enabled' => true]);
+    $message = historyMessage('reply') + ['presentation' => ['type' => 'example.lookup', 'id' => 'result-1'], 'result' => ['status' => 'ready']];
+    $id = $this->postJson(route('ai-agent.conversations.store'), ['conversation_id' => 'same-client', 'messages' => [$message]])->assertOk()->json('id');
+    $this->getJson(route('ai-agent.conversations.show', $id))->assertOk()->assertJsonPath('messages.0.presentation', $message['presentation']);
+    $this->actingAs(Admin::factory()->create(['role_id' => $this->owner->role_id]), 'admin');
+    $this->getJson(route('ai-agent.conversations.show', $id))->assertNotFound();
+    $this->deleteJson(route('ai-agent.conversations.destroy', $id))->assertOk()->assertJsonPath('deleted', false);
+    $other = $this->postJson(route('ai-agent.conversations.store'), ['conversation_id' => 'same-client', 'messages' => [historyMessage('other')]])->assertOk()->json('id');
+    expect($other)->not->toBe($id);
+    Http::assertNothingSent();
+});
+
+it('honors history ACL even when persistence is enabled', function () {
+    config(['ai-agent.history.enabled' => true]);
+    $role = Role::factory()->create(['permission_type' => 'custom', 'permissions' => ['catalog.products']]);
+    $this->actingAs(Admin::factory()->create(['role_id' => $role->id]), 'admin');
+    $this->postJson(route('ai-agent.conversations.store'), ['messages' => [historyMessage('reply')]])->assertForbidden();
+});
+
+it('keeps regenerated replies deleted when a delayed tab saves them again', function (bool $deleteFirst) {
+    config(['ai-agent.history.enabled' => true]);
+    $old = ['conversation_id' => 'regenerate-fixture', 'messages' => [historyMessage('old')]];
+    if (! $deleteFirst) {
+        $this->postJson(route('ai-agent.conversations.store'), $old)->assertOk();
+    }
+    $id = $this->postJson(route('ai-agent.conversations.store'), ['conversation_id' => 'regenerate-fixture', 'messages' => [historyMessage('new')], 'deleted_message_ids' => ['old']])->assertOk()->json('id');
+    $this->postJson(route('ai-agent.conversations.store'), $old)->assertOk();
+    $this->getJson(route('ai-agent.conversations.show', $id))->assertOk()->assertJsonCount(1, 'messages')
+        ->assertJsonPath('messages.0.message_id', 'new')->assertJsonPath('deleted_message_ids.0', 'old');
+})->with([false, true]);
+
+it('allows a deletion-only save before the replacement reply exists', function () {
+    config(['ai-agent.history.enabled' => true]);
+    $this->postJson(route('ai-agent.conversations.store'), ['conversation_id' => 'empty-retry', 'messages' => [], 'deleted_message_ids' => ['old']])->assertOk();
+});
+
+it('merges stale snapshots without losing later messages or reviving handled confirmations', function () {
+    config(['ai-agent.history.enabled' => true]);
+    $first = historyMessage('first') + ['_confirmed' => true, 'result' => ['status' => 'done']];
+    $id = $this->postJson(route('ai-agent.conversations.store'), ['conversation_id' => 'merge-fixture', 'metadata' => ['owner_field' => 1], 'messages' => [$first, historyMessage('second')]])->assertOk()->json('id');
+    $this->postJson(route('ai-agent.conversations.store'), ['conversation_id' => 'merge-fixture', 'metadata' => ['owner_field' => 2, 'new_field' => 3], 'messages' => [historyMessage('first') + ['_confirmed' => false], historyMessage('first', 'Changed identity')]])->assertOk();
+    $this->getJson(route('ai-agent.conversations.show', $id))->assertOk()->assertJsonCount(2, 'messages')
+        ->assertJsonPath('messages.0._confirmed', true)->assertJsonPath('messages.0.result.status', 'done');
+    expect(json_decode(DB::table('ai_agent_conversations')->where('id', $id)->value('metadata'), true))->toBe(['owner_field' => 1, 'new_field' => 3]);
+});
+
+it('batches message reads and writes instead of issuing queries per message', function () {
+    config(['ai-agent.history.enabled' => true]);
+    $counts = [];
+    foreach ([1, 100] as $size) {
+        $messages = array_map(fn ($i) => historyMessage('message-'.$i), range(1, $size));
+        foreach ([false, true] as $repeat) {
+            DB::enableQueryLog();
+            DB::flushQueryLog();
+            $this->postJson(route('ai-agent.conversations.store'), ['conversation_id' => 'batch-'.$size, 'messages' => $messages])->assertOk();
+            $queries = array_filter(DB::getQueryLog(), fn ($query) => str_contains($query['query'], 'ai_agent_messages'));
+            $counts[] = count($queries);
+            DB::disableQueryLog();
+        }
+    }
+    expect(max($counts))->toBeLessThanOrEqual(2);
+    expect(Schema::hasIndex('ai_agent_messages', ['conversation_id', 'message_id'], 'unique'))->toBeTrue();
+});
+
+it('rejects invalid display fields and oversized metadata without partial writes', function () {
+    config(['ai-agent.history.enabled' => true]);
+    foreach ([['product_url' => 'javascript:alert(1)'], ['result' => ['__proto__' => []]], ['_confirmed' => 'yes']] as $invalid) {
+        $this->postJson(route('ai-agent.conversations.store'), ['conversation_id' => 'invalid-history', 'messages' => [historyMessage('reply') + $invalid]])->assertUnprocessable();
+    }
+    $this->postJson(route('ai-agent.conversations.store'), ['conversation_id' => 'invalid-history', 'metadata' => ['large' => str_repeat('x', 65537)], 'messages' => [historyMessage('reply')]])->assertUnprocessable();
+    expect(DB::table('ai_agent_conversations')->where('client_id', 'invalid-history')->exists())->toBeFalse();
+});
