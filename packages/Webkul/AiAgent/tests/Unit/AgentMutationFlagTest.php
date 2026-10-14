@@ -84,6 +84,7 @@ it('does not flag a mutation when the write tool errored, failed or changed noth
     'error status'     => fn () => mutationToolResult('assign_categories', ['result' => ['status' => 'Error: product not found']]),
     'nothing updated'  => fn () => mutationToolResult('bulk_edit', ['result' => ['updated' => 0]]),
     'tool call failed' => fn () => mutationToolResult('update_product', ['result' => ['updated' => 1]], failed: true),
+    'preview only'     => fn () => mutationToolResult('update_product', ['mutated' => false, 'result' => ['status' => 'preview']]),
 ]);
 
 it('flags a mutation from the registry write flag rather than a fixed tool list', function () {
@@ -98,6 +99,8 @@ it('flags a mutation from the registry write flag rather than a fixed tool list'
 });
 
 it('applies the same mutation rule to streamed responses', function () {
+    expect(streamedActionResult([mutationToolResult('update_product', ['mutated' => false, 'result' => ['status' => 'preview']])]))
+        ->not->toHaveKey('mutated');
     expect(streamedActionResult([mutationToolResult('data_quality_report', ['result' => ['score' => 80]])]))
         ->not->toHaveKey('mutated')
         ->and(streamedActionResult([mutationToolResult('manage_associations', ['result' => ['updated' => 1]])])['mutated'] ?? null)
