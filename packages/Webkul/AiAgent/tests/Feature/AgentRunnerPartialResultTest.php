@@ -24,8 +24,6 @@ it('delivers completed tool references before an observer can interrupt the stre
         yield new TextDelta('text-event', 'reply', 'Existing result ready.', time());
     }, new Meta('openai', 'fixture-model'));
     if ($observerFails) {
-        // Debugbar's incompatible usage collector throws here, after tool work
-        // completed. Keep the regression independent of that optional package.
         $stream->then(fn () => throw new RuntimeException('Completion observer failed'));
     }
     $agent = Mockery::mock(AnonymousAgent::class);
@@ -65,7 +63,6 @@ it('delivers completed tool references before an observer can interrupt the stre
         expect($output)->toContain('event: complete')->not->toContain('event: error');
     }
 
-    // Exercise real owner-scoped persistence independently of browser storage.
     $this->actingAs($admin, 'admin');
     $saved = $this->postJson(route('ai-agent.conversations.store'), [
         'conversation_id' => 'history-fixture', 'title' => 'Saved result',
