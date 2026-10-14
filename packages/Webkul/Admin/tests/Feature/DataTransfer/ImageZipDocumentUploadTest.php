@@ -269,15 +269,19 @@ it('imports file, image and gallery attribute values from an uploaded zip into t
         'images_directory_path' => $directory,
     ]);
 
+    Storage::forgetDisk(config('filesystems.default'));
+
     $importer = resolve(Importer::class);
     $importer->setImport($jobTrack);
-    $importer->setErrorHelper(app(Error::class));
+    $importer->setErrorHelper($errorHelper = app(Error::class));
 
-    expect($importer->validateRow($row, 1))->toBeTrue();
+    expect($importer->validateRow($row, 1))->toBeTrue(json_encode($errorHelper->getAllErrors()));
 
     $importer->importBatch(JobTrackBatch::factory()->create(['data' => [$row], 'job_track_id' => $jobTrack->id]));
 
-    $values = Product::where('sku', 'BOSCH-WAU28T64GB')->firstOrFail()->values['common'];
+    $product = Product::where('sku', 'BOSCH-WAU28T64GB')->firstOrFail();
+
+    $values = $product->values['common'];
 
     expect($values['user_manual'.$codeSuffix] ?? null)->toEndWith('user-manual.pdf')
         ->and($values['warranty_card'.$codeSuffix] ?? null)->toEndWith('warranty-card.docx')
@@ -286,4 +290,5 @@ it('imports file, image and gallery attribute values from an uploaded zip into t
         ->and($values['product_gallery'.$codeSuffix] ?? [])->toHaveCount(2);
 
     Storage::disk('public')->deleteDirectory($directory);
+    Storage::disk('public')->deleteDirectory('product/'.$product->id);
 });
