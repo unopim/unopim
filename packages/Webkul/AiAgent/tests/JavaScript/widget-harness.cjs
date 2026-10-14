@@ -1,4 +1,3 @@
-// Execute the actual Blade component, substituting server-rendered values only.
 const fs = require('node:fs');
 const vm = require('node:vm');
 const {webcrypto} = require('node:crypto');

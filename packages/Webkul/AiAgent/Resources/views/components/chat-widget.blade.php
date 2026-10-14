@@ -1,4 +1,4 @@
-
+{{-- Agenting PIM — Non-blocking side panel (Copilot style) --}}
 
 @php
     $magicAiEnabled  = (bool) core()->getConfigData('general.magic_ai.settings.enabled');
@@ -12,12 +12,16 @@
     $magicAiEnabled = $magicAiEnabled || count($extensionRegistry->options()) > 0;
     $defaultPlatform = collect($aiPlatforms)->firstWhere('is_default', true);
     $defaultPlatformId = $defaultPlatform['id'] ?? ($aiPlatforms[0]['id'] ?? null);
+
+    // Default panel state for fresh sessions. Stored user preference in
+    // sessionStorage still wins — see restoreState() below.
     $openByDefault = (bool) (core()->getConfigData('general.magic_ai.agentic_pim.open_by_default') ?? false);
 @endphp
 
 <v-agenting-pim></v-agenting-pim>
 
 <script>
+// Dock the layout before Vue paints to avoid a content-jump flash on refresh.
 (function () {
     var openByDefault = @json($openByDefault);
     var open = openByDefault;
@@ -47,9 +51,10 @@
 @pushOnce('scripts')
 <script type="text/x-template" id="v-agenting-pim-template">
     <div class="ap-shell">
-
+        {{-- Rendered outside #app: the panel is docked, so it must not sit inside
+             the element the docked layout shrinks (see the layout CSS below). --}}
         <teleport to="body">
-
+        {{-- ── Backdrop (small screens: covers page behind panel) ── --}}
         <transition name="ap-fade">
             <div
                 v-if="isOpen"
@@ -58,7 +63,7 @@
             ></div>
         </transition>
 
-
+        {{-- ── Side Panel ──────────────────────────────────── --}}
         <transition :name="noTransition ? '' : 'ap-slide'">
             <div
                 v-if="isOpen"
@@ -69,7 +74,7 @@
                 aria-modal="true"
                 aria-label="@lang('ai-agent::app.widget.panel-title')"
             >
-
+                {{-- Header --}}
                 <div class="ap-header flex items-center justify-between px-4 py-2.5 flex-shrink-0">
                     <div class="flex items-center gap-2.5">
                         <div class="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
@@ -93,7 +98,7 @@
                     </div>
                 </div>
 
-
+                {{-- Product Context Banner --}}
                 <div v-if="productContext" class="ap-context-banner">
                     <svg width="13" height="13" class="ap-context-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                     <span class="ap-context-text" v-text="trans.editing + ': ' + (productContext.sku || trans.product + ' #' + productContext.id)"></span>
@@ -102,7 +107,7 @@
                     </button>
                 </div>
 
-
+                {{-- Tab Bar --}}
                 <div class="ap-tab-bar">
                     <button @click="activeTab = 'capabilities'" class="ap-tab-btn" :class="{ 'ap-tab-active': activeTab === 'capabilities' }">
                         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
@@ -124,9 +129,9 @@
                     </button>
                 </div>
 
-
+                {{-- Capabilities Tab --}}
                 <div v-show="activeTab === 'capabilities'" style="flex:1;overflow-y:auto;padding:16px;">
-
+                    {{-- Search bar --}}
                     <div style="position:relative;margin-bottom:12px;">
                         <svg class="ap-search-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                         <input
@@ -138,7 +143,7 @@
                         />
                     </div>
 
-
+                    {{-- Capability tiles --}}
                     <div v-if="filteredCapabilities.length" class="grid grid-cols-2 gap-2.5">
                         <button v-for="cap in filteredCapabilities" :key="cap.key" @click="activateCapability(cap)"
                             class="flex flex-col items-start gap-2 p-3 rounded-lg border border-gray-200 dark:border-cherry-700 hover:border-primary-300 dark:hover:border-primary-600 hover:bg-primary-50 dark:hover:bg-cherry-800 transition-all text-left group">
@@ -154,9 +159,9 @@
                     <p v-else class="text-xs text-gray-400 text-center py-8" v-text="trans.noMatch"></p>
                 </div>
 
-
+                {{-- Sessions Tab --}}
                 <div v-show="activeTab === 'sessions'" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;">
-
+                    {{-- New session button --}}
                     <div class="ap-session-new-wrap">
                         <button @click="createNewSession"
                             class="ap-session-new-btn">
@@ -165,7 +170,7 @@
                         </button>
                     </div>
 
-
+                    {{-- Session list --}}
                     <div v-if="sessions.length" style="flex:1;overflow-y:auto;padding:8px;">
                         <div v-for="(session, idx) in sessions" :key="session.id"
                             @click="switchToSession(session.id)"
@@ -175,13 +180,13 @@
                             tabindex="0"
                             class="ap-session-card"
                             :class="{ 'ap-session-card-active': session.id === activeSessionId }">
-
+                            {{-- Session icon --}}
                             <div class="ap-session-icon"
                                 :class="{ 'ap-session-icon-active': session.id === activeSessionId }">
                                 <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                             </div>
 
-
+                            {{-- Session info --}}
                             <div style="flex:1;min-width:0;">
                                 <p class="ap-session-title" v-text="session.name"></p>
                                 <p class="ap-session-meta">
@@ -190,11 +195,11 @@
                                 </p>
                             </div>
 
-
+                            {{-- Active indicator --}}
                             <div v-if="session.id === activeSessionId"
                                 style="width:8px;height:8px;border-radius:50%;background:rgb(var(--c-primary-600));flex-shrink:0;"></div>
 
-
+                            {{-- Delete button --}}
                             <button v-else @click.stop="confirmDeleteSession(session.id)"
                                 :title="trans.deleteSession"
                                 :aria-label="trans.deleteSession"
@@ -207,7 +212,7 @@
                         </div>
                     </div>
 
-
+                    {{-- Empty state --}}
                     <div v-else style="flex:1;display:flex;align-items:center;justify-content:center;padding:32px;">
                         <div style="text-align:center;">
                             <svg class="ap-empty-icon" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg>
@@ -216,10 +221,10 @@
                     </div>
                 </div>
 
-
+                {{-- Chat Tab --}}
                 <div v-show="activeTab === 'chat'" style="flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;">
 
-
+                    {{-- Chat sub-header: capability badge + clear --}}
                     <div class="ap-chat-subheader">
                         <div style="display:flex;align-items:center;gap:6px;">
                             <span v-if="activeCapability"
@@ -238,7 +243,7 @@
                     </div>
 
                     <div ref="messagesEl" @scroll.passive="onMessagesScroll" class="flex flex-1 flex-col gap-[18px] min-h-0 overflow-y-auto px-4 py-3.5">
-
+                        {{-- Empty state --}}
                         <div v-if="messages.length === 0 && !isLoading" class="flex flex-col items-center justify-center h-full text-center py-8">
                             <svg class="w-10 h-10 text-primary-200 dark:text-primary-800 mb-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
                             <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
@@ -250,7 +255,7 @@
                         </div>
 
                         <template v-for="(msg, idx) in messages" :key="idx">
-
+                            {{-- User --}}
                             <div v-if="msg.role === 'user'" class="flex justify-end gap-2 items-end">
                                 <div class="max-w-[85%] space-y-1.5">
                                     <div v-if="msg.files && msg.files.length" class="flex flex-wrap gap-1.5 justify-end">
@@ -266,14 +271,15 @@
                                 </div>
                             </div>
 
-
+                            {{-- Assistant --}}
                             <div v-else>
                                 <div class="space-y-2.5">
-
+                                    {{-- Response --}}
                                     <div style="padding:2px 0;">
                                         <div class="text-[13px] text-gray-700 dark:text-gray-300 leading-[1.75] ap-ai-response" v-html="renderMarkdown(renderContent(msg, idx))"></div>
                                     </div>
 
+                                    {{-- Result details card --}}
                                     <component v-if="resultComponent(msg.presentation)" :is="resultComponent(msg.presentation)"
                                         :descriptor="msg.presentation" :visible="isOpen && activeTab === 'chat'" class="mt-4"></component>
 
@@ -285,27 +291,27 @@
                                             <template v-for="(val, key) in msg.result" :key="key">
                                                 <div v-if="val !== null && val !== ''" class="text-xs leading-relaxed">
                                                     <span class="text-primary-400 dark:text-primary-500 capitalize font-semibold" v-text="String(key).replace(/_/g, ' ') + ': '"></span>
-
+                                                    {{-- Boolean --}}
                                                     <span v-if="typeof val === 'boolean'" class="inline-flex items-center gap-1 font-semibold" :class="val ? 'text-emerald-600' : 'text-red-400'">
                                                         <span v-text="val ? '✓ ' + trans.yes : '✗ ' + trans.no"></span>
                                                     </span>
-
+                                                    {{-- Array --}}
                                                     <template v-else-if="Array.isArray(val)">
                                                         <div v-if="val.length === 0" class="mt-0.5 text-gray-400 italic" v-text="trans.none"></div>
                                                         <div v-else class="mt-1 flex flex-wrap gap-1">
                                                             <span v-for="(item, i) in val" :key="i" class="inline-block px-2 py-0.5 rounded-md text-[11px] font-medium bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 border border-primary-100 dark:border-primary-800" v-text="item"></span>
                                                         </div>
                                                     </template>
-
+                                                    {{-- Number --}}
                                                     <span v-else-if="typeof val === 'number'" class="font-bold text-gray-800 dark:text-gray-200" v-text="val"></span>
-
+                                                    {{-- String --}}
                                                     <span v-else class="text-gray-700 dark:text-gray-300 font-medium" v-text="val"></span>
                                                 </div>
                                             </template>
                                         </div>
                                     </div>
 
-
+                                    {{-- Action buttons --}}
                                     <div class="flex gap-2.5 flex-wrap mt-3 mb-1">
                                         <a v-if="msg.product_url" :href="msg.product_url" class="inline-flex items-center gap-1.5 text-xs font-semibold text-white px-4 py-2 rounded-lg transition-all hover:shadow-md" style="background:linear-gradient(135deg,rgb(var(--c-primary-600)),rgb(var(--c-primary-500)));">
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
@@ -323,7 +329,7 @@
                                         </button>
                                     </div>
 
-
+                                    {{-- Message actions: retry, copy, helpful, not helpful — shown AFTER result card --}}
                                     <div v-if="!msg.isStreaming && !msg.isRedirect" class="flex items-center gap-0.5 ap-msg-actions" style="margin-top:2px;">
                                         <button @click="retryFrom(idx)" :title="trans.retry" :aria-label="trans.retry" class="ap-action-btn">
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
@@ -340,7 +346,7 @@
                                         </button>
                                     </div>
 
-
+                                    {{-- Confirmation buttons — at the very bottom --}}
                                     <div v-if="needsConfirmation(msg, idx)" class="flex gap-2 mt-1">
                                         <button @click="confirmAction('yes', idx)" :disabled="isLoading" class="inline-flex items-center gap-1.5 text-xs font-semibold text-white px-4 py-2 rounded-lg transition-all hover:shadow-md" style="background:linear-gradient(135deg,rgb(var(--c-primary-600)),rgb(var(--c-primary-500)));">
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
@@ -362,7 +368,7 @@
                         <span v-text="streamingStatus || trans.processing"></span>
                     </div>
 
-
+                    {{-- Pending files --}}
                     <div v-if="pendingFiles.length > 0" class="ap-pending-files">
                         <div v-for="(f, idx) in pendingFiles" :key="idx" class="ap-pending-chip" :title="f.name">
                             <button
@@ -392,15 +398,17 @@
                         </div>
                     </div>
 
+                    {{-- Input — always-visible bordered box --}}
                     @foreach($extensionRegistry->composers() as $composer)
                     <{{ $composer['component'] }} :value="extensionContext['{{ $composer['key'] }}'] || {}" :conversation-id="activeSessionId" :draft="inputText" :cursor="composerCursor" :disabled="isLoading" :ref="el => composerRefs['{{ $composer['key'] }}'] = el" @replace-draft="replaceComposerDraft" @change="extensionContext['{{ $composer['key'] }}'] = $event"></{{ $composer['component'] }}>
                     @endforeach
 
                     <div class="ap-input-wrap">
 
-
+                        {{-- Outer bordered container --}}
                         <div class="ap-input-box">
 
+                            {{-- Textarea --}}
                             <div class="ap-composer-editor">
                             <div v-if="composerHasReferences" ref="composerHighlight" class="ap-composer-highlight" aria-hidden="true"><template v-for="(part, i) in composerSegments" :key="i"><span :class="{'ap-composer-reference': part.reference}" v-text="part.text"></span></template></div>
 
@@ -419,10 +427,10 @@
                             ></textarea>
                             </div>
 
-
+                            {{-- Toolbar row: Attach + Platform/Model + Send --}}
                             <div class="ap-input-toolbar">
 
-
+                                {{-- Left: attach + platform + model --}}
                                 <div style="display:flex;align-items:center;gap:4px;flex:1;min-width:0;">
                                     <label
                                         :title="fileInputTitle"
@@ -460,7 +468,7 @@
                                     </template>
                                 </div>
 
-
+                                {{-- Right: Send button --}}
                                 <button
                                     @click="send"
                                     :disabled="isLoading || (!inputText.trim() && pendingFiles.length === 0)"
@@ -480,7 +488,7 @@
             </div>
         </transition>
 
-
+        {{-- ── Trigger Button ──────────────────────────────── --}}
         <button
             v-show="!isOpen"
             @click="toggle"
@@ -849,16 +857,26 @@ body.overlay-open .ap-fab { display: none; }
 .ap-send-btn:disabled { opacity:0.35; cursor:not-allowed; }
 </style>
 
-
+{{-- DOMPurify is bundled with the admin app (window.DOMPurify) — no external CDN. --}}
 <script type="module">
+// Mirrors Webkul\MagicAI\Support\ModelRecommender::pickTextModel().
+// The chat widget must never auto-select an image-only model
+// (chatgpt-image-latest, dall-e-*, sora-*, imagen-*, veo-*, …) because
+// Prism::text() can't call them and the request fails with "model not
+// found". Keep this list in sync with ModelRecommender::IMAGE_ONLY_PATTERNS.
 const AGENTIC_PIM_IMAGE_ONLY_PATTERNS = [
+    // OpenAI / Azure
     /dall-?e/i, /(^|[-_])gpt-image/i, /chatgpt-image/i, /(^|[-_])sora([-_]|$)/i,
+    // Google (Gemini / Vertex)
     /imagen/i, /(^|[-_])veo([-_]|$)/i,
+    // Stability / Black Forest Labs / Midjourney / Playground
     /stable-?diffusion/i, /(^|[-_])flux([-_]|$)/i, /midjourney/i, /playground-v/i,
+    // Ideogram / Recraft / Kling / Luma / Pika / Runway / Hunyuan / CogVideo
     /(^|[-_])ideogram([-_]|$)/i, /(^|[-_])recraft([-_]|$)/i,
     /(^|[-_])kling([-_]|$)/i, /(^|[-_])luma([-_]|$)/i,
     /(^|[-_])pika([-_]|$)/i, /(^|[-_])runway([-_]|$)/i,
     /hunyuan-?video/i, /(^|[-_])cogvideo/i, /(^|[-_])wan-?\d/i, /animate-?diff/i,
+    // Generic "image" / "video" families (catch-all)
     /(^|[-_])image([-_]|$)/i, /(^|[-_])image-?\d/i, /(^|[-_])video-?\d/i,
 ];
 const pickTextModel = (models) => {
@@ -994,6 +1012,7 @@ app.component('v-agenting-pim', {
             noTransition: false,
             capabilitySearch: '',
             extensionContext: {},
+            // Session management
             sessions: [],
             activeSessionId: null,
             showSessions: false,
@@ -1003,6 +1022,7 @@ app.component('v-agenting-pim', {
             selectedModel: pickTextModel(initialModels),
             trans: trans,
             capabilities: [
+                // Row 1: Product creation & updates
                 { key: 'create_from_image', label: `@lang('ai-agent::app.widget.capabilities-list.create-from-image')`, description: `@lang('ai-agent::app.widget.capabilities-list.create-from-image-desc')`,
                   iconSvg: svg('<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>'),
                   color: 'rgb(var(--c-primary-600))', hint: `@lang('ai-agent::app.widget.capabilities-list.create-from-image-hint')`, acceptsImages: true, acceptsSpreadsheet: false,
@@ -1011,6 +1031,7 @@ app.component('v-agenting-pim', {
                   iconSvg: svg('<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>'),
                   color: 'rgb(var(--c-success))', hint: `@lang('ai-agent::app.widget.capabilities-list.update-products-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
                   autoPrompt: `@lang('ai-agent::app.widget.capabilities-list.update-products-prompt')`, autoFileUpload: false },
+                // Row 2: Search & explore
                 { key: 'search_products', label: `@lang('ai-agent::app.widget.capabilities-list.search-products')`, description: `@lang('ai-agent::app.widget.capabilities-list.search-products-desc')`,
                   iconSvg: svg('<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>'),
                   color: '#2563EB', hint: `@lang('ai-agent::app.widget.capabilities-list.search-products-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
@@ -1019,6 +1040,7 @@ app.component('v-agenting-pim', {
                   iconSvg: svg('<path d="M16 16v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="12" height="12" rx="2"/>'),
                   color: 'rgb(var(--c-primary-500))', hint: `@lang('ai-agent::app.widget.capabilities-list.find-similar-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
                   autoPrompt: `@lang('ai-agent::app.widget.capabilities-list.find-similar-prompt')`, autoFileUpload: false },
+                // Row 3: Content & AI generation
                 { key: 'generate_content', label: `@lang('ai-agent::app.widget.capabilities-list.generate-content')`, description: `@lang('ai-agent::app.widget.capabilities-list.generate-content-desc')`,
                   iconSvg: svg('<path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/>'),
                   color: '#F59E0B', hint: `@lang('ai-agent::app.widget.capabilities-list.generate-content-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
@@ -1027,6 +1049,7 @@ app.component('v-agenting-pim', {
                   iconSvg: svg('<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8"/><path d="M8 12h8"/>'),
                   color: '#EC4899', hint: `@lang('ai-agent::app.widget.capabilities-list.generate-image-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
                   autoPrompt: `@lang('ai-agent::app.widget.capabilities-list.generate-image-prompt')`, autoFileUpload: false },
+                // Row 4: Categories & attributes
                 { key: 'assign_categories', label: `@lang('ai-agent::app.widget.capabilities-list.assign-categories')`, description: `@lang('ai-agent::app.widget.capabilities-list.assign-categories-desc')`,
                   iconSvg: svg('<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>'),
                   color: '#6366F1', hint: `@lang('ai-agent::app.widget.capabilities-list.assign-categories-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
@@ -1035,6 +1058,7 @@ app.component('v-agenting-pim', {
                   iconSvg: svg('<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>'),
                   color: '#14B8A6', hint: `@lang('ai-agent::app.widget.capabilities-list.list-attributes-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
                   autoPrompt: `@lang('ai-agent::app.widget.capabilities-list.list-attributes-prompt')`, autoFileUpload: false },
+                // Row 5: Image editing & export
                 { key: 'edit_image', label: `@lang('ai-agent::app.widget.capabilities-list.edit-image')`, description: `@lang('ai-agent::app.widget.capabilities-list.edit-image-desc')`,
                   iconSvg: svg('<circle cx="12" cy="12" r="3"/><path d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12z" stroke-dasharray="4 2"/>'),
                   color: '#D946EF', hint: `@lang('ai-agent::app.widget.capabilities-list.edit-image-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
@@ -1043,6 +1067,7 @@ app.component('v-agenting-pim', {
                   iconSvg: svg('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>'),
                   color: '#0891B2', hint: `@lang('ai-agent::app.widget.capabilities-list.export-products-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
                   autoPrompt: `@lang('ai-agent::app.widget.capabilities-list.export-products-prompt')`, autoFileUpload: false },
+                // Row 6: Bulk & destructive operations
                 { key: 'upload_csv', label: `@lang('ai-agent::app.widget.capabilities-list.bulk-import-csv')`, description: `@lang('ai-agent::app.widget.capabilities-list.bulk-import-csv-desc')`,
                   iconSvg: svg('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/>'),
                   color: '#D97706', hint: `@lang('ai-agent::app.widget.capabilities-list.bulk-import-csv-hint')`, acceptsImages: false, acceptsSpreadsheet: true,
@@ -1051,6 +1076,7 @@ app.component('v-agenting-pim', {
                   iconSvg: svg('<polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>'),
                   color: '#DC2626', hint: `@lang('ai-agent::app.widget.capabilities-list.delete-products-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
                   autoPrompt: `@lang('ai-agent::app.widget.capabilities-list.delete-products-prompt')`, autoFileUpload: false },
+                // Row 7: Category management
                 { key: 'create_category', label: `@lang('ai-agent::app.widget.capabilities-list.create-category')`, description: `@lang('ai-agent::app.widget.capabilities-list.create-category-desc')`,
                   iconSvg: svg('<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/>'),
                   color: '#6366F1', hint: `@lang('ai-agent::app.widget.capabilities-list.create-category-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
@@ -1059,6 +1085,7 @@ app.component('v-agenting-pim', {
                   iconSvg: svg('<path d="M6 3v12"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/>'),
                   color: 'rgb(var(--c-primary-500))', hint: `@lang('ai-agent::app.widget.capabilities-list.category-tree-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
                   autoPrompt: `@lang('ai-agent::app.widget.capabilities-list.category-tree-prompt')`, autoFileUpload: false },
+                // Row 8: Attribute management
                 { key: 'create_attribute', label: `@lang('ai-agent::app.widget.capabilities-list.create-attribute')`, description: `@lang('ai-agent::app.widget.capabilities-list.create-attribute-desc')`,
                   iconSvg: svg('<path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>'),
                   color: '#0D9488', hint: `@lang('ai-agent::app.widget.capabilities-list.create-attribute-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
@@ -1067,6 +1094,7 @@ app.component('v-agenting-pim', {
                   iconSvg: svg('<polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>'),
                   color: '#14B8A6', hint: `@lang('ai-agent::app.widget.capabilities-list.manage-options-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
                   autoPrompt: `@lang('ai-agent::app.widget.capabilities-list.manage-options-prompt')`, autoFileUpload: false },
+                // Row 9: Families & bulk ops
                 { key: 'manage_families', label: `@lang('ai-agent::app.widget.capabilities-list.manage-families')`, description: `@lang('ai-agent::app.widget.capabilities-list.manage-families-desc')`,
                   iconSvg: svg('<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>'),
                   color: 'rgb(var(--c-primary-600))', hint: `@lang('ai-agent::app.widget.capabilities-list.manage-families-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
@@ -1075,6 +1103,7 @@ app.component('v-agenting-pim', {
                   iconSvg: svg('<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/><line x1="4" y1="20" x2="20" y2="20"/>'),
                   color: '#EA580C', hint: `@lang('ai-agent::app.widget.capabilities-list.bulk-edit-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
                   autoPrompt: `@lang('ai-agent::app.widget.capabilities-list.bulk-edit-prompt')`, autoFileUpload: false },
+                // Row 10: System & admin
                 { key: 'catalog_summary', label: `@lang('ai-agent::app.widget.capabilities-list.catalog-summary')`, description: `@lang('ai-agent::app.widget.capabilities-list.catalog-summary-desc')`,
                   iconSvg: svg('<path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/>'),
                   color: 'rgb(var(--c-success))', hint: `@lang('ai-agent::app.widget.capabilities-list.catalog-summary-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
@@ -1083,6 +1112,7 @@ app.component('v-agenting-pim', {
                   iconSvg: svg('<path d="M2 20h.01"/><path d="M7 20v-4"/><path d="M12 20v-8"/><path d="M17 20V8"/><path d="M22 4v16"/>'),
                   color: '#2563EB', hint: `@lang('ai-agent::app.widget.capabilities-list.manage-channels-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
                   autoPrompt: `@lang('ai-agent::app.widget.capabilities-list.manage-channels-prompt')`, autoFileUpload: false },
+                // Row 11: Users & roles
                 { key: 'manage_users', label: `@lang('ai-agent::app.widget.capabilities-list.manage-users')`, description: `@lang('ai-agent::app.widget.capabilities-list.manage-users-desc')`,
                   iconSvg: svg('<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>'),
                   color: '#64748B', hint: `@lang('ai-agent::app.widget.capabilities-list.manage-users-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
@@ -1091,6 +1121,7 @@ app.component('v-agenting-pim', {
                   iconSvg: svg('<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>'),
                   color: '#475569', hint: `@lang('ai-agent::app.widget.capabilities-list.manage-roles-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
                   autoPrompt: `@lang('ai-agent::app.widget.capabilities-list.manage-roles-prompt')`, autoFileUpload: false },
+                // Row 12: Free-form assistant
                 { key: 'ask_anything', label: `@lang('ai-agent::app.widget.capabilities-list.ask-anything')`, description: `@lang('ai-agent::app.widget.capabilities-list.ask-anything-desc')`,
                   iconSvg: svg('<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>'),
                   color: '#64748B', hint: `@lang('ai-agent::app.widget.capabilities-list.ask-anything-hint')`, acceptsImages: true, acceptsSpreadsheet: true,
@@ -1164,6 +1195,12 @@ app.component('v-agenting-pim', {
         if (!this.activeSessionId) {
             this.activeSessionId = this.generateSessionId();
         }
+
+        // The isOpen watcher only fires on change, so the initial-open state
+        // (either from sessionStorage or from the config-driven default) needs
+        // to run its side effects explicitly: shift #app margin, scroll to
+        // the latest message, and focus the input. Skip the slide transition
+        // so the panel doesn't flash in on every page load.
         if (this.isOpen) {
             this.noTransition = true;
             this.$nextTick(() => {
@@ -1276,6 +1313,7 @@ app.component('v-agenting-pim', {
         toggle() { this.isOpen = !this.isOpen; },
         close() { this.isOpen = false; },
         newSession() {
+            // Save current session before creating new one
             if (this.messages.length > 0) {
                 this.saveCurrentSession();
             }
@@ -1288,10 +1326,13 @@ app.component('v-agenting-pim', {
             this.saveState();
         },
         clearChat() { this.messages = []; this.inputText = ''; this.pendingFiles = []; this.saveState(); this.$nextTick(() => this.$refs.textInput?.focus()); },
+
+        // Session management
         generateSessionId() { return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6); },
 
         createNewSession() {
             if (this.messages.length > 0) {
+                // Save current session to localStorage only (not DB — avoids duplicates)
                 this.saveCurrentSession();
             }
             this.activeSessionId = this.generateSessionId();
@@ -1311,6 +1352,8 @@ app.component('v-agenting-pim', {
             const name = firstUserMsg
                 ? firstUserMsg.content.substring(0, 50) + (firstUserMsg.content.length > 50 ? '…' : '')
                 : this.trans.sessionDefaultName;
+
+            // Limit stored messages to prevent excessive localStorage usage.
             const recentMessages = this.messages.filter(m => !m.isRedirect).slice(-50);
             const sessionMessages = recentMessages.map(m => ({
                 message_id: m.message_id || null, request_id: m.request_id || null, presentation: m.presentation || null, role: m.role,
@@ -1344,17 +1387,15 @@ app.component('v-agenting-pim', {
             this.persistSessions();
         },
 
-
-
-
-
-
-
         async switchToSession(sessionId) {
             if (this.messages.length > 0 && this.activeSessionId) {
                 await this.saveCurrentSession();
             }
+
+            // Try loading from local sessions first (fast)
             let session = this.sessions.find(s => s.id === sessionId);
+
+            // If it's a DB-backed session (numeric ID), load from API
             if (!session && typeof sessionId === 'number') {
                 try {
                     const res = await this.$axios.get("{{ url(config('app.admin_url') . '/ai-agent/conversations') }}/" + sessionId);
@@ -1412,6 +1453,7 @@ app.component('v-agenting-pim', {
                 const raw = localStorage.getItem('agenting_pim_sessions');
                 if (raw) {
                     const parsed = JSON.parse(raw) || [];
+                    // Deduplicate by session ID
                     const seen = new Set();
                     this.sessions = parsed.filter(s => {
                         if (seen.has(s.id)) return false;
@@ -1433,11 +1475,14 @@ app.component('v-agenting-pim', {
             this.activeCapability = cap;
             if (cap.extension_event) { window.dispatchEvent(new CustomEvent(cap.extension_event)); }
             this.activeTab = 'chat';
+
+            // Auto-populate the prompt text if the capability has one
             if (cap.autoPrompt) {
                 this.inputText = cap.autoPrompt;
             }
 
             this.$nextTick(() => {
+                // Auto-trigger file picker for capabilities that require file upload
                 if (cap.autoFileUpload && this.$refs.fileInput) {
                     this.$refs.fileInput.click();
                 } else {
@@ -1525,6 +1570,7 @@ app.component('v-agenting-pim', {
             const files = [...this.pendingFiles];
             const selectedContext = JSON.parse(JSON.stringify(this.extensionContext));
             if (!text && files.length === 0) return;
+            // Build user message for display
             const userMsg = { message_id: chatRequestId(), request_id: typeof retryRequestId === 'string' ? retryRequestId : chatRequestId(), role: 'user', extensions: selectedContext, content: text || (files.length ? '📎 ' + files.map(f => f.name).join(', ') : ''), files: files.map(f => ({ type: f.type, preview: f.preview, name: f.name })) };
             this.messages.push(userMsg);
             this.inputText = ''; this.resetTextarea(); this.scrollBottom(true); this.isLoading = true;
@@ -1547,6 +1593,7 @@ app.component('v-agenting-pim', {
                     if (this.productContext.sku) fd.append('context[product_sku]', this.productContext.sku);
                     if (this.productContext.name) fd.append('context[product_name]', this.productContext.name);
                 }
+                // Try SSE streaming first, fallback to blocking JSON endpoint
                 let data = null;
                 try {
                     const streamRes = await fetch("{{ route('ai-agent.chat.stream') }}", {
@@ -1563,6 +1610,7 @@ app.component('v-agenting-pim', {
                     const ct = streamRes.headers.get('content-type') || '';
 
                     if (streamRes.ok && ct.includes('text/event-stream')) {
+                        // SSE streaming works — process the stream
                         const completed = await this.processStream(streamRes, files);
                         this.consumeExtensionContext(completed);
                         return; // processStream handles everything
@@ -1572,13 +1620,17 @@ app.component('v-agenting-pim', {
                         throw new Error('stream-fallback');
                     }
                 } catch (streamErr) {
+                    // Streaming failed — fallback to blocking JSON endpoint
                     this.streamingStatus = this.trans.processing;
                     const res = await this.$axios.post("{{ route('ai-agent.chat.send') }}", fd, { headers: { 'Content-Type': 'multipart/form-data' } });
                     data = res.data;
                 }
+                // Handle JSON response (from either stream JSON or blocking fallback)
                 this.consumeExtensionContext(data);
                 this.pendingFiles = [];
                 this.messages.push({ message_id: chatRequestId(), presentation: data.presentation || null, role: 'assistant', content: data.reply || this.trans.noResponse, action: data.action || null, result: data.result || null, product_url: data.product_url || null, download_url: data.download_url || null });
+
+                // Auto-navigate to the created product page
                 if (data.product_url && this.activeCapability?.key === 'create_from_image') {
                     this.messages.push({ role: 'assistant', content: this.trans.openingProduct, isRedirect: true });
                     this.saveState();
@@ -1608,6 +1660,8 @@ app.component('v-agenting-pim', {
             let resultData = {};
             let streamFailed = false;
             let discardImages = false;
+
+            // Add a placeholder message for streaming
             const msgIndex = this.messages.length;
             this.messages.push({ role: 'assistant', content: '', isStreaming: true });
             let currentEvent = null;
@@ -1660,6 +1714,8 @@ app.component('v-agenting-pim', {
                 streamFailed = true;
                 if (!streamedText) streamedText = this.trans.errorGeneric;
             }
+
+            // Finalize the message
             this.pendingFiles = streamFailed
                 ? files.filter(f => !discardImages || f.type !== 'image')
                 : [];
@@ -1674,6 +1730,7 @@ app.component('v-agenting-pim', {
                 download_url: resultData.download_url || null,
                 isStreaming: false,
             };
+            // Auto-navigate/refresh handling
             if (!streamFailed && resultData.product_url && this.activeCapability?.key === 'create_from_image') {
                 this.messages.push({ role: 'assistant', content: this.trans.openingProduct, isRedirect: true });
                 this.saveState();
@@ -1712,12 +1769,14 @@ app.component('v-agenting-pim', {
         },
 
         retryFrom(idx) {
+            // Find the user message right before this assistant message
             let userIdx = idx - 1;
             while (userIdx >= 0 && this.messages[userIdx].role !== 'user') { userIdx--; }
             if (userIdx < 0) return;
             const requestId = this.messages[userIdx].request_id || chatRequestId();
             this.extensionContext = this.messages[userIdx].extensions || {};
             const userText = this.messages[userIdx].content || '';
+            // Remove from that user message onwards and resend
             this.messages.splice(userIdx);
             this.inputText = userText;
             this.$nextTick(() => this.send(requestId));
@@ -1726,7 +1785,10 @@ app.component('v-agenting-pim', {
         rateMessage(idx, rating) {
             const current = this.messages[idx]?._rating;
             const newRating = current === rating ? null : rating;
+            // Trigger Vue reactivity by replacing the object
             this.messages[idx] = { ...this.messages[idx], _rating: newRating };
+
+            // Persist feedback to backend
             if (newRating) {
                 const messageText = this.messages[idx]?.content || '';
                 this.$axios.post("{{ route('ai-agent.chat.rate') }}", {
@@ -1737,6 +1799,7 @@ app.component('v-agenting-pim', {
         },
 
         needsConfirmation(msg, idx) {
+            // Only show buttons for the LAST assistant message, not already confirmed, and not loading
             if (msg.role !== 'assistant' || msg._confirmed || this.isLoading || msg.isStreaming || msg.isRedirect) return false;
             if (idx !== this.messages.length - 1) return false;
             const text = (msg.content || '').toLowerCase();
@@ -1744,7 +1807,9 @@ app.component('v-agenting-pim', {
         },
 
         confirmAction(answer, idx) {
+            // Mark this message as confirmed so buttons disappear
             this.messages[idx] = { ...this.messages[idx], _confirmed: true };
+            // Send the user's answer as a chat message
             this.inputText = answer === 'yes' ? 'Yes, proceed' : 'No, cancel';
             this.scrollBottom(true);
             this.$nextTick(() => this.send());
@@ -1862,6 +1927,7 @@ app.component('v-agenting-pim', {
 
         renderContent(msg, idx) {
             let text = msg.content || '';
+            // Strip the confirmation prompt text when buttons are shown OR after user has confirmed
             if (this.needsConfirmation(msg, idx) || msg._confirmed) {
                 text = text.replace(/\n*(?:shall i proceed|do you want me to proceed|should i (?:go ahead|proceed|create|update|delete|continue)|confirm.*(?:yes|no)|proceed)\s*[\?\.]?\s*\(?\s*(?:yes\s*[\/\\|]\s*no)?\s*\)?\s*$/i, '').trimEnd();
             }
@@ -1889,6 +1955,8 @@ app.component('v-agenting-pim', {
                 .replace(/\n/g, '<br>')
                 .replace(/(<br>\s*)+(<table)/g, '$2')
                 .replace(/(<\/table>)(\s*<br>)+/g, '$1');
+
+            // Sanitize HTML to prevent XSS from AI-generated or injected content.
             if (typeof DOMPurify !== 'undefined') {
                 return DOMPurify.sanitize(html, {
                     ALLOWED_TAGS: ['strong', 'em', 'code', 'a', 'p', 'br', 'span', 'ul', 'ol', 'li', 'table', 'thead', 'tbody', 'tr', 'th', 'td'],
@@ -1896,6 +1964,10 @@ app.component('v-agenting-pim', {
                     ADD_ATTR: ['data-internal-link'],
                 });
             }
+
+            // Fail SAFE, not open: with no sanitizer available this string still
+            // flows into v-html, so returning it raw is an XSS sink. Strip every
+            // tag to plain (escaped) text instead — formatting is lost, safety isn't.
             return this.stripToText(html);
         },
 
@@ -1953,8 +2025,16 @@ app.component('v-agenting-pim', {
                     ALLOWED_ATTR: ['d', 'fill', 'stroke', 'viewBox', 'width', 'height', 'xmlns', 'stroke-width', 'stroke-linecap', 'stroke-linejoin', 'cx', 'cy', 'r', 'x', 'y', 'rx', 'ry', 'points', 'x1', 'y1', 'x2', 'y2'],
                 });
             }
+
+            // No sanitizer: never inject untrusted SVG (script/foreignObject vectors).
             return '';
         },
+
+        // HTML-escape to inert text — used only as the no-DOMPurify fallback.
+        // The return value flows back into v-html (innerHTML), so it must be an
+        // ESCAPED string: assign as textContent (browser encodes < & etc), then
+        // read innerHTML to get the encoded form. Never parse the input as HTML
+        // (innerHTML-in decodes entities / completes unterminated tags → XSS).
         stripToText(html) {
             const el = document.createElement('div');
             el.textContent = String(html);
@@ -1971,6 +2051,8 @@ app.component('v-agenting-pim', {
                     activeSessionId: this.activeSessionId,
                     messages: this.messages.filter(m => !m.isRedirect).map(m => ({ message_id: m.message_id || null, request_id: m.request_id || null, presentation: m.presentation || null, role: m.role, content: m.content, result: m.result || null, product_url: m.product_url || null, download_url: m.download_url || null, _confirmed: m._confirmed || false })),
                 }));
+
+                // Auto-save current session to localStorage
                 if (this.messages.length > 0 && this.activeSessionId) {
                     this.saveCurrentSession();
                 }
@@ -1984,6 +2066,7 @@ app.component('v-agenting-pim', {
                 const s = JSON.parse(raw);
                 if (s.activeTab) this.activeTab = s.activeTab;
                 if (s.activeCapability) this.activeCapability = this.capabilities.find(c => c.key === s.activeCapability) || null;
+                // Restore platform only when it still matches the current server default; otherwise respect the newly-set default.
                 if (s.selectedPlatformId && s.selectedPlatformId === this.defaultPlatformId && this.platforms.find(p => p.id === s.selectedPlatformId)) {
                     this.selectedPlatformId = s.selectedPlatformId;
                     if (s.selectedModel && this.availableModels.includes(s.selectedModel)) {
@@ -1994,6 +2077,7 @@ app.component('v-agenting-pim', {
                 }
                 if (s.activeSessionId) this.activeSessionId = s.activeSessionId;
                 if (Array.isArray(s.messages) && s.messages.length > 0) this.messages = s.messages.filter(m => !m.isRedirect);
+                // isOpen restored synchronously in data() to avoid first-paint flicker.
             } catch (e) {}
         },
     },
@@ -2004,6 +2088,13 @@ app.component('v-agenting-pim', {
 
         const appEl = document.getElementById('app');
         if (appEl) appEl.style.marginRight = '';
+
+        // NOTE: do NOT clear storage here. Admin navigation is PJAX
+        // (navigation.js unmount/remount the Vue app on every page change), so
+        // this hook fires on each navigation — wiping it would defeat the
+        // sessionStorage panel-state persistence (panel would reopen from the
+        // open_by_default default) and drop saved chat sessions across pages.
+        // sessionStorage state clears naturally when the tab/session ends.
     },
 });
 </script>

@@ -14,7 +14,6 @@ test('composer receives draft/cursor and replacements update the native caret', 
     assert.equal(w.composerCursor, 6);
     w.replaceComposerDraft({start: 6, end: 11, text: '@Product 😀'});
     assert.equal(w.inputText, 'hello @Product 😀');
-    // DOM caret offsets remain UTF-16 offsets; name limits count characters.
     assert.equal(w.composerCursor, w.inputText.length);
     assert.deepEqual(selection, [[w.inputText.length, w.inputText.length]]);
     w.replaceComposerDraft({start: 0, end: 5, text: ''});
@@ -106,7 +105,6 @@ test('actual send retains hidden model and snapshots composer attachments', asyn
     w.inputText = 'edit @Product'; w.activeSessionId = 'fixture-conversation';
     w.extensionContext = {fixture: {references: ['@Product'], token: 'opaque-fixture'}};
     w.resetTextarea = w.scrollBottom = () => {};
-    // Stop at the intercepted transport; no server or provider is involved.
     void w.send();
     await Promise.resolve();
     assert.equal(w.hideSingleModelSelector, true);
