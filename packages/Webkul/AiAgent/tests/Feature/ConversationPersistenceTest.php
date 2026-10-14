@@ -64,6 +64,27 @@ it('allows a deletion-only save before the replacement reply exists', function (
     $this->postJson(route('ai-agent.conversations.store'), ['conversation_id' => 'empty-retry', 'messages' => [], 'deleted_message_ids' => ['old']])->assertOk();
 });
 
+it('upgrades legacy identities so reopening and regenerating do not duplicate or retain the old reply', function () {
+    config(['ai-agent.history.enabled' => true]);
+    $id = DB::table('ai_agent_conversations')->insertGetId(['user_id' => $this->owner->id, 'title' => 'Legacy conversation', 'created_at' => now(), 'updated_at' => now()]);
+    $messageId = DB::table('ai_agent_messages')->insertGetId(['conversation_id' => $id, 'role' => 'assistant', 'content' => 'Legacy reply']);
+    $migration = require __DIR__.'/../../Database/Migration/2026_10_14_000005_add_message_deletion_identity.php';
+    $migration->down();
+    $migration->up();
+    $response = $this->getJson(route('ai-agent.conversations.show', $id))->assertOk();
+    $clientId = $response->json('conversation.client_id');
+    $identity = $response->json('messages.0.message_id');
+    expect($clientId)->not->toBeNull();
+    expect($identity)->not->toBeNull();
+    $payload = ['conversation_id' => $clientId, 'messages' => [historyMessage($identity, 'Legacy reply')]];
+    $this->postJson(route('ai-agent.conversations.store'), $payload)->assertOk()->assertJsonPath('id', $id);
+    expect(DB::table('ai_agent_messages')->where('conversation_id', $id)->count())->toBe(1);
+    expect(DB::table('ai_agent_messages')->where('id', $messageId)->value('content'))->toBe('Legacy reply');
+    $this->postJson(route('ai-agent.conversations.store'), ['conversation_id' => $clientId, 'messages' => [], 'deleted_message_ids' => [$identity]])->assertOk();
+    $this->postJson(route('ai-agent.conversations.store'), $payload)->assertOk();
+    $this->getJson(route('ai-agent.conversations.show', $id))->assertOk()->assertJsonCount(0, 'messages');
+});
+
 it('merges stale snapshots without losing later messages or reviving handled confirmations', function () {
     config(['ai-agent.history.enabled' => true]);
     $first = historyMessage('first') + ['_confirmed' => true, 'result' => ['status' => 'done']];
