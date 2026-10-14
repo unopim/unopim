@@ -3,6 +3,10 @@
 use Webkul\AiAgent\Chat\Tools;
 
 return [
+    'history' => [
+        'enabled' => filter_var(env('AI_AGENT_HISTORY_ENABLED', false), FILTER_VALIDATE_BOOL),
+    ],
+
     /**
      * Agent chat tools.
      *
