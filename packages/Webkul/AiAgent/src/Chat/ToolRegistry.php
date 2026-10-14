@@ -20,6 +20,13 @@ class ToolRegistry
     /** @var array<class-string<PimTool>, PimTool> */
     protected array $tools = [];
 
+    protected array $decorators = [];
+
+    public function decorate(callable $decorator): void
+    {
+        $this->decorators[] = $decorator;
+    }
+
     /** @var array<class-string<PimTool>, array{name: string, group: string, write: bool, permission: ?string, guidance: ?string}> */
     protected array $metadata = [];
 
@@ -170,7 +177,11 @@ class ToolRegistry
                 continue;
             }
 
-            $built[] = $tool->register($context);
+            $registered = $tool->register($context);
+            foreach ($this->decorators as $decorator) {
+                $registered = $decorator($registered, $context, $this->metadata[$class]);
+            }
+            $built[] = $registered;
         }
 
         return $built;

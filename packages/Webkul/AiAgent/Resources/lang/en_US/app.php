@@ -29,6 +29,7 @@ return [
     ],
 
     'common' => [
+        'invalid-data'                  => 'The supplied data is invalid or exceeds the allowed limits.',
         'yes'                           => 'Yes',
         'no'                            => 'No',
         'save'                          => 'Save',

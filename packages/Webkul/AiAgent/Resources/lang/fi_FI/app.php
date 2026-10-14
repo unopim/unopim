@@ -29,6 +29,7 @@ return [
     ],
 
     'common' => [
+        'invalid-data'                  => 'Annetut tiedot ovat virheellisiä tai ylittävät sallitut rajat.',
         'yes'                           => 'Kyllä',
         'no'                            => 'Ei',
         'save'                          => 'Tallenna',
