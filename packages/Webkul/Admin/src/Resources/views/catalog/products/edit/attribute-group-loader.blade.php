@@ -1,7 +1,11 @@
 @props(['productId', 'nextGroupId'])
 
+{{--
+    Groups pulled in by the loader must be rendered for the channel and locale
+    the editor is looking at, so the scope selected on the page travels along.
+--}}
 <v-product-attribute-group-loader
-    endpoint="{{ route('admin.catalog.products.attribute_group_fields', ['id' => $productId, 'groupId' => '__group__']) }}"
+    endpoint="{{ route('admin.catalog.products.attribute_group_fields', array_merge(['id' => $productId, 'groupId' => '__group__'], request()->only(['channel', 'locale']))) }}"
     :next-group-id="{{ (int) $nextGroupId }}"
 ></v-product-attribute-group-loader>
 
