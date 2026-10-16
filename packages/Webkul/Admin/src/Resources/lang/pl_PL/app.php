@@ -1707,7 +1707,9 @@ return [
                 'setup-queue-error'          => 'Proszę zmienić sterownik kolejki na "database" lub "redis", aby rozpocząć proces importu.',
                 'update-success'             => 'Import został pomyślnie zaktualizowany.',
                 'zip-upload-success'         => 'ZIP przesłano i rozpakowano pomyślnie.',
-                'zip-upload-partial'         => 'Przesłano ZIP. Wyodrębniono plików: :extracted, pominięto: :skipped. Akceptowane są tylko te typy plików: :types.',
+                'zip-extracted-count'        => '{1} :count plik wyodrębniony|[2,4] :count pliki wyodrębnione|[0,*] :count plików wyodrębniono',
+                'zip-skipped-count'          => '{1} :count pominięty|[2,4] :count pominięte|[0,*] :count pominięto',
+                'zip-upload-partial'         => 'Przesłano ZIP. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [

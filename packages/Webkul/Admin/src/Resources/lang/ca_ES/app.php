@@ -1706,7 +1706,9 @@ return [
                 'setup-queue-error'          => 'Canvia el controlador de cua a "database" o "redis" per iniciar el procés d\'importació.',
                 'update-success'             => 'Importació actualitzada amb èxit.',
                 'zip-upload-success'         => 'ZIP pujat i extret correctament.',
-                'zip-upload-partial'         => 'ZIP pujat. :extracted fitxers extrets, :skipped omesos. Només s\'accepten aquests tipus de fitxer: :types.',
+                'zip-extracted-count'        => '{1} :count fitxer extret|[0,*] :count fitxers extrets',
+                'zip-skipped-count'          => '{1} :count omès|[0,*] :count omesos',
+                'zip-upload-partial'         => 'ZIP pujat. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [

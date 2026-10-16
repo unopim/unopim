@@ -1808,7 +1808,9 @@ return [
                 'setup-queue-error'          => 'Please change your queue driver to "database" or "redis" to start the import process.',
                 'update-success'             => 'Import updated successfully.',
                 'zip-upload-success'         => 'ZIP uploaded and extracted successfully.',
-                'zip-upload-partial'         => 'ZIP uploaded. :extracted files extracted, :skipped skipped. Only these file types are accepted: :types.',
+                'zip-extracted-count'        => '{1} :count file extracted|[0,*] :count files extracted',
+                'zip-skipped-count'          => '{1} :count skipped|[0,*] :count skipped',
+                'zip-upload-partial'         => 'ZIP uploaded. :extracted, :skipped.',
             ],
 
             'exports' => [

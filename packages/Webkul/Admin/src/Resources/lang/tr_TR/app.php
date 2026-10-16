@@ -1706,7 +1706,9 @@ return [
                 'setup-queue-error'          => 'İçe aktarma sürecini başlatmak için lütfen kuyruk sürücünüzü "database" veya "redis" olarak değiştirin.',
                 'update-success'             => 'İçe aktarma başarıyla güncellendi.',
                 'zip-upload-success'         => 'ZIP başarıyla yüklendi ve çıkartıldı.',
-                'zip-upload-partial'         => 'ZIP yüklendi. :extracted dosya çıkarıldı, :skipped atlandı. Yalnızca şu dosya türleri kabul edilir: :types.',
+                'zip-extracted-count'        => ':count dosya çıkarıldı',
+                'zip-skipped-count'          => ':count atlandı',
+                'zip-upload-partial'         => 'ZIP yüklendi. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [

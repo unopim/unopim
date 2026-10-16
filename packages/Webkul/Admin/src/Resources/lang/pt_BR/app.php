@@ -1707,7 +1707,9 @@ return [
                 'setup-queue-error'          => 'Por favor, altere seu driver de fila para "database" ou "redis" para iniciar o processo de importação.',
                 'update-success'             => 'Importação atualizada com sucesso.',
                 'zip-upload-success'         => 'ZIP enviado e extraído com sucesso.',
-                'zip-upload-partial'         => 'ZIP enviado. :extracted arquivos extraídos, :skipped ignorados. Somente estes tipos de arquivo são aceitos: :types.',
+                'zip-extracted-count'        => '{1} :count arquivo extraído|[0,*] :count arquivos extraídos',
+                'zip-skipped-count'          => '{1} :count ignorado|[0,*] :count ignorados',
+                'zip-upload-partial'         => 'ZIP enviado. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [

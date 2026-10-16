@@ -1707,7 +1707,9 @@ return [
                 'setup-queue-error'          => 'Vă rugăm să schimbați driverul cozii la "database" sau "redis" pentru a începe procesul de import.',
                 'update-success'             => 'Import actualizat cu succes.',
                 'zip-upload-success'         => 'ZIP încărcat și extras cu succes.',
-                'zip-upload-partial'         => 'ZIP încărcat. :extracted fișiere extrase, :skipped omise. Sunt acceptate doar aceste tipuri de fișiere: :types.',
+                'zip-extracted-count'        => '{1} :count fișier extras|[0,*] :count fișiere extrase',
+                'zip-skipped-count'          => '{1} :count omis|[0,*] :count omise',
+                'zip-upload-partial'         => 'ZIP încărcat. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [

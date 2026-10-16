@@ -1706,7 +1706,9 @@ return [
                 'setup-queue-error'          => 'Будь ласка, змініть драйвер черги на "database" або "redis", щоб розпочати процес імпорту.',
                 'update-success'             => 'Імпорт успішно оновлено.',
                 'zip-upload-success'         => 'ZIP успішно завантажено та розпаковано.',
-                'zip-upload-partial'         => 'ZIP завантажено. Видобуто файлів: :extracted, пропущено: :skipped. Приймаються лише такі типи файлів: :types.',
+                'zip-extracted-count'        => '{1} :count файл видобуто|[2,4] :count файли видобуто|[0,*] :count файлів видобуто',
+                'zip-skipped-count'          => '{1} :count пропущено|[0,*] :count пропущено',
+                'zip-upload-partial'         => 'ZIP завантажено. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [

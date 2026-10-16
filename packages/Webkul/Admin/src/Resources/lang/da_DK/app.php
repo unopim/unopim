@@ -1706,7 +1706,9 @@ return [
                 'setup-queue-error'          => 'Skift din kødriver til "database" eller "redis" for at starte importprocessen.',
                 'update-success'             => 'Import opdateret med succes.',
                 'zip-upload-success'         => 'ZIP uploadet og udpakket med succes.',
-                'zip-upload-partial'         => 'ZIP uploadet. :extracted filer udpakket, :skipped sprunget over. Kun disse filtyper accepteres: :types.',
+                'zip-extracted-count'        => '{1} :count fil udpakket|[0,*] :count filer udpakket',
+                'zip-skipped-count'          => '{1} :count sprunget over|[0,*] :count sprunget over',
+                'zip-upload-partial'         => 'ZIP uploadet. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [

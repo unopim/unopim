@@ -1706,7 +1706,9 @@ return [
                 'setup-queue-error'          => 'Vänligen ändra din ködrivrutin till "databas" eller "redis" för att starta importprocessen.',
                 'update-success'             => 'Importen uppdaterades framgångsrikt.',
                 'zip-upload-success'         => 'ZIP uppladdad och extraherad framgångsrikt.',
-                'zip-upload-partial'         => 'ZIP uppladdad. :extracted filer extraherade, :skipped överhoppade. Endast dessa filtyper accepteras: :types.',
+                'zip-extracted-count'        => '{1} :count fil extraherad|[0,*] :count filer extraherade',
+                'zip-skipped-count'          => '{1} :count överhoppad|[0,*] :count överhoppade',
+                'zip-upload-partial'         => 'ZIP uppladdad. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [

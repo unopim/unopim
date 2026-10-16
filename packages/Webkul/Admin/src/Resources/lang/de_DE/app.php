@@ -1706,7 +1706,9 @@ return [
                 'setup-queue-error'          => 'Bitte ändern Sie Ihren Warteschlangentreiber auf „Datenbank“ oder „Redis“, um den Importvorgang zu starten.',
                 'update-success'             => 'Import erfolgreich aktualisiert.',
                 'zip-upload-success'         => 'ZIP erfolgreich hochgeladen und entpackt.',
-                'zip-upload-partial'         => 'ZIP hochgeladen. :extracted Dateien entpackt, :skipped übersprungen. Nur diese Dateitypen werden akzeptiert: :types.',
+                'zip-extracted-count'        => '{1} :count Datei entpackt|[0,*] :count Dateien entpackt',
+                'zip-skipped-count'          => '{1} :count übersprungen|[0,*] :count übersprungen',
+                'zip-upload-partial'         => 'ZIP hochgeladen. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [

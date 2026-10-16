@@ -1706,7 +1706,9 @@ return [
                 'setup-queue-error'          => 'Vui lòng thay đổi trình điều khiển hàng đợi của bạn thành "database" hoặc "redis" để bắt đầu quá trình nhập.',
                 'update-success'             => 'Nhập đã được cập nhật thành công.',
                 'zip-upload-success'         => 'ZIP đã được tải lên và giải nén thành công.',
-                'zip-upload-partial'         => 'Đã tải ZIP lên. Đã giải nén :extracted tệp, bỏ qua :skipped. Chỉ chấp nhận các loại tệp sau: :types.',
+                'zip-extracted-count'        => 'Đã giải nén :count tệp',
+                'zip-skipped-count'          => 'bỏ qua :count',
+                'zip-upload-partial'         => 'Đã tải ZIP lên. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [

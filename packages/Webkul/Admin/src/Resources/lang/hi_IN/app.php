@@ -1706,7 +1706,9 @@ return [
                 'setup-queue-error'          => 'आयात प्रक्रिया शुरू करने के लिए कृपया अपने कतार ड्राइवर को "डेटाबेस" या "रेडिस" में बदलें।',
                 'update-success'             => 'सफलतापूर्वक अपडेट किया गया आयात।',
                 'zip-upload-success'         => 'ZIP सफलतापूर्वक अपलोड और निकाला गया।',
-                'zip-upload-partial'         => 'ZIP अपलोड हो गया। :extracted फ़ाइलें निकाली गईं, :skipped छोड़ी गईं। केवल ये फ़ाइल प्रकार स्वीकार्य हैं: :types।',
+                'zip-extracted-count'        => '{1} :count फ़ाइल निकाली गई|[0,*] :count फ़ाइलें निकाली गईं',
+                'zip-skipped-count'          => '{1} :count छोड़ी गई|[0,*] :count छोड़ी गईं',
+                'zip-upload-partial'         => 'ZIP अपलोड हो गया। :extracted, :skipped।',
             ],
             'exports' => [
                 'create' => [

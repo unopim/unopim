@@ -1706,7 +1706,9 @@ return [
                 'setup-queue-error'          => 'Пожалуйста, измените свой драйвер очереди на «базу данных» или «Redis», чтобы начать процесс импорта.',
                 'update-success'             => 'Импорт успешно обновлен.',
                 'zip-upload-success'         => 'ZIP успешно загружен и распакован.',
-                'zip-upload-partial'         => 'ZIP загружен. Извлечено файлов: :extracted, пропущено: :skipped. Принимаются только следующие типы файлов: :types.',
+                'zip-extracted-count'        => '{1} :count файл извлечен|[2,4] :count файла извлечено|[0,*] :count файлов извлечено',
+                'zip-skipped-count'          => '{1} :count пропущен|[2,4] :count пропущено|[0,*] :count пропущено',
+                'zip-upload-partial'         => 'ZIP загружен. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [

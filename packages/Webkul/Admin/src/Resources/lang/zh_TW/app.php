@@ -1706,7 +1706,9 @@ return [
                 'setup-queue-error'          => '請將您的隊列驅動程序更改為 "database" 或 "redis" 以開始導入過程。',
                 'update-success'             => '導入成功更新。',
                 'zip-upload-success'         => 'ZIP 上傳並解壓縮成功。',
-                'zip-upload-partial'         => 'ZIP 已上傳。已解壓縮 :extracted 個檔案，略過 :skipped 個。僅接受以下檔案類型：:types。',
+                'zip-extracted-count'        => '已解壓縮 :count 個檔案',
+                'zip-skipped-count'          => '略過 :count 個',
+                'zip-upload-partial'         => 'ZIP 已上傳。:extracted，:skipped。',
             ],
             'exports' => [
                 'create' => [

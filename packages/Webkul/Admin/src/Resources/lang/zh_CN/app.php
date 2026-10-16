@@ -1706,7 +1706,9 @@ return [
                 'setup-queue-error'          => '请将您的队列驱动程序更改为“数据库”或“ Redis”以开始导入过程。',
                 'update-success'             => '导入成功更新。',
                 'zip-upload-success'         => 'ZIP 上传并解压成功。',
-                'zip-upload-partial'         => 'ZIP 已上传。已解压 :extracted 个文件，跳过 :skipped 个。仅接受以下文件类型：:types。',
+                'zip-extracted-count'        => '已解压 :count 个文件',
+                'zip-skipped-count'          => '跳过 :count 个',
+                'zip-upload-partial'         => 'ZIP 已上传。:extracted，:skipped。',
             ],
             'exports' => [
                 'create' => [

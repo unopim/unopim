@@ -101,7 +101,6 @@ it('lists every skipped entry by name instead of dropping it silently', function
     expect($response->json('files_count'))->toBe(2)
         ->and($response->json('skipped_files'))->toEqualCanonicalizing(['evil.php', 'vector.svg'])
         ->and($response->json('message'))->toContain('2 files extracted, 2 skipped')
-        ->and($response->json('message'))->toContain('PDF')
         ->and(Storage::disk('public')->exists($path.'/evil.php'))->toBeFalse()
         ->and(Storage::disk('public')->exists($path.'/vector.svg'))->toBeFalse();
 
@@ -221,7 +220,7 @@ it('caps the reported skipped entries while counting all of them', function () u
     expect($response->json('files_count'))->toBe(1)
         ->and($response->json('skipped_count'))->toBe(4)
         ->and($response->json('skipped_files'))->toHaveCount(2)
-        ->and($response->json('message'))->toContain('1 files extracted, 4 skipped');
+        ->and($response->json('message'))->toContain('1 file extracted, 4 skipped');
 
     Storage::disk('public')->deleteDirectory($path);
 });

@@ -1706,7 +1706,9 @@ return [
                 'setup-queue-error'          => 'Harap ubah driver antrian Anda menjadi "basis data" atau "redis" untuk memulai proses impor.',
                 'update-success'             => 'Impor berhasil diperbarui.',
                 'zip-upload-success'         => 'ZIP berhasil diunggah dan diekstrak.',
-                'zip-upload-partial'         => 'ZIP diunggah. :extracted file diekstrak, :skipped dilewati. Hanya jenis file berikut yang diterima: :types.',
+                'zip-extracted-count'        => ':count file diekstrak',
+                'zip-skipped-count'          => ':count dilewati',
+                'zip-upload-partial'         => 'ZIP diunggah. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [

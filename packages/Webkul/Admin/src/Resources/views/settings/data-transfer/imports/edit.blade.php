@@ -344,12 +344,20 @@
                         <div class="min-w-0">
                             <p class="text-sm font-medium text-green-700 dark:text-green-400 truncate">@{{ uploadedFileName }}</p>
                             <p class="text-xs text-green-600 dark:text-green-500">@{{ uploadedFilesCount }} @{{ filesExtractedLabel }}</p>
-                            <p
+                            <div
                                 v-if="uploadedSkippedCount"
                                 class="text-xs text-warning break-words"
                             >
-                                @{{ uploadedSkippedCount }} @{{ filesSkippedLabel }} @{{ uploadedSkippedFiles.join(', ') }}@{{ uploadedSkippedCount > uploadedSkippedFiles.length ? ', …' : '' }}
-                            </p>
+                                <p>@{{ uploadedSkippedCount }} @{{ filesSkippedLabel }}</p>
+                                <ul class="list-disc list-inside mt-0.5 space-y-0.5">
+                                    <li v-for="file in uploadedSkippedFiles" :key="file" class="font-mono text-[11px] truncate">
+                                        @{{ file }}
+                                    </li>
+                                    <li v-if="uploadedSkippedCount > uploadedSkippedFiles.length" class="text-gray-400 dark:text-gray-500">
+                                        &hellip;
+                                    </li>
+                                </ul>
+                            </div>
                             <p class="text-xs font-mono text-gray-400 dark:text-gray-500 truncate">storage/app/public/@{{ uploadedPath }}</p>
                         </div>
                     </div>

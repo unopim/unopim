@@ -1707,7 +1707,9 @@ return [
                 'setup-queue-error'          => 'Wijzig je wachtrijdriver naar "database" of "redis" om het importproces te starten.',
                 'update-success'             => 'Import succesvol bijgewerkt.',
                 'zip-upload-success'         => 'ZIP succesvol geüpload en uitgepakt.',
-                'zip-upload-partial'         => 'ZIP geüpload. :extracted bestanden uitgepakt, :skipped overgeslagen. Alleen deze bestandstypen worden geaccepteerd: :types.',
+                'zip-extracted-count'        => '{1} :count bestand uitgepakt|[0,*] :count bestanden uitgepakt',
+                'zip-skipped-count'          => '{1} :count overgeslagen|[0,*] :count overgeslagen',
+                'zip-upload-partial'         => 'ZIP geüpload. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [

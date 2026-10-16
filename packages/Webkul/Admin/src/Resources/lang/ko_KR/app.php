@@ -1707,7 +1707,9 @@ return [
                 'setup-queue-error'          => '가져오기 프로세스를 시작하려면 큐 드라이버를 "database" 또는 "redis"로 변경하십시오.',
                 'update-success'             => '가져오기가 성공적으로 업데이트되었습니다.',
                 'zip-upload-success'         => 'ZIP이 성공적으로 업로드 및 추출되었습니다.',
-                'zip-upload-partial'         => 'ZIP이 업로드되었습니다. 파일 :extracted개 추출, :skipped개 건너뜀. 다음 파일 형식만 허용됩니다: :types.',
+                'zip-extracted-count'        => '파일 :count개 추출',
+                'zip-skipped-count'          => ':count개 건너뜀',
+                'zip-upload-partial'         => 'ZIP이 업로드되었습니다. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [

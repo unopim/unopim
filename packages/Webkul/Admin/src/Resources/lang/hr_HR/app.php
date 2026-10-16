@@ -1706,7 +1706,9 @@ return [
                 'setup-queue-error'          => 'Molimo promijenite svoj red vozača na "bazu podataka" ili "redis" kako biste započeli proces uvoza.',
                 'update-success'             => 'Uvoz uspješno ažuriran.',
                 'zip-upload-success'         => 'ZIP uspješno učitan i raspakiran.',
-                'zip-upload-partial'         => 'ZIP učitan. :extracted datoteka raspakirano, :skipped preskočeno. Prihvaćene su samo ove vrste datoteka: :types.',
+                'zip-extracted-count'        => '{1} :count datoteka raspakirana|[2,4] :count datoteke raspakirane|[0,*] :count datoteka raspakirano',
+                'zip-skipped-count'          => '{1} :count preskočena|[2,4] :count preskočene|[0,*] :count preskočeno',
+                'zip-upload-partial'         => 'ZIP učitan. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [

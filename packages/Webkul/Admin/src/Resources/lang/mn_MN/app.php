@@ -1707,7 +1707,9 @@ return [
                 'setup-queue-error'          => 'Дарааллын жолоочоо "мэдээллийн сан" эсвэл импортын үйл явцыг эхлүүлэхийн тулд "мэдээллийн сан" эсвэл "Redis" -ийг өөрчилнө үү.',
                 'update-success'             => 'Импорт амжилттай шинэчилсэн.',
                 'zip-upload-success'         => 'ZIP файл амжилттай байршуулагдаж задлагдлаа.',
-                'zip-upload-partial'         => 'ZIP байршуулагдлаа. :extracted файл задаллаа, :skipped алгассан. Зөвхөн эдгээр файлын төрлийг зөвшөөрнө: :types.',
+                'zip-extracted-count'        => ':count файл задаллаа',
+                'zip-skipped-count'          => ':count алгассан',
+                'zip-upload-partial'         => 'ZIP байршуулагдлаа. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [

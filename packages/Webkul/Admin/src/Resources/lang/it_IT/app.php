@@ -1706,7 +1706,9 @@ return [
                 'setup-queue-error'          => 'Si prega di cambiare il driver della coda in "database" o "redis" per avviare il processo di importazione.',
                 'update-success'             => 'Importazione aggiornata con successo.',
                 'zip-upload-success'         => 'ZIP caricato ed estratto con successo.',
-                'zip-upload-partial'         => 'ZIP caricato. :extracted file estratti, :skipped saltati. Sono accettati solo questi tipi di file: :types.',
+                'zip-extracted-count'        => '{1} :count file estratto|[0,*] :count file estratti',
+                'zip-skipped-count'          => '{1} :count saltato|[0,*] :count saltati',
+                'zip-upload-partial'         => 'ZIP caricato. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [

@@ -1706,7 +1706,9 @@ return [
                 'setup-queue-error'          => 'Veuillez modifier le pilote de file d\'attente pour "base de données" ou "redis" afin de démarrer l\'import.',
                 'update-success'             => 'Import mis à jour avec succès.',
                 'zip-upload-success'         => 'ZIP téléchargé et extrait avec succès.',
-                'zip-upload-partial'         => 'ZIP téléchargé. :extracted fichiers extraits, :skipped ignorés. Seuls ces types de fichiers sont acceptés : :types.',
+                'zip-extracted-count'        => '{1} :count fichier extrait|[0,*] :count fichiers extraits',
+                'zip-skipped-count'          => '{1} :count ignoré|[0,*] :count ignorés',
+                'zip-upload-partial'         => 'ZIP téléchargé. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [

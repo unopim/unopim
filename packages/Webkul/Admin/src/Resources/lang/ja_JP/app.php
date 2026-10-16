@@ -1706,7 +1706,9 @@ return [
                 'setup-queue-error'          => 'インポート プロセスを開始するには、キュー ドライバーを「database」または「redis」に変更してください。',
                 'update-success'             => 'インポートが正常に更新されました。',
                 'zip-upload-success'         => 'ZIP のアップロードと展開が完了しました。',
-                'zip-upload-partial'         => 'ZIPをアップロードしました。:extracted 件のファイルを抽出し、:skipped 件をスキップしました。次のファイル形式のみ使用できます: :types。',
+                'zip-extracted-count'        => ':count 件のファイルを抽出',
+                'zip-skipped-count'          => ':count 件をスキップ',
+                'zip-upload-partial'         => 'ZIPをアップロードしました。:extracted、:skipped。',
             ],
             'exports' => [
                 'create' => [

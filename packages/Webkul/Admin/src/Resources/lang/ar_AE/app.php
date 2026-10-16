@@ -1706,7 +1706,9 @@ return [
                 'setup-queue-error'          => 'يرجى تغيير برنامج قائمة الانتظار الخاص بك إلى "قاعدة البيانات" أو "redis" لبدء عملية الاستيراد.',
                 'update-success'             => 'استيراد تحديث بنجاح.',
                 'zip-upload-success'         => 'تم رفع واستخراج ZIP بنجاح.',
-                'zip-upload-partial'         => 'تم رفع ZIP. تم استخراج :extracted ملفات، وتم تخطي :skipped. أنواع الملفات التالية فقط مقبولة: :types.',
+                'zip-extracted-count'        => '{1} تم استخراج ملف واحد|{2} تم استخراج ملفين|[3,10] تم استخراج :count ملفات|[11,*] تم استخراج :count ملف',
+                'zip-skipped-count'          => '{1} تم تخطي ملف واحد|{2} تم تخطي ملفين|[3,10] تم تخطي :count ملفات|[11,*] تم تخطي :count ملف',
+                'zip-upload-partial'         => 'تم رفع ZIP. :extracted، و:skipped.',
             ],
             'exports' => [
                 'create' => [

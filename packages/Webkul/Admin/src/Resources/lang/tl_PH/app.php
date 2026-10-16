@@ -1706,7 +1706,9 @@ return [
                 'setup-queue-error'          => 'Mangyaring baguhin ang iyong queue driver sa "database" o "redis" upang simulan ang proseso ng pag-import.',
                 'update-success'             => 'Matagumpay na na-update ang pag-import.',
                 'zip-upload-success'         => 'Matagumpay na na-upload at na-extract ang ZIP.',
-                'zip-upload-partial'         => 'Na-upload ang ZIP. :extracted file ang na-extract, :skipped ang nilaktawan. Ang mga sumusunod na uri ng file lamang ang tinatanggap: :types.',
+                'zip-extracted-count'        => '{1} :count file ang na-extract|[0,*] :count mga file ang na-extract',
+                'zip-skipped-count'          => '{1} :count ang nilaktawan|[0,*] :count ang nilaktawan',
+                'zip-upload-partial'         => 'Na-upload ang ZIP. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [

@@ -1706,7 +1706,9 @@ return [
                 'setup-queue-error'          => 'Vaihda jono-ajuri "tietokannaksi" tai "redisiksi", jotta voit aloittaa tuontiprosessin.',
                 'update-success'             => 'Tuonti päivitettiin onnistuneesti.',
                 'zip-upload-success'         => 'ZIP ladattu ja purettu onnistuneesti.',
-                'zip-upload-partial'         => 'ZIP ladattu. :extracted tiedostoa purettu, :skipped ohitettu. Vain nämä tiedostotyypit hyväksytään: :types.',
+                'zip-extracted-count'        => '{1} :count tiedosto purettu|[0,*] :count tiedostoa purettu',
+                'zip-skipped-count'          => '{1} :count ohitettu|[0,*] :count ohitettu',
+                'zip-upload-partial'         => 'ZIP ladattu. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [

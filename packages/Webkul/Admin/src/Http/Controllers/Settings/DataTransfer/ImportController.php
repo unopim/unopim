@@ -769,9 +769,8 @@ class ImportController extends Controller
         }
 
         return trans('admin::app.settings.data-transfer.imports.zip-upload-partial', [
-            'extracted' => $extraction['extracted'],
-            'skipped'   => $extraction['skipped_count'],
-            'types'     => $this->allowedArchiveExtensionsLabel(),
+            'extracted' => trans_choice('admin::app.settings.data-transfer.imports.zip-extracted-count', $extraction['extracted'], ['count' => $extraction['extracted']]),
+            'skipped'   => trans_choice('admin::app.settings.data-transfer.imports.zip-skipped-count', $extraction['skipped_count'], ['count' => $extraction['skipped_count']]),
         ]);
     }
 

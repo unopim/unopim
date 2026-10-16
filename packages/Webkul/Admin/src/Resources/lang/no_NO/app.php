@@ -1707,7 +1707,9 @@ return [
                 'setup-queue-error'          => 'Vennligst endre kødriveren din til "database" eller "redis" for å starte importprosessen.',
                 'update-success'             => 'Import oppdatert vellykket.',
                 'zip-upload-success'         => 'ZIP lastet opp og pakket ut vellykket.',
-                'zip-upload-partial'         => 'ZIP lastet opp. :extracted filer pakket ut, :skipped hoppet over. Bare disse filtypene aksepteres: :types.',
+                'zip-extracted-count'        => '{1} :count fil pakket ut|[0,*] :count filer pakket ut',
+                'zip-skipped-count'          => '{1} :count hoppet over|[0,*] :count hoppet over',
+                'zip-upload-partial'         => 'ZIP lastet opp. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [

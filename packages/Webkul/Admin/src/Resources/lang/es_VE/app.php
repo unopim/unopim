@@ -1706,7 +1706,9 @@ return [
                 'setup-queue-error'          => 'Por favor, cambie su controlador de cola a "base de datos" o "redis" para iniciar el proceso de importación.',
                 'update-success'             => 'Importación actualizada exitosamente.',
                 'zip-upload-success'         => 'ZIP subido y extraído exitosamente.',
-                'zip-upload-partial'         => 'ZIP subido. :extracted archivos extraídos, :skipped omitidos. Solo se aceptan estos tipos de archivo: :types.',
+                'zip-extracted-count'        => '{1} :count archivo extraído|[0,*] :count archivos extraídos',
+                'zip-skipped-count'          => '{1} :count omitido|[0,*] :count omitidos',
+                'zip-upload-partial'         => 'ZIP subido. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [
