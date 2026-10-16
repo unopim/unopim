@@ -76,6 +76,7 @@ class AiAgentServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(ExtensionRegistry::class);
+        $this->app->singleton(ResultRendererRegistry::class);
         $this->app->register(ModuleServiceProvider::class);
 
         $this->registerConfig();
@@ -128,7 +129,6 @@ class AiAgentServiceProvider extends ServiceProvider
             return $registry;
         });
 
-        $this->app->singleton(ResultRendererRegistry::class);
         $this->app->singleton(AgentRunner::class);
     }
 }

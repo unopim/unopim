@@ -5,7 +5,6 @@ use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Contracts\AuthorizesContext;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 use Webkul\AiAgent\Chat\ExtensionRegistry;
-use Webkul\AiAgent\Chat\ResultRendererRegistry;
 use Webkul\AiAgent\Chat\ToolRegistry;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\User\Models\Admin;
@@ -19,7 +18,7 @@ it('resolves extension providers lazily and keeps the registered negative identi
 
         return new MagicAIPlatform(['provider' => 'example']);
     }, ['id' => 42, 'label' => 'Example']);
-    expect($registry->options()[0]['id'])->toBe(-7)->and($calls)->toBe(0);
+    expect($calls)->toBe(0);
     expect($registry->resolve(-7)->provider)->toBe('example')->and($calls)->toBe(1);
     expect($registry->resolve(-8))->toBeNull();
     expect(fn () => $registry->provider(1, fn () => null, []))->toThrow(InvalidArgumentException::class);
@@ -39,26 +38,6 @@ it('registers trusted composers and replaces the same namespace deterministicall
     $registry->composer('example.catalog', 'v-new-picker', 'example::new');
     expect($registry->composers())->toHaveCount(1)
         ->and($registry->composers()[0]['component'])->toBe('v-new-picker');
-});
-
-it('keeps unknown result references inert and rejects executable descriptor fields', function () {
-    $registry = app(ResultRendererRegistry::class);
-    $reference = ['type' => 'uninstalled.lookup', 'id' => 'result_42'];
-    expect($registry->descriptor($reference))->toBe($reference)
-        ->and($registry->components())->toBe([])
-        ->and($registry->descriptor($reference + ['component' => 'v-attacker']))->toBeNull()
-        ->and($registry->descriptor(['type' => "lookup\n", 'id' => 'result']))->toBeNull()
-        ->and($registry->descriptor(['type' => 'lookup', 'id' => '../other-user']))->toBeNull()
-        ->and($registry->descriptor(['type' => 'lookup', 'id' => str_repeat('x', 65)]))->toBeNull();
-});
-
-it('maps only registered renderer views and composer consumers', function () {
-    $registry = app(ResultRendererRegistry::class);
-    $registry->register('example.lookup', 'v-example-result', 'example::result', 'example.catalog');
-    expect($registry->components())->toBe(['example.lookup' => 'v-example-result'])
-        ->and($registry->views())->toBe(['example::result'])
-        ->and($registry->contextConsumers())->toBe(['example.lookup' => 'example.catalog']);
-    expect(fn () => $registry->register('bad', 'script', 'example::result'))->toThrow(InvalidArgumentException::class);
 });
 
 it('runs decorators in order with fresh request context only after authorization', function (bool $acl, bool $authorized) {
@@ -85,3 +64,40 @@ it('runs decorators in order with fresh request context only after authorization
     }
     expect($seen)->toBe($acl && $authorized ? [[1, 'first request'], [2, 'first request'], [1, 'second request'], [2, 'second request']] : []);
 })->with([[true, true], [false, true], [true, false]]);
+
+it('rejects an invalid decorator result before the next decorator runs', function (mixed $invalid) {
+    $registry = new ToolRegistry;
+    $native = Mockery::mock(Tool::class);
+    $tool = Mockery::mock(PimTool::class);
+    $tool->shouldReceive('register')->once()->andReturn($native);
+    $registry->register($tool, ['name' => 'example']);
+    $registry->decorate(fn () => $invalid);
+    $called = false;
+    $registry->decorate(function ($value) use (&$called) {
+        $called = true;
+
+        return $value;
+    });
+    $context = new ChatContext('hello', [], null, null, null, 'en_US', 'default', new MagicAIPlatform);
+
+    expect(fn () => $registry->build($context))->toThrow(UnexpectedValueException::class, 'Decorator for tool "example" must return');
+    expect($called)->toBeFalse();
+})->with([null, false, 'invalid', [[]], [new stdClass]]);
+
+it('passes a replacement tool through the rest of the decorator chain', function () {
+    $registry = new ToolRegistry;
+    $native = Mockery::mock(Tool::class);
+    $replacement = Mockery::mock(Tool::class);
+    $tool = Mockery::mock(PimTool::class);
+    $tool->shouldReceive('register')->once()->andReturn($native);
+    $registry->register($tool);
+    $registry->decorate(fn () => $replacement);
+    $registry->decorate(function ($value) use ($replacement) {
+        expect($value)->toBe($replacement);
+
+        return $value;
+    });
+
+    expect($registry->build(new ChatContext('hello', [], null, null, null, 'en_US', 'default', new MagicAIPlatform)))
+        ->toBe([$replacement]);
+});

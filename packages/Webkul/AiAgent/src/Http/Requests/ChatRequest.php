@@ -47,7 +47,6 @@ class ChatRequest extends FormRequest
             'extensions.*'    => ['array'],
             'context'         => ['nullable', 'array'],
             'history'         => ['nullable', 'array'],
-            'request_id'      => ['nullable', 'uuid'],
             'conversation_id' => ['nullable', 'string', 'max:64', 'regex:/^[A-Za-z0-9_-]+$/'],
         ];
     }
