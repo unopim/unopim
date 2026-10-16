@@ -1583,7 +1583,7 @@ return [
                     'zip-upload-or'       => 'o mag-upload ng ZIP ng mga larawan at dokumento',
                     'zip-click-upload'    => 'I-click upang mag-upload ng ZIP ng mga larawan at dokumento',
                     'zip-files-extracted' => 'mga file na na-extract',
-                    'zip-files-skipped'   => 'na file ang nilaktawan (hindi suportadong uri, di-wastong nilalaman, o masyadong malaki):',
+                    'zip-files-skipped'   => ':skipped (hindi suportadong uri, di-wastong nilalaman, o masyadong malaki):',
                     'zip-accepted-types'  => 'Tinatanggap sa ZIP: :types',
                     'zip-drop-hint'       => 'I-click o i-drag & drop ang isang ZIP file dito',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MAX. 2MB)',

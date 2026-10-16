@@ -1584,7 +1584,7 @@ return [
                     'zip-upload-or'       => 'of upload een ZIP met afbeeldingen en documenten',
                     'zip-click-upload'    => 'Klik om een ZIP met afbeeldingen en documenten te uploaden',
                     'zip-files-extracted' => 'bestanden uitgepakt',
-                    'zip-files-skipped'   => 'bestanden overgeslagen (niet-ondersteund type, ongeldige inhoud of te groot):',
+                    'zip-files-skipped'   => ':skipped (niet-ondersteund type, ongeldige inhoud of te groot):',
                     'zip-accepted-types'  => 'Geaccepteerd in de ZIP: :types',
                     'zip-drop-hint'       => 'Klik of sleep en laat een ZIP-bestand hier vallen',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MAX. 2MB)',

@@ -1583,7 +1583,7 @@ return [
                     'zip-upload-or'       => 'veya görsel ve belgelerden oluşan bir ZIP dosyası yükleyin',
                     'zip-click-upload'    => 'Görsel ve belge ZIP dosyası yüklemek için tıklayın',
                     'zip-files-extracted' => 'dosya çıkartıldı',
-                    'zip-files-skipped'   => 'dosya atlandı (desteklenmeyen tür, geçersiz içerik veya çok büyük):',
+                    'zip-files-skipped'   => ':skipped (desteklenmeyen tür, geçersiz içerik veya çok büyük):',
                     'zip-accepted-types'  => 'ZIP içinde kabul edilenler: :types',
                     'zip-drop-hint'       => 'Buraya bir ZIP dosyasını tıklayın veya sürükleyip bırakın',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MAKS. 2MB)',

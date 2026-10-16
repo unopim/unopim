@@ -1583,7 +1583,7 @@ return [
                     'zip-upload-or'       => 'eller ladda upp en ZIP med bilder och dokument',
                     'zip-click-upload'    => 'Klicka för att ladda upp en ZIP med bilder och dokument',
                     'zip-files-extracted' => 'filer extraherade',
-                    'zip-files-skipped'   => 'filer hoppades över (typ som inte stöds, ogiltigt innehåll eller för stora):',
+                    'zip-files-skipped'   => ':skipped (typ som inte stöds, ogiltigt innehåll eller för stora):',
                     'zip-accepted-types'  => 'Accepteras i ZIP-filen: :types',
                     'zip-drop-hint'       => 'Klicka eller dra & släpp en ZIP-fil här',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MAX. 2 MB)',

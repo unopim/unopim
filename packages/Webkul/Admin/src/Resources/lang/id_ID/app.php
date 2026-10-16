@@ -1583,7 +1583,7 @@ return [
                     'zip-upload-or'       => 'atau unggah ZIP berisi gambar dan dokumen',
                     'zip-click-upload'    => 'Klik untuk mengunggah ZIP berisi gambar dan dokumen',
                     'zip-files-extracted' => 'file diekstrak',
-                    'zip-files-skipped'   => 'file dilewati (jenis tidak didukung, konten tidak valid, atau terlalu besar):',
+                    'zip-files-skipped'   => ':skipped (jenis tidak didukung, konten tidak valid, atau terlalu besar):',
                     'zip-accepted-types'  => 'Diterima dalam ZIP: :types',
                     'zip-drop-hint'       => 'Klik atau seret dan lepaskan file ZIP di sini',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MAKS. 2MB)',

@@ -220,10 +220,40 @@ it('caps the reported skipped entries while counting all of them', function () u
     expect($response->json('files_count'))->toBe(1)
         ->and($response->json('skipped_count'))->toBe(4)
         ->and($response->json('skipped_files'))->toHaveCount(2)
-        ->and($response->json('message'))->toContain('1 file extracted, 4 skipped');
+        ->and($response->json('message'))->toContain('1 file extracted, 4 skipped')
+        ->and($response->json('extracted_label'))->toBe('1 file extracted')
+        ->and($response->json('skipped_label'))->toStartWith('4 skipped');
 
     Storage::disk('public')->deleteDirectory($path);
 });
+
+it('returns pluralized card labels so a single extracted file is not reported as files', function () use ($onePixelPng) {
+    $response = uploadMediaZip($this, makeMediaZip([
+        'product.png' => $onePixelPng,
+    ]))->assertOk();
+
+    expect($response->json('extracted_label'))->toBe('1 file extracted')
+        ->and($response->json('skipped_label'))->toBeNull();
+
+    Storage::disk('public')->deleteDirectory($response->json('path'));
+});
+
+it('picks the locale plural form for zip upload counts', function (string $locale, string $key, int $count, string $expected) {
+    expect(trans_choice('admin::app.settings.data-transfer.imports.'.$key, $count, ['count' => $count], $locale))->toBe($expected);
+})->with([
+    'ru 21 extracted' => ['ru_RU', 'zip-extracted-count', 21, '21 файл извлечён'],
+    'ru 22 extracted' => ['ru_RU', 'zip-extracted-count', 22, '22 файла извлечено'],
+    'ru 25 extracted' => ['ru_RU', 'zip-extracted-count', 25, '25 файлов извлечено'],
+    'uk 21 extracted' => ['uk_UA', 'zip-extracted-count', 21, '21 файл видобуто'],
+    'uk 22 extracted' => ['uk_UA', 'zip-extracted-count', 22, '22 файли видобуто'],
+    'hr 21 extracted' => ['hr_HR', 'zip-extracted-count', 21, '21 datoteka raspakirana'],
+    'hr 22 skipped'   => ['hr_HR', 'zip-skipped-count', 22, '22 preskočene'],
+    'pl 22 extracted' => ['pl_PL', 'zip-extracted-count', 22, '22 pliki wyodrębnione'],
+    'pl 25 skipped'   => ['pl_PL', 'zip-skipped-count', 25, '25 pominięto'],
+    'ar 0 extracted'  => ['ar_AE', 'zip-extracted-count', 0, 'لم يتم استخراج أي ملف'],
+    'ar 2 skipped'    => ['ar_AE', 'zip-skipped-count', 2, 'تم تخطي ملفين'],
+    'ar 11 extracted' => ['ar_AE', 'zip-extracted-count', 11, 'تم استخراج 11 ملفًا'],
+]);
 
 it('imports file, image and gallery attribute values from an uploaded zip into the product', function () use ($minimalPdf, $onePixelPng) {
     $response = uploadMediaZip($this, makeMediaZip([

@@ -1583,7 +1583,7 @@ return [
                     'zip-upload-or'       => 'o pugeu un ZIP d\'imatges i documents',
                     'zip-click-upload'    => 'Feu clic per pujar un ZIP d\'imatges i documents',
                     'zip-files-extracted' => 'fitxers extrets',
-                    'zip-files-skipped'   => 'fitxers omesos (tipus no admès, contingut no vàlid o massa grans):',
+                    'zip-files-skipped'   => ':skipped (tipus no admès, contingut no vàlid o massa grans):',
                     'zip-accepted-types'  => 'Acceptat al ZIP: :types',
                     'zip-drop-hint'       => 'Feu clic o arrossegueu i deixeu anar un fitxer ZIP aquí',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MÀX. 2MB)',

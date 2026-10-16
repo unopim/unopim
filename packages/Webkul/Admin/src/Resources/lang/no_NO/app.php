@@ -1584,7 +1584,7 @@ return [
                     'zip-upload-or'       => 'eller last opp en ZIP med bilder og dokumenter',
                     'zip-click-upload'    => 'Klikk for å laste opp en ZIP med bilder og dokumenter',
                     'zip-files-extracted' => 'filer pakket ut',
-                    'zip-files-skipped'   => 'filer hoppet over (type som ikke støttes, ugyldig innhold eller for store):',
+                    'zip-files-skipped'   => ':skipped (type som ikke støttes, ugyldig innhold eller for store):',
                     'zip-accepted-types'  => 'Akseptert i ZIP-filen: :types',
                     'zip-drop-hint'       => 'Klikk eller dra & slipp en ZIP-fil her',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MAKS. 2MB)',

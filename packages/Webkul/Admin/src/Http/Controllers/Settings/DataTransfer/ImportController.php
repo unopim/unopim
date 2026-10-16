@@ -753,12 +753,18 @@ class ImportController extends Controller
         $zip->close();
 
         return new JsonResponse([
-            'path'          => $folderName,
-            'files_count'   => $extraction['extracted'],
-            'skipped_files' => $extraction['skipped'],
-            'skipped_count' => $extraction['skipped_count'],
-            'zip_name'      => $file->getClientOriginalName(),
-            'message'       => $this->zipUploadMessage($extraction),
+            'path'            => $folderName,
+            'files_count'     => $extraction['extracted'],
+            'skipped_files'   => $extraction['skipped'],
+            'skipped_count'   => $extraction['skipped_count'],
+            'zip_name'        => $file->getClientOriginalName(),
+            'extracted_label' => $this->zipExtractedCountLabel($extraction['extracted']),
+            'skipped_label'   => $extraction['skipped_count'] > 0
+                ? trans('admin::app.settings.data-transfer.imports.create.zip-files-skipped', [
+                    'skipped' => $this->zipSkippedCountLabel($extraction['skipped_count']),
+                ])
+                : null,
+            'message'         => $this->zipUploadMessage($extraction),
         ]);
     }
 
@@ -769,9 +775,19 @@ class ImportController extends Controller
         }
 
         return trans('admin::app.settings.data-transfer.imports.zip-upload-partial', [
-            'extracted' => trans_choice('admin::app.settings.data-transfer.imports.zip-extracted-count', $extraction['extracted'], ['count' => $extraction['extracted']]),
-            'skipped'   => trans_choice('admin::app.settings.data-transfer.imports.zip-skipped-count', $extraction['skipped_count'], ['count' => $extraction['skipped_count']]),
+            'extracted' => $this->zipExtractedCountLabel($extraction['extracted']),
+            'skipped'   => $this->zipSkippedCountLabel($extraction['skipped_count']),
         ]);
+    }
+
+    protected function zipExtractedCountLabel(int $count): string
+    {
+        return trans_choice('admin::app.settings.data-transfer.imports.zip-extracted-count', $count, ['count' => $count]);
+    }
+
+    protected function zipSkippedCountLabel(int $count): string
+    {
+        return trans_choice('admin::app.settings.data-transfer.imports.zip-skipped-count', $count, ['count' => $count]);
     }
 
     protected function allowedArchiveExtensions(): array

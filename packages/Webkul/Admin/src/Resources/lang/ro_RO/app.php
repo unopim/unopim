@@ -1584,7 +1584,7 @@ return [
                     'zip-upload-or'       => 'sau încărcați un ZIP cu imagini și documente',
                     'zip-click-upload'    => 'Faceți clic pentru a încărca un ZIP cu imagini și documente',
                     'zip-files-extracted' => 'fișiere extrase',
-                    'zip-files-skipped'   => 'fișiere omise (tip neacceptat, conținut nevalid sau prea mari):',
+                    'zip-files-skipped'   => ':skipped (tip neacceptat, conținut nevalid sau prea mari):',
                     'zip-accepted-types'  => 'Acceptat în ZIP: :types',
                     'zip-drop-hint'       => 'Click sau trageți și plasați un fișier ZIP aici',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MAX. 2MB)',

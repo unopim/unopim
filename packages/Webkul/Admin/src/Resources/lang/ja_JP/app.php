@@ -1583,7 +1583,7 @@ return [
                     'zip-upload-or'       => 'または画像とドキュメントの ZIP をアップロード',
                     'zip-click-upload'    => 'クリックして画像とドキュメントの ZIP をアップロード',
                     'zip-files-extracted' => 'ファイルが展開されました',
-                    'zip-files-skipped'   => '件のファイルをスキップしました（未対応の形式、無効な内容、またはサイズ超過）:',
+                    'zip-files-skipped'   => ':skipped（未対応の形式、無効な内容、またはサイズ超過）:',
                     'zip-accepted-types'  => 'ZIP内で受け付けるもの: :types',
                     'zip-drop-hint'       => 'クリックするかZIPファイルをここにドラッグ＆ドロップ',
                     'file-upload-info'    => 'CSV, XLSX, JSON（最大2MB）',

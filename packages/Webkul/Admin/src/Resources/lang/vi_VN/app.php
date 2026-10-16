@@ -1583,7 +1583,7 @@ return [
                     'zip-upload-or'       => 'hoặc tải lên một tệp ZIP chứa hình ảnh và tài liệu',
                     'zip-click-upload'    => 'Nhấn để tải lên tệp ZIP chứa hình ảnh và tài liệu',
                     'zip-files-extracted' => 'tệp đã giải nén',
-                    'zip-files-skipped'   => 'tệp bị bỏ qua (loại không được hỗ trợ, nội dung không hợp lệ hoặc quá lớn):',
+                    'zip-files-skipped'   => ':skipped (loại không được hỗ trợ, nội dung không hợp lệ hoặc quá lớn):',
                     'zip-accepted-types'  => 'Được chấp nhận trong ZIP: :types',
                     'zip-drop-hint'       => 'Nhấp hoặc kéo và thả tệp ZIP vào đây',
                     'file-upload-info'    => 'CSV, XLSX, JSON (TỐI ĐA. 2MB)',

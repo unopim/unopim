@@ -1583,7 +1583,7 @@ return [
                     'zip-upload-or'       => 'oder ein ZIP mit Bildern und Dokumenten hochladen',
                     'zip-click-upload'    => 'Klicken Sie, um ein ZIP mit Bildern und Dokumenten hochzuladen',
                     'zip-files-extracted' => 'Dateien entpackt',
-                    'zip-files-skipped'   => 'Dateien übersprungen (nicht unterstützter Typ, ungültiger Inhalt oder zu groß):',
+                    'zip-files-skipped'   => ':skipped (nicht unterstützter Typ, ungültiger Inhalt oder zu groß):',
                     'zip-accepted-types'  => 'Im ZIP akzeptiert: :types',
                     'zip-drop-hint'       => 'Klicken oder ZIP-Datei hier ablegen',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MAX. 2MB)',

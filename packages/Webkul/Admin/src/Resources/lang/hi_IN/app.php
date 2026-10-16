@@ -1583,7 +1583,7 @@ return [
                     'zip-upload-or'       => 'या छवियों और दस्तावेज़ों का ZIP अपलोड करें',
                     'zip-click-upload'    => 'छवियों और दस्तावेज़ों का ZIP अपलोड करने के लिए क्लिक करें',
                     'zip-files-extracted' => 'फ़ाइलें निकाली गईं',
-                    'zip-files-skipped'   => 'फ़ाइलें छोड़ी गईं (असमर्थित प्रकार, अमान्य सामग्री या बहुत बड़ी):',
+                    'zip-files-skipped'   => ':skipped (असमर्थित प्रकार, अमान्य सामग्री या बहुत बड़ी):',
                     'zip-accepted-types'  => 'ZIP में स्वीकार्य: :types',
                     'zip-drop-hint'       => 'यहाँ क्लिक करें या ZIP फ़ाइल खींचें और छोड़ें',
                     'file-upload-info'    => 'CSV, XLSX, JSON (अधिकतम 2MB)',

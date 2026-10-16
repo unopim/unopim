@@ -1583,7 +1583,7 @@ return [
                     'zip-upload-or'       => '或上传图片和文档 ZIP 压缩包',
                     'zip-click-upload'    => '点击上传图片和文档 ZIP 压缩包',
                     'zip-files-extracted' => '文件已解压',
-                    'zip-files-skipped'   => '个文件已跳过（不支持的类型、无效内容或文件过大）：',
+                    'zip-files-skipped'   => ':skipped（不支持的类型、无效内容或文件过大）：',
                     'zip-accepted-types'  => 'ZIP 中接受的类型：:types',
                     'zip-drop-hint'       => '点击或将ZIP文件拖放至此处',
                     'file-upload-info'    => 'CSV, XLSX, JSON（最大 2MB）',

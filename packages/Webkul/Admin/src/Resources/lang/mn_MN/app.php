@@ -1584,7 +1584,7 @@ return [
                     'zip-upload-or'       => 'эсвэл зураг, баримт бичгийн ZIP файл байршуулах',
                     'zip-click-upload'    => 'Зураг, баримт бичгийн ZIP файл байршуулахын тулд дарна уу',
                     'zip-files-extracted' => 'файл задлагдсан',
-                    'zip-files-skipped'   => 'файл алгассан (дэмжигдээгүй төрөл, буруу агуулга эсвэл хэт том):',
+                    'zip-files-skipped'   => ':skipped (дэмжигдээгүй төрөл, буруу агуулга эсвэл хэт том):',
                     'zip-accepted-types'  => 'ZIP-д зөвшөөрөгдөх: :types',
                     'zip-drop-hint'       => 'Дарах эсвэл ZIP файлыг энд чирж оруулна уу',
                     'file-upload-info'    => 'CSV, XLSX, JSON (ДЭЭД 2MB)',

@@ -1680,7 +1680,7 @@ return [
                     'zip-upload-or'       => 'or upload a ZIP of images and documents',
                     'zip-click-upload'    => 'Click to upload a ZIP of images and documents',
                     'zip-files-extracted' => 'files extracted',
-                    'zip-files-skipped'   => 'files skipped (unsupported type, invalid content or too large):',
+                    'zip-files-skipped'   => ':skipped (unsupported type, invalid content or too large):',
                     'zip-accepted-types'  => 'Accepted in the ZIP: :types',
                     'zip-drop-hint'       => 'Click or drag & drop a ZIP file here',
                     'images-directory'    => 'Path',

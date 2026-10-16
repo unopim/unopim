@@ -1583,7 +1583,7 @@ return [
                     'zip-upload-or'       => 'tai lataa ZIP-tiedosto kuvista ja asiakirjoista',
                     'zip-click-upload'    => 'Napsauta ladataksesi ZIP-tiedoston kuvista ja asiakirjoista',
                     'zip-files-extracted' => 'tiedostoa purettu',
-                    'zip-files-skipped'   => 'tiedostoa ohitettu (tukematon tyyppi, virheellinen sisältö tai liian suuri):',
+                    'zip-files-skipped'   => ':skipped (tukematon tyyppi, virheellinen sisältö tai liian suuri):',
                     'zip-accepted-types'  => 'Hyväksytty ZIP-tiedostossa: :types',
                     'zip-drop-hint'       => 'Napsauta tai vedä ja pudota ZIP-tiedosto tähän',
                     'file-upload-info'    => 'CSV, XLSX, JSON (ENINT. 2 Mt)',

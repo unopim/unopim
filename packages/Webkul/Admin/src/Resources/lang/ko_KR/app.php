@@ -1584,7 +1584,7 @@ return [
                     'zip-upload-or'       => '또는 이미지 및 문서 ZIP 업로드',
                     'zip-click-upload'    => '클릭하여 이미지 및 문서 ZIP 업로드',
                     'zip-files-extracted' => '파일이 추출되었습니다',
-                    'zip-files-skipped'   => '개 파일 건너뜀(지원되지 않는 형식, 잘못된 내용 또는 너무 큰 파일):',
+                    'zip-files-skipped'   => ':skipped(지원되지 않는 형식, 잘못된 내용 또는 너무 큰 파일):',
                     'zip-accepted-types'  => 'ZIP에서 허용됨: :types',
                     'zip-drop-hint'       => '여기에 ZIP 파일을 클릭하거나 드래그 앤 드롭하세요',
                     'file-upload-info'    => 'CSV, XLSX, JSON (최대 2MB)',
