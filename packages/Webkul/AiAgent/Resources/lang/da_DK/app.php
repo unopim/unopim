@@ -29,6 +29,7 @@ return [
     ],
 
     'common' => [
+        'invalid-data'                  => 'De angivne data er ugyldige eller overskrider de tilladte grænser.',
         'yes'                           => 'Ja',
         'no'                            => 'Nej',
         'save'                          => 'Gem',

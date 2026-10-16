@@ -29,6 +29,7 @@ return [
     ],
 
     'common' => [
+        'invalid-data'                  => 'Angivna data är ogiltiga eller överskrider tillåtna gränser.',
         'yes'                           => 'Ja',
         'no'                            => 'Nej',
         'save'                          => 'Spara',

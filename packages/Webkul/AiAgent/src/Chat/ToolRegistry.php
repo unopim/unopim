@@ -20,8 +20,17 @@ class ToolRegistry
     /** @var array<class-string<PimTool>, PimTool> */
     protected array $tools = [];
 
+    /** @var list<callable(Tool, ChatContext, array{name: string, group: string, write: bool, permission: ?string, guidance: ?string}): Tool> */
+    protected array $decorators = [];
+
     /** @var array<class-string<PimTool>, array{name: string, group: string, write: bool, permission: ?string, guidance: ?string}> */
     protected array $metadata = [];
+
+    /** @param callable(Tool, ChatContext, array{name: string, group: string, write: bool, permission: ?string, guidance: ?string}): Tool $decorator */
+    public function decorate(callable $decorator): void
+    {
+        $this->decorators[] = $decorator;
+    }
 
     /**
      * Register a PIM tool with optional metadata (name, group, write,
@@ -170,7 +179,17 @@ class ToolRegistry
                 continue;
             }
 
-            $built[] = $tool->register($context);
+            $registered = $tool->register($context);
+
+            foreach ($this->decorators as $decorator) {
+                $registered = $decorator($registered, $context, $this->metadata[$class]);
+
+                if (! $registered instanceof Tool) {
+                    throw new \UnexpectedValueException(sprintf('Decorator for tool "%s" must return %s; received %s.', $this->metadata[$class]['name'], Tool::class, get_debug_type($registered)));
+                }
+            }
+
+            $built[] = $registered;
         }
 
         return $built;
