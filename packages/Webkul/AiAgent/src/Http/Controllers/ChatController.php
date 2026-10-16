@@ -198,9 +198,6 @@ class ChatController extends Controller
             uploadedFilePaths: $filePaths,
             currentPage: $context['current_page'] ?? null,
             user: auth()->guard('admin')->user(),
-            conversationId: $request->conversationId(),
-            requestId: $request->validated('request_id'),
-            hasNewImages: $request->hasFile('images'),
             extensions: $request->validated('extensions') ?? [],
         );
     }
@@ -293,8 +290,13 @@ class ChatController extends Controller
     protected function resolvePlatform(int $platformId): ?MagicAIPlatform
     {
         if ($platformId < 0) {
-            return app(ExtensionRegistry::class)->resolve($platformId);
+            $platform = app(ExtensionRegistry::class)->resolve($platformId);
+
+            if ($platform) {
+                return $platform;
+            }
         }
+
         if ($platformId > 0) {
             $platform = $this->platformRepository->find($platformId);
 
