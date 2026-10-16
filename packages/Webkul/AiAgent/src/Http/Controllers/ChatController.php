@@ -293,8 +293,13 @@ class ChatController extends Controller
     protected function resolvePlatform(int $platformId): ?MagicAIPlatform
     {
         if ($platformId < 0) {
-            return app(ExtensionRegistry::class)->resolve($platformId);
+            $platform = app(ExtensionRegistry::class)->resolve($platformId);
+
+            if ($platform) {
+                return $platform;
+            }
         }
+
         if ($platformId > 0) {
             $platform = $this->platformRepository->find($platformId);
 
