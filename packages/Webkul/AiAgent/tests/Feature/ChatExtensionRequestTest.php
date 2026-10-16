@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 use Webkul\AiAgent\Http\Requests\ChatRequest;
 use Webkul\User\Models\Admin;
 use Webkul\User\Models\Role;
@@ -41,6 +42,14 @@ it('does not silently discard invalid JSON or scalar extension data', function (
     $this->postJson('/_test/chat-extensions', ['message' => 'Preview', 'extensions' => $value])
         ->assertUnprocessable()->assertJsonValidationErrors('extensions');
 })->with(['{broken', 'null', '"string"', 'false']);
+
+it('validates a logical request identity for saved conversations', function () {
+    $id = (string) Str::uuid();
+    $this->postJson('/_test/chat-extensions', ['message' => 'Preview', 'request_id' => $id, 'conversation_id' => 'session_42'])
+        ->assertOk()->assertJsonPath('request_id', $id)->assertJsonPath('conversation_id', 'session_42');
+    $this->postJson('/_test/chat-extensions', ['message' => 'Preview', 'request_id' => 'invalid'])
+        ->assertUnprocessable()->assertJsonValidationErrors('request_id');
+});
 
 it('rejects extension namespaces the composer registry could never register', function (array $value, bool $json) {
     $this->postJson('/_test/chat-extensions', ['message' => 'Preview', 'extensions' => $json ? json_encode($value) : $value])

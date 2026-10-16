@@ -63,7 +63,6 @@ it('delivers completed tool references before an observer can interrupt the stre
         expect($output)->toContain('event: complete')->not->toContain('event: error');
     }
 
-    // Exercise real owner-scoped persistence independently of browser storage.
     $this->actingAs($admin, 'admin');
     $saved = $this->postJson(route('ai-agent.conversations.store'), [
         'conversation_id' => 'history-fixture', 'title' => 'Saved result',
