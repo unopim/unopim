@@ -224,6 +224,55 @@ it('serves a group of fields scoped to the requested channel and locale', functi
     expect($html)->toContain('values[channel_locale_specific]['.$channel->code.'][fr_FR]['.$scoped->code.']');
 });
 
+it('builds the loader endpoint from the codes it is given, not from the request', function () {
+    $this->loginAsAdmin();
+
+    request()->merge(['channel' => 'default', 'locale' => 'en_US']);
+
+    $html = view('admin::catalog.products.edit.attribute-group-loader', [
+        'productId'   => 7,
+        'nextGroupId' => 3,
+        'channelCode' => 'print',
+        'localeCode'  => 'fr_FR',
+    ])->render();
+
+    expect($html)->toContain(e(route('admin.catalog.products.attribute_group_fields', [
+        'id'      => 7,
+        'groupId' => '__group__',
+        'channel' => 'print',
+        'locale'  => 'fr_FR',
+    ])))->not->toContain('locale=en_US');
+});
+
+it('hands the loader the channel\'s own locale when the requested one is not in the channel', function () {
+    $this->loginAsAdmin();
+
+    config(['product_editor.lazy_group_threshold' => 5]);
+
+    Locale::where('code', 'fr_FR')->update(['status' => 1]);
+
+    $channel = Channel::factory()->create();
+
+    $channel->locales()->sync([Locale::where('code', 'fr_FR')->value('id')]);
+
+    $product = Product::factory()->create([
+        'type'                => ProductType::Simple->value,
+        'attribute_family_id' => familyWithGroups(4, 3, 'outside')->id,
+    ]);
+
+    $this->followingRedirects()
+        ->get(route('admin.catalog.products.edit', ['id' => $product->id, 'channel' => $channel->code, 'locale' => 'en_US']))
+        ->assertOk()
+        ->assertSee('v-product-attribute-group-loader', false)
+        ->assertSee(route('admin.catalog.products.attribute_group_fields', [
+            'id'      => $product->id,
+            'groupId' => '__group__',
+            'channel' => $channel->code,
+            'locale'  => 'fr_FR',
+        ]))
+        ->assertDontSee('locale=en_US', false);
+});
+
 it('does not render the scroll loader for a small family', function () {
     $this->loginAsAdmin();
 
