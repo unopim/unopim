@@ -99,6 +99,23 @@ return [
         'republished'                 => '版本已重新發布。',
         'republish-invalid'           => '此版本無法重新發布。',
         'republish-noop'              => '此版本已是目前版本。',
+        'releases'                    => [
+            'title'        => 'Releases',
+            'release'      => 'Release',
+            'published-at' => 'Published at',
+            'published-by' => 'Published by',
+            'locales'      => 'Locales',
+            'none'         => 'No releases yet.',
+        ],
+        'carrier' => [
+            'issue'        => 'Issue QR code',
+            'not-issuable' => 'A QR code can only be issued for a published passport.',
+            'title'        => 'Issued QR codes',
+            'issued-at'    => 'Issued at',
+            'issued-by'    => 'Issued by',
+            'target'       => 'Encoded link',
+            'none'         => 'No QR codes have been issued yet.',
+        ],
         'versions'                    => [
             'title'         => '護照版本歷程',
             'subtitle'      => 'SKU :sku · 通路 :channel',

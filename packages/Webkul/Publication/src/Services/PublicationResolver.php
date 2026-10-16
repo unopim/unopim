@@ -5,6 +5,7 @@ namespace Webkul\Publication\Services;
 use Illuminate\Support\Facades\Log;
 use Webkul\Publication\Models\Publication;
 use Webkul\Publication\Models\PublicationProxy;
+use Webkul\Publication\Models\PublicationRelease;
 use Webkul\Publication\Models\PublicationVersion;
 
 class PublicationResolver
@@ -71,15 +72,33 @@ class PublicationResolver
     }
 
     /**
+     * Finds one release of the publication by its per-publication sequence.
+     */
+    public function findRelease(Publication $publication, int $sequence): ?PublicationRelease
+    {
+        return $publication->releases()->where('sequence', $sequence)->first();
+    }
+
+    /**
      * Resolves the best-match current version by explicit locale, falling back to Accept-Language preference.
      */
     public function resolveVersion(Publication $publication, ?string $localeCode, ?string $acceptLanguage): ?PublicationVersion
     {
-        $currentByLocale = $publication->versions->keyBy(fn (PublicationVersion $version): string => $version->locale->code);
+        return $this->pickVersion($publication, $publication->versions, $localeCode, $acceptLanguage);
+    }
+
+    /**
+     * The same locale negotiation over any set of versions, one per locale (e.g. a release's `versionsAsOf()`).
+     *
+     * @param  iterable<PublicationVersion>  $versions
+     */
+    public function pickVersion(Publication $publication, iterable $versions, ?string $localeCode, ?string $acceptLanguage): ?PublicationVersion
+    {
+        $byLocale = collect($versions)->keyBy(fn (PublicationVersion $version): string => $version->locale->code);
 
         foreach ($this->localePreference($publication, $localeCode, $acceptLanguage) as $code) {
-            if ($currentByLocale->has($code)) {
-                return $currentByLocale->get($code);
+            if ($byLocale->has($code)) {
+                return $byLocale->get($code);
             }
         }
 

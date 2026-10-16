@@ -51,5 +51,11 @@ return [
             'heading' => 'このパスポートは現在利用できません。',
             'notice'  => 'この記録は透明性のために保持されていますが、現在は積極的に更新されていません。',
         ],
+        'release' => [
+            'banner'       => 'Release :sequence of this passport',
+            'superseded'   => 'This is an earlier state of the passport, kept exactly as it was published. A newer state exists.',
+            'current'      => 'This is the current state of the passport.',
+            'view-current' => 'View the current passport',
+        ],
     ],
 ];
