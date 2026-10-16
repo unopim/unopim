@@ -14,9 +14,12 @@ use Webkul\MagicAI\Models\MagicAIPlatform;
  *
  * @phpstan-type ProviderOption array{label: string, id?: int, provider?: string, models?: list<string>, is_default?: bool, hide_single_model?: bool}
  * @phpstan-type ComposerRegistration array{key: string, component: string, view: string}
+ * @phpstan-type CapabilityPresentation array{description?: string, extension_event?: string|null}
  */
 class ExtensionRegistry
 {
+    public const COMPOSER_REFERENCES = 2;
+
     /** Namespace pattern shared by composer keys and the chat request's extension selections. */
     public const NAMESPACE_PATTERN = '/^[a-z][a-z0-9._-]{0,63}$/D';
 
@@ -25,6 +28,9 @@ class ExtensionRegistry
 
     /** @var array<string, ComposerRegistration> */
     private array $composers = [];
+
+    /** @var array<string, CapabilityPresentation> */
+    private array $capabilities = [];
 
     /**
      * Register a lazy provider; the negative ID overrides any ID in its display options.
@@ -47,6 +53,12 @@ class ExtensionRegistry
         return isset($this->providers[$id]) ? ($this->providers[$id]['resolve'])() : null;
     }
 
+    /** @return list<ProviderOption> */
+    public function options(): array
+    {
+        return array_values(array_map(fn ($entry) => $entry['option'], $this->providers));
+    }
+
     /** Register trusted component/view names under a validated composer key. */
     public function composer(string $key, string $component, string $view): void
     {
@@ -62,5 +74,21 @@ class ExtensionRegistry
     public function composers(): array
     {
         return array_values($this->composers);
+    }
+
+    /** @param CapabilityPresentation $presentation */
+    public function capability(string $key, array $presentation): void
+    {
+        if (! preg_match('/^[a-z][a-z0-9._-]{0,63}$/D', $key)) {
+            throw new \InvalidArgumentException('Invalid capability registration.');
+        }
+
+        $this->capabilities[$key] = $presentation;
+    }
+
+    /** @return array<string, CapabilityPresentation> */
+    public function capabilities(): array
+    {
+        return $this->capabilities;
     }
 }
