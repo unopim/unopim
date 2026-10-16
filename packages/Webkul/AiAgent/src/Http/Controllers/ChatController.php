@@ -12,6 +12,7 @@ use Webkul\AiAgent\Chat\AgentRunner;
 use Webkul\AiAgent\Chat\AiErrorResolver;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\ChatUploadStore;
+use Webkul\AiAgent\Chat\ExtensionRegistry;
 use Webkul\AiAgent\Http\Requests\ChatRequest;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
@@ -197,6 +198,7 @@ class ChatController extends Controller
             uploadedFilePaths: $filePaths,
             currentPage: $context['current_page'] ?? null,
             user: auth()->guard('admin')->user(),
+            extensions: $request->validated('extensions') ?? [],
         );
     }
 
@@ -287,6 +289,14 @@ class ChatController extends Controller
      */
     protected function resolvePlatform(int $platformId): ?MagicAIPlatform
     {
+        if ($platformId < 0) {
+            $platform = app(ExtensionRegistry::class)->resolve($platformId);
+
+            if ($platform) {
+                return $platform;
+            }
+        }
+
         if ($platformId > 0) {
             $platform = $this->platformRepository->find($platformId);
 

@@ -5,6 +5,8 @@ namespace Webkul\AiAgent\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Number;
+use JsonException;
+use Webkul\AiAgent\Rules\BoundedJson;
 
 class ChatRequest extends FormRequest
 {
@@ -41,6 +43,8 @@ class ChatRequest extends FormRequest
             }],
             'platform_id'     => ['nullable', 'integer'],
             'model'           => ['nullable', 'string', 'max:200'],
+            'extensions'      => ['nullable', 'array', 'max:10', new BoundedJson],
+            'extensions.*'    => ['array'],
             'context'         => ['nullable', 'array'],
             'history'         => ['nullable', 'array'],
             'conversation_id' => ['nullable', 'string', 'max:64', 'regex:/^[A-Za-z0-9_-]+$/'],
@@ -81,6 +85,20 @@ class ChatRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
+        if (is_string($this->input('extensions'))) {
+            $extensions = $this->input('extensions');
+
+            if (strlen($extensions) <= 16384) {
+                try {
+                    $decoded = json_decode($extensions, true, 10, JSON_THROW_ON_ERROR);
+
+                    if (is_array($decoded)) {
+                        $this->merge(['extensions' => $decoded]);
+                    }
+                } catch (JsonException) {
+                }
+            }
+        }
         if (is_string($this->input('history'))) {
             $this->merge(['history' => json_decode($this->input('history'), true) ?: []]);
         }

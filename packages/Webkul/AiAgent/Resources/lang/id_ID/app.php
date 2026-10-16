@@ -29,6 +29,7 @@ return [
     ],
 
     'common' => [
+        'invalid-data'                  => 'Data yang diberikan tidak valid atau melebihi batas yang diizinkan.',
         'yes'                           => 'Ya',
         'no'                            => 'Tidak',
         'save'                          => 'Simpan',

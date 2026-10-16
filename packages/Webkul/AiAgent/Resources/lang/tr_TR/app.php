@@ -29,6 +29,7 @@ return [
     ],
 
     'common' => [
+        'invalid-data'                  => 'Sağlanan veriler geçersiz veya izin verilen sınırları aşıyor.',
         'yes'                           => 'Evet',
         'no'                            => 'Hayır',
         'save'                          => 'Kaydet',
