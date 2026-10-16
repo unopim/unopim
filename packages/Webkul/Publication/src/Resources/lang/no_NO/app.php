@@ -51,5 +51,11 @@ return [
             'heading' => 'Dette passet er ikke lenger tilgjengelig.',
             'notice'  => 'Denne posten oppbevares av hensyn til åpenhet, men vedlikeholdes ikke lenger aktivt.',
         ],
+        'release' => [
+            'banner'       => 'Release :sequence of this passport',
+            'superseded'   => 'This is an earlier state of the passport, kept exactly as it was published. A newer state exists.',
+            'current'      => 'This is the current state of the passport.',
+            'view-current' => 'View the current passport',
+        ],
     ],
 ];
