@@ -51,5 +51,11 @@ return [
             'heading' => '이 여권 정보는 더 이상 제공되지 않습니다.',
             'notice'  => '이 기록은 투명성을 위해 보존되지만 더 이상 적극적으로 관리되지 않습니다.',
         ],
+        'release' => [
+            'banner'       => 'Release :sequence of this passport',
+            'superseded'   => 'This is an earlier state of the passport, kept exactly as it was published. A newer state exists.',
+            'current'      => 'This is the current state of the passport.',
+            'view-current' => 'View the current passport',
+        ],
     ],
 ];

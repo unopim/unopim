@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Webkul\Publication\Console\RevokePublicationGtinCommand;
+use Webkul\Publication\Contracts\LotReleaseResolver;
 use Webkul\Publication\DataTransferObjects\PublicationType;
 use Webkul\Publication\Events\PublicationPublished;
 use Webkul\Publication\Events\PublicationRedacted;
@@ -29,14 +31,20 @@ use Webkul\Publication\Listeners\SyncPublicationGtin;
 use Webkul\Publication\Listeners\SyncPublicationVersionDocuments;
 use Webkul\Publication\Registry\PublicationTypeRegistry;
 use Webkul\Publication\Services\Gs1DigitalLink;
+use Webkul\Publication\Services\NullLotReleaseResolver;
 
 class PublicationServiceProvider extends ServiceProvider
 {
     /**
-     * Registers the request-scoped publication type registry.
+     * Registers the request-scoped publication type registry and the default lot resolver.
+     *
+     * The lot resolver is bound with `bindIf` because the engine cannot know which release a lot shipped under:
+     * a consumer with batch or ERP data rebinds it.
      */
     public function register(): void
     {
+        $this->app->bindIf(LotReleaseResolver::class, NullLotReleaseResolver::class);
+
         $this->app->scoped(PublicationTypeRegistry::class);
     }
 
@@ -68,10 +76,17 @@ class PublicationServiceProvider extends ServiceProvider
         Event::listen('core.channel.delete.before', GuardChannelDeletionAgainstPublications::class);
 
         $this->registerPublicRoutes();
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([RevokePublicationGtinCommand::class]);
+        }
     }
 
     /**
      * Public and idempotent so a consuming provider or a post-boot test can re-trigger registration.
+     *
+     * The GS1 qualifier routes carry a lot (AI 10), a serial (AI 21), or both in that order. The URI grammar only
+     * bounds each segment; the 82-character set and the 1-20 length are enforced in the controller.
      */
     public function registerPublicRoutes(): void
     {
@@ -121,6 +136,19 @@ class PublicationServiceProvider extends ServiceProvider
                         ->defaults('type', $type->code)
                         ->name('publication.public.'.$type->code.'.carrier.svg');
 
+                    // Four segments with a literal `r`, so it can never shadow the two-segment routes above.
+                    // `sequence` is bounded to a positive int that fits the column; anything else 404s at the router.
+                    // Entry point a printed release carrier encodes: negotiates the locale once, then 302s to the strict URL.
+                    Route::get('/{uuid}/r/{sequence}', [PublicationController::class, 'redirectRelease'])
+                        ->where('sequence', '[1-9][0-9]{0,9}')
+                        ->defaults('type', $type->code)
+                        ->name('publication.public.'.$type->code.'.show.release.entry');
+
+                    Route::get('/{uuid}/r/{sequence}/{locale}', [PublicationController::class, 'showRelease'])
+                        ->where('sequence', '[1-9][0-9]{0,9}')
+                        ->defaults('type', $type->code)
+                        ->name('publication.public.'.$type->code.'.show.release');
+
                     Route::get('/{uuid}/{locale}', [PublicationController::class, 'show'])
                         ->defaults('type', $type->code)
                         ->name('publication.public.'.$type->code.'.show.locale');
@@ -135,6 +163,13 @@ class PublicationServiceProvider extends ServiceProvider
                     ->where('gtin', Gs1DigitalLink::GTIN_PATTERN)
                     ->defaults('type', 'dpp')
                     ->name('publication.public.gs1');
+
+                foreach (['/01/{gtin}/10/{lot}' => 'gs1.lot', '/01/{gtin}/21/{serial}' => 'gs1.serial', '/01/{gtin}/10/{lot}/21/{serial}' => 'gs1.lot.serial'] as $uri => $name) {
+                    Route::get($uri, [PublicationController::class, 'resolveByGtinQualified'])
+                        ->where(['gtin' => Gs1DigitalLink::GTIN_PATTERN, 'lot' => '[^\/]{1,80}', 'serial' => '[^\/]{1,80}'])
+                        ->defaults('type', 'dpp')
+                        ->name('publication.public.'.$name);
+                }
             });
 
         // A late re-invocation needs an explicit refresh, or route() throws despite the routes matching requests fine.

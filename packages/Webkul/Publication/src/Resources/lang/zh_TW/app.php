@@ -51,5 +51,11 @@ return [
             'heading' => '此護照資訊已不再提供。',
             'notice'  => '此記錄基於透明度予以保留,但已不再主動維護。',
         ],
+        'release' => [
+            'banner'       => 'Release :sequence of this passport',
+            'superseded'   => 'This is an earlier state of the passport, kept exactly as it was published. A newer state exists.',
+            'current'      => 'This is the current state of the passport.',
+            'view-current' => 'View the current passport',
+        ],
     ],
 ];
