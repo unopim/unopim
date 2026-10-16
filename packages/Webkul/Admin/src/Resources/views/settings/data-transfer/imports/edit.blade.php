@@ -384,8 +384,8 @@
                             <div v-if="!selectedFile">
                                 <span class="icon-upload text-4xl text-gray-300 dark:text-gray-600 mb-2 block"></span>
                                 <p class="text-sm text-gray-600 dark:text-gray-300">@{{ dropHintLabel }}</p>
-                                <p class="text-xs text-gray-400 mt-1">.zip</p>
-                                <p class="text-xs text-gray-400 mt-1">@{{ acceptedTypesLabel }}</p>
+                                <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">.zip</p>
+                                <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">@{{ acceptedTypesLabel }}</p>
                             </div>
 
                             <div v-else>

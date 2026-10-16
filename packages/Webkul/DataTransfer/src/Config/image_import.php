@@ -18,7 +18,7 @@ return [
     'max_compression_ratio' => env('IMAGE_IMPORT_MAX_COMPRESSION_RATIO', 100),
 
     'allowed_extensions' => [
-        'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tif', 'tiff', 'jfif', 'jif',
+        'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tif', 'tiff', 'jfif', 'jif', 'psd',
         'pdf', 'doc', 'docx', 'ppt', 'pptx', 'rtf', 'txt', 'csv',
         'mp3', 'wav',
     ],

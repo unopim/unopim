@@ -4,6 +4,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Webkul\Attribute\Models\Attribute;
+use Webkul\Core\Rules\FileOrImageValidValue;
 use Webkul\DataTransfer\Helpers\Error;
 use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Helpers\Importers\FieldProcessor;
@@ -136,6 +137,23 @@ it('only extracts the extensions listed in the image import configuration', func
         ->and(Storage::disk('public')->exists($path.'/datasheet.pdf'))->toBeFalse();
 
     Storage::disk('public')->deleteDirectory($path);
+});
+
+it('keeps the allowed extensions in sync with attribute validator extensions minus svg', function () {
+    $expected = array_values(array_diff(
+        array_unique(array_merge(
+            FileOrImageValidValue::FILE_ALLOWED_EXTENSION,
+            FileOrImageValidValue::IMAGE_ALLOWED_EXTENSIONS,
+        )),
+        ['svg']
+    ));
+
+    $actual = array_values(config('image_import.allowed_extensions'));
+
+    sort($expected);
+    sort($actual);
+
+    expect($actual)->toBe($expected);
 });
 
 it('extracts every attribute-supported document, image and audio format', function () use ($minimalPdf, $onePixelPng) {
