@@ -55,8 +55,17 @@ _wait_for_elasticsearch() {
 
     echo "→ Waiting for Elasticsearch at ${url}..."
 
+    # A secured cluster answers 401 without credentials and 403 to a user
+    # without cluster privileges on /_cluster/health. GET / needs only the
+    # cluster:monitor/main action, which a least-privilege user can have, so
+    # probe that, with the same credentials the app will use.
+    local -a auth=()
+    if [ -n "${ELASTICSEARCH_USER:-}" ]; then
+        auth=(-u "${ELASTICSEARCH_USER}:${ELASTICSEARCH_PASS:-}")
+    fi
+
     for _ in $(seq 1 30); do
-        if curl -fsS "${url}/_cluster/health?wait_for_status=yellow&timeout=5s" >/dev/null 2>&1; then
+        if curl -fsS "${auth[@]}" "${url}/" >/dev/null 2>&1; then
             return 0
         fi
 
