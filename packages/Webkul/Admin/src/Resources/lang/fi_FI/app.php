@@ -1580,9 +1580,11 @@ return [
                     'zip-upload-success'  => 'ZIP ladattu ja purettu onnistuneesti.',
                     'zip-upload-error'    => 'ZIP-lataus epäonnistui. Yritä uudelleen.',
                     'invalid-zip'         => 'Ladattu tiedosto ei ole kelvollinen ZIP-arkisto.',
-                    'zip-upload-or'       => 'tai lataa ZIP-tiedosto kuvista',
-                    'zip-click-upload'    => 'Napsauta ladataksesi ZIP-tiedoston kuvista',
+                    'zip-upload-or'       => 'tai lataa ZIP-tiedosto kuvista ja asiakirjoista',
+                    'zip-click-upload'    => 'Napsauta ladataksesi ZIP-tiedoston kuvista ja asiakirjoista',
                     'zip-files-extracted' => 'tiedostoa purettu',
+                    'zip-files-skipped'   => ':skipped (tukematon tyyppi, virheellinen sisältö tai liian suuri):',
+                    'zip-accepted-types'  => 'Hyväksytty ZIP-tiedostossa: :types',
                     'zip-drop-hint'       => 'Napsauta tai vedä ja pudota ZIP-tiedosto tähän',
                     'file-upload-info'    => 'CSV, XLSX, JSON (ENINT. 2 Mt)',
                     'images-directory'    => 'Polku',
@@ -1704,6 +1706,9 @@ return [
                 'setup-queue-error'          => 'Vaihda jono-ajuri "tietokannaksi" tai "redisiksi", jotta voit aloittaa tuontiprosessin.',
                 'update-success'             => 'Tuonti päivitettiin onnistuneesti.',
                 'zip-upload-success'         => 'ZIP ladattu ja purettu onnistuneesti.',
+                'zip-extracted-count'        => '{1} :count tiedosto purettu|[0,*] :count tiedostoa purettu',
+                'zip-skipped-count'          => '{1} :count ohitettu|[0,*] :count ohitettu',
+                'zip-upload-partial'         => 'ZIP ladattu. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [
