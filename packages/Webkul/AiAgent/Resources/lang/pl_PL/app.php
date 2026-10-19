@@ -29,6 +29,8 @@ return [
     ],
 
     'common' => [
+        'invalid-data'                  => 'Podane dane są nieprawidłowe lub przekraczają dozwolone limity.',
+        'conversation-not-found'        => 'Nie znaleziono rozmowy.',
         'yes'                           => 'Tak',
         'no'                            => 'Nie',
         'save'                          => 'Zapisz',
