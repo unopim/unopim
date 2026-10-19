@@ -42,7 +42,7 @@
         "predis/predis": "^3.4",
         "prettus/l5-repository": "^4.0",
         "pusher/pusher-php-server": "^7.0",
-        "shetabit/visitor": "^4.1",
+        "shetabit/visitor": "^5.0",
         "symfony/intl": "^7.0"
     },
     "require-dev": {
