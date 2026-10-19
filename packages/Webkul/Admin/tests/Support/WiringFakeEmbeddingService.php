@@ -3,10 +3,11 @@
 namespace Webkul\Admin\Tests\Support;
 
 use Webkul\AiAgent\Services\EmbeddingSimilarityService;
+use Webkul\MagicAI\Models\MagicAIPlatform;
 
 /**
  * Deterministic embedding stand-in: rankProducts() returns preset kNN hits,
- * rank() scores documents by needle match so pruning order is predictable.
+ * rankOrFail() scores documents by needle match so pruning order is predictable.
  */
 class WiringFakeEmbeddingService extends EmbeddingSimilarityService
 {
@@ -20,7 +21,12 @@ class WiringFakeEmbeddingService extends EmbeddingSimilarityService
         return array_slice($this->knnHits, 0, $limit ?? 10);
     }
 
-    public function rank(string $query, array $documents, ?int $limit = null): array
+    public function resolvePlatform(?MagicAIPlatform $preferred = null, ?int $dimensions = null): ?MagicAIPlatform
+    {
+        return $preferred;
+    }
+
+    public function rankOrFail(string $query, array $documents, ?int $limit = null, ?MagicAIPlatform $platform = null): array
     {
         $scores = [];
 

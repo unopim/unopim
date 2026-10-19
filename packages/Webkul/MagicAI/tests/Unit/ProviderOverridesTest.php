@@ -1,5 +1,6 @@
 <?php
 
+use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Services\ProviderOverrides;
 
 it('decodes a JSON string into an array', function () {
@@ -41,4 +42,25 @@ it('merges extras over the base without letting them redefine the platform url o
 
 it('returns the base untouched when extras decode to nothing', function () {
     expect(ProviderOverrides::build(['key' => 'sk-real'], null))->toBe(['key' => 'sk-real']);
+});
+
+it('builds platform overrides from its key, url and extras', function () {
+    $platform = new MagicAIPlatform([
+        'provider' => 'azure',
+        'api_key'  => 'sk-real',
+        'api_url'  => 'https://example.openai.azure.com',
+        'extras'   => ['url' => 'http://127.0.0.1', 'embedding_deployment' => 'embed-large'],
+    ]);
+
+    expect($platform->providerOverrides())->toBe([
+        'key'                  => 'sk-real',
+        'url'                  => 'https://example.openai.azure.com',
+        'embedding_deployment' => 'embed-large',
+    ]);
+});
+
+it('leaves the provider default url in place when the platform has none', function () {
+    $platform = new MagicAIPlatform(['provider' => 'openai', 'api_key' => 'sk-real', 'api_url' => null]);
+
+    expect($platform->providerOverrides())->toBe(['key' => 'sk-real']);
 });

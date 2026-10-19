@@ -29,6 +29,7 @@ return [
     ],
 
     'common' => [
+        'invalid-data'                  => 'De opgegeven gegevens zijn ongeldig of overschrijden de toegestane limieten.',
         'yes'                           => 'Ja',
         'no'                            => 'Nee',
         'save'                          => 'Opslaan',

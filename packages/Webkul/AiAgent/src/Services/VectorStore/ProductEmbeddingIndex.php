@@ -60,11 +60,12 @@ class ProductEmbeddingIndex
     {
         return [
             'properties' => [
-                'product_id'          => ['type' => 'long'],
-                'sku'                 => ['type' => 'keyword'],
-                'attribute_family_id' => ['type' => 'long'],
-                'content_hash'        => ['type' => 'keyword'],
-                'updated_at'          => ['type' => 'date'],
+                'product_id'            => ['type' => 'long'],
+                'sku'                   => ['type' => 'keyword'],
+                'attribute_family_id'   => ['type' => 'long'],
+                'content_hash'          => ['type' => 'keyword'],
+                'embedding_fingerprint' => ['type' => 'keyword'],
+                'updated_at'            => ['type' => 'date'],
 
                 self::VECTOR_FIELD => [
                     'type'       => 'dense_vector',
@@ -104,7 +105,7 @@ class ProductEmbeddingIndex
     /**
      * Bulk upsert embedding documents keyed by product id.
      *
-     * @param  array<int, array{product_id: int, sku: ?string, content_hash: string, embedding: array<int, float>}>  $documents
+     * @param  array<int, array{product_id: int, sku: ?string, content_hash: string, embedding_fingerprint?: string, embedding: array<int, float>}>  $documents
      * @return array<int, int> product ids that failed to index
      */
     public function bulkUpsert(array $documents): array
@@ -124,12 +125,13 @@ class ProductEmbeddingIndex
             ];
 
             $payload['body'][] = [
-                'product_id'          => (int) $document['product_id'],
-                'sku'                 => $document['sku'],
-                'attribute_family_id' => isset($document['attribute_family_id']) ? (int) $document['attribute_family_id'] : null,
-                'content_hash'        => $document['content_hash'],
-                'updated_at'          => now()->toIso8601String(),
-                self::VECTOR_FIELD    => $document['embedding'],
+                'product_id'            => (int) $document['product_id'],
+                'sku'                   => $document['sku'],
+                'attribute_family_id'   => isset($document['attribute_family_id']) ? (int) $document['attribute_family_id'] : null,
+                'content_hash'          => $document['content_hash'],
+                'embedding_fingerprint' => $document['embedding_fingerprint'] ?? null,
+                'updated_at'            => now()->toIso8601String(),
+                self::VECTOR_FIELD      => $document['embedding'],
             ];
         }
 
@@ -216,12 +218,13 @@ class ProductEmbeddingIndex
 
     /**
      * Run a bounded kNN search against the stored product embeddings,
-     * optionally restricted to one attribute family.
+     * optionally restricted to one attribute family and to vectors produced
+     * by one embedding model.
      *
      * @param  array<int, float|int>  $queryVector
      * @return array<int, array{product_id: int, score: float}> sorted by score descending
      */
-    public function searchSimilar(array $queryVector, int $limit, ?int $attributeFamilyId = null): array
+    public function searchSimilar(array $queryVector, int $limit, ?int $attributeFamilyId = null, ?string $embeddingFingerprint = null): array
     {
         $k = min(max(1, $limit), max(1, (int) config('ai-agent.vector_store.knn.max_results', 50)));
 
@@ -232,10 +235,13 @@ class ProductEmbeddingIndex
             'num_candidates' => max($k, (int) config('ai-agent.vector_store.knn.num_candidates', 100)),
         ];
 
-        if ($attributeFamilyId !== null) {
-            $knn['filter'] = [
-                'term' => ['attribute_family_id' => $attributeFamilyId],
-            ];
+        $filters = array_values(array_filter([
+            $attributeFamilyId !== null ? ['term' => ['attribute_family_id' => $attributeFamilyId]] : null,
+            $embeddingFingerprint !== null ? ['term' => ['embedding_fingerprint' => $embeddingFingerprint]] : null,
+        ]));
+
+        if ($filters !== []) {
+            $knn['filter'] = count($filters) === 1 ? $filters[0] : ['bool' => ['filter' => $filters]];
         }
 
         $response = ElasticSearch::search([

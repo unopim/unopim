@@ -29,6 +29,7 @@ return [
     ],
 
     'common' => [
+        'invalid-data'                  => 'Les dades proporcionades no són vàlides o superen els límits permesos.',
         'yes'                           => 'Sí',
         'no'                            => 'No',
         'save'                          => 'Desar',
