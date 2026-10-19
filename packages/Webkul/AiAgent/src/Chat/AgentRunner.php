@@ -20,7 +20,6 @@ use Webkul\AiAgent\Events\AgentSystemPromptBuilding;
 use Webkul\AiAgent\Events\AgentToolExecuted;
 use Webkul\AiAgent\Services\TokenUsageRecorder;
 use Webkul\MagicAI\Enums\AiProvider;
-use Webkul\MagicAI\Services\ProviderOverrides;
 use Webkul\MagicAI\Services\ScopedProviderConfig;
 
 /**
@@ -315,15 +314,7 @@ class AgentRunner
      */
     protected function providerOverrides(ChatContext $context): array
     {
-        $overrides = [
-            'key' => $context->platform->api_key,
-        ];
-
-        if ($context->platform->api_url) {
-            $overrides['url'] = $context->platform->api_url;
-        }
-
-        return ProviderOverrides::build($overrides, $context->platform->extras);
+        return $context->platform->providerOverrides();
     }
 
     /**
