@@ -244,3 +244,12 @@ it('does not treat unrelated provider errors as an image refusal', function () {
 
     expect(AiErrorResolver::rejectsImageInput($exception))->toBeFalse();
 });
+
+it('replaces the raw JSON body of a failed HTTP request with the provider message', function () {
+    $body = json_encode(['object' => 'error', 'message' => 'Invalid model: mistral-ocr-4-1', 'type' => 'invalid_model', 'code' => '1500']);
+
+    $resolved = AiErrorResolver::resolve(makeRequestException(400, $body));
+
+    expect($resolved['message'])->toBe('HTTP 400: Invalid model: mistral-ocr-4-1')
+        ->and($resolved['message'])->not->toContain('{');
+});

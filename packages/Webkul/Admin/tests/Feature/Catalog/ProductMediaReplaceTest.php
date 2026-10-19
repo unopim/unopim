@@ -400,15 +400,25 @@ describe('channel and locale scopes', function () {
 
         $newChannelCode = $newChannel->code;
 
-        $defaultChannelCode = core()->getDefaultChannel()->code;
+        $defaultChannel = core()->getDefaultChannel();
+
+        $defaultChannelCode = $defaultChannel->code;
 
         [$product, $code] = productWithMediaAttribute('image', ['value_per_channel' => true]);
 
         Storage::fake();
 
-        $defaultUri = route('admin.catalog.products.update', ['id' => $product->id, 'channel' => $defaultChannelCode]);
+        $defaultUri = route('admin.catalog.products.update', [
+            'id'      => $product->id,
+            'channel' => $defaultChannelCode,
+            'locale'  => $defaultChannel->locales->first()->code,
+        ]);
 
-        $otherUri = route('admin.catalog.products.update', ['id' => $product->id, 'channel' => $newChannelCode]);
+        $otherUri = route('admin.catalog.products.update', [
+            'id'      => $product->id,
+            'channel' => $newChannelCode,
+            'locale'  => $newChannel->locales->first()->code,
+        ]);
 
         submitProductForm($defaultUri, ['sku' => $product->sku], [
             'values' => ['channel_specific' => [$defaultChannelCode => [$code => [UploadedFile::fake()->image('default-first.jpg')]]]],
@@ -421,6 +431,9 @@ describe('channel and locale scopes', function () {
         $product->refresh();
 
         $defaultStored = scopedProductValue($product, 'channel_specific', $code, [$defaultChannelCode]);
+
+        expect($defaultStored)->toContain('default-first.jpg')
+            ->and(scopedProductValue($product, 'channel_specific', $code, [$newChannelCode]))->toContain('other-first.jpg');
 
         submitProductForm($otherUri, [
             'sku'    => $product->sku,
