@@ -29,6 +29,7 @@ return [
     ],
 
     'common' => [
+        'invalid-data'                  => 'Hindi wasto ang ibinigay na data o lumampas ito sa mga pinapayagang limitasyon.',
         'yes'                           => 'Oo',
         'no'                            => 'Hindi',
         'save'                          => 'I-save',

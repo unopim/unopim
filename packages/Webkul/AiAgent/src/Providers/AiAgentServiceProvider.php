@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Webkul\AiAgent\Chat\AgentRunner;
+use Webkul\AiAgent\Chat\ExtensionRegistry;
+use Webkul\AiAgent\Chat\ResultRendererRegistry;
 use Webkul\AiAgent\Chat\ToolRegistry;
 use Webkul\AiAgent\Console\Commands\CatalogQualityMonitor;
 use Webkul\AiAgent\Console\Commands\CleanupTempFiles;
@@ -73,6 +75,8 @@ class AiAgentServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->singleton(ExtensionRegistry::class);
+        $this->app->singleton(ResultRendererRegistry::class);
         $this->app->register(ModuleServiceProvider::class);
 
         $this->registerConfig();

@@ -29,6 +29,7 @@ return [
     ],
 
     'common' => [
+        'invalid-data'                  => '提供的数据无效或超出允许的限制。',
         'yes'                           => '是',
         'no'                            => '否',
         'save'                          => '保存',

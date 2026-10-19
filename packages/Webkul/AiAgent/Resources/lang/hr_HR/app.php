@@ -29,6 +29,7 @@ return [
     ],
 
     'common' => [
+        'invalid-data'                  => 'Navedeni podaci nisu valjani ili premašuju dopuštena ograničenja.',
         'yes'                           => 'Da',
         'no'                            => 'Ne',
         'save'                          => 'Spremi',
