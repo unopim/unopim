@@ -150,7 +150,7 @@
                             initial-path="{{ old('images_directory_path', $import->images_directory_path) }}"
                             upload-url="{{ route('admin.settings.data_transfer.imports.upload_images_zip') }}"
                             ls-key="unopim_zip_upload_edit_{{ $import->id }}"
-                            files-extracted-label="@lang('admin::app.settings.data-transfer.imports.create.zip-files-extracted')"
+                            accepted-types-label="@lang('admin::app.settings.data-transfer.imports.create.zip-accepted-types', ['types' => $acceptedArchiveTypes])"
                             upload-error-label="@lang('admin::app.settings.data-transfer.imports.create.zip-upload-error')"
                             placeholder="import-images/my-products"
                             file-info-example="@lang('admin::app.settings.data-transfer.imports.edit.file-info-example')"
@@ -341,7 +341,21 @@
                         <span class="icon-product text-xl text-green-600 dark:text-green-400 shrink-0"></span>
                         <div class="min-w-0">
                             <p class="text-sm font-medium text-green-700 dark:text-green-400 truncate">@{{ uploadedFileName }}</p>
-                            <p class="text-xs text-green-600 dark:text-green-500">@{{ uploadedFilesCount }} @{{ filesExtractedLabel }}</p>
+                            <p class="text-xs text-green-600 dark:text-green-500">@{{ uploadedExtractedLabel ?? uploadedFilesCount }}</p>
+                            <div
+                                v-if="uploadedSkippedCount"
+                                class="text-xs text-warning break-words"
+                            >
+                                <p>@{{ uploadedSkippedLabel ?? uploadedSkippedCount }}</p>
+                                <ul class="list-disc list-inside mt-0.5 space-y-0.5">
+                                    <li v-for="file in uploadedSkippedFiles" :key="file" class="font-mono text-[11px] truncate">
+                                        @{{ file }}
+                                    </li>
+                                    <li v-if="uploadedSkippedCount > uploadedSkippedFiles.length" class="text-gray-400 dark:text-gray-500">
+                                        &hellip;
+                                    </li>
+                                </ul>
+                            </div>
                             <p class="text-xs font-mono text-gray-400 dark:text-gray-500 truncate">storage/app/public/@{{ uploadedPath }}</p>
                         </div>
                     </div>
@@ -376,7 +390,8 @@
                             <div v-if="!selectedFile">
                                 <span class="icon-upload text-4xl text-gray-300 dark:text-gray-600 mb-2 block"></span>
                                 <p class="text-sm text-gray-600 dark:text-gray-300">@{{ dropHintLabel }}</p>
-                                <p class="text-xs text-gray-400 mt-1">.zip</p>
+                                <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">.zip</p>
+                                <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">@{{ acceptedTypesLabel }}</p>
                             </div>
 
                             <div v-else>
@@ -434,7 +449,7 @@
                     'initialPath',
                     'uploadUrl',
                     'lsKey',
-                    'filesExtractedLabel',
+                    'acceptedTypesLabel',
                     'uploadErrorLabel',
                     'placeholder',
                     'fileInfoExample',
@@ -453,6 +468,10 @@
                         uploadedPath:       null,
                         uploadedFileName:   null,
                         uploadedFilesCount: 0,
+                        uploadedSkippedFiles: [],
+                        uploadedSkippedCount: 0,
+                        uploadedExtractedLabel: null,
+                        uploadedSkippedLabel: null,
                     };
                 },
 
@@ -465,6 +484,10 @@
                             this.uploadedPath       = saved.path;
                             this.uploadedFileName   = saved.zip_name ?? '';
                             this.uploadedFilesCount = saved.files_count ?? 0;
+                            this.uploadedSkippedFiles = saved.skipped_files ?? [];
+                            this.uploadedSkippedCount = saved.skipped_count ?? this.uploadedSkippedFiles.length;
+                            this.uploadedExtractedLabel = saved.extracted_label ?? null;
+                            this.uploadedSkippedLabel = saved.skipped_label ?? null;
                         }
                     } catch (e) {}
                 },
@@ -512,12 +535,16 @@
                         this.$axios.post(this.uploadUrl, formData, {
                             headers: { 'Content-Type': 'multipart/form-data' },
                         }).then(response => {
-                            const { path, files_count, zip_name } = response.data;
+                            const { path, files_count, zip_name, skipped_files, skipped_count, extracted_label, skipped_label } = response.data;
 
                             this.currentPath        = path;
                             this.uploadedPath       = path;
                             this.uploadedFileName   = zip_name ?? this.selectedFile.name;
                             this.uploadedFilesCount = files_count ?? 0;
+                            this.uploadedSkippedFiles = skipped_files ?? [];
+                            this.uploadedSkippedCount = skipped_count ?? this.uploadedSkippedFiles.length;
+                            this.uploadedExtractedLabel = extracted_label ?? null;
+                            this.uploadedSkippedLabel = skipped_label ?? null;
                             this.modalUploading     = false;
 
                             try {
@@ -525,6 +552,10 @@
                                     path,
                                     files_count,
                                     zip_name: this.uploadedFileName,
+                                    skipped_files: this.uploadedSkippedFiles,
+                                    skipped_count: this.uploadedSkippedCount,
+                                    extracted_label: this.uploadedExtractedLabel,
+                                    skipped_label: this.uploadedSkippedLabel,
                                 }));
                             } catch (e) {}
 
@@ -545,6 +576,10 @@
                         this.uploadedPath       = null;
                         this.uploadedFileName   = null;
                         this.uploadedFilesCount = 0;
+                        this.uploadedSkippedFiles = [];
+                        this.uploadedSkippedCount = 0;
+                        this.uploadedExtractedLabel = null;
+                        this.uploadedSkippedLabel = null;
 
                         try {
                             localStorage.removeItem(this.lsKey);

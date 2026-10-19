@@ -1580,9 +1580,11 @@ return [
                     'zip-upload-success'  => 'ZIP 上传并解压成功。',
                     'zip-upload-error'    => 'ZIP 上传失败。请重试。',
                     'invalid-zip'         => '上传的文件不是有效的 ZIP 压缩包。',
-                    'zip-upload-or'       => '或上传图片 ZIP 压缩包',
-                    'zip-click-upload'    => '点击上传图片 ZIP 压缩包',
+                    'zip-upload-or'       => '或上传图片和文档 ZIP 压缩包',
+                    'zip-click-upload'    => '点击上传图片和文档 ZIP 压缩包',
                     'zip-files-extracted' => '文件已解压',
+                    'zip-files-skipped'   => ':skipped（不支持的类型、无效内容或文件过大）：',
+                    'zip-accepted-types'  => 'ZIP 中接受的类型：:types',
                     'zip-drop-hint'       => '点击或将ZIP文件拖放至此处',
                     'file-upload-info'    => 'CSV, XLSX, JSON（最大 2MB）',
                     'images-directory'    => '小路',
@@ -1704,6 +1706,9 @@ return [
                 'setup-queue-error'          => '请将您的队列驱动程序更改为“数据库”或“ Redis”以开始导入过程。',
                 'update-success'             => '导入成功更新。',
                 'zip-upload-success'         => 'ZIP 上传并解压成功。',
+                'zip-extracted-count'        => '已解压 :count 个文件',
+                'zip-skipped-count'          => '跳过 :count 个',
+                'zip-upload-partial'         => 'ZIP 已上传。:extracted，:skipped。',
             ],
             'exports' => [
                 'create' => [

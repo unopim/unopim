@@ -1580,9 +1580,11 @@ return [
                     'zip-upload-success'  => 'ZIP téléchargé et extrait avec succès.',
                     'zip-upload-error'    => 'Échec du téléchargement du ZIP. Veuillez réessayer.',
                     'invalid-zip'         => 'Le fichier téléchargé n\'est pas une archive ZIP valide.',
-                    'zip-upload-or'       => 'ou télécharger un ZIP d\'images',
-                    'zip-click-upload'    => 'Cliquer pour télécharger un ZIP d\'images',
+                    'zip-upload-or'       => 'ou télécharger un ZIP d\'images et de documents',
+                    'zip-click-upload'    => 'Cliquer pour télécharger un ZIP d\'images et de documents',
                     'zip-files-extracted' => 'fichiers extraits',
+                    'zip-files-skipped'   => ':skipped (type non pris en charge, contenu invalide ou trop volumineux) :',
+                    'zip-accepted-types'  => 'Accepté dans le ZIP : :types',
                     'zip-drop-hint'       => 'Cliquez ou glissez-déposez un fichier ZIP ici',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MAX. 2 Mo)',
                     'images-directory'    => 'Chemin',
@@ -1704,6 +1706,9 @@ return [
                 'setup-queue-error'          => 'Veuillez modifier le pilote de file d\'attente pour "base de données" ou "redis" afin de démarrer l\'import.',
                 'update-success'             => 'Import mis à jour avec succès.',
                 'zip-upload-success'         => 'ZIP téléchargé et extrait avec succès.',
+                'zip-extracted-count'        => '{1} :count fichier extrait|[0,*] :count fichiers extraits',
+                'zip-skipped-count'          => '{1} :count ignoré|[0,*] :count ignorés',
+                'zip-upload-partial'         => 'ZIP téléchargé. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [
