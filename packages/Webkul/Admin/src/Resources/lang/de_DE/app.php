@@ -1580,9 +1580,11 @@ return [
                     'zip-upload-success'  => 'ZIP erfolgreich hochgeladen und entpackt.',
                     'zip-upload-error'    => 'ZIP-Upload fehlgeschlagen. Bitte versuchen Sie es erneut.',
                     'invalid-zip'         => 'Die hochgeladene Datei ist kein gültiges ZIP-Archiv.',
-                    'zip-upload-or'       => 'oder ein ZIP mit Bildern hochladen',
-                    'zip-click-upload'    => 'Klicken Sie, um ein ZIP mit Bildern hochzuladen',
+                    'zip-upload-or'       => 'oder ein ZIP mit Bildern und Dokumenten hochladen',
+                    'zip-click-upload'    => 'Klicken Sie, um ein ZIP mit Bildern und Dokumenten hochzuladen',
                     'zip-files-extracted' => 'Dateien entpackt',
+                    'zip-files-skipped'   => ':skipped (nicht unterstützter Typ, ungültiger Inhalt oder zu groß):',
+                    'zip-accepted-types'  => 'Im ZIP akzeptiert: :types',
                     'zip-drop-hint'       => 'Klicken oder ZIP-Datei hier ablegen',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MAX. 2MB)',
                     'images-directory'    => 'Pfad',
@@ -1704,6 +1706,9 @@ return [
                 'setup-queue-error'          => 'Bitte ändern Sie Ihren Warteschlangentreiber auf „Datenbank“ oder „Redis“, um den Importvorgang zu starten.',
                 'update-success'             => 'Import erfolgreich aktualisiert.',
                 'zip-upload-success'         => 'ZIP erfolgreich hochgeladen und entpackt.',
+                'zip-extracted-count'        => '{1} :count Datei entpackt|[0,*] :count Dateien entpackt',
+                'zip-skipped-count'          => '{1} :count übersprungen|[0,*] :count übersprungen',
+                'zip-upload-partial'         => 'ZIP hochgeladen. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [

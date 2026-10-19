@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Webkul\MagicAI\Contracts\MagicAIPlatform as MagicAIPlatformContract;
 use Webkul\MagicAI\Database\Factories\MagicAIPlatformFactory;
+use Webkul\MagicAI\Services\ProviderOverrides;
 
 #[Fillable([
     'label',
@@ -76,6 +77,22 @@ class MagicAIPlatform extends Model implements MagicAIPlatformContract
         } catch (DecryptException) {
             return null;
         }
+    }
+
+    /**
+     * The laravel/ai provider config overrides for calls made through this platform.
+     *
+     * @return array<string, mixed>
+     */
+    public function providerOverrides(): array
+    {
+        $overrides = ['key' => $this->api_key];
+
+        if ($this->api_url) {
+            $overrides['url'] = $this->api_url;
+        }
+
+        return ProviderOverrides::build($overrides, $this->extras);
     }
 
     /**

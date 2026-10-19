@@ -3,6 +3,11 @@
 use Webkul\AiAgent\Chat\Tools;
 
 return [
+    'history' => [
+        'enabled'      => filter_var(env('AI_AGENT_HISTORY_ENABLED', false), FILTER_VALIDATE_BOOL),
+        'max_messages' => (int) env('AI_AGENT_HISTORY_MAX_MESSAGES', 500),
+    ],
+
     /**
      * Agent chat tools.
      *
@@ -41,7 +46,7 @@ return [
         Tools\UpdateCategory::class   => ['name' => 'update_category', 'group' => 'taxonomy', 'write' => true, 'permission' => 'catalog.categories.edit', 'enabled' => true],
         Tools\CategoryTree::class     => ['name' => 'category_tree', 'group' => 'taxonomy', 'write' => false, 'permission' => 'catalog.categories', 'enabled' => true],
         Tools\ListAttributes::class   => ['name' => 'list_attributes', 'group' => 'taxonomy', 'write' => false, 'permission' => 'catalog.attributes', 'enabled' => true],
-        Tools\CreateAttribute::class  => ['name' => 'create_attribute', 'group' => 'taxonomy', 'write' => true, 'permission' => 'catalog.attributes', 'enabled' => true],
+        Tools\CreateAttribute::class  => ['name' => 'create_attribute', 'group' => 'taxonomy', 'write' => true, 'permission' => 'catalog.attributes.create', 'enabled' => true],
         Tools\ManageOptions::class    => ['name' => 'manage_attribute_options', 'group' => 'taxonomy', 'write' => true, 'permission' => 'catalog.attributes', 'enabled' => true],
         Tools\ManageFamilies::class   => ['name' => 'manage_families', 'group' => 'taxonomy', 'write' => true, 'permission' => 'catalog.families', 'enabled' => true],
 
