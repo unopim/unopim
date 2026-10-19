@@ -886,13 +886,6 @@ const pickTextModel = (models) => {
     }
     return models[0];
 };
-const chatRequestId = () => {
-    const bytes = crypto.getRandomValues(new Uint8Array(16));
-    bytes[6] = (bytes[6] & 15) | 64;
-    bytes[8] = (bytes[8] & 63) | 128;
-    const hex = Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
-    return `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`;
-};
 
 app.component('v-agenting-pim', {
     template: '#v-agenting-pim-template',
@@ -1356,7 +1349,8 @@ app.component('v-agenting-pim', {
             // Limit stored messages to prevent excessive localStorage usage.
             const recentMessages = this.messages.filter(m => !m.isRedirect).slice(-50);
             const sessionMessages = recentMessages.map(m => ({
-                message_id: m.message_id || null, request_id: m.request_id || null, presentation: m.presentation || null, role: m.role,
+                presentation: m.presentation || null,
+                role: m.role,
                 content: m.content || '',
                 result: m.result || null,
                 product_url: m.product_url || null,
@@ -1565,13 +1559,13 @@ app.component('v-agenting-pim', {
             if (key) delete this.extensionContext[key];
         },
 
-        async send(retryRequestId = null) {
+        async send() {
             const text = this.inputText.trim();
             const files = [...this.pendingFiles];
             const selectedContext = JSON.parse(JSON.stringify(this.extensionContext));
             if (!text && files.length === 0) return;
             // Build user message for display
-            const userMsg = { message_id: chatRequestId(), request_id: typeof retryRequestId === 'string' ? retryRequestId : chatRequestId(), role: 'user', extensions: selectedContext, content: text || (files.length ? '📎 ' + files.map(f => f.name).join(', ') : ''), files: files.map(f => ({ type: f.type, preview: f.preview, name: f.name })) };
+            const userMsg = { role: 'user', extensions: selectedContext, content: text || (files.length ? '📎 ' + files.map(f => f.name).join(', ') : ''), files: files.map(f => ({ type: f.type, preview: f.preview, name: f.name })) };
             this.messages.push(userMsg);
             this.inputText = ''; this.resetTextarea(); this.scrollBottom(true); this.isLoading = true;
             this.streamingStatus = files.length > 0 ? this.trans.analyzingFiles : this.trans.thinking;
@@ -1584,7 +1578,6 @@ app.component('v-agenting-pim', {
                 if (this.selectedModel) fd.append('model', this.selectedModel);
                 files.forEach((f, i) => { if (f.type === 'image') fd.append('images[' + i + ']', f.file); else fd.append('files[' + i + ']', f.file); });
                 fd.append('conversation_id', this.activeSessionId);
-                fd.append('request_id', userMsg.request_id);
                 fd.append('extensions', JSON.stringify(selectedContext));
                 fd.append('history', JSON.stringify(this.messages.slice(0, -1).map(m => ({ role: m.role, content: m.content || '' }))));
                 fd.append('context[current_page]', window.location.pathname);
@@ -1628,7 +1621,7 @@ app.component('v-agenting-pim', {
                 // Handle JSON response (from either stream JSON or blocking fallback)
                 this.consumeExtensionContext(data);
                 this.pendingFiles = [];
-                this.messages.push({ message_id: chatRequestId(), presentation: data.presentation || null, role: 'assistant', content: data.reply || this.trans.noResponse, action: data.action || null, result: data.result || null, product_url: data.product_url || null, download_url: data.download_url || null });
+                this.messages.push({ presentation: data.presentation || null, role: 'assistant', content: data.reply || this.trans.noResponse, action: data.action || null, result: data.result || null, product_url: data.product_url || null, download_url: data.download_url || null });
 
                 // Auto-navigate to the created product page
                 if (data.product_url && this.activeCapability?.key === 'create_from_image') {
@@ -1724,7 +1717,6 @@ app.component('v-agenting-pim', {
                 content: streamedText || this.trans.noResponse,
                 action: resultData.action || 'agent_response',
                 result: resultData.result || null,
-                message_id: chatRequestId(),
                 presentation: resultData.presentation || null,
                 product_url: resultData.product_url || null,
                 download_url: resultData.download_url || null,
@@ -1773,13 +1765,12 @@ app.component('v-agenting-pim', {
             let userIdx = idx - 1;
             while (userIdx >= 0 && this.messages[userIdx].role !== 'user') { userIdx--; }
             if (userIdx < 0) return;
-            const requestId = this.messages[userIdx].request_id || chatRequestId();
             this.extensionContext = this.messages[userIdx].extensions || {};
             const userText = this.messages[userIdx].content || '';
             // Remove from that user message onwards and resend
             this.messages.splice(userIdx);
             this.inputText = userText;
-            this.$nextTick(() => this.send(requestId));
+            this.$nextTick(() => this.send());
         },
 
         rateMessage(idx, rating) {
@@ -2049,7 +2040,7 @@ app.component('v-agenting-pim', {
                     selectedPlatformId: this.selectedPlatformId,
                     selectedModel: this.selectedModel,
                     activeSessionId: this.activeSessionId,
-                    messages: this.messages.filter(m => !m.isRedirect).map(m => ({ message_id: m.message_id || null, request_id: m.request_id || null, presentation: m.presentation || null, role: m.role, content: m.content, result: m.result || null, product_url: m.product_url || null, download_url: m.download_url || null, _confirmed: m._confirmed || false })),
+                    messages: this.messages.filter(m => !m.isRedirect).map(m => ({ presentation: m.presentation || null, role: m.role, content: m.content, result: m.result || null, product_url: m.product_url || null, download_url: m.download_url || null, _confirmed: m._confirmed || false })),
                 }));
 
                 // Auto-save current session to localStorage
