@@ -1580,9 +1580,11 @@ return [
                     'zip-upload-success'  => 'ZIP uploadet og udpakket med succes.',
                     'zip-upload-error'    => 'ZIP-upload mislykkedes. Prøv venligst igen.',
                     'invalid-zip'         => 'Den uploadede fil er ikke et gyldigt ZIP-arkiv.',
-                    'zip-upload-or'       => 'eller upload en ZIP med billeder',
-                    'zip-click-upload'    => 'Klik for at uploade en ZIP med billeder',
+                    'zip-upload-or'       => 'eller upload en ZIP med billeder og dokumenter',
+                    'zip-click-upload'    => 'Klik for at uploade en ZIP med billeder og dokumenter',
                     'zip-files-extracted' => 'filer udpakket',
+                    'zip-files-skipped'   => ':skipped (ikke-understøttet type, ugyldigt indhold eller for store):',
+                    'zip-accepted-types'  => 'Accepteret i ZIP: :types',
                     'zip-drop-hint'       => 'Klik eller træk og slip en ZIP-fil her',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MAKS. 2MB)',
                     'images-directory'    => 'Sti',
@@ -1704,6 +1706,9 @@ return [
                 'setup-queue-error'          => 'Skift din kødriver til "database" eller "redis" for at starte importprocessen.',
                 'update-success'             => 'Import opdateret med succes.',
                 'zip-upload-success'         => 'ZIP uploadet og udpakket med succes.',
+                'zip-extracted-count'        => '{1} :count fil udpakket|[0,*] :count filer udpakket',
+                'zip-skipped-count'          => '{1} :count sprunget over|[0,*] :count sprunget over',
+                'zip-upload-partial'         => 'ZIP uploadet. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [
