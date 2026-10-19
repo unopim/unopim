@@ -437,7 +437,7 @@ class MagicAIController extends Controller
 
     public function saveTranslatedData(): JsonResponse
     {
-        if (! bouncer()->hasPermission('ai-agent')) {
+        if (! bouncer()->hasPermission('ai-agent') || ! bouncer()->hasPermission('catalog.products.edit')) {
             return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
         }
 
@@ -543,7 +543,7 @@ class MagicAIController extends Controller
 
     public function saveAllTranslatedAttributes(): JsonResponse
     {
-        if (! bouncer()->hasPermission('ai-agent')) {
+        if (! bouncer()->hasPermission('ai-agent') || ! bouncer()->hasPermission('catalog.products.edit')) {
             return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
         }
 
