@@ -2,6 +2,7 @@
 
 namespace Webkul\AiAgent\Chat;
 
+use InvalidArgumentException;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 
 /**
@@ -16,6 +17,9 @@ use Webkul\MagicAI\Models\MagicAIPlatform;
  */
 class ExtensionRegistry
 {
+    /** Namespace pattern shared by composer keys and the chat request's extension selections. */
+    public const NAMESPACE_PATTERN = '/^[a-z][a-z0-9._-]{0,63}$/D';
+
     /** @var array<int, array{resolve: callable(): ?MagicAIPlatform, option: ProviderOption}> */
     private array $providers = [];
 
@@ -31,8 +35,9 @@ class ExtensionRegistry
     public function provider(int $id, callable $resolve, array $option): void
     {
         if ($id >= 0) {
-            throw new \InvalidArgumentException('Extension provider IDs must be negative.');
+            throw new InvalidArgumentException('Extension provider IDs must be negative.');
         }
+
         $this->providers[$id] = ['resolve' => $resolve, 'option' => ['id' => $id] + $option];
     }
 
@@ -45,9 +50,9 @@ class ExtensionRegistry
     /** Register trusted component/view names under a validated composer key. */
     public function composer(string $key, string $component, string $view): void
     {
-        if (! preg_match('/^[a-z][a-z0-9._-]{0,63}$/D', $key)
+        if (! preg_match(self::NAMESPACE_PATTERN, $key)
             || ! preg_match('/^v-[a-z0-9-]{1,125}$/D', $component)) {
-            throw new \InvalidArgumentException('Invalid composer registration.');
+            throw new InvalidArgumentException('Invalid composer registration.');
         }
 
         $this->composers[$key] = compact('key', 'component', 'view');

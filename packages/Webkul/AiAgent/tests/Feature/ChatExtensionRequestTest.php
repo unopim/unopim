@@ -41,3 +41,23 @@ it('does not silently discard invalid JSON or scalar extension data', function (
     $this->postJson('/_test/chat-extensions', ['message' => 'Preview', 'extensions' => $value])
         ->assertUnprocessable()->assertJsonValidationErrors('extensions');
 })->with(['{broken', 'null', '"string"', 'false']);
+
+it('rejects extension namespaces the composer registry could never register', function (array $value, bool $json) {
+    $this->postJson('/_test/chat-extensions', ['message' => 'Preview', 'extensions' => $json ? json_encode($value) : $value])
+        ->assertUnprocessable()->assertJsonValidationErrors('extensions');
+})->with([
+    'numeric'    => [[0 => ['id' => 1]]],
+    'list'       => [[['id' => 1], ['id' => 2]]],
+    'uppercase'  => [['Example' => []]],
+    'leading'    => [['1example' => []]],
+    'symbol'     => [['exa mple' => []]],
+    'too long'   => [[str_repeat('x', 65) => []]],
+])->with([false, true]);
+
+it('accepts dotted and hyphenated extension namespaces', function () {
+    $data = ['example.catalog' => ['id' => 1], 'acme-dam_v2' => []];
+
+    $response = $this->postJson('/_test/chat-extensions', ['message' => 'Preview', 'extensions' => $data])->assertOk();
+
+    expect($response->json('extensions'))->toEqual($data);
+});

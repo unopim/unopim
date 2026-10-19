@@ -4,6 +4,8 @@ namespace Webkul\AiAgent\Chat;
 
 use Illuminate\Support\Str;
 use Laravel\Ai\Contracts\Tool;
+use Laravel\Ai\Tools\ToolNameResolver;
+use UnexpectedValueException;
 use Webkul\AiAgent\Chat\Contracts\AuthorizesContext;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 
@@ -26,7 +28,15 @@ class ToolRegistry
     /** @var array<class-string<PimTool>, array{name: string, group: string, write: bool, permission: ?string, guidance: ?string}> */
     protected array $metadata = [];
 
-    /** @param callable(Tool, ChatContext, array{name: string, group: string, write: bool, permission: ?string, guidance: ?string}): Tool $decorator */
+    /**
+     * Wrap every built tool for each request, in registration order.
+     *
+     * A decorator must delegate to the tool it receives, never replace it: the
+     * wrapped tool's handle() carries its in-handle permission checks, so the
+     * returned tool must keep the same name or build() throws.
+     *
+     * @param  callable(Tool, ChatContext, array{name: string, group: string, write: bool, permission: ?string, guidance: ?string}): Tool  $decorator
+     */
     public function decorate(callable $decorator): void
     {
         $this->decorators[] = $decorator;
@@ -182,11 +192,17 @@ class ToolRegistry
             $registered = $tool->register($context);
 
             foreach ($this->decorators as $decorator) {
-                $registered = $decorator($registered, $context, $this->metadata[$class]);
+                $decorated = $decorator($registered, $context, $this->metadata[$class]);
 
-                if (! $registered instanceof Tool) {
-                    throw new \UnexpectedValueException(sprintf('Decorator for tool "%s" must return %s; received %s.', $this->metadata[$class]['name'], Tool::class, get_debug_type($registered)));
+                if (! $decorated instanceof Tool) {
+                    throw new UnexpectedValueException(sprintf('Decorator for tool "%s" must return %s; received %s.', $this->metadata[$class]['name'], Tool::class, get_debug_type($decorated)));
                 }
+
+                if ($decorated !== $registered && ToolNameResolver::resolve($decorated) !== ToolNameResolver::resolve($registered)) {
+                    throw new UnexpectedValueException(sprintf('Decorator for tool "%s" must preserve the tool name; received "%s".', $this->metadata[$class]['name'], ToolNameResolver::resolve($decorated)));
+                }
+
+                $registered = $decorated;
             }
 
             $built[] = $registered;

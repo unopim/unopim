@@ -1,13 +1,14 @@
 <?php
 
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Exceptions;
 use Webkul\AiAgent\Chat\ExtensionRegistry;
 use Webkul\AiAgent\Http\Controllers\ChatController;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
 
 it('uses a registered extension provider without looking up a database default', function () {
-    $platform = new MagicAIPlatform(['provider' => 'example']);
+    $platform = new MagicAIPlatform(['provider' => 'example', 'status' => true]);
     app(ExtensionRegistry::class)->provider(-7, fn () => $platform, ['label' => 'Example']);
     $repository = Mockery::mock(MagicAIPlatformRepository::class);
     $repository->shouldNotReceive('find', 'getActiveDefault', 'getActiveList');
@@ -45,3 +46,22 @@ it('falls back consistently when the requested provider is unavailable', functio
     expect((new ReflectionMethod(ChatController::class, 'resolvePlatform'))->invoke(app(ChatController::class), $id))
         ->toBe($platform);
 })->with(['unknown', 'unavailable', 'missing', 'disabled', 'default'])->with(['default', 'first', 'none']);
+
+it('falls back to the default platform when an extension provider is disabled or throws', function (string $failure) {
+    $default = new MagicAIPlatform(['provider' => 'fallback', 'status' => true]);
+    app(ExtensionRegistry::class)->provider(-7, fn () => $failure === 'throws'
+        ? throw new RuntimeException('Extension backend offline')
+        : new MagicAIPlatform(['provider' => 'example', 'status' => false]), ['label' => 'Example']);
+    $repository = Mockery::mock(MagicAIPlatformRepository::class);
+    $repository->shouldNotReceive('find');
+    $repository->shouldReceive('getActiveDefault')->once()->andReturn($default);
+    app()->instance(MagicAIPlatformRepository::class, $repository);
+    Exceptions::fake();
+
+    expect((new ReflectionMethod(ChatController::class, 'resolvePlatform'))->invoke(app(ChatController::class), -7))
+        ->toBe($default);
+
+    $failure === 'throws'
+        ? Exceptions::assertReported(fn (RuntimeException $e) => $e->getMessage() === 'Extension backend offline')
+        : Exceptions::assertNothingReported();
+})->with(['throws', 'disabled']);

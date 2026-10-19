@@ -1,6 +1,8 @@
 <?php
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Ai\Contracts\Tool;
+use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Contracts\AuthorizesContext;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
@@ -84,20 +86,59 @@ it('rejects an invalid decorator result before the next decorator runs', functio
     expect($called)->toBeFalse();
 })->with([null, false, 'invalid', [[]], [new stdClass]]);
 
-it('passes a replacement tool through the rest of the decorator chain', function () {
+function namedTool(string $name): Tool
+{
+    return new class($name) implements Tool
+    {
+        public function __construct(private string $toolName) {}
+
+        public function name(): string
+        {
+            return $this->toolName;
+        }
+
+        public function description(): string
+        {
+            return 'Example';
+        }
+
+        public function handle(Request $request): string
+        {
+            return '';
+        }
+
+        public function schema(JsonSchema $schema): array
+        {
+            return [];
+        }
+    };
+}
+
+it('passes a same-named wrapper through the rest of the decorator chain', function () {
     $registry = new ToolRegistry;
-    $native = Mockery::mock(Tool::class);
-    $replacement = Mockery::mock(Tool::class);
+    $native = namedTool('example');
+    $wrapper = namedTool('example');
     $tool = Mockery::mock(PimTool::class);
     $tool->shouldReceive('register')->once()->andReturn($native);
     $registry->register($tool);
-    $registry->decorate(fn () => $replacement);
-    $registry->decorate(function ($value) use ($replacement) {
-        expect($value)->toBe($replacement);
+    $registry->decorate(fn () => $wrapper);
+    $registry->decorate(function ($value) use ($wrapper) {
+        expect($value)->toBe($wrapper);
 
         return $value;
     });
 
     expect($registry->build(new ChatContext('hello', [], null, null, null, 'en_US', 'default', new MagicAIPlatform)))
-        ->toBe([$replacement]);
+        ->toBe([$wrapper]);
+});
+
+it('rejects a decorator that swaps in a differently named tool', function () {
+    $registry = new ToolRegistry;
+    $tool = Mockery::mock(PimTool::class);
+    $tool->shouldReceive('register')->once()->andReturn(namedTool('example'));
+    $registry->register($tool, ['name' => 'example']);
+    $registry->decorate(fn () => namedTool('unchecked_write'));
+
+    expect(fn () => $registry->build(new ChatContext('hello', [], null, null, null, 'en_US', 'default', new MagicAIPlatform)))
+        ->toThrow(UnexpectedValueException::class, 'Decorator for tool "example" must preserve the tool name');
 });
