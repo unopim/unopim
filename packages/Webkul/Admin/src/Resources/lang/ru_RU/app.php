@@ -1580,9 +1580,11 @@ return [
                     'zip-upload-success'  => 'ZIP успешно загружен и распакован.',
                     'zip-upload-error'    => 'Не удалось загрузить ZIP. Попробуйте снова.',
                     'invalid-zip'         => 'Загруженный файл не является допустимым архивом ZIP.',
-                    'zip-upload-or'       => 'или загрузите ZIP с изображениями',
-                    'zip-click-upload'    => 'Нажмите, чтобы загрузить ZIP с изображениями',
+                    'zip-upload-or'       => 'или загрузите ZIP с изображениями и документами',
+                    'zip-click-upload'    => 'Нажмите, чтобы загрузить ZIP с изображениями и документами',
                     'zip-files-extracted' => 'файлов извлечено',
+                    'zip-files-skipped'   => ':skipped (неподдерживаемый тип, недопустимое содержимое или слишком большой размер):',
+                    'zip-accepted-types'  => 'Допустимо в ZIP: :types',
                     'zip-drop-hint'       => 'Нажмите или перетащите ZIP-файл сюда',
                     'file-upload-info'    => 'CSV, XLSX, JSON (МАКС. 2 МБ)',
                     'images-directory'    => 'Путь',
@@ -1704,6 +1706,9 @@ return [
                 'setup-queue-error'          => 'Пожалуйста, измените свой драйвер очереди на «базу данных» или «Redis», чтобы начать процесс импорта.',
                 'update-success'             => 'Импорт успешно обновлен.',
                 'zip-upload-success'         => 'ZIP успешно загружен и распакован.',
+                'zip-extracted-count'        => ':count файл извлечён|:count файла извлечено|:count файлов извлечено',
+                'zip-skipped-count'          => ':count пропущен|:count пропущено|:count пропущено',
+                'zip-upload-partial'         => 'ZIP загружен. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [
