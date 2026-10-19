@@ -14,6 +14,7 @@ use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\User\Models\Admin;
 
 it('delivers completed tool references before an observer can interrupt the stream', function (bool $observerFails) {
+    config(['ai-agent.history.enabled' => true]);
     Http::preventStrayRequests();
     $descriptor = ['type' => 'example.lookup', 'id' => 'existing-result'];
     $stream = new StreamableAgentResponse('fixture', function () use ($descriptor) {
@@ -62,5 +63,12 @@ it('delivers completed tool references before an observer can interrupt the stre
         expect($output)->toContain('event: complete')->not->toContain('event: error');
     }
 
+    $this->actingAs($admin, 'admin');
+    $saved = $this->postJson(route('ai-agent.conversations.store'), [
+        'conversation_id' => 'history-fixture', 'title' => 'Saved result',
+        'messages'        => [['role' => 'assistant', 'content' => 'Result available', 'message_id' => 'reply-1', 'presentation' => $receipt['presentation']]],
+    ])->assertOk();
+    $this->getJson(route('ai-agent.conversations.show', $saved->json('id')))
+        ->assertOk()->assertJsonPath('messages.0.presentation', $descriptor);
     Http::assertNothingSent();
 })->with(['observer disabled' => false, 'observer throws after result' => true]);

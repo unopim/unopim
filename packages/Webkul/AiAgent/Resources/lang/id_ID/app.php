@@ -30,6 +30,7 @@ return [
 
     'common' => [
         'invalid-data'                  => 'Data yang diberikan tidak valid atau melebihi batas yang diizinkan.',
+        'conversation-not-found'        => 'Percakapan tidak ditemukan.',
         'yes'                           => 'Ya',
         'no'                            => 'Tidak',
         'save'                          => 'Simpan',

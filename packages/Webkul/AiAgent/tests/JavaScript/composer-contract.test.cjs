@@ -115,7 +115,7 @@ test('actual send retains hidden model and snapshots composer attachments', asyn
     assert.equal(JSON.parse(request.body.get('extensions')).fixture.token, 'opaque-fixture');
 });
 
-test('regenerate after reload restores the saved extension selection', () => {
+test('regenerate after reload restores the saved extension selection', async () => {
     const store = {};
     const sessionStorage = {getItem: key => store[key] ?? null, setItem: (key, value) => { store[key] = value; }};
     const saved = {fixture: {references: ['@Product'], token: 'opaque-fixture'}};
@@ -127,18 +127,20 @@ test('regenerate after reload restores the saved extension selection', () => {
     const {widget: after} = widget([], {sessionStorage});
     after.restoreState();
     after.send = () => {};
+    after.saveCurrentSession = async () => {};
     after.extensionContext = {};
-    after.retryFrom(1);
+    await after.retryFrom(1);
     assert.equal(JSON.stringify(after.extensionContext), JSON.stringify(saved));
     assert.equal(after.inputText, 'edit @Product');
 });
 
-test('regenerate keeps the current selection when the message saved none', () => {
+test('regenerate keeps the current selection when the message saved none', async () => {
     const {widget: w} = widget();
     w.send = () => {};
+    w.saveCurrentSession = async () => {};
     w.extensionContext = {fixture: {references: ['@Current']}};
     w.messages = [{role: 'user', content: 'legacy'}, {role: 'assistant', content: 'Done'}];
-    w.retryFrom(1);
+    await w.retryFrom(1);
     assert.deepEqual(w.extensionContext, {fixture: {references: ['@Current']}});
 });
 

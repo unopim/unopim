@@ -30,6 +30,7 @@ return [
 
     'common' => [
         'invalid-data'                  => '提供的資料無效或超出允許的限制。',
+        'conversation-not-found'        => '找不到對話。',
         'yes'                           => '是',
         'no'                            => '否',
         'save'                          => '儲存',
