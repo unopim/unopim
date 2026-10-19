@@ -24,7 +24,6 @@ it('disables every conversation endpoint by default without changing stored hist
     $this->getJson(route('ai-agent.conversations.index'))->assertForbidden()
         ->assertJsonPath('message', trans('ai-agent::app.common.unauthorized'));
     $this->getJson(route('ai-agent.conversations.show', 1))->assertForbidden();
-    $this->deleteJson(route('ai-agent.conversations.destroy', 1))->assertForbidden();
     $this->postJson(route('ai-agent.conversations.store'), ['messages' => [historyMessage('reply')]])->assertForbidden();
     expect(DB::table('ai_agent_conversations')->count())->toBe($count);
 });
@@ -94,7 +93,7 @@ it('merges stale snapshots without losing later messages or reviving handled con
     $this->postJson(route('ai-agent.conversations.store'), ['conversation_id' => 'merge-fixture', 'metadata' => ['owner_field' => 2, 'new_field' => 3], 'messages' => [historyMessage('first') + ['_confirmed' => false], historyMessage('first', 'Changed identity')]])->assertOk();
     $this->getJson(route('ai-agent.conversations.show', $id))->assertOk()->assertJsonCount(2, 'messages')
         ->assertJsonPath('messages.0._confirmed', true)->assertJsonPath('messages.0.result.status', 'done');
-    expect(json_decode(DB::table('ai_agent_conversations')->where('id', $id)->value('metadata'), true))->toBe(['owner_field' => 1, 'new_field' => 3]);
+    expect(json_decode(DB::table('ai_agent_conversations')->where('id', $id)->value('metadata'), true))->toEqual(['owner_field' => 1, 'new_field' => 3]);
 });
 
 it('batches message reads and writes instead of issuing queries per message', function () {
@@ -122,4 +121,42 @@ it('rejects invalid display fields and oversized metadata without partial writes
     }
     $this->postJson(route('ai-agent.conversations.store'), ['conversation_id' => 'invalid-history', 'metadata' => ['large' => str_repeat('x', 65537)], 'messages' => [historyMessage('reply')]])->assertUnprocessable();
     expect(DB::table('ai_agent_conversations')->where('client_id', 'invalid-history')->exists())->toBeFalse();
+});
+
+it('lets owners delete stored history after the setting is turned off', function () {
+    $id = DB::table('ai_agent_conversations')->insertGetId(['user_id' => $this->owner->id, 'title' => 'Kept', 'created_at' => now(), 'updated_at' => now()]);
+    expect(config('ai-agent.history.enabled'))->toBeFalse();
+
+    $this->deleteJson(route('ai-agent.conversations.destroy', $id))->assertOk()->assertJsonPath('deleted', true);
+    expect(DB::table('ai_agent_conversations')->where('id', $id)->exists())->toBeFalse();
+});
+
+it('still requires the chat ACL to delete stored history', function () {
+    $id = DB::table('ai_agent_conversations')->insertGetId(['user_id' => $this->owner->id, 'title' => 'Kept', 'created_at' => now(), 'updated_at' => now()]);
+    $role = Role::factory()->create(['permission_type' => 'custom', 'permissions' => ['catalog.products']]);
+    $this->actingAs(Admin::factory()->create(['role_id' => $role->id]), 'admin');
+
+    $this->deleteJson(route('ai-agent.conversations.destroy', $id))->assertForbidden();
+    expect(DB::table('ai_agent_conversations')->where('id', $id)->exists())->toBeTrue();
+});
+
+it('returns only the latest configured number of messages in order', function () {
+    config(['ai-agent.history.enabled' => true, 'ai-agent.history.max_messages' => 3]);
+    $messages = array_map(fn ($i) => historyMessage('message-'.$i, 'Reply '.$i), range(1, 5));
+    $id = $this->postJson(route('ai-agent.conversations.store'), ['conversation_id' => 'capped', 'messages' => $messages])->assertOk()->json('id');
+
+    $response = $this->getJson(route('ai-agent.conversations.show', $id))->assertOk()->assertJsonCount(3, 'messages');
+    expect(array_column($response->json('messages'), 'message_id'))->toBe(['message-3', 'message-4', 'message-5']);
+});
+
+it('prunes deletion markers beyond the retained window', function () {
+    config(['ai-agent.history.enabled' => true, 'ai-agent.history.max_messages' => 2]);
+    foreach (['old-1', 'old-2', 'old-3', 'old-4'] as $deleted) {
+        $id = $this->postJson(route('ai-agent.conversations.store'), ['conversation_id' => 'markers', 'messages' => [], 'deleted_message_ids' => [$deleted]])->assertOk()->json('id');
+    }
+
+    expect(DB::table('ai_agent_messages')->where('conversation_id', $id)->whereNotNull('deleted_at')->pluck('message_id')->sort()->values()->all())
+        ->toBe(['old-3', 'old-4']);
+    expect($this->getJson(route('ai-agent.conversations.show', $id))->assertOk()->json('deleted_message_ids'))
+        ->toEqualCanonicalizing(['old-3', 'old-4']);
 });

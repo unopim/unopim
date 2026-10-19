@@ -1366,7 +1366,7 @@ app.component('v-agenting-pim', {
 
         createNewSession() {
             if (this.messages.length > 0) {
-                // Save current session to localStorage only (not DB — avoids duplicates)
+                // Save locally, and to saved history when enabled; the client id keeps repeat saves idempotent
                 this.saveCurrentSession();
             }
             this.activeSessionId = this.generateSessionId();

@@ -8,6 +8,11 @@ use Webkul\AiAgent\Rules\BoundedJson;
 
 class StoreConversationRequest extends ConversationRequest
 {
+    /**
+     * Get the validation rules for a widget conversation snapshot.
+     *
+     * @return array<string, mixed>
+     */
     public function rules(): array
     {
         return [
@@ -30,6 +35,11 @@ class StoreConversationRequest extends ConversationRequest
         ];
     }
 
+    /**
+     * Validate each message's display fields once the shape rules pass.
+     *
+     * @return array<int, callable(Validator): void>
+     */
     public function after(): array
     {
         return [function (Validator $validator): void {

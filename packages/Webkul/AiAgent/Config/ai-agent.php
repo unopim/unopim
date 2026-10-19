@@ -4,7 +4,8 @@ use Webkul\AiAgent\Chat\Tools;
 
 return [
     'history' => [
-        'enabled' => filter_var(env('AI_AGENT_HISTORY_ENABLED', false), FILTER_VALIDATE_BOOL),
+        'enabled'      => filter_var(env('AI_AGENT_HISTORY_ENABLED', false), FILTER_VALIDATE_BOOL),
+        'max_messages' => (int) env('AI_AGENT_HISTORY_MAX_MESSAGES', 500),
     ],
 
     /**
