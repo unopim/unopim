@@ -251,7 +251,11 @@ return [
             ],
         ],
         'categories' => [
-            'title' => 'Kategoriler',
+            'title'   => 'Kategoriler',
+            'filters' => [
+                'locales'      => 'Diller',
+                'locales-info' => 'Kategoriler seçilen her dil için bir kez dışa aktarılır. Tüm etkin dilleri dışa aktarmak için boş bırakın.',
+            ],
         ],
         'category-fields' => [
             'title' => 'Kategori Alanları',

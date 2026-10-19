@@ -251,7 +251,11 @@ return [
             ],
         ],
         'categories' => [
-            'title' => 'Mga Kategorya',
+            'title'   => 'Mga Kategorya',
+            'filters' => [
+                'locales'      => 'Mga Wika',
+                'locales-info' => 'Ang mga kategorya ay ine-export nang isang beses para sa bawat napiling wika. Iwanang blangko para i-export ang lahat ng aktibong wika.',
+            ],
         ],
         'category-fields' => [
             'title' => 'Mga Field ng Kategorya',

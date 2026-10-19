@@ -251,7 +251,11 @@ return [
             ],
         ],
         'categories' => [
-            'title' => '分類',
+            'title'   => '分類',
+            'filters' => [
+                'locales'      => '語言',
+                'locales-info' => '分類會針對每個所選語言各匯出一次。留空則匯出所有已啟用的語言。',
+            ],
         ],
         'category-fields' => [
             'title' => '分類欄位',

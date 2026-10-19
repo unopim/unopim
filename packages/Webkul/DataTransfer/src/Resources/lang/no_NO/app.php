@@ -251,7 +251,11 @@ return [
             ],
         ],
         'categories' => [
-            'title' => 'Kategorier',
+            'title'   => 'Kategorier',
+            'filters' => [
+                'locales'      => 'Språk',
+                'locales-info' => 'Kategorier eksporteres én gang per valgt språk. La feltet stå tomt for å eksportere alle aktive språk.',
+            ],
         ],
         'category-fields' => [
             'title' => 'Kategorifelter',

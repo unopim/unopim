@@ -251,7 +251,11 @@ return [
             ],
         ],
         'categories' => [
-            'title' => 'Kategori',
+            'title'   => 'Kategori',
+            'filters' => [
+                'locales'      => 'Bahasa',
+                'locales-info' => 'Kategori diekspor satu kali untuk setiap bahasa yang dipilih. Biarkan kosong untuk mengekspor semua bahasa aktif.',
+            ],
         ],
         'category-fields' => [
             'title' => 'Field Kategori',

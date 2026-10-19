@@ -251,7 +251,11 @@ return [
             ],
         ],
         'categories' => [
-            'title' => 'Kategorije',
+            'title'   => 'Kategorije',
+            'filters' => [
+                'locales'      => 'Jezici',
+                'locales-info' => 'Kategorije se izvoze jednom za svaki odabrani jezik. Ostavite prazno za izvoz svih aktivnih jezika.',
+            ],
         ],
         'category-fields' => [
             'title' => 'Polja kategorije',

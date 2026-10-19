@@ -251,7 +251,11 @@ return [
             ],
         ],
         'categories' => [
-            'title' => '类别',
+            'title'   => '类别',
+            'filters' => [
+                'locales'      => '语言',
+                'locales-info' => '分类会针对每个所选语言各导出一次。留空则导出所有已启用的语言。',
+            ],
         ],
         'category-fields' => [
             'title' => '分类字段',

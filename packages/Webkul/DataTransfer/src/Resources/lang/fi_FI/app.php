@@ -251,7 +251,11 @@ return [
             ],
         ],
         'categories' => [
-            'title' => 'Kategoriat',
+            'title'   => 'Kategoriat',
+            'filters' => [
+                'locales'      => 'Kielet',
+                'locales-info' => 'Kategoriat viedään kerran jokaista valittua kieltä kohden. Jätä tyhjäksi viedäksesi kaikki aktiiviset kielet.',
+            ],
         ],
         'category-fields' => [
             'title' => 'Kategoriakentät',

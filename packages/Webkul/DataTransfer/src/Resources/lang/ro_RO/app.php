@@ -251,7 +251,11 @@ return [
             ],
         ],
         'categories' => [
-            'title' => 'Categorii',
+            'title'   => 'Categorii',
+            'filters' => [
+                'locales'      => 'Limbi',
+                'locales-info' => 'Categoriile sunt exportate o dată pentru fiecare limbă selectată. Lăsați gol pentru a exporta toate limbile active.',
+            ],
         ],
         'category-fields' => [
             'title' => 'Câmpuri categorie',

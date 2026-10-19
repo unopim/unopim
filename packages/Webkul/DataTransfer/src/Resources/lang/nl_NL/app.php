@@ -251,7 +251,11 @@ return [
             ],
         ],
         'categories' => [
-            'title' => 'Categorieën',
+            'title'   => 'Categorieën',
+            'filters' => [
+                'locales'      => 'Talen',
+                'locales-info' => 'Categorieën worden één keer per geselecteerde taal geëxporteerd. Laat leeg om alle actieve talen te exporteren.',
+            ],
         ],
         'category-fields' => [
             'title' => 'Categorievelden',
