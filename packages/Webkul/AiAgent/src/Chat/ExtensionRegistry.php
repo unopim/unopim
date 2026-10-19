@@ -20,6 +20,9 @@ class ExtensionRegistry
 {
     public const COMPOSER_REFERENCES = 2;
 
+    /** Capability fields an extension may override. */
+    private const CAPABILITY_OVERRIDES = ['description', 'extension_event'];
+
     /** Namespace pattern shared by composer keys and the chat request's extension selections. */
     public const NAMESPACE_PATTERN = '/^[a-z][a-z0-9._-]{0,63}$/D';
 
@@ -76,14 +79,19 @@ class ExtensionRegistry
         return array_values($this->composers);
     }
 
-    /** @param CapabilityPresentation $presentation */
+    /**
+     * Override how a built-in capability is presented; keys other than
+     * description and extension_event are dropped.
+     *
+     * @param  CapabilityPresentation  $presentation
+     */
     public function capability(string $key, array $presentation): void
     {
-        if (! preg_match('/^[a-z][a-z0-9._-]{0,63}$/D', $key)) {
-            throw new \InvalidArgumentException('Invalid capability registration.');
+        if (! preg_match(self::NAMESPACE_PATTERN, $key)) {
+            throw new InvalidArgumentException('Invalid capability registration.');
         }
 
-        $this->capabilities[$key] = $presentation;
+        $this->capabilities[$key] = array_intersect_key($presentation, array_flip(self::CAPABILITY_OVERRIDES));
     }
 
     /** @return array<string, CapabilityPresentation> */

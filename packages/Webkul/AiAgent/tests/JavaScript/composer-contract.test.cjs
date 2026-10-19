@@ -114,3 +114,39 @@ test('actual send retains hidden model and snapshots composer attachments', asyn
     w.extensionContext.fixture.token = 'later';
     assert.equal(JSON.parse(request.body.get('extensions')).fixture.token, 'opaque-fixture');
 });
+
+test('regenerate after reload restores the saved extension selection', () => {
+    const store = {};
+    const sessionStorage = {getItem: key => store[key] ?? null, setItem: (key, value) => { store[key] = value; }};
+    const saved = {fixture: {references: ['@Product'], token: 'opaque-fixture'}};
+    const {widget: before} = widget([], {sessionStorage});
+    before.saveCurrentSession = () => {};
+    before.messages = [{role: 'user', content: 'edit @Product', extensions: saved}, {role: 'assistant', content: 'Done'}];
+    before.saveState();
+
+    const {widget: after} = widget([], {sessionStorage});
+    after.restoreState();
+    after.send = () => {};
+    after.extensionContext = {};
+    after.retryFrom(1);
+    assert.equal(JSON.stringify(after.extensionContext), JSON.stringify(saved));
+    assert.equal(after.inputText, 'edit @Product');
+});
+
+test('regenerate keeps the current selection when the message saved none', () => {
+    const {widget: w} = widget();
+    w.send = () => {};
+    w.extensionContext = {fixture: {references: ['@Current']}};
+    w.messages = [{role: 'user', content: 'legacy'}, {role: 'assistant', content: 'Done'}];
+    w.retryFrom(1);
+    assert.deepEqual(w.extensionContext, {fixture: {references: ['@Current']}});
+});
+
+test('session history keeps each message extension selection', () => {
+    const {widget: w} = widget();
+    w.persistSessions = () => {};
+    w.activeSessionId = 'fixture';
+    w.messages = [{role: 'user', content: 'edit', extensions: {fixture: {token: 'a'}}}];
+    w.saveCurrentSession();
+    assert.deepEqual(w.sessions[0].messages[0].extensions, {fixture: {token: 'a'}});
+});

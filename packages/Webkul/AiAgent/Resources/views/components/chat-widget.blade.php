@@ -8,8 +8,8 @@
 
     $platformRepo    = app(\Webkul\MagicAI\Repository\MagicAIPlatformRepository::class);
     $extensionRegistry = app(\Webkul\AiAgent\Chat\ExtensionRegistry::class);
+    $resultRenderers = app(\Webkul\AiAgent\Chat\ResultRendererRegistry::class);
     $aiPlatforms = array_merge($extensionRegistry->options(), $platformRepo->getActivePlatformOptions());
-    $magicAiEnabled = $magicAiEnabled || count($extensionRegistry->options()) > 0;
     $defaultPlatform = collect($aiPlatforms)->firstWhere('is_default', true);
     $defaultPlatformId = $defaultPlatform['id'] ?? ($aiPlatforms[0]['id'] ?? null);
 
@@ -44,7 +44,7 @@
     @include($composer['view'])
 @endforeach
 
-@foreach(app(\Webkul\AiAgent\Chat\ResultRendererRegistry::class)->views() as $rendererView)
+@foreach($resultRenderers->views() as $rendererView)
     @include($rendererView)
 @endforeach
 
@@ -505,7 +505,37 @@
 </script>
 
 <style>
-.ap-composer-editor{position:relative}.ap-composer-highlight{position:absolute;inset:0;pointer-events:none;white-space:pre-wrap;overflow-wrap:break-word;overflow:hidden;font-family:inherit;font-size:13px;line-height:1.55;padding:12px 14px 6px;color:inherit;border:0}.ap-composer-reference{color:rgb(var(--c-info))}.ap-composer-referenced{color:transparent!important;caret-color:rgb(var(--c-primary-600))}.ap-platform-single-model{max-width:calc(100% - 34px)}
+.ap-composer-editor {
+    position: relative;
+}
+
+.ap-composer-highlight {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    overflow: hidden;
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.55;
+    padding: 12px 14px 6px;
+    color: inherit;
+    border: 0;
+}
+
+.ap-composer-reference {
+    color: rgb(var(--c-info));
+}
+
+.ap-composer-referenced {
+    color: transparent !important;
+    caret-color: rgb(var(--c-primary-600));
+}
+
+.ap-platform-single-model {
+    max-width: calc(100% - 34px);
+}
 
 :root { --ap-panel-size: 420px; --ap-panel-width: 0px; }
 
@@ -859,6 +889,9 @@ body.overlay-open .ap-fab { display: none; }
 
 {{-- DOMPurify is bundled with the admin app (window.DOMPurify) — no external CDN. --}}
 <script type="module">
+const AGENTIC_PIM_RESULT_COMPONENTS = @json($resultRenderers->components());
+const AGENTIC_PIM_RESULT_CONTEXT_CONSUMERS = @json($resultRenderers->contextConsumers());
+
 // Mirrors Webkul\MagicAI\Support\ModelRecommender::pickTextModel().
 // The chat widget must never auto-select an image-only model
 // (chatgpt-image-latest, dall-e-*, sora-*, imagen-*, veo-*, …) because
@@ -1268,8 +1301,7 @@ app.component('v-agenting-pim', {
             }
         },
         resultComponent(descriptor) {
-            const installed = @json(app(\Webkul\AiAgent\Chat\ResultRendererRegistry::class)->components());
-            return descriptor && Object.prototype.hasOwnProperty.call(installed, descriptor.type) ? installed[descriptor.type] : null;
+            return descriptor && Object.prototype.hasOwnProperty.call(AGENTIC_PIM_RESULT_COMPONENTS, descriptor.type) ? AGENTIC_PIM_RESULT_COMPONENTS[descriptor.type] : null;
         },
         detectProductContext() {
             const match = window.location.pathname.match(/\/catalog\/products\/edit\/(\d+)/);
@@ -1350,6 +1382,7 @@ app.component('v-agenting-pim', {
             const recentMessages = this.messages.filter(m => !m.isRedirect).slice(-50);
             const sessionMessages = recentMessages.map(m => ({
                 presentation: m.presentation || null,
+                extensions: m.extensions || null,
                 role: m.role,
                 content: m.content || '',
                 result: m.result || null,
@@ -1554,8 +1587,8 @@ app.component('v-agenting-pim', {
         },
 
         consumeExtensionContext(data) {
-            const consumers = @json(app(\Webkul\AiAgent\Chat\ResultRendererRegistry::class)->contextConsumers());
-            const key = consumers[data?.presentation?.type];
+            const type = data?.presentation?.type;
+            const key = type && Object.prototype.hasOwnProperty.call(AGENTIC_PIM_RESULT_CONTEXT_CONSUMERS, type) ? AGENTIC_PIM_RESULT_CONTEXT_CONSUMERS[type] : null;
             if (key) delete this.extensionContext[key];
         },
 
@@ -1765,7 +1798,9 @@ app.component('v-agenting-pim', {
             let userIdx = idx - 1;
             while (userIdx >= 0 && this.messages[userIdx].role !== 'user') { userIdx--; }
             if (userIdx < 0) return;
-            this.extensionContext = this.messages[userIdx].extensions || {};
+            if (this.messages[userIdx].extensions) {
+                this.extensionContext = JSON.parse(JSON.stringify(this.messages[userIdx].extensions));
+            }
             const userText = this.messages[userIdx].content || '';
             // Remove from that user message onwards and resend
             this.messages.splice(userIdx);
@@ -2040,7 +2075,7 @@ app.component('v-agenting-pim', {
                     selectedPlatformId: this.selectedPlatformId,
                     selectedModel: this.selectedModel,
                     activeSessionId: this.activeSessionId,
-                    messages: this.messages.filter(m => !m.isRedirect).map(m => ({ presentation: m.presentation || null, role: m.role, content: m.content, result: m.result || null, product_url: m.product_url || null, download_url: m.download_url || null, _confirmed: m._confirmed || false })),
+                    messages: this.messages.filter(m => !m.isRedirect).map(m => ({ presentation: m.presentation || null, extensions: m.extensions || null, role: m.role, content: m.content, result: m.result || null, product_url: m.product_url || null, download_url: m.download_url || null, _confirmed: m._confirmed || false })),
                 }));
 
                 // Auto-save current session to localStorage

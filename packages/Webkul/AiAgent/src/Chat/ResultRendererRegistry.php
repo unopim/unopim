@@ -2,6 +2,8 @@
 
 namespace Webkul\AiAgent\Chat;
 
+use InvalidArgumentException;
+
 /**
  * Only installed server code registers component/view names. Descriptors are inert references.
  *
@@ -18,9 +20,10 @@ class ResultRendererRegistry
     {
         if (! preg_match('/^[a-z][a-z0-9.-]{0,63}$/D', $type)
             || ! preg_match('/^v-[a-z0-9-]{1,125}$/D', $component)
-            || ($consumesContext !== null && ! preg_match('/^[a-z][a-z0-9._-]{0,63}$/D', $consumesContext))) {
-            throw new \InvalidArgumentException('Invalid result renderer registration.');
+            || ($consumesContext !== null && ! preg_match(ExtensionRegistry::NAMESPACE_PATTERN, $consumesContext))) {
+            throw new InvalidArgumentException('Invalid result renderer registration.');
         }
+
         $this->renderers[$type] = compact('component', 'view', 'consumesContext');
     }
 

@@ -21,3 +21,16 @@ it('replaces a capability presentation under the same valid key', function (stri
 
     expect($registry->capabilities())->toBe([$key => ['description' => 'Updated', 'extension_event' => null]]);
 })->with(['edit_image', 'example.catalog-edit', str_repeat('x', 64)]);
+
+it('stores only the documented presentation overrides', function () {
+    $registry = app(ExtensionRegistry::class);
+    $registry->capability('edit_image', [
+        'description'        => 'Updated',
+        'extension_event'    => 'example:open',
+        'key'                => 'hijacked',
+        'prompt'             => 'Injected prompt',
+        'acceptsSpreadsheet' => true,
+    ]);
+
+    expect($registry->capabilities())->toBe(['edit_image' => ['description' => 'Updated', 'extension_event' => 'example:open']]);
+});
