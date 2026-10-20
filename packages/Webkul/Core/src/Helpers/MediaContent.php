@@ -29,6 +29,7 @@ class MediaContent
         'pdf'  => 'application/pdf',
         'png'  => 'image/png',
         'svg'  => 'image/svg+xml',
+        'txt'  => 'text/plain; charset=UTF-8',
         'wav'  => 'audio/wav',
         'webm' => 'video/webm',
         'webp' => 'image/webp',

@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid } = require('../../utils/helpers');
+const { navigateTo, generateUid, openFilterDrawer } = require('../../utils/helpers');
 const { createFamily, deleteFamilyByCode, gotoTab } = require('../../utils/family-helpers');
 
 /**
@@ -34,7 +34,7 @@ async function selectFirstOpenOption(page) {
  * is labelled "Apply", not "Save".
  */
 async function applyTextFilter(adminPage, filterIndex, value) {
-  await adminPage.getByText('Filter', { exact: true }).click();
+  await openFilterDrawer(adminPage);
   const filterRow = adminPage.locator(`[data-datagrid-filter="${filterIndex}"]`);
   await filterRow.locator('[data-filter-toggle]').click();
   await filterRow.getByRole('textbox').fill(value);

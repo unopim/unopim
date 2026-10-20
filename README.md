@@ -178,7 +178,7 @@ UnoPim is engineered for high-volume catalogues. Read [how UnoPim scales to hand
 Free, officially maintained extensions:
 
 - [**UnoPim DAM**](https://github.com/unopim/unopim-digital-asset-management) — Digital Asset Management: file and directory management, asset upload and preview, metadata tagging, and CSV/XLSX asset assignment.
-- [**Shopify Connector**](https://github.com/unopim/shopify-connector) — sync product data, prices, descriptions, and images with a Shopify store.
+- [**Shopify Connector**](https://github.com/unopim/shopify-connector) — sync product data, prices, descriptions, and images with a Shopify store. Need real-time sync, scheduled exports or catalogs? Upgrade to [**Shopify Connector Pro**](https://store.webkul.com/unopim-shopify-connector-pro.html).
 - [**Bagisto Connector**](https://github.com/unopim/bagisto-connector) — sync products, attributes, and media into a [Bagisto](https://bagisto.com/) storefront, with customizable mappings.
 
 More connectors and modules are listed on the [UnoPim extensions marketplace](https://unopim.com/extensions/). Extensions are ordinary Concord packages — see the [developer documentation](https://devdocs.unopim.com/) to build your own.
@@ -277,10 +277,15 @@ First boot installs Composer dependencies into `./vendor`. The stack defaults to
 
 ### ☁️ AWS Marketplace
 <p>
-  <a href="https://aws.amazon.com/marketplace/pp/prodview-fdyosdv7k3cgw">
+  <a href="https://aws.amazon.com/marketplace/pp/prodview-rhsm6cbxqkm6i">
     <img src="https://raw.githubusercontent.com/unopim/temp-media/main/aws-marketplace-banner.png" alt="Launch UnoPim on AWS Marketplace" width="720">
   </a>
 </p>
+
+Pre-configured AMIs — Ubuntu LEMP with Redis, Elasticsearch and phpMyAdmin:
+
+- [**UnoPim on AWS (x86_64)**](https://aws.amazon.com/marketplace/pp/prodview-rhsm6cbxqkm6i)
+- [**UnoPim on AWS (ARM64 / Graviton)**](https://aws.amazon.com/marketplace/pp/prodview-flks5cupod5mi)
 
 ## 🤝 Contributing
 

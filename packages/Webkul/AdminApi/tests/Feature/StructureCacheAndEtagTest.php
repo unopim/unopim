@@ -99,16 +99,22 @@ it('bypasses the cache entirely when disabled by config', function () {
 it('keeps product listings uncached', function () {
     $headers = $this->getAuthenticationHeaders();
 
+    $listing = route('admin.api.products.index', [
+        'limit'   => 100,
+        'filters' => json_encode(['sku' => [['operator' => '=', 'value' => 'NEVER-CACHED-RAW']]]),
+    ]);
+
     $this->withHeaders($headers)
-        ->json('GET', route('admin.api.products.index', ['limit' => 100]))
-        ->assertOk();
+        ->json('GET', $listing)
+        ->assertOk()
+        ->assertJsonPath('total', 0);
 
     $product = Product::factory()->simple()->create(['sku' => 'NEVER-CACHED']);
 
     DB::table('products')->where('id', $product->id)->update(['sku' => 'NEVER-CACHED-RAW']);
 
     $response = $this->withHeaders($headers)
-        ->json('GET', route('admin.api.products.index', ['limit' => 100]))
+        ->json('GET', $listing)
         ->assertOk();
 
     expect(array_column($response->json('data'), 'sku'))->toContain('NEVER-CACHED-RAW');

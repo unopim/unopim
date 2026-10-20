@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Concerns\ValidatesAttributes;
 use Symfony\Component\Mime\MimeTypes;
 use Webkul\Core\Helpers\MediaContent;
+use Webkul\Core\Helpers\MediaMimeTypes;
 
 class FileOrImageValidValue implements ValidationRule
 {
@@ -22,6 +23,11 @@ class FileOrImageValidValue implements ValidationRule
     const VIDEO_ALLOWED_EXTENSIONS = ['mp4', 'webm', 'mkv'];
 
     protected FileMimeExtensionMatch $fileExtensionMatchRule;
+
+    /**
+     * @var string[]
+     */
+    protected array $storedPaths = [];
 
     public function __construct(
         protected bool $isImage = false,
@@ -61,6 +67,21 @@ class FileOrImageValidValue implements ValidationRule
     public function mergeAllowedMimes(array $mimes): self
     {
         $this->allowedMimes = array_unique(array_merge($this->allowedMimes, $mimes));
+
+        return $this;
+    }
+
+    /**
+     * Accept paths the record already stores for this field, wherever they live.
+     *
+     * Values saved before the path-prefix check existed may sit outside the
+     * record's own directory; resubmitting them unchanged must not fail.
+     *
+     * @param  string[]  $paths
+     */
+    public function allowStoredPaths(array $paths): self
+    {
+        $this->storedPaths = array_values(array_unique(array_merge($this->storedPaths, $paths)));
 
         return $this;
     }
@@ -174,6 +195,10 @@ class FileOrImageValidValue implements ValidationRule
             return false;
         }
 
+        if (in_array($path, $this->storedPaths, true)) {
+            return true;
+        }
+
         return array_any($this->allowedPathPrefixes, fn ($prefix): bool => str_starts_with($path, rtrim((string) $prefix, '/').'/'));
     }
 
@@ -191,7 +216,7 @@ class FileOrImageValidValue implements ValidationRule
             return false;
         }
 
-        $expectedMimeTypes = MimeTypes::getDefault()->getMimeTypes($extension);
+        $expectedMimeTypes = MimeTypes::getDefault()->getMimeTypes(MediaMimeTypes::normalizeExtension($extension));
 
         return is_string($mimeType)
             && $expectedMimeTypes !== []
@@ -208,7 +233,7 @@ class FileOrImageValidValue implements ValidationRule
             return false;
         }
 
-        if ($this->allowedMimes && ! $this->validateMimes($attribute, $value, $this->allowedMimes)) {
+        if ($this->allowedMimes && ! $this->validateMimes($attribute, $value, array_map(MediaMimeTypes::normalizeExtension(...), $this->allowedMimes))) {
             $fail('validation.mimes')->translate(['values' => implode(', ', $this->allowedMimes)]);
 
             return false;

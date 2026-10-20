@@ -318,10 +318,16 @@ function createAdminApp() {
      * Pre-checks a picked file against the server-side upload rule so a
      * rejected file is reported before the form is submitted. Only a 422
      * counts as a rejection; any other failure lets the file through, since
-     * the form's own validation is the enforcement point. Available on every
+     * the form's own validation is the enforcement point. A cleared picker
+     * hands over nothing to scan, so that case is rejected without a request.
+     * Available on every
      * component as `this.$scanMedia(file, { url, isImage, acceptedExtensions, fallbackMessage })`.
      */
     app.config.globalProperties.$scanMedia = async function (file, { url, isImage = false, acceptedExtensions = [], fallbackMessage = '' }) {
+        if (! (file instanceof File)) {
+            return false;
+        }
+
         const formData = new FormData();
 
         formData.append('file', file);
@@ -427,6 +433,7 @@ window.lockBodyScroll = () => {
     window.__scrollLocks = (window.__scrollLocks || 0) + 1;
 
     document.body.style.overflow = "hidden";
+    document.body.classList.add("overlay-open");
 };
 
 window.unlockBodyScroll = () => {
@@ -434,6 +441,7 @@ window.unlockBodyScroll = () => {
 
     if (! window.__scrollLocks) {
         document.body.style.overflow = "";
+        document.body.classList.remove("overlay-open");
     }
 };
 

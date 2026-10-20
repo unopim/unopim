@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Core\Facades\ElasticSearch;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\VariantStructure;
 
@@ -67,7 +68,7 @@ it('should return unique validation for product sku while creating', function ()
 
     $data = [
         'sku'                 => $product->sku,
-        'type'                => 'simple',
+        'type'                => ProductType::Simple->value,
         'attribute_family_id' => $product->attribute_family_id,
     ];
 
@@ -83,7 +84,7 @@ it('should create a simple product successfully', function () {
 
     $data = Product::factory()->definition();
 
-    $data['type'] = 'simple';
+    $data['type'] = ProductType::Simple->value;
 
     $this->post(route('admin.catalog.products.store', $data))
         ->assertOk()
@@ -127,7 +128,7 @@ it('should return json error if family lacks configurable attributes when creati
     $data = [
         'sku'                 => fake()->uuid,
         'attribute_family_id' => $familyId,
-        'type'                => 'configurable',
+        'type'                => ProductType::Configurable->value,
     ];
 
     $this->post(route('admin.catalog.products.store'), $data)
@@ -146,7 +147,7 @@ it('should return the family variant structures when creating configurable produ
 
     $data = Product::factory()->definition();
 
-    $data['type'] = 'configurable';
+    $data['type'] = ProductType::Configurable->value;
 
     makeVariantStructureFor($data['attribute_family_id']);
 
@@ -160,7 +161,7 @@ it('should create a configurable product successfully', function () {
 
     $data = Product::factory()->definition();
 
-    $data['type'] = 'configurable';
+    $data['type'] = ProductType::Configurable->value;
 
     $structure = makeVariantStructureFor($data['attribute_family_id']);
 

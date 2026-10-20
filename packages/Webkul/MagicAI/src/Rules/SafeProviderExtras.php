@@ -4,6 +4,7 @@ namespace Webkul\MagicAI\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use stdClass;
 use Webkul\MagicAI\Services\ProviderOverrides;
 
 /**
@@ -26,30 +27,32 @@ class SafeProviderExtras implements ValidationRule
             return;
         }
 
-        if (is_string($value)) {
-            if (strlen($value) > self::MAX_BYTES) {
-                $fail(trans('admin::app.configuration.platform.message.extras-too-large'));
-
-                return;
-            }
-
-            $value = json_decode($value, true, self::MAX_DEPTH);
-
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                $fail(trans('admin::app.configuration.platform.message.extras-invalid-json'));
-
-                return;
-            }
+        if (is_array($value)) {
+            $value = json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES, self::MAX_DEPTH);
         }
 
-        if (! is_array($value) || array_is_list($value)) {
+        if (! is_string($value)) {
+            $fail(trans('admin::app.configuration.platform.message.extras-invalid-json'));
+
+            return;
+        }
+
+        if (strlen($value) > self::MAX_BYTES) {
+            $fail(trans('admin::app.configuration.platform.message.extras-too-large'));
+
+            return;
+        }
+
+        $value = json_decode($value, false, self::MAX_DEPTH);
+
+        if (json_last_error() !== JSON_ERROR_NONE || ! $value instanceof stdClass) {
             $fail(trans('admin::app.configuration.platform.message.extras-invalid-json'));
 
             return;
         }
 
         $reserved = array_intersect(
-            array_map(strtolower(...), array_keys($value)),
+            array_map(strtolower(...), array_keys((array) $value)),
             ProviderOverrides::RESERVED_KEYS,
         );
 

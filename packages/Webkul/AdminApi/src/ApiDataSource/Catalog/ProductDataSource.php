@@ -9,6 +9,7 @@ use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Completeness\Repositories\ProductCompletenessScoreRepository;
 use Webkul\Product\Contracts\VariantValueResolver;
 use Webkul\Product\Database\Eloquent\Builder;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Repositories\ProductAssociationRepository;
 use Webkul\Product\Repositories\ProductRepository;
 
@@ -237,7 +238,7 @@ class ProductDataSource extends ApiDataSource
     {
         $parentQuery = clone $queryBuilder;
         $parentQuery->where('products.sku', $sku)
-            ->where('products.type', config('product_types.configurable.key'));
+            ->where('products.type', ProductType::Configurable->value);
         $parentId = $parentQuery->first()?->id;
 
         if (! $parentId) {
@@ -310,7 +311,7 @@ class ProductDataSource extends ApiDataSource
             'values'     => $mergedValues ?? $product['values'],
         ];
 
-        if (in_array($product['type'], [config('product_types.configurable.key'), config('product_types.variant_group.key')], true)) {
+        if (in_array($product['type'], ProductType::VARIANT_PARENT_VALUES, true)) {
             $superAttributes = $this->getSuperAttributes($product);
 
             $responseData['super_attributes'] = $superAttributes;

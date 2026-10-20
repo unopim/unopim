@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Webkul\MagicAI\Enums\AiProvider;
+use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Services\ProviderOverrides;
 
 /*
@@ -109,3 +110,87 @@ it('rejects extras that decode to a json list rather than an object', function (
 
     expect(DB::table('magic_ai_platforms')->where('label', 'list-extras')->exists())->toBeFalse();
 });
+
+it('updates saved extras when they are explicitly supplied', function (mixed $extras, array $expected) {
+    $this->loginAsAdmin();
+
+    $platform = MagicAIPlatform::create([
+        'label'    => 'clear-extras',
+        'provider' => AiProvider::OpenAI->value,
+        'models'   => 'gpt-4o',
+        'extras'   => ['organization' => 'org-old'],
+    ]);
+
+    $this->putJson(route('admin.magic_ai.platform.update', $platform->id), [
+        'label'    => $platform->label,
+        'provider' => $platform->provider,
+        'models'   => $platform->models,
+        'extras'   => $extras,
+    ])->assertOk();
+
+    expect($platform->refresh()->extras)->toBe($expected);
+})->with([
+    'empty object'      => ['{}', []],
+    'empty string'      => ['', []],
+    'null'              => [null, []],
+    'empty array'       => [[], []],
+    'replacement JSON'  => ['{"organization":"org-new"}', ['organization' => 'org-new']],
+    'replacement array' => [['organization' => 'org-new'], ['organization' => 'org-new']],
+]);
+
+it('preserves saved extras when the update omits them', function () {
+    $this->loginAsAdmin();
+
+    $platform = MagicAIPlatform::create([
+        'label'    => 'keep-extras',
+        'provider' => AiProvider::OpenAI->value,
+        'models'   => 'gpt-4o',
+        'extras'   => ['organization' => 'org-old'],
+    ]);
+
+    $this->putJson(route('admin.magic_ai.platform.update', $platform->id), [
+        'label'    => 'renamed-platform',
+        'provider' => $platform->provider,
+        'models'   => $platform->models,
+    ])->assertOk();
+
+    expect($platform->refresh()->extras)->toBe(['organization' => 'org-old']);
+    $this->assertDatabaseHas('magic_ai_platforms', ['id' => $platform->id, 'label' => 'renamed-platform']);
+});
+
+it('rejects oversized and deeply nested extras in either input format', function (mixed $extras, string $message) {
+    $this->loginAsAdmin();
+
+    $this->postJson(route('admin.magic_ai.platform.store'), [
+        'label'    => 'invalid-extras',
+        'provider' => AiProvider::OpenAI->value,
+        'models'   => 'gpt-4o',
+        'extras'   => $extras,
+    ])->assertUnprocessable()->assertJsonValidationErrors([
+        'extras' => trans('admin::app.configuration.platform.message.'.$message),
+    ]);
+
+    $this->assertDatabaseMissing('magic_ai_platforms', ['label' => 'invalid-extras']);
+})->with([
+    'oversized JSON'  => [json_encode(['organization' => str_repeat('x', 8192)]), 'extras-too-large'],
+    'oversized array' => [['organization' => str_repeat('x', 8192)], 'extras-too-large'],
+    'deep JSON'       => ['{"options":{"a":{"b":{"c":{"d":{"e":true}}}}}}', 'extras-invalid-json'],
+    'deep array'      => [['options' => ['a' => ['b' => ['c' => ['d' => ['e' => true]]]]]], 'extras-invalid-json'],
+]);
+
+it('accepts bounded extras in either input format', function (mixed $extras) {
+    $this->loginAsAdmin();
+
+    $this->postJson(route('admin.magic_ai.platform.store'), [
+        'label'    => 'valid-extras',
+        'provider' => AiProvider::OpenAI->value,
+        'models'   => 'gpt-4o',
+        'extras'   => $extras,
+    ])->assertOk();
+
+    expect(MagicAIPlatform::where('label', 'valid-extras')->firstOrFail()->extras)
+        ->toEqual(['organization' => 'org-example', 'options' => ['timeout' => 30]]);
+})->with([
+    'JSON'  => ['{"organization":"org-example","options":{"timeout":30}}'],
+    'array' => [['organization' => 'org-example', 'options' => ['timeout' => 30]]],
+]);

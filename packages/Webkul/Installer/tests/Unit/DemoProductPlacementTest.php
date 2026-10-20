@@ -2,6 +2,7 @@
 
 use Webkul\Admin\Http\Controllers\Catalog\AttributeFamilyController;
 use Webkul\Installer\Database\Seeders\Demo\DemoProductSeeder;
+use Webkul\Product\Enums\VariantLevel;
 use Webkul\Product\Repositories\ProductRepository;
 
 /**
@@ -28,68 +29,68 @@ describe('demo variant structure placements', function () {
         $map = placementSeeder()->placementMap(['axes' => ['color']], demoUniqueCodes());
 
         foreach (['url_key', 'ean', 'product_number'] as $code) {
-            expect($map[$code] ?? null)->toBe('variant');
+            expect($map[$code] ?? null)->toBe(VariantLevel::Variant->value);
         }
     });
 
     it('leaves axes at the level their own row fixes them to', function () {
         $single = placementSeeder()->placementMap(['axes' => ['color']], demoUniqueCodes());
 
-        expect($single['color'])->toBe('variant');
+        expect($single['color'])->toBe(VariantLevel::Variant->value);
 
         $double = placementSeeder()->placementMap(['axes' => ['color', 'size']], demoUniqueCodes());
 
-        expect($double['color'])->toBe('sub_parent')
-            ->and($double['size'])->toBe('variant');
+        expect($double['color'])->toBe(VariantLevel::SubParent->value)
+            ->and($double['size'])->toBe(VariantLevel::Variant->value);
     });
 
     it('never places an axis as a unique attribute', function () {
         $map = placementSeeder()->placementMap(['axes' => ['sku']], ['sku']);
 
-        expect($map['sku'])->toBe('variant');
+        expect($map['sku'])->toBe(VariantLevel::Variant->value);
     });
 
     it('puts price on the variant so each sellable row carries its own', function () {
-        expect(placementSeeder()->placementMap(['axes' => ['color']], demoUniqueCodes())['price'])->toBe('variant');
+        expect(placementSeeder()->placementMap(['axes' => ['color']], demoUniqueCodes())['price'])->toBe(VariantLevel::Variant->value);
     });
 
     it('keeps the main image common so every row below inherits one', function () {
         $single = placementSeeder()->placementMap(['axes' => ['color']], demoUniqueCodes());
         $double = placementSeeder()->placementMap(['axes' => ['color', 'size']], demoUniqueCodes());
 
-        expect($single['image'])->toBe('common')
-            ->and($double['image'])->toBe('common');
+        expect($single['image'])->toBe(VariantLevel::Common->value)
+            ->and($double['image'])->toBe(VariantLevel::Common->value);
     });
 
     it('decides the gallery level from the depth of the structure', function () {
-        expect(placementSeeder()->placementMap(['axes' => ['color']], demoUniqueCodes())['gallery'])->toBe('variant')
-            ->and(placementSeeder()->placementMap(['axes' => ['color', 'size']], demoUniqueCodes())['gallery'])->toBe('sub_parent');
+        expect(placementSeeder()->placementMap(['axes' => ['color']], demoUniqueCodes())['gallery'])->toBe(VariantLevel::Variant->value)
+            ->and(placementSeeder()->placementMap(['axes' => ['color', 'size']], demoUniqueCodes())['gallery'])->toBe(VariantLevel::SubParent->value);
     });
 });
 
 describe('demo value ownership', function () {
-    $placements = ['url_key' => 'variant', 'price' => 'variant', 'gallery' => 'sub_parent', 'image' => 'common'];
+    $placements = ['url_key' => VariantLevel::Variant->value, 'price' => VariantLevel::Variant->value, 'gallery' => VariantLevel::SubParent->value, 'image' => VariantLevel::Common->value];
 
     it('keeps only the values placed at the given level', function () use ($placements) {
         $values = ['sku' => 'a', 'url_key' => 'a', 'price' => '10', 'gallery' => ['x'], 'image' => 'y', 'brand' => 'z'];
 
-        expect(placementSeeder()->ownedValues($values, $placements, 'common'))
+        expect(placementSeeder()->ownedValues($values, $placements, VariantLevel::Common->value))
             ->toBe(['sku' => 'a', 'image' => 'y', 'brand' => 'z']);
     });
 
     it('carries sku at every level', function () use ($placements) {
-        foreach (['common', 'sub_parent', 'variant'] as $level) {
+        foreach (VariantLevel::VALUES as $level) {
             expect(placementSeeder()->ownedValues(['sku' => 'a'], $placements, $level))->toBe(['sku' => 'a']);
         }
     });
 
     it('treats an unplaced attribute as common', function () use ($placements) {
-        expect(placementSeeder()->ownedValues(['brand' => 'z'], $placements, 'variant'))->toBe([]);
+        expect(placementSeeder()->ownedValues(['brand' => 'z'], $placements, VariantLevel::Variant->value))->toBe([]);
     });
 
     it('leaves values untouched when the product has no structure', function () {
         $values = ['sku' => 'a', 'url_key' => 'a', 'brand' => 'z'];
 
-        expect(placementSeeder()->ownedValues($values, [], 'common'))->toBe($values);
+        expect(placementSeeder()->ownedValues($values, [], VariantLevel::Common->value))->toBe($values);
     });
 });

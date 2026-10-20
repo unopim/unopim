@@ -3,6 +3,7 @@
 use Webkul\AiAgent\Services\ProductImportCsvNormalizer;
 use Webkul\AiAgent\Services\ProductWriterService;
 use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
+use Webkul\Product\Enums\ProductType;
 
 /**
  * Parse the generated (semicolon-delimited) CSV back into header + rows.
@@ -24,8 +25,6 @@ function parseGeneratedCsv(string $csv): array
 
 function makeNormalizer(): ProductImportCsvNormalizer
 {
-    // resolveSelectValuePublic is only called for select/multiselect attributes;
-    // the fixtures below use none, so the writer service is never invoked.
     return new ProductImportCsvNormalizer(Mockery::mock(ProductWriterService::class));
 }
 
@@ -65,12 +64,12 @@ it('injects family code, channel, locale, type and default-active status per row
     $row = parseGeneratedCsv($csv)['rows'][0];
 
     expect($row['sku'])->toBe('SHOE-1');
-    expect($row['type'])->toBe('simple');
+    expect($row['type'])->toBe(ProductType::Simple->value);
     expect($row['attribute_family'])->toBe('default');
     expect($row['channel'])->toBe('default');
     expect($row['locale'])->toBe('en_US');
     expect($row['parent'])->toBe('');
-    expect($row['status'])->toBe('true'); // core only enables on literal "true"
+    expect($row['status'])->toBe('true');
 });
 
 it('expands a single price value into one column per active currency as bare decimals', function () use ($familyAttrs) {
@@ -163,8 +162,6 @@ it('escapes spreadsheet formula operators in cell values to prevent CSV injectio
         'en_US',
     );
 
-    // The stored CSV is downloadable from import history and may be opened in
-    // a spreadsheet, so an operator-leading value must be neutralized.
     expect(parseGeneratedCsv($csv)['rows'][0]['name'])->toBe("'=cmd'");
 });
 

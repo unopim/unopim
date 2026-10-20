@@ -119,6 +119,23 @@ it('forces a download for a type that is not inline safe', function () {
     expect($response->headers->get('Content-Disposition'))->toContain('attachment');
 });
 
+it('previews saved text files as plain text with security headers', function () {
+    $this->loginAsAdmin();
+
+    Storage::fake();
+    $content = '<script>alert(document.domain)</script> Plain text specification';
+    Storage::put('product/1/spec/sheet.txt', $content);
+
+    $response = get(route('admin.media.preview', ['path' => 'product/1/spec/sheet.txt']))->assertOk();
+
+    $response->assertHeader('Content-Type', 'text/plain; charset=UTF-8')
+        ->assertHeader('X-Content-Type-Options', 'nosniff')
+        ->assertStreamedContent($content);
+
+    expect($response->headers->get('Content-Disposition'))->toContain('inline');
+    expect($response->headers->get('Content-Security-Policy'))->toContain("default-src 'none'");
+});
+
 it('applies the same access control to preview as to download', function () {
     Storage::fake();
 

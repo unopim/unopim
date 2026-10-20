@@ -21,7 +21,7 @@
     <script type="text/x-template" id="v-translate-attribute-template">
         <li
             class="w-full hover:bg-gray-100 dark:hover:bg-cherry-800 cursor-pointer px-3 py-2"
-            @click="resetForm();fetchAttribute();fetchSourceLocales();fetchTargetLocales();$refs.translationModal.toggle();"
+            @click="resetForm();fetchAttribute();fetchSourceLocales();fetchTargetLocales();fetchTranslatePlatforms();$refs.translationModal.toggle();"
         >
             <span
                 class="icon-language text-gray-700 w-full"
@@ -42,102 +42,181 @@
                     clip
                     @toggle="handleToggle"
                 >
-                    <x-slot:header>
-                        <p class="flex items-center text-lg text-gray-800 dark:text-white font-bold">
+                    <x-slot:header class="!px-6 !py-4">
+                        <p class="flex items-center text-lg font-bold text-gray-800 dark:text-white">
                             @lang('admin::app.catalog.products.edit.translate.title')
                         </p>
                     </x-slot>
-                    <x-slot:content class="flex gap-5 max-xl:flex-wrap text-base dark:text-white !p-0">
-                        <!-- Steps 1 & 2: Source/Target Selection (centered layout) -->
-                        <template v-if="!translatedValues">
-                            <div class="w-full max-w-lg mx-auto py-6 px-4">
-                                <!-- Step Indicator -->
-                                <div class="flex items-center justify-center mb-6">
-                                    <div class="flex items-center">
-                                        <span class="inline-flex items-center justify-center min-w-[28px] min-h-[28px] w-7 h-7 rounded-full text-xs font-bold text-white bg-primary-700 shrink-0">1</span>
-                                        <span class="inline-block w-20 h-0.5 mx-1" :class="currentStep >= 2 ? 'bg-primary-700' : 'bg-gray-200 dark:bg-gray-600'"></span>
-                                        <span class="inline-flex items-center justify-center min-w-[28px] min-h-[28px] w-7 h-7 rounded-full text-xs font-bold shrink-0" :class="currentStep >= 2 ? 'bg-primary-700 text-white' : 'bg-gray-200 dark:bg-gray-600 text-gray-500 dark:text-gray-400'">2</span>
+                    <x-slot:content class="text-base dark:text-white !p-0">
+                        <template v-if="! translatedValues">
+                            <div class="w-full px-6 py-5">
+                                <div class="mb-6 flex items-start justify-center">
+                                    <div class="flex w-28 flex-col items-center gap-1.5">
+                                        <span class="flex h-7 w-7 items-center justify-center rounded-full bg-primary-600 text-xs font-bold text-white">1</span>
+
+                                        <span
+                                            class="text-xs"
+                                            :class="currentStep === 1 ? 'font-semibold text-primary-600 dark:text-primary-400' : 'text-gray-500 dark:text-gray-400'"
+                                        >
+                                            @lang('admin::app.catalog.products.edit.translate.select-source')
+                                        </span>
+                                    </div>
+
+                                    <span
+                                        class="mt-3.5 h-0.5 w-16 shrink-0 rounded"
+                                        :class="currentStep >= 2 ? 'bg-primary-600' : 'bg-gray-200 dark:bg-gray-600'"
+                                    ></span>
+
+                                    <div class="flex w-28 flex-col items-center gap-1.5">
+                                        <span
+                                            class="flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold"
+                                            :class="currentStep >= 2 ? 'bg-primary-600 text-white' : 'bg-gray-200 text-gray-500 dark:bg-gray-600 dark:text-gray-400'"
+                                        >
+                                            2
+                                        </span>
+
+                                        <span
+                                            class="text-xs"
+                                            :class="currentStep === 2 ? 'font-semibold text-primary-600 dark:text-primary-400' : 'text-gray-500 dark:text-gray-400'"
+                                        >
+                                            @lang('admin::app.catalog.products.edit.translate.select-target')
+                                        </span>
                                     </div>
                                 </div>
-                                <div class="flex justify-center gap-10 mb-6 text-xs text-gray-500 dark:text-gray-400">
-                                    <span :class="currentStep === 1 ? 'text-primary-700 dark:text-primary-400 font-semibold' : ''">@lang('admin::app.catalog.products.edit.translate.select-source')</span>
-                                    <span :class="currentStep === 2 ? 'text-primary-700 dark:text-primary-400 font-semibold' : ''">@lang('admin::app.catalog.products.edit.translate.select-target')</span>
+
+                                @php
+                                    $channels = core()->getAllChannels();
+                                    $options = [];
+
+                                    foreach ($channels as $channel) {
+                                        $channelName = $channel->name;
+
+                                        $options[] = [
+                                            'id'    => $channel->code,
+                                            'label' => empty($channelName) ? "[$channel->code]" : $channelName,
+                                        ];
+                                    }
+
+                                    $optionsInJson = json_encode($options);
+                                @endphp
+
+                                <div class="mb-4 rounded-lg border border-gray-200 bg-gray-50 p-5 dark:border-cherry-700 dark:bg-cherry-800">
+                                    <div class="mb-3 flex items-center justify-between gap-2.5">
+                                        <h3 class="text-sm font-semibold text-gray-800 dark:text-white">
+                                            @lang('admin::app.catalog.products.edit.translate.source-content')
+                                        </h3>
+
+                                        <button
+                                            v-if="currentStep > 1"
+                                            type="button"
+                                            class="text-xs font-semibold text-primary-600 hover:underline dark:text-primary-400"
+                                            @click="goBackToStep1"
+                                        >
+                                            @lang('admin::app.catalog.products.edit.translate.change')
+                                        </button>
+                                    </div>
+
+                                    <div v-show="currentStep === 1">
+                                        <x-admin::form.control-group>
+                                            <x-admin::form.control-group.label class="required">
+                                                @lang('admin::app.catalog.products.edit.translate.source-channel')
+                                            </x-admin::form.control-group.label>
+
+                                            <x-admin::form.control-group.control
+                                                type="select"
+                                                name="channel"
+                                                rules="required"
+                                                ::value="sourceChannel"
+                                                :options="$optionsInJson"
+                                                @input="getSourceLocale"
+                                            />
+
+                                            <x-admin::form.control-group.error control-name="channel" />
+                                        </x-admin::form.control-group>
+
+                                        <x-admin::form.control-group v-if="localeOption">
+                                            <x-admin::form.control-group.label class="required">
+                                                @lang('admin::app.catalog.products.edit.translate.source-locale')
+                                            </x-admin::form.control-group.label>
+
+                                            <x-admin::form.control-group.control
+                                                type="select"
+                                                name="locale"
+                                                rules="required"
+                                                ref="localeRef"
+                                                ::value="sourceLocale"
+                                                ::options="localeOption"
+                                                @input="resetTargetLocales"
+                                            />
+
+                                            <x-admin::form.control-group.error control-name="locale" />
+                                        </x-admin::form.control-group>
+
+                                        <x-admin::form.control-group>
+                                            <x-admin::form.control-group.label class="required">
+                                                @lang('admin::app.catalog.products.edit.translate.attributes')
+                                            </x-admin::form.control-group.label>
+
+                                            <x-admin::form.control-group.control
+                                                type="multiselect"
+                                                name="attributes"
+                                                ref="attributesOptionsRef"
+                                                rules="required"
+                                                ::value="attributes ?? []"
+                                                ::options="attributesOptions ?? '[]'"
+                                                @input="setSelectedAttributes"
+                                            />
+
+                                            <x-admin::form.control-group.error control-name="attributes" />
+                                        </x-admin::form.control-group>
+                                    </div>
+
+                                    <div
+                                        v-show="currentStep > 1"
+                                        class="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-gray-600 dark:text-gray-300"
+                                    >
+                                        <span>@{{ sourceChannelLabel }}</span>
+                                        <span class="text-gray-300 dark:text-gray-600">&middot;</span>
+                                        <span>@{{ sourceLocaleLabel }}</span>
+                                    </div>
+
+                                    <div
+                                        v-if="selectedAttributes.length"
+                                        class="mt-4 border-t border-gray-200 pt-3 dark:border-cherry-700"
+                                    >
+                                        <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                                            @lang('admin::app.catalog.products.edit.translate.attributes-to-translate')
+                                            (@{{ selectedAttributes.length }})
+                                        </p>
+
+                                        <div class="max-h-40 space-y-2 overflow-y-auto pr-1">
+                                            <div
+                                                v-for="attribute in selectedAttributes"
+                                                :key="attribute.id"
+                                                class="flex gap-3 text-sm"
+                                            >
+                                                <span
+                                                    class="w-32 shrink-0 truncate text-gray-500 dark:text-gray-400"
+                                                    :title="attribute.label"
+                                                >
+                                                    @{{ attribute.label }}
+                                                </span>
+
+                                                <span
+                                                    class="truncate"
+                                                    :class="previewValue(attribute.id) ? 'text-gray-800 dark:text-gray-200' : 'italic text-gray-400 dark:text-gray-500'"
+                                                    :title="previewValue(attribute.id)"
+                                                >
+                                                    @{{ previewValue(attribute.id) || noValueLabel }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <!-- Source Content Card -->
-                                <div class="bg-primary-50 dark:bg-cherry-800 rounded-lg p-4 mb-4">
-                                    <h3 class="text-sm font-semibold text-gray-800 dark:text-white mb-3">
-                                        @lang('admin::app.catalog.products.edit.translate.source-content')
-                                    </h3>
-
-                                    @php
-                                        $channels = core()->getAllChannels();
-                                        $options = [];
-                                        foreach ($channels as $channel) {
-                                            $channelName = $channel->name;
-                                            $options[] = [
-                                                'id'    => $channel->code,
-                                                'label' => empty($channelName) ? "[$channel->code]" : $channelName,
-                                            ];
-                                        }
-                                        $optionsInJson = json_encode($options);
-                                    @endphp
-
-                                    <x-admin::form.control-group>
-                                        <x-admin::form.control-group.label class="required">
-                                            @lang('admin::app.catalog.products.edit.translate.source-channel')
-                                        </x-admin::form.control-group.label>
-                                        <x-admin::form.control-group.control
-                                            type="select"
-                                            name="channel"
-                                            rules="required"
-                                            ::value="sourceChannel"
-                                            :options="$optionsInJson"
-                                            @input="getSourceLocale"
-                                            ::disabled="currentStep > 2"
-                                        />
-                                        <x-admin::form.control-group.error control-name="channel" />
-                                    </x-admin::form.control-group>
-
-                                    <x-admin::form.control-group v-if="localeOption">
-                                        <x-admin::form.control-group.label class="required">
-                                            @lang('admin::app.catalog.products.edit.translate.locale')
-                                        </x-admin::form.control-group.label>
-                                        <x-admin::form.control-group.control
-                                            type="select"
-                                            name="locale"
-                                            rules="required"
-                                            ref="localeRef"
-                                            ::value="sourceLocale"
-                                            ::options="localeOption"
-                                            @input="resetTargetLocales"
-                                            ::disabled="currentStep > 2"
-                                        />
-                                        <x-admin::form.control-group.error control-name="locale" />
-                                    </x-admin::form.control-group>
-
-                                    <!-- Attributes -->
-                                    <x-admin::form.control-group>
-                                        <x-admin::form.control-group.label class="required">
-                                            @lang('admin::app.catalog.products.edit.translate.attributes')
-                                        </x-admin::form.control-group.label>
-                                        <x-admin::form.control-group.control
-                                            type="multiselect"
-                                            name="attributes"
-                                            ref="attributesOptionsRef"
-                                            rules="required"
-                                            ::value="attributes ?? []"
-                                            ::options="attributesOptions"
-                                            ::disabled="currentStep > 2"
-                                        />
-                                        <x-admin::form.control-group.error control-name="attributes" />
-                                    </x-admin::form.control-group>
-                                </div>
-
-                                <!-- Target Content Card (Step 2) -->
                                 <template v-if="currentStep > 1">
-                                    <div class="bg-primary-50 dark:bg-cherry-800 rounded-lg p-4">
-                                        <h3 class="text-sm font-semibold text-gray-800 dark:text-white mb-3">
+                                    <div class="rounded-lg border border-gray-200 bg-gray-50 p-5 dark:border-cherry-700 dark:bg-cherry-800">
+                                        <h3 class="mb-3 text-sm font-semibold text-gray-800 dark:text-white">
                                             @lang('admin::app.catalog.products.edit.translate.target-content')
                                         </h3>
 
@@ -145,6 +224,7 @@
                                             <x-admin::form.control-group.label class="required">
                                                 @lang('admin::app.catalog.products.edit.translate.target-channel')
                                             </x-admin::form.control-group.label>
+
                                             <x-admin::form.control-group.control
                                                 type="select"
                                                 name="targetChannel"
@@ -152,8 +232,8 @@
                                                 ::value="targetChannel"
                                                 :options="$optionsInJson"
                                                 @input="getTargetLocale"
-                                                ::disabled="currentStep > 2"
                                             />
+
                                             <x-admin::form.control-group.error control-name="targetChannel" />
                                         </x-admin::form.control-group>
 
@@ -161,6 +241,7 @@
                                             <x-admin::form.control-group.label class="required">
                                                 @lang('admin::app.catalog.products.edit.translate.target-locales')
                                             </x-admin::form.control-group.label>
+
                                             <x-admin::form.control-group.control
                                                 type="multiselect"
                                                 id="section"
@@ -171,25 +252,32 @@
                                                 ::options="targetLocOptions"
                                                 track-by="id"
                                                 label-by="label"
-                                                ::disabled="currentStep > 2"
                                             />
+
                                             <x-admin::form.control-group.error control-name="targetLocale" />
                                         </x-admin::form.control-group>
+
+                                        <p class="flex items-start gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+                                            <span class="icon-information text-base leading-none"></span>
+
+                                            @lang('admin::app.catalog.products.edit.translate.overwrite-warning')
+                                        </p>
                                     </div>
+
                                 </template>
                             </div>
                         </template>
 
                         <!-- Step 3: Translation Preview (full-width clean layout) -->
                         <template v-if="translatedValues">
-                            <div class="w-full px-4 py-4">
+                            <div class="w-full px-6 py-5">
                                 <!-- Summary Banner -->
                                 <div class="flex items-center gap-3 bg-primary-50 dark:bg-cherry-800 rounded-lg px-4 py-3 mb-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" class="shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" class="shrink-0 text-primary-600 dark:text-primary-400">
                                         <g clip-path="url(#clip0_bulk_preview)">
-                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M12.1484 9.31989L9.31995 12.1483L19.9265 22.7549L22.755 19.9265L12.1484 9.31989ZM12.1484 10.7341L10.7342 12.1483L13.5626 14.9767L14.9768 13.5625L12.1484 10.7341Z" fill="#6d28d9"/>
-                                            <path d="M2.39219 2.39217L5.78438 3.95197L9.17656 2.39217L7.61677 5.78436L9.17656 9.17655L5.78438 7.61676L2.39219 9.17655L3.95198 5.78436L2.39219 2.39217Z" fill="#6d28d9"/>
-                                            <path d="M3.30947 11.0877L5.78434 12.2257L8.25922 11.0877L7.12122 13.5626L8.25922 16.0374L5.78434 14.8994L3.30947 16.0374L4.44746 13.5626L3.30947 11.0877Z" fill="#6d28d9"/>
+                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M12.1484 9.31989L9.31995 12.1483L19.9265 22.7549L22.755 19.9265L12.1484 9.31989ZM12.1484 10.7341L10.7342 12.1483L13.5626 14.9767L14.9768 13.5625L12.1484 10.7341Z" fill="currentColor"/>
+                                            <path d="M2.39219 2.39217L5.78438 3.95197L9.17656 2.39217L7.61677 5.78436L9.17656 9.17655L5.78438 7.61676L2.39219 9.17655L3.95198 5.78436L2.39219 2.39217Z" fill="currentColor"/>
+                                            <path d="M3.30947 11.0877L5.78434 12.2257L8.25922 11.0877L7.12122 13.5626L8.25922 16.0374L5.78434 14.8994L3.30947 16.0374L4.44746 13.5626L3.30947 11.0877Z" fill="currentColor"/>
                                         </g>
                                         <defs><clipPath id="clip0_bulk_preview"><rect width="24" height="24" fill="white"/></clipPath></defs>
                                     </svg>
@@ -198,8 +286,8 @@
                                             @lang('admin::app.catalog.products.edit.translate.translated-content')
                                         </p>
                                         <p class="text-xs text-gray-500 dark:text-gray-400">
-                                            @{{ Object.keys(translatedValues.translated).length }} @lang('admin::app.catalog.products.edit.translate.locale')@{{ Object.keys(translatedValues.translated).length > 1 ? 's' : '' }}
-                                            &middot; @{{ Object.keys(translatedValues.fields).length }} @lang('admin::app.catalog.products.edit.translate.attributes')
+                                            @lang('admin::app.catalog.products.edit.translate.target-locales'): @{{ Object.keys(translatedValues.translated).length }}
+                                            &middot; @lang('admin::app.catalog.products.edit.translate.attributes'): @{{ Object.keys(translatedValues.fields).length }}
                                         </p>
                                     </div>
                                 </div>
@@ -251,12 +339,38 @@
                         </template>
                     </x-slot>
 
-                    <x-slot:footer>
-                        <div class="flex items-center justify-between w-full">
-                            <div v-if="false"></div>
+                    <x-slot:footer class="!px-6 !py-4">
+                        <div class="flex w-full items-center justify-between">
+                            <div
+                                class="flex items-center gap-2"
+                                v-if="currentStep === 2 && ! translatedValues && translateModels.length"
+                            >
+                                <x-admin::form.control-group class="multiselect-compact !mb-0 w-40">
+                                    <x-admin::form.control-group.control
+                                        type="select"
+                                        name="platform_id"
+                                        ::value="translatePlatformId"
+                                        ::options="platformOptions"
+                                        :label="trans('admin::app.components.tinymce.ai-generation.platform')"
+                                        @input="setTranslatePlatform"
+                                    />
+                                </x-admin::form.control-group>
+
+                                <x-admin::form.control-group class="multiselect-compact !mb-0 w-40">
+                                    <x-admin::form.control-group.control
+                                        type="select"
+                                        name="model"
+                                        ::value="translateModel"
+                                        ::options="modelOptions"
+                                        :label="trans('admin::app.components.tinymce.ai-generation.model')"
+                                        @input="setTranslateModel"
+                                    />
+                                </x-admin::form.control-group>
+                            </div>
+
                             <div v-else></div>
 
-                            <div class="flex gap-x-2.5 items-center">
+                            <div class="flex items-center gap-x-2.5">
                                 <!-- Step 1: Next -->
                                 <template v-if="currentStep === 1">
                                     <button
@@ -269,20 +383,20 @@
                                     </button>
                                 </template>
 
-                                <!-- Step 2: Cancel + Translate -->
-                                <template v-else-if="currentStep === 2 && !translatedValues">
+                                <!-- Step 2: Back + Translate -->
+                                <template v-else-if="currentStep === 2 && ! translatedValues">
                                     <button
                                         type="button"
                                         class="secondary-button"
-                                        @click="cancel"
-                                        ::disabled="isLoading"
+                                        @click="goBackToStep1"
+                                        :disabled="isLoading"
                                     >
-                                        @lang('admin::app.catalog.products.edit.translate.cancel')
+                                        @lang('admin::app.catalog.products.edit.translate.back')
                                     </button>
                                     <button
                                         type="submit"
                                         class="primary-button flex items-center gap-1.5"
-                                        ::disabled="isLoading"
+                                        :disabled="isLoading"
                                     >
                                         <template v-if="isLoading">
                                             <img
@@ -305,7 +419,7 @@
                                     </button>
                                 </template>
 
-                                <!-- Step 3: Back + Cancel + Apply -->
+                                <!-- Step 3: Back + Apply -->
                                 <template v-else-if="translatedValues">
                                     <button
                                         type="button"
@@ -313,13 +427,6 @@
                                         @click="goBackToStep2"
                                     >
                                         &larr; @lang('admin::app.catalog.products.edit.translate.back')
-                                    </button>
-                                    <button
-                                        type="button"
-                                        class="secondary-button"
-                                        @click="cancel"
-                                    >
-                                        @lang('admin::app.catalog.products.edit.translate.cancel')
                                     </button>
                                     <button
                                         type="button"
@@ -350,6 +457,14 @@
                 return {
                     attributesOptions: null,
                     attributes: null,
+                    attributeValues: {},
+                    selectedAttributes: [],
+                    channelOptions: {!! $optionsInJson !!},
+                    noValueLabel: @json(trans('admin::app.catalog.products.edit.translate.no-value')),
+                    translatePlatforms: [],
+                    translateModels: [],
+                    translatePlatformId: null,
+                    translateModel: null,
                     targetLocOptions: null,
                     localeOption: null,
                     resourceId: "{{ request()->id }}",
@@ -364,28 +479,131 @@
                     currentStep: 1,
                 };
             },
+
+            computed: {
+                platformOptions() {
+                    return JSON.stringify(this.translatePlatforms.map((platform) => ({
+                        id:    String(platform.id),
+                        label: platform.label,
+                    })));
+                },
+
+                modelOptions() {
+                    return JSON.stringify(this.translateModels.map((model) => ({
+                        id:    model,
+                        label: model,
+                    })));
+                },
+
+                sourceChannelLabel() {
+                    return this.channelOptions.find((channel) => channel.id === this.sourceChannel)?.label ?? this.sourceChannel;
+                },
+
+                sourceLocaleLabel() {
+                    return this.parsedLocaleOptions.find((locale) => locale.id === this.sourceLocale)?.label ?? this.sourceLocale;
+                },
+
+                parsedLocaleOptions() {
+                    try {
+                        return this.localeOption ? JSON.parse(this.localeOption) : [];
+                    } catch (error) {
+                        return [];
+                    }
+                },
+            },
+
             methods: {
+                setTranslatePlatform(event) {
+                    if (! event) {
+                        return;
+                    }
+
+                    this.translatePlatformId = JSON.parse(event).id;
+
+                    this.onTranslatePlatformChange();
+                },
+
+                setTranslateModel(event) {
+                    if (event) {
+                        this.translateModel = JSON.parse(event).id;
+                    }
+                },
+
                 fetchAttribute() {
                     this.$axios.get("{{ route('admin.catalog.product.get_attribute') }}", {
                         params: {
                             productId: this.resourceId,
-                            },
-                        })
+                            channel:   this.sourceChannel,
+                            locale:    this.sourceLocale,
+                        },
+                    })
                         .then((response) => {
-                            let options = response.data?.attributes;
+                            let options = response.data?.attributes ?? [];
+
                             this.attributesOptions = JSON.stringify(options);
                             this.attributes = options;
+                            this.attributeValues = response.data?.values ?? {};
+                            this.selectedAttributes = options;
+
                             this.$nextTick(() => {
                                 if (this.$refs['attributesOptionsRef']) {
                                     this.$refs['attributesOptionsRef'].selectedValue = options;
                                 }
                             });
-
                         })
                         .catch((error) => {
                             console.error('Error fetching attributes:', error);
-                            throw error;
                         });
+                },
+
+                onTranslatePlatformChange() {
+                    const platform = this.translatePlatforms.find((item) => String(item.id) === String(this.translatePlatformId));
+
+                    this.translateModels = platform?.models ?? [];
+                    this.translateModel = this.translateModels[0] ?? null;
+                },
+
+                fetchTranslatePlatforms() {
+                    if (this.translatePlatforms.length) {
+                        return;
+                    }
+
+                    this.$axios.get("{{ route('admin.magic_ai.platforms') }}")
+                        .then((response) => {
+                            this.translatePlatforms = response.data?.platforms ?? [];
+
+                            const defaultPlatform = this.translatePlatforms.find((platform) => platform.is_default)
+                                ?? this.translatePlatforms[0];
+
+                            if (defaultPlatform) {
+                                this.translatePlatformId = String(defaultPlatform.id);
+                                this.translateModels = defaultPlatform.models ?? [];
+                                this.translateModel = this.model && this.translateModels.includes(this.model)
+                                    ? this.model
+                                    : (this.translateModels[0] ?? null);
+                            }
+                        })
+                        .catch((error) => {
+                            console.error('Error fetching platforms:', error);
+                        });
+                },
+
+                setSelectedAttributes(event) {
+                    try {
+                        this.selectedAttributes = event ? JSON.parse(event) : [];
+                    } catch (error) {
+                        this.selectedAttributes = [];
+                    }
+                },
+
+                previewValue(code) {
+                    const value = this.attributeValues?.[code];
+
+                    if (value === null || value === undefined || typeof value === 'object') {
+                        return '';
+                    }
+
+                    return String(value).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
                 },
 
                 fetchSourceLocales() {
@@ -431,6 +649,8 @@
                                         this.$refs['localeRef'].selectedValue = options[0];
                                     }
                                 }
+
+                                this.fetchAttribute();
                             })
                             .catch((error) => {
                                 console.error('Error fetching source locales:', error);
@@ -468,6 +688,9 @@
                 resetTargetLocales(event) {
                     if (event) {
                         this.sourceLocale = JSON.parse(event).id;
+
+                        this.fetchAttribute();
+
                         this.getLocale(this.targetChannel)
                             .then((options) => {
                                 if (this.$refs['targetLocOptionsRef']) {
@@ -516,8 +739,13 @@
                     }
 
                     const formData = new FormData(this.$refs.translationForm);
-                    let locale = params['locale'];
-                    formData.append('model', this.model);
+
+                    formData.set('model', this.translateModel ?? this.model);
+
+                    if (this.translatePlatformId) {
+                        formData.set('platform_id', this.translatePlatformId);
+                    }
+
                     formData.append('resource_id', this.resourceId);
                     formData.append('resource_type', 'product');
                     this.$axios.post("{{ route('admin.magic_ai.translate.all.attribute') }}", formData)
@@ -590,22 +818,35 @@
                         });
                 },
 
-                cancel() {
-                    this.$refs.translationModal.close();
-                    this.resetForm();
-                },
-
                 resetForm() {
                     this.translatedValues = null;
                     this.localeOption = null;
                     this.targetLocOptions = null;
+                    this.attributeValues = {};
+                    this.selectedAttributes = [];
+                    this.currentStep = 1;
                 },
+
+                goBackToStep1() {
+                    this.currentStep = 1;
+                },
+
                 goBackToStep2() {
                     this.translatedValues = null;
                     this.currentStep = 2;
                 },
+
                 nextStep(e) {
                     e.stopPropagation();
+
+                    if (! this.sourceChannel || ! this.sourceLocale || ! this.selectedAttributes.length) {
+                        this.$emitter.emit('add-flash', {
+                            type:    'warning',
+                            message: @json(trans('admin::app.catalog.products.edit.translate.incomplete-source')),
+                        });
+
+                        return;
+                    }
 
                     this.currentStep += 1;
 

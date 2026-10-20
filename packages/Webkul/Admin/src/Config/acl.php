@@ -96,6 +96,16 @@ return [
         'route' => 'admin.catalog.products.quick-export',
         'sort'  => 8,
     ], [
+        'key'   => 'catalog.products.quick_export',
+        'name'  => 'admin::app.acl.quick-export',
+        'route' => 'admin.catalog.products.quick-export.queue',
+        'sort'  => 8,
+    ], [
+        'key'   => 'catalog.products.quick_export',
+        'name'  => 'admin::app.acl.quick-export',
+        'route' => 'admin.catalog.products.quick-export.download',
+        'sort'  => 8,
+    ], [
         'key'   => 'catalog.products.bulk_edit',
         'name'  => 'admin::app.acl.bulk-edit',
         'route' => 'admin.catalog.products.bulk-edit.save',
@@ -610,20 +620,20 @@ return [
         'route' => 'admin.settings.data_transfer.imports.start',
         'sort'  => 4,
     ], [
-        'key'   => 'data_transfer.export',
-        'name'  => 'admin::app.acl.exports',
+        'key'   => 'data_transfer.export.execute',
+        'name'  => 'admin::app.acl.execute',
         'route' => 'admin.settings.data_transfer.exports.index_data',
-        'sort'  => 3,
+        'sort'  => 4,
     ], [
         'key'   => 'data_transfer.export',
         'name'  => 'admin::app.acl.exports',
         'route' => 'admin.settings.data_transfer.exports.export-view',
         'sort'  => 3,
     ], [
-        'key'   => 'data_transfer.export',
-        'name'  => 'admin::app.acl.exports',
+        'key'   => 'data_transfer.export.execute',
+        'name'  => 'admin::app.acl.execute',
         'route' => 'admin.settings.data_transfer.exports.link',
-        'sort'  => 3,
+        'sort'  => 4,
     ], [
         'key'   => 'data_transfer.export',
         'name'  => 'admin::app.acl.exports',

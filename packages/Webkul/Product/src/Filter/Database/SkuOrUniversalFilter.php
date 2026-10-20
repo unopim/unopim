@@ -29,7 +29,9 @@ class SkuOrUniversalFilter extends AbstractDatabaseAttributeFilter
 
         $escapedValue = QueryString::escapeValue(current((array) $value));
 
-        $this->queryBuilder->where(function ($query) use ($fields, $options, $escapedValue): void {
+        $likeSafeValue = addcslashes($escapedValue, '%_');
+
+        $this->queryBuilder->where(function ($query) use ($fields, $options, $likeSafeValue): void {
             $searched = false;
 
             foreach ($fields as $attribute) {
@@ -47,7 +49,7 @@ class SkuOrUniversalFilter extends AbstractDatabaseAttributeFilter
 
                 $query->orWhereRaw(
                     "LOWER($searchPath) LIKE ?",
-                    '%'.strtolower($escapedValue).'%'
+                    '%'.strtolower($likeSafeValue).'%'
                 );
 
                 $searched = true;

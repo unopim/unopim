@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Webkul\AiAgent\DTOs\ImageProductContext;
 use Webkul\Core\Filesystem\FileStorer;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Repositories\ProductRepository;
 
 /**
@@ -70,33 +71,27 @@ class ProductWriterService
 
         $familyId = $this->resolveFamily($family);
 
-        // 1 — Create the bare product
         $product = $repo->create([
             'sku'                 => $sku,
-            'type'                => 'simple',
+            'type'                => ProductType::Simple->value,
             'attribute_family_id' => $familyId,
         ]);
 
-        // 2 — Load all attributes belonging to this family with their metadata
         $familyAttributes = $this->getFamilyAttributes($familyId);
         $currencies = $this->getActiveCurrencies();
 
-        // Build a name from AI data
         $productName = $attributes['detected_name'] ?? $attributes['name'] ?? $sku;
         $urlKey = Str::slug($productName);
 
-        // Initialize value buckets
         $commonValues = ['sku' => $sku, 'url_key' => $urlKey];
         $channelLocaleValues = [];
         $channelSpecificValues = [];
         $localeSpecificValues = [];
 
-        // Auto-set product_number from SKU if the family has it
         if (isset($familyAttributes['product_number']) && empty($attributes['product_number'])) {
             $attributes['product_number'] = $sku;
         }
 
-        // 3 — Route each AI attribute to the correct value bucket based on family metadata
         foreach ($familyAttributes as $attrCode => $attrMeta) {
             if (\in_array($attrCode, self::SYSTEM_ATTRS, true)) {
                 continue;
@@ -113,12 +108,10 @@ class ProductWriterService
                 continue;
             }
 
-            // Handle price-type attributes (multi-currency object)
             if ($attrMeta['type'] === self::PRICE_TYPE) {
                 $value = $this->buildPriceValue($value, $currencies);
             }
 
-            // Handle select-type attributes (resolve to option code)
             if (\in_array($attrMeta['type'], self::SELECT_TYPES, true)) {
                 $value = $this->resolveSelectValue($attrCode, $value, $attrMeta['attribute_id']);
                 if ($value === null) {
@@ -126,7 +119,6 @@ class ProductWriterService
                 }
             }
 
-            // Place the value in the correct bucket based on value_per_channel/value_per_locale
             if ($attrMeta['value_per_channel'] && $attrMeta['value_per_locale']) {
                 $channelLocaleValues[$attrCode] = $value;
             } elseif ($attrMeta['value_per_channel']) {
@@ -138,14 +130,12 @@ class ProductWriterService
             }
         }
 
-        // Handle estimated_price → price attribute (if not already set)
         $estimatedPrice = $attributes['estimated_price'] ?? null;
 
         if ($estimatedPrice && is_numeric($estimatedPrice) && isset($familyAttributes['price']) && ! isset($channelLocaleValues['price'])) {
             $channelLocaleValues['price'] = $this->buildPriceValue($estimatedPrice, $currencies);
         }
 
-        // Estimate cost from price if the cost attribute exists and is not set
         if ($estimatedPrice && is_numeric($estimatedPrice) && isset($familyAttributes['cost']) && ! isset($channelSpecificValues['cost'])) {
             $channelSpecificValues['cost'] = $this->buildPriceValue(
                 round((float) $estimatedPrice * $this->costPriceRatio(), 2),
@@ -153,7 +143,6 @@ class ProductWriterService
             );
         }
 
-        // 4 — Assemble the full values JSON structure
         $values = $product->values ?? [];
         $values['common'] = array_merge($values['common'] ?? [], $commonValues);
 
@@ -178,14 +167,12 @@ class ProductWriterService
             );
         }
 
-        // 5 — Save categories
         $categoryValues = $this->resolveCategories($ctx->category, $attributes['categories'] ?? null);
 
         if ($categoryValues !== []) {
             $values['categories'] = $categoryValues;
         }
 
-        // 6 — Attach the uploaded image to the product
         $imagePath = $this->storeProductImage($product->id, $ctx->imagePath);
 
         if ($imagePath) {
@@ -195,15 +182,10 @@ class ProductWriterService
         $product->values = $values;
         $product->save();
 
-        // 7 — Log execution
         $this->logExecution($product->id, $ctx, $sku, $locale, $channel);
 
         return $product->id;
     }
-
-    // -------------------------------------------------------------------------
-    // Attribute family resolution
-    // -------------------------------------------------------------------------
 
     /**
      * Load all attributes for an attribute family with their metadata.
@@ -244,7 +226,6 @@ class ProductWriterService
      */
     protected function buildPriceValue(mixed $value, array $currencies): array
     {
-        // If already a multi-currency object, return as-is
         if (is_array($value)) {
             return $value;
         }
@@ -273,7 +254,6 @@ class ProductWriterService
             return null;
         }
 
-        // Load available options for this attribute
         $options = DB::table('attribute_options as ao')
             ->leftJoin('attribute_option_translations as aot', function ($join): void {
                 $join->on('aot.attribute_option_id', '=', 'ao.id')
@@ -283,21 +263,18 @@ class ProductWriterService
             ->select('ao.code', 'aot.label')
             ->get();
 
-        // Try exact code match first
         foreach ($options as $opt) {
             if (strcasecmp((string) $opt->code, $value) === 0) {
                 return $opt->code;
             }
         }
 
-        // Try label match
         foreach ($options as $opt) {
             if ($opt->label && strcasecmp((string) $opt->label, $value) === 0) {
                 return $opt->code;
             }
         }
 
-        // Try partial/fuzzy match (AI might return "Stainless Steel" for a "Steel" option)
         $valueLower = strtolower($value);
 
         foreach ($options as $opt) {
@@ -315,10 +292,6 @@ class ProductWriterService
 
         return null;
     }
-
-    // -------------------------------------------------------------------------
-    // Helpers
-    // -------------------------------------------------------------------------
 
     /**
      * Log the AI execution to ai_agent_executions.
@@ -434,14 +407,12 @@ class ProductWriterService
                 continue;
             }
 
-            // Direct code match
             if (\in_array($suggestion, $allCategories, true)) {
                 $matched[] = $suggestion;
 
                 continue;
             }
 
-            // Try matching the last segment of "Electronics > Laptops" paths
             $segments = array_map(trim(...), explode('>', $suggestion));
             $lastSegment = end($segments);
             $slugged = Str::slug($lastSegment);
@@ -484,13 +455,8 @@ class ProductWriterService
             }
         }
 
-        // Fallback: use the first attribute family
         return (int) (DB::table('attribute_families')->value('id') ?? 1);
     }
-
-    // -------------------------------------------------------------------------
-    // Public accessors for Chat Tool classes
-    // -------------------------------------------------------------------------
 
     /**
      * Public accessor for getFamilyAttributes.

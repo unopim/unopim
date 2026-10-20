@@ -2,6 +2,8 @@
 
 namespace Webkul\MagicAI\Repository;
 
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 use Webkul\Core\Eloquent\Repository;
 use Webkul\MagicAI\Contracts\MagicAIPlatform;
 
@@ -70,5 +72,25 @@ class MagicAIPlatformRepository extends Repository
             'id'    => $model,
             'label' => $model,
         ], $platform->model_list);
+    }
+
+    /**
+     * Make the platform the only default one.
+     */
+    public function makeDefault(int $id): void
+    {
+        DB::transaction(function () use ($id): void {
+            DB::table('magic_ai_platforms')->where('is_default', true)->update(['is_default' => false]);
+
+            $this->update(['is_default' => true], $id);
+        });
+    }
+
+    /**
+     * The platforms to list or choose from on the command line, newest last.
+     */
+    public function forConsole(int $limit = 1000): Collection
+    {
+        return $this->model->newQuery()->orderBy('id')->limit($limit)->get();
     }
 }
