@@ -1580,9 +1580,11 @@ return [
                     'zip-upload-success'  => 'ZIP caricato ed estratto con successo.',
                     'zip-upload-error'    => 'Caricamento ZIP fallito. Riprova.',
                     'invalid-zip'         => 'Il file caricato non è un archivio ZIP valido.',
-                    'zip-upload-or'       => 'o carica un ZIP di immagini',
-                    'zip-click-upload'    => 'Clicca per caricare un ZIP di immagini',
+                    'zip-upload-or'       => 'o carica un ZIP di immagini e documenti',
+                    'zip-click-upload'    => 'Clicca per caricare un ZIP di immagini e documenti',
                     'zip-files-extracted' => 'file estratti',
+                    'zip-files-skipped'   => ':skipped (tipo non supportato, contenuto non valido o troppo grandi):',
+                    'zip-accepted-types'  => 'Accettato nello ZIP: :types',
                     'zip-drop-hint'       => 'Clicca o trascina e rilascia un file ZIP qui',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MAX. 2MB)',
                     'images-directory'    => 'Percorso',
@@ -1704,6 +1706,9 @@ return [
                 'setup-queue-error'          => 'Si prega di cambiare il driver della coda in "database" o "redis" per avviare il processo di importazione.',
                 'update-success'             => 'Importazione aggiornata con successo.',
                 'zip-upload-success'         => 'ZIP caricato ed estratto con successo.',
+                'zip-extracted-count'        => '{1} :count file estratto|[0,*] :count file estratti',
+                'zip-skipped-count'          => '{1} :count saltato|[0,*] :count saltati',
+                'zip-upload-partial'         => 'ZIP caricato. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [

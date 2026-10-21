@@ -40,6 +40,10 @@ class RememberFact implements PimTool
                 $value = $request->string('value')->toString();
                 $scope = $request->string('scope')->toString() ?: 'catalog';
 
+                if ($scope !== 'user' && ! $this->context->hasPermission('ai-agent.system-prompt.edit')) {
+                    $scope = 'user';
+                }
+
                 $userId = $scope === 'user' ? $this->context->user?->id : null;
                 $channel = $scope === 'catalog' ? $this->context->channel : null;
 

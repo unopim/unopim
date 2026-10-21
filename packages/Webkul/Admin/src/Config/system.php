@@ -17,6 +17,7 @@ return [
         'name'      => 'admin::app.configuration.index.general.magic-ai.title',
         'info'      => 'admin::app.configuration.index.general.magic-ai.info',
         'icon'      => 'settings/magic-ai.svg',
+        'acl'       => 'ai-agent.general',
         'sort'      => 3,
     ], [
         'key'    => 'general.magic_ai.settings',

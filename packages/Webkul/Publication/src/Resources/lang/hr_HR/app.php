@@ -52,10 +52,10 @@ return [
             'notice'  => 'Ovaj zapis zadržan je radi transparentnosti, ali se više aktivno ne održava.',
         ],
         'release' => [
-            'banner'       => 'Release :sequence of this passport',
-            'superseded'   => 'This is an earlier state of the passport, kept exactly as it was published. A newer state exists.',
-            'current'      => 'This is the current state of the passport.',
-            'view-current' => 'View the current passport',
+            'banner'       => 'Izdanje :sequence ove putovnice proizvoda',
+            'superseded'   => 'Ovo je ranije stanje putovnice proizvoda, sačuvano točno onako kako je objavljeno. Postoji novije stanje.',
+            'current'      => 'Ovo je trenutačno stanje putovnice proizvoda.',
+            'view-current' => 'Prikaži trenutačnu putovnicu proizvoda',
         ],
     ],
 ];

@@ -52,10 +52,10 @@ return [
             'notice'  => 'Энэ бүртгэлийг ил тод байдлын үүднээс хадгалж байгаа боловч цаашид идэвхтэй арчилахгүй.',
         ],
         'release' => [
-            'banner'       => 'Release :sequence of this passport',
-            'superseded'   => 'This is an earlier state of the passport, kept exactly as it was published. A newer state exists.',
-            'current'      => 'This is the current state of the passport.',
-            'view-current' => 'View the current passport',
+            'banner'       => 'Энэ паспортын нийтлэл :sequence',
+            'superseded'   => 'Энэ бол паспортын өмнөх төлөв бөгөөд нийтлэгдсэн хэлбэрээрээ яг хадгалагдсан. Илүү шинэ төлөв байна.',
+            'current'      => 'Энэ бол паспортын одоогийн төлөв.',
+            'view-current' => 'Одоогийн паспортыг харах',
         ],
     ],
 ];

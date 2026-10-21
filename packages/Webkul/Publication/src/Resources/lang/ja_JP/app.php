@@ -52,10 +52,10 @@ return [
             'notice'  => 'この記録は透明性のために保持されていますが、現在は積極的に更新されていません。',
         ],
         'release' => [
-            'banner'       => 'Release :sequence of this passport',
-            'superseded'   => 'This is an earlier state of the passport, kept exactly as it was published. A newer state exists.',
-            'current'      => 'This is the current state of the passport.',
-            'view-current' => 'View the current passport',
+            'banner'       => 'このパスポートのリリース :sequence',
+            'superseded'   => 'これはパスポートの以前の状態で、公開時のまま保存されています。より新しい状態があります。',
+            'current'      => 'これはパスポートの現在の状態です。',
+            'view-current' => '現在のパスポートを表示',
         ],
     ],
 ];

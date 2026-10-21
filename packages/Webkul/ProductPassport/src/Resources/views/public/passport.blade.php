@@ -10,7 +10,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ trans('passport::app.public.title') }}</title>
     @if ($release ?? false)
-        {{-- A release page is a reference to one moment, never the page search engines should surface. --}}
         <link rel="canonical" href="{{ $release['current_url'] }}">
         <meta name="robots" content="noindex, noarchive">
     @endif

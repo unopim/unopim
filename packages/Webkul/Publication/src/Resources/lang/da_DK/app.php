@@ -52,10 +52,10 @@ return [
             'notice'  => 'Denne post opbevares af hensyn til gennemsigtighed, men vedligeholdes ikke længere aktivt.',
         ],
         'release' => [
-            'banner'       => 'Release :sequence of this passport',
-            'superseded'   => 'This is an earlier state of the passport, kept exactly as it was published. A newer state exists.',
-            'current'      => 'This is the current state of the passport.',
-            'view-current' => 'View the current passport',
+            'banner'       => 'Udgivelse :sequence af dette produktpas',
+            'superseded'   => 'Dette er en tidligere udgave af produktpasset, bevaret præcis som den blev offentliggjort. Der findes en nyere udgave.',
+            'current'      => 'Dette er den aktuelle udgave af produktpasset.',
+            'view-current' => 'Se det aktuelle produktpas',
         ],
     ],
 ];

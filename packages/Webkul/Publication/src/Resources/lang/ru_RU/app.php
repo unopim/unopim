@@ -52,10 +52,10 @@ return [
             'notice'  => 'Эта запись сохраняется для прозрачности, но больше не поддерживается активно.',
         ],
         'release' => [
-            'banner'       => 'Release :sequence of this passport',
-            'superseded'   => 'This is an earlier state of the passport, kept exactly as it was published. A newer state exists.',
-            'current'      => 'This is the current state of the passport.',
-            'view-current' => 'View the current passport',
+            'banner'       => 'Выпуск :sequence этого паспорта',
+            'superseded'   => 'Это более раннее состояние паспорта, сохранённое точно в том виде, в каком оно было опубликовано. Существует более новое состояние.',
+            'current'      => 'Это текущее состояние паспорта.',
+            'view-current' => 'Открыть текущий паспорт',
         ],
     ],
 ];

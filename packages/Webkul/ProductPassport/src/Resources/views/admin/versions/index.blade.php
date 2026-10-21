@@ -94,15 +94,10 @@
         @endif
     </div>
 
-    @php
-        $canIssue = bouncer()->hasPermission('catalog.passport.publish') && $publication->status->isPubliclyResolvable();
-    @endphp
-
-    {{-- Releases: one number per publish moment across locales; the unit a printed carrier is bound to. --}}
     <div class="mt-4 bg-white dark:bg-cherry-900 rounded box-shadow overflow-x-auto">
         <h2 class="p-4 text-base font-semibold text-gray-800 dark:text-white">@lang('passport::app.publications.releases.title')</h2>
 
-        @if ($publication->releases->isEmpty())
+        @if ($releases->isEmpty())
             <p class="px-4 pb-6 text-sm text-gray-500 dark:text-gray-400">@lang('passport::app.publications.releases.none')</p>
         @else
             <x-admin::table>
@@ -119,7 +114,7 @@
                 </x-admin::table.thead>
 
                 <x-admin::table.tbody>
-                    @foreach ($publication->releases as $release)
+                    @foreach ($releases as $release)
                         <x-admin::table.tbody.tr class="border-t border-gray-100 dark:border-cherry-800">
                             <x-admin::table.td>{{ $release->sequence }}</x-admin::table.td>
                             <x-admin::table.td>{{ $release->published_at }}</x-admin::table.td>
@@ -139,14 +134,25 @@
                     @endforeach
                 </x-admin::table.tbody>
             </x-admin::table>
+
+            @if ($releases->hasPages())
+                <div class="flex justify-end gap-4 p-4 text-sm">
+                    @if ($releases->previousPageUrl())
+                        <a href="{{ $releases->previousPageUrl() }}" class="text-primary-700 dark:text-primary-300 font-semibold">@lang('admin::app.components.datagrid.toolbar.pagination.previous-page')</a>
+                    @endif
+
+                    @if ($releases->nextPageUrl())
+                        <a href="{{ $releases->nextPageUrl() }}" class="text-primary-700 dark:text-primary-300 font-semibold">@lang('admin::app.components.datagrid.toolbar.pagination.next-page')</a>
+                    @endif
+                </div>
+            @endif
         @endif
     </div>
 
-    {{-- Issued carriers: the immutable record of what was printed and what it encodes. --}}
     <div class="mt-4 bg-white dark:bg-cherry-900 rounded box-shadow overflow-x-auto">
         <h2 class="p-4 text-base font-semibold text-gray-800 dark:text-white">@lang('passport::app.publications.carrier.title')</h2>
 
-        @if ($publication->carrierIssuances->isEmpty())
+        @if ($issuances->isEmpty())
             <p class="px-4 pb-6 text-sm text-gray-500 dark:text-gray-400">@lang('passport::app.publications.carrier.none')</p>
         @else
             <x-admin::table>
@@ -160,7 +166,7 @@
                 </x-admin::table.thead>
 
                 <x-admin::table.tbody>
-                    @foreach ($publication->carrierIssuances as $issuance)
+                    @foreach ($issuances as $issuance)
                         <x-admin::table.tbody.tr class="border-t border-gray-100 dark:border-cherry-800">
                             <x-admin::table.td>{{ $issuance->issued_at }}</x-admin::table.td>
                             <x-admin::table.td>{{ $issuance->release?->sequence }}</x-admin::table.td>
@@ -170,6 +176,18 @@
                     @endforeach
                 </x-admin::table.tbody>
             </x-admin::table>
+
+            @if ($issuances->hasPages())
+                <div class="flex justify-end gap-4 p-4 text-sm">
+                    @if ($issuances->previousPageUrl())
+                        <a href="{{ $issuances->previousPageUrl() }}" class="text-primary-700 dark:text-primary-300 font-semibold">@lang('admin::app.components.datagrid.toolbar.pagination.previous-page')</a>
+                    @endif
+
+                    @if ($issuances->nextPageUrl())
+                        <a href="{{ $issuances->nextPageUrl() }}" class="text-primary-700 dark:text-primary-300 font-semibold">@lang('admin::app.components.datagrid.toolbar.pagination.next-page')</a>
+                    @endif
+                </div>
+            @endif
         @endif
     </div>
 

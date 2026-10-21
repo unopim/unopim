@@ -52,10 +52,10 @@ return [
             'notice'  => '이 기록은 투명성을 위해 보존되지만 더 이상 적극적으로 관리되지 않습니다.',
         ],
         'release' => [
-            'banner'       => 'Release :sequence of this passport',
-            'superseded'   => 'This is an earlier state of the passport, kept exactly as it was published. A newer state exists.',
-            'current'      => 'This is the current state of the passport.',
-            'view-current' => 'View the current passport',
+            'banner'       => '이 제품 여권의 릴리스 :sequence',
+            'superseded'   => '게시된 그대로 보존된 제품 여권의 이전 상태입니다. 더 최신 상태가 있습니다.',
+            'current'      => '제품 여권의 현재 상태입니다.',
+            'view-current' => '현재 제품 여권 보기',
         ],
     ],
 ];
