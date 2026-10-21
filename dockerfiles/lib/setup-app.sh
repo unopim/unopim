@@ -58,7 +58,7 @@ _wait_for_elasticsearch() {
         *) url="http://${host}" ;;
     esac
 
-    echo "→ Waiting for Elasticsearch at $(printf '%s' "$url" | sed -E 's#^(https?://)[^/@]*@#\1#')..."
+    echo "→ Waiting for Elasticsearch at $(printf '%s' "$url" | sed -E 's#^(https?://)[^/]*@#\1#')..."
 
     for _ in $(seq 1 30); do
         status=$(_elasticsearch_curl_auth | curl -K - --connect-timeout 5 --max-time 15 -sS -o /dev/null -w '%{http_code}' \
