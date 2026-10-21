@@ -30,6 +30,7 @@ return [
 
     'common' => [
         'invalid-data'                  => 'I dati forniti non sono validi o superano i limiti consentiti.',
+        'conversation-not-found'        => 'Conversazione non trovata.',
         'yes'                           => 'Sì',
         'no'                            => 'No',
         'save'                          => 'Salva',

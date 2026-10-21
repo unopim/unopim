@@ -30,6 +30,7 @@ return [
 
     'common' => [
         'invalid-data'                  => 'De oppgitte dataene er ugyldige eller overskrider de tillatte grensene.',
+        'conversation-not-found'        => 'Samtalen ble ikke funnet.',
         'yes'                           => 'Ja',
         'no'                            => 'Nei',
         'save'                          => 'Lagre',

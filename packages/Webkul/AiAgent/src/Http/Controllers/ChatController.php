@@ -199,6 +199,9 @@ class ChatController extends Controller
             uploadedFilePaths: $filePaths,
             currentPage: $context['current_page'] ?? null,
             user: auth()->guard('admin')->user(),
+            conversationId: $request->conversationId(),
+            requestId: $request->validated('request_id'),
+            hasNewImages: $request->hasFile('images'),
             extensions: $request->validated('extensions') ?? [],
         );
     }

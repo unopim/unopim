@@ -30,6 +30,7 @@ return [
 
     'common' => [
         'invalid-data'                  => 'Sağlanan veriler geçersiz veya izin verilen sınırları aşıyor.',
+        'conversation-not-found'        => 'Konuşma bulunamadı.',
         'yes'                           => 'Evet',
         'no'                            => 'Hayır',
         'save'                          => 'Kaydet',

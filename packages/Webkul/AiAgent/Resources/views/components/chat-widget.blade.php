@@ -919,6 +919,13 @@ const pickTextModel = (models) => {
     }
     return models[0];
 };
+const chatRequestId = () => {
+    const bytes = crypto.getRandomValues(new Uint8Array(16));
+    bytes[6] = (bytes[6] & 15) | 64;
+    bytes[8] = (bytes[8] & 63) | 128;
+    const hex = Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
+    return `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`;
+};
 
 app.component('v-agenting-pim', {
     template: '#v-agenting-pim-template',
@@ -1027,6 +1034,8 @@ app.component('v-agenting-pim', {
             activeTab: 'capabilities',
             activeCapability: null,
             messages: [],
+            historyEnabled: @json((bool) config('ai-agent.history.enabled', false)),
+            deletedMessageIds: {},
             inputText: '',
             composerCursor: 0,
             composerRefs: {},
@@ -1357,7 +1366,7 @@ app.component('v-agenting-pim', {
 
         createNewSession() {
             if (this.messages.length > 0) {
-                // Save current session to localStorage only (not DB — avoids duplicates)
+                // Save locally, and to saved history when enabled; the client id keeps repeat saves idempotent
                 this.saveCurrentSession();
             }
             this.activeSessionId = this.generateSessionId();
@@ -1370,21 +1379,25 @@ app.component('v-agenting-pim', {
             this.$nextTick(() => this.$refs.textInput?.focus());
         },
 
-        saveCurrentSession(persistToDb = false) {
-            if (!this.activeSessionId || this.messages.length === 0) return;
+        saveCurrentSession(persistToDb = true) {
+            if (!this.activeSessionId || (this.messages.length === 0 && !(this.deletedMessageIds[this.activeSessionId]?.length))) return;
 
             const firstUserMsg = this.messages.find(m => m.role === 'user');
             const name = firstUserMsg
                 ? firstUserMsg.content.substring(0, 50) + (firstUserMsg.content.length > 50 ? '…' : '')
                 : this.trans.sessionDefaultName;
-
-            // Limit stored messages to prevent excessive localStorage usage.
-            const recentMessages = this.messages.filter(m => !m.isRedirect).slice(-50);
+            const recentMessages = this.messages.filter(m => !m.isRedirect);
+            for (const message of recentMessages) message.message_id ||= chatRequestId();
             const sessionMessages = recentMessages.map(m => ({
+                role: m.role,
+                message_id: m.message_id || null,
+                request_id: m.request_id || null,
                 presentation: m.presentation || null,
                 extensions: m.extensions || null,
-                role: m.role,
+                tool_calls: m.tool_calls || null,
+                tokens_used: m.tokens_used || 0,
                 content: m.content || '',
+                action: m.action || null,
                 result: m.result || null,
                 product_url: m.product_url || null,
                 download_url: m.download_url || null,
@@ -1397,7 +1410,8 @@ app.component('v-agenting-pim', {
                 name: name,
                 messageCount: this.messages.filter(m => m.role === 'user').length,
                 lastActive: new Date().toLocaleDateString(),
-                messages: sessionMessages,
+                dbId: this.sessions[existingIdx]?.dbId || null,
+                messages: sessionMessages.slice(-50),
                 capability: this.activeCapability?.key || null,
             };
 
@@ -1412,26 +1426,91 @@ app.component('v-agenting-pim', {
             }
 
             this.persistSessions();
+            if (this.historyEnabled && persistToDb && !this.messages.some(m => m.isStreaming)) {
+                const payload = {conversation_id: String(sessionData.id), title: name,
+                    deleted_message_ids: [...(this.deletedMessageIds[sessionData.id] || [])],
+                    messages: sessionMessages.map(m => ({role:m.role, content:m.content, message_id:m.message_id, request_id:m.request_id, presentation:m.presentation, tool_calls:m.tool_calls, tokens_used:m.tokens_used, result:m.result, product_url:m.product_url, download_url:m.download_url, _confirmed:m._confirmed, action:m.action}))};
+                const serialized = JSON.stringify(payload);
+                this._historyFingerprints ||= {};
+                if (this._historyFingerprints[sessionData.id] === serialized) return;
+                this._historyFingerprints[sessionData.id] = serialized;
+                this._historySave = (this._historySave || Promise.resolve()).catch(() => {}).then(() =>
+                    this.saveHistoryBatches(payload)
+                ).then(res => {
+                    const local = this.sessions.find(s => s.id === sessionData.id);
+                    if (local) local.dbId = res.data.id;
+                    const savedDeletions = new Set(payload.deleted_message_ids);
+                    this.deletedMessageIds[sessionData.id] = (this.deletedMessageIds[sessionData.id] || []).filter(id => !savedDeletions.has(id));
+                    this.persistSessions();
+                }).catch(() => { delete this._historyFingerprints[sessionData.id]; });
+            }
+            return this._historySave;
+        },
+
+        async saveHistoryBatches(payload) {
+            let response;
+            for (let offset = 0; offset < Math.max(payload.messages.length, payload.deleted_message_ids.length, 1); offset += 100) {
+                response = await this.$axios.post("{{ route('ai-agent.conversations.store') }}", {...payload, messages:payload.messages.slice(offset, offset + 100), deleted_message_ids:payload.deleted_message_ids.slice(offset, offset + 100)});
+            }
+            return response;
+        },
+
+        historyLink(value, product = false) {
+            if (typeof value !== 'string' || value.length > 8192 || /[\x00-\x20\x7f\\]/.test(value)) return null;
+            try {
+                const decoded = decodeURIComponent(value);
+                if (/^[\/]{2}|[\x00-\x1f\x7f\\]/.test(decoded)) return null;
+                if (!value.startsWith('/') && !/^https?:\/\//.test(value)) return null;
+                const link = new URL(value, window.location.origin);
+                if (!['http:', 'https:'].includes(link.protocol) || link.username || link.password || (product && link.origin !== window.location.origin)) return null;
+                return value;
+            } catch { return null; }
+        },
+
+        mergeHistory(incoming, local = [], deletedIds = []) {
+            const deleted = new Set(deletedIds);
+            incoming = incoming.filter(message => !deleted.has(message.message_id));
+            local = local.filter(message => !deleted.has(message.message_id));
+            const remaining = new Set(local);
+            const merged = incoming.map(remote => {
+                const cached = local.find(m => m.message_id && m.message_id === remote.message_id)
+                    || local.find(m => !m.message_id && remaining.has(m) && m.role === remote.role && m.content === remote.content) || {};
+                remaining.delete(cached);
+                const message = {...cached, ...remote};
+                for (const field of ['result', 'product_url', 'download_url', 'action']) {
+                    if (remote[field] == null && cached[field] != null) message[field] = cached[field];
+                }
+                message._confirmed = Boolean(remote._confirmed || cached._confirmed);
+                if (typeof message.tool_calls === 'string') {
+                    try { message.tool_calls = JSON.parse(message.tool_calls); } catch { message.tool_calls = null; }
+                }
+                message.product_url = this.historyLink(message.product_url, true);
+                message.download_url = this.historyLink(message.download_url);
+                return message;
+            });
+            return [...merged, ...[...remaining].map(message => ({...message, product_url:this.historyLink(message.product_url, true), download_url:this.historyLink(message.download_url)}))];
         },
 
         async switchToSession(sessionId) {
+            const selection = this._historySelection = (this._historySelection || 0) + 1;
             if (this.messages.length > 0 && this.activeSessionId) {
                 await this.saveCurrentSession();
             }
 
             // Try loading from local sessions first (fast)
             let session = this.sessions.find(s => s.id === sessionId);
-
-            // If it's a DB-backed session (numeric ID), load from API
-            if (!session && typeof sessionId === 'number') {
+            if (this.historyEnabled && (session?.dbId || typeof sessionId === 'number')) {
                 try {
-                    const res = await this.$axios.get("{{ url(config('app.admin_url') . '/ai-agent/conversations') }}/" + sessionId);
+                    const res = await this.$axios.get("{{ url(config('app.admin_url') . '/ai-agent/conversations') }}/" + (session?.dbId || sessionId));
+                    if (selection !== this._historySelection) return;
                     const data = res.data;
+                    const localMessages = this.activeSessionId === sessionId ? this.messages : session?.messages || [];
                     session = {
-                        id: data.conversation.id,
+                        id: data.conversation.client_id || data.conversation.id,
+                        dbId: data.conversation.id,
                         name: data.conversation.title,
-                        messages: data.messages.map(m => ({ role: m.role, content: m.content })),
-                        capability: null,
+                        messages: this.mergeHistory(data.messages, localMessages, [...(data.deleted_message_ids || []), ...(this.deletedMessageIds[data.conversation.client_id || sessionId] || [])]),
+                        capability: session?.capability || null,
                     };
                 } catch (e) { return; }
             }
@@ -1455,9 +1534,10 @@ app.component('v-agenting-pim', {
         },
 
         async deleteSession(sessionId) {
-            if (typeof sessionId === 'number') {
+            const dbId = this.sessions.find(s => s.id === sessionId)?.dbId || (typeof sessionId === 'number' ? sessionId : null);
+            if (this.historyEnabled && dbId) {
                 try {
-                    await this.$axios.delete("{{ url(config('app.admin_url') . '/ai-agent/conversations') }}/" + sessionId);
+                    await this.$axios.delete("{{ url(config('app.admin_url') . '/ai-agent/conversations') }}/" + dbId);
                 } catch (e) {
                     this.$emitter.emit('add-flash', { type: 'error', message: this.trans.errorGeneric });
 
@@ -1489,6 +1569,22 @@ app.component('v-agenting-pim', {
                     });
                 }
             } catch (e) { this.sessions = []; }
+            if (!this.historyEnabled) return;
+            this.$axios.get("{{ route('ai-agent.conversations.index') }}").then(async res => {
+                for (const item of res.data.conversations || []) {
+                    const id = item.client_id || item.id;
+                    const existing = this.sessions.find(s => s.id === id);
+                    if (existing) existing.dbId = item.id;
+                    else this.sessions.push({id, dbId:item.id, name:item.title, messageCount:'',lastActive:new Date(item.updated_at).toLocaleDateString()});
+                }
+                const activeId = this.activeSessionId;
+                const saved = this.sessions.find(s => s.id === activeId);
+                if (saved?.dbId) {
+                    const response = await this.$axios.get("{{ url(config('app.admin_url') . '/ai-agent/conversations') }}/" + saved.dbId);
+                    if (this.activeSessionId !== activeId || this.messages.some(m => m.isStreaming)) return;
+                    this.messages = this.mergeHistory(response.data.messages, this.messages, [...(response.data.deleted_message_ids || []), ...(this.deletedMessageIds[activeId] || [])]);
+                }
+            }).catch(() => {});
         },
         onPlatformChange() {
             this.selectedModel = pickTextModel(this.availableModels);
@@ -1592,13 +1688,13 @@ app.component('v-agenting-pim', {
             if (key) delete this.extensionContext[key];
         },
 
-        async send() {
+        async send(retryRequestId = null) {
             const text = this.inputText.trim();
             const files = [...this.pendingFiles];
             const selectedContext = JSON.parse(JSON.stringify(this.extensionContext));
             if (!text && files.length === 0) return;
             // Build user message for display
-            const userMsg = { role: 'user', extensions: selectedContext, content: text || (files.length ? '📎 ' + files.map(f => f.name).join(', ') : ''), files: files.map(f => ({ type: f.type, preview: f.preview, name: f.name })) };
+            const userMsg = { message_id: chatRequestId(), request_id: typeof retryRequestId === 'string' ? retryRequestId : chatRequestId(), role: 'user', extensions: selectedContext, content: text || (files.length ? '📎 ' + files.map(f => f.name).join(', ') : ''), files: files.map(f => ({ type: f.type, preview: f.preview, name: f.name })) };
             this.messages.push(userMsg);
             this.inputText = ''; this.resetTextarea(); this.scrollBottom(true); this.isLoading = true;
             this.streamingStatus = files.length > 0 ? this.trans.analyzingFiles : this.trans.thinking;
@@ -1611,6 +1707,7 @@ app.component('v-agenting-pim', {
                 if (this.selectedModel) fd.append('model', this.selectedModel);
                 files.forEach((f, i) => { if (f.type === 'image') fd.append('images[' + i + ']', f.file); else fd.append('files[' + i + ']', f.file); });
                 fd.append('conversation_id', this.activeSessionId);
+                fd.append('request_id', userMsg.request_id);
                 fd.append('extensions', JSON.stringify(selectedContext));
                 fd.append('history', JSON.stringify(this.messages.slice(0, -1).map(m => ({ role: m.role, content: m.content || '' }))));
                 fd.append('context[current_page]', window.location.pathname);
@@ -1654,7 +1751,7 @@ app.component('v-agenting-pim', {
                 // Handle JSON response (from either stream JSON or blocking fallback)
                 this.consumeExtensionContext(data);
                 this.pendingFiles = [];
-                this.messages.push({ presentation: data.presentation || null, role: 'assistant', content: data.reply || this.trans.noResponse, action: data.action || null, result: data.result || null, product_url: data.product_url || null, download_url: data.download_url || null });
+                this.messages.push({ message_id: chatRequestId(), presentation: data.presentation || null, role: 'assistant', content: data.reply || this.trans.noResponse, action: data.action || null, result: data.result || null, product_url: data.product_url || null, download_url: data.download_url || null });
 
                 // Auto-navigate to the created product page
                 if (data.product_url && this.activeCapability?.key === 'create_from_image') {
@@ -1750,6 +1847,7 @@ app.component('v-agenting-pim', {
                 content: streamedText || this.trans.noResponse,
                 action: resultData.action || 'agent_response',
                 result: resultData.result || null,
+                message_id: chatRequestId(),
                 presentation: resultData.presentation || null,
                 product_url: resultData.product_url || null,
                 download_url: resultData.download_url || null,
@@ -1793,19 +1891,28 @@ app.component('v-agenting-pim', {
             }
         },
 
-        retryFrom(idx) {
+        async retryFrom(idx) {
+            if (this.isLoading) return;
+            const sessionId = this.activeSessionId;
             // Find the user message right before this assistant message
             let userIdx = idx - 1;
             while (userIdx >= 0 && this.messages[userIdx].role !== 'user') { userIdx--; }
             if (userIdx < 0) return;
+            const requestId = this.messages[userIdx].request_id || chatRequestId();
             if (this.messages[userIdx].extensions) {
                 this.extensionContext = JSON.parse(JSON.stringify(this.messages[userIdx].extensions));
             }
             const userText = this.messages[userIdx].content || '';
             // Remove from that user message onwards and resend
+            const removed = this.messages.slice(userIdx).map(message => message.message_id).filter(Boolean);
+            this.deletedMessageIds[this.activeSessionId] = [...new Set([...(this.deletedMessageIds[this.activeSessionId] || []), ...removed])];
             this.messages.splice(userIdx);
+            this.isLoading = true;
+            await this.saveCurrentSession();
+            this.isLoading = false;
+            if (this.activeSessionId !== sessionId) return;
             this.inputText = userText;
-            this.$nextTick(() => this.send());
+            this.$nextTick(() => this.send(requestId));
         },
 
         rateMessage(idx, rating) {
@@ -2075,7 +2182,8 @@ app.component('v-agenting-pim', {
                     selectedPlatformId: this.selectedPlatformId,
                     selectedModel: this.selectedModel,
                     activeSessionId: this.activeSessionId,
-                    messages: this.messages.filter(m => !m.isRedirect).map(m => ({ presentation: m.presentation || null, extensions: m.extensions || null, role: m.role, content: m.content, result: m.result || null, product_url: m.product_url || null, download_url: m.download_url || null, _confirmed: m._confirmed || false })),
+                    deletedMessageIds: this.deletedMessageIds,
+                    messages: this.messages.filter(m => !m.isRedirect).map(m => ({ message_id: m.message_id || null, request_id: m.request_id || null, presentation: m.presentation || null, extensions: m.extensions || null, role: m.role, content: m.content, action: m.action || null, result: m.result || null, product_url: m.product_url || null, download_url: m.download_url || null, _confirmed: m._confirmed || false })),
                 }));
 
                 // Auto-save current session to localStorage
@@ -2102,6 +2210,7 @@ app.component('v-agenting-pim', {
                     }
                 }
                 if (s.activeSessionId) this.activeSessionId = s.activeSessionId;
+                if (s.deletedMessageIds && typeof s.deletedMessageIds === 'object') this.deletedMessageIds = s.deletedMessageIds;
                 if (Array.isArray(s.messages) && s.messages.length > 0) this.messages = s.messages.filter(m => !m.isRedirect);
                 // isOpen restored synchronously in data() to avoid first-paint flicker.
             } catch (e) {}

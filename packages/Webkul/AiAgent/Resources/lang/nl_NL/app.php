@@ -30,6 +30,7 @@ return [
 
     'common' => [
         'invalid-data'                  => 'De opgegeven gegevens zijn ongeldig of overschrijden de toegestane limieten.',
+        'conversation-not-found'        => 'Gesprek niet gevonden.',
         'yes'                           => 'Ja',
         'no'                            => 'Nee',
         'save'                          => 'Opslaan',
