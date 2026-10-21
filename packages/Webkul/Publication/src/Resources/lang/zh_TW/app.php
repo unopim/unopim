@@ -52,10 +52,10 @@ return [
             'notice'  => '此記錄基於透明度予以保留,但已不再主動維護。',
         ],
         'release' => [
-            'banner'       => 'Release :sequence of this passport',
-            'superseded'   => 'This is an earlier state of the passport, kept exactly as it was published. A newer state exists.',
-            'current'      => 'This is the current state of the passport.',
-            'view-current' => 'View the current passport',
+            'banner'       => '此護照的第 :sequence 次發布',
+            'superseded'   => '這是護照的較早狀態，完全依發布時的樣子保留。已有更新的狀態。',
+            'current'      => '這是護照的目前狀態。',
+            'view-current' => '檢視目前的護照',
         ],
     ],
 ];

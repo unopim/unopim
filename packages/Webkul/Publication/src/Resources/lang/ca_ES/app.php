@@ -52,10 +52,10 @@ return [
             'notice'  => 'Aquest registre es conserva per transparència, però ja no es manté activament.',
         ],
         'release' => [
-            'banner'       => 'Release :sequence of this passport',
-            'superseded'   => 'This is an earlier state of the passport, kept exactly as it was published. A newer state exists.',
-            'current'      => 'This is the current state of the passport.',
-            'view-current' => 'View the current passport',
+            'banner'       => 'Publicació :sequence d\'aquest passaport',
+            'superseded'   => 'Aquest és un estat anterior del passaport, conservat exactament tal com es va publicar. N\'hi ha un estat més recent.',
+            'current'      => 'Aquest és l\'estat actual del passaport.',
+            'view-current' => 'Mostra el passaport actual',
         ],
     ],
 ];

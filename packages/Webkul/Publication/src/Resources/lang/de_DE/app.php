@@ -52,10 +52,10 @@ return [
             'notice'  => 'Dieser Datensatz wird aus Gründen der Transparenz aufbewahrt, wird jedoch nicht mehr aktiv gepflegt.',
         ],
         'release' => [
-            'banner'       => 'Release :sequence of this passport',
-            'superseded'   => 'This is an earlier state of the passport, kept exactly as it was published. A newer state exists.',
-            'current'      => 'This is the current state of the passport.',
-            'view-current' => 'View the current passport',
+            'banner'       => 'Veröffentlichung :sequence dieses Produktpasses',
+            'superseded'   => 'Dies ist ein früherer Stand des Produktpasses, genau so aufbewahrt, wie er veröffentlicht wurde. Es gibt einen neueren Stand.',
+            'current'      => 'Dies ist der aktuelle Stand des Produktpasses.',
+            'view-current' => 'Aktuellen Produktpass ansehen',
         ],
     ],
 ];

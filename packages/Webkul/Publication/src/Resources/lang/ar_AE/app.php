@@ -52,10 +52,10 @@ return [
             'notice'  => 'يُحتفظ بهذا السجل لأغراض الشفافية، لكنه لم يعد يُحدَّث بشكل نشط.',
         ],
         'release' => [
-            'banner'       => 'Release :sequence of this passport',
-            'superseded'   => 'This is an earlier state of the passport, kept exactly as it was published. A newer state exists.',
-            'current'      => 'This is the current state of the passport.',
-            'view-current' => 'View the current passport',
+            'banner'       => 'الإصدار :sequence من جواز المنتج هذا',
+            'superseded'   => 'هذه حالة سابقة من جواز المنتج، محفوظة تمامًا كما نُشرت. توجد حالة أحدث.',
+            'current'      => 'هذه هي الحالة الحالية لجواز المنتج.',
+            'view-current' => 'عرض جواز المنتج الحالي',
         ],
     ],
 ];

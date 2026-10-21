@@ -52,10 +52,10 @@ return [
             'notice'  => 'यह रिकॉर्ड पारदर्शिता के लिए बनाए रखा गया है, लेकिन अब इसे सक्रिय रूप से अद्यतन नहीं किया जा रहा है।',
         ],
         'release' => [
-            'banner'       => 'Release :sequence of this passport',
-            'superseded'   => 'This is an earlier state of the passport, kept exactly as it was published. A newer state exists.',
-            'current'      => 'This is the current state of the passport.',
-            'view-current' => 'View the current passport',
+            'banner'       => 'इस पासपोर्ट की रिलीज़ :sequence',
+            'superseded'   => 'यह पासपोर्ट की एक पुरानी स्थिति है, जिसे ठीक वैसे ही सुरक्षित रखा गया है जैसे यह प्रकाशित हुई थी। इसकी एक नई स्थिति उपलब्ध है।',
+            'current'      => 'यह पासपोर्ट की वर्तमान स्थिति है।',
+            'view-current' => 'वर्तमान पासपोर्ट देखें',
         ],
     ],
 ];

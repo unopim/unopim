@@ -52,10 +52,10 @@ return [
             'notice'  => 'Dit record wordt bewaard omwille van transparantie, maar wordt niet langer actief bijgehouden.',
         ],
         'release' => [
-            'banner'       => 'Release :sequence of this passport',
-            'superseded'   => 'This is an earlier state of the passport, kept exactly as it was published. A newer state exists.',
-            'current'      => 'This is the current state of the passport.',
-            'view-current' => 'View the current passport',
+            'banner'       => 'Publicatie :sequence van dit productpaspoort',
+            'superseded'   => 'Dit is een eerdere stand van het productpaspoort, precies bewaard zoals die is gepubliceerd. Er is een nieuwere stand.',
+            'current'      => 'Dit is de actuele stand van het productpaspoort.',
+            'view-current' => 'Bekijk het actuele productpaspoort',
         ],
     ],
 ];

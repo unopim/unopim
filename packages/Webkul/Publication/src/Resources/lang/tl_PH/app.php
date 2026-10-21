@@ -52,10 +52,10 @@ return [
             'notice'  => 'Itinatago ang talaang ito para sa transparency ngunit hindi na ito aktibong pinananatili.',
         ],
         'release' => [
-            'banner'       => 'Release :sequence of this passport',
-            'superseded'   => 'This is an earlier state of the passport, kept exactly as it was published. A newer state exists.',
-            'current'      => 'This is the current state of the passport.',
-            'view-current' => 'View the current passport',
+            'banner'       => 'Paglalathala :sequence ng pasaporteng ito',
+            'superseded'   => 'Ito ay isang naunang estado ng pasaporte, iningatan nang eksakto kung paano ito inilathala. May mas bagong estado.',
+            'current'      => 'Ito ang kasalukuyang estado ng pasaporte.',
+            'view-current' => 'Tingnan ang kasalukuyang pasaporte',
         ],
     ],
 ];
