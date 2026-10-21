@@ -21,6 +21,7 @@ function replyWidget(globals = {}) {
         '@json($replyPollLimitMs)': 60000,
     });
     const w = instance(components['v-agenting-pim']);
+    w.persistState = w.saveState;
     w.scrollBottom = w.saveState = w.saveCurrentSession = () => {};
     w.unmount = () => components['v-agenting-pim'].beforeUnmount.call(w);
     return w;
@@ -89,4 +90,29 @@ test('a widget unmounted by navigation stops polling without cancelling, finaliz
     assert.deepEqual(posts, []);
     assert.equal(w.messages[0].replyId, 'r2');
     assert.equal(w.messages[0].isStreaming, true);
+});
+
+test('a widget unmounted before the reply id arrives leaves no empty bubble behind', async () => {
+    const store = {};
+    const sessionStorage = {getItem: key => store[key] ?? null, setItem: (key, value) => { store[key] = value; }};
+    let w;
+    w = replyWidget({
+        sessionStorage,
+        fetch: async () => {
+            w.saveState();
+            w.unmount();
+            return {ok: true, status: 200, json: async () => ({reply_id: 'r3', status: 'queued'})};
+        },
+    });
+    w.saveState = w.persistState;
+    w.messages = [{role: 'user', content: 'Find red shoes'}];
+    w.streamReply = () => { throw Error('An unmounted widget must not stream the turn'); };
+    w.$axios = {get: () => { throw Error('An unmounted widget must not poll'); }, post: () => { throw Error('An unmounted widget must not cancel'); }};
+
+    const handled = await w.sendQueued(new FormData(), []);
+    const saved = JSON.parse(store.agenting_pim_state).messages;
+
+    assert.equal(handled, true);
+    assert.equal(w.messages.length, 1);
+    assert.deepEqual(saved.map(m => m.content), ['Find red shoes']);
 });

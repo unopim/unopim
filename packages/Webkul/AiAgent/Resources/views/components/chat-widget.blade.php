@@ -1818,8 +1818,11 @@ app.component('v-agenting-pim', {
          * the turn should be streamed instead: the enqueue request failed on
          * the server or network, the platform cannot run on a worker (409), or
          * no worker picked the reply up in time. After PJAX navigation
-         * unmounted this instance it returns true: the next page resumes the
-         * reply, and nothing is streamed for a widget nobody sees.
+         * unmounted this instance it returns true: the next page resumes a
+         * reply that already has an id, and nothing is streamed for a widget
+         * nobody sees. A placeholder still waiting for its id is removed, and
+         * saveState() never stores an empty placeholder without an id, so the
+         * next page shows no empty bubble.
          */
         async sendQueued(fd, files) {
             const msgIndex = this.messages.length;
@@ -1841,7 +1844,12 @@ app.component('v-agenting-pim', {
 
             const payload = response ? await response.json().catch(() => ({})) : {};
 
-            if (this._unmounted) return true;
+            if (this._unmounted) {
+                this.messages.splice(msgIndex, 1);
+                this.saveState();
+
+                return true;
+            }
 
             if (! response?.ok || ! payload.reply_id) {
                 this.messages.splice(msgIndex, 1);
@@ -2491,7 +2499,7 @@ app.component('v-agenting-pim', {
                     selectedModel: this.selectedModel,
                     activeSessionId: this.activeSessionId,
                     deletedMessageIds: this.deletedMessageIds,
-                    messages: this.messages.filter(m => !m.isRedirect).map(m => ({ message_id: m.message_id || null, request_id: m.request_id || null, presentation: m.presentation || null, extensions: m.extensions || null, role: m.role, content: m.content, action: m.action || null, result: m.result || null, product_url: m.product_url || null, download_url: m.download_url || null, _confirmed: m._confirmed || false, isStreaming: !!(m.isStreaming && m.replyId), replyId: m.replyId || null })),
+                    messages: this.messages.filter(m => !m.isRedirect && !(m.isStreaming && !m.replyId && !m.content)).map(m => ({ message_id: m.message_id || null, request_id: m.request_id || null, presentation: m.presentation || null, extensions: m.extensions || null, role: m.role, content: m.content, action: m.action || null, result: m.result || null, product_url: m.product_url || null, download_url: m.download_url || null, _confirmed: m._confirmed || false, isStreaming: !!(m.isStreaming && m.replyId), replyId: m.replyId || null })),
                 }));
 
                 // Auto-save current session to localStorage
