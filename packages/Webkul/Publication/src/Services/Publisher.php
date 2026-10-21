@@ -32,6 +32,10 @@ class Publisher
 
     /**
      * Mints a new version when the payload checksum changed; returns null on gate failure or unchanged payload.
+     *
+     * A Withdrawn or Redacted publication is refused before the payload is built, so a refused publish never
+     * runs the builder's side effects (such as copying documents back onto the asset disk after an erasure).
+     * The same check runs again under the row lock.
      */
     public function publish(
         Product $product,
@@ -59,6 +63,8 @@ class Publisher
         // Publication must exist before build(): the payload stamps its own uuid/url from it.
         $publication = $this->publications->findOrCreateFor($product->id, $channel->id, $type);
 
+        $this->ensureAcceptsNewVersions($publication);
+
         $context = new PublicationContext(
             uuid: $publication->uuid,
             channel: $channel,
@@ -76,11 +82,7 @@ class Publisher
             // Lock the row so concurrent workers on the same (publication, locale) can't race the unique index.
             $publication = Publication::query()->whereKey($publication->id)->lockForUpdate()->firstOrFail();
 
-            if (! $publication->status->acceptsNewVersions()) {
-                throw new InvalidPublicationTransitionException(
-                    'Publication '.$publication->id.' is '.$publication->status->value.'; reinstate it before publishing a locale.'
-                );
-            }
+            $this->ensureAcceptsNewVersions($publication);
 
             $current = $publication->currentVersion($locale->id);
 
@@ -253,6 +255,21 @@ class Publisher
 
             DB::afterCommit(fn () => PublicationRedacted::dispatch($publication, $reason));
         });
+    }
+
+    /**
+     * Withdrawn and Redacted are sticky: publishing into either needs an explicit transition first.
+     * A row created a moment ago has no status loaded yet; the column defaults to Draft.
+     */
+    private function ensureAcceptsNewVersions(Publication $publication): void
+    {
+        $status = $publication->status ?? PublicationStatus::Draft;
+
+        if (! $status->acceptsNewVersions()) {
+            throw new InvalidPublicationTransitionException(
+                'Publication '.$publication->id.' is '.$status->value.'; reinstate it before publishing a locale.'
+            );
+        }
     }
 
     /**
