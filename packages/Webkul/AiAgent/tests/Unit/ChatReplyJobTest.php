@@ -1,12 +1,15 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Webkul\AiAgent\Chat\AgentRunner;
 use Webkul\AiAgent\Chat\AiErrorResolver;
 use Webkul\AiAgent\Chat\ChatContext;
+use Webkul\AiAgent\Chat\ReplyGuard;
 use Webkul\AiAgent\Chat\ToolRegistry;
 use Webkul\AiAgent\Jobs\ChatReplyJob;
 use Webkul\AiAgent\Models\ChatReply;
 use Webkul\AiAgent\Repositories\ChatReplyRepository;
+use Webkul\Core\Models\Locale;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\User\Models\Admin;
 
@@ -102,7 +105,25 @@ it('keeps the job timeout below the queue retry_after', function (int $retryAfte
 })->with([
     'default'       => [90, 80],
     'raised'        => [300, 290],
-    'very low'      => [20, 10],
+    'low'           => [20, 10],
+    'below minimum' => [5, 4],
+]);
+
+it('only treats drivers that run jobs outside the request as async', function (?string $connection, ?string $driver, bool $async) {
+    if ($connection) {
+        config(["queue.connections.{$connection}" => $driver ? ['driver' => $driver] : null]);
+    }
+
+    expect(ChatReplyJob::runsAsync($connection))->toBe($async);
+})->with([
+    'database'   => ['database', 'database', true],
+    'redis'      => ['redis', 'redis', true],
+    'sync'       => ['sync', 'sync', false],
+    'deferred'   => ['deferred', 'deferred', false],
+    'background' => ['background', 'background', false],
+    'null'       => ['null-queue', 'null', false],
+    'unknown'    => ['missing', null, false],
+    'unset'      => [null, null, false],
 ]);
 
 it('writes the generated reply and its actions into the row', function () {
@@ -180,4 +201,46 @@ it('marks only an unfinished reply as failed when the queue gives up on the job'
     expect($generating->refresh()->status)->toBe(ChatReply::STATUS_ERROR)
         ->and($generating->error)->not->toBeEmpty()
         ->and($done->refresh()->status)->toBe(ChatReply::STATUS_DONE);
+});
+
+it('writes user-facing text in the admin UI locale and restores the worker locale', function () {
+    app()->setLocale('en_US');
+    $admin = Admin::factory()->create(['ui_locale_id' => Locale::query()->where('code', 'nl_NL')->firstOrFail()->id]);
+
+    $runner = new class(app(ToolRegistry::class)) extends AgentRunner
+    {
+        public function generate(ChatContext $context, callable $emit, int $timeout = 120): array
+        {
+            $missing = (int) DB::table('products')->max('id') + 100;
+
+            return [
+                'reply'  => app(ReplyGuard::class)->apply('[Ghost]('.route('admin.catalog.products.edit', ['id' => $missing]).')', ['search_products']),
+                'action' => 'agent_response',
+                'data'   => [],
+            ];
+        }
+    };
+    app()->instance(AgentRunner::class, $runner);
+
+    $grounded = queuedReply($admin);
+    runReplyJob($grounded, replyJobContext($this->platform, $admin));
+
+    $missingContext = queuedReply($admin);
+    runReplyJob($missingContext, ['platform_id' => 0] + replyJobContext($this->platform, $admin));
+
+    expect($grounded->refresh()->content)->toBe(trans('ai-agent::app.common.ungrounded-product-reply', [], 'nl_NL'))
+        ->not->toBe(trans('ai-agent::app.common.ungrounded-product-reply', [], 'en_US'))
+        ->and($missingContext->refresh()->error)->toBe(trans('ai-agent::app.common.reply-context-unavailable', [], 'nl_NL'))
+        ->and(app()->getLocale())->toBe('en_US');
+});
+
+it('stops quietly when the claimed reply was pruned meanwhile', function () {
+    $runner = fakeReplyRunner(['reply' => 'never', 'action' => 'agent_response', 'data' => []]);
+    $repository = Mockery::mock(ChatReplyRepository::class);
+    $repository->shouldReceive('claim')->once()->andReturnTrue();
+    $repository->shouldReceive('find')->once()->andReturnNull();
+
+    (new ChatReplyJob('pruned-id', replyJobContext($this->platform, $this->admin)))->handle($runner, $repository);
+
+    expect($runner->contexts)->toBe([]);
 });

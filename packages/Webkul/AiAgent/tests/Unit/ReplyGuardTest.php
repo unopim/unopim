@@ -74,3 +74,18 @@ it('replaces only chat images whose stored file is missing', function () {
         '![Remote](https://cdn.example.test/x.png)',
     ]));
 });
+
+it('strips same-origin images outside the public storage path', function (string $url) {
+    Storage::fake('public');
+    Storage::disk('public')->put('product/1/real.png', 'png');
+
+    expect(app(ReplyGuard::class)->stripUnresolvableImages("![x]({$url})"))
+        ->toBe(trans('ai-agent::app.common.image-unavailable-with-alt', ['alt' => 'x']));
+})->with([
+    'admin route'     => ['/admin/catalog/products/delete/1'],
+    'absolute admin'  => [fn () => rtrim((string) config('app.url'), '/').'/admin/settings/users'],
+    'traversal'       => ['/storage/../.env'],
+    'storage root'    => ['/storage/'],
+    'nested storage'  => ['/admin/storage/product/1/real.png'],
+    'relative'        => ['storage/product/1/real.png'],
+]);

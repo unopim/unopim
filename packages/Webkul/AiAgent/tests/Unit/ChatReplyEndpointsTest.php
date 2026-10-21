@@ -102,6 +102,18 @@ it('does not let an admin poll or cancel another admin reply', function () {
     expect($reply->refresh()->status)->toBe(ChatReply::STATUS_QUEUED);
 });
 
+it('refuses polling and cancelling to an admin without the ai-agent permission', function () {
+    $reply = chatReplyFor($this->admin);
+    $this->actingAs(Admin::factory()->create([
+        'role_id' => Role::factory()->create(['permission_type' => 'custom', 'permissions' => ['dashboard']])->id,
+    ]), 'admin');
+
+    $this->getJson(route('ai-agent.chat.reply', ['id' => $reply->id]))->assertForbidden();
+    $this->postJson(route('ai-agent.chat.reply.cancel', ['id' => $reply->id]))->assertForbidden();
+
+    expect($reply->refresh()->status)->toBe(ChatReply::STATUS_QUEUED);
+});
+
 it('answers 404 for an id that is not a uuid', function () {
     $this->getJson('/'.config('app.admin_url').'/ai-agent/chat/reply/1%20or%201=1')->assertNotFound();
 });
