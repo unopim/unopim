@@ -2,6 +2,7 @@
 
 namespace Webkul\ProductPassport\Services;
 
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Attribute\Contracts\Attribute as AttributeContract;
 use Webkul\Product\Models\Product;
@@ -287,7 +288,9 @@ class PassportPayloadBuilder implements PayloadBuilder
      * The digest is part of the path on purpose. A re-issued file lands beside the previous one instead
      * of being skipped as "already there", so the payload changes, the checksum changes and Publisher
      * mints a new version, while every sealed version keeps pointing at the exact bytes it attested.
-     * The basename stays the field code, so the download filename is unchanged.
+     * The basename stays the field code, so the download filename is unchanged. An object already at the
+     * target path holds these exact bytes, so it is never written twice; the file is hashed and copied
+     * as a stream, so a large document is never held in memory.
      *
      * Must run at build time: PublicationVersion::payload is immutable once the version row exists, so no path can be rewritten later.
      *
@@ -301,19 +304,48 @@ class PassportPayloadBuilder implements PayloadBuilder
             return null;
         }
 
-        $contents = (string) $source->get($sourcePath);
-        $digest = hash('sha256', $contents);
+        $digest = $this->sha256($source, $sourcePath);
+
+        if ($digest === null) {
+            return null;
+        }
+
         $extension = pathinfo($sourcePath, PATHINFO_EXTENSION);
 
         $targetPath = "publication/{$uuid}/{$localeCode}/".substr($digest, 0, 16)."/{$fieldCode}".($extension !== '' ? ".{$extension}" : '');
 
         $target = Storage::disk(config('publication.asset_disk'));
 
-        // Content-addressed: an object already at this path holds these exact bytes.
         if (! $target->exists($targetPath)) {
-            $target->put($targetPath, $contents);
+            $stream = $source->readStream($sourcePath);
+
+            $target->writeStream($targetPath, $stream);
+
+            if (is_resource($stream)) {
+                fclose($stream);
+            }
         }
 
         return ['path' => $targetPath, 'sha256' => $digest];
+    }
+
+    /**
+     * SHA-256 of a file, read as a stream so memory stays flat whatever the file size. Null when the file cannot be read.
+     */
+    private function sha256(Filesystem $disk, string $path): ?string
+    {
+        $stream = $disk->readStream($path);
+
+        if (! is_resource($stream)) {
+            return null;
+        }
+
+        $context = hash_init('sha256');
+
+        hash_update_stream($context, $stream);
+
+        fclose($stream);
+
+        return hash_final($context);
     }
 }

@@ -81,3 +81,16 @@ it('reuses the same asset path while the document is unchanged', function (): vo
     expect($builder->build($product, $context)['documents'][0]['path'])
         ->toBe($builder->build($product, $context)['documents'][0]['path']);
 });
+
+it('hashes and copies a multi-megabyte document intact', function (): void {
+    [$product, $context, $sourcePath] = $this->productWithSecretAndDppAttributes(withDocument: true);
+
+    $contents = random_bytes(2 * 1024 * 1024);
+
+    Storage::disk(config('filesystems.default'))->put($sourcePath, $contents);
+
+    $document = resolve(PassportPayloadBuilder::class)->build($product, $context)['documents'][0];
+
+    expect($document['sha256'])->toBe(hash('sha256', $contents))
+        ->and(Storage::disk(config('publication.asset_disk'))->get($document['path']))->toBe($contents);
+});
