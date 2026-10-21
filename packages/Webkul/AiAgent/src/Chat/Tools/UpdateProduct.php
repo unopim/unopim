@@ -126,7 +126,7 @@ class UpdateProduct implements PimTool
                             // unmatched entries without telling anyone.
                             $looksLikeLocaleMap = $localeKeys !== [] && array_all(
                                 $localeKeys,
-                                fn ($localeKey) => isset($activeLocaleCodes[(string) $localeKey])
+                                fn ($localeKey): bool => isset($activeLocaleCodes[(string) $localeKey])
                             );
 
                             if ($looksLikeLocaleMap && isset($familyAttributes[$code])) {
