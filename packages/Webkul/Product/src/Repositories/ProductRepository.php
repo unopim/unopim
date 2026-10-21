@@ -357,6 +357,20 @@ class ProductRepository extends Repository
     }
 
     /**
+     * SKUs starting with the prefix, case-insensitively, in id order.
+     *
+     * @return Collection<int, string>
+     */
+    public function skusStartingWith(string $prefix, int $limit): Collection
+    {
+        return $this->getModel()->newQuery()
+            ->whereLike('sku', addcslashes($prefix, '%_\\').'%')
+            ->orderBy('id')
+            ->limit($limit)
+            ->pluck('sku');
+    }
+
+    /**
      * Get all products.
      *
      * To Do (@devansh-webkul): Need to reduce all the request query from this repo and provide

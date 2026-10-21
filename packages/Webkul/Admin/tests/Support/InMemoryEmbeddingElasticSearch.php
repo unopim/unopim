@@ -7,7 +7,7 @@ use Webkul\Core\Facades\ElasticSearch;
 
 /**
  * Routes the ElasticSearch facade to an in-memory embedding index that applies
- * bulk index/update actions and the kNN attribute family term filter, so the
+ * bulk index/update actions and the kNN term filters, so the
  * vector store can be asserted at payload level without a live cluster.
  */
 class InMemoryEmbeddingElasticSearch
@@ -73,11 +73,12 @@ class InMemoryEmbeddingElasticSearch
         if (isset($params['body']['query']['ids'])) {
             $hits = array_intersect_key($this->documents, array_flip($params['body']['query']['ids']['values']));
         } else {
-            $familyId = $params['body']['knn']['filter']['term']['attribute_family_id'] ?? null;
+            $filter = $params['body']['knn']['filter'] ?? null;
+            $terms = array_merge(...array_column($filter['bool']['filter'] ?? ($filter === null ? [] : [$filter]), 'term'));
 
             $hits = array_filter(
                 $this->documents,
-                fn (array $source): bool => $familyId === null || ($source['attribute_family_id'] ?? null) === $familyId,
+                fn (array $source): bool => array_intersect_key($source, $terms) == $terms,
             );
         }
 

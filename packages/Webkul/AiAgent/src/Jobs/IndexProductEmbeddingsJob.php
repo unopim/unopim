@@ -6,7 +6,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Laravel\Ai\Embeddings;
+use Webkul\AiAgent\Services\EmbeddingSimilarityService;
 use Webkul\AiAgent\Services\VectorStore\ProductEmbeddingDocumentBuilder;
 use Webkul\AiAgent\Services\VectorStore\ProductEmbeddingIndex;
 
@@ -14,9 +14,12 @@ use Webkul\AiAgent\Services\VectorStore\ProductEmbeddingIndex;
  * Embeds a batch of products' textual values and upserts them into the
  * persistent Elasticsearch vector store.
  *
- * Skips products whose embedded text is unchanged (content hash match), so
- * re-runs are cheap and the indexer is resumable. Unchanged products whose
- * stored attribute family is stale get a metadata-only update instead.
+ * Skips products whose embedded text and embedding model are unchanged
+ * (content hash match), so re-runs are cheap and the indexer is resumable.
+ * Switching the embedding provider or model changes every hash, so the next
+ * run re-embeds the catalog instead of mixing vectors from two models.
+ * Unchanged products whose stored attribute family is stale get a
+ * metadata-only update instead.
  */
 class IndexProductEmbeddingsJob implements ShouldQueue
 {
@@ -51,6 +54,11 @@ class IndexProductEmbeddingsJob implements ShouldQueue
             return;
         }
 
+        $similarityService = resolve(EmbeddingSimilarityService::class);
+        $platform = $similarityService->resolvePlatform(dimensions: $index->dimensions());
+        $fingerprint = $similarityService->embeddingFingerprint($platform, $index->dimensions());
+        $documents = $this->stampFingerprint($documents, $fingerprint);
+
         [$documents, $staleFamilies] = $this->partitionDocuments(
             $index->existingDocuments(array_column($documents, 'product_id')),
             $documents,
@@ -69,11 +77,11 @@ class IndexProductEmbeddingsJob implements ShouldQueue
         }
 
         try {
-            $response = Embeddings::for(array_column($documents, 'text'))
-                ->cache()
-                ->generate();
-
-            $vectors = $response->embeddings;
+            $vectors = $similarityService->generateEmbeddings(
+                array_column($documents, 'text'),
+                $platform,
+                $index->dimensions(),
+            );
         } catch (\Throwable $e) {
             Log::channel('elasticsearch')->error('Failed to generate product embeddings for vector store.', [
                 'product_ids' => array_column($documents, 'product_id'),
@@ -95,11 +103,12 @@ class IndexProductEmbeddingsJob implements ShouldQueue
             }
 
             $upserts[] = [
-                'product_id'          => $document['product_id'],
-                'sku'                 => $document['sku'],
-                'attribute_family_id' => $document['attribute_family_id'],
-                'content_hash'        => $document['content_hash'],
-                'embedding'           => $vector,
+                'product_id'            => $document['product_id'],
+                'sku'                   => $document['sku'],
+                'attribute_family_id'   => $document['attribute_family_id'],
+                'content_hash'          => $document['content_hash'],
+                'embedding_fingerprint' => $fingerprint,
+                'embedding'             => $vector,
             ];
         }
 
@@ -133,6 +142,20 @@ class IndexProductEmbeddingsJob implements ShouldQueue
         }
 
         return $documents;
+    }
+
+    /**
+     * Fold the embedding model fingerprint into each content hash.
+     *
+     * @param  array<int, array{product_id: int, sku: ?string, text: string, content_hash: string, attribute_family_id: ?int}>  $documents
+     * @return array<int, array{product_id: int, sku: ?string, text: string, content_hash: string, attribute_family_id: ?int}>
+     */
+    protected function stampFingerprint(array $documents, string $fingerprint): array
+    {
+        return array_map(
+            fn (array $document): array => [...$document, 'content_hash' => hash('sha256', $document['content_hash'].'|'.$fingerprint)],
+            $documents,
+        );
     }
 
     /**

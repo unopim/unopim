@@ -101,7 +101,7 @@ it('finds same-family products through the vector store by default for a sku loo
         true,
     );
 
-    expect(end($es->searchBodies)['knn']['filter'])->toBe(['term' => ['attribute_family_id' => (int) $source->attribute_family_id]])
+    expect(end($es->searchBodies)['knn']['filter']['bool']['filter'])->toContain(['term' => ['attribute_family_id' => (int) $source->attribute_family_id]])
         ->and($result['source'] ?? null)->toBe('vector_store')
         ->and(array_column($result['products'], 'sku'))->toContain($sibling->sku);
 });

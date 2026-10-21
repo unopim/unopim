@@ -29,6 +29,8 @@ return [
     ],
 
     'common' => [
+        'invalid-data'                  => 'البيانات المقدمة غير صالحة أو تتجاوز الحدود المسموح بها.',
+        'conversation-not-found'        => 'لم يتم العثور على المحادثة.',
         'yes'                           => 'نعم',
         'no'                            => 'لا',
         'save'                          => 'حفظ',
@@ -58,6 +60,7 @@ return [
         'import-empty-file'             => 'الملف فارغ أو تعذر تحليله.',
         'import-missing-sku-column'     => 'يجب أن يحتوي الملف على عمود "sku". الأعمدة الموجودة: :columns.',
         'import-family-not-found'       => 'لم يتم العثور على عائلة السمات ":family".',
+        'category-tree-no-family'       => 'لم يتم العثور على عائلة السمات ":family".',
         'import-invalid-sku-row'        => 'الصف :row: رمز SKU غير صالح أو فارغ.',
         'import-acl-skip-update'        => 'تم تخطي رمز SKU ":sku": يتطلب تحديث منتج موجود صلاحية \'catalog.products.edit\'.',
         'import-acl-skip-create'        => 'تم تخطي رمز SKU ":sku": يتطلب إنشاء منتج جديد صلاحية \'catalog.products.create\'.',

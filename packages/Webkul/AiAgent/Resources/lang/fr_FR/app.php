@@ -29,6 +29,8 @@ return [
     ],
 
     'common' => [
+        'invalid-data'                  => 'Les données fournies sont invalides ou dépassent les limites autorisées.',
+        'conversation-not-found'        => 'Conversation introuvable.',
         'yes'                           => 'Oui',
         'no'                            => 'Non',
         'save'                          => 'Enregistrer',
@@ -58,6 +60,7 @@ return [
         'import-empty-file'             => 'Le fichier est vide ou n\'a pas pu être analysé.',
         'import-missing-sku-column'     => 'Le fichier doit comporter une colonne « sku ». Colonnes trouvées : :columns.',
         'import-family-not-found'       => 'La famille d\'attributs « :family » est introuvable.',
+        'category-tree-no-family'       => 'La famille d\'attributs « :family » est introuvable.',
         'import-invalid-sku-row'        => 'Ligne :row : SKU invalide ou vide.',
         'import-acl-skip-update'        => 'SKU « :sku » ignoré : la mise à jour d\'un produit existant nécessite l\'autorisation \'catalog.products.edit\'.',
         'import-acl-skip-create'        => 'SKU « :sku » ignoré : la création d\'un nouveau produit nécessite l\'autorisation \'catalog.products.create\'.',
