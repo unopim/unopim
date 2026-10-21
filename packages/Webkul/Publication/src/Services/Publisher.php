@@ -14,6 +14,7 @@ use Webkul\Publication\DataTransferObjects\PublicationContext;
 use Webkul\Publication\DataTransferObjects\PublicationType;
 use Webkul\Publication\Enums\PublicationStatus;
 use Webkul\Publication\Events\PublicationPublished;
+use Webkul\Publication\Events\PublicationPublishRefused;
 use Webkul\Publication\Events\PublicationRedacted;
 use Webkul\Publication\Events\PublicationReinstated;
 use Webkul\Publication\Events\PublicationWithdrawn;
@@ -35,7 +36,8 @@ class Publisher
      *
      * A Withdrawn or Redacted publication is refused before the payload is built, so a refused publish never
      * runs the builder's side effects (such as copying documents back onto the asset disk after an erasure).
-     * The same check runs again under the row lock.
+     * The same check runs again under the row lock; when that one refuses, the payload has already been
+     * built, so PublicationPublishRefused is dispatched for the builder's side effects to be undone.
      */
     public function publish(
         Product $product,
@@ -78,6 +80,27 @@ class Publisher
         $canonical = $this->canonicalize(Arr::except($payload, 'meta'));
         $checksum = hash('sha256', json_encode($canonical, JSON_THROW_ON_ERROR));
 
+        try {
+            return $this->mintVersion($publication, $locale, $payload, $checksum, $publishedById);
+        } catch (InvalidPublicationTransitionException $exception) {
+            PublicationPublishRefused::dispatch($publication->refresh());
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * Stores $payload as the new current version for $locale unless its checksum matches the current one.
+     *
+     * @param  array<string, mixed>  $payload
+     */
+    private function mintVersion(
+        Publication $publication,
+        Locale $locale,
+        array $payload,
+        string $checksum,
+        ?int $publishedById,
+    ): ?PublicationVersion {
         return DB::transaction(function () use ($publication, $locale, $payload, $checksum, $publishedById): ?PublicationVersion {
             // Lock the row so concurrent workers on the same (publication, locale) can't race the unique index.
             $publication = Publication::query()->whereKey($publication->id)->lockForUpdate()->firstOrFail();

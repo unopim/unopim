@@ -15,6 +15,7 @@ use Webkul\ProductPassport\Listeners\ValidateProductGtin;
 use Webkul\ProductPassport\Services\PassportAttributeRequirements;
 use Webkul\ProductPassport\View\Composers\PassportAttributeRequirementsComposer;
 use Webkul\ProductPassport\View\Composers\PassportPanelComposer;
+use Webkul\Publication\Events\PublicationPublishRefused;
 use Webkul\Publication\Events\PublicationRedacted;
 
 class ProductPassportServiceProvider extends ServiceProvider
@@ -69,7 +70,7 @@ class ProductPassportServiceProvider extends ServiceProvider
         Event::listen('catalog.product.create.after', AutoPublishPassport::class);
         Event::listen('catalog.product.update.after', AutoPublishPassport::class);
 
-        Event::listen(PublicationRedacted::class, DeletePassportDocumentsOnRedaction::class);
+        Event::listen([PublicationRedacted::class, PublicationPublishRefused::class], DeletePassportDocumentsOnRedaction::class);
 
         // Guard-check here too: a globally-fired event string carries no guarantee about who triggered it.
         Event::listen('unopim.admin.catalog.product.edit.form.links.after', function ($viewRenderEventManager): void {

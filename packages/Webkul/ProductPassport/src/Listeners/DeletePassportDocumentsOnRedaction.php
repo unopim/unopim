@@ -5,6 +5,8 @@ namespace Webkul\ProductPassport\Listeners;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Storage;
 use RuntimeException;
+use Webkul\Publication\Enums\PublicationStatus;
+use Webkul\Publication\Events\PublicationPublishRefused;
 use Webkul\Publication\Events\PublicationRedacted;
 
 /**
@@ -12,8 +14,11 @@ use Webkul\Publication\Events\PublicationRedacted;
  * disk once a passport is redacted, so an erasure leaves no readable copy of them behind.
  *
  * Every version is redacted by then, so no payload references these files any more, and Redacted is
- * sticky, so Publisher refuses to build (and re-copy) a payload for it. The directory is scoped to the
- * publication's uuid, so no other publication shares it.
+ * sticky, so a publish that starts after the redaction cannot copy them back. A publish already past
+ * its status check when the redaction commits may still copy them; its lock-time refusal dispatches
+ * PublicationPublishRefused, which runs this cleanup again. It acts only on a passport that is Redacted
+ * at that point, and deleting is idempotent. The directory is scoped to the publication's uuid, so no
+ * other publication shares it.
  *
  * Queued, so a storage error never fails the request that committed the redaction: a failed delete
  * throws and is retried with backoff, and after the last attempt it lands in the failed jobs table,
@@ -33,9 +38,9 @@ class DeletePassportDocumentsOnRedaction implements ShouldQueue
         return (string) config('publication.queue');
     }
 
-    public function handle(PublicationRedacted $event): void
+    public function handle(PublicationRedacted|PublicationPublishRefused $event): void
     {
-        if ($event->publication->type !== 'dpp') {
+        if ($event->publication->type !== 'dpp' || $event->publication->status !== PublicationStatus::Redacted) {
             return;
         }
 
