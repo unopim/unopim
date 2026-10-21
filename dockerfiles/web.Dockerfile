@@ -27,7 +27,7 @@ RUN composer install \
 # ---------------------------------------------------------------------------
 # Stage 2: Production image
 # ---------------------------------------------------------------------------
-FROM php:8.4-apache
+FROM php:8.4.27-apache
 
 LABEL maintainer="Webkul <support@webkul.com>"
 LABEL org.opencontainers.image.title="UnoPim"
