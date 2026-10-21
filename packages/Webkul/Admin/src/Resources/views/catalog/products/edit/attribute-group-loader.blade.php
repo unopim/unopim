@@ -1,7 +1,7 @@
-@props(['productId', 'nextGroupId'])
+@props(['productId', 'nextGroupId', 'channelCode', 'localeCode'])
 
 <v-product-attribute-group-loader
-    endpoint="{{ route('admin.catalog.products.attribute_group_fields', ['id' => $productId, 'groupId' => '__group__']) }}"
+    endpoint="{{ route('admin.catalog.products.attribute_group_fields', ['id' => $productId, 'groupId' => '__group__', 'channel' => $channelCode, 'locale' => $localeCode]) }}"
     :next-group-id="{{ (int) $nextGroupId }}"
 ></v-product-attribute-group-loader>
 
