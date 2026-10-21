@@ -29,6 +29,8 @@ return [
     ],
 
     'common' => [
+        'invalid-data'                  => 'Hindi wasto ang ibinigay na data o lumampas ito sa mga pinapayagang limitasyon.',
+        'conversation-not-found'        => 'Hindi natagpuan ang pag-uusap.',
         'yes'                           => 'Oo',
         'no'                            => 'Hindi',
         'save'                          => 'I-save',
@@ -58,6 +60,7 @@ return [
         'import-empty-file'             => 'Walang laman ang file o hindi ito ma-parse.',
         'import-missing-sku-column'     => 'Kailangang may "sku" na column ang file. Mga column na nakita: :columns.',
         'import-family-not-found'       => 'Hindi natagpuan ang attribute family na ":family".',
+        'category-tree-no-family'       => 'Hindi natagpuan ang attribute family na ":family".',
         'import-invalid-sku-row'        => 'Row :row: hindi wasto o walang laman na SKU.',
         'import-acl-skip-update'        => 'Nilaktawan ang SKU ":sku": ang pag-update ng umiiral na produkto ay nangangailangan ng \'catalog.products.edit\' na pahintulot.',
         'import-acl-skip-create'        => 'Nilaktawan ang SKU ":sku": ang paggawa ng bagong produkto ay nangangailangan ng \'catalog.products.create\' na pahintulot.',

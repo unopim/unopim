@@ -1580,9 +1580,11 @@ return [
                     'zip-upload-success'  => 'ZIP đã được tải lên và giải nén thành công.',
                     'zip-upload-error'    => 'Tải lên ZIP thất bại. Vui lòng thử lại.',
                     'invalid-zip'         => 'Tệp đã tải lên không phải là tệp ZIP hợp lệ.',
-                    'zip-upload-or'       => 'hoặc tải lên một tệp ZIP chứa hình ảnh',
-                    'zip-click-upload'    => 'Nhấn để tải lên tệp ZIP chứa hình ảnh',
+                    'zip-upload-or'       => 'hoặc tải lên một tệp ZIP chứa hình ảnh và tài liệu',
+                    'zip-click-upload'    => 'Nhấn để tải lên tệp ZIP chứa hình ảnh và tài liệu',
                     'zip-files-extracted' => 'tệp đã giải nén',
+                    'zip-files-skipped'   => ':skipped (loại không được hỗ trợ, nội dung không hợp lệ hoặc quá lớn):',
+                    'zip-accepted-types'  => 'Được chấp nhận trong ZIP: :types',
                     'zip-drop-hint'       => 'Nhấp hoặc kéo và thả tệp ZIP vào đây',
                     'file-upload-info'    => 'CSV, XLSX, JSON (TỐI ĐA. 2MB)',
                     'images-directory'    => 'Đường dẫn',
@@ -1704,6 +1706,9 @@ return [
                 'setup-queue-error'          => 'Vui lòng thay đổi trình điều khiển hàng đợi của bạn thành "database" hoặc "redis" để bắt đầu quá trình nhập.',
                 'update-success'             => 'Nhập đã được cập nhật thành công.',
                 'zip-upload-success'         => 'ZIP đã được tải lên và giải nén thành công.',
+                'zip-extracted-count'        => 'Đã giải nén :count tệp',
+                'zip-skipped-count'          => 'bỏ qua :count',
+                'zip-upload-partial'         => 'Đã tải ZIP lên. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [

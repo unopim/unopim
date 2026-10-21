@@ -1580,9 +1580,11 @@ return [
                     'zip-upload-success'  => 'ZIP 上傳並解壓縮成功。',
                     'zip-upload-error'    => 'ZIP 上傳失敗。請重試。',
                     'invalid-zip'         => '上傳的檔案不是有效的 ZIP 壓縮檔。',
-                    'zip-upload-or'       => '或上傳圖片 ZIP 壓縮檔',
-                    'zip-click-upload'    => '點擊上傳圖片 ZIP 壓縮檔',
+                    'zip-upload-or'       => '或上傳圖片和文件 ZIP 壓縮檔',
+                    'zip-click-upload'    => '點擊上傳圖片和文件 ZIP 壓縮檔',
                     'zip-files-extracted' => '檔案已解壓縮',
+                    'zip-files-skipped'   => ':skipped（不支援的類型、無效內容或檔案過大）：',
+                    'zip-accepted-types'  => 'ZIP 中接受的類型：:types',
                     'zip-drop-hint'       => '點擊或拖放 ZIP 文件到這裡',
                     'file-upload-info'    => 'CSV, XLSX, JSON（最大 2MB）',
                     'images-directory'    => '路徑',
@@ -1704,6 +1706,9 @@ return [
                 'setup-queue-error'          => '請將您的隊列驅動程序更改為 "database" 或 "redis" 以開始導入過程。',
                 'update-success'             => '導入成功更新。',
                 'zip-upload-success'         => 'ZIP 上傳並解壓縮成功。',
+                'zip-extracted-count'        => '已解壓縮 :count 個檔案',
+                'zip-skipped-count'          => '略過 :count 個',
+                'zip-upload-partial'         => 'ZIP 已上傳。:extracted，:skipped。',
             ],
             'exports' => [
                 'create' => [

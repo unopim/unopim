@@ -178,7 +178,7 @@ UnoPim is engineered for high-volume catalogues. Read [how UnoPim scales to hand
 Free, officially maintained extensions:
 
 - [**UnoPim DAM**](https://github.com/unopim/unopim-digital-asset-management) — Digital Asset Management: file and directory management, asset upload and preview, metadata tagging, and CSV/XLSX asset assignment.
-- [**Shopify Connector**](https://github.com/unopim/shopify-connector) — sync product data, prices, descriptions, and images with a Shopify store.
+- [**Shopify Connector**](https://github.com/unopim/shopify-connector) — sync product data, prices, descriptions, and images with a Shopify store. Need real-time sync, scheduled exports or catalogs? Upgrade to [**Shopify Connector Pro**](https://store.webkul.com/unopim-shopify-connector-pro.html).
 - [**Bagisto Connector**](https://github.com/unopim/bagisto-connector) — sync products, attributes, and media into a [Bagisto](https://bagisto.com/) storefront, with customizable mappings.
 
 More connectors and modules are listed on the [UnoPim extensions marketplace](https://unopim.com/extensions/). Extensions are ordinary Concord packages — see the [developer documentation](https://devdocs.unopim.com/) to build your own.

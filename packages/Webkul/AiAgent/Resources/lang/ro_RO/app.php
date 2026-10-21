@@ -29,6 +29,8 @@ return [
     ],
 
     'common' => [
+        'invalid-data'                  => 'Datele furnizate sunt nevalide sau depășesc limitele permise.',
+        'conversation-not-found'        => 'Conversația nu a fost găsită.',
         'yes'                           => 'Da',
         'no'                            => 'Nu',
         'save'                          => 'Salvează',
@@ -58,6 +60,7 @@ return [
         'import-empty-file'             => 'Fișierul este gol sau nu a putut fi procesat.',
         'import-missing-sku-column'     => 'Fișierul trebuie să aibă o coloană "sku". Coloane găsite: :columns.',
         'import-family-not-found'       => 'Familia de atribute ":family" nu a fost găsită.',
+        'category-tree-no-family'       => 'Familia de atribute ":family" nu a fost găsită.',
         'import-invalid-sku-row'        => 'Rândul :row: SKU invalid sau gol.',
         'import-acl-skip-update'        => 'SKU ":sku" omis: actualizarea unui produs existent necesită permisiunea \'catalog.products.edit\'.',
         'import-acl-skip-create'        => 'SKU ":sku" omis: crearea unui produs nou necesită permisiunea \'catalog.products.create\'.',
