@@ -134,3 +134,26 @@ it('stamps no path when the asset disk refuses the write', function (): void {
     expect($document)->not->toHaveKey('path')
         ->and($document)->not->toHaveKey('sha256');
 });
+
+it('keeps the copied document when the asset disk closes the stream it was given', function (): void {
+    [$product, $context] = $this->productWithSecretAndDppAttributes(withDocument: true);
+
+    $disk = Storage::disk(config('publication.asset_disk'));
+
+    Storage::set(config('publication.asset_disk'), new class($disk->getDriver(), $disk->getAdapter(), $disk->getConfig()) extends FilesystemAdapter
+    {
+        public function writeStream($path, $resource, array $options = [])
+        {
+            $written = parent::writeStream($path, $resource, $options);
+
+            fclose($resource);
+
+            return $written;
+        }
+    });
+
+    $document = resolve(PassportPayloadBuilder::class)->build($product, $context)['documents'][0];
+
+    expect($document)->toHaveKey('path')
+        ->and(Storage::disk(config('publication.asset_disk'))->get($document['path']))->toBe('%PDF-1.4 stub');
+});

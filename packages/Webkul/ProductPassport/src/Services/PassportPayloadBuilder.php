@@ -339,7 +339,9 @@ class PassportPayloadBuilder implements PayloadBuilder
 
             return ['path' => $targetPath, 'sha256' => $digest];
         } finally {
-            fclose($spool);
+            if (is_resource($spool)) {
+                fclose($spool);
+            }
         }
     }
 
