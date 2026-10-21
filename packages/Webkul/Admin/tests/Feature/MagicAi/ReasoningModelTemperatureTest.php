@@ -100,3 +100,104 @@ it('raises max_output_tokens to at least 16000 for reasoning models', function (
             && ($body['max_output_tokens'] ?? 0) >= 16000;
     });
 });
+
+function fakeAnthropicMessage(): void
+{
+    Http::fake([
+        '*' => Http::response([
+            'id'            => 'msg_test',
+            'type'          => 'message',
+            'role'          => 'assistant',
+            'model'         => 'claude-test',
+            'content'       => [['type' => 'text', 'text' => 'ok']],
+            'stop_reason'   => 'end_turn',
+            'stop_sequence' => null,
+            'usage'         => ['input_tokens' => 1, 'output_tokens' => 1],
+        ]),
+    ]);
+}
+
+function anthropicPlatform(): MagicAIPlatform
+{
+    return MagicAIPlatform::create([
+        'label'    => 'Test Anthropic',
+        'provider' => 'anthropic',
+        'api_key'  => 'sk-ant-test',
+        'models'   => 'claude-fable-5',
+        'status'   => true,
+    ]);
+}
+
+it('does NOT send temperature for Claude models that removed sampling parameters', function (string $model) {
+    fakeAnthropicMessage();
+
+    (new LaravelAiAdapter(
+        platform: anthropicPlatform(),
+        model: $model,
+        prompt: 'hi',
+        temperature: 0.42,
+    ))->ask();
+
+    Http::assertSent(function (Request $request) use ($model) {
+        $body = json_decode($request->body(), true);
+
+        return ($body['model'] ?? null) === $model
+            && ! array_key_exists('temperature', $body);
+    });
+})->with([
+    'claude-fable-5',
+    'claude-fable-5-1',
+    'claude-opus-5',
+    'claude-opus-5-5',
+    'claude-opus-4-8',
+    'claude-opus-4-7',
+    'claude-sonnet-5',
+    'anthropic.claude-opus-4-7-v1:0',
+    'us.anthropic.claude-sonnet-5-v1:0',
+]);
+
+it('sends temperature for Claude models that still accept sampling parameters', function (string $model) {
+    fakeAnthropicMessage();
+
+    (new LaravelAiAdapter(
+        platform: anthropicPlatform(),
+        model: $model,
+        prompt: 'hi',
+        temperature: 0.42,
+    ))->ask();
+
+    Http::assertSent(function (Request $request) use ($model) {
+        $body = json_decode($request->body(), true);
+
+        return ($body['model'] ?? null) === $model
+            && ($body['temperature'] ?? null) === 0.42;
+    });
+})->with([
+    'claude-opus-4-6',
+    'claude-sonnet-4-6',
+    'claude-haiku-4-5',
+    'claude-sonnet-4-20250514',
+    'claude-3-5-sonnet-20241022',
+    'anthropic.claude-opus-4-6-v1:0',
+    'us.anthropic.claude-sonnet-4-5-20250929-v1:0',
+    'anthropic.claude-3-5-sonnet-20240620-v1:0',
+    'claude-opus-4-6@20250805',
+]);
+
+it('keeps the configured max tokens for Claude models that reject sampling parameters', function () {
+    fakeAnthropicMessage();
+
+    (new LaravelAiAdapter(
+        platform: anthropicPlatform(),
+        model: 'claude-opus-4-7',
+        prompt: 'hi',
+        maxTokens: 2048,
+    ))->ask();
+
+    Http::assertSent(function (Request $request) {
+        $body = json_decode($request->body(), true);
+
+        return ($body['model'] ?? null) === 'claude-opus-4-7'
+            && ($body['max_tokens'] ?? null) === 2048;
+    });
+});

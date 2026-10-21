@@ -222,9 +222,46 @@ async function resolveEditableProductId(page) {
   return record.product_id;
 }
 
+/**
+ * The toolbar collapses the filter label to an icon once it measures narrow, so
+ * the drawer is opened through the toggle itself rather than its label text.
+ */
+async function openFilterDrawer(page) {
+  await page.locator('[data-grid-filter]').first().click();
+}
+
+/**
+ * Dismiss an open select dropdown. Escape closes the surrounding modal as well,
+ * so the dropdown is closed by blurring the field instead.
+ */
+async function closeDropdown(page) {
+  await page.evaluate(() => {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+  });
+}
+
+/**
+ * The first and last page controls collapse out of a narrow toolbar, so the
+ * symbols a grid renders depend on the toolbar's measured width.
+ */
+async function visiblePaginationSymbols(page) {
+  const toolbar = page.locator('.datagrid-toolbar').first();
+
+  await toolbar.waitFor({ state: 'visible' });
+
+  return await toolbar.evaluate((el) => el.classList.contains('is-tight'))
+    ? ['\u2039', '\u203a']
+    : ['\u00ab', '\u2039', '\u203a', '\u00bb'];
+}
+
 module.exports = {
   ROUTES,
   navigateTo,
+  openFilterDrawer,
+  closeDropdown,
+  visiblePaginationSymbols,
   searchInDataGrid,
   clickEditOnRow,
   clickDeleteOnRow,

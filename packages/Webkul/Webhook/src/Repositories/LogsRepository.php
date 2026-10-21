@@ -14,4 +14,14 @@ class LogsRepository extends Repository
     {
         return WebhookLog::class;
     }
+
+    /**
+     * Delete the given logs in a single query.
+     *
+     * @param  array<int>  $ids
+     */
+    public function massDelete(array $ids): int
+    {
+        return $this->model->newQuery()->whereKey($ids)->delete();
+    }
 }

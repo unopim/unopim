@@ -137,6 +137,14 @@ return [
                     'delete-success' => 'Webhook 日誌已成功刪除',
                     'delete-failed'  => 'Webhook 日誌刪除意外失敗',
                     'unauthorized'   => '此操作未經授權',
+                    'select-all'     => [
+                        'delete' => [
+                            'queued'    => '已將所有符合條件的日誌刪除工作加入佇列，完成後會通知您。',
+                            'title'     => 'Webhook 日誌刪除',
+                            'completed' => '已刪除 :count 筆 Webhook 日誌。',
+                            'failed'    => '刪除 :count 筆 Webhook 日誌時發生錯誤，部分日誌未被刪除。',
+                        ],
+                    ],
                 ],
             ],
         ],

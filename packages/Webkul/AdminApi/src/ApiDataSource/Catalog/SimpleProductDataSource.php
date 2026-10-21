@@ -3,6 +3,7 @@
 namespace Webkul\AdminApi\ApiDataSource\Catalog;
 
 use Webkul\Product\Database\Eloquent\Builder;
+use Webkul\Product\Enums\ProductType;
 
 class SimpleProductDataSource extends ProductDataSource
 {
@@ -45,7 +46,7 @@ class SimpleProductDataSource extends ProductDataSource
      */
     public function setDefaultFilters($queryBuilder)
     {
-        $queryBuilder->where('products.type', config('product_types.simple.key'));
+        $queryBuilder->where('products.type', ProductType::Simple->value);
 
         $this->queryBuilder = $queryBuilder;
     }

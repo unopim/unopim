@@ -21,6 +21,8 @@ class ProductAttributeForm extends FormRequest
     {
         return [
             'productId' => ['required', 'integer', Rule::exists('products', 'id')],
+            'channel'   => ['sometimes', 'string', Rule::exists('channels', 'code')],
+            'locale'    => ['sometimes', 'string', Rule::exists('locales', 'code')],
         ];
     }
 }
