@@ -88,6 +88,17 @@ if (! function_exists('clean_content')) {
     }
 }
 
+if (! function_exists('is_filled_value')) {
+    /**
+     * Determine if an attribute value is filled. Unlike filled(), zero, false and
+     * whitespace-only strings are real values; only null, '' and [] are blank.
+     */
+    function is_filled_value(mixed $value): bool
+    {
+        return ! in_array($value, [null, '', []], true);
+    }
+}
+
 if (! function_exists('form_control_id')) {
     /**
      * Build the DOM id a form control renders for the given field name, so labels
