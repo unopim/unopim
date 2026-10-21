@@ -6,6 +6,13 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * `target` is the exact string encoded into the carrier, kept verbatim: a later change to the base URL must
+     * not rewrite history.
+     *
+     * Index names are explicit because the auto-generated ones include the table prefix and overrun MySQL's
+     * 64-character identifier limit on prefixed installs.
+     */
     public function up(): void
     {
         Schema::create('publication_carrier_issuances', function (Blueprint $table): void {
@@ -18,7 +25,6 @@ return new class extends Migration
             $table->foreign('release_id')->references('id')->on('publication_releases')->restrictOnDelete();
             $table->index('release_id', 'pubcar_release_idx');
 
-            // The exact string encoded into the carrier, kept verbatim: a later change to the base URL must not rewrite history.
             $table->text('target');
 
             $table->string('format', 16)->default('svg');
@@ -31,7 +37,6 @@ return new class extends Migration
 
             $table->timestamps();
 
-            // Explicit names: auto names include the prefix and overrun MySQL's 64-char identifier limit on prefixed installs.
             $table->index(['publication_id', 'issued_at'], 'pubcar_pub_issued_idx');
         });
     }
