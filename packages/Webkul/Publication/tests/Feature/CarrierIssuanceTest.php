@@ -33,7 +33,7 @@ it('redirects the release entry url to the strict per-locale url and 404s an unk
     $this->get('/p/'.$uuid.'/r/9')->assertNotFound();
 });
 
-it('negotiates the entry locale only among locales that exist in that release', function (): void {
+it('negotiates the entry locale only among locales that exist in that release, falling back when the preferred one came later', function (): void {
     $first = $this->publishedPassportFixture();
 
     $publication = $first->publication;
@@ -50,7 +50,6 @@ it('negotiates the entry locale only among locales that exist in that release', 
     $uuid = $publication->uuid;
     $preferOther = ['Accept-Language' => str_replace('_', '-', $other->code)];
 
-    // Release 1 predates the other locale: the preference cannot be honoured, so it falls back to what exists.
     $this->withHeaders($preferOther)->get('/p/'.$uuid.'/r/1')
         ->assertRedirect(route('publication.public.dpp.show.release', ['uuid' => $uuid, 'sequence' => 1, 'locale' => $first->locale->code]));
 
