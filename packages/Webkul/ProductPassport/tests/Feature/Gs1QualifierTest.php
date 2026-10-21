@@ -224,3 +224,61 @@ it('warns and falls back to live when the lot resolver returns a release of anot
         ->withArgs(fn (string $message, array $context): bool => str_contains($message, 'another publication') && $context['release_id'] === $foreign->id)
         ->once();
 });
+
+it('keeps a gtin outside the route grammar as routing metadata only, never in the history', function (string $gtin): void {
+    [, , $versions] = $this->publishGtinPassport($gtin);
+    $publication = $versions[0]->publication->fresh();
+
+    expect($publication->gtin)->toBe($gtin)
+        ->and($publication->alias_identifier)->toBeNull()
+        ->and($publication->gtins()->count())->toBe(0);
+})->with([
+    'separator inside'   => ['4006381-333931'],
+    'longer than gtin14' => ['4006381333931000'],
+]);
+
+it('refreshes recorded_at when a publication takes a gtin back, leaving a revocation alone', function (): void {
+    [$product, $channels, $versions] = $this->publishGtinPassport('4006381333931');
+    $publication = $versions[0]->publication->fresh();
+
+    $gtinCode = array_key_first(array_filter($product->values['common'], fn ($value): bool => $value === '4006381333931'));
+
+    $republishWith = function (string $gtin) use ($product, $gtinCode, $channels, $versions): void {
+        $product->values = array_replace_recursive($product->values, ['common' => [$gtinCode => $gtin]]);
+        $product->save();
+
+        resolve(Publisher::class)->publish($product, $channels[0], $versions[0]->locale, 'dpp');
+    };
+
+    $republishWith('10614141000415');
+
+    $longAgo = now()->subYear()->startOfSecond();
+
+    DB::table('publication_gtins')
+        ->where('publication_id', $publication->id)
+        ->where('gtin', '4006381333931')
+        ->update(['recorded_at' => $longAgo, 'revoked_at' => $longAgo]);
+
+    $republishWith('4006381333931');
+
+    $row = $publication->gtins()->where('gtin', '4006381333931')->firstOrFail();
+
+    expect($publication->gtins()->count())->toBe(2)
+        ->and($row->recorded_at->greaterThan($longAgo))->toBeTrue()
+        ->and($row->revoked_at?->equalTo($longAgo))->toBeTrue();
+});
+
+it('backfills only well-formed gtins into the history', function (): void {
+    [, , $versions] = $this->publishGtinPassport('4006381333931', 2);
+    [$wellFormed, $malformed] = [$versions[0]->publication_id, $versions[1]->publication_id];
+
+    DB::table('publications')->where('id', $malformed)->update(['gtin' => '4006381333931000']);
+    DB::table('publication_gtins')->delete();
+
+    $migration = require base_path('packages/Webkul/Publication/src/Database/Migrations/2026_09_04_000013_create_publication_gtins_table.php');
+
+    (fn () => $this->backfill())->call($migration);
+
+    expect(DB::table('publication_gtins')->where('publication_id', $wellFormed)->pluck('gtin')->all())->toBe(['4006381333931'])
+        ->and(DB::table('publication_gtins')->where('publication_id', $malformed)->exists())->toBeFalse();
+});

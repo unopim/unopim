@@ -12,8 +12,10 @@ use Webkul\Publication\Exceptions\ImmutableVersionException;
 /**
  * Every GTIN a publication has ever published under. `publications.gtin` is the current one;
  * a printed `/01/{gtin}` link must keep resolving after a correction, so the history is kept
- * and is append-only. The one permitted change is revoking a row, which retires a GTIN published by
- * mistake: the history fallback in `PublicationResolver::findByGtin()` skips it, and nothing un-revokes it.
+ * and is append-only. The one permitted change through the model is revoking a row, which retires a GTIN
+ * published by mistake: the history fallback in `PublicationResolver::findByGtin()` skips it, and nothing
+ * un-revokes it. `SyncPublicationGtin` refreshes `recorded_at` when a publication takes a GTIN back, so the
+ * row records when the GTIN was last adopted.
  */
 #[Fillable(['publication_id', 'gtin', 'recorded_at'])]
 #[Table(name: 'publication_gtins')]
