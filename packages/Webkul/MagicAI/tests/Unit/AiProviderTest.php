@@ -155,6 +155,17 @@ it('summarises an upstream failure instead of surfacing the raw response body', 
     }
 });
 
+it('surfaces the upstream reason whatever error shape the provider returns', function (string $body, string $reason) {
+    $client = fakeProviderClient([new Response(403, [], $body)]);
+
+    expect(fn () => AiProvider::XAI->fetchModels('xai-key', null, $client))
+        ->toThrow(RuntimeException::class, $reason);
+})->with([
+    'xai string error'    => ['{"code":"permission-denied","error":"Your team has no credits."}', 'Your team has no credits.'],
+    'openai error object' => ['{"error":{"message":"Key lacks scope."}}', 'Key lacks scope.'],
+    'top-level message'   => ['{"message":"Forbidden for region."}', 'Forbidden for region.'],
+]);
+
 it('keeps the release date each provider reports alongside the model id', function () {
     $client = fakeProviderClient([
         new Response(200, [], json_encode(['data' => [['id' => 'gpt-5-mini', 'created' => 1754425928], ['id' => 'gpt-3.5-turbo', 'created' => 1677610602]]])),

@@ -91,7 +91,7 @@ describe('Agentic chat prompt caching (Issue #421)', function () {
 
         $result = app(AgentRunner::class)->run(cachingChatContext('anthropic', 'claude-sonnet-4-5', $this->admin));
 
-        expect($result['data']['tokens_used'])->toBe(50)
+        expect($result['data']['tokens_used'])->toBe(1550)
             ->and($result['data']['cached_tokens'])->toBe(1500);
     });
 

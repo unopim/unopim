@@ -1581,9 +1581,11 @@ return [
                     'zip-upload-success'  => 'ZIP이 성공적으로 업로드 및 추출되었습니다.',
                     'zip-upload-error'    => 'ZIP 업로드에 실패했습니다. 다시 시도해 주세요.',
                     'invalid-zip'         => '업로드된 파일은 유효한 ZIP 아카이브가 아닙니다.',
-                    'zip-upload-or'       => '또는 이미지 ZIP 업로드',
-                    'zip-click-upload'    => '클릭하여 이미지 ZIP 업로드',
+                    'zip-upload-or'       => '또는 이미지 및 문서 ZIP 업로드',
+                    'zip-click-upload'    => '클릭하여 이미지 및 문서 ZIP 업로드',
                     'zip-files-extracted' => '파일이 추출되었습니다',
+                    'zip-files-skipped'   => ':skipped(지원되지 않는 형식, 잘못된 내용 또는 너무 큰 파일):',
+                    'zip-accepted-types'  => 'ZIP에서 허용됨: :types',
                     'zip-drop-hint'       => '여기에 ZIP 파일을 클릭하거나 드래그 앤 드롭하세요',
                     'file-upload-info'    => 'CSV, XLSX, JSON (최대 2MB)',
                     'images-directory'    => '경로',
@@ -1705,6 +1707,9 @@ return [
                 'setup-queue-error'          => '가져오기 프로세스를 시작하려면 큐 드라이버를 "database" 또는 "redis"로 변경하십시오.',
                 'update-success'             => '가져오기가 성공적으로 업데이트되었습니다.',
                 'zip-upload-success'         => 'ZIP이 성공적으로 업로드 및 추출되었습니다.',
+                'zip-extracted-count'        => '파일 :count개 추출',
+                'zip-skipped-count'          => ':count개 건너뜀',
+                'zip-upload-partial'         => 'ZIP이 업로드되었습니다. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [

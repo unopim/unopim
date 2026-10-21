@@ -1580,9 +1580,11 @@ return [
                     'zip-upload-success'  => 'ZIP pujat i extret correctament.',
                     'zip-upload-error'    => 'Error en pujar el ZIP. Torneu-ho a provar.',
                     'invalid-zip'         => 'El fitxer pujat no és un arxiu ZIP vàlid.',
-                    'zip-upload-or'       => 'o pugeu un ZIP d\'imatges',
-                    'zip-click-upload'    => 'Feu clic per pujar un ZIP d\'imatges',
+                    'zip-upload-or'       => 'o pugeu un ZIP d\'imatges i documents',
+                    'zip-click-upload'    => 'Feu clic per pujar un ZIP d\'imatges i documents',
                     'zip-files-extracted' => 'fitxers extrets',
+                    'zip-files-skipped'   => ':skipped (tipus no admès, contingut no vàlid o massa grans):',
+                    'zip-accepted-types'  => 'Acceptat al ZIP: :types',
                     'zip-drop-hint'       => 'Feu clic o arrossegueu i deixeu anar un fitxer ZIP aquí',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MÀX. 2MB)',
                     'images-directory'    => 'Camí',
@@ -1704,6 +1706,9 @@ return [
                 'setup-queue-error'          => 'Canvia el controlador de cua a "database" o "redis" per iniciar el procés d\'importació.',
                 'update-success'             => 'Importació actualitzada amb èxit.',
                 'zip-upload-success'         => 'ZIP pujat i extret correctament.',
+                'zip-extracted-count'        => '{1} :count fitxer extret|[0,*] :count fitxers extrets',
+                'zip-skipped-count'          => '{1} :count omès|[0,*] :count omesos',
+                'zip-upload-partial'         => 'ZIP pujat. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [

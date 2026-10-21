@@ -101,6 +101,8 @@ class DashboardController extends Controller
      */
     public function rollback(int $id): JsonResponse
     {
+        abort_unless(bouncer()->hasPermission('catalog.products.edit'), 403, trans('ai-agent::app.common.unauthorized'));
+
         $changeset = DB::table('ai_agent_changesets')
             ->where('id', $id)
             ->where('status', 'applied')

@@ -14,12 +14,12 @@ use Laravel\Ai\Responses\AgentResponse;
 use Laravel\Ai\Responses\Data\ToolResult;
 use Laravel\Ai\Streaming\Events\TextDelta;
 use Laravel\Ai\Streaming\Events\ToolCall;
+use Laravel\Ai\Streaming\Events\ToolResult as ToolResultEvent;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Webkul\AiAgent\Events\AgentSystemPromptBuilding;
 use Webkul\AiAgent\Events\AgentToolExecuted;
 use Webkul\AiAgent\Services\TokenUsageRecorder;
 use Webkul\MagicAI\Enums\AiProvider;
-use Webkul\MagicAI\Services\ProviderOverrides;
 use Webkul\MagicAI\Services\ScopedProviderConfig;
 
 /**
@@ -70,7 +70,7 @@ class AgentRunner
         );
 
         $usage = $response->usage;
-        $tokensUsed = ($usage->promptTokens ?? 0) + ($usage->completionTokens ?? 0);
+        $tokensUsed = $usage->inputTokens + $usage->outputTokens;
 
         $result = [
             'reply'  => $response->text ?: trans('ai-agent::app.common.operation-completed'),
@@ -133,6 +133,20 @@ class AgentRunner
                         $statusSent = false;
 
                         foreach ($stream as $event) {
+                            if ($event instanceof ToolResultEvent
+                                && $event->successful && ! $event->preliminary
+                                && ! $event->toolResult->failed && ! $event->toolResult->denied) {
+                                $raw = $event->toolResult->result;
+                                $partial = [];
+                                $this->mergeActionPayload(
+                                    is_string($raw) || $raw instanceof \Stringable ? json_decode((string) $raw, true) : null,
+                                    $partial,
+                                );
+                                if ($partial !== []) {
+                                    $this->sendSSE('tool_result', $partial);
+                                }
+                            }
+
                             if ($event instanceof ToolCall) {
                                 $stepCount++;
                                 $this->sendSSE('tool_call', [
@@ -158,7 +172,7 @@ class AgentRunner
                         // final usage + text. Fall back to buffer if usage is null.
                         $finalText = $stream->text ?: $textBuffer ?: trans('ai-agent::app.common.operation-completed');
                         $usage = $stream->usage;
-                        $tokensUsed = ($usage?->promptTokens ?? 0) + ($usage?->completionTokens ?? 0);
+                        $tokensUsed = ($usage?->inputTokens ?? 0) + ($usage?->outputTokens ?? 0);
                         $cachedTokens = $usage?->cacheReadInputTokens ?? 0;
 
                         $this->recordStreamingTokens($context, $tokensUsed, $cachedTokens);
@@ -303,15 +317,7 @@ class AgentRunner
      */
     protected function providerOverrides(ChatContext $context): array
     {
-        $overrides = [
-            'key' => $context->platform->api_key,
-        ];
-
-        if ($context->platform->api_url) {
-            $overrides['url'] = $context->platform->api_url;
-        }
-
-        return ProviderOverrides::build($overrides, $context->platform->extras);
+        return $context->platform->providerOverrides();
     }
 
     /**
@@ -634,6 +640,7 @@ MODE;
             || $toolResult->denied
             || ! is_array($payload)
             || isset($payload['error'])
+            || ($payload['mutated'] ?? null) === false
             || ! ($this->toolRegistry->metadata($toolResult->name)['write'] ?? false)) {
             return;
         }
@@ -662,6 +669,10 @@ MODE;
     {
         if (! is_array($payload)) {
             return;
+        }
+
+        if ($descriptor = app(ResultRendererRegistry::class)->descriptor($payload['presentation'] ?? null)) {
+            $result['presentation'] = $descriptor;
         }
 
         if (! empty($payload['product_url'])) {

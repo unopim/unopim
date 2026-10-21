@@ -8,10 +8,12 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Throwable;
 use Webkul\AiAgent\Chat\AgentRunner;
 use Webkul\AiAgent\Chat\AiErrorResolver;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\ChatUploadStore;
+use Webkul\AiAgent\Chat\ExtensionRegistry;
 use Webkul\AiAgent\Http\Requests\ChatRequest;
 use Webkul\AiAgent\Services\TokenUsageRecorder;
 use Webkul\MagicAI\Models\MagicAIPlatform;
@@ -63,7 +65,7 @@ class ChatController extends Controller
             );
 
             return new JsonResponse($result);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $resolved = AiErrorResolver::resolve($e);
             $rejectsImages = AiErrorResolver::rejectsImageInput($e);
 
@@ -201,6 +203,10 @@ class ChatController extends Controller
             uploadedFilePaths: $filePaths,
             currentPage: $context['current_page'] ?? null,
             user: auth()->guard('admin')->user(),
+            conversationId: $request->conversationId(),
+            requestId: $request->validated('request_id'),
+            hasNewImages: $request->hasFile('images'),
+            extensions: $request->validated('extensions') ?? [],
         );
     }
 
@@ -260,10 +266,25 @@ class ChatController extends Controller
     }
 
     /**
-     * Resolve the AI platform to use.
+     * Resolve the AI platform to use; a failing or inactive extension provider
+     * falls back to the stored default instead of failing the chat.
      */
     protected function resolvePlatform(int $platformId): ?MagicAIPlatform
     {
+        if ($platformId < 0) {
+            try {
+                $platform = app(ExtensionRegistry::class)->resolve($platformId);
+            } catch (Throwable $e) {
+                report($e);
+
+                $platform = null;
+            }
+
+            if ($platform && $platform->status) {
+                return $platform;
+            }
+        }
+
         if ($platformId > 0) {
             $platform = $this->platformRepository->find($platformId);
 
