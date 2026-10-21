@@ -29,6 +29,8 @@ return [
     ],
 
     'common' => [
+        'invalid-data'                  => 'Annetut tiedot ovat virheellisiä tai ylittävät sallitut rajat.',
+        'conversation-not-found'        => 'Keskustelua ei löytynyt.',
         'yes'                           => 'Kyllä',
         'no'                            => 'Ei',
         'save'                          => 'Tallenna',

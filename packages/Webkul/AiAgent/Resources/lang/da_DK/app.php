@@ -29,6 +29,8 @@ return [
     ],
 
     'common' => [
+        'invalid-data'                  => 'De angivne data er ugyldige eller overskrider de tilladte grænser.',
+        'conversation-not-found'        => 'Samtalen blev ikke fundet.',
         'yes'                           => 'Ja',
         'no'                            => 'Nej',
         'save'                          => 'Gem',

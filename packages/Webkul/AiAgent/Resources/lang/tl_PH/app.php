@@ -29,6 +29,8 @@ return [
     ],
 
     'common' => [
+        'invalid-data'                  => 'Hindi wasto ang ibinigay na data o lumampas ito sa mga pinapayagang limitasyon.',
+        'conversation-not-found'        => 'Hindi natagpuan ang pag-uusap.',
         'yes'                           => 'Oo',
         'no'                            => 'Hindi',
         'save'                          => 'I-save',

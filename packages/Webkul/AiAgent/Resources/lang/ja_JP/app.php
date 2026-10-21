@@ -29,6 +29,8 @@ return [
     ],
 
     'common' => [
+        'invalid-data'                  => '入力されたデータが無効であるか、許容される上限を超えています。',
+        'conversation-not-found'        => '会話が見つかりません。',
         'yes'                           => 'はい',
         'no'                            => 'いいえ',
         'save'                          => '保存',

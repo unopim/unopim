@@ -29,6 +29,8 @@ return [
     ],
 
     'common' => [
+        'invalid-data'                  => 'Datele furnizate sunt nevalide sau depășesc limitele permise.',
+        'conversation-not-found'        => 'Conversația nu a fost găsită.',
         'yes'                           => 'Da',
         'no'                            => 'Nu',
         'save'                          => 'Salvează',

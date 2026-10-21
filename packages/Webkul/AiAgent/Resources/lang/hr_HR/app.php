@@ -29,6 +29,8 @@ return [
     ],
 
     'common' => [
+        'invalid-data'                  => 'Navedeni podaci nisu valjani ili premašuju dopuštena ograničenja.',
+        'conversation-not-found'        => 'Razgovor nije pronađen.',
         'yes'                           => 'Da',
         'no'                            => 'Ne',
         'save'                          => 'Spremi',

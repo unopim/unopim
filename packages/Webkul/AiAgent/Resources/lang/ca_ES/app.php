@@ -29,6 +29,8 @@ return [
     ],
 
     'common' => [
+        'invalid-data'                  => 'Les dades proporcionades no són vàlides o superen els límits permesos.',
+        'conversation-not-found'        => 'No s’ha trobat la conversa.',
         'yes'                           => 'Sí',
         'no'                            => 'No',
         'save'                          => 'Desar',

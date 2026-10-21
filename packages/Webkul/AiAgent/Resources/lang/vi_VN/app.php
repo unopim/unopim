@@ -29,6 +29,8 @@ return [
     ],
 
     'common' => [
+        'invalid-data'                  => 'Dữ liệu được cung cấp không hợp lệ hoặc vượt quá giới hạn cho phép.',
+        'conversation-not-found'        => 'Không tìm thấy cuộc trò chuyện.',
         'yes'                           => 'Có',
         'no'                            => 'Không',
         'save'                          => 'Lưu',
