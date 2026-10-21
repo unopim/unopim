@@ -64,7 +64,24 @@ class ChatReplyJob implements ShouldQueue
     }
 
     /**
-     * Job timeout for a queue connection, ten seconds below its retry_after.
+     * Queue drivers that run a job inside the current request (or not at all),
+     * so a reply cannot outlive the page and the widget streams instead.
+     */
+    protected const INLINE_DRIVERS = ['sync', 'deferred', 'background', 'null'];
+
+    /**
+     * Whether replies on the connection run on a separate worker.
+     */
+    public static function runsAsync(?string $connection): bool
+    {
+        $driver = $connection ? config("queue.connections.{$connection}.driver") : null;
+
+        return is_string($driver) && ! in_array($driver, self::INLINE_DRIVERS, true);
+    }
+
+    /**
+     * Job timeout for a queue connection: ten seconds below its retry_after,
+     * but at least ten seconds, and always below retry_after itself.
      *
      * A timeout at or above retry_after lets the queue hand a still-running
      * job to a second worker, which then fails it while the first worker is
@@ -74,15 +91,16 @@ class ChatReplyJob implements ShouldQueue
     {
         $retryAfter = (int) config("queue.connections.{$connection}.retry_after", 90);
 
-        return max(1, $retryAfter - 10);
+        return min(max(10, $retryAfter - 10), max(1, $retryAfter - 1));
     }
 
     /**
-     * Generate the reply, unless it was cancelled or claimed by another worker.
+     * Generate the reply, unless it was cancelled, claimed by another worker
+     * or pruned.
      *
-     * The acting admin is set on the guard for the tools and cleared afterwards.
-     * The provider timeout stays below the job timeout so a slow provider ends
-     * in a readable error instead of a killed worker.
+     * A worker has no request, so the admin's UI locale (which Bouncer sets
+     * for web requests) is applied here for every user-facing string and
+     * restored afterwards.
      */
     public function handle(AgentRunner $agentRunner, ChatReplyRepository $chatReplyRepository): void
     {
@@ -91,7 +109,36 @@ class ChatReplyJob implements ShouldQueue
         }
 
         $reply = $chatReplyRepository->find($this->replyId);
-        $context = $this->rebuildContext();
+
+        if (! $reply) {
+            return;
+        }
+
+        $admin = $this->admin();
+
+        $this->withAdminLocale($admin, fn () => $this->generateReply($reply, $agentRunner, $admin));
+    }
+
+    /**
+     * Called by the queue when the job fails outright (for example a timeout),
+     * so the widget stops polling instead of waiting forever.
+     */
+    public function failed(\Throwable $e): void
+    {
+        $this->withAdminLocale($this->admin(), fn () => app(ChatReplyRepository::class)
+            ->failUnfinished($this->replyId, AiErrorResolver::resolve($e)['message']));
+    }
+
+    /**
+     * Run the agent and write the outcome into the reply row.
+     *
+     * The acting admin is set on the guard for the tools and cleared afterwards.
+     * The provider timeout stays below the job timeout so a slow provider ends
+     * in a readable error instead of a killed worker.
+     */
+    protected function generateReply(ChatReply $reply, AgentRunner $agentRunner, ?Admin $admin): void
+    {
+        $context = $this->rebuildContext($admin);
 
         if (! $context) {
             $reply->update([
@@ -102,8 +149,8 @@ class ChatReplyJob implements ShouldQueue
             return;
         }
 
-        if ($context->user) {
-            auth()->guard('admin')->setUser($context->user);
+        if ($admin) {
+            auth()->guard('admin')->setUser($admin);
         }
 
         try {
@@ -131,12 +178,28 @@ class ChatReplyJob implements ShouldQueue
     }
 
     /**
-     * Called by the queue when the job fails outright (for example a timeout),
-     * so the widget stops polling instead of waiting forever.
+     * Run the callback in the admin's UI locale (the app default without one)
+     * and restore the previous locale afterwards.
      */
-    public function failed(\Throwable $e): void
+    protected function withAdminLocale(?Admin $admin, Closure $callback): mixed
     {
-        app(ChatReplyRepository::class)->failUnfinished($this->replyId, AiErrorResolver::resolve($e)['message']);
+        $previous = app()->getLocale();
+
+        app()->setLocale($admin?->uiLocale?->code ?: config('app.locale'));
+
+        try {
+            return $callback();
+        } finally {
+            app()->setLocale($previous);
+        }
+    }
+
+    /**
+     * The admin who sent the message, if they still exist.
+     */
+    protected function admin(): ?Admin
+    {
+        return isset($this->context['admin_id']) ? Admin::find($this->context['admin_id']) : null;
     }
 
     /**
@@ -175,7 +238,7 @@ class ChatReplyJob implements ShouldQueue
      * Rebuild the chat context from the serialized inputs, or null when the
      * platform no longer exists.
      */
-    protected function rebuildContext(): ?ChatContext
+    protected function rebuildContext(?Admin $admin): ?ChatContext
     {
         $context = $this->context;
         $platform = MagicAIPlatform::find($context['platform_id'] ?? null);
@@ -197,7 +260,7 @@ class ChatReplyJob implements ShouldQueue
             uploadedImagePaths: $context['uploadedImagePaths'] ?? [],
             uploadedFilePaths: $context['uploadedFilePaths'] ?? [],
             currentPage: $context['currentPage'] ?? null,
-            user: isset($context['admin_id']) ? Admin::find($context['admin_id']) : null,
+            user: $admin,
             conversationId: $context['conversationId'] ?? null,
             requestId: $context['requestId'] ?? null,
             hasNewImages: (bool) ($context['hasNewImages'] ?? false),

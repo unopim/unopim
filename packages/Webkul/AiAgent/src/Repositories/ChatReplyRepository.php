@@ -30,6 +30,8 @@ class ChatReplyRepository extends Repository
     /**
      * Atomically move a queued reply to generating.
      *
+     * A single conditional UPDATE ... WHERE status = 'queued'; the database
+     * lets exactly one caller (this claim or cancelQueued()) change the row.
      * Returns false when the reply was cancelled or another worker already
      * claimed it, so a reply is generated at most once.
      */
@@ -44,8 +46,10 @@ class ChatReplyRepository extends Repository
     /**
      * Cancel the admin's reply while no worker has claimed it yet.
      *
-     * Returns false once a worker is generating it, in which case the caller
-     * keeps polling instead of falling back.
+     * The same conditional UPDATE on status = 'queued' as claim(), so a
+     * cancel and a claim can never both succeed. Returns false once a worker
+     * is generating it, in which case the caller keeps polling instead of
+     * falling back.
      */
     public function cancelQueued(string $id, int $userId): bool
     {

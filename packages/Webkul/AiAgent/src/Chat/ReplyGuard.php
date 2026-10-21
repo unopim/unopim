@@ -70,9 +70,10 @@ class ReplyGuard
     /**
      * Replace markdown images whose URL does not resolve to a stored file with a short note.
      *
-     * Same-origin /storage URLs are checked on the public disk and URLs on the
-     * configured S3 host on the s3 disk. Anything that cannot be checked cheaply
-     * is left alone; the widget's host allowlist is the backstop for those.
+     * Same-origin URLs must be files under the public storage path; URLs on
+     * the configured S3 host are checked on the s3 disk. Other hosts cannot be
+     * checked cheaply and are left alone; the widget's host allowlist is the
+     * backstop for those.
      */
     public function stripUnresolvableImages(string $text): string
     {
@@ -180,7 +181,22 @@ class ReplyGuard
     }
 
     /**
+     * URL path of the public disk with a trailing slash, e.g. "/storage/".
+     */
+    public function publicStoragePath(): string
+    {
+        $path = parse_url((string) config('filesystems.disks.public.url'), PHP_URL_PATH);
+
+        return rtrim(is_string($path) && $path !== '' ? $path : '/storage', '/').'/';
+    }
+
+    /**
      * Whether an image URL points at a file that actually exists.
+     *
+     * An image on the app's own host must be a file under the public storage
+     * path; any other path (an admin route, a traversal) counts as missing, so
+     * a prompt-injected image cannot make the browser fire an authenticated
+     * request.
      *
      * @return bool|null true = exists, false = checked and missing, null = not cheaply checkable
      */
@@ -196,11 +212,17 @@ class ReplyGuard
         $path = $parts['path'] ?? '';
 
         if ($host === null || $host === $appHost) {
-            if (preg_match('#/storage/(.+)$#', $path, $match)) {
-                return Storage::disk('public')->exists(urldecode($match[1]));
+            $prefix = $this->publicStoragePath();
+
+            if (! str_starts_with($path, $prefix) || strlen($path) === strlen($prefix)) {
+                return false;
             }
 
-            return null;
+            try {
+                return Storage::disk('public')->exists(urldecode(substr($path, strlen($prefix))));
+            } catch (\Throwable) {
+                return false;
+            }
         }
 
         if ($s3Host === null || $host !== $s3Host) {

@@ -17,16 +17,18 @@
     // sessionStorage still wins — see restoreState() below.
     $openByDefault = (bool) (core()->getConfigData('general.magic_ai.agentic_pim.open_by_default') ?? false);
 
-    // Hosts besides the current origin whose images the chat renders inline:
-    // the app URL host and a configured S3/CDN disk. Anything else is a link.
+    // Chat images render inline only from the public storage path on the app's
+    // own host, or from a configured S3/CDN host. Anything else is a link.
+    $appImageHost = parse_url((string) config('app.url'), PHP_URL_HOST) ?: null;
+    $storageImagePath = app(\Webkul\AiAgent\Chat\ReplyGuard::class)->publicStoragePath();
     $allowedImageHosts = collect([
-        parse_url((string) config('app.url'), PHP_URL_HOST),
         parse_url((string) (config('filesystems.disks.s3.url') ?: ''), PHP_URL_HOST),
     ])->filter()->unique()->values();
 
-    // Replies run on a queue worker (and survive navigation) unless the queue
-    // is synchronous; then the turn streams over SSE as before.
-    $asyncReplies = config('queue.default') !== 'sync';
+    // Replies run on a queue worker (and survive navigation) only when the
+    // queue driver runs jobs out of the request; otherwise the turn streams
+    // over SSE as before.
+    $asyncReplies = \Webkul\AiAgent\Jobs\ChatReplyJob::runsAsync(config('queue.default'));
     $replyPollLimitMs = (\Webkul\AiAgent\Jobs\ChatReplyJob::timeoutFor(config('queue.default')) + 30) * 1000;
 @endphp
 
@@ -1075,6 +1077,8 @@ app.component('v-agenting-pim', {
             selectedModel: pickTextModel(initialModels),
             trans: trans,
             allowedImageHosts: @json($allowedImageHosts),
+            appImageHost: @json($appImageHost),
+            storageImagePath: @json($storageImagePath),
             asyncReplies: @json($asyncReplies),
             capabilities: [
                 // Row 1: Product creation & updates
@@ -1813,7 +1817,9 @@ app.component('v-agenting-pim', {
          * the enqueue request is thrown for send() to show. Returns false when
          * the turn should be streamed instead: the enqueue request failed on
          * the server or network, the platform cannot run on a worker (409), or
-         * no worker picked the reply up in time.
+         * no worker picked the reply up in time. After PJAX navigation
+         * unmounted this instance it returns true: the next page resumes the
+         * reply, and nothing is streamed for a widget nobody sees.
          */
         async sendQueued(fd, files) {
             const msgIndex = this.messages.length;
@@ -1835,6 +1841,8 @@ app.component('v-agenting-pim', {
 
             const payload = response ? await response.json().catch(() => ({})) : {};
 
+            if (this._unmounted) return true;
+
             if (! response?.ok || ! payload.reply_id) {
                 this.messages.splice(msgIndex, 1);
                 if (response && response.status >= 400 && response.status < 500 && response.status !== 409) {
@@ -1848,6 +1856,8 @@ app.component('v-agenting-pim', {
             this.saveState();
 
             const data = await this.pollReply(payload.reply_id, msgIndex);
+
+            if (this._unmounted) return true;
 
             if (data?.status === 'cancelled') {
                 this.messages.splice(msgIndex, 1);
@@ -1868,7 +1878,10 @@ app.component('v-agenting-pim', {
          * retried and a 404 ends polling. A reply still queued after the grace
          * period means no worker is running: it is cancelled and
          * {status: 'cancelled'} is returned without finalizing. Returns null
-         * when the placeholder was replaced (for example a new session).
+         * when the placeholder was replaced (for example a new session) or the
+         * widget was unmounted by navigation; the instance then stops without
+         * cancelling, finalizing or scheduling a redirect, so the next page's
+         * widget owns the reply.
          */
         async pollReply(replyId, msgIndex) {
             const started = Date.now();
@@ -1877,9 +1890,11 @@ app.component('v-agenting-pim', {
             while (Date.now() - started < AGENTIC_PIM_REPLY_POLL.maxMs) {
                 await new Promise(resolve => setTimeout(resolve, AGENTIC_PIM_REPLY_POLL.intervalMs));
 
-                if (this.messages[msgIndex]?.replyId !== replyId) return null;
+                if (this._unmounted || this.messages[msgIndex]?.replyId !== replyId) return null;
 
                 const polled = await this.fetchReply(replyId);
+
+                if (this._unmounted) return null;
 
                 if (! polled) continue;
 
@@ -2400,10 +2415,13 @@ app.component('v-agenting-pim', {
         },
 
         /**
-         * An image URL renders only when it is http(s) and same-origin (app
-         * served /storage) or on a configured media host. Relative paths
-         * resolve against the current origin; data: and javascript: URLs and
-         * other hosts are rejected so <img> cannot be a tracking or SSRF sink.
+         * An image URL renders only when it is http(s) and either a file under
+         * the public storage path on the app's own host, or on a configured
+         * media host. Relative paths resolve against the current origin (dot
+         * segments are normalised first). Other paths on the app host (admin
+         * routes) are rejected so a prompt-injected image cannot fire an
+         * authenticated request; data:, javascript: and foreign hosts are
+         * rejected so <img> cannot be a tracking or SSRF sink.
          */
         isAllowedImageUrl(url) {
             let parsed;
@@ -2416,7 +2434,11 @@ app.component('v-agenting-pim', {
 
             if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') return false;
 
-            return parsed.host === window.location.host || this.allowedImageHosts.includes(parsed.hostname);
+            if (parsed.host === window.location.host || parsed.hostname === this.appImageHost) {
+                return parsed.pathname.startsWith(this.storageImagePath) && parsed.pathname.length > this.storageImagePath.length;
+            }
+
+            return this.allowedImageHosts.includes(parsed.hostname);
         },
 
         /**
@@ -2506,6 +2528,8 @@ app.component('v-agenting-pim', {
     beforeUnmount() {
         this.messagesObserver?.disconnect();
         this.messagesObserver = null;
+
+        this._unmounted = true;
 
         if (this._imgErrorHandler) document.removeEventListener('error', this._imgErrorHandler, true);
 
