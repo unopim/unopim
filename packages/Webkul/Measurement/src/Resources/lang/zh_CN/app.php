@@ -135,14 +135,6 @@ return [
         'max_units'        => '一个计量单位组不能拥有超过 :max 个单位。',
     ],
 
-    'importers' => [
-        'products' => [
-            'validation' => [
-                'invalid-unit' => '单位 ":unit" 不是测量属性 ":attribute" 的有效单位。',
-            ],
-        ],
-    ],
-
     'messages' => [
         'family' => [
             'created'                => '测量系列已成功创建。',

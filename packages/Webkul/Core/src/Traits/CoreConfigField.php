@@ -34,6 +34,9 @@ trait CoreConfigField
     /**
      * Get validations for forms in configuration page.
      *
+     * `nullable` is a Laravel-only modifier with no vee-validate rule registered
+     * for it, so it is dropped here rather than forwarded to the frontend.
+     *
      * @return string
      */
     public function getValidations(array $field)
@@ -43,7 +46,7 @@ trait CoreConfigField
         if (is_array($field['validation'])) {
             $field['validation'] = implode('|', array_filter(
                 $field['validation'],
-                fn ($rule): bool => is_string($rule) && ! class_exists($rule)
+                fn ($rule): bool => is_string($rule) && $rule !== 'nullable' && ! class_exists($rule)
             ));
         }
 

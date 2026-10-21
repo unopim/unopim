@@ -33,7 +33,6 @@ function createBundleKitTypeForExportTest(): int
                 'validation'  => 'number',
                 'is_required' => 1,
                 'status'      => 1,
-                'section'     => 'left',
                 'en_US'       => ['name' => 'Quantity'],
             ],
         ],
@@ -80,6 +79,15 @@ function roundTripAssociationBatch(iterable $results): JobTrackBatch
     return new JobTrackBatch(['data' => iterator_to_array($results)]);
 }
 
+/**
+ * The exporter reads every link in the table, so narrow its rows to the ones
+ * owned by the product under test.
+ */
+function associationRowsFor(array $rows, Product $product): array
+{
+    return collect($rows)->where('sku', $product->sku)->values()->all();
+}
+
 describe('ProductAssociation export — join query', function () {
     it('produces one row per link with correct sku, association_type, related_sku, and quantity', function () {
         $typeId = createBundleKitTypeForExportTest();
@@ -97,7 +105,7 @@ describe('ProductAssociation export — join query', function () {
         $results = callAssociationExporterGetResults($exporter);
         $batch = roundTripAssociationBatch($results);
 
-        $rows = $exporter->prepareAssociations($batch);
+        $rows = associationRowsFor($exporter->prepareAssociations($batch), $p1);
 
         expect($rows)->toHaveCount(2);
 
@@ -130,7 +138,7 @@ describe('ProductAssociation export — join query', function () {
         $exporter = makeAssociationExporter();
         $batch = roundTripAssociationBatch(callAssociationExporterGetResults($exporter));
 
-        $rows = $exporter->prepareAssociations($batch);
+        $rows = associationRowsFor($exporter->prepareAssociations($batch), $p1);
 
         // The permanent columns plus the dynamic `quantity` field must be present;
         // additional, unrelated field codes from other active association types
@@ -153,7 +161,6 @@ describe('ProductAssociation export — join query', function () {
                     'type'        => 'text',
                     'is_required' => 0,
                     'status'      => 1,
-                    'section'     => 'left',
                     'en_US'       => ['name' => 'Note'],
                 ],
             ],
@@ -170,7 +177,7 @@ describe('ProductAssociation export — join query', function () {
         $exporter = makeAssociationExporter();
         $batch = roundTripAssociationBatch(callAssociationExporterGetResults($exporter));
 
-        $rows = $exporter->prepareAssociations($batch);
+        $rows = associationRowsFor($exporter->prepareAssociations($batch), $p1);
 
         expect($rows)->toHaveCount(2);
 
@@ -204,7 +211,6 @@ describe('ProductAssociation export — join query', function () {
                     'validation'  => 'number',
                     'is_required' => 1,
                     'status'      => 1,
-                    'section'     => 'left',
                     'en_US'       => ['name' => 'Quantity'],
                 ],
                 [
@@ -213,7 +219,6 @@ describe('ProductAssociation export — join query', function () {
                     'is_required'      => 0,
                     'value_per_locale' => 1,
                     'status'           => 1,
-                    'section'          => 'left',
                     'en_US'            => ['name' => 'Locale Note'],
                 ],
             ],
@@ -230,7 +235,7 @@ describe('ProductAssociation export — join query', function () {
         $exporter = makeAssociationExporter();
         $batch = roundTripAssociationBatch(callAssociationExporterGetResults($exporter));
 
-        $rows = $exporter->prepareAssociations($batch);
+        $rows = associationRowsFor($exporter->prepareAssociations($batch), $p1);
 
         expect($rows[0])->not->toHaveKey('locale_note');
     });

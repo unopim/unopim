@@ -20,7 +20,7 @@
         readonly
       />
 
-      <div class="flex items-center gap-0.5 flex-shrink-0">
+      <div v-if="! locked" class="flex items-center gap-0.5 flex-shrink-0">
         <span
           v-if="imageList.length"
           @click="preview"
@@ -54,7 +54,8 @@
         modelValue: Array,
         entityId: Number,
         column: Object,
-        attribute: Object
+        attribute: Object,
+        locked: Boolean
       },
 
       data() {

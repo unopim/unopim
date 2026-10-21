@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Webkul\Product\Contracts\Product;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Webhook\Helpers\ProductComparer;
 use Webkul\Webhook\Models\Webhook;
@@ -27,7 +28,8 @@ class WebhookService
     public function __construct(
         protected WebhookRepository $webhookRepository,
         protected LogsRepository $logsRepository,
-        protected ProductRepository $productRepository
+        protected ProductRepository $productRepository,
+        protected RecentProductAudits $recentProductAudits
     ) {}
 
     /**
@@ -289,7 +291,6 @@ class WebhookService
     {
         $adminName = $this->actingName();
 
-        // Store only this product's slice per row; persisting the whole batch payload per row was O(N²) storage.
         $dataBySku = collect($payload['data'] ?? [])->keyBy(fn ($entry): ?string => $entry['sku'] ?? null);
 
         $envelope = array_diff_key($payload, ['data' => true]);
@@ -326,7 +327,7 @@ class WebhookService
             'changes' => $productChanges,
         ];
 
-        if ($type === 'configurable') {
+        if ($type === ProductType::Configurable->value) {
             $normalized['variants'] = $product->variants->map(fn ($variant): array => [
                 'sku'    => $variant->sku,
                 'status' => (bool) $variant->status,
@@ -355,22 +356,23 @@ class WebhookService
         return $response;
     }
 
+    /**
+     * The diff a webhook should report for a product.
+     *
+     * The audit is the one written for this product during this request where there is
+     * one, so a slow write cannot lose its payload. Queued batches have no such record
+     * and fall back to the newest audit by id, still bounded by product freshness.
+     */
     public function getProductChangesForWebhook(Product $product): array
     {
-        $latestChanges = $product->audits()->latest()->first();
+        $latestChanges = $this->recentProductAudits->for($product->getKey())
+            ?? $product->audits()->orderByDesc('id')->first();
 
         if (! $latestChanges) {
             return [];
         }
 
-        $changeTime = $latestChanges->updated_at;
-        $productTime = $product->updated_at;
-
-        if (abs($productTime->diffInMinutes(now())) > 60) {
-            return [];
-        }
-
-        if (abs($changeTime->diffInSeconds($productTime)) > 2) {
+        if (abs($product->updated_at->diffInMinutes(now())) > 60) {
             return [];
         }
 

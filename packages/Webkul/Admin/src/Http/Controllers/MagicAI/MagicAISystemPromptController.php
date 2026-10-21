@@ -90,10 +90,6 @@ class MagicAISystemPromptController extends Controller
 
         $id = request()->id;
 
-        if ($data['is_enabled']) {
-            $this->magicAiSystemPromptRepository->disableAllEnabledPrompts();
-        }
-
         $this->magicAiSystemPromptRepository->update($data, $id);
 
         return new JsonResponse([

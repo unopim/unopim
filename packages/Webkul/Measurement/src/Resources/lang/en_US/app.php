@@ -135,14 +135,6 @@ return [
         'max_units'       => 'A measurement family cannot have more than :max units.',
     ],
 
-    'importers' => [
-        'products' => [
-            'validation' => [
-                'invalid-unit' => 'The unit ":unit" is not a valid unit for the ":attribute" measurement attribute.',
-            ],
-        ],
-    ],
-
     'messages' => [
         'family' => [
             'created'               => 'Measurement family created successfully.',

@@ -180,6 +180,8 @@
                 </label>
             </template>
 
+            <span class="contents" :data-error-slot="name"></span>
+
             <v-error-message
                 :name="name"
                 v-slot="{ message }"

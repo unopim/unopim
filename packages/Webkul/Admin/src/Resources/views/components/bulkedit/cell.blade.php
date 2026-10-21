@@ -6,7 +6,7 @@
             :class="{
                 'z-[2]': isActive,
                 'bg-primary-50 dark:bg-primary-900/30': isSelected && !isActive,
-                'opacity-60 cursor-not-allowed': locked
+                'opacity-60 cursor-not-allowed italic bg-gray-100 dark:bg-cherry-700': locked
             }"
             :style="isActive ? 'box-shadow: inset 0 0 0 2px var(--active-cell-color, rgb(var(--c-primary-600))); outline: none;' : ''"
             :title="locked ? lockedTooltip : null"
@@ -29,6 +29,7 @@
                     :column="col"
                     :entityId="entityId"
                     :attribute="attribute"
+                    :locked="locked"
                 />
             </div>
             <div

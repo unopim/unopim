@@ -35,13 +35,6 @@
         ])
         ->values();
 
-    $sectionOptions = collect(['left', 'right'])
-        ->map(fn ($section) => [
-            'id'    => $section,
-            'label' => trans('admin::app.catalog.category_fields.create.set-section-'.$section),
-        ])
-        ->values();
-
     /**
      * Normalizes either an Eloquent collection of `AssociationTypeField` models
      * (edit prefill) or a plain array coming back from `old('fields')` (a
@@ -106,7 +99,6 @@
                 'is_required'      => (bool) $field->is_required,
                 'is_unique'        => (bool) $field->is_unique,
                 'value_per_locale' => (bool) $field->value_per_locale,
-                'section'          => $field->section ?: 'left',
                 'status'           => (bool) $field->status,
                 'locales'          => $fieldLocales,
                 'options'          => $options,
@@ -131,7 +123,6 @@
             'is_required'      => filter_var($field['is_required'] ?? false, FILTER_VALIDATE_BOOLEAN),
             'is_unique'        => filter_var($field['is_unique'] ?? false, FILTER_VALIDATE_BOOLEAN),
             'value_per_locale' => filter_var($field['value_per_locale'] ?? false, FILTER_VALIDATE_BOOLEAN),
-            'section'          => $field['section'] ?? 'left',
             'status'           => filter_var($field['status'] ?? true, FILTER_VALIDATE_BOOLEAN),
             'locales'          => $fieldLocales,
             'options'          => $options,
@@ -149,7 +140,6 @@
     :locales='@json($localesForJs)'
     :field-type-options='@json($fieldTypeOptions)'
     :validation-options='@json($validationOptions)'
-    :section-options='@json($sectionOptions)'
     current-locale-code="{{ $currentLocaleCode }}"
 ></v-association-field-builder>
 
@@ -199,14 +189,12 @@
                                     </x-admin::table.th>
 
                                     <x-admin::table.th>
-                                        @lang('admin::app.catalog.category_fields.create.set-section')
-                                    </x-admin::table.th>
-
-                                    <x-admin::table.th>
                                         @lang('admin::app.catalog.category_fields.create.status')
                                     </x-admin::table.th>
 
-                                    <x-admin::table.th />
+                                    <x-admin::table.th>
+                                        @lang('admin::app.components.datagrid.table.actions')
+                                    </x-admin::table.th>
                                 </x-admin::table.thead.tr>
                             </x-admin::table.thead>
 
@@ -233,7 +221,6 @@
                                         <input type="hidden" :name="'fields[' + element.id + '][is_required]'" :value="element.is_required ? 1 : 0">
                                         <input type="hidden" :name="'fields[' + element.id + '][is_unique]'" :value="element.is_unique ? 1 : 0">
                                         <input type="hidden" :name="'fields[' + element.id + '][value_per_locale]'" :value="element.value_per_locale ? 1 : 0">
-                                        <input type="hidden" :name="'fields[' + element.id + '][section]'" :value="element.section">
                                         <input type="hidden" :name="'fields[' + element.id + '][status]'" :value="element.status ? 1 : 0">
                                         <input type="hidden" :name="'fields[' + element.id + '][position]'" :value="index">
 
@@ -271,10 +258,6 @@
 
                                         <x-admin::table.td>
                                             <p class="dark:text-white" v-text="fieldTypeLabel(element.type)"></p>
-                                        </x-admin::table.td>
-
-                                        <x-admin::table.td>
-                                            <p class="dark:text-white" v-text="sectionLabel(element.section)"></p>
                                         </x-admin::table.td>
 
                                         <x-admin::table.td>
@@ -429,22 +412,24 @@
 
                             <!-- Locales Inputs -->
                             <template v-if="! isFieldNew">
-                                <p class="mb-2.5 text-sm text-gray-800 dark:text-white font-semibold">
-                                    @lang('admin::app.catalog.category_fields.create.label')
-                                </p>
-
-                                <div class="grid grid-cols-2 gap-4 mb-2.5">
-                                    <template v-for="locale in locales" :key="'field-modal-locale-' + locale.code">
-                                        <x-admin::form.control-group class="w-full mb-2.5">
-                                            <x-admin::form.control-group.label>@{{ locale.name }}</x-admin::form.control-group.label>
-
+                                <x-admin::form.translatable-fields
+                                    class="mb-2.5"
+                                    :locales="$activeLocales"
+                                    :label="trans('admin::app.catalog.category_fields.create.label')"
+                                >
+                                    @foreach ($activeLocales as $locale)
+                                        <x-admin::form.control-group
+                                            class="w-full mb-2.5"
+                                            v-show="locale === '{{ $locale->code }}'"
+                                        >
                                             <x-admin::form.control-group.control
                                                 type="text"
-                                                ::name="locale.code"
+                                                name="{{ $locale->code }}"
+                                                :label="$locale->name"
                                             />
                                         </x-admin::form.control-group>
-                                    </template>
-                                </div>
+                                    @endforeach
+                                </x-admin::form.translatable-fields>
                             </template>
 
                             <!-- Input Validation -->
@@ -662,10 +647,6 @@
                     type: Array,
                     default: () => [],
                 },
-                sectionOptions: {
-                    type: Array,
-                    default: () => [],
-                },
                 currentLocaleCode: {
                     type: String,
                     default: '',
@@ -745,10 +726,6 @@
 
                 fieldTypeLabel(type) {
                     return this.fieldTypeOptions.find(option => option.id === type)?.label ?? type;
-                },
-
-                sectionLabel(section) {
-                    return this.sectionOptions.find(option => option.id === section)?.label ?? section;
                 },
 
                 openAddField() {
@@ -854,7 +831,6 @@
                             is_required: false,
                             is_unique: false,
                             value_per_locale: false,
-                            section: this.sectionOptions[0]?.id ?? 'left',
                             status: true,
                             locales: locales,
                             options: [],

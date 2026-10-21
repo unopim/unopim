@@ -55,7 +55,7 @@ class CleanupTempFiles extends Command
                 continue;
             }
 
-            $files = File::files($dir);
+            $files = File::allFiles($dir);
 
             foreach ($files as $file) {
                 if ($file->getMTime() < $cutoff) {

@@ -4,7 +4,7 @@ $restricted = ['dashboard', 'configuration', 'configuration.integrations'];
 
 $emailPayload = ['emails' => ['configure' => ['email_settings' => ['mail_host' => 'evil.smtp.example']]]];
 
-$debugPayload = ['general' => ['debug' => ['settings' => ['allowed_ips' => '0.0.0.0/0']]]];
+$debugPayload = ['general' => ['debug' => ['settings' => ['allowed_ips' => '203.0.113.5']]]];
 
 $ssoPayload = ['general' => ['microsoft_sso' => ['settings' => ['tenant' => 'attacker-tenant']]]];
 
@@ -28,7 +28,7 @@ it('denies writing debug settings through the legacy configuration route', funct
 
     $this->assertDatabaseMissing('core_config', [
         'code'  => 'general.debug.settings.allowed_ips',
-        'value' => '0.0.0.0/0',
+        'value' => '203.0.113.5',
     ]);
 });
 
@@ -59,7 +59,7 @@ it('denies the slug-less configuration post that targets every section at once',
 
     $this->assertDatabaseMissing('core_config', [
         'code'  => 'general.debug.settings.allowed_ips',
-        'value' => '0.0.0.0/0',
+        'value' => '203.0.113.5',
     ]);
 
     $this->assertDatabaseMissing('core_config', [
@@ -98,7 +98,7 @@ it('isolates sections on the legacy route: the email grant does not unlock debug
 
     $this->assertDatabaseMissing('core_config', [
         'code'  => 'general.debug.settings.allowed_ips',
-        'value' => '0.0.0.0/0',
+        'value' => '203.0.113.5',
     ]);
 });
 

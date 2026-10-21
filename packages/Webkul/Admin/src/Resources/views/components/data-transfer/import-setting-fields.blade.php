@@ -61,6 +61,7 @@
             data() {
                 return {
                     entity: this.resolveEntity(this.entityType),
+                    initialValues: { ...this.savedValues, ...(this.oldValues?.filters ?? {}) },
                 };
             },
 
@@ -83,10 +84,6 @@
 
                 fields() {
                     return this.sets[this.entity] ?? [];
-                },
-
-                initialValues() {
-                    return { ...this.savedValues, ...(this.oldValues?.filters ?? {}) };
                 },
             },
 

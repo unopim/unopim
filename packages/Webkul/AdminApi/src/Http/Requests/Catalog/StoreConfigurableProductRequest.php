@@ -2,27 +2,39 @@
 
 namespace Webkul\AdminApi\Http\Requests\Catalog;
 
+use Illuminate\Validation\Rule;
 use Webkul\AdminApi\Http\Requests\ApiFormRequest;
+use Webkul\Product\Enums\ProductType;
 
 class StoreConfigurableProductRequest extends ApiFormRequest
 {
     /**
      * Get the validation rules that apply to the request.
      *
+     * `super_attributes` stops being required once `variant_structure` names an
+     * existing structure: the controller derives the axis codes from it, so
+     * demanding both would force the client to restate what it already declares.
+     *
      * @return array<string, array<int, mixed>>
      */
     public function rules(): array
     {
+        $isVariantGroup = $this->input('type') === ProductType::VariantGroup->value;
+
+        $hasVariantStructure = filled($this->input('variant_structure'));
+
         return [
             'status'            => ['nullable', 'boolean'],
-            'parent'            => ['nullable', 'string'],
+            'type'              => ['nullable', Rule::in(ProductType::VARIANT_PARENT_VALUES)],
+            'parent'            => [Rule::requiredIf($isVariantGroup), 'nullable', 'string'],
             'channel'           => ['nullable', 'string'],
             'locale'            => ['nullable', 'string'],
-            'family'            => ['required', 'string'],
+            'family'            => [Rule::requiredIf(! $isVariantGroup), 'string'],
             'additional'        => ['nullable', 'array'],
             'values'            => ['required', 'array'],
-            'values.common.sku' => ['required'],
-            'super_attributes'  => ['required', 'array'],
+            'values.common.sku' => ['required', 'unique:products,sku'],
+            'variant_structure' => ['nullable', 'string'],
+            'super_attributes'  => [Rule::requiredIf(! $isVariantGroup && ! $hasVariantStructure), 'array'],
             'associations'      => ['nullable', 'array'],
         ];
     }

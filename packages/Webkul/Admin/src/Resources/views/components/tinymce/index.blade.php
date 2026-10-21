@@ -122,7 +122,7 @@
                                                 type="number"
                                                 v-model.number="ai.max_tokens"
                                                 min="1"
-                                                max="32768"
+                                                max="{{ \Webkul\MagicAI\MagicAI::MAX_TOKENS_CEILING }}"
                                                 class="w-full py-2 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 dark:bg-cherry-800 dark:border-cherry-800"
                                             />
                                         </x-admin::form.control-group>
@@ -291,7 +291,7 @@
                         content: null,
                         system_prompt_id: null,
                         tone: '',
-                        max_tokens: 1024,
+                        max_tokens: @json(\Webkul\MagicAI\MagicAI::defaultMaxTokens()),
                         temperature: 0.7,
                     },
 
@@ -678,6 +678,13 @@
                             this.isLoading = false;
 
                             this.ai.content = response.data.content.replace(/<think[^>]*>.*?<\/think>/gs, '');
+
+                            if (response.data.truncated) {
+                                this.$emitter.emit('add-flash', {
+                                    type: 'warning',
+                                    message: "@lang('admin::app.components.tinymce.ai-generation.truncated')",
+                                });
+                            }
                         })
                         .catch(error => {
                             this.isLoading = false;

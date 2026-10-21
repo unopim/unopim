@@ -38,7 +38,6 @@ function createBundleKitTypeWithQuantityField(): int
                 'validation'  => 'number',
                 'is_required' => 1,
                 'status'      => 1,
-                'section'     => 'left',
                 'en_US'       => ['name' => 'Quantity'],
             ],
         ],
@@ -64,7 +63,6 @@ function createTypeWithLocaleAndCommonField(): int
                 'validation'  => 'number',
                 'is_required' => 1,
                 'status'      => 1,
-                'section'     => 'left',
                 'en_US'       => ['name' => 'Quantity'],
             ],
             [
@@ -73,7 +71,6 @@ function createTypeWithLocaleAndCommonField(): int
                 'is_required'      => 1,
                 'value_per_locale' => 1,
                 'status'           => 1,
-                'section'          => 'left',
                 'en_US'            => ['name' => 'Locale Note'],
             ],
         ],

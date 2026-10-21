@@ -1,5 +1,5 @@
 const { test, expect } = require('../../../utils/family-fixtures');
-const { generateUid } = require('../../../utils/helpers');
+const { generateUid, openFilterDrawer } = require('../../../utils/helpers');
 const {
   INDEX_PATH, gotoIndex, createFamily, deleteFamilyByCode, assignGroup, saveFamilyEdit, setFamilyLabel,
 } = require('../../../utils/family-helpers');
@@ -25,7 +25,7 @@ test.describe('Attribute Family — General tab & index', () => {
     await page.waitForTimeout(1500);
     await expect(page.locator('#app').getByText('default', { exact: true }).first()).toBeVisible();
 
-    await page.getByText('Filter', { exact: true }).click();
+    await openFilterDrawer(page);
     await expect(page.locator('#app').getByText('Apply Filters')).toBeVisible();
   });
 

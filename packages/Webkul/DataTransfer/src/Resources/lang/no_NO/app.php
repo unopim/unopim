@@ -14,7 +14,8 @@ return [
         'products' => [
             'title'      => 'Produkter',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => 'Enheten ":unit" er ikke en gyldig enhet for måleattributtet ":attribute".',
+                'errors'       => [
                     'duplicate-url-key'                        => 'URL-nøkkel: \'%s\' ble allerede generert for en vare med SKU: \'%s\'.',
                     'invalid-attribute-family'                 => 'Ugyldig verdi for attributtfamiliekolonnen (attributtfamilien eksisterer ikke?)',
                     'invalid-type'                             => 'Produkttype er ugyldig eller ikke støttet',
@@ -189,8 +190,10 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
+            'file-name'      => 'Filnavn',
+            'file-name-info' => 'Mønster for filnavn. Plassholdere: [code], [date], [time], [entity_type]',
             'file-path'      => 'Filsti',
-            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'file-path-info' => 'Mønster for filnavn. Plassholdere: [code], [date], [time], [entity_type]',
             'status'         => 'Status',
             'enable'         => 'Aktivert',
             'all'            => 'Alle',
@@ -291,14 +294,15 @@ return [
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'Kolonner nummer "%s" har tomme overskrifter.',
-            'column-name-invalid'  => 'Ugyldige kolonnenavn: "%s".',
-            'column-not-found'     => 'Mangler nødvendige kolonner: %s.',
-            'column-numbers'       => 'Antall kolonner stemmer ikke med antall rader i overskriften.',
-            'invalid-attribute'    => 'Overskrift inneholder ugyldige attributter: "%s".',
-            'system'               => 'En uventet systemfeil oppstod.',
-            'wrong-quotes'         => 'Skråstilt anførselstegn brukt i stedet for rette anførselstegn.',
-            'file-empty'           => 'Filen er tom eller inneholder ingen overskriftsrad. Vennligst last opp en gyldig fil med data.',
+            'column-empty-headers'   => 'Kolonner nummer "%s" har tomme overskrifter.',
+            'column-name-invalid'    => 'Ugyldige kolonnenavn: "%s".',
+            'column-not-found'       => 'Mangler nødvendige kolonner: %s.',
+            'column-numbers'         => 'Antall kolonner stemmer ikke med antall rader i overskriften.',
+            'invalid-attribute'      => 'Overskrift inneholder ugyldige attributter: "%s".',
+            'system'                 => 'En uventet systemfeil oppstod.',
+            'wrong-quotes'           => 'Skråstilt anførselstegn brukt i stedet for rette anførselstegn.',
+            'file-empty'             => 'Filen er tom eller inneholder ingen overskriftsrad. Vennligst last opp en gyldig fil med data.',
+            'file-missing'           => 'Kildefilen for denne jobben ble ikke funnet. Kontroller filbanen i profilen, og last opp filen på nytt.',
         ],
     ],
     'job' => [

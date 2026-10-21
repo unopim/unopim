@@ -135,14 +135,6 @@ return [
         'max_units'        => '측정 패밀리는 :max개를 초과하는 단위를 가질 수 없습니다.',
     ],
 
-    'importers' => [
-        'products' => [
-            'validation' => [
-                'invalid-unit' => '":unit" 단위는 ":attribute" 측정 속성에 유효한 단위가 아닙니다.',
-            ],
-        ],
-    ],
-
     'messages' => [
         'family' => [
             'created'                => '측정 패밀리가 성공적으로 생성되었습니다.',

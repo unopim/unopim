@@ -4,6 +4,7 @@ use Webkul\Admin\DataGrids\Catalog\ProductDataGrid;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Services\AttributeService;
 use Webkul\Core\Repositories\ChannelRepository;
+use Webkul\Product\Contracts\VariantValueResolver;
 use Webkul\Product\Normalizer\ProductAttributeValuesNormalizer;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Services\AttributeValueNormalizer;
@@ -37,7 +38,7 @@ it('decorates the grid rather than rebinding it, so other packages keep their ow
     $this->loginWithPermissions('all');
 
     // Stands in for another package's grid subclass; extending must preserve it.
-    $subclass = new class(app(AttributeFamilyRepository::class), app(ProductRepository::class), app(ChannelRepository::class), app(ProductAttributeValuesNormalizer::class), app(AttributeService::class), app(AttributeValueNormalizer::class)) extends ProductDataGrid {};
+    $subclass = new class(app(AttributeFamilyRepository::class), app(ProductRepository::class), app(ChannelRepository::class), app(ProductAttributeValuesNormalizer::class), app(AttributeService::class), app(AttributeValueNormalizer::class), app(VariantValueResolver::class)) extends ProductDataGrid {};
 
     app()->bind(ProductDataGrid::class, fn (): ProductDataGrid => clone $subclass);
 

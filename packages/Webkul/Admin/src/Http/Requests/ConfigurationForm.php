@@ -4,6 +4,8 @@ namespace Webkul\Admin\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
+use Webkul\Core\Rules\IpPatternRule;
 
 class ConfigurationForm extends FormRequest
 {
@@ -24,7 +26,7 @@ class ConfigurationForm extends FormRequest
      */
     public function rules()
     {
-        return collect(request()->input('keys', []))->mapWithKeys(function ($item) {
+        $rules = collect(request()->input('keys', []))->mapWithKeys(function ($item) {
             $data = json_decode($item, true);
 
             return collect($data['fields'])->mapWithKeys(function ($field) use ($data) {
@@ -40,6 +42,27 @@ class ConfigurationForm extends FormRequest
                 return [];
             })->toArray();
         })->toArray();
+
+        $rules['general.debug.settings.allowed_ips'] = ['nullable', new IpPatternRule];
+
+        return $rules;
+    }
+
+    /**
+     * Human-readable names for the fields validated outside the dynamic
+     * `keys`-driven rule set, so the generated message reads naturally instead
+     * of showing the raw dot-path.
+     *
+     * @return array<string, string>
+     */
+    public function attributes()
+    {
+        return [
+            'general.debug.settings.allowed_ips' => Str::before(
+                trans('admin::app.configuration.index.general.debug.settings.allowed-ips'),
+                ' ('
+            ),
+        ];
     }
 
     protected function resolveRules(mixed $validation): mixed

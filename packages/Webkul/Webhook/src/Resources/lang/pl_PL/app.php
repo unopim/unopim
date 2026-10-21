@@ -137,6 +137,14 @@ return [
                     'delete-success' => 'Logi Webhooka zostały pomyślnie usunięte',
                     'delete-failed'  => 'Usuwanie logów Webhooka nie powiodło się niespodziewanie',
                     'unauthorized'   => 'Ta akcja jest nieautoryzowana',
+                    'select-all'     => [
+                        'delete' => [
+                            'queued'    => 'Usuwanie wszystkich pasujących logów zostało dodane do kolejki. Otrzymasz powiadomienie po zakończeniu.',
+                            'title'     => 'Usuwanie logów webhooków',
+                            'completed' => 'Usunięto logów webhooków: :count.',
+                            'failed'    => 'Usuwanie :count logów webhooków zakończyło się błędami. Niektóre logi nie zostały usunięte.',
+                        ],
+                    ],
                 ],
             ],
         ],

@@ -415,6 +415,61 @@
                     }
 
                     data[keys[keys.length - 1]] = value;
+
+                    this.warnOnDuplicateAxisTuple(entityId);
+                },
+
+                ownAxisTuple(row) {
+                    const axes = row.axes || [];
+
+                    if (! axes.length || ! row.parent_id) {
+                        return null;
+                    }
+
+                    const edited = this.updatedEntityData[row.id] || {};
+                    const own = row.values?.common || {};
+                    const parts = [];
+
+                    for (const code of axes) {
+                        const value = code in edited ? edited[code] : own[code];
+
+                        if (value === null || value === undefined || value === '') {
+                            return null;
+                        }
+
+                        parts.push(code + '=' + String(value));
+                    }
+
+                    return row.parent_id + '::' + parts.join('|');
+                },
+
+                duplicateAxisSiblingOf(row) {
+                    const tuple = this.ownAxisTuple(row);
+
+                    if (! tuple) {
+                        return null;
+                    }
+
+                    return this.allRows.find(
+                        other => other.id !== row.id && this.ownAxisTuple(other) === tuple
+                    ) ?? null;
+                },
+
+                warnOnDuplicateAxisTuple(entityId) {
+                    const row = this.allRows.find(candidate => candidate.id === entityId);
+
+                    if (! row) {
+                        return;
+                    }
+
+                    if (! this.duplicateAxisSiblingOf(row)) {
+                        return;
+                    }
+
+                    this.$emitter.emit('add-flash', {
+                        type: 'warning',
+                        message: @json(trans('admin::app.catalog.products.bulk-edit.validation.duplicate-axis')),
+                    });
                 },
 
                 handleSave() {
@@ -446,10 +501,18 @@
                         this.$navigate(response.data.redirect_url || "{{ route('admin.catalog.products.index') }}");
                     })
                     .catch(error => {
+                        const payload = error.response?.data ?? {};
+                        const details = Object.values(payload.errors ?? {}).flat();
+
                         this.$emitter.emit('add-flash', {
                             type: 'error',
-                            message: error.response?.data?.message || @json(trans('admin::app.catalog.products.bulk-edit.validation.failed')),
+                            message: payload.message || @json(trans('admin::app.catalog.products.bulk-edit.validation.failed')),
                         });
+
+                        details.slice(0, 5).forEach(detail => this.$emitter.emit('add-flash', {
+                            type: 'error',
+                            message: detail,
+                        }));
                     })
                     .finally(() => {
                         this.isLoading = false;

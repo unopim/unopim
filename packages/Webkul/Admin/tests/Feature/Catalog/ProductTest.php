@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Core\Facades\ElasticSearch;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\VariantStructure;
 
@@ -40,7 +41,6 @@ it('should return the product datagrid', function () {
 
             ElasticSearch::indices()->refresh(['index' => $productIndex]);
         } catch (Exception $e) {
-            // ES not available, skip refresh
         }
     }
 
@@ -68,7 +68,7 @@ it('should return unique validation for product sku while creating', function ()
 
     $data = [
         'sku'                 => $product->sku,
-        'type'                => 'simple',
+        'type'                => ProductType::Simple->value,
         'attribute_family_id' => $product->attribute_family_id,
     ];
 
@@ -84,7 +84,7 @@ it('should create a simple product successfully', function () {
 
     $data = Product::factory()->definition();
 
-    $data['type'] = 'simple';
+    $data['type'] = ProductType::Simple->value;
 
     $this->post(route('admin.catalog.products.store', $data))
         ->assertOk()
@@ -128,7 +128,7 @@ it('should return json error if family lacks configurable attributes when creati
     $data = [
         'sku'                 => fake()->uuid,
         'attribute_family_id' => $familyId,
-        'type'                => 'configurable',
+        'type'                => ProductType::Configurable->value,
     ];
 
     $this->post(route('admin.catalog.products.store'), $data)
@@ -147,7 +147,7 @@ it('should return the family variant structures when creating configurable produ
 
     $data = Product::factory()->definition();
 
-    $data['type'] = 'configurable';
+    $data['type'] = ProductType::Configurable->value;
 
     makeVariantStructureFor($data['attribute_family_id']);
 
@@ -161,7 +161,7 @@ it('should create a configurable product successfully', function () {
 
     $data = Product::factory()->definition();
 
-    $data['type'] = 'configurable';
+    $data['type'] = ProductType::Configurable->value;
 
     $structure = makeVariantStructureFor($data['attribute_family_id']);
 
@@ -339,8 +339,12 @@ it('should return validation error when setting duplicate variant configurable a
         ],
     ];
 
+    $expected = trans('admin::app.catalog.products.edit.types.configurable.variant-combination-exists', [
+        'values' => ($attribute->name ?: $attribute->code).': '.$attribute->options->first()->code,
+    ]);
+
     $this->put(route('admin.catalog.products.update', $newProduct->id), $data)
-        ->assertSessionHas('warning', trans('admin::app.catalog.products.edit.types.configurable.create.variant-already-exists'));
+        ->assertSessionHas('warning', $expected);
 
     $newProduct->refresh();
 
@@ -548,8 +552,6 @@ it('should render product edit page header with sticky top offset so save button
 
     $content = $response->getContent();
 
-    // The product page header uses a sticky wrapper (js-sticky-header) with an inline
-    // top offset so it sits below the main header and the save bar stays visible.
     $this->assertStringContainsString(
         'js-sticky-header',
         $content,
@@ -654,7 +656,11 @@ it('should return a json message instead of redirecting when an ajax update hits
         ],
     ];
 
+    $expected = trans('admin::app.catalog.products.edit.types.configurable.variant-combination-exists', [
+        'values' => ($attribute->name ?: $attribute->code).': '.$attribute->options->first()->code,
+    ]);
+
     $this->putJson(route('admin.catalog.products.update', $newProduct->id), $data, ['X-Ajax-Form' => 'true'])
         ->assertUnprocessable()
-        ->assertJsonFragment(['message' => trans('admin::app.catalog.products.edit.types.configurable.create.variant-already-exists')]);
+        ->assertJsonFragment(['message' => $expected]);
 });

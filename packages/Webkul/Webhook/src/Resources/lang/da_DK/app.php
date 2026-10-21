@@ -137,6 +137,14 @@ return [
                     'delete-success' => 'Webhook-logfiler blev slettet',
                     'delete-failed'  => 'Sletning af Webhook-logfiler mislykkedes uventet',
                     'unauthorized'   => 'Denne handling er ikke tilladt',
+                    'select-all'     => [
+                        'delete' => [
+                            'queued'    => 'Sletning er sat i kø for alle matchende logposter. Du får besked, når den er færdig.',
+                            'title'     => 'Sletning af webhook-logs',
+                            'completed' => ':count webhook-logs slettet.',
+                            'failed'    => 'Sletningen af :count webhook-logs blev afsluttet med fejl. Nogle logs blev ikke slettet.',
+                        ],
+                    ],
                 ],
             ],
         ],

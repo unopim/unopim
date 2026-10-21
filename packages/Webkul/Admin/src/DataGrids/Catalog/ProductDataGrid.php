@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\LazyCollection;
 use Webkul\Admin\Filters\ProductPropertyFilters;
 use Webkul\Admin\Traits\AttributeColumnTrait;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
@@ -16,7 +17,9 @@ use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\DataGrid\Column;
 use Webkul\DataGrid\Contracts\ExportableInterface;
 use Webkul\DataGrid\DataGrid;
+use Webkul\ElasticSearch\Cursor\MatchingIdCursor;
 use Webkul\ElasticSearch\Enums\FilterOperators;
+use Webkul\Product\Contracts\VariantValueResolver;
 use Webkul\Product\Factories\ElasticSearch\Cursor\ResultCursorFactory;
 use Webkul\Product\Factories\ProductQueryBuilderFactory;
 use Webkul\Product\Models\VariantStructure;
@@ -103,6 +106,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         protected ProductAttributeValuesNormalizer $valuesNormalizer,
         protected AttributeService $attributeService,
         protected AttributeValueNormalizer $attributeValueNormalizer,
+        protected VariantValueResolver $variantValueResolver,
     ) {}
 
     public function prepareQueryBuilder()
@@ -122,6 +126,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             ->select(
                 'products.sku',
                 'products.id as product_id',
+                'products.parent_id',
                 'products.status',
                 'products.type',
                 'products.created_at',
@@ -135,9 +140,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                         ELSE {$tablePrefix}attribute_family_name.name
                     END) as attribute_family"
                 ),
-                DB::raw('
-                    COALESCE('.$tablePrefix.'products.values, '.$tablePrefix.'parent_products.values) as raw_values
-                '),
+                'products.values as raw_values',
                 'products.avg_completeness_score as completeness',
             );
 
@@ -429,7 +432,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         if (bouncer()->hasPermission('catalog.products.copy')) {
             $this->addAction([
-                'index'  => 'edit',
+                'index'  => 'copy',
                 'icon'   => 'icon-copy',
                 'title'  => trans('admin::app.catalog.products.index.datagrid.copy'),
                 'method' => 'POST',
@@ -461,19 +464,21 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     {
         if (bouncer()->hasPermission('catalog.products.bulk_edit')) {
             $this->addMassAction([
-                'title'   => trans('admin::app.catalog.products.bulk-edit.action'),
-                'url'     => route('admin.catalog.products.bulkedit.filters'),
-                'method'  => 'POST',
-                'options' => ['actionType' => 'redirect', 'modal' => 'open-bulk-edit-modal'],
+                'title'               => trans('admin::app.catalog.products.bulk-edit.action'),
+                'url'                 => route('admin.catalog.products.bulkedit.filters'),
+                'method'              => 'POST',
+                'supports_select_all' => true,
+                'options'             => ['actionType' => 'redirect', 'modal' => 'open-bulk-edit-modal'],
             ]);
         }
 
         if (bouncer()->hasPermission('catalog.products.mass_update')) {
             $this->addMassAction([
-                'title'   => trans('admin::app.catalog.products.index.datagrid.update-status'),
-                'url'     => route('admin.catalog.products.mass_update'),
-                'method'  => 'POST',
-                'options' => [
+                'title'               => trans('admin::app.catalog.products.index.datagrid.update-status'),
+                'url'                 => route('admin.catalog.products.mass_update'),
+                'method'              => 'POST',
+                'supports_select_all' => true,
+                'options'             => [
                     [
                         'label' => trans('admin::app.catalog.products.index.datagrid.active'),
                         'value' => true,
@@ -488,10 +493,11 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         if (bouncer()->hasPermission('catalog.products.mass_delete')) {
             $this->addMassAction([
-                'title'   => trans('admin::app.catalog.products.index.datagrid.delete'),
-                'url'     => route('admin.catalog.products.mass_delete'),
-                'method'  => 'POST',
-                'options' => ['actionType' => 'delete'],
+                'title'               => trans('admin::app.catalog.products.index.datagrid.delete'),
+                'url'                 => route('admin.catalog.products.mass_delete'),
+                'method'              => 'POST',
+                'supports_select_all' => true,
+                'options'             => ['actionType' => 'delete'],
             ]);
         }
     }
@@ -598,6 +604,39 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
             return;
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * Unlike the listing, there is no database fallback when Elasticsearch fails: the fallback
+     * query ignores Elasticsearch-built filters, and a mass action must never widen to every product.
+     */
+    public function getMatchingIds(): LazyCollection
+    {
+        if (! config('elasticsearch.enabled')) {
+            return parent::getMatchingIds();
+        }
+
+        $this->prepareColumns();
+
+        $this->setQueryBuilder();
+
+        $this->setElasticFilters($this->validatedRequest()['filters'] ?? []);
+
+        return MatchingIdCursor::lazy(
+            strtolower(config('elasticsearch.prefix').'_products'),
+            $this->prepareQuery->build()['query'] ?? [],
+            static::MATCHING_IDS_BATCH_SIZE,
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getPrimaryDatabaseColumn(): string
+    {
+        return 'products.id';
     }
 
     /**
@@ -1081,6 +1120,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             $column->options = $column->getFormOptions();
         }
 
+        $mergedValuesByProductId = $this->resolveMergedValuesForPage($paginator['data']);
+
         foreach ($paginator['data'] as $record) {
             $record = $this->sanitizeRow($record);
 
@@ -1096,7 +1137,9 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 }
             }
 
-            $this->processRawValues($record);
+            $this->processRawValues($record, $mergedValuesByProductId[$record->product_id] ?? null);
+
+            unset($record->parent_id);
 
             $record->actions = [];
 
@@ -1122,18 +1165,19 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'search_placeholder' => __($this->searchPlaceholder),
             'records'            => $paginator['data'],
             'meta'               => [
-                'primary_column'     => $this->primaryColumn,
-                'select_all_enabled' => $this->enableSelectAll,
-                'default_order'      => $this->sortColumn,
-                'from'               => $paginator['from'],
-                'to'                 => $paginator['to'],
-                'total'              => $paginator['total'],
-                'per_page_options'   => [10, 20, 30, 40, 50],
-                'per_page'           => $paginator['per_page'],
-                'current_page'       => $paginator['current_page'],
-                'last_page'          => $paginator['last_page'],
-                'default_filters'    => $this->defaultFilters,
-                'managedColumn'      => [
+                'primary_column'       => $this->primaryColumn,
+                'select_all_enabled'   => $this->enableSelectAll,
+                'mass_action_id_limit' => static::MASS_ACTION_ID_LIMIT,
+                'default_order'        => $this->sortColumn,
+                'from'                 => $paginator['from'],
+                'to'                   => $paginator['to'],
+                'total'                => $paginator['total'],
+                'per_page_options'     => [10, 20, 30, 40, 50],
+                'per_page'             => $paginator['per_page'],
+                'current_page'         => $paginator['current_page'],
+                'last_page'            => $paginator['last_page'],
+                'default_filters'      => $this->defaultFilters,
+                'managedColumn'        => [
                     'enabled' => $this->manageableColumn,
                     'columns' => $this->managedColumns,
                     'route'   => route('admin.datagrid.available_columns'),
@@ -1143,15 +1187,40 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     }
 
     /**
-     * Process raw values and update record.
+     * A common attribute set only on a row's ancestor (root parent, or a
+     * variant group one level below it) must still surface as that row's
+     * value in the grid. Delegates the batched, per-page ancestor-chain walk
+     * to `VariantValueResolver::resolveBatch()` -- shared with the AdminApi
+     * and export paths so there is one merge implementation, not several.
+     *
+     * @return array<int, array>
      */
-    protected function processRawValues(object &$record): void
+    protected function resolveMergedValuesForPage(iterable $records): array
+    {
+        $rows = collect($records)->map(fn ($record) => [
+            'id'        => $record->product_id,
+            'parent_id' => $record->parent_id ?? null,
+            'values'    => $record->raw_values ?? null,
+        ]);
+
+        return $this->variantValueResolver->resolveBatch($rows);
+    }
+
+    /**
+     * Process raw values and update record.
+     *
+     * @param  array|null  $mergedValues  The row's `values`, already merged with its
+     *                                    ancestor chain by `resolveMergedValuesForPage()`.
+     *                                    Falls back to the row's own `raw_values` when
+     *                                    absent (e.g. a row with no parent).
+     */
+    protected function processRawValues(object &$record, ?array $mergedValues = null): void
     {
         if (empty($this->attributeColumns)) {
             return;
         }
 
-        $rawValues = json_decode($record->raw_values, true);
+        $rawValues = $mergedValues ?? json_decode($record->raw_values, true);
         $values = $this->attributeValueNormalizer->normalize($rawValues, [
             'locale'                 => core()->getRequestedLocaleCode(),
             'channel'                => core()->getRequestedChannelCode(),

@@ -5,6 +5,7 @@ namespace Webkul\Admin\Http\Controllers\Settings\DataTransfer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -63,7 +64,9 @@ class ImportController extends Controller
     {
         $importerConfig = config(self::IMPORTERS);
 
-        return view('admin::settings.data-transfer.imports.create', compact('importerConfig'));
+        $acceptedArchiveTypes = $this->allowedArchiveExtensionsLabel();
+
+        return view('admin::settings.data-transfer.imports.create', compact('importerConfig', 'acceptedArchiveTypes'));
     }
 
     /**
@@ -101,8 +104,9 @@ class ImportController extends Controller
         }
 
         $fileData = [
-            'type'   => self::TYPE,
-            'action' => 'append',
+            'type'                => self::TYPE,
+            'action'              => 'append',
+            'validation_strategy' => Import::VALIDATION_STRATEGY_SKIP_ERRORS,
         ];
 
         if (isset($importerConfig[$data['entity_type']]['has_file_options']) && $importerConfig[$data['entity_type']]['has_file_options'] == 'true') {
@@ -139,7 +143,9 @@ class ImportController extends Controller
 
         $import = $this->jobInstancesRepository->findOrFail($id);
 
-        return view('admin::settings.data-transfer.imports.edit', compact('import', 'importerConfig'));
+        $acceptedArchiveTypes = $this->allowedArchiveExtensionsLabel();
+
+        return view('admin::settings.data-transfer.imports.edit', compact('import', 'importerConfig', 'acceptedArchiveTypes'));
     }
 
     /**
@@ -267,7 +273,9 @@ class ImportController extends Controller
         try {
             $import = $this->jobInstancesRepository->findOrFail($id);
 
-            if (empty($import->file_path)) {
+            $requiresFile = (bool) config(self::IMPORTERS.'.'.$import->entity_type.'.has_file_options', false);
+
+            if ($requiresFile && empty($import->file_path)) {
                 return redirect()
                     ->route('admin.settings.data_transfer.imports.import-view', $import->id)
                     ->with('error', trans('admin::app.settings.data-transfer.imports.rerun-no-file'));
@@ -297,7 +305,7 @@ class ImportController extends Controller
 
             return redirect()->route('admin.settings.data_transfer.tracker.view', $jobTrackInstance->id);
         } catch (\Throwable $e) {
-            \Log::error('Import failed for job instance '.$id.': '.$e->getMessage());
+            Log::error('Import failed for job instance '.$id.': '.$e->getMessage());
 
             $batchId = $jobTrackInstance?->id ?? $id;
 
@@ -741,109 +749,196 @@ class ImportController extends Controller
             mkdir($extractPath, 0755, true);
         }
 
-        $filesCount = $this->extractImageEntries($zip, $extractPath);
+        $extraction = $this->extractMediaEntries($zip, $extractPath);
         $zip->close();
 
         return new JsonResponse([
-            'path'        => $folderName,
-            'files_count' => $filesCount,
-            'zip_name'    => $file->getClientOriginalName(),
-            'message'     => trans('admin::app.settings.data-transfer.imports.zip-upload-success'),
+            'path'            => $folderName,
+            'files_count'     => $extraction['extracted'],
+            'skipped_files'   => $extraction['skipped'],
+            'skipped_count'   => $extraction['skipped_count'],
+            'zip_name'        => $file->getClientOriginalName(),
+            'extracted_label' => $this->zipExtractedCountLabel($extraction['extracted']),
+            'skipped_label'   => $extraction['skipped_count'] > 0
+                ? trans('admin::app.settings.data-transfer.imports.create.zip-files-skipped', [
+                    'skipped' => $this->zipSkippedCountLabel($extraction['skipped_count']),
+                ])
+                : null,
+            'message'         => $this->zipUploadMessage($extraction),
         ]);
     }
 
-    /**
-     * Safely extract only genuine image entries from an uploaded ZIP into the
-     * target directory. Non-image extensions, spoofed content, and nested paths
-     * (zip-slip) are rejected so no script/executable file reaches the web root.
-     */
-    protected function extractImageEntries(\ZipArchive $zip, string $extractPath): int
+    protected function zipUploadMessage(array $extraction): string
     {
-        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'];
+        if ($extraction['skipped_count'] === 0) {
+            return trans('admin::app.settings.data-transfer.imports.zip-upload-success');
+        }
 
-        $maxEntrySize = (int) config('image_import.max_entry_size', 15 * 1024 * 1024);
+        return trans('admin::app.settings.data-transfer.imports.zip-upload-partial', [
+            'extracted' => $this->zipExtractedCountLabel($extraction['extracted']),
+            'skipped'   => $this->zipSkippedCountLabel($extraction['skipped_count']),
+        ]);
+    }
+
+    protected function zipExtractedCountLabel(int $count): string
+    {
+        return trans_choice('admin::app.settings.data-transfer.imports.zip-extracted-count', $count, ['count' => $count]);
+    }
+
+    protected function zipSkippedCountLabel(int $count): string
+    {
+        return trans_choice('admin::app.settings.data-transfer.imports.zip-skipped-count', $count, ['count' => $count]);
+    }
+
+    protected function allowedArchiveExtensions(): array
+    {
+        return array_map(strtolower(...), (array) config('image_import.allowed_extensions', []));
+    }
+
+    protected function allowedArchiveExtensionsLabel(): string
+    {
+        return strtoupper(implode(', ', $this->allowedArchiveExtensions()));
+    }
+
+    protected function isArchiveMetadataEntry(string $entryName): bool
+    {
+        $normalizedPath = str_replace('\\', '/', $entryName);
+        $baseName = basename($normalizedPath);
+
+        return str_starts_with($normalizedPath, '__MACOSX/')
+            || str_starts_with($baseName, '._')
+            || in_array($baseName, ['.DS_Store', 'Thumbs.db', 'desktop.ini'], true);
+    }
+
+    protected function contentMatchesExtension(string $extension, string $mimeType): bool
+    {
+        if (in_array($extension, MimeTypes::getDefault()->getExtensions($mimeType), true)) {
+            return true;
+        }
+
+        $fallbackMimeTypes = (array) config('image_import.extension_mime_fallbacks.'.$extension, []);
+
+        return in_array($mimeType, $fallbackMimeTypes, true);
+    }
+
+    /**
+     * Safely extract only genuine image, document and audio entries from an uploaded ZIP
+     * into the target directory. Disallowed extensions, spoofed content, and nested
+     * paths (zip-slip) are rejected so no script/executable file reaches the web root.
+     */
+    protected function extractMediaEntries(\ZipArchive $zip, string $extractPath): array
+    {
         $maxTotalSize = (int) config('image_import.max_total_size', 500 * 1024 * 1024);
+        $maxReportedSkipped = (int) config('image_import.max_reported_skipped', 50);
+        $allowedExtensions = $this->allowedArchiveExtensions();
 
         $fileInfo = new \finfo(FILEINFO_MIME_TYPE);
 
         $extractedCount = 0;
         $totalExtractedBytes = 0;
+        $skippedEntries = [];
+        $skippedCount = 0;
 
         for ($index = 0; $index < $zip->numFiles; $index++) {
             $entryName = $zip->getNameIndex($index);
 
-            if ($entryName === false || str_ends_with($entryName, '/')) {
+            if ($entryName === false || str_ends_with($entryName, '/') || $this->isArchiveMetadataEntry($entryName)) {
                 continue;
             }
 
-            $relativePath = ltrim(str_replace('\\', '/', $entryName), '/');
+            $remainingBytes = $maxTotalSize > 0 ? $maxTotalSize - $totalExtractedBytes : null;
 
-            if ($relativePath === '' || str_contains($relativePath, '../')) {
+            $writtenBytes = $this->extractMediaEntry($zip, $entryName, $extractPath, $fileInfo, $remainingBytes, $allowedExtensions);
+
+            if ($writtenBytes === null) {
+                $skippedCount++;
+
+                if (count($skippedEntries) < $maxReportedSkipped) {
+                    $skippedEntries[] = $entryName;
+                }
+
                 continue;
             }
-
-            $extension = strtolower(pathinfo($relativePath, PATHINFO_EXTENSION));
-
-            if (! in_array($extension, $allowedExtensions, true)) {
-                continue;
-            }
-
-            $stat = $zip->statIndex($index);
-
-            if ($stat === false || ($maxEntrySize > 0 && $stat['size'] > $maxEntrySize)) {
-                continue;
-            }
-
-            $stream = $zip->getStream($entryName);
-
-            if ($stream === false) {
-                continue;
-            }
-
-            $contents = $maxEntrySize > 0
-                ? stream_get_contents($stream, $maxEntrySize + 1)
-                : stream_get_contents($stream);
-
-            fclose($stream);
-
-            if ($contents === false) {
-                continue;
-            }
-
-            $actualSize = strlen($contents);
-
-            $mimeType = (string) $fileInfo->buffer($contents);
-
-            if (
-                ($maxEntrySize > 0 && $actualSize > $maxEntrySize)
-                || ($maxTotalSize > 0 && ($totalExtractedBytes + $actualSize) > $maxTotalSize)
-                || ! in_array($extension, MimeTypes::getDefault()->getExtensions($mimeType), true)
-            ) {
-                continue;
-            }
-
-            $targetPath = $extractPath.DIRECTORY_SEPARATOR.$relativePath;
-
-            $targetDir = dirname($targetPath);
-
-            if (! is_dir($targetDir)) {
-                mkdir($targetDir, 0755, true);
-            }
-
-            $realBase = realpath($extractPath);
-            $realDir = realpath($targetDir);
-
-            if ($realBase === false || $realDir === false || ! str_starts_with($realDir.DIRECTORY_SEPARATOR, $realBase.DIRECTORY_SEPARATOR)) {
-                continue;
-            }
-
-            file_put_contents($targetPath, $contents);
 
             $extractedCount++;
-            $totalExtractedBytes += $actualSize;
+            $totalExtractedBytes += $writtenBytes;
         }
 
-        return $extractedCount;
+        return [
+            'extracted'     => $extractedCount,
+            'skipped'       => $skippedEntries,
+            'skipped_count' => $skippedCount,
+        ];
+    }
+
+    protected function extractMediaEntry(\ZipArchive $zip, string $entryName, string $extractPath, \finfo $fileInfo, ?int $remainingBytes, array $allowedExtensions): ?int
+    {
+        $maxEntrySize = (int) config('image_import.max_entry_size', 15 * 1024 * 1024);
+
+        $relativePath = ltrim(str_replace('\\', '/', $entryName), '/');
+
+        if ($relativePath === '' || str_contains($relativePath, '../')) {
+            return null;
+        }
+
+        $extension = strtolower(pathinfo($relativePath, PATHINFO_EXTENSION));
+
+        if (! in_array($extension, $allowedExtensions, true)) {
+            return null;
+        }
+
+        $stat = $zip->statName($entryName);
+
+        if ($stat === false || ($maxEntrySize > 0 && $stat['size'] > $maxEntrySize)) {
+            return null;
+        }
+
+        $stream = $zip->getStream($entryName);
+
+        if ($stream === false) {
+            return null;
+        }
+
+        $contents = $maxEntrySize > 0
+            ? stream_get_contents($stream, $maxEntrySize + 1)
+            : stream_get_contents($stream);
+
+        fclose($stream);
+
+        if ($contents === false) {
+            return null;
+        }
+
+        $actualSize = strlen($contents);
+
+        $mimeType = (string) $fileInfo->buffer($contents);
+
+        if (
+            ($maxEntrySize > 0 && $actualSize > $maxEntrySize)
+            || ($remainingBytes !== null && $actualSize > $remainingBytes)
+            || ! $this->contentMatchesExtension($extension, $mimeType)
+        ) {
+            return null;
+        }
+
+        $targetPath = $extractPath.DIRECTORY_SEPARATOR.$relativePath;
+
+        $targetDir = dirname($targetPath);
+
+        if (! is_dir($targetDir)) {
+            mkdir($targetDir, 0755, true);
+        }
+
+        $realBase = realpath($extractPath);
+        $realDir = realpath($targetDir);
+
+        if ($realBase === false || $realDir === false || ! str_starts_with($realDir.DIRECTORY_SEPARATOR, $realBase.DIRECTORY_SEPARATOR)) {
+            return null;
+        }
+
+        file_put_contents($targetPath, $contents);
+
+        return $actualSize;
     }
 
     protected function archiveRejectionReason(\ZipArchive $zip): ?array

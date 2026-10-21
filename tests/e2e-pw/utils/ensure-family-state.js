@@ -15,7 +15,7 @@ const BASE = process.env.FAMILY_BASE_URL || process.env.BASE_URL || 'http://127.
 const EMAIL = process.env.FAMILY_ADMIN_EMAIL || process.env.ADMIN_EMAIL || process.env.ADMIN_USERNAME || 'admin@example.com';
 // Never hardcode the password: supply it at run time via FAMILY_ADMIN_PASSWORD
 // (or ADMIN_PASSWORD). Only needed when the saved session is missing/stale.
-const PASSWORD = process.env.FAMILY_ADMIN_PASSWORD || process.env.ADMIN_PASSWORD || '';
+const PASSWORD = process.env.FAMILY_ADMIN_PASSWORD || process.env.ADMIN_PASSWORD || 'admin123';
 const MAX_AGE_MS = 6 * 60 * 60 * 1000; // 6h
 
 function isFresh() {

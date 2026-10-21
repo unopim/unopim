@@ -20,7 +20,6 @@ it('creates an association type with a translated name and a field', function ()
         'validation'          => 'number',
         'is_required'         => 1,
         'status'              => 1,
-        'section'             => 'left',
     ]);
 
     expect($type->fresh()->name)->toBe('Bundle / Kit')

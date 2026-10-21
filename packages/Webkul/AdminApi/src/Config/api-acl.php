@@ -8,7 +8,6 @@ return [
         'sort'  => 11,
     ],
 
-    // Settings
     [
         'key'   => 'api.settings',
         'name'  => 'admin::app.acl.settings',
@@ -76,7 +75,6 @@ return [
         'sort'  => 3,
     ],
 
-    // Catalog
     [
         'key'   => 'api.catalog',
         'name'  => 'admin::app.acl.catalog',
@@ -143,7 +141,6 @@ return [
         'sort'  => 3,
     ],
 
-    // Legacy "configrable_products" (typo) prefix — kept for backward compatibility.
     [
         'key'   => 'api.catalog.products',
         'name'  => 'admin::app.acl.products',
@@ -286,6 +283,55 @@ return [
         'sort'  => 3,
     ],
 
+    [
+        'key'   => 'api.catalog.association_types',
+        'name'  => 'admin::app.acl.association_types',
+        'route' => 'admin.api.association-types.index',
+        'sort'  => 3,
+    ], [
+        'key'   => 'api.catalog.association_types.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.api.association-types.store',
+        'sort'  => 1,
+    ], [
+        'key'   => 'api.catalog.association_types.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.api.association-types.update',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.association_types.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.api.association-types.patch',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.association_types.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.association-types.delete',
+        'sort'  => 3,
+    ],
+
+    [
+        'key'   => 'api.catalog.association_types.fields',
+        'name'  => 'admin::app.acl.association_type_fields',
+        'route' => 'admin.api.association-types-fields.get',
+        'sort'  => 4,
+    ], [
+        'key'   => 'api.catalog.association_types.fields.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.api.association-types-fields.store',
+        'sort'  => 1,
+    ], [
+        'key'   => 'api.catalog.association_types.fields.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.api.association-types-fields.update',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.association_types.fields.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.association-types-fields.delete',
+        'sort'  => 3,
+    ],
+
     // ── Attributes ──────────────────────────────────────────
     [
         'key'   => 'api.catalog.attributes',
@@ -411,7 +457,38 @@ return [
         'sort'  => 3,
     ],
 
-    // ── Product Passports ───────────────────────────────────
+    [
+        'key'   => 'api.catalog.families.variant_structures',
+        'name'  => 'admin::app.acl.variant-structures',
+        'route' => 'admin.api.families-variant-structures.index',
+        'sort'  => 4,
+    ], [
+        'key'   => 'api.catalog.families.variant_structures',
+        'name'  => 'admin::app.acl.variant-structures',
+        'route' => 'admin.api.families-variant-structures.get',
+        'sort'  => 4,
+    ], [
+        'key'   => 'api.catalog.families.variant_structures.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.api.families-variant-structures.store',
+        'sort'  => 1,
+    ], [
+        'key'   => 'api.catalog.families.variant_structures.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.api.families-variant-structures.update',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.families.variant_structures.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.api.families-variant-structures.patch',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.families.variant_structures.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.families-variant-structures.delete',
+        'sort'  => 3,
+    ],
+
     [
         'key'   => 'api.catalog.passports',
         'name'  => 'admin::app.acl.passports',

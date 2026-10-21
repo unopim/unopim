@@ -12,6 +12,8 @@
     'fullPreview'        => true,
     'acceptedExtensions' => [],
     'instructions'         => '',
+    'readOnly'           => false,
+    'allowDownload'      => false,
 ])
 
 @php
@@ -38,6 +40,8 @@
     v-bind:responsive="{{ $responsive ? 'true' : 'false' }}"
     v-bind:has-context="{{ $hasContext ? 'true' : 'false' }}"
     v-bind:full-preview="{{ $fullPreview ? 'true' : 'false' }}"
+    v-bind:read-only="{{ $readOnly ? 'true' : 'false' }}"
+    v-bind:allow-download="{{ $allowDownload ? 'true' : 'false' }}"
     :accepted-extensions='@json($acceptedExtensions)'
     :errors="errors"
 >
@@ -72,6 +76,7 @@
                         title="@lang('admin::app.components.media.images.add-image-btn')"
                         :hint="showUploadHint ? @js(trans('admin::app.components.media.images.drag-drop-hint')) : ''"
                         :allowed-types="allowedTypesLabel"
+                        :read-only="readOnly"
                         @trigger="resetAIModal(); $refs.choiceImageModal.open()"
                         @drop="onDrop"
                     ></v-media-add-tile>
@@ -85,6 +90,7 @@
                         :allowed-types="allowedTypesLabel"
                         :accept="acceptAttribute"
                         :input-id="$.uid + '_imageInput'"
+                        :read-only="readOnly"
                         @change="add"
                         @drop="onDrop"
                     ></v-media-add-tile>
@@ -96,6 +102,7 @@
                     v-bind="{animation: 200}"
                     :list="images"
                     item-key="id"
+                    :disabled="readOnly"
                 >
                     <template #item="{ element, index }">
                         <v-media-image-item
@@ -108,6 +115,8 @@
                             :responsive="responsive"
                             :fullPreview="fullPreview"
                             :accepted-extensions="acceptedExtensions"
+                            :read-only="readOnly"
+                            :allow-download="allowDownload"
                             @onRemove="remove($event)"
                         >
                         </v-media-image-item>
@@ -443,8 +452,10 @@
                 :height="responsive ? '176px' : `calc(${height} + 36px)`"
                 :object-fit="objectFit"
                 :allow-preview="true"
-                :allow-replace="true"
-                :allow-remove="true"
+                :allow-replace="! readOnly"
+                :allow-remove="! readOnly"
+                :allow-download="allowDownload"
+                :show-drag-handle="! readOnly"
                 :show-extension="false"
                 :invalid="isInvalid"
                 @preview="preview"
@@ -452,8 +463,9 @@
                 @remove="remove"
             ></v-media-card>
 
-            <input type="hidden" :name="name" v-if="! image.is_new && image.value" :value="image.value"/>
+            <input type="hidden" :name="name" v-if="! readOnly && ! image.is_new && image.value" :value="image.value"/>
             <input
+                v-if="! readOnly"
                 type="file"
                 :name="name + '[]'"
                 class="hidden"
@@ -479,16 +491,18 @@
                 </x-slot>
             </x-admin::modal>
 
-            <x-admin::modal ref="imagePreviewModalFull" no-class="true">
-                <x-slot:content>
-                    <v-image-viewer
-                        v-if="image"
-                        :src="image.url"
-                        :file-name="getDisplayFileName(image)"
-                        @close="closeFullPreview"
-                    ></v-image-viewer>
-                </x-slot>
-            </x-admin::modal>
+            <Teleport to="body">
+                <x-admin::modal ref="imagePreviewModalFull" no-class="true">
+                    <x-slot:content>
+                        <v-image-viewer
+                            v-if="image"
+                            :src="image.url"
+                            :file-name="getDisplayFileName(image)"
+                            @close="closeFullPreview"
+                        ></v-image-viewer>
+                    </x-slot>
+                </x-admin::modal>
+            </Teleport>
 
         </div>
     </script>
@@ -560,6 +574,16 @@
                 },
 
                 fullPreview: {
+                    type: Boolean,
+                    default: false,
+                },
+
+                readOnly: {
+                    type: Boolean,
+                    default: false,
+                },
+
+                allowDownload: {
                     type: Boolean,
                     default: false,
                 },
@@ -689,12 +713,12 @@
                     image.selected = true;
                 },
 
-                add(files) {
+                async add(files) {
                     if (! files || ! files.length) {
                         return;
                     }
 
-                    if (! this.addFiles(files)) {
+                    if (! await this.addFiles(files)) {
                         return;
                     }
 
@@ -729,7 +753,20 @@
                     return file.type.startsWith('image/');
                 },
 
-                addFiles(files) {
+                scanFile(file) {
+                    return this.$scanMedia(file, {
+                        url: "{{ route('admin.media.scan') }}",
+                        isImage: true,
+                        acceptedExtensions: this.acceptedExtensions,
+                        fallbackMessage: @json(trans('admin::app.components.media.images.not-allowed-error')),
+                    });
+                },
+
+                async addFiles(files) {
+                    if (! files || ! files.length) {
+                        return false;
+                    }
+
                     const validFiles = Array.from(files).every(file => this.isFileAccepted(file));
 
                     if (! validFiles) {
@@ -741,18 +778,26 @@
                         return false;
                     }
 
-                    Array.from(files).forEach((file) => {
+                    let anyAdded = false;
+
+                    for (const file of Array.from(files)) {
+                        if (! await this.scanFile(file)) {
+                            continue;
+                        }
+
                         this.images.push({
                             id: 'image_' + this.images.length,
                             url: '',
                             file: file,
                             name: file.name
                         });
-                    });
+
+                        anyAdded = true;
+                    }
 
                     this.signalChange();
 
-                    return true;
+                    return anyAdded;
                 },
 
                 remove(image) {
@@ -1001,7 +1046,7 @@
         app.component('v-media-image-item', {
             template: '#v-media-image-item-template',
 
-            props: ['index', 'image', 'name', 'width', 'height', 'objectFit', 'responsive', 'fullPreview', 'acceptedExtensions'],
+            props: ['index', 'image', 'name', 'width', 'height', 'objectFit', 'responsive', 'fullPreview', 'acceptedExtensions', 'readOnly', 'allowDownload'],
 
             computed: {
                 acceptAttribute() {
@@ -1054,10 +1099,19 @@
                     this.$refs[this.$.uid + '_imageInput_' + this.index].click();
                 },
 
-                edit() {
+                scanFile(file) {
+                    return this.$scanMedia(file, {
+                        url: "{{ route('admin.media.scan') }}",
+                        isImage: true,
+                        acceptedExtensions: this.acceptedExtensions,
+                        fallbackMessage: @json(trans('admin::app.components.media.images.not-allowed-error')),
+                    });
+                },
+
+                async edit() {
                     let imageInput = this.$refs[this.$.uid + '_imageInput_' + this.index];
 
-                    if (imageInput.files == undefined) {
+                    if (! imageInput.files || ! imageInput.files.length) {
                         return;
                     }
 
@@ -1069,6 +1123,10 @@
                             message: @json(trans('admin::app.components.media.images.not-allowed-error'))
                         });
 
+                        return;
+                    }
+
+                    if (! await this.scanFile(imageInput.files[0])) {
                         return;
                     }
 

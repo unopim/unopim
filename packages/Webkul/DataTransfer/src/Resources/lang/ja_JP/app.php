@@ -14,7 +14,8 @@ return [
         'products' => [
             'title'      => '製品',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => '単位「:unit」は測定属性「:attribute」の有効な単位ではありません。',
+                'errors'       => [
                     'duplicate-url-key'                        => 'URLキー「%s」は、SKU「%s」のアイテムに対して既に生成されています。',
                     'invalid-attribute-family'                 => '属性ファミリー列の値が無効です（属性ファミリーが存在しない可能性があります）',
                     'invalid-type'                             => '製品タイプが無効またはサポートされていません',
@@ -189,8 +190,10 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
+            'file-name'      => 'ファイル名',
+            'file-name-info' => 'ファイル名のパターン。使用できるトークン: [code], [date], [time], [entity_type]',
             'file-path'      => 'ファイル パス',
-            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'file-path-info' => 'ファイル名のパターン。使用できるトークン: [code], [date], [time], [entity_type]',
             'status'         => 'ステータス',
             'enable'         => '有効',
             'all'            => 'すべて',
@@ -291,14 +294,15 @@ return [
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => '列番号「%s」のヘッダーが空です。',
-            'column-name-invalid'  => '無効な列名: 「%s」。',
-            'column-not-found'     => '必須列が見つかりません: %s。',
-            'column-numbers'       => '列の数がヘッダーの行数と一致しません。',
-            'invalid-attribute'    => 'ヘッダーに無効な属性が含まれています: 「%s」。',
-            'system'               => '予期しないシステムエラーが発生しました。',
-            'wrong-quotes'         => 'ストレート引用符の代わりに波型引用符が使用されています。',
-            'file-empty'           => 'ファイルが空であるか、ヘッダー行が含まれていません。データを含む有効なファイルをアップロードしてください。',
+            'column-empty-headers'   => '列番号「%s」のヘッダーが空です。',
+            'column-name-invalid'    => '無効な列名: 「%s」。',
+            'column-not-found'       => '必須列が見つかりません: %s。',
+            'column-numbers'         => '列の数がヘッダーの行数と一致しません。',
+            'invalid-attribute'      => 'ヘッダーに無効な属性が含まれています: 「%s」。',
+            'system'                 => '予期しないシステムエラーが発生しました。',
+            'wrong-quotes'           => 'ストレート引用符の代わりに波型引用符が使用されています。',
+            'file-empty'             => 'ファイルが空であるか、ヘッダー行が含まれていません。データを含む有効なファイルをアップロードしてください。',
+            'file-missing'           => 'このジョブのソースファイルが見つかりません。プロファイルのファイルパスを確認し、ファイルを再度アップロードしてください。',
         ],
     ],
     'job' => [

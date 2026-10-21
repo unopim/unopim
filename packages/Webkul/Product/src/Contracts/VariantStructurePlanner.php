@@ -11,6 +11,11 @@ interface VariantStructurePlanner
 
     public function structureFor(Product $product): ?VariantStructure;
 
+    public function primeStructure(int $productId, ?VariantStructure $structure): void;
+
+    /** @param  iterable<Product>  $products */
+    public function primeStructuresFor(iterable $products): void;
+
     public function ownsAttribute(Product $product, string $attributeCode): bool;
 
     public function ownsAtOwnLevel(Product $product, string $attributeCode): bool;

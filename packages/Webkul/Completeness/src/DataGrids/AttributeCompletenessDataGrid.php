@@ -104,6 +104,14 @@ class AttributeCompletenessDataGrid extends DataGrid
     }
 
     /**
+     * The grid has no id column, and the joined tables all carry one, so the bare key would be ambiguous.
+     */
+    protected function getPrimaryDatabaseColumn(): string
+    {
+        return 'attributes.id';
+    }
+
+    /**
      * Prepare actions.
      *
      * @return void
@@ -116,11 +124,12 @@ class AttributeCompletenessDataGrid extends DataGrid
     public function prepareMassActions(): void
     {
         $this->addMassAction([
-            'type'    => 'edit',
-            'title'   => trans('completeness::app.catalog.families.edit.completeness.datagrid.actions.change-requirement'),
-            'url'     => route('admin.catalog.families.completeness.mass_update'),
-            'method'  => 'POST',
-            'options' => [
+            'type'                => 'edit',
+            'title'               => trans('completeness::app.catalog.families.edit.completeness.datagrid.actions.change-requirement'),
+            'url'                 => route('admin.catalog.families.completeness.mass_update'),
+            'method'              => 'POST',
+            'supports_select_all' => true,
+            'options'             => [
                 'modal' => 'open-completeness-required-modal',
             ],
         ]);

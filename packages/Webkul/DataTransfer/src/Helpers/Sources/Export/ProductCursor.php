@@ -2,6 +2,7 @@
 
 namespace Webkul\DataTransfer\Helpers\Sources\Export;
 
+use Illuminate\Support\Facades\Log;
 use Webkul\DataTransfer\Cursor\AbstractCursor;
 use Webkul\DataTransfer\Helpers\Sources\Export\Filters\ProductExportFilter;
 
@@ -50,7 +51,7 @@ class ProductCursor extends AbstractCursor
 
             $this->offset += $this->batchSize;
         } catch (\Throwable $e) {
-            \Log::error('Product export cursor error: '.$e->getMessage());
+            Log::error('Product export cursor error: '.$e->getMessage());
             throw $e;
         }
 

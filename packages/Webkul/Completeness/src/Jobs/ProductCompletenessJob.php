@@ -5,6 +5,7 @@ namespace Webkul\Completeness\Jobs;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Completeness\Repositories\CompletenessSettingsRepository;
 use Webkul\Completeness\Repositories\ProductCompletenessScoreRepository;
@@ -57,7 +58,7 @@ class ProductCompletenessJob implements ShouldQueue
         $products->loadMissing('parent.parent');
 
         if (app()->environment('testing')) {
-            \Log::debug('CompletenessJob', [
+            Log::debug('CompletenessJob', [
                 'productIds'    => $this->productIds,
                 'productsFound' => $products->keys()->toArray(),
                 'channelCount'  => count($this->channels),
@@ -260,7 +261,7 @@ class ProductCompletenessJob implements ShouldQueue
                 $locales[0]['code']
             );
 
-            if (! empty($value)) {
+            if (is_filled_value($value)) {
                 $nonLocalizableFilled++;
             }
         }
@@ -285,7 +286,7 @@ class ProductCompletenessJob implements ShouldQueue
                     $localeCode
                 );
 
-                if (! empty($value)) {
+                if (is_filled_value($value)) {
                     $filled++;
                 }
             }

@@ -113,7 +113,7 @@ class Exporter extends AbstractExporter
     {
         $fieldValues = [];
         $filters = $this->getFilters();
-        $withMedia = (bool) $filters['with_media'];
+        $withMedia = (bool) ($filters['with_media'] ?? false);
 
         foreach ($this->categoryFields as $field) {
             $fieldValues[$field->code] = $additionalData[$field->code] ?? null;

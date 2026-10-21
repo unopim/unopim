@@ -116,6 +116,7 @@
 
             created() {
                 window.addEventListener('click', this.handleFocusOut);
+                window.addEventListener('overlay:opened', this.handleOverlayOpened);
             },
 
             mounted() {
@@ -131,6 +132,7 @@
 
             beforeUnmount() {
                 window.removeEventListener('click', this.handleFocusOut);
+                window.removeEventListener('overlay:opened', this.handleOverlayOpened);
 
                 if (this.teleport) {
                     window.removeEventListener('resize', this.handleViewportChange);
@@ -256,6 +258,10 @@
                     if (block.clientHeight) {
                         this.toggleBlockHeight = block.clientHeight;
                     }
+                },
+
+                handleOverlayOpened() {
+                    this.isActive = false;
                 },
 
                 handleFocusOut(e) {

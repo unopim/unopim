@@ -90,16 +90,7 @@ class CategoryIndexer extends Command
 
                 $this->info('Checking for stale categories to delete...');
 
-                $elasticCategoryIds = collect(ElasticSearch::search([
-                    'index' => $categoryIndex,
-                    'body'  => [
-                        '_source' => false,
-                        'query'   => [
-                            'match_all' => new \stdClass,
-                        ],
-                        'size' => 1000000000,
-                    ],
-                ])['hits']['hits'])->pluck('_id')->map(fn ($id): int => (int) $id)->toArray();
+                $elasticCategoryIds = $this->allIndexedIds($categoryIndex);
 
                 $categoriesToDelete = array_diff($elasticCategoryIds, $dbCategoryIds);
 
@@ -175,6 +166,57 @@ class CategoryIndexer extends Command
 
             Log::channel('elasticsearch')->warning('ELASTICSEARCH IS NOT ENABLE.');
         }
+    }
+
+    /**
+     * Every document id in the index, read in pages via point-in-time.
+     *
+     * A single unbounded search returns the whole index in one response, which
+     * the client permits only because it raises max_result_window globally;
+     * the response then has to fit in PHP's memory limit.
+     *
+     * @return array<int, int>
+     */
+    protected function allIndexedIds(string $categoryIndex): array
+    {
+        $pit = ElasticSearch::openPointInTime(['index' => $categoryIndex, 'keep_alive' => '5m'])['id'];
+        $searchAfter = null;
+        $ids = [];
+
+        try {
+            while (true) {
+                $body = [
+                    '_source' => false,
+                    'query'   => ['match_all' => new \stdClass],
+                    'size'    => self::BATCH_SIZE,
+                    'sort'    => [['_shard_doc' => 'asc']],
+                    'pit'     => ['id' => $pit, 'keep_alive' => '5m'],
+                ];
+
+                if ($searchAfter !== null) {
+                    $body['search_after'] = $searchAfter;
+                }
+
+                $hits = ElasticSearch::search(['body' => $body])['hits']['hits'];
+
+                if ($hits === []) {
+                    break;
+                }
+
+                $searchAfter = $hits[array_key_last($hits)]['sort'];
+
+                foreach ($hits as $hit) {
+                    $ids[] = (int) $hit['_id'];
+                }
+            }
+        } finally {
+            try {
+                ElasticSearch::closePointInTime(['body' => ['id' => $pit]]);
+            } catch (\Throwable) {
+            }
+        }
+
+        return $ids;
     }
 
     /**

@@ -17,7 +17,7 @@
         readonly
       />
 
-      <div class="flex items-center gap-0.5 flex-shrink-0">
+      <div v-if="! locked" class="flex items-center gap-0.5 flex-shrink-0">
         <span
           v-if="modelValue"
           @click="preview"
@@ -57,6 +57,7 @@
         entityId: Number,
         column: Object,
         attribute: Object,
+        locked: Boolean,
       },
 
       data() {
@@ -74,9 +75,13 @@
         acceptedTypes() {
           const extensions = this.attribute?.allowed_extensions;
 
-          if (extensions) {
-            return extensions.split(',')
-              .map(extension => '.' + extension.trim().replace(/^\./, ''))
+          const list = Array.isArray(extensions)
+            ? extensions
+            : (typeof extensions === 'string' ? extensions.split(',') : []);
+
+          if (list.length) {
+            return list
+              .map(extension => '.' + String(extension).trim().replace(/^\./, ''))
               .join(',');
           }
 

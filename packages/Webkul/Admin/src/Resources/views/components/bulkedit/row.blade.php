@@ -58,6 +58,7 @@
             },
 
             methods: {
+
                 lockState(col) {
                     return this.row.locks?.[col.code] ?? 'own';
                 },

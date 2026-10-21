@@ -34,7 +34,7 @@ return [
     */
 
     'optional_packages' => [
-        'enabled' => env('INSTALLER_OPTIONAL_PACKAGES', false),
+        'enabled' => env('INSTALLER_OPTIONAL_PACKAGES', true),
 
         'packages' => [
             'dam' => [
@@ -49,11 +49,11 @@ return [
                 'install'  => 'shopify-package:install',
             ],
 
-            'bagisto' => [
-                'composer' => 'unopim/bagisto-connector',
-                'label'    => 'Bagisto Connector',
-                'install'  => 'bagisto-package:install',
-            ],
+            // 'bagisto' => [
+            //     'composer' => 'unopim/bagisto-connector',
+            //     'label'    => 'Bagisto Connector',
+            //     'install'  => 'bagisto-package:install',
+            // ],
         ],
     ],
 ];

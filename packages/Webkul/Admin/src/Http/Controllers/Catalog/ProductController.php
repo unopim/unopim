@@ -12,17 +12,22 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Webkul\Admin\DataGrids\Catalog\ProductDataGrid;
 use Webkul\Admin\Filters\ProductPropertyFilters;
 use Webkul\Admin\Http\Controllers\Controller;
-use Webkul\Admin\Http\Requests\MassDestroyRequest;
-use Webkul\Admin\Http\Requests\MassUpdateRequest;
+use Webkul\Admin\Http\Requests\CheckVariantUniquenessForm;
 use Webkul\Admin\Http\Requests\ProductAttributeForm;
 use Webkul\Admin\Http\Requests\ProductAttributeGroupsForm;
 use Webkul\Admin\Http\Requests\ProductForm;
+use Webkul\Admin\Http\Requests\QueueQuickExportRequest;
+use Webkul\Admin\Http\Requests\SelectableMassDestroyRequest;
+use Webkul\Admin\Http\Requests\SelectableMassUpdateRequest;
 use Webkul\Admin\Http\Requests\VariantChildrenForm;
 use Webkul\Admin\Http\Requests\VariantNodeForm;
 use Webkul\Admin\Http\Resources\Catalog\AssociationTypeLinkResource;
+use Webkul\Admin\Jobs\ExportDataGridSelection;
+use Webkul\Admin\Jobs\ProcessMassActionSelection;
 use Webkul\Admin\Traits\AttributeColumnTrait;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Attribute\Models\AttributeOptionProxy;
@@ -33,7 +38,10 @@ use Webkul\Core\Rules\Sku;
 use Webkul\Product\Contracts\Product as ProductContract;
 use Webkul\Product\Contracts\ProductAssociation as ProductAssociationContract;
 use Webkul\Product\Contracts\VariantStructurePlanner;
-use Webkul\Product\Helpers\ProductType;
+use Webkul\Product\Enums\ProductType;
+use Webkul\Product\Enums\VariantLevel;
+use Webkul\Product\Facades\ProductValueMapper as ProductValueMapperFacade;
+use Webkul\Product\Helpers\ProductType as ProductTypeHelper;
 use Webkul\Product\Jobs\MassDeleteProducts;
 use Webkul\Product\Jobs\MassUpdateProductsStatus;
 use Webkul\Product\Models\Product;
@@ -117,6 +125,39 @@ class ProductController extends Controller
     }
 
     /**
+     * Queue the quick export of every product matching the grid's filters.
+     */
+    public function queueQuickExport(QueueQuickExportRequest $queueQuickExportRequest): JsonResponse
+    {
+        ExportDataGridSelection::dispatch(
+            ProductDataGrid::class,
+            $queueQuickExportRequest->selectionParams(),
+            $queueQuickExportRequest->input('format'),
+            auth()->guard('admin')->id(),
+            'admin::app.catalog.products.index.datagrid.select-all.export',
+            'admin.catalog.products.quick-export.download',
+        );
+
+        return new JsonResponse([
+            'message' => trans('admin::app.catalog.products.index.datagrid.select-all.export.queued'),
+        ]);
+    }
+
+    /**
+     * Download a finished quick export, only ever from the signed-in admin's own exports.
+     */
+    public function downloadQuickExport(string $file): StreamedResponse
+    {
+        $path = sprintf('%s/%d/%s', ExportDataGridSelection::DIRECTORY, auth()->guard('admin')->id(), $file);
+
+        $disk = Storage::disk(ExportDataGridSelection::DISK);
+
+        abort_unless($disk->exists($path), 404);
+
+        return $disk->download($path, 'products.'.pathinfo($file, PATHINFO_EXTENSION));
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(): JsonResponse
@@ -137,7 +178,7 @@ class ProductController extends Controller
 
         $data['variant_structure_id'] = request()->input('variant_structure_id');
 
-        if (ProductType::hasVariants($data['type'])) {
+        if (ProductTypeHelper::hasVariants($data['type'])) {
             $structures = $this->variantStructureRepository->findWhere([
                 'attribute_family_id' => $data['attribute_family_id'],
             ])->filter(fn ($structure) => $structure->hasAllAxisAttributesInFamily())->values();
@@ -193,19 +234,16 @@ class ProductController extends Controller
     }
 
     /**
-     * Create a new `variant_group` or `simple` node under a configurable (or
-     * one of its `variant_group` children), for the Variant Inheritance
-     * Editor's "pick a new axis value -> create -> navigate" sidebar flow.
-     * The new node owns only its fixed axis value; every other attribute is
-     * resolved from the ancestor chain at read time (see VariantValueResolver).
-     * The duplicate check and sku generation both read the parent's existing
-     * children, so they run under the parent's row lock alongside the insert.
+     * Create a new `variant_group` or `simple` node under a configurable or one of
+     * its `variant_group` children. The node owns only its fixed axis value; the
+     * rest resolves from the ancestor chain at read time. Duplicate check and sku
+     * generation read the parent's children, so both run under its row lock.
      */
     public function createVariantNode(VariantNodeForm $request, int $configurableId): JsonResponse
     {
         $configurable = $this->productRepository->findOrFail($configurableId);
 
-        if ($configurable->type !== 'configurable' || ! $configurable->variantStructure) {
+        if ($configurable->type !== ProductType::Configurable->value || ! $configurable->variantStructure) {
             abort(404);
         }
 
@@ -228,7 +266,7 @@ class ProductController extends Controller
 
             $typeInstance = $configurable->getTypeInstance();
 
-            if ($role === 'variant_group') {
+            if ($role === ProductType::VariantGroup->value) {
                 return $typeInstance->createVariantGroup($configurable, [
                     'group_values' => $axisValues,
                     'sku'          => $request->input('sku') ?: $this->uniqueVariantNodeSku($configurable, $configurable, $axisValues),
@@ -250,9 +288,7 @@ class ProductController extends Controller
             ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        if ($role !== 'variant_group') {
-            Event::dispatch('catalog.product.create.after', $node);
-        }
+        Event::dispatch('catalog.product.create.after', $node);
 
         return new JsonResponse([
             'data' => [
@@ -263,29 +299,24 @@ class ProductController extends Controller
     }
 
     /**
-     * Resolve the parent a new variant node should be created under, given
-     * the requested `parent_id` (null means directly under the configurable)
-     * and the node's `role`. Returns null for any combination outside the
-     * configurable's own subtree/structure shape:
-     * - a `variant_group` can only be created directly under the configurable,
-     *   and only when the structure has 2 levels.
-     * - a `simple` node goes directly under the configurable in a 1-level
-     *   structure, or under one of the configurable's own `variant_group`
-     *   children in a 2-level structure.
+     * Resolve the parent a new variant node belongs under, from the requested
+     * `parent_id` (null means the configurable itself) and the node's `role`.
+     * Returns null for any combination outside the configurable's own subtree or
+     * its structure's shape.
      */
     protected function resolveVariantNodeParent(Product $configurable, mixed $parentId, string $role): ?Product
     {
         $levels = (int) $configurable->variantStructure->levels;
 
         if (empty($parentId) || (int) $parentId === $configurable->id) {
-            if ($role === 'variant_group') {
+            if ($role === ProductType::VariantGroup->value) {
                 return $levels === 2 ? $configurable : null;
             }
 
             return $levels === 1 ? $configurable : null;
         }
 
-        if ($role !== 'simple') {
+        if ($role !== ProductType::Simple->value) {
             return null;
         }
 
@@ -293,7 +324,7 @@ class ProductController extends Controller
 
         if (
             ! $parent
-            || $parent->type !== 'variant_group'
+            || $parent->type !== ProductType::VariantGroup->value
             || (int) $parent->parent_id !== $configurable->id
         ) {
             return null;
@@ -345,25 +376,16 @@ class ProductController extends Controller
     }
 
     /**
-     * Paginated, searchable listing of a configurable's CREATED variant
-     * children — the on-demand counterpart to the ancestry-only
-     * {@see buildVariantTree()} payload, so the sidebar axis-nav can browse
-     * thousands of variants without ever inlining them into the page.
-     *
-     * `parent_id` selects which node to list direct children of (null/absent
-     * means the configurable itself). The expected child role is
-     * `variant_group` when listing the configurable's own children in a
-     * 2-level structure, `simple` otherwise (a `variant_group`'s children,
-     * or any node in a 1-level structure). `axis` (validated against the
-     * configurable's own axis codes by {@see VariantChildrenForm}) is the
-     * attribute whose `values.common` option code labels each child; `query`
-     * filters by that option's translated label or the child's sku.
+     * Paginated, searchable listing of a configurable's created variant children —
+     * the on-demand counterpart to the ancestry-only {@see buildVariantTree()}
+     * payload, so the sidebar can browse thousands of variants without inlining
+     * them. `axis` labels each child; `query` filters by that label or the sku.
      */
     public function variantChildren(VariantChildrenForm $request, int $configurableId): JsonResponse
     {
         $configurable = $this->productRepository->findOrFail($configurableId);
 
-        if ($configurable->type !== 'configurable' || ! $configurable->variantStructure) {
+        if ($configurable->type !== ProductType::Configurable->value || ! $configurable->variantStructure) {
             abort(404);
         }
 
@@ -378,8 +400,8 @@ class ProductController extends Controller
         $perPage = min(max((int) ($request->input('perPage') ?: self::VARIANT_CHILDREN_PER_PAGE), 1), self::VARIANT_CHILDREN_MAX_PER_PAGE);
 
         $expectedRole = $parent->id === $configurable->id && (int) $configurable->variantStructure->levels === 2
-            ? 'variant_group'
-            : 'simple';
+            ? ProductType::VariantGroup->value
+            : ProductType::Simple->value;
 
         $axes = $this->variantChildrenAxisCodes($configurable, $expectedRole);
 
@@ -431,7 +453,7 @@ class ProductController extends Controller
                 ->pluck('score', 'product_id')
             : collect();
 
-        $isGroupList = $expectedRole === 'variant_group';
+        $isGroupList = $expectedRole === ProductType::VariantGroup->value;
 
         $leafTotals = $isGroupList
             ? ProductProxy::modelClass()::whereIn('parent_id', $childIds)
@@ -519,7 +541,7 @@ class ProductController extends Controller
 
         $byLevel = $this->variantStructurePlanner->axisCodesByLevel($structure);
 
-        $level = $expectedRole === 'variant_group' || (int) $structure->levels === 1
+        $level = $expectedRole === ProductType::VariantGroup->value || (int) $structure->levels === 1
             ? 'level_1'
             : 'level_2';
 
@@ -527,12 +549,10 @@ class ProductController extends Controller
     }
 
     /**
-     * Resolve the parent a variant-children listing is scoped to, given the
-     * requested `parent_id` (null means direct children of the configurable
-     * itself). Returns null for any parent outside the configurable's own
-     * subtree — mirroring {@see resolveVariantNodeParent()}'s guard, but
-     * without a `role`: the caller derives the expected child role from the
-     * structure's level count once the parent is resolved.
+     * Resolve the parent a variant-children listing is scoped to, from the requested
+     * `parent_id` (null means the configurable itself). Returns null for any parent
+     * outside the configurable's own subtree — {@see resolveVariantNodeParent()}'s
+     * guard without a `role`, which the caller derives from the level count.
      */
     protected function resolveVariantChildrenParent(Product $configurable, mixed $parentId): ?Product
     {
@@ -544,7 +564,7 @@ class ProductController extends Controller
 
         if (
             ! $parent
-            || $parent->type !== 'variant_group'
+            || $parent->type !== ProductType::VariantGroup->value
             || (int) $parent->parent_id !== $configurable->id
         ) {
             return null;
@@ -717,14 +737,10 @@ class ProductController extends Controller
     }
 
     /**
-     * Builds the payload the product edit "Links" panel needs: for every type
-     * this product already links to, its (locale-resolved) field definitions
-     * and those links, with the related product's display data (via the same
-     * `normalizeWithImage()` used elsewhere) plus the link's `additional_data`.
-     *
-     * Types the product links to nothing under are deliberately absent: they
-     * are attached on demand through the async type picker, so the page payload
-     * stays flat however many types are configured.
+     * Builds the payload the product edit "Links" panel needs: for every type this
+     * product already links to, its locale-resolved field definitions and links,
+     * each with the related product's display data and `additional_data`. Types with
+     * no links are absent — attached on demand, keeping the page payload flat.
      *
      * @return array<int, array{code: string, name: string, fields: array, links: array}>
      */
@@ -773,12 +789,10 @@ class ProductController extends Controller
     }
 
     /**
-     * Resolve, for a variant node, which family attributes are inherited (locked)
-     * rather than editable at this level, and the value each inherits from its
-     * owning ancestor. Placement (`common`/`sub_parent`/`variant`) decides the
-     * level an attribute is edited at; anything not owned at the current node's
-     * level is locked and shows the ancestor's value. `sku` and the axis
-     * attributes are never locked. Returns null for non-variant products.
+     * Resolve which family attributes a variant node inherits (locked) rather than
+     * edits, and the value each inherits. Placement decides the level an attribute
+     * is edited at; anything not owned at this node's level locks and shows the
+     * ancestor's value. `sku` and axis attributes never lock; non-variants get null.
      *
      * @return array{currentLevel: string, locks: array<string, array{level: string, value: mixed}>}|null
      */
@@ -790,12 +804,7 @@ class ProductController extends Controller
             return null;
         }
 
-        $currentLevel = match ($product->type) {
-            'configurable'  => 'common',
-            'variant_group' => 'sub_parent',
-            'simple'        => 'variant',
-            default         => null,
-        };
+        $currentLevel = ProductType::tryFrom((string) $product->type)?->variantLevel();
 
         if ($currentLevel === null) {
             return null;
@@ -805,20 +814,19 @@ class ProductController extends Controller
 
         $allAxisCodes = $this->variantStructurePlanner->allAxisCodes($structure);
 
-        $groupAncestor = $product->type === 'simple' && $product->parent?->type === 'variant_group'
+        $groupAncestor = $product->type === ProductType::Simple->value && $product->parent?->type === ProductType::VariantGroup->value
             ? $product->parent
             : null;
 
         $ownerByLevel = [
-            'common'     => $configurable,
-            'sub_parent' => $groupAncestor,
+            VariantLevel::Common->value    => $configurable,
+            VariantLevel::SubParent->value => $groupAncestor,
         ];
 
         $channelCode = core()->getRequestedChannelCode();
         $localeCode = core()->getRequestedLocaleCode();
 
-        $levelOrder = ['common' => 0, 'sub_parent' => 1, 'variant' => 2];
-        $currentOrder = $levelOrder[$currentLevel];
+        $currentOrder = $currentLevel->order();
 
         $locks = [];
         $hidden = [];
@@ -834,9 +842,9 @@ class ProductController extends Controller
         }
 
         $fixedAxisDepth = match ($currentLevel) {
-            'sub_parent' => 1,
-            'variant'    => (int) $structure->levels,
-            default      => 0,
+            VariantLevel::SubParent => 1,
+            VariantLevel::Variant   => (int) $structure->levels,
+            VariantLevel::Common    => 0,
         };
 
         foreach ($configurable->attribute_family->customAttributes as $attribute) {
@@ -847,18 +855,18 @@ class ProductController extends Controller
             if (in_array($attribute->code, $allAxisCodes, true)) {
                 $axisDepth = $axisDepths[$attribute->code] ?? 1;
 
-                if ($axisDepth <= $fixedAxisDepth) {
+                if ($axisDepth < $fixedAxisDepth) {
                     $axisLevel = (int) $structure->levels === 2
-                        ? ($axisDepth === 1 ? 'sub_parent' : 'variant')
+                        ? ($axisDepth === 1 ? VariantLevel::SubParent->value : VariantLevel::Variant->value)
                         : null;
 
                     $locks[$attribute->code] = [
                         'axis'    => true,
                         'level'   => $axisLevel,
-                        'ownerId' => $axisLevel === 'sub_parent' ? $groupAncestor?->id : null,
+                        'ownerId' => $axisLevel === VariantLevel::SubParent->value ? $groupAncestor?->id : null,
                         'value'   => $attribute->getValueFromProductValues($resolvedValues, $channelCode, $localeCode),
                     ];
-                } else {
+                } elseif ($axisDepth > $fixedAxisDepth) {
                     $hidden[] = $attribute->code;
                 }
 
@@ -867,7 +875,7 @@ class ProductController extends Controller
 
             $placement = $this->variantStructurePlanner->placementOf($structure, $attribute->code);
 
-            $placementOrder = $levelOrder[$placement] ?? 0;
+            $placementOrder = VariantLevel::tryFrom($placement)?->order() ?? 0;
 
             if ($placementOrder === $currentOrder) {
                 continue;
@@ -889,32 +897,17 @@ class ProductController extends Controller
         }
 
         return [
-            'currentLevel' => $currentLevel,
+            'currentLevel' => $currentLevel->value,
             'locks'        => $locks,
             'hidden'       => $hidden,
         ];
     }
 
     /**
-     * Build the blueprint consumed by the Variant Inheritance Editor: axes,
-     * common-scope family attributes tagged with axis/placement metadata, and
-     * the ANCESTRY chain of the node being edited only — the configurable,
-     * plus (when editing a `variant_group` or `simple` leaf) every ancestor
-     * between it and the configurable. Siblings and unrelated descendants are
-     * never inlined, so the payload stays constant-size no matter how many
-     * thousands of variants a configurable owns; the sidebar fetches
-     * sibling/child nodes on demand via the paginated, searchable
-     * {@see variantChildren()} endpoint. The frontend resolves inheritance
-     * client-side, so nodes carry only what they own — never a resolved or
-     * merged value. Returns null for legacy configurables (no
-     * `variant_structure_id`), which keep the flat UI untouched.
-     *
-     * Any node in the subtree - the configurable itself, a `variant_group`,
-     * or a `simple` leaf - can be passed in: the tree is always built from
-     * the configurable ancestor (same attributes/axes payload) so the sidebar
-     * axis-nav renders identically regardless of which node's edit page is
-     * open. `currentNodeId` tells the frontend which node to highlight;
-     * `configurableId` is the ancestor the tree was built from.
+     * Build the blueprint for the Variant Inheritance Editor: axes, tagged family
+     * attributes, and the edited node's ancestry chain only — siblings load on
+     * demand via {@see variantChildren()}, keeping the payload constant-size. Nodes
+     * carry only what they own. Legacy configurables get null and the flat UI.
      *
      * @return array{levels: int, axesByLevel: array<string, array<int, string>>, attributes: array<int, array<string, mixed>>, nodes: array<string, array<string, mixed>>, axisLabels: array<string, string>, currentNodeId: int, configurableId: int}|null
      */
@@ -974,13 +967,13 @@ class ProductController extends Controller
      */
     protected function countVariantLeaves(Product $configurable, int $levels): int
     {
-        $leaves = ProductProxy::modelClass()::where('type', 'simple');
+        $leaves = ProductProxy::modelClass()::where('type', ProductType::Simple->value);
 
         if ($levels === 2) {
             return $leaves->whereIn(
                 'parent_id',
                 ProductProxy::modelClass()::where('parent_id', $configurable->id)
-                    ->where('type', 'variant_group')
+                    ->where('type', ProductType::VariantGroup->value)
                     ->select('id')
             )->count();
         }
@@ -1021,41 +1014,35 @@ class ProductController extends Controller
     }
 
     /**
-     * Resolve the configurable ancestor a variant tree should be built from:
-     * the product itself when it's already a configurable, or its
-     * `configurable` ancestor when it's a `variant_group`/`simple` node.
-     * Walk depth is guarded since it's bounded by the structure's level
-     * count (at most 2 today).
+     * Resolve the configurable ancestor a variant tree is built from: the product
+     * itself when already configurable, otherwise its `configurable` ancestor. The
+     * walk is depth-guarded, bounded by the structure's level count.
      */
     protected function resolveConfigurableForVariantTree(Product $product): ?Product
     {
-        if ($product->type === 'configurable') {
+        if ($product->type === ProductType::Configurable->value) {
             return $product;
         }
 
-        if (! in_array($product->type, ['variant_group', 'simple'], true)) {
+        if (! in_array($product->type, ProductType::VARIANT_CHILD_VALUES, true)) {
             return null;
         }
 
         $ancestor = $product->parent;
         $guard = 0;
 
-        while ($ancestor && $ancestor->type !== 'configurable' && $guard++ < 10) {
+        while ($ancestor && $ancestor->type !== ProductType::Configurable->value && $guard++ < 10) {
             $ancestor = $ancestor->parent;
         }
 
-        return $ancestor?->type === 'configurable' ? $ancestor : null;
+        return $ancestor?->type === ProductType::Configurable->value ? $ancestor : null;
     }
 
     /**
-     * Build the ancestry-only `nodes` map for the variant tree: the
-     * configurable, plus — when `$current` is a `variant_group` or `simple`
-     * leaf — every ancestor between it and the configurable (current leaf ->
-     * its `variant_group` -> the configurable). Siblings and any other
-     * descendant are never visited, so this runs in O(structure levels)
-     * regardless of how many variants the configurable owns. Walk depth is
-     * guarded since it's bounded by the structure's level count (at most 2
-     * today).
+     * Build the ancestry-only `nodes` map for the variant tree: the configurable
+     * plus every ancestor between it and `$current`. Siblings and other descendants
+     * are never visited, so this runs in O(structure levels) however many variants
+     * the configurable owns; the walk is depth-guarded by that same level count.
      *
      * @param  array<int, string>  $allAxisCodes
      * @return array<string, array<string, mixed>>
@@ -1092,7 +1079,7 @@ class ProductController extends Controller
             : collect();
 
         $groupIds = array_values(array_filter(array_map(
-            fn (Product $n) => $n->type === 'variant_group' ? $n->id : null,
+            fn (Product $n) => $n->type === ProductType::VariantGroup->value ? $n->id : null,
             $chain
         )));
 
@@ -1128,7 +1115,7 @@ class ProductController extends Controller
 
             $imagePath = $ancestor->getProductDisplayImage($channelCode, $localeCode, $imageAttributes);
 
-            $isGroup = $ancestor->type === 'variant_group';
+            $isGroup = $ancestor->type === ProductType::VariantGroup->value;
 
             $nodes[(string) $ancestor->id] = [
                 'id'              => $ancestor->id,
@@ -1215,21 +1202,79 @@ class ProductController extends Controller
         return back()->withInput()->withErrors($errors);
     }
 
+    /**
+     * The axis values a node fixes at its own level, keyed by attribute code — the
+     * tuple a sibling repeats for the combination to be a duplicate. An axis from
+     * another level must never enter it: comparing on one narrows the match to rows
+     * that leave it unset. Structureless products compare on every super attribute.
+     *
+     * @param  array<string, mixed>  $submittedCommon
+     * @return array<string, mixed>
+     */
+    protected function ownLevelAxisValues(?Product $product, array $submittedCommon): array
+    {
+        if (! $product) {
+            return [];
+        }
+
+        $structure = $this->variantStructurePlanner->structureFor($product);
+
+        $codes = $structure
+            ? array_filter(
+                $this->variantStructurePlanner->allAxisCodes($structure),
+                fn (string $code): bool => $this->variantStructurePlanner->ownsAtOwnLevel($product, $code)
+            )
+            : collect($product->parent?->super_attributes ?? [])->pluck('code')->all();
+
+        $values = [];
+
+        foreach ($codes as $code) {
+            $values[$code] = $submittedCommon[$code] ?? null;
+        }
+
+        return $values;
+    }
+
+    /**
+     * Render an axis tuple as readable "label: value" pairs for a flash
+     * message, preferring each axis attribute's translated label over its code.
+     *
+     * @param  array<string, mixed>  $axisValues
+     */
+    protected function describeAxisValues(Product $product, array $axisValues): string
+    {
+        $structure = $this->variantStructurePlanner->structureFor($product);
+
+        $attributes = $structure
+            ? $structure->axes->map(fn ($axis) => $axis->attribute)->filter()
+            : collect($product->parent?->super_attributes ?? []);
+
+        $labels = $attributes
+            ->mapWithKeys(fn ($attribute): array => [$attribute->code => $attribute->name ?: $attribute->code])
+            ->all();
+
+        $pairs = [];
+
+        foreach ($axisValues as $code => $value) {
+            if ($value === null || $value === '') {
+                continue;
+            }
+
+            $pairs[] = ($labels[$code] ?? $code).': '.(is_array($value) ? implode(', ', $value) : (string) $value);
+        }
+
+        return implode(', ', $pairs);
+    }
+
     public function update(ProductForm $request, int $id): RedirectResponse|JsonResponse
     {
         Event::dispatch('catalog.product.update.before', $id);
-
-        $configurableValues = [];
 
         $data = $request->all();
 
         $product = $this->productRepository->find($id);
 
-        foreach (($product?->parent?->super_attributes ?? []) as $attr) {
-            $attrCode = $attr->code;
-
-            $configurableValues[$attrCode] = $data['values']['common'][$attrCode] ?? null;
-        }
+        $configurableValues = $this->ownLevelAxisValues($product, $data['values']['common'] ?? []);
 
         if (! empty($configurableValues) && $product->parent_id) {
             $isUnique = $this->productRepository->isUniqueVariantForProduct(
@@ -1239,7 +1284,13 @@ class ProductController extends Controller
             );
 
             if (! $isUnique) {
-                session()->flash('warning', trans('admin::app.catalog.products.edit.types.configurable.create.variant-already-exists'));
+                $messageKey = $product->type === ProductType::VariantGroup->value
+                    ? 'admin::app.catalog.products.edit.types.configurable.variant-group-combination-exists'
+                    : 'admin::app.catalog.products.edit.types.configurable.variant-combination-exists';
+
+                session()->flash('warning', trans($messageKey, [
+                    'values' => $this->describeAxisValues($product, $configurableValues),
+                ]));
 
                 return back()->withInput();
             }
@@ -1257,7 +1308,7 @@ class ProductController extends Controller
         }
 
         try {
-            $this->valuesValidator->validate(data: $data[AbstractType::PRODUCT_VALUES_KEY], productId: $id);
+            $this->valuesValidator->validate(data: $data[AbstractType::PRODUCT_VALUES_KEY] ?? [], productId: $id);
         } catch (ValidationException $e) {
             $messages = [];
 
@@ -1352,8 +1403,23 @@ class ProductController extends Controller
     /**
      * Mass delete the products.
      */
-    public function massDestroy(MassDestroyRequest $massDestroyRequest): JsonResponse
+    public function massDestroy(SelectableMassDestroyRequest $massDestroyRequest): JsonResponse
     {
+        if ($massDestroyRequest->selectsAllMatching()) {
+            ProcessMassActionSelection::queue(
+                ProductDataGrid::class,
+                $massDestroyRequest->selectionParams(),
+                MassDeleteProducts::class,
+                [],
+                auth()->guard('admin')->id(),
+                'admin::app.catalog.products.index.datagrid.select-all.delete',
+            );
+
+            return new JsonResponse([
+                'message' => trans('admin::app.catalog.products.index.datagrid.select-all.delete.queued'),
+            ]);
+        }
+
         $productIds = $massDestroyRequest->input('indices');
 
         if (count($productIds) > (int) config('products.mass_action_async_threshold')) {
@@ -1380,11 +1446,26 @@ class ProductController extends Controller
     /**
      * Mass update the products.
      */
-    public function massUpdate(MassUpdateRequest $massUpdateRequest): JsonResponse
+    public function massUpdate(SelectableMassUpdateRequest $massUpdateRequest): JsonResponse
     {
-        $productIds = $massUpdateRequest->input('indices');
-
         $status = (bool) $massUpdateRequest->input('value');
+
+        if ($massUpdateRequest->selectsAllMatching()) {
+            ProcessMassActionSelection::queue(
+                ProductDataGrid::class,
+                $massUpdateRequest->selectionParams(),
+                MassUpdateProductsStatus::class,
+                [$status],
+                auth()->guard('admin')->id(),
+                'admin::app.catalog.products.index.datagrid.select-all.update-status',
+            );
+
+            return new JsonResponse([
+                'message' => trans('admin::app.catalog.products.index.datagrid.select-all.update-status.queued'),
+            ], JsonResponse::HTTP_OK);
+        }
+
+        $productIds = $massUpdateRequest->input('indices');
 
         if (count($productIds) > (int) config('products.mass_action_async_threshold')) {
             MassUpdateProductsStatus::dispatch($productIds, $status);
@@ -1497,13 +1578,16 @@ class ProductController extends Controller
     /**
      * Check variant configurable attributes uniqueness
      */
-    public function checkVariantUniqueness(): JsonResponse
+    public function checkVariantUniqueness(CheckVariantUniquenessForm $request): JsonResponse
     {
-        $variantAttributes = request()->input('variantAttributes');
+        $data = $request->validated();
 
-        $data = request()->except('variantAttributes');
-
-        $isUnique = $this->productRepository->isUniqueVariantForProduct($data['parentId'], $variantAttributes, $data['sku'], $data['variantId'] ?? null);
+        $isUnique = $this->productRepository->isUniqueVariantForProduct(
+            $data['parentId'],
+            $data['variantAttributes'],
+            $data['sku'] ?? null,
+            $data['variantId'] ?? null
+        );
 
         if (! $isUnique) {
             return new JsonResponse([
@@ -1545,20 +1629,38 @@ class ProductController extends Controller
     public function getAttribute(ProductAttributeForm $request): JsonResponse
     {
         $product = $this->productRepository->findOrFail((int) $request->validated('productId'));
-        $attributes = $product->getEditableAttributes()->where('ai_translate', 1)->select('code', 'name', 'type', 'ai_translate');
-        $attributeOptions = [];
 
-        if ($attributes) {
-            foreach ($attributes as $attribute) {
-                $attributeOptions[] = [
-                    'id'    => $attribute['code'],
-                    'label' => $attribute['name'],
-                ];
+        $sourceValues = ProductValueMapperFacade::getScopedFields(
+            $product->toArray(),
+            core()->getRequestedChannelCode(),
+            core()->getRequestedLocaleCode()
+        );
+
+        $attributeOptions = [];
+        $values = [];
+
+        foreach ($product->getEditableAttributes()->where('ai_translate', 1) as $attribute) {
+            if (! $attribute->isLocaleBasedAttribute()) {
+                continue;
             }
+
+            $sourceValue = $sourceValues[$attribute->code] ?? null;
+
+            if (! is_scalar($sourceValue) || trim((string) $sourceValue) === '') {
+                continue;
+            }
+
+            $attributeOptions[] = [
+                'id'    => $attribute->code,
+                'label' => $attribute->name,
+            ];
+
+            $values[$attribute->code] = $sourceValue;
         }
 
         return new JsonResponse([
             'attributes' => $attributeOptions,
+            'values'     => $values,
         ]);
     }
 }

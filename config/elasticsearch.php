@@ -8,8 +8,15 @@ return [
     'connection' => env('ELASTICSEARCH_CONNECTION', 'default') ?: 'default',
 
     'enabled'       => filter_var(env('ELASTICSEARCH_ENABLED', false), FILTER_VALIDATE_BOOLEAN),
-    'prefix'        => env('ELASTICSEARCH_INDEX_PREFIX') ?: env('APP_NAME', 'UnoPim'),
+    'prefix'        => preg_replace('/\s+/', '', (string) (env('ELASTICSEARCH_INDEX_PREFIX') ?: env('APP_NAME', 'UnoPim'))),
     'debug_payload' => filter_var(env('ELASTICSEARCH_DEBUG_PAYLOAD', false), FILTER_VALIDATE_BOOLEAN),
+
+    /**
+     * Upper bound on mapped fields per index. Every localisable or channel scoped
+     * attribute expands into its own field, so a catalogue with a wide attribute
+     * set exhausts Elasticsearch's default limit of 1000 and rejects documents.
+     */
+    'total_fields_limit' => (int) env('ELASTICSEARCH_TOTAL_FIELDS_LIMIT', 3000),
 
     /**
      * These are the available connections parameters that you can use to connect
