@@ -63,7 +63,7 @@ it('dual-writes associations to the link table via the PUT update API', function
         ->assertStatus(200)
         ->assertJsonFragment(['success' => true]);
 
-    $this->assertDatabaseCount('product_associations', 3);
+    expect(DB::table('product_associations')->where('product_id', $product->id)->count())->toBe(3);
 
     assertAssociationLinkExists($product->id, 'related_products', $related->id);
     assertAssociationLinkExists($product->id, 'up_sells', $upSell->id);
@@ -98,7 +98,7 @@ it('dual-writes associations to the link table via the POST store (create) API',
 
     $created = Product::where('sku', $sku)->firstOrFail();
 
-    $this->assertDatabaseCount('product_associations', 1);
+    expect(DB::table('product_associations')->where('product_id', $created->id)->count())->toBe(1);
 
     assertAssociationLinkExists($created->id, 'related_products', $related->id);
 });
@@ -129,7 +129,7 @@ it('dual-writes associations to the link table via the PATCH partial update API'
         ->assertStatus(200)
         ->assertJsonFragment(['success' => true]);
 
-    $this->assertDatabaseCount('product_associations', 1);
+    expect(DB::table('product_associations')->where('product_id', $product->id)->count())->toBe(1);
 
     assertAssociationLinkExists($product->id, 'related_products', $related->id);
 });

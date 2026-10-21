@@ -52,10 +52,10 @@ return [
             'notice'  => 'Catatan ini disimpan untuk transparansi, tetapi tidak lagi dikelola secara aktif.',
         ],
         'release' => [
-            'banner'       => 'Release :sequence of this passport',
-            'superseded'   => 'This is an earlier state of the passport, kept exactly as it was published. A newer state exists.',
-            'current'      => 'This is the current state of the passport.',
-            'view-current' => 'View the current passport',
+            'banner'       => 'Rilis :sequence dari paspor ini',
+            'superseded'   => 'Ini adalah keadaan paspor sebelumnya, disimpan persis seperti saat diterbitkan. Sudah ada keadaan yang lebih baru.',
+            'current'      => 'Ini adalah keadaan paspor saat ini.',
+            'view-current' => 'Lihat paspor saat ini',
         ],
     ],
 ];

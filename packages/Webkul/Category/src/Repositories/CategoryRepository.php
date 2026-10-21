@@ -22,6 +22,13 @@ class CategoryRepository extends Repository
 
     const DEFAULT_PER_PAGE = 100;
 
+    /**
+     * Hard ceiling on a one-shot descendant subtree fetch, so a click on a
+     * near-root category with a huge branch can't pull tens of thousands
+     * of rows into a single response.
+     */
+    const MAX_DESCENDANTS = 5000;
+
     public function __construct(Container $app, protected FileStorer $fileStorer)
     {
         parent::__construct($app);
@@ -308,6 +315,36 @@ class CategoryRepository extends Repository
             'has_more' => ($page * $limit) < $total,
             'total'    => $total,
         ];
+    }
+
+    /**
+     * Descendant count read straight off the category's own _lft/_rgt
+     * span — no query against the descendants themselves, just the row
+     * already fetched for validation.
+     */
+    public function countDescendants(int $id): int
+    {
+        $category = $this->model->findOrFail($id);
+
+        return (int) (($category->_rgt - $category->_lft - 1) / 2);
+    }
+
+    /**
+     * The full descendant subtree of a category in one nested-set range
+     * query, hydrated back into a tree so a cascading select can both
+     * select and render every level in a single pass — no per-level
+     * fetch, so nothing pops open staggered as separate requests resolve.
+     *
+     * Passing the loaded model rather than its id keeps kalnoy/nestedset
+     * from re-querying the node's own _lft/_rgt bounds a second time.
+     *
+     * @return Collection
+     */
+    public function getDescendantTree(int $id)
+    {
+        $category = $this->model->findOrFail($id);
+
+        return $this->model->descendantsOf($category)->toTree($id);
     }
 
     /**

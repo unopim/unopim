@@ -6,27 +6,34 @@ use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\DB;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;
+use Webkul\AiAgent\Chat\AiErrorResolver;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 use Webkul\AiAgent\Services\EmbeddingSimilarityService;
+use Webkul\MagicAI\Enums\AiProvider;
+use Webkul\MagicAI\Enums\EmbeddingRejection;
+use Webkul\MagicAI\Models\MagicAIPlatform;
+use Webkul\Product\Repositories\ProductRepository;
 
 class FindSimilarProducts implements PimTool
 {
     public function __construct(
         protected EmbeddingSimilarityService $embeddingSimilarityService,
+        protected ProductRepository $productRepository,
     ) {}
 
     public function register(ChatContext $context): Tool
     {
-        $embeddingSimilarityService = $this->embeddingSimilarityService;
-
-        return new class($context, $embeddingSimilarityService) extends ContextualTool
+        return new class($context, $this->embeddingSimilarityService, $this->productRepository) extends ContextualTool
         {
             use ChecksPermission;
 
-            public function __construct(ChatContext $context, protected EmbeddingSimilarityService $embeddingSimilarityService)
-            {
+            public function __construct(
+                ChatContext $context,
+                protected EmbeddingSimilarityService $embeddingSimilarityService,
+                protected ProductRepository $productRepository,
+            ) {
                 parent::__construct($context);
             }
 
@@ -74,7 +81,10 @@ class FindSimilarProducts implements PimTool
                         ->first();
 
                     if (! $sourceProduct) {
-                        return json_encode(['error' => "SKU not found: {$sku}"]);
+                        return json_encode([
+                            'error'        => "SKU not found: {$sku}. Ask the user to confirm one of did_you_mean before searching again; never substitute a different product silently.",
+                            'did_you_mean' => $this->closestSkus($sku),
+                        ]);
                     }
                 } elseif ($this->context->hasProductContext()) {
                     // Default to the product the user is currently editing.
@@ -172,14 +182,23 @@ class FindSimilarProducts implements PimTool
                     $item['status'],
                 ]))->all();
 
-                $ranked = $this->embeddingSimilarityService->rank($queryText, $documents, $limit);
+                $embeddingPlatform = $this->embeddingSimilarityService->resolvePlatform($this->context->platform);
+                $ranking = 'semantic';
+                $note = null;
+
+                try {
+                    $ranked = $embeddingPlatform instanceof MagicAIPlatform
+                        ? $this->embeddingSimilarityService->rankOrFail($queryText, $documents, $limit, $embeddingPlatform)
+                        : [];
+                } catch (\Throwable $e) {
+                    $ranked = [];
+                    $note = $this->embeddingFailureNote($embeddingPlatform, AiErrorResolver::resolve($e)['message']);
+                }
 
                 if ($ranked === []) {
-                    return json_encode([
-                        'total'    => 0,
-                        'products' => [],
-                        'info'     => 'Similarity scoring unavailable. Check Laravel AI embeddings configuration.',
-                    ]);
+                    $ranking = 'keyword';
+                    $note ??= $this->embeddingFailureNote($embeddingPlatform, 'the provider returned no vectors');
+                    $ranked = $this->rankByKeywords($queryText, $documents, $limit);
                 }
 
                 $results = [];
@@ -196,12 +215,120 @@ class FindSimilarProducts implements PimTool
                     $results[] = $row;
                 }
 
-                return json_encode([
+                return json_encode(array_filter([
                     'total'                 => count($results),
                     'products'              => $results,
                     'query'                 => $queryText,
                     'scoped_to_same_family' => $familyScoped,
-                ]);
+                    'ranking'               => $ranking,
+                    'embedding_platform'    => $ranking === 'semantic' ? $embeddingPlatform?->label : null,
+                    'note'                  => $note,
+                ], fn ($value): bool => ! is_null($value)));
+            }
+
+            /**
+             * Explain to the model why semantic ranking was not used, naming the
+             * platforms involved so the reply reflects the real backend state.
+             */
+            private function embeddingFailureNote(?MagicAIPlatform $embeddingPlatform, string $reason): string
+            {
+                $fallback = 'Results are ranked by keyword overlap of SKU, name, type and family instead. Tell the user this plainly.';
+
+                if ($embeddingPlatform instanceof MagicAIPlatform) {
+                    return sprintf('AI semantic similarity was not used because the embeddings request to platform "%s" failed: %s. %s', $embeddingPlatform->label, $reason, $fallback);
+                }
+
+                $chatPlatform = $this->context->platform;
+                $rejection = $this->embeddingSimilarityService->embeddingRejection($chatPlatform) ?? EmbeddingRejection::NoEmbeddingsApi;
+
+                $note = sprintf(
+                    'AI semantic similarity was not used because the chat platform "%s" (%s) cannot create embeddings: %s, and no other active AI platform can. %s',
+                    $chatPlatform->label,
+                    AiProvider::tryFrom((string) $chatPlatform->provider)?->label() ?? $chatPlatform->provider,
+                    $rejection->describe(),
+                    $fallback,
+                );
+
+                if ($rejection !== EmbeddingRejection::NoEmbeddingsApi) {
+                    return $note;
+                }
+
+                $capable = collect(AiProvider::cases())
+                    ->filter(fn (AiProvider $provider): bool => $provider->supportsEmbeddings())
+                    ->map(fn (AiProvider $provider): string => $provider->label())
+                    ->implode(', ');
+
+                return "{$note} To enable semantic similarity, activate a platform from one of these providers under Magic AI platforms: {$capable}.";
+            }
+
+            /**
+             * Rank documents by token overlap (Jaccard) with the query.
+             *
+             * @param  array<int, string>  $documents
+             * @return array<int, array{index: int, score: float}>
+             */
+            private function rankByKeywords(string $queryText, array $documents, int $limit): array
+            {
+                $queryTokens = $this->tokens($queryText);
+                $scores = [];
+
+                foreach ($documents as $index => $document) {
+                    $tokens = $this->tokens($document);
+                    $union = count(array_unique(array_merge($queryTokens, $tokens)));
+                    $score = $union === 0 ? 0.0 : count(array_intersect($queryTokens, $tokens)) / $union;
+
+                    if ($score > 0) {
+                        $scores[] = ['index' => $index, 'score' => round($score, 4)];
+                    }
+                }
+
+                usort($scores, fn (array $a, array $b): int => $b['score'] <=> $a['score']);
+
+                return array_slice($scores, 0, $limit);
+            }
+
+            /**
+             * @return array<int, string>
+             */
+            private function tokens(string $text): array
+            {
+                return array_values(array_unique(array_filter($this->words($text), fn (string $part): bool => mb_strlen($part) > 1)));
+            }
+
+            /**
+             * Split text into lowercase letter/number runs.
+             *
+             * @return array<int, string>
+             */
+            private function words(string $text, int $limit = -1): array
+            {
+                return preg_split('/[^\p{L}\p{N}]+/u', mb_strtolower($text), $limit, PREG_SPLIT_NO_EMPTY) ?: [];
+            }
+
+            /**
+             * Existing SKUs closest to a mistyped one, sharing its leading segment.
+             *
+             * @return array<int, string>
+             */
+            private function closestSkus(string $sku): array
+            {
+                $needle = mb_strtolower($sku);
+                $prefix = $this->words($needle, 2)[0] ?? '';
+
+                if ($prefix === '') {
+                    return [];
+                }
+
+                $maxDistance = max(3, intdiv(strlen($needle), 3));
+
+                return $this->productRepository->skusStartingWith($prefix, 500)
+                    ->map(fn (string $candidate): array => [$candidate, levenshtein($needle, mb_strtolower($candidate))])
+                    ->filter(fn (array $pair): bool => $pair[1] <= $maxDistance)
+                    ->sortBy(fn (array $pair): int => $pair[1])
+                    ->take(5)
+                    ->map(fn (array $pair): string => $pair[0])
+                    ->values()
+                    ->all();
             }
 
             /**

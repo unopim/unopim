@@ -62,6 +62,10 @@ class CoreServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
 
         $this->app->beforeResolving(MailManager::class, function (): void {
+            if ($this->mailTransportIsPinnedByEnvironment()) {
+                return;
+            }
+
             $this->overrideMailConfiguration();
         });
 
@@ -126,6 +130,17 @@ class CoreServiceProvider extends ServiceProvider
     }
 
     /**
+     * Whether the environment pinned a transport the stored settings must not replace.
+     *
+     * The array transport is the one the test environment forces, so overriding it
+     * would dial the admin's SMTP host and send real mail from the suite.
+     */
+    private function mailTransportIsPinnedByEnvironment(): bool
+    {
+        return config('mail.default') === 'array';
+    }
+
+    /**
      * Override the mail transport with admin Configuration (Email settings) values
      * when present. Deferred until a mailer is resolved: reading the settings costs
      * a schema check and several config queries, and almost no request sends mail.
@@ -185,7 +200,8 @@ class CoreServiceProvider extends ServiceProvider
      * Create the HTMLPurifier serializer cache directory.
      *
      * Concurrent boots race here, so the directory is re-checked after the attempt rather than
-     * before it, which rules out `File::ensureDirectoryExists()`.
+     * before it, which rules out `File::ensureDirectoryExists()`. The local error handler is
+     * needed because Laravel's handler swallows the warning, leaving error_get_last() empty.
      *
      * @throws RuntimeException
      */
@@ -197,7 +213,6 @@ class CoreServiceProvider extends ServiceProvider
 
         $failure = null;
 
-        // Laravel's handler swallows the warning, leaving error_get_last() empty.
         set_error_handler(function (int $level, string $message) use (&$failure): bool {
             $failure = $message;
 

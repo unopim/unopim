@@ -50,10 +50,10 @@ return [
             'notice'  => 'Cet enregistrement est conservé à des fins de transparence, mais n\'est plus activement maintenu.',
         ],
         'release' => [
-            'banner'       => 'Release :sequence of this passport',
-            'superseded'   => 'This is an earlier state of the passport, kept exactly as it was published. A newer state exists.',
-            'current'      => 'This is the current state of the passport.',
-            'view-current' => 'View the current passport',
+            'banner'       => 'Publication :sequence de ce passeport',
+            'superseded'   => 'Ceci est un état antérieur du passeport, conservé exactement tel qu\'il a été publié. Un état plus récent existe.',
+            'current'      => 'Ceci est l\'état actuel du passeport.',
+            'view-current' => 'Voir le passeport actuel',
         ],
     ],
 ];

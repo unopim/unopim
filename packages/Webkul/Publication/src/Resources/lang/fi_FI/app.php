@@ -52,10 +52,10 @@ return [
             'notice'  => 'Tämä tietue säilytetään avoimuuden vuoksi, mutta sitä ei enää ylläpidetä aktiivisesti.',
         ],
         'release' => [
-            'banner'       => 'Release :sequence of this passport',
-            'superseded'   => 'This is an earlier state of the passport, kept exactly as it was published. A newer state exists.',
-            'current'      => 'This is the current state of the passport.',
-            'view-current' => 'View the current passport',
+            'banner'       => 'Tämän tuotepassin julkaisu :sequence',
+            'superseded'   => 'Tämä on tuotepassin aiempi tila, säilytetty täsmälleen sellaisena kuin se julkaistiin. Uudempi tila on olemassa.',
+            'current'      => 'Tämä on tuotepassin nykyinen tila.',
+            'view-current' => 'Näytä nykyinen tuotepassi',
         ],
     ],
 ];

@@ -50,6 +50,7 @@
 # ─── Shared configuration (reused via YAML anchors) ─────────────────
 x-app-environment: &app-environment
   APP_URL: "${APP_URL:-http://localhost:${APP_PORT:-8000}}"
+  APP_CHANNEL: "${APP_CHANNEL:-default}"
   DB_CONNECTION: "${DB_CONNECTION:-pgsql}"
   DB_HOST: "${DB_HOST:-unopim-pgsql}"
   DB_PORT: "${DB_PORT:-5432}"

@@ -1,6 +1,6 @@
 const path = require('path');
 const { test, expect } = require('../../utils/fixtures');
-const { clickSave, navigateTo, generateUid, searchInDataGrid, clickEditOnRow } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, searchInDataGrid, clickEditOnRow, closeDropdown } = require('../../utils/helpers');
 
 // Regression: Discard must revert rich fields (WYSIWYG/Select/Multiselect/Image/Gallery/File)
 // whose value lives in Vue state; each now restores itself on the bar's `unsaved-changes:reset`.
@@ -33,7 +33,7 @@ async function createSimpleProduct(adminPage, sku, familyIndex = 0) {
     .locator('.multiselect__element:not(.multiselect__element--disabled) .multiselect__option:not(.multiselect__option--disabled)')
     .nth(familyIndex)
     .click();
-  await adminPage.keyboard.press('Escape');
+  await closeDropdown(adminPage);
 
   await adminPage.locator('input[name="sku"]').fill(sku);
   await clickSave(adminPage, 'Save Product');
@@ -53,7 +53,7 @@ async function selectFirstOption(page, fieldName, optionLabel) {
       .first()
       .click();
   }
-  await page.keyboard.press('Escape');
+  await closeDropdown(page);
 }
 
 async function deleteProductBySku(adminPage, sku) {
@@ -106,7 +106,7 @@ async function findMultiselectWithOptions(page) {
       return candidate;
     }
 
-    await page.keyboard.press('Escape');
+    await closeDropdown(page);
   }
 
   return null;
@@ -149,7 +149,7 @@ test.describe('Product edit — Discard reverts rich fields', () => {
       .locator('.multiselect__element:not(.multiselect__element--disabled) .multiselect__option:not(.multiselect__option--disabled)')
       .first()
       .click();
-    await adminPage.keyboard.press('Escape');
+    await closeDropdown(adminPage);
 
     await expect(bar(adminPage)).toBeVisible({ timeout: 10000 });
 

@@ -4,13 +4,17 @@ namespace Webkul\MagicAI\Services;
 
 use Laravel\Ai\Image;
 use Laravel\Ai\Responses\AgentResponse;
+use Laravel\Ai\Responses\Data\FinishReason;
 use Laravel\Ai\Responses\ImageResponse;
 use Webkul\MagicAI\Agents\MagicContentAgent;
 use Webkul\MagicAI\Agents\TranslationAgent;
 use Webkul\MagicAI\Contracts\LLMModelInterface;
+use Webkul\MagicAI\Contracts\ReportsTruncation;
 use Webkul\MagicAI\Contracts\SupportsStructuredTranslation;
 use Webkul\MagicAI\Enums\AiProvider;
+use Webkul\MagicAI\MagicAI;
 use Webkul\MagicAI\Models\MagicAIPlatform;
+use Webkul\MagicAI\Responses\GeneratedContent;
 
 /**
  * Adapter that bridges MagicAI's LLMModelInterface with the Laravel AI SDK.
@@ -18,7 +22,7 @@ use Webkul\MagicAI\Models\MagicAIPlatform;
  * Provider credentials are applied through ScopedProviderConfig so they never
  * leak across Octane requests; generation options travel on the agent itself.
  */
-class LaravelAiAdapter implements LLMModelInterface, SupportsStructuredTranslation
+class LaravelAiAdapter implements LLMModelInterface, ReportsTruncation, SupportsStructuredTranslation
 {
     protected AiProvider $aiProvider;
 
@@ -27,11 +31,26 @@ class LaravelAiAdapter implements LLMModelInterface, SupportsStructuredTranslati
         protected string $model,
         protected string $prompt,
         protected float $temperature = 0.7,
-        protected int $maxTokens = 1054,
+        protected int $maxTokens = MagicAI::DEFAULT_MAX_TOKENS,
         protected string $systemPrompt = '',
         protected bool $stream = false,
     ) {
         $this->aiProvider = AiProvider::from($this->platform->provider);
+    }
+
+    /**
+     * The model identifier sent to the provider. Azure addresses a model by its
+     * deployment name, so a configured deployment wins over the catalogue entry.
+     */
+    protected function modelName(): string
+    {
+        if ($this->aiProvider !== AiProvider::Azure) {
+            return $this->model;
+        }
+
+        $deployment = trim((string) (ProviderOverrides::decode($this->platform->extras)['deployment'] ?? ''));
+
+        return $deployment !== '' ? $deployment : $this->model;
     }
 
     /**
@@ -45,7 +64,9 @@ class LaravelAiAdapter implements LLMModelInterface, SupportsStructuredTranslati
             'key' => $this->platform->api_key,
         ];
 
-        if ($this->aiProvider === AiProvider::Custom) {
+        if ($this->aiProvider === AiProvider::Concentrate) {
+            $overrides['url'] = $this->platform->api_url ?: $this->aiProvider->defaultUrl();
+        } elseif ($this->aiProvider === AiProvider::Custom) {
             // Never fall back to the global openai-compatible env URL — that
             // would send this platform's API key to an unrelated host.
             if (! $this->platform->api_url) {
@@ -59,11 +80,7 @@ class LaravelAiAdapter implements LLMModelInterface, SupportsStructuredTranslati
             $overrides['url'] = $this->platform->api_url;
         }
 
-        if ($this->platform->extras && is_array($this->platform->extras)) {
-            return array_merge($overrides, $this->platform->extras);
-        }
-
-        return $overrides;
+        return ProviderOverrides::build($overrides, $this->platform->extras);
     }
 
     /**
@@ -71,18 +88,47 @@ class LaravelAiAdapter implements LLMModelInterface, SupportsStructuredTranslati
      */
     public function ask(): string
     {
+        return $this->askResult()->text;
+    }
+
+    /**
+     * Generate text content, reporting whether the model was cut off by the
+     * token ceiling.
+     */
+    public function askResult(): GeneratedContent
+    {
         $response = ScopedProviderConfig::run(
             $this->aiProvider->configKey(),
             $this->providerOverrides(),
             fn (): AgentResponse => $this->contentAgent()->prompt(
                 $this->prompt,
                 provider: $this->aiProvider->toLab(),
-                model: $this->model,
+                model: $this->modelName(),
                 timeout: 120,
             ),
         );
 
-        return $response->text;
+        return new GeneratedContent(
+            text: self::dropDanglingMarkup($response->text),
+            truncated: self::hitTokenCeiling($response),
+        );
+    }
+
+    /**
+     * Whether the provider stopped on the token ceiling rather than finishing.
+     */
+    public static function hitTokenCeiling(AgentResponse $response): bool
+    {
+        return $response->steps->last()?->finishReason === FinishReason::Length;
+    }
+
+    /**
+     * A generation cut mid-tag leaves an unterminated `<...` that the editor
+     * would render as stray text, so the fragment is dropped.
+     */
+    public static function dropDanglingMarkup(string $text): string
+    {
+        return rtrim((string) preg_replace('/<[^<>]*$/', '', $text));
     }
 
     /**
@@ -98,7 +144,7 @@ class LaravelAiAdapter implements LLMModelInterface, SupportsStructuredTranslati
             fn (): AgentResponse => $agent->prompt(
                 $this->prompt,
                 provider: $this->aiProvider->toLab(),
-                model: $this->model,
+                model: $this->modelName(),
                 timeout: 120,
             ),
         );
@@ -125,7 +171,7 @@ class LaravelAiAdapter implements LLMModelInterface, SupportsStructuredTranslati
 
         return new MagicContentAgent(
             systemPrompt: $this->systemPrompt,
-            temperature: $isReasoningModel ? null : $this->temperature,
+            temperature: $isReasoningModel || $this->rejectsSamplingParameters($this->model) ? null : $this->temperature,
             maxTokens: $isReasoningModel ? max($this->maxTokens, 16000) : $this->maxTokens,
         );
     }
@@ -143,6 +189,25 @@ class LaravelAiAdapter implements LLMModelInterface, SupportsStructuredTranslati
         }
 
         return (bool) preg_match('/^chat-latest|^o[1-9]\b|^o[1-9]-|^gpt-5/', $model);
+    }
+
+    /**
+     * Determine if the model is a Claude model that rejects `temperature`.
+     *
+     * Claude 3.x, Haiku 4.x and Opus/Sonnet up to 4.6 accept sampling
+     * parameters, including dated, Vertex (`@`) and Bedrock (`-v1:0`) ids;
+     * newer Claude models return a 400, so any other Claude model omits
+     * them rather than failing on the next release.
+     */
+    protected function rejectsSamplingParameters(string $model): bool
+    {
+        $model = strtolower($model);
+
+        if (! preg_match('/(^|[.\/:])claude-/', $model)) {
+            return false;
+        }
+
+        return ! preg_match('/claude-(3|haiku-4|(opus|sonnet)-4(-[0-6])?(-\d{8})?(-v\d+(:\d+)?)?(@|$))/', $model);
     }
 
     /**
@@ -175,7 +240,7 @@ class LaravelAiAdapter implements LLMModelInterface, SupportsStructuredTranslati
             $this->providerOverrides(),
             fn (): ImageResponse => $pending->generate(
                 provider: $this->aiProvider->toLab(),
-                model: $this->model,
+                model: $this->modelName(),
             ),
         );
 

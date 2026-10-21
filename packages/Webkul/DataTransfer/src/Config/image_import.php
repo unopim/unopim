@@ -16,4 +16,17 @@ return [
     'max_total_size' => env('IMAGE_IMPORT_MAX_TOTAL_SIZE', 524288000),
 
     'max_compression_ratio' => env('IMAGE_IMPORT_MAX_COMPRESSION_RATIO', 100),
+
+    'allowed_extensions' => [
+        'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tif', 'tiff', 'jfif', 'jif', 'psd',
+        'pdf', 'doc', 'docx', 'ppt', 'pptx', 'rtf', 'txt', 'csv',
+        'mp3', 'wav',
+    ],
+
+    'extension_mime_fallbacks' => [
+        'csv' => ['text/plain'],
+        'jif' => ['image/jpeg'],
+    ],
+
+    'max_reported_skipped' => env('IMAGE_IMPORT_MAX_REPORTED_SKIPPED', 50),
 ];

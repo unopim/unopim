@@ -4,6 +4,7 @@ namespace Webkul\Product\Filter;
 
 use Illuminate\Support\Facades\DB;
 use Webkul\ElasticSearch\Contracts\PropertyFilter as PropertyFilterContract;
+use Webkul\Product\Enums\ProductType;
 
 abstract class AbstractPropertyFilter extends AbstractFilter implements PropertyFilterContract
 {
@@ -44,7 +45,7 @@ abstract class AbstractPropertyFilter extends AbstractFilter implements Property
         return DB::table($table)
             ->select("$table.id")
             ->whereIn("$table.sku", $skus)
-            ->Where("$table.type", config('product_types.configurable.key'))
+            ->Where("$table.type", ProductType::Configurable->value)
             ->pluck('id')
             ->toArray();
     }

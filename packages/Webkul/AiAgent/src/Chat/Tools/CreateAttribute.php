@@ -45,7 +45,7 @@ class CreateAttribute implements PimTool
 
             public function handle(Request $request): string
             {
-                if ($denied = $this->denyUnlessAllowed($this->context, 'catalog.attributes')) {
+                if ($denied = $this->denyUnlessAllowed($this->context, 'catalog.attributes.create')) {
                     return $denied;
                 }
 

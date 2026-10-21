@@ -52,10 +52,10 @@ return [
             'notice'  => 'Bản ghi này được lưu giữ vì mục đích minh bạch nhưng không còn được duy trì tích cực.',
         ],
         'release' => [
-            'banner'       => 'Release :sequence of this passport',
-            'superseded'   => 'This is an earlier state of the passport, kept exactly as it was published. A newer state exists.',
-            'current'      => 'This is the current state of the passport.',
-            'view-current' => 'View the current passport',
+            'banner'       => 'Bản phát hành :sequence của hộ chiếu này',
+            'superseded'   => 'Đây là trạng thái trước đây của hộ chiếu, được lưu giữ đúng như khi được công bố. Đã có trạng thái mới hơn.',
+            'current'      => 'Đây là trạng thái hiện tại của hộ chiếu.',
+            'view-current' => 'Xem hộ chiếu hiện tại',
         ],
     ],
 ];

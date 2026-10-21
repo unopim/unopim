@@ -52,10 +52,10 @@ return [
             'notice'  => 'Questo record viene conservato per motivi di trasparenza, ma non è più attivamente mantenuto.',
         ],
         'release' => [
-            'banner'       => 'Release :sequence of this passport',
-            'superseded'   => 'This is an earlier state of the passport, kept exactly as it was published. A newer state exists.',
-            'current'      => 'This is the current state of the passport.',
-            'view-current' => 'View the current passport',
+            'banner'       => 'Pubblicazione :sequence di questo passaporto',
+            'superseded'   => 'Questo è uno stato precedente del passaporto, conservato esattamente com\'è stato pubblicato. Esiste uno stato più recente.',
+            'current'      => 'Questo è lo stato attuale del passaporto.',
+            'view-current' => 'Visualizza il passaporto attuale',
         ],
     ],
 ];

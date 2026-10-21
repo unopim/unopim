@@ -72,6 +72,10 @@ class PublicationServiceProvider extends ServiceProvider
 
     /**
      * Public and idempotent so a consuming provider or a post-boot test can re-trigger registration.
+     *
+     * The release route `/{uuid}/r/{sequence}/{locale}` has a literal `r` segment, so it can never shadow
+     * the two-segment routes. Its `sequence` is bounded to a positive integer that fits the column;
+     * anything else 404s at the router.
      */
     public function registerPublicRoutes(): void
     {
@@ -121,8 +125,6 @@ class PublicationServiceProvider extends ServiceProvider
                         ->defaults('type', $type->code)
                         ->name('publication.public.'.$type->code.'.carrier.svg');
 
-                    // Four segments with a literal `r`, so it can never shadow the two-segment routes above.
-                    // `sequence` is bounded to a positive int that fits the column; anything else 404s at the router.
                     // Entry point a printed release carrier encodes: negotiates the locale once, then 302s to the strict URL.
                     Route::get('/{uuid}/r/{sequence}', [PublicationController::class, 'redirectRelease'])
                         ->where('sequence', '[1-9][0-9]{0,9}')
