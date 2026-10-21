@@ -123,6 +123,10 @@ class PublicationController extends Controller
      * Renders the state as of one release: for the requested locale, the most recent version minted at
      * or before that release. Strict locale, no Accept-Language negotiation: an explicit historical URL
      * is a reference, and a reference must not resolve to a different document per reader.
+     *
+     * `versionsAsOf()` returns at most one version per locale, so the cost of a scan stays flat however often
+     * the passport is republished; the same rows feed the locale switcher, and only the rendered version's
+     * payload is loaded.
      */
     public function showRelease(Request $request, string $uuid, string $sequence, string $locale): Response
     {
@@ -161,6 +165,20 @@ class PublicationController extends Controller
      * and it never negotiates JSON-LD (a historical payload's stamped identity is the publication URL,
      * which would misdescribe it).
      *
+     * Only the live Published state exposes its payload as JSON-LD. A version redacted on its own is a
+     * tombstone even under a Published publication, because its payload is gone; a withdrawn or redacted
+     * publication is a tombstone too.
+     *
+     * The ETag covers the release, whether the version is still current and whether it is redacted: the
+     * release banner and the tombstone change the HTML without changing the checksum.
+     *
+     * A view is counted only for a live, Published, full HTML render, never for a 304, a JSON-LD
+     * negotiation, a tombstone or a release page. It is queued so the render is not slowed, and stores a
+     * daily count only: no IP, no visitor identity.
+     *
+     * Redacted is irreversible, so it answers 410 Gone; Withdrawn can be reinstated, so it stays 200. No
+     * tombstone may sit in a shared cache, since there is no purge hook to displace it on reinstatement.
+     *
      * @param  Collection<int, PublicationVersion>  $switchable  the versions the locale switcher may link to
      */
     private function render(
@@ -174,11 +192,9 @@ class PublicationController extends Controller
         [$granted, $grantedIndex] = $this->grantedTier($request);
         $payload = $this->applyTierGate($version->payload, $grantedIndex);
 
-        // An individually redacted version is a tombstone even under a Published publication: its payload is gone.
         $gone = $publication->status === PublicationStatus::Redacted || $version->redacted_at !== null;
         $tombstone = $gone || $publication->status !== PublicationStatus::Published;
 
-        // Only the live Published state exposes payload as JSON-LD: tombstones must not leak it, historical states are HTML only.
         if (
             $release === null
             && ! $tombstone
@@ -200,8 +216,6 @@ class PublicationController extends Controller
 
         app()->setLocale($version->locale->code);
 
-        // Release pages carry a banner whose text depends on whether the state is still current, and a
-        // redacted version renders as a tombstone; both change the HTML without changing the checksum.
         $etag = '"'.hash_hmac('sha256', implode('|', [
             $version->checksum,
             $publication->status->value,
@@ -217,9 +231,6 @@ class PublicationController extends Controller
             return response('', 304)->header('ETag', $etag);
         }
 
-        // Count only a live (Published) full HTML render — never a 304, a JSON-LD
-        // negotiation, a tombstone, or a historical release page. Queued so the render is
-        // not slowed, and it stores a daily count only: no IP, no visitor identity.
         if ($release === null && ! $tombstone) {
             RecordPublicationView::dispatch($publication->id, (int) $version->locale->id);
         }
@@ -252,8 +263,6 @@ class PublicationController extends Controller
             default           => ((bool) (core()->getConfigData('general.publication.settings.indexable', $publication->channel->code) ?? false)) ? 'index, nofollow' : 'noindex, nofollow',
         };
 
-        // Redacted is irreversible, so it is 410 Gone; Withdrawn can be reinstated, so it stays 200.
-        // No tombstone may sit in a shared cache: there is no purge hook to displace it on reinstatement.
         $response = response($view->render(), $gone ? 410 : 200)
             ->header('ETag', $etag)
             ->header('Cache-Control', $tombstone ? 'private, no-store' : $this->cacheControl($publication->channel?->code))
