@@ -23,6 +23,11 @@ class PassportPayloadBuilder implements PayloadBuilder
 
     private const DEFAULT_SECTION = 'passport';
 
+    /**
+     * How much of a document the copy spool keeps in memory before it spills to a temp file.
+     */
+    private const SPOOL_MEMORY_BYTES = 2 * 1024 * 1024;
+
     public function __construct(
         private readonly PassportTemplateResolver $templates,
     ) {}
@@ -289,8 +294,12 @@ class PassportPayloadBuilder implements PayloadBuilder
      * of being skipped as "already there", so the payload changes, the checksum changes and Publisher
      * mints a new version, while every sealed version keeps pointing at the exact bytes it attested.
      * The basename stays the field code, so the download filename is unchanged. An object already at the
-     * target path holds these exact bytes, so it is never written twice; the file is hashed and copied
-     * as a stream, so a large document is never held in memory.
+     * target path holds these exact bytes, so it is never written twice.
+     *
+     * The source is read once into a spool, and both the digest and the written bytes come from that
+     * spool, so they describe the same snapshot even if the source changes meanwhile; memory stays flat
+     * whatever the file size. Returns null, so the document gets no servable path, when the source is
+     * missing or unreadable or the write fails.
      *
      * Must run at build time: PublicationVersion::payload is immutable once the version row exists, so no path can be rewritten later.
      *
@@ -304,35 +313,43 @@ class PassportPayloadBuilder implements PayloadBuilder
             return null;
         }
 
-        $digest = $this->sha256($source, $sourcePath);
+        $spool = $this->spool($source, $sourcePath);
 
-        if ($digest === null) {
+        if ($spool === null) {
             return null;
         }
 
-        $extension = pathinfo($sourcePath, PATHINFO_EXTENSION);
+        try {
+            $context = hash_init('sha256');
 
-        $targetPath = "publication/{$uuid}/{$localeCode}/".substr($digest, 0, 16)."/{$fieldCode}".($extension !== '' ? ".{$extension}" : '');
+            hash_update_stream($context, $spool);
 
-        $target = Storage::disk(config('publication.asset_disk'));
+            $digest = hash_final($context);
 
-        if (! $target->exists($targetPath)) {
-            $stream = $source->readStream($sourcePath);
+            $extension = pathinfo($sourcePath, PATHINFO_EXTENSION);
 
-            $target->writeStream($targetPath, $stream);
+            $targetPath = "publication/{$uuid}/{$localeCode}/{$digest}/{$fieldCode}".($extension !== '' ? ".{$extension}" : '');
 
-            if (is_resource($stream)) {
-                fclose($stream);
+            $target = Storage::disk(config('publication.asset_disk'));
+
+            if (! $target->exists($targetPath)
+                && (! rewind($spool) || $target->writeStream($targetPath, $spool) === false)) {
+                return null;
             }
-        }
 
-        return ['path' => $targetPath, 'sha256' => $digest];
+            return ['path' => $targetPath, 'sha256' => $digest];
+        } finally {
+            fclose($spool);
+        }
     }
 
     /**
-     * SHA-256 of a file, read as a stream so memory stays flat whatever the file size. Null when the file cannot be read.
+     * Reads the file once into a rewound local spool (memory up to SPOOL_MEMORY_BYTES, a temp file beyond).
+     * Null when the file cannot be read.
+     *
+     * @return resource|null
      */
-    private function sha256(Filesystem $disk, string $path): ?string
+    private function spool(Filesystem $disk, string $path)
     {
         $stream = $disk->readStream($path);
 
@@ -340,12 +357,24 @@ class PassportPayloadBuilder implements PayloadBuilder
             return null;
         }
 
-        $context = hash_init('sha256');
+        $spool = fopen('php://temp/maxmemory:'.self::SPOOL_MEMORY_BYTES, 'w+b');
 
-        hash_update_stream($context, $stream);
+        try {
+            $copied = $spool !== false
+                && stream_copy_to_stream($stream, $spool) !== false
+                && rewind($spool);
+        } finally {
+            fclose($stream);
+        }
 
-        fclose($stream);
+        if (! $copied) {
+            if (is_resource($spool)) {
+                fclose($spool);
+            }
 
-        return hash_final($context);
+            return null;
+        }
+
+        return $spool;
     }
 }

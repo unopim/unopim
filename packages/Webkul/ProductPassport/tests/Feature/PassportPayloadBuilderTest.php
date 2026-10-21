@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 use Webkul\ProductPassport\Services\PassportPayloadBuilder;
 
@@ -93,4 +94,43 @@ it('hashes and copies a multi-megabyte document intact', function (): void {
 
     expect($document['sha256'])->toBe(hash('sha256', $contents))
         ->and(Storage::disk(config('publication.asset_disk'))->get($document['path']))->toBe($contents);
+});
+
+it('stamps no path when the source document cannot be read', function (): void {
+    [$product, $context] = $this->productWithSecretAndDppAttributes(withDocument: true);
+
+    $disk = Storage::disk(config('filesystems.default'));
+
+    Storage::set(config('filesystems.default'), new class($disk->getDriver(), $disk->getAdapter(), $disk->getConfig()) extends FilesystemAdapter
+    {
+        public function readStream($path)
+        {
+            return null;
+        }
+    });
+
+    $document = resolve(PassportPayloadBuilder::class)->build($product, $context)['documents'][0];
+
+    expect($document)->not->toHaveKey('path')
+        ->and($document)->not->toHaveKey('sha256')
+        ->and(Storage::disk(config('publication.asset_disk'))->exists('publication/'.$context->uuid))->toBeFalse();
+});
+
+it('stamps no path when the asset disk refuses the write', function (): void {
+    [$product, $context] = $this->productWithSecretAndDppAttributes(withDocument: true);
+
+    $disk = Storage::disk(config('publication.asset_disk'));
+
+    Storage::set(config('publication.asset_disk'), new class($disk->getDriver(), $disk->getAdapter(), $disk->getConfig()) extends FilesystemAdapter
+    {
+        public function writeStream($path, $resource, array $options = [])
+        {
+            return false;
+        }
+    });
+
+    $document = resolve(PassportPayloadBuilder::class)->build($product, $context)['documents'][0];
+
+    expect($document)->not->toHaveKey('path')
+        ->and($document)->not->toHaveKey('sha256');
 });
