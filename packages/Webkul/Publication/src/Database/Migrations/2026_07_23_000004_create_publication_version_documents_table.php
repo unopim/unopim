@@ -11,7 +11,6 @@ return new class extends Migration
         Schema::create('publication_version_documents', function (Blueprint $table): void {
             $table->id();
 
-            // Paths each version's payload references; superseded versions keep their rows, the asset controller decides servability per request.
             $table->unsignedBigInteger('publication_version_id');
             $table->foreign('publication_version_id', 'pvd_version_fk')
                 ->references('id')->on('publication_versions')->cascadeOnDelete();
