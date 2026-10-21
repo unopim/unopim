@@ -54,6 +54,20 @@ class UpdateProduct implements PimTool
                 ];
             }
 
+            /**
+             * Locale-scoped values go to the requested locale, or to the conversation
+             * locale when none is given. An unknown or inactive locale is rejected
+             * rather than written elsewhere: German copy landing in en_US because of a
+             * typo is worse than no write at all.
+             *
+             * A value counts as a locale map only when every key is an active locale,
+             * so {"de_DE": ..., "typo": ...} reaches the type check instead of having
+             * its unmatched entries dropped silently.
+             *
+             * Auto-translation is skipped when a locale is named explicitly: setting
+             * the German description must not overwrite the other locales with
+             * machine translations of that German text.
+             */
             public function handle(Request $request): string
             {
                 if ($denied = $this->denyUnlessAllowed($this->context, 'catalog.products.edit')) {
@@ -77,10 +91,6 @@ class UpdateProduct implements PimTool
                 $currencies = $this->writerService->getActiveCurrencyCodes();
                 $activeLocaleCodes = array_flip(core()->getAllActiveLocales()->pluck('code')->all());
 
-                // An explicit locale lets the caller target a translation instead of
-                // silently writing over whichever locale the conversation happens to
-                // be in. Unknown codes fail loudly: writing German copy into en_US
-                // because of a typo is worse than not writing it at all.
                 $requestedLocale = trim($request->string('locale')->toString());
 
                 if ($requestedLocale !== '' && ! isset($activeLocaleCodes[$requestedLocale])) {
@@ -121,9 +131,6 @@ class UpdateProduct implements PimTool
                         // Detect and route each locale value to the correct bucket.
                         if (is_array($value) && $value !== []) {
                             $localeKeys = array_keys($value);
-                            // Every key must be an active locale. Testing only the first
-                            // one accepted {"de_DE": ..., "typo": ...} and dropped the
-                            // unmatched entries without telling anyone.
                             $looksLikeLocaleMap = $localeKeys !== [] && array_all(
                                 $localeKeys,
                                 fn ($localeKey): bool => isset($activeLocaleCodes[(string) $localeKey])
@@ -198,10 +205,7 @@ class UpdateProduct implements PimTool
                             $value = $resolved;
                         }
 
-                        // Route to correct bucket — target locale + translate others.
-                        // Auto-translation is skipped when the caller named a locale:
-                        // "set the German description" must not overwrite the other
-                        // locales with machine translations of that German text.
+                        // Route to correct bucket — source locale + translate others
                         if ($meta['value_per_channel'] && $meta['value_per_locale']) {
                             foreach ($allChannels as $ch) {
                                 $values['channel_locale_specific'][$ch->code][$targetLocale][$code] = $value;

@@ -1688,6 +1688,12 @@ app.component('v-agenting-pim', {
             if (key) delete this.extensionContext[key];
         },
 
+        /**
+         * Sends the message with the catalog scope of the page the user is looking at
+         * (locale/channel query parameters, else the scope inputs). The backend prefers
+         * these codes and otherwise falls back to the default locale, so without them a
+         * locale-scoped edit lands on the wrong translation.
+         */
         async send(retryRequestId = null) {
             const text = this.inputText.trim();
             const files = [...this.pendingFiles];
@@ -1711,10 +1717,6 @@ app.component('v-agenting-pim', {
                 fd.append('extensions', JSON.stringify(selectedContext));
                 fd.append('history', JSON.stringify(this.messages.slice(0, -1).map(m => ({ role: m.role, content: m.content || '' }))));
                 fd.append('context[current_page]', window.location.pathname);
-                // Catalog scope of the page the user is looking at. The backend
-                // prefers widget-provided codes and otherwise falls back to the
-                // default locale, so without this a locale-scoped edit lands on
-                // the wrong translation while the user is viewing another one.
                 const scopeParams = new URLSearchParams(window.location.search);
                 const scopeLocale = scopeParams.get('locale')
                     || document.querySelector('input[name="locale"]')?.value
