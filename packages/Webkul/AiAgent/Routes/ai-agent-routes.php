@@ -68,8 +68,14 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
             ->name('chat.send-async');
 
         Route::get('chat/reply/{id}', [ChatController::class, 'replyStatus'])
+            ->whereUuid('id')
             ->middleware('throttle:240,1')
             ->name('chat.reply');
+
+        Route::post('chat/reply/{id}/cancel', [ChatController::class, 'cancelReply'])
+            ->whereUuid('id')
+            ->middleware('throttle:30,1')
+            ->name('chat.reply.cancel');
 
         Route::post('chat/rate', [ChatController::class, 'rate'])
             ->middleware('throttle:60,1')

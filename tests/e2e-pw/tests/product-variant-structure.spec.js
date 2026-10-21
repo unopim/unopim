@@ -1,5 +1,5 @@
 const { test, expect } = require('../utils/fixtures');
-const { navigateTo, clickSave, generateUid, searchInDataGrid } = require('../utils/helpers');
+const { navigateTo, clickSave, generateUid, searchInDataGrid, closeDropdown } = require('../utils/helpers');
 
 /** Select a value from a Vue-multiselect dropdown by field name (mirrors products.spec.js). */
 async function selectMultiselect(page, fieldName, optionLabel) {
@@ -16,7 +16,7 @@ async function selectMultiselect(page, fieldName, optionLabel) {
       .first()
       .click();
   }
-  await page.keyboard.press('Escape');
+  await closeDropdown(page);
 }
 
 async function deleteProductBySku(adminPage, sku) {

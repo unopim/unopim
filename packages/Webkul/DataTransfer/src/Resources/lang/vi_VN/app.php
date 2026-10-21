@@ -14,7 +14,8 @@ return [
         'products' => [
             'title'      => 'Các sản phẩm',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => 'Đơn vị ":unit" không phải là đơn vị hợp lệ cho thuộc tính đo lường ":attribute".',
+                'errors'       => [
                     'duplicate-url-key'                        => 'URL key: \'%s\' đã được tạo cho một mục có SKU: \'%s\'.',
                     'invalid-attribute-family'                 => 'Giá trị không hợp lệ cho cột gia đình thuộc tính (gia đình thuộc tính không tồn tại?)',
                     'invalid-type'                             => 'Loại sản phẩm không hợp lệ hoặc không được hỗ trợ',
@@ -189,8 +190,10 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
+            'file-name'      => 'Tên tệp',
+            'file-name-info' => 'Mẫu tên tệp. Các biến: [code], [date], [time], [entity_type]',
             'file-path'      => 'Đường dẫn tệp',
-            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'file-path-info' => 'Mẫu tên tệp. Các biến: [code], [date], [time], [entity_type]',
             'status'         => 'Trạng thái',
             'enable'         => 'Bật',
             'all'            => 'Tất cả',
@@ -291,14 +294,15 @@ return [
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'Các cột với số "%s" có các tiêu đề trống.',
-            'column-name-invalid'  => 'Tên cột không hợp lệ: "%s".',
-            'column-not-found'     => 'Các cột yêu cầu không được tìm thấy: %s.',
-            'column-numbers'       => 'Số cột không khớp với số hàng trong tiêu đề.',
-            'invalid-attribute'    => 'Tiêu đề chứa thuộc tính không hợp lệ: "%s".',
-            'system'               => 'Lỗi hệ thống không mong muốn xảy ra.',
-            'wrong-quotes'         => 'Dùng dấu ngoặc kép cong thay cho dấu ngoặc kép thẳng.',
-            'file-empty'           => 'Tệp trống hoặc không chứa dòng tiêu đề. Vui lòng tải lên tệp hợp lệ có dữ liệu.',
+            'column-empty-headers'   => 'Các cột với số "%s" có các tiêu đề trống.',
+            'column-name-invalid'    => 'Tên cột không hợp lệ: "%s".',
+            'column-not-found'       => 'Các cột yêu cầu không được tìm thấy: %s.',
+            'column-numbers'         => 'Số cột không khớp với số hàng trong tiêu đề.',
+            'invalid-attribute'      => 'Tiêu đề chứa thuộc tính không hợp lệ: "%s".',
+            'system'                 => 'Lỗi hệ thống không mong muốn xảy ra.',
+            'wrong-quotes'           => 'Dùng dấu ngoặc kép cong thay cho dấu ngoặc kép thẳng.',
+            'file-empty'             => 'Tệp trống hoặc không chứa dòng tiêu đề. Vui lòng tải lên tệp hợp lệ có dữ liệu.',
+            'file-missing'           => 'Không tìm thấy tệp nguồn cho tác vụ này. Hãy kiểm tra đường dẫn tệp trong hồ sơ, sau đó tải tệp lên lại.',
         ],
     ],
     'job' => [

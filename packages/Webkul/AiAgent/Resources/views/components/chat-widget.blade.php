@@ -7,7 +7,9 @@
     $magicAiModel    = trim(explode(',', $magicAiModels)[0]) ?: ucfirst($magicAiPlatform);
 
     $platformRepo    = app(\Webkul\MagicAI\Repository\MagicAIPlatformRepository::class);
-    $aiPlatforms     = $platformRepo->getActivePlatformOptions();
+    $extensionRegistry = app(\Webkul\AiAgent\Chat\ExtensionRegistry::class);
+    $resultRenderers = app(\Webkul\AiAgent\Chat\ResultRendererRegistry::class);
+    $aiPlatforms = array_merge($extensionRegistry->options(), $platformRepo->getActivePlatformOptions());
     $defaultPlatform = collect($aiPlatforms)->firstWhere('is_default', true);
     $defaultPlatformId = $defaultPlatform['id'] ?? ($aiPlatforms[0]['id'] ?? null);
 
@@ -15,12 +17,17 @@
     // sessionStorage still wins — see restoreState() below.
     $openByDefault = (bool) (core()->getConfigData('general.magic_ai.agentic_pim.open_by_default') ?? false);
 
-    // Hosts (besides same-origin) whose images the chat may render inline:
-    // the app URL host plus a configured S3/CDN disk. Anything else -> plain link.
+    // Hosts besides the current origin whose images the chat renders inline:
+    // the app URL host and a configured S3/CDN disk. Anything else is a link.
     $allowedImageHosts = collect([
         parse_url((string) config('app.url'), PHP_URL_HOST),
         parse_url((string) (config('filesystems.disks.s3.url') ?: ''), PHP_URL_HOST),
     ])->filter()->unique()->values();
+
+    // Replies run on a queue worker (and survive navigation) unless the queue
+    // is synchronous; then the turn streams over SSE as before.
+    $asyncReplies = config('queue.default') !== 'sync';
+    $replyPollLimitMs = (\Webkul\AiAgent\Jobs\ChatReplyJob::timeoutFor(config('queue.default')) + 30) * 1000;
 @endphp
 
 <v-agenting-pim></v-agenting-pim>
@@ -44,6 +51,14 @@
     });
 })();
 </script>
+
+@foreach($extensionRegistry->composers() as $composer)
+    @include($composer['view'])
+@endforeach
+
+@foreach($resultRenderers->views() as $rendererView)
+    @include($rendererView)
+@endforeach
 
 @pushOnce('scripts')
 <script type="text/x-template" id="v-agenting-pim-template">
@@ -239,7 +254,7 @@
                         </button>
                     </div>
 
-                    <div ref="messagesEl" style="flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:18px;min-height:0;">
+                    <div ref="messagesEl" @scroll.passive="onMessagesScroll" class="flex flex-1 flex-col gap-[18px] min-h-0 overflow-y-auto px-4 py-3.5">
                         {{-- Empty state --}}
                         <div v-if="messages.length === 0 && !isLoading" class="flex flex-col items-center justify-center h-full text-center py-8">
                             <svg class="w-10 h-10 text-primary-200 dark:text-primary-800 mb-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
@@ -277,7 +292,10 @@
                                     </div>
 
                                     {{-- Result details card --}}
-                                    <div v-if="msg.result && Object.keys(msg.result).length" class="rounded-xl border border-primary-200 dark:border-cherry-700 overflow-hidden">
+                                    <component v-if="resultComponent(msg.presentation)" :is="resultComponent(msg.presentation)"
+                                        :descriptor="msg.presentation" :visible="isOpen && activeTab === 'chat'" class="mt-4"></component>
+
+                                    <div v-if="!resultComponent(msg.presentation) && msg.result && Object.keys(msg.result).length" class="rounded-xl border border-primary-200 dark:border-cherry-700 overflow-hidden">
                                         <div class="px-4 py-2 border-b border-primary-100 dark:border-cherry-700" style="background:linear-gradient(135deg,rgb(var(--c-primary-50)),rgb(var(--c-primary-100)));">
                                             <p class="text-[10px] font-bold text-primary-500 dark:text-primary-400 uppercase tracking-wider" v-text="trans.result"></p>
                                         </div>
@@ -355,17 +373,11 @@
                             </div>
                         </template>
 
-                        {{-- Typing / Streaming indicator --}}
-                        <div v-if="isLoading" aria-live="polite" role="status">
-                            <div style="padding:2px 0;">
-                                <div class="flex items-center gap-2">
-                                    <span class="w-1.5 h-1.5 bg-primary-400 rounded-full animate-bounce" style="animation-delay:0ms"></span>
-                                    <span class="w-1.5 h-1.5 bg-primary-400 rounded-full animate-bounce" style="animation-delay:150ms"></span>
-                                    <span class="w-1.5 h-1.5 bg-primary-400 rounded-full animate-bounce" style="animation-delay:300ms"></span>
-                                    <span v-if="streamingStatus" class="text-xs text-primary-500 dark:text-primary-400 ml-1 font-medium" v-text="streamingStatus"></span>
-                                </div>
-                            </div>
-                        </div>
+                    </div>
+
+                    <div v-if="isLoading" class="ap-live-status" aria-live="polite" role="status">
+                        <span class="ap-live-status-dot"></span>
+                        <span v-text="streamingStatus || trans.processing"></span>
                     </div>
 
                     {{-- Pending files --}}
@@ -399,22 +411,33 @@
                     </div>
 
                     {{-- Input — always-visible bordered box --}}
+                    @foreach($extensionRegistry->composers() as $composer)
+                    <{{ $composer['component'] }} :value="extensionContext['{{ $composer['key'] }}'] || {}" :conversation-id="activeSessionId" :draft="inputText" :cursor="composerCursor" :disabled="isLoading" :ref="el => composerRefs['{{ $composer['key'] }}'] = el" @replace-draft="replaceComposerDraft" @change="extensionContext['{{ $composer['key'] }}'] = $event"></{{ $composer['component'] }}>
+                    @endforeach
+
                     <div class="ap-input-wrap">
 
                         {{-- Outer bordered container --}}
                         <div class="ap-input-box">
 
                             {{-- Textarea --}}
+                            <div class="ap-composer-editor">
+                            <div v-if="composerHasReferences" ref="composerHighlight" class="ap-composer-highlight" aria-hidden="true"><template v-for="(part, i) in composerSegments" :key="i"><span :class="{'ap-composer-reference': part.reference}" v-text="part.text"></span></template></div>
+
                             <textarea
                                 ref="textInput"
                                 v-model="inputText"
-                                @keydown.enter.exact.prevent="send"
                                 rows="3"
                                 class="ap-input-textarea"
                                 :placeholder="inputPlaceholder"
                                 :disabled="isLoading"
-                                @input="autoResize"
+                                @input="composerInput"
+                                @click="composerSelection" @keyup="composerSelection" @select="composerSelection"
+                                @scroll="syncComposerScroll"
+                                :class="{'ap-composer-referenced': composerHasReferences}"
+                                @keydown="onComposerKey"
                             ></textarea>
+                            </div>
 
                             {{-- Toolbar row: Attach + Platform/Model + Send --}}
                             <div class="ap-input-toolbar">
@@ -439,12 +462,14 @@
                                             v-model="selectedPlatformId"
                                             @change="onPlatformChange"
                                             class="ap-input-select"
+                                            :class="{'ap-platform-single-model': hideSingleModelSelector}"
                                             :title="trans.selectPlatform"
                                             :aria-label="trans.selectPlatform"
                                         >
                                             <option v-for="p in platforms" :key="p.id" :value="p.id" v-text="p.label"></option>
                                         </select>
                                         <select
+                                            v-if="!hideSingleModelSelector"
                                             v-model="selectedModel"
                                             class="ap-input-select"
                                             :title="trans.selectModel"
@@ -492,6 +517,38 @@
 </script>
 
 <style>
+.ap-composer-editor {
+    position: relative;
+}
+
+.ap-composer-highlight {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    overflow: hidden;
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.55;
+    padding: 12px 14px 6px;
+    color: inherit;
+    border: 0;
+}
+
+.ap-composer-reference {
+    color: rgb(var(--c-info));
+}
+
+.ap-composer-referenced {
+    color: transparent !important;
+    caret-color: rgb(var(--c-primary-600));
+}
+
+.ap-platform-single-model {
+    max-width: calc(100% - 34px);
+}
+
 :root { --ap-panel-size: 420px; --ap-panel-width: 0px; }
 
 /* Docked width: the panel pushes the app aside instead of covering it. Zero on
@@ -565,6 +622,9 @@ body.ap-panel-open #app { contain: paint; }
 /* Lift the FAB above the sticky unsaved-changes save bar (bottom-0, ~60px tall)
    so it never overlaps the Save button. Body class set by v-unsaved-changes. */
 body.unsaved-bar-open .ap-fab { bottom: 84px; }
+body.datagrid-bar-open .ap-fab { bottom: 88px; }
+
+body.overlay-open .ap-fab { display: none; }
 
 /* Tablet & mobile: full-screen overlay above navbar */
 @media (max-width: 1024px) {
@@ -592,6 +652,9 @@ body.unsaved-bar-open .ap-fab { bottom: 84px; }
 
 /* AI response text styling */
 .ap-ai-response { word-break: break-word; }
+.ap-ai-response .ap-ai-img { display: block; max-width: 100%; height: auto; margin: 6px 0; border-radius: 8px; border: 1px solid rgb(var(--c-primary-100)); }
+.dark .ap-ai-response .ap-ai-img { border-color: rgb(var(--c-primary-500) / 0.25); }
+.ap-ai-response .ap-ai-img-missing { font-size: 0.85em; font-style: italic; color: rgb(var(--c-primary-400)); }
 .ap-ai-response strong { color: rgb(var(--c-primary-800)); font-weight: 700; }
 .dark .ap-ai-response strong { color: rgb(var(--c-primary-300)); }
 .ap-ai-response code { background: rgb(var(--c-primary-100)); color: rgb(var(--c-primary-700)); padding: 2px 6px; border-radius: 4px; font-size: 0.8em; font-weight: 500; }
@@ -722,6 +785,22 @@ body.unsaved-bar-open .ap-fab { bottom: 84px; }
 .ap-clear-chat-btn:hover { background:#ffe7e7; }
 .dark .ap-clear-chat-btn:hover { background:#4a2733; }
 
+.ap-live-status {
+    display:flex; align-items:center; gap:8px; padding:7px 16px; flex-shrink:0;
+    font-size:11px; font-weight:600; letter-spacing:.01em;
+    color:rgb(var(--c-primary-600)); background:rgb(var(--c-primary-50));
+    border-top:1px solid rgb(var(--c-primary-100));
+}
+.dark .ap-live-status {
+    color:rgb(var(--c-primary-300)); background:rgb(var(--c-primary-900) / 0.35);
+    border-top-color:rgb(var(--c-primary-800));
+}
+.ap-live-status-dot {
+    width:6px; height:6px; border-radius:9999px; flex-shrink:0;
+    background:rgb(var(--c-primary-500)); animation:ap-live-pulse 1s ease-in-out infinite;
+}
+@keyframes ap-live-pulse { 0%,100% { opacity:.3; transform:scale(.8); } 50% { opacity:1; transform:scale(1.2); } }
+
 .ap-pending-files {
     display:flex; flex-wrap:wrap; gap:6px; padding:8px 16px;
     border-top:1px solid #e5e7eb; background:#f9fafb; flex-shrink:0;
@@ -825,6 +904,9 @@ body.unsaved-bar-open .ap-fab { bottom: 84px; }
 
 {{-- DOMPurify is bundled with the admin app (window.DOMPurify) — no external CDN. --}}
 <script type="module">
+const AGENTIC_PIM_RESULT_COMPONENTS = @json($resultRenderers->components());
+const AGENTIC_PIM_RESULT_CONTEXT_CONSUMERS = @json($resultRenderers->contextConsumers());
+
 // Mirrors Webkul\MagicAI\Support\ModelRecommender::pickTextModel().
 // The chat widget must never auto-select an image-only model
 // (chatgpt-image-latest, dall-e-*, sora-*, imagen-*, veo-*, …) because
@@ -843,7 +925,7 @@ const AGENTIC_PIM_IMAGE_ONLY_PATTERNS = [
     /(^|[-_])pika([-_]|$)/i, /(^|[-_])runway([-_]|$)/i,
     /hunyuan-?video/i, /(^|[-_])cogvideo/i, /(^|[-_])wan-?\d/i, /animate-?diff/i,
     // Generic "image" / "video" families (catch-all)
-    /(^|[-_])image-?\d/i, /(^|[-_])video-?\d/i,
+    /(^|[-_])image([-_]|$)/i, /(^|[-_])image-?\d/i, /(^|[-_])video-?\d/i,
 ];
 const pickTextModel = (models) => {
     if (!Array.isArray(models) || models.length === 0) return '';
@@ -851,6 +933,14 @@ const pickTextModel = (models) => {
         if (!AGENTIC_PIM_IMAGE_ONLY_PATTERNS.some(rx => rx.test(m))) return m;
     }
     return models[0];
+};
+const AGENTIC_PIM_REPLY_POLL = { intervalMs: 800, queueGraceMs: 6000, maxMs: @json($replyPollLimitMs) };
+const chatRequestId = () => {
+    const bytes = crypto.getRandomValues(new Uint8Array(16));
+    bytes[6] = (bytes[6] & 15) | 64;
+    bytes[8] = (bytes[8] & 63) | 128;
+    const hex = Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
+    return `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`;
 };
 
 app.component('v-agenting-pim', {
@@ -881,6 +971,7 @@ app.component('v-agenting-pim', {
             newSession: `@lang('ai-agent::app.widget.new-session')`,
             noSessions: `@lang('ai-agent::app.widget.no-sessions')`,
             sessionDefaultName: `@lang('ai-agent::app.widget.session-default-name')`,
+            messages: `@lang('ai-agent::app.widget.messages')`,
             deleteSession: `@lang('ai-agent::app.widget.delete-session')`,
             renameSession: `@lang('ai-agent::app.widget.rename-session')`,
             readyFor: `@lang('ai-agent::app.widget.ready-for')`,
@@ -912,6 +1003,8 @@ app.component('v-agenting-pim', {
             analyzingFiles: `@lang('ai-agent::app.widget.analyzing-files')`,
             thinking: `@lang('ai-agent::app.widget.thinking')`,
             refreshingPage: `@lang('ai-agent::app.widget.refreshing-page')`,
+            imageUnavailable: `@lang('ai-agent::app.widget.image-unavailable')`,
+            imageUnavailableAlt: `@lang('ai-agent::app.widget.image-unavailable-alt')`,
             runningTool: `@lang('ai-agent::app.widget.tool-status.running-tool')`,
             toolStatus: {
                 search_products: `@lang('ai-agent::app.widget.tool-status.search-products')`,
@@ -959,13 +1052,19 @@ app.component('v-agenting-pim', {
             activeTab: 'capabilities',
             activeCapability: null,
             messages: [],
+            historyEnabled: @json((bool) config('ai-agent.history.enabled', false)),
+            deletedMessageIds: {},
             inputText: '',
+            composerCursor: 0,
+            composerRefs: {},
             pendingFiles: [],
             isLoading: false,
             streamingStatus: '',
+            autoScroll: true,
             productContext: null,
             noTransition: false,
             capabilitySearch: '',
+            extensionContext: {},
             // Session management
             sessions: [],
             activeSessionId: null,
@@ -975,12 +1074,8 @@ app.component('v-agenting-pim', {
             selectedPlatformId: initialPlatform ? initialPlatform.id : null,
             selectedModel: pickTextModel(initialModels),
             trans: trans,
-            // Extra hosts (besides same-origin) allowed to render <img> in chat.
-            // Same-origin covers app-served /storage; a configured S3/CDN disk
-            // covers cloud-hosted media. Anything else renders as a plain link.
-            // Computed in the PHP block at the top of this file and passed here as
-            // a plain variable (a complex inline expression trips Blade's parser).
             allowedImageHosts: @json($allowedImageHosts),
+            asyncReplies: @json($asyncReplies),
             capabilities: [
                 // Row 1: Product creation & updates
                 { key: 'create_from_image', label: `@lang('ai-agent::app.widget.capabilities-list.create-from-image')`, description: `@lang('ai-agent::app.widget.capabilities-list.create-from-image-desc')`,
@@ -1091,6 +1186,26 @@ app.component('v-agenting-pim', {
     },
 
     computed: {
+        composerSegments() {
+            const references = [...new Set(
+                Object.values(this.extensionContext)
+                    .flatMap(v => Array.isArray(v?.references) ? v.references : [])
+                    .filter(x => typeof x === 'string' && Array.from(x).length <= 255)
+            )].sort((a, b) => b.length - a.length);
+            if (!references.length) return [{text: this.inputText, reference: false}];
+            const escaped = references.map(x => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+            const pattern = new RegExp('(?<![\\p{L}\\p{N}_])(?:'+escaped.join('|')+')(?![\\p{L}\\p{N}_-])', 'gu');
+            const parts = [];
+            let offset = 0;
+            for (const match of this.inputText.matchAll(pattern)) {
+                parts.push({text: this.inputText.slice(offset, match.index), reference: false}, {text: match[0], reference: true});
+                offset = match.index + match[0].length;
+            }
+            parts.push({text: this.inputText.slice(offset), reference: false});
+            return parts;
+        },
+        composerHasReferences() { return this.composerSegments.some(x => x.reference); },
+
         filteredCapabilities() {
             if (!this.capabilitySearch.trim()) return this.capabilities;
             const q = this.capabilitySearch.toLowerCase();
@@ -1104,48 +1219,39 @@ app.component('v-agenting-pim', {
             const platform = this.platforms.find(p => p.id === this.selectedPlatformId);
             return platform ? (platform.models || []) : [];
         },
+        hideSingleModelSelector() {
+            const platform = this.platforms.find(p => p.id === this.selectedPlatformId);
+            return platform?.hide_single_model === true && this.availableModels.length === 1;
+        },
         fileAccept() {
             if (this.activeCapability?.acceptsSpreadsheet) return '.csv,.xlsx,.xls,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel';
             return 'image/jpeg,image/png,image/webp,image/gif';
         },
         fileInputTitle() { return this.activeCapability?.acceptsSpreadsheet ? this.trans.attachCsvXlsx : this.trans.attachImage; },
         inputPlaceholder() {
-            if (this.isLoading) return this.trans.processing;
             if (this.activeCapability) return this.activeCapability.hint;
             return this.trans.askCatalog;
         },
     },
 
     mounted() {
+        const overrides = @json($extensionRegistry->capabilities());
+        this.capabilities = this.capabilities.map(c => ({...c, ...(overrides[c.key] || {})}));
+        this._composeListener = (event) => {
+            this.isOpen = true; this.activeTab = 'chat';
+            if (typeof event.detail?.text === 'string') this.inputText = event.detail.text;
+            this.$nextTick(() => this.$refs.textInput?.focus());
+        };
+        window.addEventListener('ai-agent:compose', this._composeListener);
+        this.$nextTick(() => this.observeMessages());
         this.loadSessions();
         this.detectProductContext();
         this.restoreState();
         if (!this.activeSessionId) {
             this.activeSessionId = this.generateSessionId();
         }
-
-        // A reply may still be generating server-side from a previous page —
-        // pick it back up so it lands here instead of being lost on navigation.
         this.resumePendingReply();
-
-        // A chat image URL can 404 (e.g. the agent pointed at a path that isn't
-        // there). Swap the broken <img> for a small caption instead of a
-        // broken-image icon. `error` doesn't bubble, so listen in the capture
-        // phase; the widget is a multi-root fragment so $el is not a reliable
-        // ancestor — listen on document and filter strictly by the ap-ai-img
-        // class (chat images only). Removed in beforeUnmount to avoid stacking
-        // a listener on every PJAX remount.
-        this._imgErrorHandler = (e) => {
-            const t = e.target;
-            if (t && t.tagName === 'IMG' && t.classList?.contains('ap-ai-img') && !t.dataset.failed) {
-                t.dataset.failed = '1';
-                const note = document.createElement('span');
-                note.className = 'text-[11px] text-gray-400 dark:text-gray-500 italic';
-                const alt = t.getAttribute('alt');
-                note.textContent = alt ? (alt + ' (image unavailable)') : 'Image unavailable';
-                t.replaceWith(note);
-            }
-        };
+        this._imgErrorHandler = (event) => this.replaceBrokenImage(event.target);
         document.addEventListener('error', this._imgErrorHandler, true);
 
         // The isOpen watcher only fires on change, so the initial-open state
@@ -1170,7 +1276,8 @@ app.component('v-agenting-pim', {
             this.saveState();
 
             if (val && this.activeTab === 'chat') {
-                this.scrollBottom();
+                this.$nextTick(() => this.observeMessages());
+                this.scrollBottom(true);
                 this.$nextTick(() => this.$refs.textInput?.focus());
             }
         },
@@ -1179,13 +1286,55 @@ app.component('v-agenting-pim', {
             this.saveState();
 
             if (val === 'chat' && this.isOpen) {
-                this.scrollBottom();
+                this.$nextTick(() => this.observeMessages());
+                this.scrollBottom(true);
             }
         },
         activeCapability: { deep: true, handler() { this.saveState(); } },
     },
 
+    beforeUnmount() { window.removeEventListener('ai-agent:compose', this._composeListener); },
     methods: {
+        composerSelection() {
+            this.composerCursor = this.$refs.textInput?.selectionStart ?? this.inputText.length;
+        },
+        composerInput() {
+            this.composerSelection();
+            this.autoResize();
+        },
+        syncComposerScroll() {
+            const input = this.$refs.textInput, layer = this.$refs.composerHighlight;
+            if (input && layer) {
+                layer.scrollTop = input.scrollTop;
+                layer.scrollLeft = input.scrollLeft;
+            }
+        },
+        replaceComposerDraft(change) {
+            if (this.isLoading || !change || typeof change.text !== 'string') return;
+            const {start, end, text} = change;
+            if (!Number.isInteger(start) || !Number.isInteger(end) || start < 0 || end < start || end > this.inputText.length || text.length > 10000) return;
+            this.inputText = this.inputText.slice(0, start) + text + this.inputText.slice(end);
+            this.composerCursor = start + text.length;
+            this.$nextTick(() => {
+                const input = this.$refs.textInput;
+                input?.focus();
+                input?.setSelectionRange(this.composerCursor, this.composerCursor);
+                this.autoResize();
+            });
+        },
+        onComposerKey(event) {
+            if (event.isComposing) return;
+            for (const composer of Object.values(this.composerRefs)) {
+                if (composer?.handleKey?.(event)) return;
+            }
+            if (event.key === 'Enter' && !event.shiftKey && !event.ctrlKey && !event.altKey && !event.metaKey) {
+                event.preventDefault();
+                this.send();
+            }
+        },
+        resultComponent(descriptor) {
+            return descriptor && Object.prototype.hasOwnProperty.call(AGENTIC_PIM_RESULT_COMPONENTS, descriptor.type) ? AGENTIC_PIM_RESULT_COMPONENTS[descriptor.type] : null;
+        },
         detectProductContext() {
             const match = window.location.pathname.match(/\/catalog\/products\/edit\/(\d+)/);
             if (match) {
@@ -1240,7 +1389,7 @@ app.component('v-agenting-pim', {
 
         createNewSession() {
             if (this.messages.length > 0) {
-                // Save current session to localStorage only (not DB — avoids duplicates)
+                // Save locally, and to saved history when enabled; the client id keeps repeat saves idempotent
                 this.saveCurrentSession();
             }
             this.activeSessionId = this.generateSessionId();
@@ -1253,19 +1402,25 @@ app.component('v-agenting-pim', {
             this.$nextTick(() => this.$refs.textInput?.focus());
         },
 
-        saveCurrentSession(persistToDb = false) {
-            if (!this.activeSessionId || this.messages.length === 0) return;
+        saveCurrentSession(persistToDb = true) {
+            if (!this.activeSessionId || (this.messages.length === 0 && !(this.deletedMessageIds[this.activeSessionId]?.length))) return;
 
             const firstUserMsg = this.messages.find(m => m.role === 'user');
             const name = firstUserMsg
                 ? firstUserMsg.content.substring(0, 50) + (firstUserMsg.content.length > 50 ? '…' : '')
                 : this.trans.sessionDefaultName;
-
-            // Limit stored messages to prevent excessive localStorage usage.
-            const recentMessages = this.messages.filter(m => !m.isRedirect).slice(-50);
+            const recentMessages = this.messages.filter(m => !m.isRedirect);
+            for (const message of recentMessages) message.message_id ||= chatRequestId();
             const sessionMessages = recentMessages.map(m => ({
                 role: m.role,
+                message_id: m.message_id || null,
+                request_id: m.request_id || null,
+                presentation: m.presentation || null,
+                extensions: m.extensions || null,
+                tool_calls: m.tool_calls || null,
+                tokens_used: m.tokens_used || 0,
                 content: m.content || '',
+                action: m.action || null,
                 result: m.result || null,
                 product_url: m.product_url || null,
                 download_url: m.download_url || null,
@@ -1278,7 +1433,8 @@ app.component('v-agenting-pim', {
                 name: name,
                 messageCount: this.messages.filter(m => m.role === 'user').length,
                 lastActive: new Date().toLocaleDateString(),
-                messages: sessionMessages,
+                dbId: this.sessions[existingIdx]?.dbId || null,
+                messages: sessionMessages.slice(-50),
                 capability: this.activeCapability?.key || null,
             };
 
@@ -1293,26 +1449,91 @@ app.component('v-agenting-pim', {
             }
 
             this.persistSessions();
+            if (this.historyEnabled && persistToDb && !this.messages.some(m => m.isStreaming)) {
+                const payload = {conversation_id: String(sessionData.id), title: name,
+                    deleted_message_ids: [...(this.deletedMessageIds[sessionData.id] || [])],
+                    messages: sessionMessages.map(m => ({role:m.role, content:m.content, message_id:m.message_id, request_id:m.request_id, presentation:m.presentation, tool_calls:m.tool_calls, tokens_used:m.tokens_used, result:m.result, product_url:m.product_url, download_url:m.download_url, _confirmed:m._confirmed, action:m.action}))};
+                const serialized = JSON.stringify(payload);
+                this._historyFingerprints ||= {};
+                if (this._historyFingerprints[sessionData.id] === serialized) return;
+                this._historyFingerprints[sessionData.id] = serialized;
+                this._historySave = (this._historySave || Promise.resolve()).catch(() => {}).then(() =>
+                    this.saveHistoryBatches(payload)
+                ).then(res => {
+                    const local = this.sessions.find(s => s.id === sessionData.id);
+                    if (local) local.dbId = res.data.id;
+                    const savedDeletions = new Set(payload.deleted_message_ids);
+                    this.deletedMessageIds[sessionData.id] = (this.deletedMessageIds[sessionData.id] || []).filter(id => !savedDeletions.has(id));
+                    this.persistSessions();
+                }).catch(() => { delete this._historyFingerprints[sessionData.id]; });
+            }
+            return this._historySave;
+        },
+
+        async saveHistoryBatches(payload) {
+            let response;
+            for (let offset = 0; offset < Math.max(payload.messages.length, payload.deleted_message_ids.length, 1); offset += 100) {
+                response = await this.$axios.post("{{ route('ai-agent.conversations.store') }}", {...payload, messages:payload.messages.slice(offset, offset + 100), deleted_message_ids:payload.deleted_message_ids.slice(offset, offset + 100)});
+            }
+            return response;
+        },
+
+        historyLink(value, product = false) {
+            if (typeof value !== 'string' || value.length > 8192 || /[\x00-\x20\x7f\\]/.test(value)) return null;
+            try {
+                const decoded = decodeURIComponent(value);
+                if (/^[\/]{2}|[\x00-\x1f\x7f\\]/.test(decoded)) return null;
+                if (!value.startsWith('/') && !/^https?:\/\//.test(value)) return null;
+                const link = new URL(value, window.location.origin);
+                if (!['http:', 'https:'].includes(link.protocol) || link.username || link.password || (product && link.origin !== window.location.origin)) return null;
+                return value;
+            } catch { return null; }
+        },
+
+        mergeHistory(incoming, local = [], deletedIds = []) {
+            const deleted = new Set(deletedIds);
+            incoming = incoming.filter(message => !deleted.has(message.message_id));
+            local = local.filter(message => !deleted.has(message.message_id));
+            const remaining = new Set(local);
+            const merged = incoming.map(remote => {
+                const cached = local.find(m => m.message_id && m.message_id === remote.message_id)
+                    || local.find(m => !m.message_id && remaining.has(m) && m.role === remote.role && m.content === remote.content) || {};
+                remaining.delete(cached);
+                const message = {...cached, ...remote};
+                for (const field of ['result', 'product_url', 'download_url', 'action']) {
+                    if (remote[field] == null && cached[field] != null) message[field] = cached[field];
+                }
+                message._confirmed = Boolean(remote._confirmed || cached._confirmed);
+                if (typeof message.tool_calls === 'string') {
+                    try { message.tool_calls = JSON.parse(message.tool_calls); } catch { message.tool_calls = null; }
+                }
+                message.product_url = this.historyLink(message.product_url, true);
+                message.download_url = this.historyLink(message.download_url);
+                return message;
+            });
+            return [...merged, ...[...remaining].map(message => ({...message, product_url:this.historyLink(message.product_url, true), download_url:this.historyLink(message.download_url)}))];
         },
 
         async switchToSession(sessionId) {
+            const selection = this._historySelection = (this._historySelection || 0) + 1;
             if (this.messages.length > 0 && this.activeSessionId) {
                 await this.saveCurrentSession();
             }
 
             // Try loading from local sessions first (fast)
             let session = this.sessions.find(s => s.id === sessionId);
-
-            // If it's a DB-backed session (numeric ID), load from API
-            if (!session && typeof sessionId === 'number') {
+            if (this.historyEnabled && (session?.dbId || typeof sessionId === 'number')) {
                 try {
-                    const res = await this.$axios.get("{{ url(config('app.admin_url') . '/ai-agent/conversations') }}/" + sessionId);
+                    const res = await this.$axios.get("{{ url(config('app.admin_url') . '/ai-agent/conversations') }}/" + (session?.dbId || sessionId));
+                    if (selection !== this._historySelection) return;
                     const data = res.data;
+                    const localMessages = this.activeSessionId === sessionId ? this.messages : session?.messages || [];
                     session = {
-                        id: data.conversation.id,
+                        id: data.conversation.client_id || data.conversation.id,
+                        dbId: data.conversation.id,
                         name: data.conversation.title,
-                        messages: data.messages.map(m => ({ role: m.role, content: m.content })),
-                        capability: null,
+                        messages: this.mergeHistory(data.messages, localMessages, [...(data.deleted_message_ids || []), ...(this.deletedMessageIds[data.conversation.client_id || sessionId] || [])]),
+                        capability: session?.capability || null,
                     };
                 } catch (e) { return; }
             }
@@ -1336,9 +1557,10 @@ app.component('v-agenting-pim', {
         },
 
         async deleteSession(sessionId) {
-            if (typeof sessionId === 'number') {
+            const dbId = this.sessions.find(s => s.id === sessionId)?.dbId || (typeof sessionId === 'number' ? sessionId : null);
+            if (this.historyEnabled && dbId) {
                 try {
-                    await this.$axios.delete("{{ url(config('app.admin_url') . '/ai-agent/conversations') }}/" + sessionId);
+                    await this.$axios.delete("{{ url(config('app.admin_url') . '/ai-agent/conversations') }}/" + dbId);
                 } catch (e) {
                     this.$emitter.emit('add-flash', { type: 'error', message: this.trans.errorGeneric });
 
@@ -1370,13 +1592,34 @@ app.component('v-agenting-pim', {
                     });
                 }
             } catch (e) { this.sessions = []; }
+            if (!this.historyEnabled) return;
+            this.$axios.get("{{ route('ai-agent.conversations.index') }}").then(async res => {
+                for (const item of res.data.conversations || []) {
+                    const id = item.client_id || item.id;
+                    const existing = this.sessions.find(s => s.id === id);
+                    if (existing) existing.dbId = item.id;
+                    else this.sessions.push({id, dbId:item.id, name:item.title, messageCount:'',lastActive:new Date(item.updated_at).toLocaleDateString()});
+                }
+                const activeId = this.activeSessionId;
+                const saved = this.sessions.find(s => s.id === activeId);
+                if (saved?.dbId) {
+                    const response = await this.$axios.get("{{ url(config('app.admin_url') . '/ai-agent/conversations') }}/" + saved.dbId);
+                    if (this.activeSessionId !== activeId || this.messages.some(m => m.isStreaming)) return;
+                    this.messages = this.mergeHistory(response.data.messages, this.messages, [...(response.data.deleted_message_ids || []), ...(this.deletedMessageIds[activeId] || [])]);
+                }
+            }).catch(() => {});
         },
         onPlatformChange() {
             this.selectedModel = pickTextModel(this.availableModels);
             this.saveState();
         },
         activateCapability(cap) {
+            if (this.messages.length > 0) {
+                this.createNewSession();
+            }
+
             this.activeCapability = cap;
+            if (cap.extension_event) { window.dispatchEvent(new CustomEvent(cap.extension_event)); }
             this.activeTab = 'chat';
 
             // Auto-populate the prompt text if the capability has one
@@ -1441,6 +1684,10 @@ app.component('v-agenting-pim', {
                 return false;
             }
 
+            if (!data.mutated) {
+                return false;
+            }
+
             if (data.product_url || data.download_url) {
                 return false;
             }
@@ -1458,15 +1705,21 @@ app.component('v-agenting-pim', {
             return true;
         },
 
-        async send() {
+        consumeExtensionContext(data) {
+            const type = data?.presentation?.type;
+            const key = type && Object.prototype.hasOwnProperty.call(AGENTIC_PIM_RESULT_CONTEXT_CONSUMERS, type) ? AGENTIC_PIM_RESULT_CONTEXT_CONSUMERS[type] : null;
+            if (key) delete this.extensionContext[key];
+        },
+
+        async send(retryRequestId = null) {
             const text = this.inputText.trim();
             const files = [...this.pendingFiles];
+            const selectedContext = JSON.parse(JSON.stringify(this.extensionContext));
             if (!text && files.length === 0) return;
-
             // Build user message for display
-            const userMsg = { role: 'user', content: text || (files.length ? '📎 ' + files.map(f => f.name).join(', ') : ''), files: files.map(f => ({ type: f.type, preview: f.preview, name: f.name })) };
+            const userMsg = { message_id: chatRequestId(), request_id: typeof retryRequestId === 'string' ? retryRequestId : chatRequestId(), role: 'user', extensions: selectedContext, content: text || (files.length ? '📎 ' + files.map(f => f.name).join(', ') : ''), files: files.map(f => ({ type: f.type, preview: f.preview, name: f.name })) };
             this.messages.push(userMsg);
-            this.inputText = ''; this.resetTextarea(); this.scrollBottom(); this.isLoading = true;
+            this.inputText = ''; this.resetTextarea(); this.scrollBottom(true); this.isLoading = true;
             this.streamingStatus = files.length > 0 ? this.trans.analyzingFiles : this.trans.thinking;
 
             try {
@@ -1476,6 +1729,9 @@ app.component('v-agenting-pim', {
                 if (this.selectedPlatformId) fd.append('platform_id', this.selectedPlatformId);
                 if (this.selectedModel) fd.append('model', this.selectedModel);
                 files.forEach((f, i) => { if (f.type === 'image') fd.append('images[' + i + ']', f.file); else fd.append('files[' + i + ']', f.file); });
+                fd.append('conversation_id', this.activeSessionId);
+                fd.append('request_id', userMsg.request_id);
+                fd.append('extensions', JSON.stringify(selectedContext));
                 fd.append('history', JSON.stringify(this.messages.slice(0, -1).map(m => ({ role: m.role, content: m.content || '' }))));
                 fd.append('context[current_page]', window.location.pathname);
                 if (this.productContext) {
@@ -1483,126 +1739,236 @@ app.component('v-agenting-pim', {
                     if (this.productContext.sku) fd.append('context[product_sku]', this.productContext.sku);
                     if (this.productContext.name) fd.append('context[product_name]', this.productContext.name);
                 }
-                // Enqueue the reply on the server so generation outlives this page,
-                // then poll for it. This is what makes the reply survive navigation:
-                // if the user leaves mid-answer, mounted() resumes polling on the
-                // next page (the reply id is stored on the streaming message).
-                this.pendingFiles = [];
-                const msgIndex = this.messages.length;
-                this.messages.push({ role: 'assistant', content: '', isStreaming: true, replyId: null });
-
-                try {
-                    const res = await fetch("{{ route('ai-agent.chat.send-async') }}", {
-                        method: 'POST',
-                        body: fd,
-                        credentials: 'same-origin',
-                        headers: {
-                            'Accept': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
-                        },
-                    });
-
-                    if (! res.ok) throw new Error('enqueue-failed');
-
-                    const payload = await res.json();
-                    this.messages[msgIndex].replyId = payload.reply_id;
-                    // Persist now so navigating right after sending still resumes.
-                    this.saveState();
-
-                    await this.pollReply(payload.reply_id, msgIndex);
-                } catch (enqueueErr) {
-                    // Queue path unavailable — fall back to the blocking endpoint.
-                    this.streamingStatus = this.trans.processing;
-                    try {
-                        const res = await this.$axios.post("{{ route('ai-agent.chat.send') }}", fd, { headers: { 'Content-Type': 'multipart/form-data' } });
-                        this.finalizeReply(msgIndex, { status: 'done', content: res.data.reply, actions: res.data });
-                    } catch (err) {
-                        this.messages[msgIndex] = { role: 'assistant', content: err.response?.data?.reply || err.response?.data?.message || this.trans.errorGeneric, isStreaming: false };
-                    }
-                }
+                if (this.asyncReplies && await this.sendQueued(fd, files)) return;
+                await this.streamReply(fd, files);
             } catch (err) {
                 if (files.length > 0 && this.pendingFiles.length === 0) this.pendingFiles = files;
+                if (err.response?.data?.discard_images) this.pendingFiles = this.pendingFiles.filter(f => f.type !== 'image');
                 this.messages.push({ role: 'assistant', content: err.response?.data?.reply || err.response?.data?.message || this.trans.errorGeneric });
             } finally {
                 this.isLoading = false;
                 this.streamingStatus = '';
-                this.scrollBottom();
+                this.scrollBottom(true);
                 this.focusInput();
             }
         },
 
-        // Poll one async reply until it finishes, streaming its text into the
-        // placeholder message (same typing render). Resilient to transient
-        // errors; stops on done / error / 404 / timeout.
-        async pollReply(replyId, msgIndex) {
-            this.isLoading = true;
-            const base = "{{ url(config('app.admin_url') . '/ai-agent/chat/reply') }}/";
-            const maxTries = 450; // ~6 min at 800ms
-            let tries = 0;
+        /**
+         * Stream the turn over SSE, falling back to the blocking JSON endpoint.
+         */
+        async streamReply(fd, files) {
+            // Try SSE streaming first, fallback to blocking JSON endpoint
+            let data = null;
+            try {
+                const streamRes = await fetch("{{ route('ai-agent.chat.stream') }}", {
+                    method: 'POST',
+                    body: fd,
+                    credentials: 'same-origin',
+                    headers: {
+                        'Accept': 'text/event-stream',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    },
+                });
 
-            while (tries < maxTries) {
-                await new Promise(r => setTimeout(r, 800));
-                tries++;
+                const ct = streamRes.headers.get('content-type') || '';
 
-                let data;
-                try {
-                    const res = await this.$axios.get(base + replyId);
-                    data = res.data;
-                } catch (e) {
-                    if (e.response?.status === 404) break; // reply gone (cleaned up)
-                    continue; // transient — keep polling
+                if (streamRes.ok && ct.includes('text/event-stream')) {
+                    // SSE streaming works — process the stream
+                    const completed = await this.processStream(streamRes, files);
+                    this.consumeExtensionContext(completed);
+                    return; // processStream handles everything
+                } else if (streamRes.ok && ct.includes('application/json')) {
+                    data = await streamRes.json();
+                } else {
+                    throw new Error('stream-fallback');
                 }
-
-                const msg = this.messages[msgIndex];
-                if (! msg || msg.replyId !== replyId) { this.isLoading = false; return; }
-
-                if (data.content) { msg.content = data.content; this.scrollBottom(); }
-                if (data.agent_status) this.streamingStatus = data.agent_status;
-
-                if (data.done) {
-                    this.finalizeReply(msgIndex, data);
-                    this.isLoading = false;
-                    this.streamingStatus = '';
-                    return;
-                }
+            } catch (streamErr) {
+                // Streaming failed — fallback to blocking JSON endpoint
+                this.streamingStatus = this.trans.processing;
+                const res = await this.$axios.post("{{ route('ai-agent.chat.send') }}", fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+                data = res.data;
             }
+            // Handle JSON response (from either stream JSON or blocking fallback)
+            this.consumeExtensionContext(data);
+            this.pendingFiles = [];
+            this.messages.push({ message_id: chatRequestId(), presentation: data.presentation || null, role: 'assistant', content: data.reply || this.trans.noResponse, action: data.action || null, result: data.result || null, product_url: data.product_url || null, download_url: data.download_url || null });
 
-            // Timed out or the reply vanished.
-            const msg = this.messages[msgIndex];
-            if (msg) {
-                msg.isStreaming = false;
-                delete msg.replyId;
-                if (! msg.content) msg.content = this.trans.errorGeneric;
+            // Auto-navigate to the created product page
+            if (data.product_url && this.activeCapability?.key === 'create_from_image') {
+                this.messages.push({ role: 'assistant', content: this.trans.openingProduct, isRedirect: true });
+                this.saveState();
+                setTimeout(() => { window.location.href = data.product_url; }, 1500);
+            } else if (this.shouldAutoRefreshAfterAction(data)) {
+                this.saveState();
+                this.streamingStatus = this.trans.refreshingPage;
+                setTimeout(() => { window.location.reload(); }, 1500);
             }
-            this.isLoading = false;
-            this.streamingStatus = '';
-            this.saveState();
         },
 
-        // Turn the streaming placeholder into a finished message and run any
-        // post-action navigation/refresh (same behaviour as the old stream path).
-        finalizeReply(msgIndex, data) {
-            const msg = this.messages[msgIndex];
-            if (! msg) return;
+        /**
+         * Generate the reply on a queue worker and poll it, so the reply
+         * survives navigation: the reply id is saved on the placeholder message
+         * and mounted() resumes polling on the next page. A client error from
+         * the enqueue request is thrown for send() to show. Returns false when
+         * the turn should be streamed instead: the enqueue request failed on
+         * the server or network, the platform cannot run on a worker (409), or
+         * no worker picked the reply up in time.
+         */
+        async sendQueued(fd, files) {
+            const msgIndex = this.messages.length;
+            this.messages.push({ role: 'assistant', content: '', isStreaming: true, replyId: null });
 
-            if (data.status === 'error') {
-                msg.content = data.error || data.content || this.trans.errorGeneric;
-                msg.isStreaming = false;
-                delete msg.replyId;
-                this.saveState();
+            let response = null;
+            try {
+                response = await fetch("{{ route('ai-agent.chat.send-async') }}", {
+                    method: 'POST',
+                    body: fd,
+                    credentials: 'same-origin',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    },
+                });
+            } catch (e) {}
+
+            const payload = response ? await response.json().catch(() => ({})) : {};
+
+            if (! response?.ok || ! payload.reply_id) {
+                this.messages.splice(msgIndex, 1);
+                if (response && response.status >= 400 && response.status < 500 && response.status !== 409) {
+                    throw { response: { status: response.status, data: payload } };
+                }
+                return false;
+            }
+
+            this.pendingFiles = [];
+            this.messages[msgIndex].replyId = payload.reply_id;
+            this.saveState();
+
+            const data = await this.pollReply(payload.reply_id, msgIndex);
+
+            if (data?.status === 'cancelled') {
+                this.messages.splice(msgIndex, 1);
+                this.pendingFiles = files;
+                return false;
+            }
+
+            if (data?.status === 'error' && data.actions?.discard_images !== undefined) {
+                this.pendingFiles = files.filter(f => ! data.actions.discard_images || f.type !== 'image');
+            }
+
+            return true;
+        },
+
+        /**
+         * Poll an async reply until it finishes, writing its text into the
+         * placeholder message, then finalize the message. Transient errors are
+         * retried and a 404 ends polling. A reply still queued after the grace
+         * period means no worker is running: it is cancelled and
+         * {status: 'cancelled'} is returned without finalizing. Returns null
+         * when the placeholder was replaced (for example a new session).
+         */
+        async pollReply(replyId, msgIndex) {
+            const started = Date.now();
+            let data = { status: 'error', done: true };
+
+            while (Date.now() - started < AGENTIC_PIM_REPLY_POLL.maxMs) {
+                await new Promise(resolve => setTimeout(resolve, AGENTIC_PIM_REPLY_POLL.intervalMs));
+
+                if (this.messages[msgIndex]?.replyId !== replyId) return null;
+
+                const polled = await this.fetchReply(replyId);
+
+                if (! polled) continue;
+
+                if (polled.status === 'queued'
+                    && Date.now() - started > AGENTIC_PIM_REPLY_POLL.queueGraceMs
+                    && await this.cancelReply(replyId)) {
+                    return { status: 'cancelled' };
+                }
+
+                this.showReplyProgress(this.messages[msgIndex], polled);
+
+                if (polled.done) {
+                    data = polled;
+                    break;
+                }
+            }
+
+            this.finalizeReply(msgIndex, data);
+
+            return data;
+        },
+
+        /**
+         * Fetch one poll of an async reply; null on a transient error.
+         */
+        async fetchReply(replyId) {
+            try {
+                return (await this.$axios.get(this.replyUrl(replyId))).data;
+            } catch (e) {
+                return e.response?.status === 404 ? { ...(e.response.data || {}), status: 'error', done: true } : null;
+            }
+        },
+
+        /**
+         * Ask the server to drop a reply no worker picked up; true when it was cancelled.
+         */
+        cancelReply(replyId) {
+            return this.$axios.post(this.replyUrl(replyId, 'cancel')).then(res => res.data?.cancelled === true, () => false);
+        },
+
+        replyUrl(replyId, action = null) {
+            const url = action === 'cancel'
+                ? "{{ route('ai-agent.chat.reply.cancel', ['id' => '__ID__']) }}"
+                : "{{ route('ai-agent.chat.reply', ['id' => '__ID__']) }}";
+
+            return url.replace('__ID__', encodeURIComponent(replyId));
+        },
+
+        /**
+         * Show the text and status of a reply that is still generating. The
+         * job stores a tool call as "tool:<name>" and a status label as is.
+         */
+        showReplyProgress(msg, data) {
+            if (data.content && msg) {
+                msg.content = data.content;
+                this.scrollBottom();
+            }
+
+            const status = data.agent_status || '';
+
+            if (status) {
+                this.streamingStatus = status.startsWith('tool:') ? this.toolStatusLabel(status.slice(5)) : status;
+            }
+        },
+
+        /**
+         * Turn the polled placeholder into the finished message and run the
+         * same post-action navigation or refresh as a streamed reply.
+         */
+        finalizeReply(msgIndex, data) {
+            if (data.status !== 'done') {
+                this.messages[msgIndex] = { role: 'assistant', message_id: chatRequestId(), content: data.error || this.trans.errorGeneric, isStreaming: false };
+
                 return;
             }
 
             const actions = data.actions || {};
-            msg.content = data.content || this.trans.noResponse;
-            msg.action = actions.action || 'agent_response';
-            msg.result = actions.result || null;
-            msg.product_url = actions.product_url || null;
-            msg.download_url = actions.download_url || null;
-            msg.isStreaming = false;
-            delete msg.replyId;
-            this.saveState();
+            this.consumeExtensionContext(actions);
+            this.messages[msgIndex] = {
+                role: 'assistant',
+                message_id: chatRequestId(),
+                content: data.content || this.trans.noResponse,
+                action: actions.action || 'agent_response',
+                result: actions.result || null,
+                presentation: actions.presentation || null,
+                product_url: actions.product_url || null,
+                download_url: actions.download_url || null,
+                isStreaming: false,
+            };
 
             if (actions.product_url && this.activeCapability?.key === 'create_from_image') {
                 this.messages.push({ role: 'assistant', content: this.trans.openingProduct, isRedirect: true });
@@ -1615,12 +1981,25 @@ app.component('v-agenting-pim', {
             }
         },
 
-        // On (re)mount, resume any reply that was still generating when the page
-        // was left. The reply kept generating server-side, so it shows up here.
-        resumePendingReply() {
-            const idx = this.messages.findIndex(m => m && m.isStreaming && m.replyId);
-            if (idx === -1) return;
-            this.pollReply(this.messages[idx].replyId, idx);
+        /**
+         * Resume a reply that was still generating when the previous page was
+         * left; it kept generating on the worker. One that no worker picked up
+         * is cancelled and shown as failed, since the request cannot be
+         * streamed again from here.
+         */
+        async resumePendingReply() {
+            const msgIndex = this.messages.findIndex(m => m?.isStreaming && m.replyId);
+
+            if (msgIndex === -1) return;
+
+            this.isLoading = true;
+
+            const data = await this.pollReply(this.messages[msgIndex].replyId, msgIndex);
+
+            if (data?.status === 'cancelled') this.finalizeReply(msgIndex, { status: 'error' });
+
+            this.isLoading = false;
+            this.streamingStatus = '';
         },
 
         async processStream(response, files) {
@@ -1629,11 +2008,13 @@ app.component('v-agenting-pim', {
             let buffer = '';
             let streamedText = '';
             let resultData = {};
+            let streamFailed = false;
+            let discardImages = false;
 
             // Add a placeholder message for streaming
             const msgIndex = this.messages.length;
             this.messages.push({ role: 'assistant', content: '', isStreaming: true });
-
+            let currentEvent = null;
             try {
                 while (true) {
                     const { done, value } = await reader.read();
@@ -1643,7 +2024,6 @@ app.component('v-agenting-pim', {
                     const lines = buffer.split('\n');
                     buffer = lines.pop() || '';
 
-                    let currentEvent = null;
                     for (const line of lines) {
                         if (line.startsWith('event: ')) {
                             currentEvent = line.substring(7).trim();
@@ -1662,10 +2042,15 @@ app.component('v-agenting-pim', {
                                         this.messages[msgIndex].content = streamedText;
                                         this.scrollBottom();
                                         break;
+                                    case 'tool_result':
                                     case 'complete':
-                                        resultData = eventData;
+                                        resultData = {...resultData, ...eventData};
+                                        this.messages[msgIndex].presentation = resultData.presentation || null;
+                                        this.messages[msgIndex].result = resultData.result || null;
                                         break;
                                     case 'error':
+                                        streamFailed = true;
+                                        discardImages = eventData.discard_images === true;
                                         streamedText = eventData.message || this.trans.errorGeneric;
                                         this.messages[msgIndex].content = streamedText;
                                         break;
@@ -1676,31 +2061,36 @@ app.component('v-agenting-pim', {
                     }
                 }
             } catch (e) {
+                streamFailed = true;
                 if (!streamedText) streamedText = this.trans.errorGeneric;
             }
 
             // Finalize the message
-            this.pendingFiles = [];
+            this.pendingFiles = streamFailed
+                ? files.filter(f => !discardImages || f.type !== 'image')
+                : [];
             this.messages[msgIndex] = {
                 role: 'assistant',
-                content: streamedText || this.trans.noResponse,
+                content: (!streamFailed && resultData.reply) || streamedText || this.trans.noResponse,
                 action: resultData.action || 'agent_response',
                 result: resultData.result || null,
+                message_id: chatRequestId(),
+                presentation: resultData.presentation || null,
                 product_url: resultData.product_url || null,
                 download_url: resultData.download_url || null,
                 isStreaming: false,
             };
-
             // Auto-navigate/refresh handling
-            if (resultData.product_url && this.activeCapability?.key === 'create_from_image') {
+            if (!streamFailed && resultData.product_url && this.activeCapability?.key === 'create_from_image') {
                 this.messages.push({ role: 'assistant', content: this.trans.openingProduct, isRedirect: true });
                 this.saveState();
                 setTimeout(() => { window.location.href = resultData.product_url; }, 1500);
-            } else if (this.shouldAutoRefreshAfterAction(resultData)) {
+            } else if (!streamFailed && this.shouldAutoRefreshAfterAction(resultData)) {
                 this.saveState();
                 this.streamingStatus = this.trans.refreshingPage;
                 setTimeout(() => { window.location.reload(); }, 1500);
             }
+            return resultData;
         },
 
         copyMessage(idx) {
@@ -1728,16 +2118,28 @@ app.component('v-agenting-pim', {
             }
         },
 
-        retryFrom(idx) {
+        async retryFrom(idx) {
+            if (this.isLoading) return;
+            const sessionId = this.activeSessionId;
             // Find the user message right before this assistant message
             let userIdx = idx - 1;
             while (userIdx >= 0 && this.messages[userIdx].role !== 'user') { userIdx--; }
             if (userIdx < 0) return;
+            const requestId = this.messages[userIdx].request_id || chatRequestId();
+            if (this.messages[userIdx].extensions) {
+                this.extensionContext = JSON.parse(JSON.stringify(this.messages[userIdx].extensions));
+            }
             const userText = this.messages[userIdx].content || '';
             // Remove from that user message onwards and resend
+            const removed = this.messages.slice(userIdx).map(message => message.message_id).filter(Boolean);
+            this.deletedMessageIds[this.activeSessionId] = [...new Set([...(this.deletedMessageIds[this.activeSessionId] || []), ...removed])];
             this.messages.splice(userIdx);
+            this.isLoading = true;
+            await this.saveCurrentSession();
+            this.isLoading = false;
+            if (this.activeSessionId !== sessionId) return;
             this.inputText = userText;
-            this.$nextTick(() => this.send());
+            this.$nextTick(() => this.send(requestId));
         },
 
         rateMessage(idx, rating) {
@@ -1769,6 +2171,7 @@ app.component('v-agenting-pim', {
             this.messages[idx] = { ...this.messages[idx], _confirmed: true };
             // Send the user's answer as a chat message
             this.inputText = answer === 'yes' ? 'Yes, proceed' : 'No, cancel';
+            this.scrollBottom(true);
             this.$nextTick(() => this.send());
         },
 
@@ -1825,7 +2228,21 @@ app.component('v-agenting-pim', {
             return lastSegment || 'generated-image';
         },
 
-        scrollBottom() {
+        /**
+         * Pin the transcript to the latest message.
+         *
+         * Skipped while the user is reading further up, unless forced by an
+         * action the user just took (sending, confirming, switching session).
+         */
+        scrollBottom(force = false) {
+            if (force) {
+                this.autoScroll = true;
+            }
+
+            if (! this.autoScroll) {
+                return;
+            }
+
             this.$nextTick(() => {
                 requestAnimationFrame(() => {
                     const el = this.$refs.messagesEl;
@@ -1835,6 +2252,35 @@ app.component('v-agenting-pim', {
                     }
                 });
             });
+        },
+
+        onMessagesScroll() {
+            const el = this.$refs.messagesEl;
+
+            if (! el) {
+                return;
+            }
+
+            this.autoScroll = (el.scrollHeight - el.scrollTop - el.clientHeight) <= 80;
+        },
+
+        /**
+         * Keep the transcript pinned while streamed text, tool-status rows,
+         * markdown blocks and lazily loaded images change its height. Images
+         * settle their height after the mutation that inserted them, so their
+         * load event is listened to as well.
+         */
+        observeMessages() {
+            const el = this.$refs.messagesEl;
+
+            if (! el || this.messagesObserver) {
+                return;
+            }
+
+            this.messagesObserver = new MutationObserver(() => this.scrollBottom());
+            this.messagesObserver.observe(el, { childList: true, subtree: true, characterData: true });
+
+            el.addEventListener('load', () => this.scrollBottom(), true);
         },
         autoResize() { const el = this.$refs.textInput; if (el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 160) + 'px'; } },
         resetTextarea() { this.$nextTick(() => { const el = this.$refs.textInput; if (el) { el.style.height = 'auto'; el.style.height = '72px'; } }); },
@@ -1848,65 +2294,14 @@ app.component('v-agenting-pim', {
             return text;
         },
 
-        // Convert GitHub-style markdown tables (| a | b | rows with a |---|---|
-        // separator) into an HTML table. Runs BEFORE the inline rules so cell
-        // text still gets bold/links/etc. Non-table lines pass through untouched.
-        renderTables(text) {
-            if (text.indexOf('|') === -1) return text;
-            const isSep = (l) => {
-                const t = l.trim();
-                return t.indexOf('-') !== -1 && t.replace(/[|\s:-]/g, '') === '';
-            };
-            const cells = (l) => {
-                let t = l.trim();
-                if (t.startsWith('|')) t = t.slice(1);
-                if (t.endsWith('|')) t = t.slice(0, -1);
-                return t.split('|').map(c => c.trim());
-            };
-            const isRow = (l) => /^\s*\|.*\|\s*$/.test(l);
-            const th = 'border border-gray-200 dark:border-gray-700 px-2 py-1 text-left font-semibold bg-gray-50 dark:bg-cherry-800';
-            const td = 'border border-gray-200 dark:border-gray-700 px-2 py-1 align-top';
-            const lines = text.split('\n');
-            const out = [];
-            let i = 0;
-            while (i < lines.length) {
-                if (isRow(lines[i]) && i + 1 < lines.length && isSep(lines[i + 1])) {
-                    const head = cells(lines[i]);
-                    i += 2;
-                    const body = [];
-                    while (i < lines.length && isRow(lines[i]) && !isSep(lines[i])) {
-                        body.push(cells(lines[i]));
-                        i++;
-                    }
-                    out.push(
-                        '<table class="w-full my-2 text-[12px] border-collapse"><thead><tr>' +
-                        head.map(h => `<th class="${th}">${h}</th>`).join('') +
-                        '</tr></thead><tbody>' +
-                        body.map(r => '<tr>' + head.map((_, c) => `<td class="${td}">${r[c] || ''}</td>`).join('') + '</tr>').join('') +
-                        '</tbody></table>'
-                    );
-                } else {
-                    out.push(lines[i]);
-                    i++;
-                }
-            }
-            return out.join('\n');
-        },
-
         renderMarkdown(text) {
             if (!text) return '';
-            const html = this.renderTables(text)
+            const html = this.renderMarkdownTables(text)
+                .replace(/^[*-] (.+)$/gm, '<p class="flex gap-1.5 my-0.5"><span class="text-primary-400 font-bold flex-shrink-0">&bull;</span><span>$1</span></p>')
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                 .replace(/\*(.*?)\*/g, '<em>$1</em>')
                 .replace(/`([^`]+)`/g, '<code class="bg-gray-100 dark:bg-cherry-800 px-1 py-0.5 rounded text-xs font-mono text-primary-700 dark:text-primary-400">$1</code>')
-                // Images: ![alt](url) — must run BEFORE the link rule (image = "!" + link).
-                // Only app/media-hosted URLs become an <img>; anything else degrades
-                // to a plain link so the agent can never point <img> at a hostile host.
-                .replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g, (_, alt, url) => {
-                    return this.isAllowedImageUrl(url)
-                        ? `<img src="${url}" alt="${alt}" loading="lazy" class="ap-ai-img rounded-lg my-1.5 max-w-full h-auto border border-gray-200 dark:border-gray-700" />`
-                        : `<a href="${url}" class="text-primary-600 underline hover:no-underline" target="_blank">${alt || url}</a>`;
-                })
+                .replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g, (_, alt, url) => this.renderImage(alt, url))
                 .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, url) => {
                     const isInternal = url.includes('/admin/');
                     return isInternal
@@ -1916,28 +2311,24 @@ app.component('v-agenting-pim', {
                 .replace(/^### (.+)$/gm, '<p class="font-semibold text-sm mt-2 mb-1">$1</p>')
                 .replace(/^## (.+)$/gm, '<p class="font-bold text-sm mt-2 mb-1">$1</p>')
                 .replace(/^# (.+)$/gm, '<p class="font-bold text-base mt-2 mb-1">$1</p>')
-                .replace(/^- (.+)$/gm, '<p class="flex gap-1.5 my-0.5"><span class="text-primary-400 font-bold flex-shrink-0">&bull;</span><span>$1</span></p>')
                 .replace(/^(\d+)\. (.+)$/gm, '<p class="flex gap-1.5 my-0.5"><span class="text-primary-400 font-bold flex-shrink-0">$1.</span><span>$2</span></p>')
                 .replace(/\n\n/g, '<br><br>')
-                .replace(/\n/g, '<br>');
+                .replace(/\n/g, '<br>')
+                .replace(/(<br>\s*)+(<table)/g, '$2')
+                .replace(/(<\/table>)(\s*<br>)+/g, '$1');
 
             // Sanitize HTML to prevent XSS from AI-generated or injected content.
             if (typeof DOMPurify !== 'undefined') {
-                // Defense-in-depth: even though the image rule above only emits
-                // <img> for allowed hosts, strip any <img> (e.g. one the agent
-                // wrote as raw HTML) whose src is off the allowlist.
-                const dropForeignImg = (node) => {
-                    if (node.tagName === 'IMG' && ! this.isAllowedImageUrl(node.getAttribute('src') || '')) {
-                        node.remove();
-                    }
-                };
-                DOMPurify.addHook('afterSanitizeAttributes', dropForeignImg);
+                DOMPurify.addHook('afterSanitizeAttributes', node => {
+                    if (node.tagName === 'IMG' && ! this.isAllowedImageUrl(node.getAttribute('src') || '')) node.remove();
+                });
                 const clean = DOMPurify.sanitize(html, {
                     ALLOWED_TAGS: ['strong', 'em', 'code', 'a', 'p', 'br', 'span', 'ul', 'ol', 'li', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'img'],
                     ALLOWED_ATTR: ['href', 'target', 'class', 'style', 'src', 'alt', 'loading'],
                     ADD_ATTR: ['data-internal-link'],
                 });
                 DOMPurify.removeHook('afterSanitizeAttributes');
+
                 return clean;
             }
 
@@ -1947,21 +2338,102 @@ app.component('v-agenting-pim', {
             return this.stripToText(html);
         },
 
-        // An image URL is renderable only if it is same-origin (app-served
-        // /storage, asset()) or on a configured media/CDN host. Relative paths
-        // resolve against the current origin. Everything else (other hosts,
-        // data:, javascript:) is rejected so <img> can't be a tracking/SSRF sink.
+        /**
+         * Convert GitHub-style pipe tables into HTML before the line-based
+         * rules run, since those turn every newline into a <br> and would
+         * leave the table as literal pipes.
+         */
+        renderMarkdownTables(text) {
+            const lines = text.split('\n');
+            const output = [];
+
+            for (let i = 0; i < lines.length; i++) {
+                const isDivider = /^\s*\|?[\s:|-]*-[\s:|-]*\|?\s*$/.test(lines[i + 1] || '')
+                    && (lines[i + 1] || '').includes('-');
+
+                if (!this.isTableRow(lines[i]) || !isDivider || !this.isTableRow(lines[i + 1])) {
+                    output.push(lines[i]);
+                    continue;
+                }
+
+                const header = this.splitTableRow(lines[i]);
+                const body = [];
+                let cursor = i + 2;
+
+                while (cursor < lines.length && this.isTableRow(lines[cursor])) {
+                    body.push(this.splitTableRow(lines[cursor]));
+                    cursor++;
+                }
+
+                const headCells = header.map(cell => `<th class="text-left font-semibold px-2 py-1 border-b border-gray-200 dark:border-cherry-800">${cell}</th>`).join('');
+                const bodyRows = body.map(row => `<tr>${row.map(cell => `<td class="px-2 py-1 align-top border-b border-gray-100 dark:border-cherry-900">${cell}</td>`).join('')}</tr>`).join('');
+
+                output.push(`<table class="w-full my-1.5 text-[12px] border-collapse"><thead><tr>${headCells}</tr></thead><tbody>${bodyRows}</tbody></table>`);
+
+                i = cursor - 1;
+            }
+
+            return output.join('\n');
+        },
+
+        isTableRow(line) {
+            return typeof line === 'string' && /^\s*\|.*\|\s*$/.test(line);
+        },
+
+        splitTableRow(line) {
+            return line.trim().replace(/^\||\|$/g, '').split('|').map(cell => cell.trim());
+        },
+
+        /**
+         * Render a markdown image. Only an allowed URL becomes an <img>; any
+         * other URL degrades to a plain link, so the agent can never point an
+         * <img> at a foreign host. Runs before the link rule (an image is "!"
+         * plus a link). The sanitizer hook in renderMarkdown() also drops any
+         * raw <img> with a foreign src.
+         */
+        renderImage(alt, url) {
+            const attr = value => String(value).replace(/"/g, '&quot;');
+
+            return this.isAllowedImageUrl(url)
+                ? `<img src="${attr(url)}" alt="${attr(alt)}" loading="lazy" class="ap-ai-img" />`
+                : `<a href="${attr(url)}" class="text-primary-600 underline hover:no-underline" target="_blank">${alt || url}</a>`;
+        },
+
+        /**
+         * An image URL renders only when it is http(s) and same-origin (app
+         * served /storage) or on a configured media host. Relative paths
+         * resolve against the current origin; data: and javascript: URLs and
+         * other hosts are rejected so <img> cannot be a tracking or SSRF sink.
+         */
         isAllowedImageUrl(url) {
-            if (! url) return false;
-            let u;
+            let parsed;
+
             try {
-                u = new URL(url, window.location.origin);
+                parsed = new URL(url, window.location.origin);
             } catch (e) {
                 return false;
             }
-            if (u.protocol !== 'https:' && u.protocol !== 'http:') return false;
-            if (u.host === window.location.host) return true;
-            return this.allowedImageHosts.includes(u.host);
+
+            if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') return false;
+
+            return parsed.host === window.location.host || this.allowedImageHosts.includes(parsed.hostname);
+        },
+
+        /**
+         * Swap a chat image that failed to load for a short caption. `error`
+         * does not bubble, so mounted() listens in the capture phase on the
+         * document (the widget is a multi-root fragment); only chat images
+         * carry the ap-ai-img class.
+         */
+        replaceBrokenImage(target) {
+            if (target?.tagName !== 'IMG' || ! target.classList?.contains('ap-ai-img') || target.dataset.failed) return;
+
+            target.dataset.failed = '1';
+            const note = document.createElement('span');
+            const alt = target.getAttribute('alt');
+            note.className = 'ap-ai-img-missing';
+            note.textContent = alt ? this.trans.imageUnavailableAlt.replace(':alt', alt) : this.trans.imageUnavailable;
+            target.replaceWith(note);
         },
 
         sanitizeSvg(svgHtml) {
@@ -1996,7 +2468,8 @@ app.component('v-agenting-pim', {
                     selectedPlatformId: this.selectedPlatformId,
                     selectedModel: this.selectedModel,
                     activeSessionId: this.activeSessionId,
-                    messages: this.messages.filter(m => !m.isRedirect).map(m => ({ role: m.role, content: m.content, result: m.result || null, product_url: m.product_url || null, download_url: m.download_url || null, _confirmed: m._confirmed || false, isStreaming: m.isStreaming || false, replyId: m.replyId || null })),
+                    deletedMessageIds: this.deletedMessageIds,
+                    messages: this.messages.filter(m => !m.isRedirect).map(m => ({ message_id: m.message_id || null, request_id: m.request_id || null, presentation: m.presentation || null, extensions: m.extensions || null, role: m.role, content: m.content, action: m.action || null, result: m.result || null, product_url: m.product_url || null, download_url: m.download_url || null, _confirmed: m._confirmed || false, isStreaming: !!(m.isStreaming && m.replyId), replyId: m.replyId || null })),
                 }));
 
                 // Auto-save current session to localStorage
@@ -2023,6 +2496,7 @@ app.component('v-agenting-pim', {
                     }
                 }
                 if (s.activeSessionId) this.activeSessionId = s.activeSessionId;
+                if (s.deletedMessageIds && typeof s.deletedMessageIds === 'object') this.deletedMessageIds = s.deletedMessageIds;
                 if (Array.isArray(s.messages) && s.messages.length > 0) this.messages = s.messages.filter(m => !m.isRedirect);
                 // isOpen restored synchronously in data() to avoid first-paint flicker.
             } catch (e) {}
@@ -2030,12 +2504,13 @@ app.component('v-agenting-pim', {
     },
 
     beforeUnmount() {
+        this.messagesObserver?.disconnect();
+        this.messagesObserver = null;
+
+        if (this._imgErrorHandler) document.removeEventListener('error', this._imgErrorHandler, true);
+
         const appEl = document.getElementById('app');
         if (appEl) appEl.style.marginRight = '';
-
-        // Match the document-level image-error listener added in mounted() so it
-        // does not stack across PJAX remounts.
-        if (this._imgErrorHandler) document.removeEventListener('error', this._imgErrorHandler, true);
 
         // NOTE: do NOT clear storage here. Admin navigation is PJAX
         // (navigation.js unmount/remount the Vue app on every page change), so

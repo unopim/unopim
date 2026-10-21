@@ -6,14 +6,15 @@ use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Laravel\Ai\AnonymousAgent;
 use Laravel\Ai\Files\Image;
 use Laravel\Ai\Messages\AssistantMessage;
 use Laravel\Ai\Messages\UserMessage;
 use Laravel\Ai\Responses\AgentResponse;
+use Laravel\Ai\Responses\Data\ToolResult;
 use Laravel\Ai\Streaming\Events\TextDelta;
 use Laravel\Ai\Streaming\Events\ToolCall;
+use Laravel\Ai\Streaming\Events\ToolResult as ToolResultEvent;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Webkul\AiAgent\Events\AgentSystemPromptBuilding;
 use Webkul\AiAgent\Events\AgentToolExecuted;
@@ -69,14 +70,14 @@ class AgentRunner
         );
 
         $usage = $response->usage;
-        $tokensUsed = ($usage->promptTokens ?? 0) + ($usage->completionTokens ?? 0);
-
-        $groundedSkus = $this->skusFromRawResults(
-            collect($response->toolResults)->map(fn ($r) => $r->result ?? null)->all()
-        );
+        $tokensUsed = $usage->inputTokens + $usage->outputTokens;
 
         $result = [
-            'reply'  => $this->stripUnresolvableImages($this->guardProductGrounding($response->text ?: trans('ai-agent::app.common.operation-completed'), null, $groundedSkus)),
+            'reply' => app(ReplyGuard::class)->apply(
+                $response->text ?: trans('ai-agent::app.common.operation-completed'),
+                collect($response->toolResults)->pluck('name')->all(),
+                $context->history,
+            ),
             'action' => 'agent_response',
             'data'   => [
                 'steps'       => $response->steps->count(),
@@ -94,7 +95,9 @@ class AgentRunner
      *
      * Sends progress events during tool execution, then streams the final
      * text response. Subscribes to laravel/ai stream events (ToolCall,
-     * TextDelta) to provide real-time feedback to the chat widget.
+     * TextDelta) to provide real-time feedback to the chat widget. The
+     * `complete` event carries the checked final reply, which replaces the
+     * streamed text.
      */
     public function runStreaming(ChatContext $context): StreamedResponse
     {
@@ -106,20 +109,12 @@ class AgentRunner
                 session()->save();
             }
 
-            // Disable output buffering for real-time streaming
-            while (ob_get_level()) {
-                ob_end_flush();
-            }
+            $this->disableOutputBuffering();
 
             try {
-                $result = $this->generate($context, fn (string $event, array $data) => $this->sendSSE($event, $data));
-
-                // Already streamed as text_delta; strip from final payload.
-                unset($result['reply']);
-                $this->sendSSE('complete', $result);
+                $this->sendSSE('complete', $this->generate($context, fn (string $event, array $data) => $this->sendSSE($event, $data)));
             } catch (\Throwable $e) {
-                $this->logStreamError($e);
-                $this->sendSSE('error', ['message' => AiErrorResolver::resolve($e)['message']]);
+                $this->sendSSE('error', $this->handleGenerationError($e, $context));
             }
         }, 200, [
             'Content-Type'      => 'text/event-stream',
@@ -130,38 +125,41 @@ class AgentRunner
     }
 
     /**
-     * Run the agent and emit generation events through $emit, so the live SSE
-     * stream and the async queue job (which persists the reply so it survives a
-     * page reload) share exactly one generation loop.
+     * Run the agent for one chat turn and report progress through $emit.
      *
-     * $emit(string $event, array $data) is called with:
-     *   status     {message}     — a human status label
-     *   tool_call  {step, tool}  — a tool invocation
-     *   text_delta {chunk}       — a chunk of assistant text
+     * The live SSE stream and the queued ChatReplyJob (which persists the reply
+     * so it survives a page reload) share this single generation loop. $emit
+     * receives (string $event, array $data) for these events:
+     *   status      {message}     a human status label
+     *   tool_call   {step, tool}  a tool invocation
+     *   tool_result {...}         action payload of a completed tool
+     *   text_delta  {chunk}       a chunk of assistant text
      *
-     * Returns the final result array {reply, action, data, ...actions}.
+     * The text is streamed before the turn is complete, so the final reply
+     * returned here (after ReplyGuard) can differ from the streamed deltas and
+     * must replace them.
+     *
+     * @param  int  $timeout  Per-request provider timeout in seconds.
+     * @return array{reply: string, action: string, data: array<string, mixed>}
      */
-    public function generate(ChatContext $context, callable $emit): array
+    public function generate(ChatContext $context, callable $emit, int $timeout = 120): array
     {
-        $statusMsg = $context->hasImages()
+        $emit('status', ['message' => $context->hasImages()
             ? trans('ai-agent::app.common.status-analyzing-image')
-            : trans('ai-agent::app.common.status-thinking');
-        $emit('status', ['message' => $statusMsg]);
+            : trans('ai-agent::app.common.status-thinking')]);
 
         $aiProvider = AiProvider::from($context->platform->provider);
 
         return ScopedProviderConfig::run(
             $aiProvider->configKey(),
             $this->providerOverrides($context),
-            function () use ($context, $aiProvider, $emit): array {
-                $agent = $this->buildAgent($context);
-
-                $stream = $agent->stream(
+            function () use ($context, $aiProvider, $emit, $timeout): array {
+                $stream = $this->buildAgent($context)->stream(
                     $context->message,
                     attachments: $this->buildAttachments($context),
                     provider: $aiProvider->toLab(),
                     model: $context->model,
-                    timeout: 120,
+                    timeout: $timeout,
                 );
 
                 $textBuffer = '';
@@ -170,6 +168,21 @@ class AgentRunner
                 $toolsUsed = [];
 
                 foreach ($stream as $event) {
+                    if ($event instanceof ToolResultEvent
+                        && $event->successful && ! $event->preliminary
+                        && ! $event->toolResult->failed && ! $event->toolResult->denied) {
+                        $raw = $event->toolResult->result;
+                        $partial = [];
+                        $this->mergeActionPayload(
+                            is_string($raw) || $raw instanceof \Stringable ? json_decode((string) $raw, true) : null,
+                            $partial,
+                        );
+
+                        if ($partial !== []) {
+                            $emit('tool_result', $partial);
+                        }
+                    }
+
                     if ($event instanceof ToolCall) {
                         $stepCount++;
                         $toolsUsed[] = $event->toolCall->name;
@@ -192,25 +205,17 @@ class AgentRunner
                     }
                 }
 
-                // After stream completes, the StreamableAgentResponse holds
-                // final usage + text. Fall back to buffer if usage is null.
-                $rawResults = [];
-                foreach ($stream->events as $ev) {
-                    if (isset($ev->toolResult)) {
-                        $rawResults[] = $ev->toolResult->result ?? null;
-                    }
-                }
-                $groundedSkus = $this->skusFromRawResults($rawResults);
-
-                $rawText   = $stream->text ?: $textBuffer ?: trans('ai-agent::app.common.operation-completed');
-                $finalText = $this->stripUnresolvableImages($this->guardProductGrounding($rawText, $toolsUsed, $groundedSkus));
                 $usage = $stream->usage;
-                $tokensUsed = ($usage?->promptTokens ?? 0) + ($usage?->completionTokens ?? 0);
+                $tokensUsed = ($usage?->inputTokens ?? 0) + ($usage?->outputTokens ?? 0);
 
                 $this->recordStreamingTokens($context, $tokensUsed);
 
                 $result = [
-                    'reply'  => $finalText,
+                    'reply' => app(ReplyGuard::class)->apply(
+                        $stream->text ?: $textBuffer ?: trans('ai-agent::app.common.operation-completed'),
+                        $toolsUsed,
+                        $context->history,
+                    ),
                     'action' => 'agent_response',
                     'data'   => [
                         'steps'       => $stepCount,
@@ -226,12 +231,23 @@ class AgentRunner
     }
 
     /**
-     * Log a streaming/generation error, distinguishing a known provider error
-     * (warning) from an unexpected one (error).
+     * Log a failed generation, drop stored images the model refused, and
+     * return the error payload shown to the user.
+     *
+     * A known provider error is logged as a warning, anything else as an error.
+     *
+     * @return array{message: string, discard_images: bool}
      */
-    protected function logStreamError(\Throwable $e): void
+    public function handleGenerationError(\Throwable $e, ChatContext $context): array
     {
-        if (AiErrorResolver::resolve($e)['is_known']) {
+        $resolved = AiErrorResolver::resolve($e);
+        $rejectsImages = AiErrorResolver::rejectsImageInput($e);
+
+        if ($rejectsImages) {
+            resolve(ChatUploadStore::class)->forgetImages($context->uploadedImagePaths);
+        }
+
+        if ($resolved['is_known']) {
             Log::warning('AI Agent stream provider error', [
                 'type'    => $e::class,
                 'message' => $e->getMessage(),
@@ -239,228 +255,21 @@ class AgentRunner
         } else {
             Log::error('AI Agent stream error', ['exception' => $e]);
         }
+
+        return [
+            'message'        => $resolved['message'],
+            'discard_images' => $rejectsImages,
+        ];
     }
 
     /**
-     * Guard against product references the model did not actually look up.
-     *
-     * The model is capable of calling the catalog tools and usually does, but a
-     * tool call is optional at each step, so it occasionally invents a plausible
-     * product (brand, SKU, price, image path) instead of searching. Two
-     * deterministic checks catch that, independent of the model:
-     *   1. A product edit-link pointing at an id that does not exist is a
-     *      fabrication.
-     *   2. If the reply presents a specific product (an edit-link or a product
-     *      image) but the model called ZERO tools this turn, it was produced
-     *      with no grounding at all.
-     * Either way the whole reply is replaced with an honest fallback rather than
-     * showing a product that is not in the catalog.
-     *
-     * @param  array<int, string>|null  $toolsUsed     Tool names called this turn,
-     *                                                 or null when unknown (which
-     *                                                 skips the zero-tool check).
-     * @param  array<int, string>        $groundedSkus  SKUs the tools actually
-     *                                                 returned this turn.
+     * Flush and close every output buffer so SSE events reach the client as they are sent.
      */
-    protected function guardProductGrounding(string $text, ?array $toolsUsed, array $groundedSkus = []): string
+    protected function disableOutputBuffering(): void
     {
-        $fallback = "I couldn't confirm a real product for that request, so I'm not showing one. Give me a specific SKU or a keyword and I'll pull the exact details from the catalog.";
-
-        // 1. Every product edit-link must point at a product that exists.
-        if (preg_match_all('#/catalog/products/(\d+)/edit#', $text, $m)) {
-            foreach (array_unique($m[1]) as $id) {
-                if (! DB::table('products')->where('id', (int) $id)->exists()) {
-                    Log::warning('AI Agent replaced reply linking a non-existent product', ['product_id' => $id]);
-
-                    return $fallback;
-                }
-            }
+        while (ob_get_level()) {
+            ob_end_flush();
         }
-
-        // 2. A specific product shown with no tool call at all was not grounded.
-        //    Skipped when $toolsUsed is null (the tool set for this turn is
-        //    unknown) or non-empty (the model did some real work, so give it the
-        //    benefit of the doubt — checks 1 and stripUnresolvableImages still
-        //    guard the concrete artifacts).
-        if ($toolsUsed === []) {
-            $presentsProduct = preg_match('#/catalog/products/\d+/edit#', $text)
-                || preg_match('#!\[[^\]]*\]\([^)]*?/storage/#', $text);
-
-            if ($presentsProduct) {
-                Log::warning('AI Agent replaced ungrounded product reply (no tools called)');
-
-                return $fallback;
-            }
-        }
-
-        // 3. Every SKU the reply presents must be a real product. The tools that
-        //    ran this turn returned real SKUs; their shape tells us what a SKU
-        //    looks like in this catalog, so we can spot same-shaped tokens in the
-        //    reply (without matching dates/dimensions) and require each to exist.
-        //    This catches the case where the model DID call a tool but still put
-        //    an invented SKU in the prose.
-        if ($groundedSkus !== []) {
-            $groundedSet = array_flip($groundedSkus);
-            $patterns = [];
-            foreach (array_slice(array_values(array_unique($groundedSkus)), 0, 5) as $sku) {
-                $patterns[$this->skuShapeRegex($sku)] = true;
-            }
-
-            $candidates = [];
-            foreach (array_keys($patterns) as $pattern) {
-                if ($pattern !== '' && @preg_match_all('/(?<![A-Za-z0-9])'.$pattern.'(?![A-Za-z0-9])/', $text, $mm)) {
-                    foreach ($mm[0] as $token) {
-                        $candidates[$token] = true;
-                    }
-                }
-            }
-
-            foreach (array_keys($candidates) as $sku) {
-                if (isset($groundedSet[$sku])) {
-                    continue; // a tool returned this SKU this turn — real
-                }
-                if (DB::table('products')->where('sku', $sku)->exists()) {
-                    continue; // a real product (e.g. referenced from history)
-                }
-
-                Log::warning('AI Agent replaced reply presenting a fabricated SKU', ['sku' => $sku]);
-
-                return $fallback;
-            }
-        }
-
-        return $text;
-    }
-
-    /**
-     * Build a regex that matches tokens shaped like the given SKU (digit for
-     * digit, letter for letter, separators literal). Lets us recognise both real
-     * and invented SKUs of the same shape while ignoring dates and dimensions.
-     */
-    protected function skuShapeRegex(string $sku): string
-    {
-        return (string) preg_replace_callback('/./u', function (array $m): string {
-            $c = $m[0];
-
-            if (ctype_digit($c)) {
-                return '\d';
-            }
-            if (ctype_alpha($c)) {
-                return '[A-Za-z]';
-            }
-
-            return preg_quote($c, '/');
-        }, $sku);
-    }
-
-    /**
-     * Collect the SKUs that tool results carried this turn.
-     *
-     * @param  array<int, mixed>  $rawResults  Raw tool-result payloads (JSON
-     *                                         strings or arrays).
-     * @return array<int, string>
-     */
-    protected function skusFromRawResults(array $rawResults): array
-    {
-        $skus = [];
-
-        foreach ($rawResults as $raw) {
-            $decoded = is_string($raw) || $raw instanceof \Stringable
-                ? json_decode((string) $raw, true)
-                : (is_array($raw) ? $raw : null);
-
-            if (! is_array($decoded)) {
-                continue;
-            }
-
-            array_walk_recursive($decoded, function ($value, $key) use (&$skus): void {
-                if ($key === 'sku' && is_string($value) && $value !== '') {
-                    $skus[$value] = true;
-                }
-            });
-        }
-
-        return array_keys($skus);
-    }
-
-    /**
-     * Remove markdown images whose URL does not resolve to a real stored file.
-     *
-     * The chat only renders same-origin (/storage) or configured-media-host
-     * images, so a fabricated or wrong path would 404. Validating the file here
-     * means such an image never reaches the widget, rather than relying on the
-     * client to hide a broken load. The broken model habit this guards against
-     * is inventing a product and a plausible-looking image path for it. A failed
-     * image is replaced with a short note so the surrounding text still reads.
-     */
-    protected function stripUnresolvableImages(string $text): string
-    {
-        if (strpos($text, '![') === false) {
-            return $text;
-        }
-
-        $appHost = parse_url((string) config('app.url'), PHP_URL_HOST) ?: null;
-        $s3Host  = parse_url((string) (config('filesystems.disks.s3.url') ?: ''), PHP_URL_HOST) ?: null;
-
-        return preg_replace_callback(
-            '/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/',
-            function (array $m) use ($appHost, $s3Host): string {
-                $resolves = $this->imageUrlResolves($m[2], $appHost, $s3Host);
-
-                // Keep verified images, and leave URLs we cannot cheaply check
-                // (the client-side host allowlist is the backstop for those).
-                if ($resolves === true || $resolves === null) {
-                    return $m[0];
-                }
-
-                Log::warning('AI Agent stripped unresolvable chat image', ['url' => $m[2]]);
-
-                return $m[1] !== '' ? "{$m[1]} (image unavailable)" : '(image unavailable)';
-            },
-            $text
-        ) ?? $text;
-    }
-
-    /**
-     * Whether an image URL points at a file that actually exists.
-     *
-     * @return bool|null  true = exists, false = validated and missing,
-     *                    null = not cheaply validatable (leave it alone).
-     */
-    protected function imageUrlResolves(string $url, ?string $appHost, ?string $s3Host): ?bool
-    {
-        $parts = parse_url($url);
-
-        if ($parts === false) {
-            return false;
-        }
-
-        $host = $parts['host'] ?? null;
-        $path = $parts['path'] ?? '';
-
-        // Same-origin (or a relative /storage/... path) -> the public disk.
-        if ($host === null || $host === $appHost) {
-            if (preg_match('#/storage/(.+)$#', $path, $mm)) {
-                return Storage::disk('public')->exists(urldecode($mm[1]));
-            }
-
-            return null;
-        }
-
-        // The configured media host -> the DAM/object-storage disk. Accept both
-        // the raw key and a path-style URL that carries a leading bucket segment.
-        if ($s3Host !== null && $host === $s3Host) {
-            $key = urldecode(ltrim($path, '/'));
-
-            try {
-                return Storage::disk('s3')->exists($key)
-                    || Storage::disk('s3')->exists(preg_replace('#^[^/]+/#', '', $key));
-            } catch (\Throwable $e) {
-                return null;
-            }
-        }
-
-        return null;
     }
 
     /**
@@ -544,19 +353,7 @@ class AgentRunner
      */
     protected function providerOverrides(ChatContext $context): array
     {
-        $overrides = [
-            'key' => $context->platform->api_key,
-        ];
-
-        if ($context->platform->api_url) {
-            $overrides['url'] = $context->platform->api_url;
-        }
-
-        if ($context->platform->extras && is_array($context->platform->extras)) {
-            return array_merge($overrides, $context->platform->extras);
-        }
-
-        return $overrides;
+        return $context->platform->providerOverrides();
     }
 
     /**
@@ -587,6 +384,8 @@ Core Rules:
 - SHOWING IMAGES: You can display images inline with markdown: ![description](image_url). Use ONLY an image URL you actually obtained from a tool result for a REAL product in this catalog: the exact media path returned by get_product_details (render it as {app_url}/storage/{that exact path}), or the download_url returned by generate_image / edit_image / export_products. NEVER invent, guess, or derive an image path/filename from a SKU or product name, and never show an image for a product you have not fetched with a tool. If a fetched product has no image value, tell the user it has no image instead of fabricating a URL. NEVER present a product (SKU, name, price, or image) that did not come from a tool result — do not make products up; if a search returns nothing, say so.
 - IMPORTANT: Follow the APPROVAL MODE instructions below for when to ask confirmation vs. execute directly.
 PROMPT;
+
+        $prompt = str_replace('{app_url}', rtrim((string) config('app.url'), '/'), $prompt);
 
         $prompt .= "\n\n".$this->buildToolGroupsSection();
 
@@ -831,6 +630,7 @@ MODE;
                 : null;
 
             $this->mergeActionPayload($payload, $result);
+            $this->flagMutation($toolResult, $payload, $result);
         }
     }
 
@@ -863,7 +663,38 @@ MODE;
                 : null;
 
             $this->mergeActionPayload($payload, $result);
+            $this->flagMutation($event->toolResult, $payload, $result);
         }
+    }
+
+    /**
+     * Flag the response as mutated when a write tool changed data, so the widget
+     * reloads the edit page only after a real write and not after a read-only tool.
+     *
+     * @param  array<string, mixed>  $result
+     */
+    protected function flagMutation(ToolResult $toolResult, mixed $payload, array &$result): void
+    {
+        if ($toolResult->failed
+            || $toolResult->denied
+            || ! is_array($payload)
+            || isset($payload['error'])
+            || ($payload['mutated'] ?? null) === false
+            || ! ($this->toolRegistry->metadata($toolResult->name)['write'] ?? false)) {
+            return;
+        }
+
+        $toolPayload = is_array($payload['result'] ?? null) ? $payload['result'] : [];
+
+        if (is_string($toolPayload['status'] ?? null) && str_starts_with(strtolower($toolPayload['status']), 'error')) {
+            return;
+        }
+
+        if (is_numeric($toolPayload['updated'] ?? null) && $toolPayload['updated'] < 1) {
+            return;
+        }
+
+        $result['mutated'] = true;
     }
 
     /**
@@ -877,6 +708,10 @@ MODE;
     {
         if (! is_array($payload)) {
             return;
+        }
+
+        if ($descriptor = app(ResultRendererRegistry::class)->descriptor($payload['presentation'] ?? null)) {
+            $result['presentation'] = $descriptor;
         }
 
         if (! empty($payload['product_url'])) {

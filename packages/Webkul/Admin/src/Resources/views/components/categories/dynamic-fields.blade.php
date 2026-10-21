@@ -124,6 +124,8 @@
                 <x-admin::media.image
                     name="{{ $fieldName }}"
                     ::class="[errors && errors['{{ $fieldName }}'] ? 'border !border-red-600 hover:border-red-600' : '']"
+                    :allow-download="true"
+                    :full-preview="true"
                     :id="$field->code"
                     ::rules="{{ $field->getValidationsField() }}"
                     :uploaded-images="! empty($value) ? [$savedImage] : []"
@@ -152,6 +154,7 @@
 
                 <x-admin::media.files
                     type="video"
+                    :allow-download="true"
                     :id="$field->code"
                     :name="$fieldName"
                     ::rules="{{ $field->getValidationsField() }}"

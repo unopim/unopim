@@ -9,9 +9,23 @@ function selectControlSource(): string
     );
 }
 
+function multiselectSourcePath(): string
+{
+    return base_path('node_modules/vue-multiselect/dist/vue-multiselect.esm.js');
+}
+
 function multiselectSource(): string
 {
-    return file_get_contents(base_path('node_modules/vue-multiselect/dist/vue-multiselect.esm.js'));
+    return file_get_contents(multiselectSourcePath());
+}
+
+/**
+ * The library ships through npm, so a checkout that has not installed it yet has nothing to assert
+ * against; skipping keeps that an absent dependency rather than a failing expectation.
+ */
+function multiselectSourceMissing(): bool
+{
+    return ! file_exists(multiselectSourcePath());
 }
 
 it('never pins a select dropdown to open downwards', function () {
@@ -35,13 +49,13 @@ it('flips upwards only while the direction is left unset', function () {
     expect($adjust)
         ->toContain("hasEnoughSpaceBelow || spaceBelow > spaceAbove || this.openDirection === 'below' || this.openDirection === 'bottom'")
         ->toContain("this.preferredOpenDirection = 'above';");
-});
+})->skip(multiselectSourceMissing(...), 'vue-multiselect is not installed');
 
 it('keeps the default direction empty so the space check decides', function () {
     $prop = Str::between(multiselectSource(), 'openDirection: {', '},');
 
     expect($prop)->toContain("default: ''");
-});
+})->skip(multiselectSourceMissing(...), 'vue-multiselect is not installed');
 
 it('ships the account timezone field as a searchable select, which is the field that sits last', function () {
     $edit = file_get_contents(

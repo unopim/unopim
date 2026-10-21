@@ -4,6 +4,7 @@ namespace Webkul\AiAgent\Services;
 
 use Illuminate\Support\Str;
 use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
+use Webkul\Product\Enums\ProductType;
 
 /**
  * Normalizes AI-uploaded product rows into a CSV the core DataTransfer
@@ -63,10 +64,6 @@ class ProductImportCsvNormalizer
 
             $line = [];
             foreach ($header as $column) {
-                // Escape spreadsheet formula operators the same way the core
-                // exporters do; the core importer reverses it via
-                // EscapeFormulaOperators::unescapeValue(). This keeps the
-                // stored, downloadable CSV safe to open in a spreadsheet.
                 $line[] = (string) EscapeFormulaOperators::escapeValue(
                     $this->cellValue($column, $normalized, $familyAttrs, $familyCode, $channel, $locale)
                 );
@@ -129,8 +126,6 @@ class ProductImportCsvNormalizer
             }
         }
 
-        // Ensure a url_key column exists when the family defines it; it is
-        // auto-generated per row so imports do not fail on a required url_key.
         if (isset($familyAttrs['url_key']) && ! isset($seen['url_key'])) {
             $attributeColumns[] = 'url_key';
         }
@@ -166,7 +161,7 @@ class ProductImportCsvNormalizer
             case 'sku':
                 return (string) ($row['sku'] ?? '');
             case 'type':
-                return ((string) ($row['type'] ?? '')) ?: 'simple';
+                return ((string) ($row['type'] ?? '')) ?: ProductType::Simple->value;
             case 'attribute_family':
                 return $familyCode;
             case 'parent':
@@ -183,7 +178,6 @@ class ProductImportCsvNormalizer
                 return $this->buildUrlKey($row);
         }
 
-        // Price column: "code (CURRENCY)" — read the single uploaded value.
         if (preg_match('/^(.+) \(([^)]+)\)$/', $column, $matches)) {
             $raw = $row[$matches[1]] ?? null;
 

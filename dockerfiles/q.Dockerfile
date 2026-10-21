@@ -89,6 +89,11 @@ WORKDIR /var/www/html
 COPY . .
 COPY --from=composer /app/vendor ./vendor
 
+# Set permissions. The entrypoints drop to www-data via gosu, so bootstrap/cache
+# has to be owned by it before the package manifest is written on first boot.
+RUN chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
+
 # Healthcheck logic:
 #   1. If the install lock file does not exist yet, the worker is still
 #      waiting for the web/fpm container to finish first-time setup

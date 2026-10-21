@@ -16,7 +16,13 @@ function exportedJob(array $files): array
         'file_path'           => 'exports/archive.csv',
     ]);
 
-    $folder = 'exports/'.$jobInstance->id.'/uno-pim';
+    /**
+     * Unique per call rather than keyed by the job instance id: ids come from a
+     * sequence that keeps climbing while the rows roll back, so a run walks over
+     * export folders earlier runs left on the private disk. Landing on one that
+     * still holds files makes an export seeded as empty archive successfully.
+     */
+    $folder = 'exports/test-'.uniqid().'/uno-pim';
 
     foreach ($files as $name => $contents) {
         Storage::disk('private')->put($folder.'/'.$name, $contents);
@@ -58,7 +64,9 @@ describe('Job tracker archive download', function () {
     });
 
     it('reports an empty export instead of failing on a missing archive', function () {
-        [$jobInstance, $jobTrack] = exportedJob([]);
+        [$jobInstance, $jobTrack, $folder] = exportedJob([]);
+
+        expect(Storage::disk('private')->allFiles($folder))->toBeEmpty();
 
         $this->get(route('admin.settings.data_transfer.tracker.archive.download', $jobTrack->id))
             ->assertNotFound();

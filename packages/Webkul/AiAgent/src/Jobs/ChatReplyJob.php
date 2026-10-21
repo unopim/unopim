@@ -2,24 +2,27 @@
 
 namespace Webkul\AiAgent\Jobs;
 
+use Closure;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Arr;
 use Webkul\AiAgent\Chat\AgentRunner;
 use Webkul\AiAgent\Chat\AiErrorResolver;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Models\ChatReply;
+use Webkul\AiAgent\Repositories\ChatReplyRepository;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\User\Models\Admin;
 
 /**
  * Generate one chat reply on a queue worker and write its text into the
- * ChatReply row as it streams. This is what lets the reply survive a full page
- * reload: generation is decoupled from the browser connection, and the widget
- * polls the row (and resumes on the next page) instead of holding a live stream.
+ * ChatReply row as it streams.
+ *
+ * Generation is decoupled from the browser connection, so the reply survives
+ * a full page reload: the widget polls the row and resumes on the next page.
  */
 class ChatReplyJob implements ShouldQueue
 {
@@ -28,91 +31,98 @@ class ChatReplyJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    /** A chat generation can take up to ~2 minutes. */
-    public int $timeout = 180;
+    /**
+     * Seconds between content writes while text streams, so a fast token
+     * stream does not hammer the row.
+     */
+    protected const WRITE_INTERVAL = 0.15;
 
-    /** Never retry — a retry would re-run the LLM and double the token cost. */
+    /**
+     * Never retry: a retry re-runs the model and doubles the token cost.
+     */
     public int $tries = 1;
 
     /**
-     * @param  array<string, mixed>  $context  Serialized ChatContext inputs (scalars + ids).
+     * Mark the job failed (not released) when it times out.
+     */
+    public bool $failOnTimeout = true;
+
+    /**
+     * Seconds the worker may spend on this job; kept below the connection's
+     * retry_after, see timeoutFor().
+     */
+    public int $timeout;
+
+    /**
+     * @param  array<string, mixed>  $context  Serialized ChatContext inputs (scalars and ids).
      */
     public function __construct(
         protected string $replyId,
         protected array $context,
-    ) {}
+    ) {
+        $this->timeout = static::timeoutFor(config('queue.default'));
+    }
 
-    public function handle(AgentRunner $agentRunner): void
+    /**
+     * Job timeout for a queue connection, ten seconds below its retry_after.
+     *
+     * A timeout at or above retry_after lets the queue hand a still-running
+     * job to a second worker, which then fails it while the first worker is
+     * still writing the reply.
+     */
+    public static function timeoutFor(?string $connection): int
     {
-        $reply = ChatReply::find($this->replyId);
+        $retryAfter = (int) config("queue.connections.{$connection}.retry_after", 90);
 
-        if (! $reply) {
+        return max(1, $retryAfter - 10);
+    }
+
+    /**
+     * Generate the reply, unless it was cancelled or claimed by another worker.
+     *
+     * The acting admin is set on the guard for the tools and cleared afterwards.
+     * The provider timeout stays below the job timeout so a slow provider ends
+     * in a readable error instead of a killed worker.
+     */
+    public function handle(AgentRunner $agentRunner, ChatReplyRepository $chatReplyRepository): void
+    {
+        if (! $chatReplyRepository->claim($this->replyId)) {
             return;
         }
 
+        $reply = $chatReplyRepository->find($this->replyId);
         $context = $this->rebuildContext();
 
         if (! $context) {
             $reply->update([
                 'status' => ChatReply::STATUS_ERROR,
-                'error'  => 'Chat context could not be rebuilt.',
+                'error'  => trans('ai-agent::app.common.reply-context-unavailable'),
             ]);
 
             return;
         }
 
-        // Tools resolve the acting admin from the guard; set it for the worker.
         if ($context->user) {
             auth()->guard('admin')->setUser($context->user);
         }
 
-        $buffer = '';
-        $lastWrite = 0.0;
-
-        $emit = function (string $event, array $data) use ($reply, &$buffer, &$lastWrite): void {
-            if ($event === 'text_delta') {
-                $buffer .= $data['chunk'] ?? '';
-
-                // Throttle DB writes so a fast token stream doesn't hammer the row.
-                $now = microtime(true);
-                if ($now - $lastWrite > 0.15) {
-                    $reply->update(['content' => $buffer, 'status' => ChatReply::STATUS_GENERATING]);
-                    $lastWrite = $now;
-                }
-            } elseif ($event === 'status') {
-                $reply->update(['agent_status' => $data['message'] ?? null, 'status' => ChatReply::STATUS_GENERATING]);
-            } elseif ($event === 'tool_call') {
-                $reply->update(['agent_status' => $data['tool'] ?? null, 'status' => ChatReply::STATUS_GENERATING]);
-            }
-        };
-
         try {
-            $result = $agentRunner->generate($context, $emit);
-
-            // The streamed text is $result['reply']; the rest is the action payload
-            // (mirrors the SSE 'complete' event, which strips 'reply').
-            $final = $result['reply'] ?? $buffer;
-            unset($result['reply']);
+            $result = $agentRunner->generate($context, $this->progressRecorder($reply), max(1, $this->timeout - 5));
 
             $reply->update([
-                'content'      => $final,
-                'actions'      => $result,
+                'content'      => $result['reply'],
+                'actions'      => Arr::except($result, 'reply'),
                 'agent_status' => null,
                 'tokens_used'  => (int) ($result['data']['tokens_used'] ?? 0),
                 'status'       => ChatReply::STATUS_DONE,
             ]);
         } catch (\Throwable $e) {
-            $resolved = AiErrorResolver::resolve($e);
-
-            if ($resolved['is_known']) {
-                Log::warning('AI Agent async chat provider error', ['type' => $e::class, 'message' => $e->getMessage()]);
-            } else {
-                Log::error('AI Agent async chat error', ['exception' => $e, 'reply' => $this->replyId]);
-            }
+            $error = $agentRunner->handleGenerationError($e, $context);
 
             $reply->update([
                 'status'       => ChatReply::STATUS_ERROR,
-                'error'        => $resolved['message'],
+                'error'        => $error['message'],
+                'actions'      => ['discard_images' => $error['discard_images']],
                 'agent_status' => null,
             ]);
         } finally {
@@ -121,42 +131,77 @@ class ChatReplyJob implements ShouldQueue
     }
 
     /**
-     * Called by the queue when the job fails outright (e.g. timeout). Make sure
-     * the widget stops polling instead of spinning forever.
+     * Called by the queue when the job fails outright (for example a timeout),
+     * so the widget stops polling instead of waiting forever.
      */
     public function failed(\Throwable $e): void
     {
-        ChatReply::where('id', $this->replyId)->update([
-            'status'       => ChatReply::STATUS_ERROR,
-            'error'        => AiErrorResolver::resolve($e)['message'],
-            'agent_status' => null,
-        ]);
+        app(ChatReplyRepository::class)->failUnfinished($this->replyId, AiErrorResolver::resolve($e)['message']);
     }
 
+    /**
+     * Build the emitter that writes generation progress into the reply row.
+     *
+     * Text is written at most every WRITE_INTERVAL seconds; the final text is
+     * written by handle(). A status label goes to agent_status as is, a tool
+     * call as "tool:<name>" so the widget can show its translated label.
+     */
+    protected function progressRecorder(ChatReply $reply): Closure
+    {
+        $buffer = '';
+        $lastWrite = 0.0;
+
+        return function (string $event, array $data) use ($reply, &$buffer, &$lastWrite): void {
+            if ($event === 'text_delta') {
+                $buffer .= $data['chunk'] ?? '';
+
+                if (microtime(true) - $lastWrite >= self::WRITE_INTERVAL) {
+                    $lastWrite = microtime(true);
+                    $reply->update(['content' => $buffer]);
+                }
+
+                return;
+            }
+
+            if ($event === 'status') {
+                $reply->update(['agent_status' => $data['message'] ?? null]);
+            } elseif ($event === 'tool_call') {
+                $reply->update(['agent_status' => 'tool:'.($data['tool'] ?? '')]);
+            }
+        };
+    }
+
+    /**
+     * Rebuild the chat context from the serialized inputs, or null when the
+     * platform no longer exists.
+     */
     protected function rebuildContext(): ?ChatContext
     {
-        $c = $this->context;
-
-        $platform = MagicAIPlatform::find($c['platform_id'] ?? null);
+        $context = $this->context;
+        $platform = MagicAIPlatform::find($context['platform_id'] ?? null);
 
         if (! $platform) {
             return null;
         }
 
         return new ChatContext(
-            message: (string) ($c['message'] ?? ''),
-            history: $c['history'] ?? [],
-            productId: $c['productId'] ?? null,
-            productSku: $c['productSku'] ?? null,
-            productName: $c['productName'] ?? null,
-            locale: (string) ($c['locale'] ?? 'en_US'),
-            channel: (string) ($c['channel'] ?? 'default'),
+            message: (string) ($context['message'] ?? ''),
+            history: $context['history'] ?? [],
+            productId: $context['productId'] ?? null,
+            productSku: $context['productSku'] ?? null,
+            productName: $context['productName'] ?? null,
+            locale: (string) ($context['locale'] ?? 'en_US'),
+            channel: (string) ($context['channel'] ?? 'default'),
             platform: $platform,
-            model: (string) ($c['model'] ?? ''),
-            uploadedImagePaths: $c['uploadedImagePaths'] ?? [],
-            uploadedFilePaths: $c['uploadedFilePaths'] ?? [],
-            currentPage: $c['currentPage'] ?? null,
-            user: isset($c['admin_id']) ? Admin::find($c['admin_id']) : null,
+            model: (string) ($context['model'] ?? ''),
+            uploadedImagePaths: $context['uploadedImagePaths'] ?? [],
+            uploadedFilePaths: $context['uploadedFilePaths'] ?? [],
+            currentPage: $context['currentPage'] ?? null,
+            user: isset($context['admin_id']) ? Admin::find($context['admin_id']) : null,
+            conversationId: $context['conversationId'] ?? null,
+            requestId: $context['requestId'] ?? null,
+            hasNewImages: (bool) ($context['hasNewImages'] ?? false),
+            extensions: $context['extensions'] ?? [],
         );
     }
 }

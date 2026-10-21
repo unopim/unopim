@@ -36,8 +36,8 @@ describe('HistoryTrait::readyForAuditing for translatable models', function () {
 describe('attribute creation audit records', function () {
     beforeEach(function () {
         $this->repository = app(AttributeRepository::class);
-        $this->attributeType = (new Attribute)->getMorphClass();
-        $this->translationType = (new AttributeTranslation)->getMorphClass();
+        $this->attributeType = app(Attribute::class)->getMorphClass();
+        $this->translationType = app(AttributeTranslation::class)->getMorphClass();
 
         if (Locale::where('status', 1)->count() < 2) {
             Locale::where('status', 0)->orderBy('id')->take(2)->get()

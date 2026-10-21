@@ -32,6 +32,8 @@ use Webkul\Publication\Services\Publisher;
 
 class PublicationController extends Controller
 {
+    private const MASS_TRANSITION_CHUNK = 1000;
+
     public function __construct(
         private readonly PassportFeature $feature,
         private readonly PassportReadinessService $readiness,
@@ -353,18 +355,24 @@ class PublicationController extends Controller
             abort(404);
         }
 
-        $publicationIds = $request->collect('indices')->map(fn ($id): int => (int) $id)->all();
-
         $target = PublicationStatus::from($request->string('value')->value());
 
-        BulkTransitionPassportsJob::dispatch($publicationIds, $target);
+        $total = 0;
+
+        foreach ($request->selectedIds(PublicationDataGrid::class)->chunk(self::MASS_TRANSITION_CHUNK) as $chunk) {
+            $publicationIds = $chunk->map(fn ($id): int => (int) $id)->values()->all();
+
+            $total += count($publicationIds);
+
+            BulkTransitionPassportsJob::dispatch($publicationIds, $target);
+        }
 
         return new JsonResponse([
             'message' => trans(
                 $target === PublicationStatus::Withdrawn
                     ? 'passport::app.publications.mass-withdraw-queued'
                     : 'passport::app.publications.mass-reinstate-queued',
-                ['count' => count($publicationIds)],
+                ['count' => $total],
             ),
         ]);
     }

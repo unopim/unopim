@@ -135,14 +135,6 @@ return [
         'max_units'        => 'Rodzina jednostek nie może mieć więcej niż :max jednostek.',
     ],
 
-    'importers' => [
-        'products' => [
-            'validation' => [
-                'invalid-unit' => 'Jednostka ":unit" nie jest prawidłową jednostką dla atrybutu pomiaru ":attribute".',
-            ],
-        ],
-    ],
-
     'messages' => [
         'family' => [
             'created'                => 'Rodzina pomiarów została pomyślnie utworzona.',

@@ -135,14 +135,6 @@ return [
         'max_units'        => 'Ang isang pamilya ng sukat ay hindi maaaring magkaroon ng higit sa :max na yunit.',
     ],
 
-    'importers' => [
-        'products' => [
-            'validation' => [
-                'invalid-unit' => 'Ang yunit na ":unit" ay hindi wastong yunit para sa katangiang panukat na ":attribute".',
-            ],
-        ],
-    ],
-
     'messages' => [
         'family' => [
             'created'                => 'Matagumpay na nagawa ang pamilya ng sukat.',

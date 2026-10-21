@@ -1,6 +1,9 @@
 <?php
 
+use Illuminate\Contracts\Http\Kernel as HttpKernel;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Webkul\Admin\Tests\AdminTestCase;
 use Webkul\AdminApi\Tests\ApiTestCase;
 use Webkul\Attribute\Tests\AttributeTestCase;
@@ -45,6 +48,7 @@ uses(AttributeTestCase::class)->in('../packages/Webkul/Attribute/tests');
 uses(CategoryTestCase::class)->in('../packages/Webkul/Category/tests');
 uses(MeasurementTestCase::class)->in('../packages/Webkul/Measurement/tests');
 uses(CoreTestCase::class)->in('../packages/Webkul/AiAgent/tests');
+uses(AdminTestCase::class)->in('../packages/Webkul/MagicAI/tests');
 uses(CoreTestCase::class)->in('../packages/Webkul/Webhook/tests');
 uses(AdminTestCase::class)->in('../packages/Webkul/AppUrlGuard/tests');
 uses(ResourceTestCase::class)->in('../packages/Webkul/Resource/tests/Feature');
@@ -67,10 +71,10 @@ $packageTestPaths = array_map(
     glob(dirname(__DIR__).'/packages/Webkul/*/tests', GLOB_ONLYDIR) ?: [],
 );
 
+pest()->tia()->baselined();
+
 foreach ($packageTestPaths as $testPath) {
     $package = dirname($testPath);
-
-    pest()->tia()->baselined();
 
     pest()->tia()->watch([
         $package.'/src/Resources/views/**'  => $testPath,
@@ -79,9 +83,12 @@ foreach ($packageTestPaths as $testPath) {
         $package.'/src/Config/**'           => $testPath,
     ]);
 
+    // Only `database/migrations` is classified as schema by the engine itself, so package
+    // migrations need the mapping; AiAgent keeps its own at the package root.
     pest()->tia()->watch([
-        'packages/Webkul/*/src/Database/Migration/**' => $testPath,
-        'database/seeders/**'                         => $testPath,
+        'packages/Webkul/*/src/Database/Migrations/**' => $testPath,
+        'packages/Webkul/*/Database/Migration/**'      => $testPath,
+        'database/seeders/**'                          => $testPath,
     ]);
 }
 
@@ -96,10 +103,6 @@ foreach ($packageTestPaths as $testPath) {
 |
 */
 
-expect()->extend('toBeOne', function () {
-    return $this->toBe(1);
-});
-
 /*
 |--------------------------------------------------------------------------
 | Functions
@@ -111,20 +114,13 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
-{
-    // ..
-}
-
 /**
  * Seed the family's required attribute values on a factory product.
  *
  * A save is checked against every required attribute of the family, not only the ones the request
  * carried, so a bare factory product cannot be updated with a partial payload until these exist.
- *
- * @return Product
  */
-function seedRequiredProductValues($product)
+function seedRequiredProductValues(Product $product): Product
 {
     $scoped = Channel::with(['locales', 'currencies'])->get()->mapWithKeys(fn ($channel) => [
         $channel->code => $channel->locales->pluck('code')->mapWithKeys(fn ($locale) => [
@@ -151,4 +147,23 @@ function seedRequiredProductValues($product)
     $product->save();
 
     return $product;
+}
+
+function submitMultipartForm(string $uri, string $method, array $parameters, array $files = [])
+{
+    if ($method !== 'POST') {
+        $parameters += ['_method' => $method];
+    }
+
+    $symfonyRequest = SymfonyRequest::create($uri, 'POST', $parameters, [], $files);
+
+    $kernel = app(HttpKernel::class);
+
+    $request = Request::createFromBase($symfonyRequest);
+
+    $response = $kernel->handle($request);
+
+    $kernel->terminate($request, $response);
+
+    return $response;
 }

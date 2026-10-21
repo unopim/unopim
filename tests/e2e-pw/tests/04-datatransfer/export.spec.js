@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { clickSave, navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, clickSaveAndExpect, openFilterDrawer } = require('../../utils/helpers');
 
 /**
  * Helper: Create an export job with given parameters.
@@ -143,7 +143,7 @@ test.describe('UnoPim Export Jobs', () => {
 
   test('Filter menu opens when Filter is clicked', async ({ adminPage }) => {
     await navigateTo(adminPage, 'exports');
-    await adminPage.getByText('Filter', { exact: true }).click();
+    await openFilterDrawer(adminPage);
     await expect(adminPage.locator('#app').getByText('Apply Filters')).toBeVisible();
   });
 

@@ -91,6 +91,8 @@
 
         $isLocked = isset($lockedFields[$field->code]);
 
+        $isReadOnlyMedia = $isLocked && in_array($field->type, ['image', 'gallery', 'file'], true);
+
         $lockLevel = $isLocked ? ($lockedFields[$field->code]['level'] ?? null) : null;
 
         $isAxisLock = $isLocked && ! empty($lockedFields[$field->code]['axis']);
@@ -132,6 +134,8 @@
             : \Webkul\Core\Rules\FileOrImageValidValue::FILE_ALLOWED_EXTENSION;
 
         $fieldType = $field->type;
+
+        $isDisabled = $isLocked && ! $isReadOnlyMedia;
     @endphp
 
     {!! view_render_event('unopim.admin.products.dynamic-attribute-fields.field.before', ['field' => $field]) !!}
@@ -173,7 +177,8 @@
                 @endif
 
                 @if (
-                    $globaltranslationEnabled == 1
+                    ! $isDisabled
+                    && $globaltranslationEnabled == 1
                     && ($fieldType == 'text' || $fieldType == 'textarea')
                     && $field->ai_translate == 1
                     && bouncer()->hasPermission('ai-agent')
@@ -203,8 +208,8 @@
             </div>
         </div>
 
-        <fieldset @disabled($isLocked) class="border-0 p-0 m-0 min-w-0 {{ $isLocked ? 'opacity-60 cursor-not-allowed' : '' }}">
-        @if ($isLocked)
+        <fieldset @disabled($isDisabled) class="border-0 p-0 m-0 min-w-0 {{ $isDisabled ? 'opacity-60 cursor-not-allowed' : '' }}">
+        @if ($isDisabled)
             <div class="pointer-events-none">
         @endif
 
@@ -272,7 +277,7 @@
                     ] : [];
                 @endphp
 
-                @if (! empty($value))
+                @if (! empty($value) && ! $isReadOnlyMedia)
                     <input type="hidden" name="{{ $fieldName }}" value="">
                 @endIf
 
@@ -287,6 +292,8 @@
                     height="140px"
                     :has-context="true"
                     :full-preview="true"
+                    :read-only="$isReadOnlyMedia"
+                    :allow-download="true"
                 />
                 @break
             @case('gallery')
@@ -305,7 +312,7 @@
                     }, (array)$value, array_keys((array)$value)) : [];
                 @endphp
 
-                @if (! empty($value))
+                @if (! empty($value) && ! $isReadOnlyMedia)
                     <input type="hidden" name="{{ $fieldName }}" value="">
                 @endIf
 
@@ -319,6 +326,8 @@
                     :allow-multiple=true
                     width="270px"
                     height="140px"
+                    :read-only="$isReadOnlyMedia"
+                    :allow-download="true"
                 />
                 @break
             @case('file')
@@ -334,7 +343,7 @@
                     ] : [];
                 @endphp
 
-                @if (! empty($value))
+                @if (! empty($value) && ! $isReadOnlyMedia)
                     <input type="hidden" name="{{ $fieldName }}" value="">
                 @endIf
 
@@ -348,6 +357,8 @@
                     :instructions="$fieldInstructions"
                     value="{{$value}}"
                     class="mt-3"
+                    :read-only="$isReadOnlyMedia"
+                    :allow-download="true"
                 />
                 @break
             @case('price')
@@ -357,7 +368,7 @@
                 <div class="grid gap-4 [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))]">
                     @foreach ($channelCurrencies as $currency)
                         @php $currencyValue = $value[$currency->code] ?? ''; @endphp
-                        <div class="grid w-full">
+                        <div class="grid content-start w-full">
                             <x-admin::form.control-group.control
                                 type="price"
                                 :id="$field->code . '_' . $currency->code"
@@ -526,7 +537,7 @@
                 </x-admin::form.control-group.control>
 
         @endswitch
-        @if ($isLocked)
+        @if ($isLocked && ! $isReadOnlyMedia)
             </div>
         @endif
         </fieldset>

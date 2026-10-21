@@ -4,6 +4,8 @@ namespace Webkul\AiAgent\Providers;
 
 use Webkul\AiAgent\Models\Agent;
 use Webkul\AiAgent\Models\AgentExecution;
+use Webkul\AiAgent\Models\ChatReply;
+use Webkul\AiAgent\Models\Conversation;
 use Webkul\AiAgent\Models\Credential;
 use Webkul\Core\Providers\CoreModuleServiceProvider;
 
@@ -18,5 +20,7 @@ class ModuleServiceProvider extends CoreModuleServiceProvider
         Credential::class,
         Agent::class,
         AgentExecution::class,
+        Conversation::class,
+        ChatReply::class,
     ];
 }

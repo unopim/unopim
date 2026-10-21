@@ -7,15 +7,20 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Throwable;
 use Webkul\AiAgent\Chat\AgentRunner;
 use Webkul\AiAgent\Chat\AiErrorResolver;
 use Webkul\AiAgent\Chat\ChatContext;
+use Webkul\AiAgent\Chat\ChatUploadStore;
+use Webkul\AiAgent\Chat\ExtensionRegistry;
+use Webkul\AiAgent\Http\Requests\ChatRequest;
 use Webkul\AiAgent\Jobs\ChatReplyJob;
 use Webkul\AiAgent\Models\ChatReply;
+use Webkul\AiAgent\Repositories\ChatReplyRepository;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
+use Webkul\MagicAI\Services\ManagedPlatform;
 use Webkul\MagicAI\Support\ModelRecommender;
 
 /**
@@ -30,12 +35,14 @@ class ChatController extends Controller
     public function __construct(
         protected AgentRunner $agentRunner,
         protected MagicAIPlatformRepository $platformRepository,
+        protected ChatUploadStore $uploadStore,
+        protected ChatReplyRepository $chatReplyRepository,
     ) {}
 
     /**
      * Handle a chat message (text and/or images/files) — blocking JSON response.
      */
-    public function send(Request $request): JsonResponse
+    public function send(ChatRequest $request): JsonResponse
     {
         abort_unless(bouncer()->hasPermission('ai-agent'), 403, trans('admin::app.common.unauthorized'));
 
@@ -58,8 +65,13 @@ class ChatController extends Controller
             $this->recordTokenUsage($chatContext, $result['data']['tokens_used'] ?? 0);
 
             return new JsonResponse($result);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $resolved = AiErrorResolver::resolve($e);
+            $rejectsImages = AiErrorResolver::rejectsImageInput($e);
+
+            if ($rejectsImages) {
+                $this->uploadStore->forgetImages($chatContext->uploadedImagePaths);
+            }
 
             if ($resolved['is_known']) {
                 Log::warning('AI Agent chat provider error', [
@@ -71,8 +83,9 @@ class ChatController extends Controller
             }
 
             return new JsonResponse([
-                'reply'  => $resolved['message'],
-                'action' => 'error',
+                'reply'          => $resolved['message'],
+                'action'         => 'error',
+                'discard_images' => $rejectsImages,
             ], $resolved['is_known'] ? $resolved['status'] : 422);
         }
     }
@@ -82,7 +95,7 @@ class ChatController extends Controller
      *
      * Returns real-time progress: tool-call indicators, text chunks, and final result.
      */
-    public function stream(Request $request): StreamedResponse|JsonResponse
+    public function stream(ChatRequest $request): StreamedResponse|JsonResponse
     {
         abort_unless(bouncer()->hasPermission('ai-agent'), 403, trans('admin::app.common.unauthorized'));
 
@@ -98,25 +111,29 @@ class ChatController extends Controller
     /**
      * Start generating a reply on the queue and return its id immediately.
      *
-     * The reply is produced by ChatReplyJob on a worker and written to the
-     * ai_agent_chat_replies row as it streams, so it survives a full page
-     * reload — the widget polls replyStatus() and resumes on the next page
-     * instead of holding a live SSE connection that navigation would kill.
+     * ChatReplyJob writes the reply into its ai_agent_chat_replies row as it
+     * streams, so it survives a full page reload: the widget polls
+     * replyStatus() and resumes on the next page instead of holding an SSE
+     * connection that navigation would close. A platform that is not stored
+     * (an extension provider) cannot be rebuilt on a worker, so the widget is
+     * told to stream instead (409).
      */
-    public function sendAsync(Request $request): JsonResponse
+    public function sendAsync(ChatRequest $request): JsonResponse
     {
-        abort_unless(bouncer()->hasPermission('ai-agent'), 403, trans('admin::app.common.unauthorized'));
-
         $chatContext = $this->buildChatContext($request);
 
         if ($chatContext instanceof JsonResponse) {
             return $chatContext;
         }
 
-        $reply = ChatReply::create([
-            'user_id'    => $chatContext->user?->id ?? auth()->guard('admin')->id(),
-            'session_id' => $request->input('session_id'),
-            'status'     => ChatReply::STATUS_QUEUED,
+        if (! $chatContext->platform->exists) {
+            return new JsonResponse(['reply_id' => null], 409);
+        }
+
+        $reply = $this->chatReplyRepository->create([
+            'user_id'         => $chatContext->user?->id,
+            'conversation_id' => $chatContext->conversationId,
+            'status'          => ChatReply::STATUS_QUEUED,
         ]);
 
         ChatReplyJob::dispatch($reply->id, [
@@ -133,25 +150,32 @@ class ChatController extends Controller
             'uploadedFilePaths'  => $chatContext->uploadedFilePaths,
             'currentPage'        => $chatContext->currentPage,
             'admin_id'           => $chatContext->user?->id,
+            'conversationId'     => $chatContext->conversationId,
+            'requestId'          => $chatContext->requestId,
+            'hasNewImages'       => $chatContext->hasNewImages,
+            'extensions'         => $chatContext->extensions,
         ]);
 
-        return new JsonResponse(['reply_id' => $reply->id, 'status' => $reply->status]);
+        return new JsonResponse(['reply_id' => $reply->id, 'status' => ChatReply::STATUS_QUEUED]);
     }
 
     /**
-     * Poll one async reply's current state (status + text so far).
+     * Poll one of the admin's async replies: status and the text so far.
+     *
+     * Another admin's reply id answers 404, the same as an unknown id.
      */
-    public function replyStatus(Request $request, string $id): JsonResponse
+    public function replyStatus(string $id): JsonResponse
     {
         abort_unless(bouncer()->hasPermission('ai-agent'), 403, trans('admin::app.common.unauthorized'));
 
-        $reply = ChatReply::query()
-            ->where('id', $id)
-            ->where('user_id', auth()->guard('admin')->id())
-            ->first();
+        $reply = $this->chatReplyRepository->findForUser($id, (int) auth()->guard('admin')->id());
 
         if (! $reply) {
-            return new JsonResponse(['status' => 'error', 'error' => 'not_found'], 404);
+            return new JsonResponse([
+                'status' => ChatReply::STATUS_ERROR,
+                'error'  => trans('ai-agent::app.common.reply-not-found'),
+                'done'   => true,
+            ], 404);
         }
 
         return new JsonResponse([
@@ -166,33 +190,26 @@ class ChatController extends Controller
     }
 
     /**
+     * Cancel one of the admin's replies that no worker has picked up yet.
+     *
+     * The widget calls this when a reply stays queued (no queue worker is
+     * running) and then streams the turn instead. `cancelled` is false once a
+     * worker claimed the reply; the widget then keeps polling.
+     */
+    public function cancelReply(string $id): JsonResponse
+    {
+        abort_unless(bouncer()->hasPermission('ai-agent'), 403, trans('admin::app.common.unauthorized'));
+
+        return new JsonResponse([
+            'cancelled' => $this->chatReplyRepository->cancelQueued($id, (int) auth()->guard('admin')->id()),
+        ]);
+    }
+
+    /**
      * Build ChatContext from request, or return error JsonResponse.
      */
-    protected function buildChatContext(Request $request): ChatContext|JsonResponse
+    protected function buildChatContext(ChatRequest $request): ChatContext|JsonResponse
     {
-        // Decode history from JSON string when sent via FormData
-        if (is_string($request->input('history'))) {
-            $request->merge(['history' => json_decode($request->input('history'), true) ?: []]);
-        }
-
-        $request->validate([
-            'message'     => ['required_without_all:images,files', 'nullable', 'string', 'max:50000'],
-            'images'      => ['nullable', 'array', 'max:5'],
-            'images.*'    => ['image', 'mimes:jpeg,png,webp,gif', 'max:10240'],
-            'files'       => ['nullable', 'array', 'max:3'],
-            'files.*'     => ['file', 'max:102400', function (string $attribute, $value, $fail): void {
-                $allowed = ['csv', 'xlsx', 'xls'];
-                $ext = strtolower((string) $value->getClientOriginalExtension());
-                if (! in_array($ext, $allowed, true)) {
-                    $fail(trans('ai-agent::app.common.invalid-file-type', ['types' => implode(', ', $allowed)]));
-                }
-            }],
-            'platform_id' => ['nullable', 'integer'],
-            'model'       => ['nullable', 'string', 'max:200'],
-            'context'     => ['nullable', 'array'],
-            'history'     => ['nullable', 'array'],
-        ]);
-
         // Check if Agentic PIM is enabled
         $agenticEnabled = core()->getConfigData('general.magic_ai.agentic_pim.enabled');
 
@@ -239,61 +256,13 @@ class ChatController extends Controller
         // would select whichever model sorted first, so providers like OpenAI
         // that expose image-only entries (e.g. chatgpt-image-latest, dall-e-*)
         // could land on a model the text agent cannot call.
-        $model = (string) $request->input('model', '')
-            ?: (ModelRecommender::pickTextModel($platform->model_list ?? []) ?? 'gpt-4o');
+        $model = (string) resolve(ManagedPlatform::class)->resolveModel(
+            $platform,
+            (string) $request->input('model', '') ?: (ModelRecommender::pickTextModel($platform->model_list ?? []) ?? 'gpt-4o'),
+        );
 
-        // Store uploaded images — persist across conversation turns via session.
-        // The image is uploaded in the first message, but the user may confirm
-        // in a follow-up message ("Yes, proceed") which has no image attached.
-        $imagePaths = [];
-        foreach ($request->file('images', []) as $image) {
-            $stored = $image->store('ai-agent/images', 'public');
-            $imagePaths[] = storage_path('app/public/'.$stored);
-        }
-
-        if ($imagePaths !== []) {
-            // New images uploaded — save to session
-            session(['ai_agent_image_paths' => $imagePaths]);
-            session(['ai_agent_image_uploaded_at' => now()->timestamp]);
-        } else {
-            // No new images — restore from session if still fresh (< 10 minutes)
-            $uploadedAt = session('ai_agent_image_uploaded_at', 0);
-            $isFresh = (now()->timestamp - $uploadedAt) < 600;
-
-            if ($isFresh) {
-                $sessionImages = session('ai_agent_image_paths', []);
-                $imagePaths = array_filter($sessionImages, file_exists(...));
-            }
-        }
-
-        // Store uploaded files — same session persistence pattern.
-        //
-        // We deliberately use storeAs() with the original filename's
-        // extension instead of Laravel's default store() / hashName(), which
-        // guesses the extension from the MIME type. PHP often reports CSV
-        // uploads as "text/plain", so hashName() would save "products.csv"
-        // as "<hash>.txt" — and the ImportProducts tool would then reject
-        // it as an unsupported format because the extension check uses
-        // pathinfo() on the stored path.
-        $filePaths = [];
-        foreach ($request->file('files', []) as $file) {
-            $ext = strtolower($file->getClientOriginalExtension());
-            $filename = Str::random(40).($ext !== '' ? '.'.$ext : '');
-            $stored = $file->storeAs('ai-agent/files', $filename, 'public');
-            $filePaths[] = storage_path('app/public/'.$stored);
-        }
-
-        if ($filePaths !== []) {
-            session(['ai_agent_file_paths' => $filePaths]);
-            session(['ai_agent_file_uploaded_at' => now()->timestamp]);
-        } else {
-            $uploadedAt = session('ai_agent_file_uploaded_at', 0);
-
-            if ((now()->timestamp - $uploadedAt) < 600) {
-                $sessionFiles = session('ai_agent_file_paths', []);
-                $filePaths = array_filter($sessionFiles, file_exists(...));
-            }
-        }
+        $imagePaths = $this->uploadStore->images($request->file('images', []), $request->conversationId());
+        $filePaths = $this->uploadStore->files($request->file('files', []), $request->conversationId());
 
         // Build context
         $context = $request->input('context', []);
@@ -331,6 +300,10 @@ class ChatController extends Controller
             uploadedFilePaths: $filePaths,
             currentPage: $context['current_page'] ?? null,
             user: auth()->guard('admin')->user(),
+            conversationId: $request->conversationId(),
+            requestId: $request->validated('request_id'),
+            hasNewImages: $request->hasFile('images'),
+            extensions: $request->validated('extensions') ?? [],
         );
     }
 
@@ -417,10 +390,25 @@ class ChatController extends Controller
     }
 
     /**
-     * Resolve the AI platform to use.
+     * Resolve the AI platform to use; a failing or inactive extension provider
+     * falls back to the stored default instead of failing the chat.
      */
     protected function resolvePlatform(int $platformId): ?MagicAIPlatform
     {
+        if ($platformId < 0) {
+            try {
+                $platform = app(ExtensionRegistry::class)->resolve($platformId);
+            } catch (Throwable $e) {
+                report($e);
+
+                $platform = null;
+            }
+
+            if ($platform && $platform->status) {
+                return $platform;
+            }
+        }
+
         if ($platformId > 0) {
             $platform = $this->platformRepository->find($platformId);
 

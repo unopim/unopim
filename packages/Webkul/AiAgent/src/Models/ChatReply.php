@@ -2,41 +2,33 @@
 
 namespace Webkul\AiAgent\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Webkul\AiAgent\Contracts\ChatReply as ChatReplyContract;
 
 /**
- * A single assistant reply that is generated asynchronously on a queue worker.
- * Its text is written here as it streams so the chat widget can poll for it and
- * resume across a full page reload. Rows are short-lived (see ChatReplyJob /
- * the cleanup sweep) — this is transport state, not the conversation history.
+ * One assistant reply generated asynchronously on a queue worker.
+ *
+ * Its text is written here as it streams so the chat widget can poll it and
+ * resume across a full page reload. Rows are short-lived transport state, not
+ * the conversation history.
  */
-class ChatReply extends Model
+#[Fillable([
+    'user_id',
+    'conversation_id',
+    'status',
+    'content',
+    'actions',
+    'agent_status',
+    'tokens_used',
+    'error',
+])]
+#[Table(name: 'ai_agent_chat_replies')]
+class ChatReply extends Model implements ChatReplyContract
 {
     use HasUuids;
-
-    public $incrementing = false;
-
-    protected $keyType = 'string';
-
-    protected $table = 'ai_agent_chat_replies';
-
-    protected $fillable = [
-        'id',
-        'user_id',
-        'session_id',
-        'status',
-        'content',
-        'actions',
-        'agent_status',
-        'tokens_used',
-        'error',
-    ];
-
-    protected $casts = [
-        'actions'     => 'array',
-        'tokens_used' => 'integer',
-    ];
 
     public const STATUS_QUEUED = 'queued';
 
@@ -46,8 +38,26 @@ class ChatReply extends Model
 
     public const STATUS_ERROR = 'error';
 
+    public const STATUS_CANCELLED = 'cancelled';
+
+    /**
+     * Whether the reply reached a final state and polling can stop.
+     */
     public function isFinished(): bool
     {
-        return in_array($this->status, [self::STATUS_DONE, self::STATUS_ERROR], true);
+        return in_array($this->status, [self::STATUS_DONE, self::STATUS_ERROR, self::STATUS_CANCELLED], true);
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'actions'     => 'array',
+            'tokens_used' => 'integer',
+        ];
     }
 }

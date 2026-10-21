@@ -24,7 +24,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.cs',
   '\n' +
   '<p>Stisknutím kláves <strong>Shift+Tab</strong> se posunete z jednoho oddílu uživatelského rozhraní na předchozí.</p>\n' +
   '\n' +
-  '<p>Pořadí přepínání mezi oddíly uživatelského rozhraní pomocí klávesy <strong>Tab</strong>:\n' +
+  '<p>Pořadí přepínání mezi oddíly uživatelského rozhraní pomocí klávesy <strong>Tab</strong>:</p>\n' +
   '\n' +
   '<ol>\n' +
   '  <li>Řádek nabídek</li>\n' +
@@ -39,7 +39,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.cs',
   '<p>Pokud nějaký oddíl uživatelského rozhraní není přítomen, je přeskočen.</p>\n' +
   '\n' +
   '<p>Pokud je zápatí vybrané pro navigaci pomocí klávesnice a není zobrazen žádný boční panel, stisknutím kláves <strong>Shift+Tab</strong>\n' +
-  '  přejdete na první skupinu panelu nástrojů, nikoli na poslední.\n' +
+  '  přejdete na první skupinu panelu nástrojů, nikoli na poslední.</p>\n' +
   '\n' +
   '<h1>Navigace v rámci oddílů uživatelského rozhraní</h1>\n' +
   '\n' +
@@ -54,7 +54,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.cs',
   '  <li>umožňují přesun mezi položkami cesty prvku v zápatí.</li>\n' +
   '</ul>\n' +
   '\n' +
-  '<p>Klávesy se šipkou <strong>dolů</strong> a <strong>nahoru</strong>\n' +
+  '<p>Klávesy se šipkou <strong>dolů</strong> a <strong>nahoru</strong></p>\n' +
   '\n' +
   '<ul>\n' +
   '  <li>umožňují přesun mezi položkami nabídky;</li>\n' +
@@ -63,7 +63,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.cs',
   '\n' +
   '<p><strong>Šipky</strong> provádí přepínání v rámci vybraného oddílu uživatelského rozhraní.</p>\n' +
   '\n' +
-  '<p>Chcete-li zavřít otevřenou nabídku, podnabídku nebo místní nabídku, stiskněte klávesu <strong>Esc</strong>.\n' +
+  '<p>Chcete-li zavřít otevřenou nabídku, podnabídku nebo místní nabídku, stiskněte klávesu <strong>Esc</strong>.</p>\n' +
   '\n' +
   '<p>Pokud je aktuálně vybrána horní část oddílu uživatelského rozhraní, stisknutím klávesy <strong>Esc</strong> zcela ukončíte také\n' +
   '  navigaci pomocí klávesnice.</p>\n' +
@@ -71,7 +71,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.cs',
   '<h1>Provedení příkazu položky nabídky nebo tlačítka panelu nástrojů</h1>\n' +
   '\n' +
   '<p>Pokud je zvýrazněna požadovaná položka nabídky nebo tlačítko panelu nástrojů, stisknutím klávesy <strong>Return</strong>, <strong>Enter</strong>\n' +
-  '  nebo <strong>mezerníku</strong> provedete příslušný příkaz.\n' +
+  '  nebo <strong>mezerníku</strong> provedete příslušný příkaz.</p>\n' +
   '\n' +
   '<h1>Navigace v dialogových oknech bez záložek</h1>\n' +
   '\n' +

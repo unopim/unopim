@@ -3,117 +3,98 @@
 namespace Webkul\AiAgent\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\DB;
+use Webkul\AiAgent\Chat\ResultRendererRegistry;
+use Webkul\AiAgent\Http\Requests\ConversationRequest;
+use Webkul\AiAgent\Http\Requests\DestroyConversationRequest;
+use Webkul\AiAgent\Http\Requests\StoreConversationRequest;
+use Webkul\AiAgent\Repositories\ConversationRepository;
 
-/**
- * Handles persistent conversation storage for the AI chat widget.
- */
 class ConversationController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(function ($request, $next) {
-            abort_unless(bouncer()->hasPermission('ai-agent.general'), 403, trans('ai-agent::app.common.unauthorized'));
+    public function __construct(
+        protected ConversationRepository $conversationRepository,
+        protected ResultRendererRegistry $resultRenderers,
+    ) {}
 
-            return $next($request);
-        });
+    /**
+     * List the user's saved conversations.
+     */
+    public function index(ConversationRequest $request): JsonResponse
+    {
+        return new JsonResponse([
+            'conversations' => $this->conversationRepository->latestForUser(auth()->guard('admin')->id()),
+        ]);
     }
 
     /**
-     * List conversations for the current user.
+     * Show a saved conversation with its latest messages and deletion markers.
      */
-    public function index(): JsonResponse
+    public function show(ConversationRequest $request, int $id): JsonResponse
     {
         $userId = auth()->guard('admin')->id();
-
-        $conversations = DB::table('ai_agent_conversations')
-            ->where('user_id', $userId)
-            ->latest('updated_at')
-            ->limit(50)
-            ->get(['id', 'title', 'metadata', 'created_at', 'updated_at']);
-
-        return new JsonResponse(['conversations' => $conversations]);
-    }
-
-    /**
-     * Load messages for a specific conversation.
-     */
-    public function show(int $id): JsonResponse
-    {
-        $userId = auth()->guard('admin')->id();
-
-        $conversation = DB::table('ai_agent_conversations')
-            ->where('id', $id)
-            ->where('user_id', $userId)
-            ->first();
+        $conversation = $this->conversationRepository->findForUser($id, $userId);
 
         if (! $conversation) {
-            return new JsonResponse(['error' => 'Conversation not found'], 404);
+            return new JsonResponse(['error' => trans('ai-agent::app.common.conversation-not-found')], 404);
         }
 
-        $messages = DB::table('ai_agent_messages')
-            ->where('conversation_id', $id)->oldest()
-            ->get(['role', 'content', 'tool_calls', 'tokens_used', 'created_at']);
+        $limit = $this->retainedMessages();
+
+        $messages = $this->conversationRepository->latestMessages($id, $limit)->map(function ($message) {
+            $message->presentation = $this->resultRenderers->descriptor(json_decode($message->presentation ?? 'null', true));
+
+            foreach (json_decode($message->display_data ?? '{}', true) ?: [] as $key => $value) {
+                $message->{$key} = $value;
+            }
+
+            unset($message->display_data);
+
+            return $message;
+        });
 
         return new JsonResponse([
-            'conversation' => $conversation,
-            'messages'     => $messages,
+            'conversation'        => $conversation,
+            'messages'            => $messages,
+            'deleted_message_ids' => $this->conversationRepository->deletedMessageIds($id, $limit),
         ]);
     }
 
     /**
-     * Save/sync a conversation from the widget.
+     * Merge the widget's conversation snapshot into saved history.
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreConversationRequest $request): JsonResponse
     {
-        $request->validate([
-            'title'              => ['nullable', 'string', 'max:255'],
-            'messages'           => ['required', 'array'],
-            'messages.*.role'    => ['required', 'in:user,assistant,system'],
-            'messages.*.content' => ['required', 'string'],
-        ]);
+        $conversationId = $this->conversationRepository->saveSnapshot(
+            auth()->guard('admin')->id(),
+            [
+                'conversation_id'     => $request->input('conversation_id'),
+                'title'               => $request->input('title'),
+                'metadata'            => $request->input('metadata'),
+                'messages'            => $request->input('messages'),
+                'deleted_message_ids' => $request->input('deleted_message_ids', []),
+            ],
+            $this->retainedMessages(),
+        );
 
-        $userId = auth()->guard('admin')->id();
+        return new JsonResponse(['id' => $conversationId, 'saved' => true]);
+    }
 
-        $conversationId = DB::table('ai_agent_conversations')->insertGetId([
-            'user_id'    => $userId,
-            'title'      => $request->input('title', 'Chat '.now()->format('M d, H:i')),
-            'metadata'   => json_encode($request->input('metadata', [])),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        $messages = collect($request->input('messages'))->map(fn ($m): array => [
-            'conversation_id' => $conversationId,
-            'role'            => $m['role'],
-            'content'         => $m['content'],
-            'tool_calls'      => isset($m['tool_calls']) ? json_encode($m['tool_calls']) : null,
-            'tokens_used'     => $m['tokens_used'] ?? 0,
-            'created_at'      => now(),
-        ]);
-
-        DB::table('ai_agent_messages')->insert($messages->toArray());
-
+    /**
+     * Delete a saved conversation; allowed even after history is disabled.
+     */
+    public function destroy(DestroyConversationRequest $request, int $id): JsonResponse
+    {
         return new JsonResponse([
-            'id'    => $conversationId,
-            'saved' => true,
+            'deleted' => $this->conversationRepository->deleteForUser($id, auth()->guard('admin')->id()),
         ]);
     }
 
     /**
-     * Delete a conversation.
+     * Number of messages, and of deletion markers, kept per conversation.
      */
-    public function destroy(int $id): JsonResponse
+    protected function retainedMessages(): int
     {
-        $userId = auth()->guard('admin')->id();
-
-        $deleted = DB::table('ai_agent_conversations')
-            ->where('id', $id)
-            ->where('user_id', $userId)
-            ->delete();
-
-        return new JsonResponse(['deleted' => (bool) $deleted]);
+        return max(1, (int) config('ai-agent.history.max_messages', 500));
     }
 }
