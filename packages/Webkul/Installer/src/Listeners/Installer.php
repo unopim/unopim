@@ -2,7 +2,9 @@
 
 namespace Webkul\Installer\Listeners;
 
+use DateTimeZone;
 use GuzzleHttp\Client;
+use Throwable;
 use Webkul\User\Repositories\AdminRepository;
 
 class Installer
@@ -17,7 +19,10 @@ class Installer
     /**
      * Create a new listener instance.
      */
-    public function __construct(protected AdminRepository $adminRepository) {}
+    public function __construct(
+        protected AdminRepository $adminRepository,
+        protected Client $httpClient,
+    ) {}
 
     /**
      * After UnoPim is successfully installed
@@ -26,10 +31,8 @@ class Installer
     {
         $admin = $this->adminRepository->first();
 
-        $httpClient = new Client;
-
         try {
-            $httpClient->request('POST', self::API_ENDPOINT, [
+            $this->httpClient->request('POST', self::API_ENDPOINT, [
                 'headers' => [
                     'Accept' => 'application/json',
                 ],
@@ -37,7 +40,7 @@ class Installer
                     'domain'       => config('app.url'),
                     'email'        => $admin?->email,
                     'name'         => $admin?->name,
-                    'country_code' => config('app.default_country', 'IN'),
+                    'country_code' => $this->countryFromTimezone($admin?->timezone ?: config('app.timezone')),
                 ],
             ]);
         } catch (\Exception) {
@@ -45,5 +48,23 @@ class Installer
              * Skip the error
              */
         }
+    }
+
+    /**
+     * Resolve the ISO 3166-1 alpha-2 country of a timezone, since the installer never asks for a country.
+     */
+    protected function countryFromTimezone(?string $timezone): ?string
+    {
+        if (! $timezone) {
+            return null;
+        }
+
+        try {
+            $code = (new DateTimeZone($timezone))->getLocation()['country_code'] ?? null;
+        } catch (Throwable) {
+            return null;
+        }
+
+        return $code && $code !== '??' ? $code : null;
     }
 }
