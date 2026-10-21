@@ -162,7 +162,7 @@ it('404s a release that does not exist and a sequence the router rejects', funct
     $this->get('/p/'.$uuid.'/r/abc/'.$locale)->assertNotFound();
 });
 
-it('answers 410 for a release whose version was redacted, even while the publication stays published', function (): void {
+it('answers 410 for a release whose version was redacted, even while the publication stays published, and leaves the live page alone', function (): void {
     $first = $this->publishedPassportFixture();
     $this->republishWithMaterial($first, 'recycled steel');
 
@@ -178,7 +178,6 @@ it('answers 410 for a release whose version was redacted, even while the publica
 
     expect($response->headers->getCacheControlDirective('no-store'))->toBeTrue();
 
-    // The live page is unaffected.
     $this->get('/p/'.$uuid.'/'.$locale)->assertOk()->assertSee('recycled steel');
 });
 
