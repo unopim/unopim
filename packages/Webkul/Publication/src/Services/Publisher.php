@@ -220,9 +220,8 @@ class Publisher
      * GDPR Art. 17 erasure: redacts every not-yet-redacted version of the publication, superseded ones
      * included, and flips the publication to Redacted (sticky).
      *
-     * A superseded version is still a sealed record of the same data. Redacting only the current ones
-     * left every earlier payload readable in the database, so the erasure held only for as long as
-     * nothing ever read history. Versions redacted individually earlier are left as they are.
+     * Versions redacted individually earlier are left as they are. The versions are walked by id in
+     * batches, so a long version history never sits in memory at once.
      */
     public function redactAll(Publication $publication, int $redactedById, string $reason): void
     {
@@ -236,16 +235,18 @@ class Publisher
                 );
             }
 
-            $versions = $publication->versions()->whereNull('redacted_at')->get();
+            $redactedAny = false;
 
-            if ($versions->isEmpty()) {
+            foreach ($publication->versions()->whereNull('redacted_at')->lazyById(200) as $version) {
+                $version->redact($redactedById, $reason);
+
+                $redactedAny = true;
+            }
+
+            if (! $redactedAny) {
                 throw new InvalidPublicationTransitionException(
                     'Publication '.$publication->id.' has no versions left to redact.'
                 );
-            }
-
-            foreach ($versions as $version) {
-                $version->redact($redactedById, $reason);
             }
 
             $publication->update(['status' => PublicationStatus::Redacted]);
