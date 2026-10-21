@@ -10,6 +10,7 @@ use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
 use Webkul\MagicAI\Repository\MagicAISystemPromptRepository;
 use Webkul\MagicAI\Repository\MagicPromptRepository;
+use Webkul\MagicAI\Responses\GeneratedContent;
 use Webkul\MagicAI\Services\Prompt\Prompt;
 use Webkul\Product\Repositories\ProductRepository;
 
@@ -74,7 +75,7 @@ it('falls back to default when configured text platform id is deleted', function
     $mock->shouldReceive('setMaxTokens')->andReturnSelf();
     $mock->shouldReceive('setSystemPrompt')->andReturnSelf();
     $mock->shouldReceive('setPrompt')->andReturnSelf();
-    $mock->shouldReceive('ask')->andReturn('ok');
+    $mock->shouldReceive('askResult')->andReturn(new GeneratedContent('ok'));
     $this->app->instance('magic_ai', $mock);
 
     $this->postJson(route('admin.magic_ai.content'), [

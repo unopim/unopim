@@ -6,6 +6,12 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * `sequence` is monotonic per publication: one number identifies one publish moment across every locale.
+     *
+     * Index names are explicit because the auto-generated ones include the table prefix and overrun MySQL's
+     * 64-character identifier limit on prefixed installs.
+     */
     public function up(): void
     {
         Schema::create('publication_releases', function (Blueprint $table): void {
@@ -14,7 +20,6 @@ return new class extends Migration
             $table->unsignedBigInteger('publication_id');
             $table->foreign('publication_id')->references('id')->on('publications')->restrictOnDelete();
 
-            // Monotonic per publication: one number identifies one publish moment across every locale.
             $table->unsignedInteger('sequence');
 
             $table->dateTime('published_at');
@@ -25,7 +30,6 @@ return new class extends Migration
 
             $table->timestamps();
 
-            // Explicit names: auto names include the prefix and overrun MySQL's 64-char identifier limit on prefixed installs.
             $table->unique(['publication_id', 'sequence'], 'pubrel_pub_seq_uq');
             $table->index(['publication_id', 'published_at'], 'pubrel_pub_pubat_idx');
         });

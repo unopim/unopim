@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { clickSave, navigateTo, generateUid, clickSaveAndExpect, fillLocalizedField } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, clickSaveAndExpect, fillLocalizedField, openFilterDrawer, visiblePaginationSymbols } = require('../../utils/helpers');
 
 /**
  * Helper: Create an attribute via UI and land on the edit page.
@@ -93,6 +93,17 @@ async function deleteAttribute(adminPage, code) {
  * @param {string} optionCode
  * @param {string} optionLabel
  */
+async function assertPaginationControls(adminPage) {
+  for (const symbol of await visiblePaginationSymbols(adminPage)) {
+    const button = adminPage.getByText(symbol, { exact: true });
+
+    await expect(button).toBeVisible();
+    await expect(button).toBeEnabled();
+    await button.click();
+    await adminPage.waitForLoadState('networkidle');
+  }
+}
+
 async function addOption(adminPage, optionCode, optionLabel) {
   await adminPage.getByText('Add Row').click();
   await expect(adminPage.locator('#app').getByText('Add Option')).toBeVisible();
@@ -196,7 +207,7 @@ test.describe('UnoPim Attribute', () => {
 
   test('should open the filter menu when clicked', async ({ adminPage }) => {
     await navigateTo(adminPage, 'attributes');
-    await adminPage.getByText('Filter', { exact: true }).click();
+    await openFilterDrawer(adminPage);
     await expect(adminPage.locator('#app').getByText('Apply Filters')).toBeVisible();
   });
 
@@ -355,14 +366,7 @@ test.describe('Checkbox Type Attribute Option Grid', () => {
     await addOption(adminPage, `opt2_${uid}`, 'Option 2');
     await addOption(adminPage, `opt3_${uid}`, 'Option 3');
     await addOption(adminPage, `opt4_${uid}`, 'Option 4');
-    const paginationSymbols = ['«', '‹', '›', '»'];
-    for (const symbol of paginationSymbols) {
-      const button = adminPage.getByText(symbol, { exact: true });
-      await expect(button).toBeVisible();
-      await expect(button).toBeEnabled();
-      await button.click();
-      await adminPage.waitForLoadState('networkidle');
-    }
+    await assertPaginationControls(adminPage);
     await deleteAttribute(adminPage, code);
   });
 
@@ -468,14 +472,7 @@ test.describe('Multiselect Type Attribute Options Grid', () => {
     await addOption(adminPage, `opt2_${uid}`, 'Option 2');
     await addOption(adminPage, `opt3_${uid}`, 'Option 3');
     await addOption(adminPage, `opt4_${uid}`, 'Option 4');
-    const paginationSymbols = ['«', '‹', '›', '»'];
-    for (const symbol of paginationSymbols) {
-      const button = adminPage.getByText(symbol, { exact: true });
-      await expect(button).toBeVisible();
-      await expect(button).toBeEnabled();
-      await button.click();
-      await adminPage.waitForLoadState('networkidle');
-    }
+    await assertPaginationControls(adminPage);
     await deleteAttribute(adminPage, code);
   });
 
@@ -573,6 +570,30 @@ test.describe('Select Type Attribute', () => {
     await deleteAttribute(adminPage, code);
   });
 
+  test('Label edits generate a code for new options but never change an existing option code', { timeout: 90000 }, async ({ adminPage }) => {
+    const uid = generateUid();
+    const code = `sel_${uid}`;
+    const optCode = `cotton_${uid}`;
+    await createAttribute(adminPage, code, 'Material', 'Select');
+
+    await adminPage.getByText('Add Row').click();
+    const optionForm = adminPage.locator('form').filter({ hasText: 'Add Option' });
+    const codeInput = optionForm.getByPlaceholder('Code');
+    await adminPage.locator('input[name="locales.en_US"]').fill(`Cotton ${uid}`);
+    await expect(codeInput).toHaveValue(optCode);
+    await clickSave(adminPage, 'Save Option');
+    await expect(adminPage.locator('#app').getByText('Attribute Option Created Successfully').last()).toBeVisible();
+
+    const itemRow = adminPage.locator('div', { hasText: optCode }).filter({ hasText: `Cotton ${uid}` });
+    await itemRow.locator('span[title="Edit"]').first().click();
+    await expect(codeInput).toBeDisabled();
+    await expect(codeInput).toHaveValue(optCode);
+    await adminPage.locator('input[name="locales.en_US"]').fill(`Organic Cotton ${uid}`);
+    await expect(codeInput).toHaveValue(optCode);
+    await adminPage.locator('span.icon-cancel.cursor-pointer').click();
+    await deleteAttribute(adminPage, code);
+  });
+
   test('Pagination buttons should be visible, enabled, and clickable', { timeout: 90000 }, async ({ adminPage }) => {
     const uid = generateUid();
     const code = `sel_${uid}`;
@@ -581,14 +602,7 @@ test.describe('Select Type Attribute', () => {
     await addOption(adminPage, `opt2_${uid}`, 'Option 2');
     await addOption(adminPage, `opt3_${uid}`, 'Option 3');
     await addOption(adminPage, `opt4_${uid}`, 'Option 4');
-    const paginationSymbols = ['«', '‹', '›', '»'];
-    for (const symbol of paginationSymbols) {
-      const button = adminPage.getByText(symbol, { exact: true });
-      await expect(button).toBeVisible();
-      await expect(button).toBeEnabled();
-      await button.click();
-      await adminPage.waitForLoadState('networkidle');
-    }
+    await assertPaginationControls(adminPage);
     await deleteAttribute(adminPage, code);
   });
 

@@ -7,7 +7,9 @@
     $magicAiModel    = trim(explode(',', $magicAiModels)[0]) ?: ucfirst($magicAiPlatform);
 
     $platformRepo    = app(\Webkul\MagicAI\Repository\MagicAIPlatformRepository::class);
-    $aiPlatforms     = $platformRepo->getActivePlatformOptions();
+    $extensionRegistry = app(\Webkul\AiAgent\Chat\ExtensionRegistry::class);
+    $resultRenderers = app(\Webkul\AiAgent\Chat\ResultRendererRegistry::class);
+    $aiPlatforms = array_merge($extensionRegistry->options(), $platformRepo->getActivePlatformOptions());
     $defaultPlatform = collect($aiPlatforms)->firstWhere('is_default', true);
     $defaultPlatformId = $defaultPlatform['id'] ?? ($aiPlatforms[0]['id'] ?? null);
 
@@ -37,6 +39,14 @@
     });
 })();
 </script>
+
+@foreach($extensionRegistry->composers() as $composer)
+    @include($composer['view'])
+@endforeach
+
+@foreach($resultRenderers->views() as $rendererView)
+    @include($rendererView)
+@endforeach
 
 @pushOnce('scripts')
 <script type="text/x-template" id="v-agenting-pim-template">
@@ -232,7 +242,7 @@
                         </button>
                     </div>
 
-                    <div ref="messagesEl" style="flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:18px;min-height:0;">
+                    <div ref="messagesEl" @scroll.passive="onMessagesScroll" class="flex flex-1 flex-col gap-[18px] min-h-0 overflow-y-auto px-4 py-3.5">
                         {{-- Empty state --}}
                         <div v-if="messages.length === 0 && !isLoading" class="flex flex-col items-center justify-center h-full text-center py-8">
                             <svg class="w-10 h-10 text-primary-200 dark:text-primary-800 mb-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
@@ -270,7 +280,10 @@
                                     </div>
 
                                     {{-- Result details card --}}
-                                    <div v-if="msg.result && Object.keys(msg.result).length" class="rounded-xl border border-primary-200 dark:border-cherry-700 overflow-hidden">
+                                    <component v-if="resultComponent(msg.presentation)" :is="resultComponent(msg.presentation)"
+                                        :descriptor="msg.presentation" :visible="isOpen && activeTab === 'chat'" class="mt-4"></component>
+
+                                    <div v-if="!resultComponent(msg.presentation) && msg.result && Object.keys(msg.result).length" class="rounded-xl border border-primary-200 dark:border-cherry-700 overflow-hidden">
                                         <div class="px-4 py-2 border-b border-primary-100 dark:border-cherry-700" style="background:linear-gradient(135deg,rgb(var(--c-primary-50)),rgb(var(--c-primary-100)));">
                                             <p class="text-[10px] font-bold text-primary-500 dark:text-primary-400 uppercase tracking-wider" v-text="trans.result"></p>
                                         </div>
@@ -348,17 +361,11 @@
                             </div>
                         </template>
 
-                        {{-- Typing / Streaming indicator --}}
-                        <div v-if="isLoading" aria-live="polite" role="status">
-                            <div style="padding:2px 0;">
-                                <div class="flex items-center gap-2">
-                                    <span class="w-1.5 h-1.5 bg-primary-400 rounded-full animate-bounce" style="animation-delay:0ms"></span>
-                                    <span class="w-1.5 h-1.5 bg-primary-400 rounded-full animate-bounce" style="animation-delay:150ms"></span>
-                                    <span class="w-1.5 h-1.5 bg-primary-400 rounded-full animate-bounce" style="animation-delay:300ms"></span>
-                                    <span v-if="streamingStatus" class="text-xs text-primary-500 dark:text-primary-400 ml-1 font-medium" v-text="streamingStatus"></span>
-                                </div>
-                            </div>
-                        </div>
+                    </div>
+
+                    <div v-if="isLoading" class="ap-live-status" aria-live="polite" role="status">
+                        <span class="ap-live-status-dot"></span>
+                        <span v-text="streamingStatus || trans.processing"></span>
                     </div>
 
                     {{-- Pending files --}}
@@ -392,22 +399,33 @@
                     </div>
 
                     {{-- Input — always-visible bordered box --}}
+                    @foreach($extensionRegistry->composers() as $composer)
+                    <{{ $composer['component'] }} :value="extensionContext['{{ $composer['key'] }}'] || {}" :conversation-id="activeSessionId" :draft="inputText" :cursor="composerCursor" :disabled="isLoading" :ref="el => composerRefs['{{ $composer['key'] }}'] = el" @replace-draft="replaceComposerDraft" @change="extensionContext['{{ $composer['key'] }}'] = $event"></{{ $composer['component'] }}>
+                    @endforeach
+
                     <div class="ap-input-wrap">
 
                         {{-- Outer bordered container --}}
                         <div class="ap-input-box">
 
                             {{-- Textarea --}}
+                            <div class="ap-composer-editor">
+                            <div v-if="composerHasReferences" ref="composerHighlight" class="ap-composer-highlight" aria-hidden="true"><template v-for="(part, i) in composerSegments" :key="i"><span :class="{'ap-composer-reference': part.reference}" v-text="part.text"></span></template></div>
+
                             <textarea
                                 ref="textInput"
                                 v-model="inputText"
-                                @keydown.enter.exact.prevent="send"
                                 rows="3"
                                 class="ap-input-textarea"
                                 :placeholder="inputPlaceholder"
                                 :disabled="isLoading"
-                                @input="autoResize"
+                                @input="composerInput"
+                                @click="composerSelection" @keyup="composerSelection" @select="composerSelection"
+                                @scroll="syncComposerScroll"
+                                :class="{'ap-composer-referenced': composerHasReferences}"
+                                @keydown="onComposerKey"
                             ></textarea>
+                            </div>
 
                             {{-- Toolbar row: Attach + Platform/Model + Send --}}
                             <div class="ap-input-toolbar">
@@ -432,12 +450,14 @@
                                             v-model="selectedPlatformId"
                                             @change="onPlatformChange"
                                             class="ap-input-select"
+                                            :class="{'ap-platform-single-model': hideSingleModelSelector}"
                                             :title="trans.selectPlatform"
                                             :aria-label="trans.selectPlatform"
                                         >
                                             <option v-for="p in platforms" :key="p.id" :value="p.id" v-text="p.label"></option>
                                         </select>
                                         <select
+                                            v-if="!hideSingleModelSelector"
                                             v-model="selectedModel"
                                             class="ap-input-select"
                                             :title="trans.selectModel"
@@ -485,6 +505,38 @@
 </script>
 
 <style>
+.ap-composer-editor {
+    position: relative;
+}
+
+.ap-composer-highlight {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    overflow: hidden;
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.55;
+    padding: 12px 14px 6px;
+    color: inherit;
+    border: 0;
+}
+
+.ap-composer-reference {
+    color: rgb(var(--c-info));
+}
+
+.ap-composer-referenced {
+    color: transparent !important;
+    caret-color: rgb(var(--c-primary-600));
+}
+
+.ap-platform-single-model {
+    max-width: calc(100% - 34px);
+}
+
 :root { --ap-panel-size: 420px; --ap-panel-width: 0px; }
 
 /* Docked width: the panel pushes the app aside instead of covering it. Zero on
@@ -558,6 +610,9 @@ body.ap-panel-open #app { contain: paint; }
 /* Lift the FAB above the sticky unsaved-changes save bar (bottom-0, ~60px tall)
    so it never overlaps the Save button. Body class set by v-unsaved-changes. */
 body.unsaved-bar-open .ap-fab { bottom: 84px; }
+body.datagrid-bar-open .ap-fab { bottom: 88px; }
+
+body.overlay-open .ap-fab { display: none; }
 
 /* Tablet & mobile: full-screen overlay above navbar */
 @media (max-width: 1024px) {
@@ -715,6 +770,22 @@ body.unsaved-bar-open .ap-fab { bottom: 84px; }
 .ap-clear-chat-btn:hover { background:#ffe7e7; }
 .dark .ap-clear-chat-btn:hover { background:#4a2733; }
 
+.ap-live-status {
+    display:flex; align-items:center; gap:8px; padding:7px 16px; flex-shrink:0;
+    font-size:11px; font-weight:600; letter-spacing:.01em;
+    color:rgb(var(--c-primary-600)); background:rgb(var(--c-primary-50));
+    border-top:1px solid rgb(var(--c-primary-100));
+}
+.dark .ap-live-status {
+    color:rgb(var(--c-primary-300)); background:rgb(var(--c-primary-900) / 0.35);
+    border-top-color:rgb(var(--c-primary-800));
+}
+.ap-live-status-dot {
+    width:6px; height:6px; border-radius:9999px; flex-shrink:0;
+    background:rgb(var(--c-primary-500)); animation:ap-live-pulse 1s ease-in-out infinite;
+}
+@keyframes ap-live-pulse { 0%,100% { opacity:.3; transform:scale(.8); } 50% { opacity:1; transform:scale(1.2); } }
+
 .ap-pending-files {
     display:flex; flex-wrap:wrap; gap:6px; padding:8px 16px;
     border-top:1px solid #e5e7eb; background:#f9fafb; flex-shrink:0;
@@ -818,6 +889,9 @@ body.unsaved-bar-open .ap-fab { bottom: 84px; }
 
 {{-- DOMPurify is bundled with the admin app (window.DOMPurify) — no external CDN. --}}
 <script type="module">
+const AGENTIC_PIM_RESULT_COMPONENTS = @json($resultRenderers->components());
+const AGENTIC_PIM_RESULT_CONTEXT_CONSUMERS = @json($resultRenderers->contextConsumers());
+
 // Mirrors Webkul\MagicAI\Support\ModelRecommender::pickTextModel().
 // The chat widget must never auto-select an image-only model
 // (chatgpt-image-latest, dall-e-*, sora-*, imagen-*, veo-*, …) because
@@ -836,7 +910,7 @@ const AGENTIC_PIM_IMAGE_ONLY_PATTERNS = [
     /(^|[-_])pika([-_]|$)/i, /(^|[-_])runway([-_]|$)/i,
     /hunyuan-?video/i, /(^|[-_])cogvideo/i, /(^|[-_])wan-?\d/i, /animate-?diff/i,
     // Generic "image" / "video" families (catch-all)
-    /(^|[-_])image-?\d/i, /(^|[-_])video-?\d/i,
+    /(^|[-_])image([-_]|$)/i, /(^|[-_])image-?\d/i, /(^|[-_])video-?\d/i,
 ];
 const pickTextModel = (models) => {
     if (!Array.isArray(models) || models.length === 0) return '';
@@ -844,6 +918,13 @@ const pickTextModel = (models) => {
         if (!AGENTIC_PIM_IMAGE_ONLY_PATTERNS.some(rx => rx.test(m))) return m;
     }
     return models[0];
+};
+const chatRequestId = () => {
+    const bytes = crypto.getRandomValues(new Uint8Array(16));
+    bytes[6] = (bytes[6] & 15) | 64;
+    bytes[8] = (bytes[8] & 63) | 128;
+    const hex = Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
+    return `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`;
 };
 
 app.component('v-agenting-pim', {
@@ -874,6 +955,7 @@ app.component('v-agenting-pim', {
             newSession: `@lang('ai-agent::app.widget.new-session')`,
             noSessions: `@lang('ai-agent::app.widget.no-sessions')`,
             sessionDefaultName: `@lang('ai-agent::app.widget.session-default-name')`,
+            messages: `@lang('ai-agent::app.widget.messages')`,
             deleteSession: `@lang('ai-agent::app.widget.delete-session')`,
             renameSession: `@lang('ai-agent::app.widget.rename-session')`,
             readyFor: `@lang('ai-agent::app.widget.ready-for')`,
@@ -952,13 +1034,19 @@ app.component('v-agenting-pim', {
             activeTab: 'capabilities',
             activeCapability: null,
             messages: [],
+            historyEnabled: @json((bool) config('ai-agent.history.enabled', false)),
+            deletedMessageIds: {},
             inputText: '',
+            composerCursor: 0,
+            composerRefs: {},
             pendingFiles: [],
             isLoading: false,
             streamingStatus: '',
+            autoScroll: true,
             productContext: null,
             noTransition: false,
             capabilitySearch: '',
+            extensionContext: {},
             // Session management
             sessions: [],
             activeSessionId: null,
@@ -1078,6 +1166,26 @@ app.component('v-agenting-pim', {
     },
 
     computed: {
+        composerSegments() {
+            const references = [...new Set(
+                Object.values(this.extensionContext)
+                    .flatMap(v => Array.isArray(v?.references) ? v.references : [])
+                    .filter(x => typeof x === 'string' && Array.from(x).length <= 255)
+            )].sort((a, b) => b.length - a.length);
+            if (!references.length) return [{text: this.inputText, reference: false}];
+            const escaped = references.map(x => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+            const pattern = new RegExp('(?<![\\p{L}\\p{N}_])(?:'+escaped.join('|')+')(?![\\p{L}\\p{N}_-])', 'gu');
+            const parts = [];
+            let offset = 0;
+            for (const match of this.inputText.matchAll(pattern)) {
+                parts.push({text: this.inputText.slice(offset, match.index), reference: false}, {text: match[0], reference: true});
+                offset = match.index + match[0].length;
+            }
+            parts.push({text: this.inputText.slice(offset), reference: false});
+            return parts;
+        },
+        composerHasReferences() { return this.composerSegments.some(x => x.reference); },
+
         filteredCapabilities() {
             if (!this.capabilitySearch.trim()) return this.capabilities;
             const q = this.capabilitySearch.toLowerCase();
@@ -1091,19 +1199,31 @@ app.component('v-agenting-pim', {
             const platform = this.platforms.find(p => p.id === this.selectedPlatformId);
             return platform ? (platform.models || []) : [];
         },
+        hideSingleModelSelector() {
+            const platform = this.platforms.find(p => p.id === this.selectedPlatformId);
+            return platform?.hide_single_model === true && this.availableModels.length === 1;
+        },
         fileAccept() {
             if (this.activeCapability?.acceptsSpreadsheet) return '.csv,.xlsx,.xls,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel';
             return 'image/jpeg,image/png,image/webp,image/gif';
         },
         fileInputTitle() { return this.activeCapability?.acceptsSpreadsheet ? this.trans.attachCsvXlsx : this.trans.attachImage; },
         inputPlaceholder() {
-            if (this.isLoading) return this.trans.processing;
             if (this.activeCapability) return this.activeCapability.hint;
             return this.trans.askCatalog;
         },
     },
 
     mounted() {
+        const overrides = @json($extensionRegistry->capabilities());
+        this.capabilities = this.capabilities.map(c => ({...c, ...(overrides[c.key] || {})}));
+        this._composeListener = (event) => {
+            this.isOpen = true; this.activeTab = 'chat';
+            if (typeof event.detail?.text === 'string') this.inputText = event.detail.text;
+            this.$nextTick(() => this.$refs.textInput?.focus());
+        };
+        window.addEventListener('ai-agent:compose', this._composeListener);
+        this.$nextTick(() => this.observeMessages());
         this.loadSessions();
         this.detectProductContext();
         this.restoreState();
@@ -1133,7 +1253,8 @@ app.component('v-agenting-pim', {
             this.saveState();
 
             if (val && this.activeTab === 'chat') {
-                this.scrollBottom();
+                this.$nextTick(() => this.observeMessages());
+                this.scrollBottom(true);
                 this.$nextTick(() => this.$refs.textInput?.focus());
             }
         },
@@ -1142,13 +1263,55 @@ app.component('v-agenting-pim', {
             this.saveState();
 
             if (val === 'chat' && this.isOpen) {
-                this.scrollBottom();
+                this.$nextTick(() => this.observeMessages());
+                this.scrollBottom(true);
             }
         },
         activeCapability: { deep: true, handler() { this.saveState(); } },
     },
 
+    beforeUnmount() { window.removeEventListener('ai-agent:compose', this._composeListener); },
     methods: {
+        composerSelection() {
+            this.composerCursor = this.$refs.textInput?.selectionStart ?? this.inputText.length;
+        },
+        composerInput() {
+            this.composerSelection();
+            this.autoResize();
+        },
+        syncComposerScroll() {
+            const input = this.$refs.textInput, layer = this.$refs.composerHighlight;
+            if (input && layer) {
+                layer.scrollTop = input.scrollTop;
+                layer.scrollLeft = input.scrollLeft;
+            }
+        },
+        replaceComposerDraft(change) {
+            if (this.isLoading || !change || typeof change.text !== 'string') return;
+            const {start, end, text} = change;
+            if (!Number.isInteger(start) || !Number.isInteger(end) || start < 0 || end < start || end > this.inputText.length || text.length > 10000) return;
+            this.inputText = this.inputText.slice(0, start) + text + this.inputText.slice(end);
+            this.composerCursor = start + text.length;
+            this.$nextTick(() => {
+                const input = this.$refs.textInput;
+                input?.focus();
+                input?.setSelectionRange(this.composerCursor, this.composerCursor);
+                this.autoResize();
+            });
+        },
+        onComposerKey(event) {
+            if (event.isComposing) return;
+            for (const composer of Object.values(this.composerRefs)) {
+                if (composer?.handleKey?.(event)) return;
+            }
+            if (event.key === 'Enter' && !event.shiftKey && !event.ctrlKey && !event.altKey && !event.metaKey) {
+                event.preventDefault();
+                this.send();
+            }
+        },
+        resultComponent(descriptor) {
+            return descriptor && Object.prototype.hasOwnProperty.call(AGENTIC_PIM_RESULT_COMPONENTS, descriptor.type) ? AGENTIC_PIM_RESULT_COMPONENTS[descriptor.type] : null;
+        },
         detectProductContext() {
             const match = window.location.pathname.match(/\/catalog\/products\/edit\/(\d+)/);
             if (match) {
@@ -1203,7 +1366,7 @@ app.component('v-agenting-pim', {
 
         createNewSession() {
             if (this.messages.length > 0) {
-                // Save current session to localStorage only (not DB — avoids duplicates)
+                // Save locally, and to saved history when enabled; the client id keeps repeat saves idempotent
                 this.saveCurrentSession();
             }
             this.activeSessionId = this.generateSessionId();
@@ -1216,19 +1379,25 @@ app.component('v-agenting-pim', {
             this.$nextTick(() => this.$refs.textInput?.focus());
         },
 
-        saveCurrentSession(persistToDb = false) {
-            if (!this.activeSessionId || this.messages.length === 0) return;
+        saveCurrentSession(persistToDb = true) {
+            if (!this.activeSessionId || (this.messages.length === 0 && !(this.deletedMessageIds[this.activeSessionId]?.length))) return;
 
             const firstUserMsg = this.messages.find(m => m.role === 'user');
             const name = firstUserMsg
                 ? firstUserMsg.content.substring(0, 50) + (firstUserMsg.content.length > 50 ? '…' : '')
                 : this.trans.sessionDefaultName;
-
-            // Limit stored messages to prevent excessive localStorage usage.
-            const recentMessages = this.messages.filter(m => !m.isRedirect).slice(-50);
+            const recentMessages = this.messages.filter(m => !m.isRedirect);
+            for (const message of recentMessages) message.message_id ||= chatRequestId();
             const sessionMessages = recentMessages.map(m => ({
                 role: m.role,
+                message_id: m.message_id || null,
+                request_id: m.request_id || null,
+                presentation: m.presentation || null,
+                extensions: m.extensions || null,
+                tool_calls: m.tool_calls || null,
+                tokens_used: m.tokens_used || 0,
                 content: m.content || '',
+                action: m.action || null,
                 result: m.result || null,
                 product_url: m.product_url || null,
                 download_url: m.download_url || null,
@@ -1241,7 +1410,8 @@ app.component('v-agenting-pim', {
                 name: name,
                 messageCount: this.messages.filter(m => m.role === 'user').length,
                 lastActive: new Date().toLocaleDateString(),
-                messages: sessionMessages,
+                dbId: this.sessions[existingIdx]?.dbId || null,
+                messages: sessionMessages.slice(-50),
                 capability: this.activeCapability?.key || null,
             };
 
@@ -1256,26 +1426,91 @@ app.component('v-agenting-pim', {
             }
 
             this.persistSessions();
+            if (this.historyEnabled && persistToDb && !this.messages.some(m => m.isStreaming)) {
+                const payload = {conversation_id: String(sessionData.id), title: name,
+                    deleted_message_ids: [...(this.deletedMessageIds[sessionData.id] || [])],
+                    messages: sessionMessages.map(m => ({role:m.role, content:m.content, message_id:m.message_id, request_id:m.request_id, presentation:m.presentation, tool_calls:m.tool_calls, tokens_used:m.tokens_used, result:m.result, product_url:m.product_url, download_url:m.download_url, _confirmed:m._confirmed, action:m.action}))};
+                const serialized = JSON.stringify(payload);
+                this._historyFingerprints ||= {};
+                if (this._historyFingerprints[sessionData.id] === serialized) return;
+                this._historyFingerprints[sessionData.id] = serialized;
+                this._historySave = (this._historySave || Promise.resolve()).catch(() => {}).then(() =>
+                    this.saveHistoryBatches(payload)
+                ).then(res => {
+                    const local = this.sessions.find(s => s.id === sessionData.id);
+                    if (local) local.dbId = res.data.id;
+                    const savedDeletions = new Set(payload.deleted_message_ids);
+                    this.deletedMessageIds[sessionData.id] = (this.deletedMessageIds[sessionData.id] || []).filter(id => !savedDeletions.has(id));
+                    this.persistSessions();
+                }).catch(() => { delete this._historyFingerprints[sessionData.id]; });
+            }
+            return this._historySave;
+        },
+
+        async saveHistoryBatches(payload) {
+            let response;
+            for (let offset = 0; offset < Math.max(payload.messages.length, payload.deleted_message_ids.length, 1); offset += 100) {
+                response = await this.$axios.post("{{ route('ai-agent.conversations.store') }}", {...payload, messages:payload.messages.slice(offset, offset + 100), deleted_message_ids:payload.deleted_message_ids.slice(offset, offset + 100)});
+            }
+            return response;
+        },
+
+        historyLink(value, product = false) {
+            if (typeof value !== 'string' || value.length > 8192 || /[\x00-\x20\x7f\\]/.test(value)) return null;
+            try {
+                const decoded = decodeURIComponent(value);
+                if (/^[\/]{2}|[\x00-\x1f\x7f\\]/.test(decoded)) return null;
+                if (!value.startsWith('/') && !/^https?:\/\//.test(value)) return null;
+                const link = new URL(value, window.location.origin);
+                if (!['http:', 'https:'].includes(link.protocol) || link.username || link.password || (product && link.origin !== window.location.origin)) return null;
+                return value;
+            } catch { return null; }
+        },
+
+        mergeHistory(incoming, local = [], deletedIds = []) {
+            const deleted = new Set(deletedIds);
+            incoming = incoming.filter(message => !deleted.has(message.message_id));
+            local = local.filter(message => !deleted.has(message.message_id));
+            const remaining = new Set(local);
+            const merged = incoming.map(remote => {
+                const cached = local.find(m => m.message_id && m.message_id === remote.message_id)
+                    || local.find(m => !m.message_id && remaining.has(m) && m.role === remote.role && m.content === remote.content) || {};
+                remaining.delete(cached);
+                const message = {...cached, ...remote};
+                for (const field of ['result', 'product_url', 'download_url', 'action']) {
+                    if (remote[field] == null && cached[field] != null) message[field] = cached[field];
+                }
+                message._confirmed = Boolean(remote._confirmed || cached._confirmed);
+                if (typeof message.tool_calls === 'string') {
+                    try { message.tool_calls = JSON.parse(message.tool_calls); } catch { message.tool_calls = null; }
+                }
+                message.product_url = this.historyLink(message.product_url, true);
+                message.download_url = this.historyLink(message.download_url);
+                return message;
+            });
+            return [...merged, ...[...remaining].map(message => ({...message, product_url:this.historyLink(message.product_url, true), download_url:this.historyLink(message.download_url)}))];
         },
 
         async switchToSession(sessionId) {
+            const selection = this._historySelection = (this._historySelection || 0) + 1;
             if (this.messages.length > 0 && this.activeSessionId) {
                 await this.saveCurrentSession();
             }
 
             // Try loading from local sessions first (fast)
             let session = this.sessions.find(s => s.id === sessionId);
-
-            // If it's a DB-backed session (numeric ID), load from API
-            if (!session && typeof sessionId === 'number') {
+            if (this.historyEnabled && (session?.dbId || typeof sessionId === 'number')) {
                 try {
-                    const res = await this.$axios.get("{{ url(config('app.admin_url') . '/ai-agent/conversations') }}/" + sessionId);
+                    const res = await this.$axios.get("{{ url(config('app.admin_url') . '/ai-agent/conversations') }}/" + (session?.dbId || sessionId));
+                    if (selection !== this._historySelection) return;
                     const data = res.data;
+                    const localMessages = this.activeSessionId === sessionId ? this.messages : session?.messages || [];
                     session = {
-                        id: data.conversation.id,
+                        id: data.conversation.client_id || data.conversation.id,
+                        dbId: data.conversation.id,
                         name: data.conversation.title,
-                        messages: data.messages.map(m => ({ role: m.role, content: m.content })),
-                        capability: null,
+                        messages: this.mergeHistory(data.messages, localMessages, [...(data.deleted_message_ids || []), ...(this.deletedMessageIds[data.conversation.client_id || sessionId] || [])]),
+                        capability: session?.capability || null,
                     };
                 } catch (e) { return; }
             }
@@ -1299,9 +1534,10 @@ app.component('v-agenting-pim', {
         },
 
         async deleteSession(sessionId) {
-            if (typeof sessionId === 'number') {
+            const dbId = this.sessions.find(s => s.id === sessionId)?.dbId || (typeof sessionId === 'number' ? sessionId : null);
+            if (this.historyEnabled && dbId) {
                 try {
-                    await this.$axios.delete("{{ url(config('app.admin_url') . '/ai-agent/conversations') }}/" + sessionId);
+                    await this.$axios.delete("{{ url(config('app.admin_url') . '/ai-agent/conversations') }}/" + dbId);
                 } catch (e) {
                     this.$emitter.emit('add-flash', { type: 'error', message: this.trans.errorGeneric });
 
@@ -1333,13 +1569,34 @@ app.component('v-agenting-pim', {
                     });
                 }
             } catch (e) { this.sessions = []; }
+            if (!this.historyEnabled) return;
+            this.$axios.get("{{ route('ai-agent.conversations.index') }}").then(async res => {
+                for (const item of res.data.conversations || []) {
+                    const id = item.client_id || item.id;
+                    const existing = this.sessions.find(s => s.id === id);
+                    if (existing) existing.dbId = item.id;
+                    else this.sessions.push({id, dbId:item.id, name:item.title, messageCount:'',lastActive:new Date(item.updated_at).toLocaleDateString()});
+                }
+                const activeId = this.activeSessionId;
+                const saved = this.sessions.find(s => s.id === activeId);
+                if (saved?.dbId) {
+                    const response = await this.$axios.get("{{ url(config('app.admin_url') . '/ai-agent/conversations') }}/" + saved.dbId);
+                    if (this.activeSessionId !== activeId || this.messages.some(m => m.isStreaming)) return;
+                    this.messages = this.mergeHistory(response.data.messages, this.messages, [...(response.data.deleted_message_ids || []), ...(this.deletedMessageIds[activeId] || [])]);
+                }
+            }).catch(() => {});
         },
         onPlatformChange() {
             this.selectedModel = pickTextModel(this.availableModels);
             this.saveState();
         },
         activateCapability(cap) {
+            if (this.messages.length > 0) {
+                this.createNewSession();
+            }
+
             this.activeCapability = cap;
+            if (cap.extension_event) { window.dispatchEvent(new CustomEvent(cap.extension_event)); }
             this.activeTab = 'chat';
 
             // Auto-populate the prompt text if the capability has one
@@ -1404,6 +1661,10 @@ app.component('v-agenting-pim', {
                 return false;
             }
 
+            if (!data.mutated) {
+                return false;
+            }
+
             if (data.product_url || data.download_url) {
                 return false;
             }
@@ -1421,15 +1682,21 @@ app.component('v-agenting-pim', {
             return true;
         },
 
-        async send() {
+        consumeExtensionContext(data) {
+            const type = data?.presentation?.type;
+            const key = type && Object.prototype.hasOwnProperty.call(AGENTIC_PIM_RESULT_CONTEXT_CONSUMERS, type) ? AGENTIC_PIM_RESULT_CONTEXT_CONSUMERS[type] : null;
+            if (key) delete this.extensionContext[key];
+        },
+
+        async send(retryRequestId = null) {
             const text = this.inputText.trim();
             const files = [...this.pendingFiles];
+            const selectedContext = JSON.parse(JSON.stringify(this.extensionContext));
             if (!text && files.length === 0) return;
-
             // Build user message for display
-            const userMsg = { role: 'user', content: text || (files.length ? '📎 ' + files.map(f => f.name).join(', ') : ''), files: files.map(f => ({ type: f.type, preview: f.preview, name: f.name })) };
+            const userMsg = { message_id: chatRequestId(), request_id: typeof retryRequestId === 'string' ? retryRequestId : chatRequestId(), role: 'user', extensions: selectedContext, content: text || (files.length ? '📎 ' + files.map(f => f.name).join(', ') : ''), files: files.map(f => ({ type: f.type, preview: f.preview, name: f.name })) };
             this.messages.push(userMsg);
-            this.inputText = ''; this.resetTextarea(); this.scrollBottom(); this.isLoading = true;
+            this.inputText = ''; this.resetTextarea(); this.scrollBottom(true); this.isLoading = true;
             this.streamingStatus = files.length > 0 ? this.trans.analyzingFiles : this.trans.thinking;
 
             try {
@@ -1439,6 +1706,9 @@ app.component('v-agenting-pim', {
                 if (this.selectedPlatformId) fd.append('platform_id', this.selectedPlatformId);
                 if (this.selectedModel) fd.append('model', this.selectedModel);
                 files.forEach((f, i) => { if (f.type === 'image') fd.append('images[' + i + ']', f.file); else fd.append('files[' + i + ']', f.file); });
+                fd.append('conversation_id', this.activeSessionId);
+                fd.append('request_id', userMsg.request_id);
+                fd.append('extensions', JSON.stringify(selectedContext));
                 fd.append('history', JSON.stringify(this.messages.slice(0, -1).map(m => ({ role: m.role, content: m.content || '' }))));
                 fd.append('context[current_page]', window.location.pathname);
                 if (this.productContext) {
@@ -1456,7 +1726,7 @@ app.component('v-agenting-pim', {
                         headers: {
                             'Accept': 'text/event-stream',
                             'X-Requested-With': 'XMLHttpRequest',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
                         },
                     });
 
@@ -1464,7 +1734,8 @@ app.component('v-agenting-pim', {
 
                     if (streamRes.ok && ct.includes('text/event-stream')) {
                         // SSE streaming works — process the stream
-                        await this.processStream(streamRes, files);
+                        const completed = await this.processStream(streamRes, files);
+                        this.consumeExtensionContext(completed);
                         return; // processStream handles everything
                     } else if (streamRes.ok && ct.includes('application/json')) {
                         data = await streamRes.json();
@@ -1477,10 +1748,10 @@ app.component('v-agenting-pim', {
                     const res = await this.$axios.post("{{ route('ai-agent.chat.send') }}", fd, { headers: { 'Content-Type': 'multipart/form-data' } });
                     data = res.data;
                 }
-
                 // Handle JSON response (from either stream JSON or blocking fallback)
+                this.consumeExtensionContext(data);
                 this.pendingFiles = [];
-                this.messages.push({ role: 'assistant', content: data.reply || this.trans.noResponse, action: data.action || null, result: data.result || null, product_url: data.product_url || null, download_url: data.download_url || null });
+                this.messages.push({ message_id: chatRequestId(), presentation: data.presentation || null, role: 'assistant', content: data.reply || this.trans.noResponse, action: data.action || null, result: data.result || null, product_url: data.product_url || null, download_url: data.download_url || null });
 
                 // Auto-navigate to the created product page
                 if (data.product_url && this.activeCapability?.key === 'create_from_image') {
@@ -1494,11 +1765,12 @@ app.component('v-agenting-pim', {
                 }
             } catch (err) {
                 if (files.length > 0 && this.pendingFiles.length === 0) this.pendingFiles = files;
+                if (err.response?.data?.discard_images) this.pendingFiles = this.pendingFiles.filter(f => f.type !== 'image');
                 this.messages.push({ role: 'assistant', content: err.response?.data?.reply || err.response?.data?.message || this.trans.errorGeneric });
             } finally {
                 this.isLoading = false;
                 this.streamingStatus = '';
-                this.scrollBottom();
+                this.scrollBottom(true);
                 this.focusInput();
             }
         },
@@ -1509,11 +1781,13 @@ app.component('v-agenting-pim', {
             let buffer = '';
             let streamedText = '';
             let resultData = {};
+            let streamFailed = false;
+            let discardImages = false;
 
             // Add a placeholder message for streaming
             const msgIndex = this.messages.length;
             this.messages.push({ role: 'assistant', content: '', isStreaming: true });
-
+            let currentEvent = null;
             try {
                 while (true) {
                     const { done, value } = await reader.read();
@@ -1523,7 +1797,6 @@ app.component('v-agenting-pim', {
                     const lines = buffer.split('\n');
                     buffer = lines.pop() || '';
 
-                    let currentEvent = null;
                     for (const line of lines) {
                         if (line.startsWith('event: ')) {
                             currentEvent = line.substring(7).trim();
@@ -1542,10 +1815,15 @@ app.component('v-agenting-pim', {
                                         this.messages[msgIndex].content = streamedText;
                                         this.scrollBottom();
                                         break;
+                                    case 'tool_result':
                                     case 'complete':
-                                        resultData = eventData;
+                                        resultData = {...resultData, ...eventData};
+                                        this.messages[msgIndex].presentation = resultData.presentation || null;
+                                        this.messages[msgIndex].result = resultData.result || null;
                                         break;
                                     case 'error':
+                                        streamFailed = true;
+                                        discardImages = eventData.discard_images === true;
                                         streamedText = eventData.message || this.trans.errorGeneric;
                                         this.messages[msgIndex].content = streamedText;
                                         break;
@@ -1556,31 +1834,36 @@ app.component('v-agenting-pim', {
                     }
                 }
             } catch (e) {
+                streamFailed = true;
                 if (!streamedText) streamedText = this.trans.errorGeneric;
             }
 
             // Finalize the message
-            this.pendingFiles = [];
+            this.pendingFiles = streamFailed
+                ? files.filter(f => !discardImages || f.type !== 'image')
+                : [];
             this.messages[msgIndex] = {
                 role: 'assistant',
                 content: streamedText || this.trans.noResponse,
                 action: resultData.action || 'agent_response',
                 result: resultData.result || null,
+                message_id: chatRequestId(),
+                presentation: resultData.presentation || null,
                 product_url: resultData.product_url || null,
                 download_url: resultData.download_url || null,
                 isStreaming: false,
             };
-
             // Auto-navigate/refresh handling
-            if (resultData.product_url && this.activeCapability?.key === 'create_from_image') {
+            if (!streamFailed && resultData.product_url && this.activeCapability?.key === 'create_from_image') {
                 this.messages.push({ role: 'assistant', content: this.trans.openingProduct, isRedirect: true });
                 this.saveState();
                 setTimeout(() => { window.location.href = resultData.product_url; }, 1500);
-            } else if (this.shouldAutoRefreshAfterAction(resultData)) {
+            } else if (!streamFailed && this.shouldAutoRefreshAfterAction(resultData)) {
                 this.saveState();
                 this.streamingStatus = this.trans.refreshingPage;
                 setTimeout(() => { window.location.reload(); }, 1500);
             }
+            return resultData;
         },
 
         copyMessage(idx) {
@@ -1608,16 +1891,28 @@ app.component('v-agenting-pim', {
             }
         },
 
-        retryFrom(idx) {
+        async retryFrom(idx) {
+            if (this.isLoading) return;
+            const sessionId = this.activeSessionId;
             // Find the user message right before this assistant message
             let userIdx = idx - 1;
             while (userIdx >= 0 && this.messages[userIdx].role !== 'user') { userIdx--; }
             if (userIdx < 0) return;
+            const requestId = this.messages[userIdx].request_id || chatRequestId();
+            if (this.messages[userIdx].extensions) {
+                this.extensionContext = JSON.parse(JSON.stringify(this.messages[userIdx].extensions));
+            }
             const userText = this.messages[userIdx].content || '';
             // Remove from that user message onwards and resend
+            const removed = this.messages.slice(userIdx).map(message => message.message_id).filter(Boolean);
+            this.deletedMessageIds[this.activeSessionId] = [...new Set([...(this.deletedMessageIds[this.activeSessionId] || []), ...removed])];
             this.messages.splice(userIdx);
+            this.isLoading = true;
+            await this.saveCurrentSession();
+            this.isLoading = false;
+            if (this.activeSessionId !== sessionId) return;
             this.inputText = userText;
-            this.$nextTick(() => this.send());
+            this.$nextTick(() => this.send(requestId));
         },
 
         rateMessage(idx, rating) {
@@ -1649,6 +1944,7 @@ app.component('v-agenting-pim', {
             this.messages[idx] = { ...this.messages[idx], _confirmed: true };
             // Send the user's answer as a chat message
             this.inputText = answer === 'yes' ? 'Yes, proceed' : 'No, cancel';
+            this.scrollBottom(true);
             this.$nextTick(() => this.send());
         },
 
@@ -1705,7 +2001,21 @@ app.component('v-agenting-pim', {
             return lastSegment || 'generated-image';
         },
 
-        scrollBottom() {
+        /**
+         * Pin the transcript to the latest message.
+         *
+         * Skipped while the user is reading further up, unless forced by an
+         * action the user just took (sending, confirming, switching session).
+         */
+        scrollBottom(force = false) {
+            if (force) {
+                this.autoScroll = true;
+            }
+
+            if (! this.autoScroll) {
+                return;
+            }
+
             this.$nextTick(() => {
                 requestAnimationFrame(() => {
                     const el = this.$refs.messagesEl;
@@ -1715,6 +2025,35 @@ app.component('v-agenting-pim', {
                     }
                 });
             });
+        },
+
+        onMessagesScroll() {
+            const el = this.$refs.messagesEl;
+
+            if (! el) {
+                return;
+            }
+
+            this.autoScroll = (el.scrollHeight - el.scrollTop - el.clientHeight) <= 80;
+        },
+
+        /**
+         * Keep the transcript pinned while streamed text, tool-status rows,
+         * markdown blocks and lazily loaded images change its height. Images
+         * settle their height after the mutation that inserted them, so their
+         * load event is listened to as well.
+         */
+        observeMessages() {
+            const el = this.$refs.messagesEl;
+
+            if (! el || this.messagesObserver) {
+                return;
+            }
+
+            this.messagesObserver = new MutationObserver(() => this.scrollBottom());
+            this.messagesObserver.observe(el, { childList: true, subtree: true, characterData: true });
+
+            el.addEventListener('load', () => this.scrollBottom(), true);
         },
         autoResize() { const el = this.$refs.textInput; if (el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 160) + 'px'; } },
         resetTextarea() { this.$nextTick(() => { const el = this.$refs.textInput; if (el) { el.style.height = 'auto'; el.style.height = '72px'; } }); },
@@ -1730,7 +2069,8 @@ app.component('v-agenting-pim', {
 
         renderMarkdown(text) {
             if (!text) return '';
-            const html = text
+            const html = this.renderMarkdownTables(text)
+                .replace(/^[*-] (.+)$/gm, '<p class="flex gap-1.5 my-0.5"><span class="text-primary-400 font-bold flex-shrink-0">&bull;</span><span>$1</span></p>')
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                 .replace(/\*(.*?)\*/g, '<em>$1</em>')
                 .replace(/`([^`]+)`/g, '<code class="bg-gray-100 dark:bg-cherry-800 px-1 py-0.5 rounded text-xs font-mono text-primary-700 dark:text-primary-400">$1</code>')
@@ -1743,10 +2083,11 @@ app.component('v-agenting-pim', {
                 .replace(/^### (.+)$/gm, '<p class="font-semibold text-sm mt-2 mb-1">$1</p>')
                 .replace(/^## (.+)$/gm, '<p class="font-bold text-sm mt-2 mb-1">$1</p>')
                 .replace(/^# (.+)$/gm, '<p class="font-bold text-base mt-2 mb-1">$1</p>')
-                .replace(/^- (.+)$/gm, '<p class="flex gap-1.5 my-0.5"><span class="text-primary-400 font-bold flex-shrink-0">&bull;</span><span>$1</span></p>')
                 .replace(/^(\d+)\. (.+)$/gm, '<p class="flex gap-1.5 my-0.5"><span class="text-primary-400 font-bold flex-shrink-0">$1.</span><span>$2</span></p>')
                 .replace(/\n\n/g, '<br><br>')
-                .replace(/\n/g, '<br>');
+                .replace(/\n/g, '<br>')
+                .replace(/(<br>\s*)+(<table)/g, '$2')
+                .replace(/(<\/table>)(\s*<br>)+/g, '$1');
 
             // Sanitize HTML to prevent XSS from AI-generated or injected content.
             if (typeof DOMPurify !== 'undefined') {
@@ -1761,6 +2102,52 @@ app.component('v-agenting-pim', {
             // flows into v-html, so returning it raw is an XSS sink. Strip every
             // tag to plain (escaped) text instead — formatting is lost, safety isn't.
             return this.stripToText(html);
+        },
+
+        /**
+         * Convert GitHub-style pipe tables into HTML before the line-based
+         * rules run, since those turn every newline into a <br> and would
+         * leave the table as literal pipes.
+         */
+        renderMarkdownTables(text) {
+            const lines = text.split('\n');
+            const output = [];
+
+            for (let i = 0; i < lines.length; i++) {
+                const isDivider = /^\s*\|?[\s:|-]*-[\s:|-]*\|?\s*$/.test(lines[i + 1] || '')
+                    && (lines[i + 1] || '').includes('-');
+
+                if (!this.isTableRow(lines[i]) || !isDivider || !this.isTableRow(lines[i + 1])) {
+                    output.push(lines[i]);
+                    continue;
+                }
+
+                const header = this.splitTableRow(lines[i]);
+                const body = [];
+                let cursor = i + 2;
+
+                while (cursor < lines.length && this.isTableRow(lines[cursor])) {
+                    body.push(this.splitTableRow(lines[cursor]));
+                    cursor++;
+                }
+
+                const headCells = header.map(cell => `<th class="text-left font-semibold px-2 py-1 border-b border-gray-200 dark:border-cherry-800">${cell}</th>`).join('');
+                const bodyRows = body.map(row => `<tr>${row.map(cell => `<td class="px-2 py-1 align-top border-b border-gray-100 dark:border-cherry-900">${cell}</td>`).join('')}</tr>`).join('');
+
+                output.push(`<table class="w-full my-1.5 text-[12px] border-collapse"><thead><tr>${headCells}</tr></thead><tbody>${bodyRows}</tbody></table>`);
+
+                i = cursor - 1;
+            }
+
+            return output.join('\n');
+        },
+
+        isTableRow(line) {
+            return typeof line === 'string' && /^\s*\|.*\|\s*$/.test(line);
+        },
+
+        splitTableRow(line) {
+            return line.trim().replace(/^\||\|$/g, '').split('|').map(cell => cell.trim());
         },
 
         sanitizeSvg(svgHtml) {
@@ -1795,7 +2182,8 @@ app.component('v-agenting-pim', {
                     selectedPlatformId: this.selectedPlatformId,
                     selectedModel: this.selectedModel,
                     activeSessionId: this.activeSessionId,
-                    messages: this.messages.filter(m => !m.isRedirect).map(m => ({ role: m.role, content: m.content, result: m.result || null, product_url: m.product_url || null, download_url: m.download_url || null, _confirmed: m._confirmed || false })),
+                    deletedMessageIds: this.deletedMessageIds,
+                    messages: this.messages.filter(m => !m.isRedirect).map(m => ({ message_id: m.message_id || null, request_id: m.request_id || null, presentation: m.presentation || null, extensions: m.extensions || null, role: m.role, content: m.content, action: m.action || null, result: m.result || null, product_url: m.product_url || null, download_url: m.download_url || null, _confirmed: m._confirmed || false })),
                 }));
 
                 // Auto-save current session to localStorage
@@ -1822,6 +2210,7 @@ app.component('v-agenting-pim', {
                     }
                 }
                 if (s.activeSessionId) this.activeSessionId = s.activeSessionId;
+                if (s.deletedMessageIds && typeof s.deletedMessageIds === 'object') this.deletedMessageIds = s.deletedMessageIds;
                 if (Array.isArray(s.messages) && s.messages.length > 0) this.messages = s.messages.filter(m => !m.isRedirect);
                 // isOpen restored synchronously in data() to avoid first-paint flicker.
             } catch (e) {}
@@ -1829,6 +2218,9 @@ app.component('v-agenting-pim', {
     },
 
     beforeUnmount() {
+        this.messagesObserver?.disconnect();
+        this.messagesObserver = null;
+
         const appEl = document.getElementById('app');
         if (appEl) appEl.style.marginRight = '';
 

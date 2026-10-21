@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Measurement\DataGrids\MeasurementFamilyDataGrid;
+use Webkul\Measurement\Http\Requests\MassDeleteMeasurementFamilyRequest;
 use Webkul\Measurement\Repositories\AttributeMeasurementRepository;
 use Webkul\Measurement\Repositories\MeasurementFamilyRepository;
 use Webkul\Measurement\Validation\MeasurementFamilyValidator;
@@ -202,22 +203,19 @@ class MeasurementFamilyController extends Controller
      *
      * @return JsonResponse|RedirectResponse
      */
-    public function massDelete()
+    public function massDelete(MassDeleteMeasurementFamilyRequest $request)
     {
-        $ids = request()->input('indices');
-
-        if (! $ids || count($ids) === 0) {
-            return response()->json([
-                'success' => false,
-                'message' => trans('measurement::app.messages.unit.no_items_selected'),
-            ], 400);
-        }
+        $ids = $request->selectedIds(MeasurementFamilyDataGrid::class);
 
         $attributeMeasurementRepository = resolve(AttributeMeasurementRepository::class);
 
         $failedFamilies = [];
 
+        $selected = 0;
+
         foreach ($ids as $id) {
+            $selected++;
+
             $family = $this->measurementFamilyRepository->find($id);
 
             if (! $family) {
@@ -235,6 +233,13 @@ class MeasurementFamilyController extends Controller
             }
 
             $this->measurementFamilyRepository->delete($id);
+        }
+
+        if ($selected === 0) {
+            return response()->json([
+                'success' => false,
+                'message' => trans('measurement::app.messages.unit.no_items_selected'),
+            ], 400);
         }
 
         if ($failedFamilies !== []) {

@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Webkul\Category\Models\Category;
 use Webkul\Core\Models\Channel;
 use Webkul\Core\Models\Currency;
@@ -45,6 +46,30 @@ it('should return the channel datagrid', function () {
         'id'   => $data['records'][0]['id'],
         'code' => $data['records'][0]['code'],
     ]);
+});
+
+it('should show the fallback locale name in the datagrid when the requested name is null', function () {
+    $this->loginAsAdmin();
+
+    $channel = Channel::factory()->create();
+
+    DB::table('channel_translations')->updateOrInsert(
+        ['channel_id' => $channel->id, 'locale' => 'en_US'],
+        ['name' => 'Fallback Channel Name'],
+    );
+
+    DB::table('channel_translations')->updateOrInsert(
+        ['channel_id' => $channel->id, 'locale' => 'fr_FR'],
+        ['name' => null],
+    );
+
+    $records = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest'])
+        ->json('GET', route('admin.settings.channels.index'), ['locale' => 'fr_FR'])
+        ->json('records');
+
+    $record = collect($records)->firstWhere('id', $channel->id);
+
+    expect($record['translated_name'])->toBe('Fallback Channel Name');
 });
 
 it('should returns the Channel create page', function () {
@@ -285,5 +310,36 @@ it('should not delete the last channel', function () {
 
     $this->assertDatabaseHas($this->getFullTableName(Channel::class), [
         'code' => 'default',
+    ]);
+});
+
+it('should clear the channel name when it is removed on update', function () {
+    $this->loginAsAdmin();
+
+    $category = Category::factory()->create(['parent_id' => null]);
+    $locale = Locale::where('code', 'en_US')->first();
+    $currency = Currency::factory()->create();
+
+    $demoChannel = Channel::factory()->create([
+        'root_category_id' => $category->id,
+    ]);
+
+    expect($demoChannel->hasTranslation('en_US'))->toBeTrue();
+
+    $response = putJson(route('admin.settings.channels.update', ['id' => $demoChannel->id]), [
+        'code'             => $demoChannel->code,
+        'root_category_id' => $demoChannel->root_category_id,
+        'locales'          => [$locale->id],
+        'currencies'       => [$currency->id],
+        'en_US'            => ['name' => ''],
+    ]);
+
+    $response->assertStatus(302);
+    $response->assertSessionHas('success');
+
+    $this->assertDatabaseHas('channel_translations', [
+        'channel_id' => $demoChannel->id,
+        'locale'     => 'en_US',
+        'name'       => null,
     ]);
 });

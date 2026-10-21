@@ -16,6 +16,7 @@ use Webkul\AiAgent\Chat\Contracts\PimTool;
 use Webkul\AiAgent\Jobs\TranslateProductValuesJob;
 use Webkul\AiAgent\Services\ProductWriterService;
 use Webkul\Core\Filesystem\FileStorer;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Repositories\ProductRepository;
 
 class CreateProduct implements PimTool
@@ -85,7 +86,7 @@ class CreateProduct implements PimTool
                 $family = $request->string('family')->toString() ?: null;
                 $attach_image = $request->has('attach_image') ? $request->boolean('attach_image') : true;
                 $attributes_json = $request->string('attributes_json')->toString() ?: null;
-                $product_type = $request->string('product_type')->toString() ?: 'simple';
+                $product_type = $request->string('product_type')->toString() ?: ProductType::Simple->value;
                 $super_attributes = $request->string('super_attributes')->toString() ?: null;
                 $variants_json = $request->string('variants_json')->toString() ?: null;
 
@@ -103,10 +104,8 @@ class CreateProduct implements PimTool
                     return json_encode(['error' => 'Product name is required']);
                 }
 
-                // Determine product type
-                $type = ($product_type === 'configurable' || ! empty($super_attributes)) ? 'configurable' : 'simple';
+                $type = ($product_type === ProductType::Configurable->value || ! empty($super_attributes)) ? ProductType::Configurable->value : ProductType::Simple->value;
 
-                // Merge all attributes
                 $allAttrs = array_filter(array_merge($extraAttrs, [
                     'name'              => $name,
                     'description'       => $description,
@@ -140,36 +139,31 @@ class CreateProduct implements PimTool
 
                 $repo = resolve(ProductRepository::class);
 
-                // Create the product (simple or configurable parent)
-                if ($type === 'configurable' && $super_attributes) {
+                if ($type === ProductType::Configurable->value && $super_attributes) {
                     $superAttrCodes = array_map(trim(...), explode(',', $super_attributes));
 
                     $product = $repo->create([
                         'sku'                 => $sku,
-                        'type'                => 'configurable',
+                        'type'                => ProductType::Configurable->value,
                         'attribute_family_id' => $familyId,
                         'super_attributes'    => $superAttrCodes,
                     ]);
                 } else {
                     $product = $repo->create([
                         'sku'                 => $sku,
-                        'type'                => 'simple',
+                        'type'                => ProductType::Simple->value,
                         'attribute_family_id' => $familyId,
                     ]);
                 }
 
-                // Load family attributes for dynamic routing
                 $familyAttributes = $this->writerService->getFamilyAttributesPublic($familyId);
 
-                // Handle estimated_price → price mapping
                 if (! empty($allAttrs['estimated_price']) && empty($allAttrs['price'])) {
                     $allAttrs['price'] = $allAttrs['estimated_price'];
                 }
                 unset($allAttrs['estimated_price']);
 
-                // Price/cost defaults only apply when the family carries those attributes
                 if (isset($familyAttributes['price'])) {
-                    // Price defaults to 0 — signals "price not set" to the admin
                     if (empty($allAttrs['price']) || ! is_numeric($allAttrs['price'])) {
                         $allAttrs['price'] = 0;
                     }
@@ -183,12 +177,10 @@ class CreateProduct implements PimTool
                     }
                 }
 
-                // Auto-set product_number from SKU if the family has it
                 if (isset($familyAttributes['product_number']) && empty($allAttrs['product_number'])) {
                     $allAttrs['product_number'] = $sku;
                 }
 
-                // Extract categories
                 $categoryValues = null;
                 if (! empty($allAttrs['categories'])) {
                     $categoryValues = $allAttrs['categories'];
@@ -197,7 +189,6 @@ class CreateProduct implements PimTool
 
                 $currencies = $this->writerService->getActiveCurrencyCodes();
 
-                // Get ALL channels and their locales for multi-channel/locale filling
                 $allChannels = core()->getAllChannels();
 
                 $values = $product->values ?? [];
@@ -205,7 +196,7 @@ class CreateProduct implements PimTool
                 $values['common']['url_key'] = Str::slug($name);
 
                 $skippedAttrs = [];
-                $translatableFields = []; // Collect text fields for translation
+                $translatableFields = [];
 
                 foreach ($allAttrs as $code => $value) {
                     if (\in_array($code, ['sku', 'url_key', 'image'], true)) {
@@ -220,7 +211,6 @@ class CreateProduct implements PimTool
 
                     $meta = $familyAttributes[$code];
 
-                    // Handle price type → multi-currency object
                     if ($meta['type'] === 'price' && is_numeric($value)) {
                         $priceObj = [];
                         foreach ($currencies as $curr) {
@@ -229,7 +219,6 @@ class CreateProduct implements PimTool
                         $value = $priceObj;
                     }
 
-                    // Handle select/multiselect → resolve to option code
                     if (\in_array($meta['type'], ['select', 'multiselect'], true) && is_string($value)) {
                         $resolved = $this->writerService->resolveSelectValuePublic($code, $value, $meta['attribute_id']);
                         if ($resolved === null) {
@@ -240,25 +229,19 @@ class CreateProduct implements PimTool
                         $value = $resolved;
                     }
 
-                    // Route to correct bucket — source locale/channel only
-                    // Non-locale fields (price, select) go to ALL channels since they're not translatable
                     if ($meta['value_per_channel'] && $meta['value_per_locale']) {
-                        // Text fields: source locale only, other locales via translation job
                         foreach ($allChannels as $channel) {
                             $values['channel_locale_specific'][$channel->code][$this->context->locale][$code] = $value;
                         }
 
-                        // Track translatable text fields for auto-translation
                         if (\in_array($meta['type'], ['text', 'textarea'], true) && is_string($value)) {
                             $translatableFields[$code] = $value;
                         }
                     } elseif ($meta['value_per_channel']) {
-                        // Channel-specific (not locale-dependent, e.g. price) → fill all channels
                         foreach ($allChannels as $channel) {
                             $values['channel_specific'][$channel->code][$code] = $value;
                         }
                     } elseif ($meta['value_per_locale']) {
-                        // Locale-specific: source locale only, translate the rest
                         $values['locale_specific'][$this->context->locale][$code] = $value;
 
                         if (\in_array($meta['type'], ['text', 'textarea'], true) && is_string($value)) {
@@ -269,7 +252,6 @@ class CreateProduct implements PimTool
                     }
                 }
 
-                // Assign categories
                 if ($categories || (is_array($categoryValues) && $categoryValues !== [])) {
                     $catInputs = [];
 
@@ -306,7 +288,6 @@ class CreateProduct implements PimTool
                     }
                 }
 
-                // Attach uploaded image
                 $imageAttachError = null;
 
                 if ($attach_image && $this->context->hasImages()) {
@@ -348,10 +329,9 @@ class CreateProduct implements PimTool
                 $product->values = $values;
                 $product->save();
 
-                // Create variants for configurable products
                 $variantsCreated = 0;
 
-                if ($type === 'configurable' && $variants_json) {
+                if ($type === ProductType::Configurable->value && $variants_json) {
                     $variants = json_decode($variants_json, true) ?? [];
 
                     if (! empty($variants) && $super_attributes) {
@@ -365,7 +345,6 @@ class CreateProduct implements PimTool
                                 continue;
                             }
 
-                            // Build variant values with super attribute values in common
                             $variantValues = $values;
                             $variantValues['common']['sku'] = $variantSku;
                             $variantValues['common']['url_key'] = Str::slug($variantSku);
@@ -375,7 +354,6 @@ class CreateProduct implements PimTool
                                     $saValue = $variantData[$saCode];
                                     $saMeta = $familyAttributes[$saCode];
 
-                                    // Resolve select options for super attributes
                                     if (\in_array($saMeta['type'], ['select', 'multiselect'], true) && is_string($saValue)) {
                                         $resolved = $this->writerService->resolveSelectValuePublic($saCode, $saValue, $saMeta['attribute_id']);
                                         if ($resolved !== null) {
@@ -387,7 +365,6 @@ class CreateProduct implements PimTool
                                 }
                             }
 
-                            // Override variant-specific attributes (price, etc.)
                             foreach ($variantData as $vCode => $vValue) {
                                 if ($vCode === 'sku') {
                                     continue;
@@ -406,7 +383,6 @@ class CreateProduct implements PimTool
                                         $vValue = $priceObj;
                                     }
 
-                                    // Route to the correct bucket for all channels/locales
                                     if ($vMeta['value_per_channel'] && $vMeta['value_per_locale']) {
                                         foreach ($allChannels as $channel) {
                                             foreach ($channel->locales as $locale) {
@@ -427,10 +403,9 @@ class CreateProduct implements PimTool
                                 }
                             }
 
-                            // Create the variant as a child product
                             $variant = $repo->getModel()->create([
                                 'parent_id'           => $product->id,
-                                'type'                => 'simple',
+                                'type'                => ProductType::Simple->value,
                                 'attribute_family_id' => $familyId,
                                 'sku'                 => $variantSku,
                             ]);
@@ -442,14 +417,12 @@ class CreateProduct implements PimTool
                     }
                 }
 
-                // Dispatch async translation for text fields to other locales
                 if ($translatableFields !== []) {
                     dispatch(new TranslateProductValuesJob(productId: $product->id, sourceLocale: $this->context->locale, fieldsToTranslate: $translatableFields, channel: $this->context->channel))->delay(now()->addSeconds(3));
                 }
 
                 $productUrl = route('admin.catalog.products.edit', $product->id);
 
-                // Collect all filled attributes across all channels/locales
                 $filledAttrs = array_keys($values['common'] ?? []);
                 foreach ($values['channel_locale_specific'] ?? [] as $locales) {
                     foreach ($locales as $attrs) {
@@ -475,7 +448,7 @@ class CreateProduct implements PimTool
                     ],
                 ];
 
-                if ($type === 'configurable') {
+                if ($type === ProductType::Configurable->value) {
                     $result['result']['variants_created'] = $variantsCreated;
                     $result['result']['super_attributes'] = array_map(trim(...), explode(',', $super_attributes ?? ''));
                 }

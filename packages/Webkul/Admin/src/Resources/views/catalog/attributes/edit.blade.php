@@ -507,6 +507,8 @@
                                             $valueTranslate = old('ai_translate') ?? $attribute->ai_translate;
                                         @endphp
 
+                                        <input type="hidden" name="ai_translate" value="0" />
+
                                         <x-admin::form.control-group.control
                                             type="checkbox"
                                             id="ai_translate"
@@ -522,12 +524,6 @@
                                         >
                                             @lang('admin::app.catalog.attributes.edit.ai-translate')
                                         </label>
-
-                                        <input
-                                            type="hidden"
-                                            name="ai_translate"
-                                            value="{{ (boolean) $valueTranslate }}"
-                                        />
                                     </x-admin::form.control-group>
                                 @endif
                                 <x-admin::form.control-group

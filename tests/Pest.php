@@ -1,6 +1,9 @@
 <?php
 
+use Illuminate\Contracts\Http\Kernel as HttpKernel;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Webkul\Admin\Tests\AdminTestCase;
 use Webkul\AdminApi\Tests\ApiTestCase;
 use Webkul\Attribute\Tests\AttributeTestCase;
@@ -45,6 +48,7 @@ uses(AttributeTestCase::class)->in('../packages/Webkul/Attribute/tests');
 uses(CategoryTestCase::class)->in('../packages/Webkul/Category/tests');
 uses(MeasurementTestCase::class)->in('../packages/Webkul/Measurement/tests');
 uses(CoreTestCase::class)->in('../packages/Webkul/AiAgent/tests');
+uses(AdminTestCase::class)->in('../packages/Webkul/MagicAI/tests');
 uses(CoreTestCase::class)->in('../packages/Webkul/Webhook/tests');
 uses(AdminTestCase::class)->in('../packages/Webkul/AppUrlGuard/tests');
 uses(ResourceTestCase::class)->in('../packages/Webkul/Resource/tests/Feature');
@@ -143,4 +147,23 @@ function seedRequiredProductValues(Product $product): Product
     $product->save();
 
     return $product;
+}
+
+function submitMultipartForm(string $uri, string $method, array $parameters, array $files = [])
+{
+    if ($method !== 'POST') {
+        $parameters += ['_method' => $method];
+    }
+
+    $symfonyRequest = SymfonyRequest::create($uri, 'POST', $parameters, [], $files);
+
+    $kernel = app(HttpKernel::class);
+
+    $request = Request::createFromBase($symfonyRequest);
+
+    $response = $kernel->handle($request);
+
+    $kernel->terminate($request, $response);
+
+    return $response;
 }

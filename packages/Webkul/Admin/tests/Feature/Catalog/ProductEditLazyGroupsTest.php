@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\DB;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Attribute\Models\AttributeGroup;
+use Webkul\Core\Models\Channel;
+use Webkul\Core\Models\Locale;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 
 function familyWithGroups(int $groupCount, int $attributesPerGroup, string $prefix = 'grp'): AttributeFamily
@@ -41,7 +44,7 @@ it('renders every group at once for a family under the threshold', function () {
 
     $family = familyWithGroups(3, 2);
 
-    $product = Product::factory()->create(['type' => 'simple', 'attribute_family_id' => $family->id]);
+    $product = Product::factory()->create(['type' => ProductType::Simple->value, 'attribute_family_id' => $family->id]);
 
     $data = $this->get(route('admin.catalog.products.edit', $product->id))->assertOk()->original->getData();
 
@@ -57,7 +60,7 @@ it('renders only the first group for a family over the threshold', function () {
 
     $family = familyWithGroups(4, 3);
 
-    $product = Product::factory()->create(['type' => 'simple', 'attribute_family_id' => $family->id]);
+    $product = Product::factory()->create(['type' => ProductType::Simple->value, 'attribute_family_id' => $family->id]);
 
     $data = $this->get(route('admin.catalog.products.edit', $product->id))->assertOk()->original->getData();
 
@@ -75,7 +78,7 @@ it('starts from the group named by the query parameter', function () {
 
     $family = familyWithGroups(4, 3);
 
-    $product = Product::factory()->create(['type' => 'simple', 'attribute_family_id' => $family->id]);
+    $product = Product::factory()->create(['type' => ProductType::Simple->value, 'attribute_family_id' => $family->id]);
 
     $data = $this->get(route('admin.catalog.products.edit', $product->id).'?group=grp_3')
         ->assertOk()->original->getData();
@@ -91,7 +94,7 @@ it('falls back to the first group when the requested group is unknown', function
 
     $family = familyWithGroups(4, 3);
 
-    $product = Product::factory()->create(['type' => 'simple', 'attribute_family_id' => $family->id]);
+    $product = Product::factory()->create(['type' => ProductType::Simple->value, 'attribute_family_id' => $family->id]);
 
     $data = $this->get(route('admin.catalog.products.edit', $product->id).'?group=nope')
         ->assertOk()->original->getData();
@@ -106,7 +109,7 @@ it('stops pointing at a next group once the last one is reached', function () {
 
     $family = familyWithGroups(2, 2, 'last');
 
-    $product = Product::factory()->create(['type' => 'simple', 'attribute_family_id' => $family->id]);
+    $product = Product::factory()->create(['type' => ProductType::Simple->value, 'attribute_family_id' => $family->id]);
 
     $data = $this->get(route('admin.catalog.products.edit', $product->id).'?group=last_2')
         ->assertOk()->original->getData();
@@ -119,8 +122,8 @@ it('does not hydrate more attributes as the family grows', function () {
 
     config(['product_editor.lazy_group_threshold' => 5]);
 
-    $small = Product::factory()->create(['type' => 'simple', 'attribute_family_id' => familyWithGroups(4, 3, 'small')->id]);
-    $large = Product::factory()->create(['type' => 'simple', 'attribute_family_id' => familyWithGroups(40, 3, 'large')->id]);
+    $small = Product::factory()->create(['type' => ProductType::Simple->value, 'attribute_family_id' => familyWithGroups(4, 3, 'small')->id]);
+    $large = Product::factory()->create(['type' => ProductType::Simple->value, 'attribute_family_id' => familyWithGroups(40, 3, 'large')->id]);
 
     $smallData = $this->get(route('admin.catalog.products.edit', $small->id))->assertOk()->original->getData();
     $largeData = $this->get(route('admin.catalog.products.edit', $large->id))->assertOk()->original->getData();
@@ -137,7 +140,7 @@ it('renders the scroll loader and only the first group of a large family', funct
 
     $family = familyWithGroups(4, 3, 'page');
 
-    $product = Product::factory()->create(['type' => 'simple', 'attribute_family_id' => $family->id]);
+    $product = Product::factory()->create(['type' => ProductType::Simple->value, 'attribute_family_id' => $family->id]);
 
     $codesByGroup = $family->familyGroups()
         ->orderBy('position')
@@ -160,13 +163,123 @@ it('renders the scroll loader and only the first group of a large family', funct
     }
 });
 
+it('hands the selected channel and locale to the scroll loader', function () {
+    $this->loginAsAdmin();
+
+    config(['product_editor.lazy_group_threshold' => 5]);
+
+    Locale::where('code', 'fr_FR')->update(['status' => 1]);
+
+    $channel = Channel::factory()->create();
+
+    $channel->locales()->syncWithoutDetaching([Locale::where('code', 'fr_FR')->value('id')]);
+
+    $product = Product::factory()->create([
+        'type'                => ProductType::Simple->value,
+        'attribute_family_id' => familyWithGroups(4, 3, 'scope')->id,
+    ]);
+
+    $this->get(route('admin.catalog.products.edit', ['id' => $product->id, 'channel' => $channel->code, 'locale' => 'fr_FR']))
+        ->assertOk()
+        ->assertSee('v-product-attribute-group-loader', false)
+        ->assertSee(route('admin.catalog.products.attribute_group_fields', [
+            'id'      => $product->id,
+            'groupId' => '__group__',
+            'channel' => $channel->code,
+            'locale'  => 'fr_FR',
+        ]));
+});
+
+it('serves a group of fields scoped to the requested channel and locale', function () {
+    $this->loginAsAdmin();
+
+    Locale::where('code', 'fr_FR')->update(['status' => 1]);
+
+    $channel = Channel::factory()->create();
+
+    $channel->locales()->syncWithoutDetaching([Locale::where('code', 'fr_FR')->value('id')]);
+
+    $family = familyWithGroups(2, 1, 'scoped');
+
+    $scoped = Attribute::factory()->create(['type' => 'text', 'value_per_channel' => true, 'value_per_locale' => true]);
+
+    DB::table('attribute_group_mappings')->insert([
+        'attribute_family_group_id' => DB::table('attribute_family_group_mappings')
+            ->where('attribute_family_id', $family->id)
+            ->where('attribute_group_id', groupIdOf($family, 'scoped_2'))
+            ->value('id'),
+        'attribute_id' => $scoped->id,
+        'position'     => 2,
+    ]);
+
+    $product = Product::factory()->create(['type' => ProductType::Simple->value, 'attribute_family_id' => $family->id]);
+
+    $html = $this->getJson(route('admin.catalog.products.attribute_group_fields', [
+        'id'      => $product->id,
+        'groupId' => groupIdOf($family, 'scoped_2'),
+        'channel' => $channel->code,
+        'locale'  => 'fr_FR',
+    ]))->assertOk()->json('html');
+
+    expect($html)->toContain('values[channel_locale_specific]['.$channel->code.'][fr_FR]['.$scoped->code.']');
+});
+
+it('builds the loader endpoint from the codes it is given, not from the request', function () {
+    $this->loginAsAdmin();
+
+    request()->merge(['channel' => 'default', 'locale' => 'en_US']);
+
+    $html = view('admin::catalog.products.edit.attribute-group-loader', [
+        'productId'   => 7,
+        'nextGroupId' => 3,
+        'channelCode' => 'print',
+        'localeCode'  => 'fr_FR',
+    ])->render();
+
+    expect($html)->toContain(e(route('admin.catalog.products.attribute_group_fields', [
+        'id'      => 7,
+        'groupId' => '__group__',
+        'channel' => 'print',
+        'locale'  => 'fr_FR',
+    ])))->not->toContain('locale=en_US');
+});
+
+it('hands the loader the channel\'s own locale when the requested one is not in the channel', function () {
+    $this->loginAsAdmin();
+
+    config(['product_editor.lazy_group_threshold' => 5]);
+
+    Locale::where('code', 'fr_FR')->update(['status' => 1]);
+
+    $channel = Channel::factory()->create();
+
+    $channel->locales()->sync([Locale::where('code', 'fr_FR')->value('id')]);
+
+    $product = Product::factory()->create([
+        'type'                => ProductType::Simple->value,
+        'attribute_family_id' => familyWithGroups(4, 3, 'outside')->id,
+    ]);
+
+    $this->followingRedirects()
+        ->get(route('admin.catalog.products.edit', ['id' => $product->id, 'channel' => $channel->code, 'locale' => 'en_US']))
+        ->assertOk()
+        ->assertSee('v-product-attribute-group-loader', false)
+        ->assertSee(route('admin.catalog.products.attribute_group_fields', [
+            'id'      => $product->id,
+            'groupId' => '__group__',
+            'channel' => $channel->code,
+            'locale'  => 'fr_FR',
+        ]))
+        ->assertDontSee('locale=en_US', false);
+});
+
 it('does not render the scroll loader for a small family', function () {
     $this->loginAsAdmin();
 
     config(['product_editor.lazy_group_threshold' => 200]);
 
     $product = Product::factory()->create([
-        'type'                => 'simple',
+        'type'                => ProductType::Simple->value,
         'attribute_family_id' => familyWithGroups(3, 2, 'plain')->id,
     ]);
 
@@ -180,7 +293,7 @@ it('serves a group of fields with a pointer to the next group', function () {
 
     $family = familyWithGroups(3, 2, 'fields');
 
-    $product = Product::factory()->create(['type' => 'simple', 'attribute_family_id' => $family->id]);
+    $product = Product::factory()->create(['type' => ProductType::Simple->value, 'attribute_family_id' => $family->id]);
 
     $codes = $family->customAttributesForGroup(groupIdOf($family, 'fields_2'))->pluck('code')->all();
 
@@ -203,7 +316,7 @@ it('reports no next group for the last group of fields', function () {
 
     $family = familyWithGroups(2, 2, 'tail');
 
-    $product = Product::factory()->create(['type' => 'simple', 'attribute_family_id' => $family->id]);
+    $product = Product::factory()->create(['type' => ProductType::Simple->value, 'attribute_family_id' => $family->id]);
 
     $this->getJson(route('admin.catalog.products.attribute_group_fields', [
         'id'      => $product->id,
@@ -216,7 +329,7 @@ it('carries the component registrations an appended group needs', function () {
 
     $family = familyWithGroups(2, 2, 'scripts');
 
-    $product = Product::factory()->create(['type' => 'simple', 'attribute_family_id' => $family->id]);
+    $product = Product::factory()->create(['type' => ProductType::Simple->value, 'attribute_family_id' => $family->id]);
 
     $html = $this->getJson(route('admin.catalog.products.attribute_group_fields', [
         'id'      => $product->id,
@@ -231,7 +344,7 @@ it('404s for a group outside the product family', function () {
     $this->loginAsAdmin();
 
     $product = Product::factory()->create([
-        'type'                => 'simple',
+        'type'                => ProductType::Simple->value,
         'attribute_family_id' => familyWithGroups(1, 1, 'own')->id,
     ]);
 
@@ -246,7 +359,7 @@ it('404s for a group outside the product family', function () {
 it('refuses an unauthenticated request for a group of fields', function () {
     $family = familyWithGroups(1, 1, 'guest');
 
-    $product = Product::factory()->create(['type' => 'simple', 'attribute_family_id' => $family->id]);
+    $product = Product::factory()->create(['type' => ProductType::Simple->value, 'attribute_family_id' => $family->id]);
 
     $response = $this->getJson(route('admin.catalog.products.attribute_group_fields', [
         'id'      => $product->id,
@@ -261,7 +374,7 @@ it('returns to the submitted group after saving', function () {
 
     $family = familyWithGroups(3, 2, 'save');
 
-    $product = Product::factory()->create(['type' => 'simple', 'attribute_family_id' => $family->id]);
+    $product = Product::factory()->create(['type' => ProductType::Simple->value, 'attribute_family_id' => $family->id]);
 
     $this->put(route('admin.catalog.products.update', $product->id), [
         'sku'    => $product->sku,
@@ -275,7 +388,7 @@ it('omits the group from the redirect when none was submitted', function () {
     $this->loginAsAdmin();
 
     $product = Product::factory()->create([
-        'type'                => 'simple',
+        'type'                => ProductType::Simple->value,
         'attribute_family_id' => familyWithGroups(2, 2, 'nogroup')->id,
     ]);
 
@@ -311,7 +424,7 @@ it('never renders the same attribute twice across groups', function () {
         ]);
     }
 
-    $product = Product::factory()->create(['type' => 'simple', 'attribute_family_id' => $family->id]);
+    $product = Product::factory()->create(['type' => ProductType::Simple->value, 'attribute_family_id' => $family->id]);
 
     $content = $this->get(route('admin.catalog.products.edit', $product->id))->assertOk()->getContent();
 
@@ -346,7 +459,7 @@ it('rejects a save that leaves a required attribute of an unloaded group empty',
         ]);
     }
 
-    $product = Product::factory()->create(['type' => 'simple', 'attribute_family_id' => $family->id]);
+    $product = Product::factory()->create(['type' => ProductType::Simple->value, 'attribute_family_id' => $family->id]);
 
     $field = 'values[common]['.$requiredElsewhere->code.']';
 
@@ -380,7 +493,7 @@ it('accepts a partial save once every required attribute holds a value', functio
     ]);
 
     $product = Product::factory()->create([
-        'type'                => 'simple',
+        'type'                => ProductType::Simple->value,
         'attribute_family_id' => $family->id,
         'values'              => ['common' => [$required->code => 'already saved']],
     ]);

@@ -24,7 +24,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.pt_PT',
   '\n' +
   '<p>Para se mover de uma secção de IU para a anterior, prima <strong>Shift+Tab</strong>.</p>\n' +
   '\n' +
-  '<p>A ordem de <strong>tabulação</strong> destas secções de IU é:\n' +
+  '<p>A ordem de <strong>tabulação</strong> destas secções de IU é:</p>\n' +
   '\n' +
   '<ol>\n' +
   '  <li>Barra de menu</li>\n' +
@@ -39,7 +39,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.pt_PT',
   '<p>Se uma secção de IU não estiver presente, é ignorada.</p>\n' +
   '\n' +
   '<p>Se o rodapé tiver foco de navegação com teclado e não existir uma barra lateral visível, premir <strong>Shift+Tab</strong>\n' +
-  '  move o foco para o primeiro grupo da barra de ferramentas e não para o último.\n' +
+  '  move o foco para o primeiro grupo da barra de ferramentas e não para o último.</p>\n' +
   '\n' +
   '<h1>Navegar nas secções de IU</h1>\n' +
   '\n' +
@@ -54,7 +54,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.pt_PT',
   '  <li>movem-se entre itens no caminho do elemento do rodapé.</li>\n' +
   '</ul>\n' +
   '\n' +
-  '<p>As teclas de seta <strong>Para cima</strong> e <strong>Para baixo</strong>\n' +
+  '<p>As teclas de seta <strong>Para cima</strong> e <strong>Para baixo</strong></p>\n' +
   '\n' +
   '<ul>\n' +
   '  <li>movem-se entre itens de menu num menu.</li>\n' +
@@ -63,7 +63,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.pt_PT',
   '\n' +
   '<p>As teclas de <strong>seta</strong> deslocam-se ciclicamente na secção de IU em foco.</p>\n' +
   '\n' +
-  '<p>Para fechar um menu aberto, um submenu aberto ou um menu de pop-up aberto, prima a tecla <strong>Esc</strong>.\n' +
+  '<p>Para fechar um menu aberto, um submenu aberto ou um menu de pop-up aberto, prima a tecla <strong>Esc</strong>.</p>\n' +
   '\n' +
   '<p>Se o foco atual estiver no "topo" de determinada secção de IU, premir a tecla <strong>Esc</strong> também fecha\n' +
   '  completamente a navegação com teclado.</p>\n' +
@@ -71,7 +71,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.pt_PT',
   '<h1>Executar um item de menu ou botão da barra de ferramentas</h1>\n' +
   '\n' +
   '<p>Quando o item de menu ou o botão da barra de ferramentas pretendido estiver realçado, prima <strong>Retrocesso</strong>, <strong>Enter</strong>\n' +
-  '  ou a <strong>Barra de espaço</strong> para executar o item.\n' +
+  '  ou a <strong>Barra de espaço</strong> para executar o item.</p>\n' +
   '\n' +
   '<h1>Navegar em diálogos sem separadores</h1>\n' +
   '\n' +
