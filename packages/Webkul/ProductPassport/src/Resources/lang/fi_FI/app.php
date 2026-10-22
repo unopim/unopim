@@ -99,6 +99,23 @@ return [
         'republished'                 => 'Versio julkaistiin uudelleen.',
         'republish-invalid'           => 'Tätä versiota ei voi julkaista uudelleen.',
         'republish-noop'              => 'Tämä versio on jo nykyinen.',
+        'releases'                    => [
+            'title'        => 'Julkaisut',
+            'release'      => 'Julkaisu',
+            'published-at' => 'Julkaistu',
+            'published-by' => 'Julkaisija',
+            'locales'      => 'Kielet',
+            'none'         => 'Ei vielä julkaisuja.',
+        ],
+        'carrier' => [
+            'issue'        => 'Luo QR-koodi',
+            'not-issuable' => 'QR-koodin voi luoda vain julkaistulle tuotepassille.',
+            'title'        => 'Luodut QR-koodit',
+            'issued-at'    => 'Luotu',
+            'issued-by'    => 'Luoja',
+            'target'       => 'Koodattu linkki',
+            'none'         => 'QR-koodeja ei ole vielä luotu.',
+        ],
         'versions'                    => [
             'title'         => 'Passin versiohistoria',
             'subtitle'      => 'SKU :sku · kanava :channel',

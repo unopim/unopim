@@ -99,6 +99,23 @@ return [
         'republished'                 => 'バージョンを再公開しました。',
         'republish-invalid'           => 'このバージョンは再公開できません。',
         'republish-noop'              => 'このバージョンはすでに現行版です。',
+        'releases'                    => [
+            'title'        => 'リリース',
+            'release'      => 'リリース',
+            'published-at' => '公開日時',
+            'published-by' => '公開者',
+            'locales'      => 'ロケール',
+            'none'         => 'リリースはまだありません。',
+        ],
+        'carrier' => [
+            'issue'        => 'QRコードを発行',
+            'not-issuable' => 'QRコードは公開済みのパスポートに対してのみ発行できます。',
+            'title'        => '発行済みQRコード',
+            'issued-at'    => '発行日時',
+            'issued-by'    => '発行者',
+            'target'       => 'エンコードされたリンク',
+            'none'         => 'QRコードはまだ発行されていません。',
+        ],
         'versions'                    => [
             'title'         => 'パスポートのバージョン履歴',
             'subtitle'      => 'SKU :sku · チャネル :channel',

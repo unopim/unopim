@@ -33,6 +33,7 @@
                     <x-admin::table.thead.tr>
                         <x-admin::table.th>@lang('passport::app.publications.versions.locale')</x-admin::table.th>
                         <x-admin::table.th>@lang('passport::app.publications.versions.version')</x-admin::table.th>
+                        <x-admin::table.th>@lang('passport::app.publications.releases.release')</x-admin::table.th>
                         <x-admin::table.th>@lang('passport::app.publications.versions.published-at')</x-admin::table.th>
                         <x-admin::table.th>@lang('passport::app.publications.versions.published-by')</x-admin::table.th>
                         <x-admin::table.th>@lang('passport::app.publications.versions.status')</x-admin::table.th>
@@ -56,6 +57,8 @@
                                     </span>
                                 @endif
                             </x-admin::table.td>
+
+                            <x-admin::table.td>{{ $version->release?->sequence }}</x-admin::table.td>
 
                             <x-admin::table.td>{{ $version->published_at }}</x-admin::table.td>
 
@@ -88,6 +91,103 @@
                     @endforeach
                 </x-admin::table.tbody>
             </x-admin::table>
+        @endif
+    </div>
+
+    <div class="mt-4 bg-white dark:bg-cherry-900 rounded box-shadow overflow-x-auto">
+        <h2 class="p-4 text-base font-semibold text-gray-800 dark:text-white">@lang('passport::app.publications.releases.title')</h2>
+
+        @if ($releases->isEmpty())
+            <p class="px-4 pb-6 text-sm text-gray-500 dark:text-gray-400">@lang('passport::app.publications.releases.none')</p>
+        @else
+            <x-admin::table>
+                <x-admin::table.thead>
+                    <x-admin::table.thead.tr>
+                        <x-admin::table.th>@lang('passport::app.publications.releases.release')</x-admin::table.th>
+                        <x-admin::table.th>@lang('passport::app.publications.releases.published-at')</x-admin::table.th>
+                        <x-admin::table.th>@lang('passport::app.publications.releases.published-by')</x-admin::table.th>
+                        <x-admin::table.th>@lang('passport::app.publications.releases.locales')</x-admin::table.th>
+                        @if ($canIssue)
+                            <x-admin::table.th class="text-right">@lang('passport::app.publications.versions.action')</x-admin::table.th>
+                        @endif
+                    </x-admin::table.thead.tr>
+                </x-admin::table.thead>
+
+                <x-admin::table.tbody>
+                    @foreach ($releases as $release)
+                        <x-admin::table.tbody.tr class="border-t border-gray-100 dark:border-cherry-800">
+                            <x-admin::table.td>{{ $release->sequence }}</x-admin::table.td>
+                            <x-admin::table.td>{{ $release->published_at }}</x-admin::table.td>
+                            <x-admin::table.td>{{ $release->publishedBy?->name ?? trans('passport::app.publications.versions.system') }}</x-admin::table.td>
+                            <x-admin::table.td>{{ $release->versions->map(fn ($version) => $version->locale?->code)->filter()->implode(', ') }}</x-admin::table.td>
+                            @if ($canIssue)
+                                <x-admin::table.td class="text-right">
+                                    <form method="POST" action="{{ route('admin.catalog.passports.issue_carrier', [$publication->id, $release->sequence]) }}">
+                                        @csrf
+                                        <button type="submit" class="text-primary-700 dark:text-primary-300 font-semibold">
+                                            @lang('passport::app.publications.carrier.issue')
+                                        </button>
+                                    </form>
+                                </x-admin::table.td>
+                            @endif
+                        </x-admin::table.tbody.tr>
+                    @endforeach
+                </x-admin::table.tbody>
+            </x-admin::table>
+
+            @if ($releases->hasPages())
+                <div class="flex justify-end gap-4 p-4 text-sm">
+                    @if ($releases->previousPageUrl())
+                        <a href="{{ $releases->previousPageUrl() }}" class="text-primary-700 dark:text-primary-300 font-semibold">@lang('admin::app.components.datagrid.toolbar.pagination.previous-page')</a>
+                    @endif
+
+                    @if ($releases->nextPageUrl())
+                        <a href="{{ $releases->nextPageUrl() }}" class="text-primary-700 dark:text-primary-300 font-semibold">@lang('admin::app.components.datagrid.toolbar.pagination.next-page')</a>
+                    @endif
+                </div>
+            @endif
+        @endif
+    </div>
+
+    <div class="mt-4 bg-white dark:bg-cherry-900 rounded box-shadow overflow-x-auto">
+        <h2 class="p-4 text-base font-semibold text-gray-800 dark:text-white">@lang('passport::app.publications.carrier.title')</h2>
+
+        @if ($issuances->isEmpty())
+            <p class="px-4 pb-6 text-sm text-gray-500 dark:text-gray-400">@lang('passport::app.publications.carrier.none')</p>
+        @else
+            <x-admin::table>
+                <x-admin::table.thead>
+                    <x-admin::table.thead.tr>
+                        <x-admin::table.th>@lang('passport::app.publications.carrier.issued-at')</x-admin::table.th>
+                        <x-admin::table.th>@lang('passport::app.publications.releases.release')</x-admin::table.th>
+                        <x-admin::table.th>@lang('passport::app.publications.carrier.target')</x-admin::table.th>
+                        <x-admin::table.th>@lang('passport::app.publications.carrier.issued-by')</x-admin::table.th>
+                    </x-admin::table.thead.tr>
+                </x-admin::table.thead>
+
+                <x-admin::table.tbody>
+                    @foreach ($issuances as $issuance)
+                        <x-admin::table.tbody.tr class="border-t border-gray-100 dark:border-cherry-800">
+                            <x-admin::table.td>{{ $issuance->issued_at }}</x-admin::table.td>
+                            <x-admin::table.td>{{ $issuance->release?->sequence }}</x-admin::table.td>
+                            <x-admin::table.td><code class="text-xs">{{ $issuance->target }}</code></x-admin::table.td>
+                            <x-admin::table.td>{{ $issuance->issuedBy?->name ?? trans('passport::app.publications.versions.system') }}</x-admin::table.td>
+                        </x-admin::table.tbody.tr>
+                    @endforeach
+                </x-admin::table.tbody>
+            </x-admin::table>
+
+            @if ($issuances->hasPages())
+                <div class="flex justify-end gap-4 p-4 text-sm">
+                    @if ($issuances->previousPageUrl())
+                        <a href="{{ $issuances->previousPageUrl() }}" class="text-primary-700 dark:text-primary-300 font-semibold">@lang('admin::app.components.datagrid.toolbar.pagination.previous-page')</a>
+                    @endif
+
+                    @if ($issuances->nextPageUrl())
+                        <a href="{{ $issuances->nextPageUrl() }}" class="text-primary-700 dark:text-primary-300 font-semibold">@lang('admin::app.components.datagrid.toolbar.pagination.next-page')</a>
+                    @endif
+                </div>
+            @endif
         @endif
     </div>
 

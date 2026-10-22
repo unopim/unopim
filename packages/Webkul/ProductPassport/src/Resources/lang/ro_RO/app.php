@@ -99,6 +99,23 @@ return [
         'republished'                 => 'Versiunea a fost republicată cu succes.',
         'republish-invalid'           => 'Această versiune nu poate fi republicată.',
         'republish-noop'              => 'Această versiune este deja cea curentă.',
+        'releases'                    => [
+            'title'        => 'Publicări',
+            'release'      => 'Publicare',
+            'published-at' => 'Publicat la',
+            'published-by' => 'Publicat de',
+            'locales'      => 'Limbi',
+            'none'         => 'Nu există încă publicări.',
+        ],
+        'carrier' => [
+            'issue'        => 'Emite cod QR',
+            'not-issuable' => 'Un cod QR poate fi emis doar pentru un pașaport publicat.',
+            'title'        => 'Coduri QR emise',
+            'issued-at'    => 'Emis la',
+            'issued-by'    => 'Emis de',
+            'target'       => 'Link codificat',
+            'none'         => 'Nu a fost emis încă niciun cod QR.',
+        ],
         'versions'                    => [
             'title'         => 'Istoricul versiunilor pașaportului',
             'subtitle'      => 'SKU :sku · canal :channel',

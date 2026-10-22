@@ -99,6 +99,23 @@ return [
         'republished'                 => 'Versie opnieuw gepubliceerd.',
         'republish-invalid'           => 'Deze versie kan niet opnieuw worden gepubliceerd.',
         'republish-noop'              => 'Deze versie is al de huidige versie.',
+        'releases'                    => [
+            'title'        => 'Publicaties',
+            'release'      => 'Publicatie',
+            'published-at' => 'Gepubliceerd op',
+            'published-by' => 'Gepubliceerd door',
+            'locales'      => 'Talen',
+            'none'         => 'Nog geen publicaties.',
+        ],
+        'carrier' => [
+            'issue'        => 'QR-code uitgeven',
+            'not-issuable' => 'Een QR-code kan alleen worden uitgegeven voor een gepubliceerd paspoort.',
+            'title'        => 'Uitgegeven QR-codes',
+            'issued-at'    => 'Uitgegeven op',
+            'issued-by'    => 'Uitgegeven door',
+            'target'       => 'Gecodeerde link',
+            'none'         => 'Er zijn nog geen QR-codes uitgegeven.',
+        ],
         'versions'                    => [
             'title'         => 'Versiegeschiedenis van het paspoort',
             'subtitle'      => 'SKU :sku · kanaal :channel',

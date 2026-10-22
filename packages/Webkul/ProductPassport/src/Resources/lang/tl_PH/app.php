@@ -99,6 +99,23 @@ return [
         'republished'                 => 'Matagumpay na na-publish muli ang bersyon.',
         'republish-invalid'           => 'Hindi maaaring i-publish muli ang bersyong ito.',
         'republish-noop'              => 'Ito na ang kasalukuyang bersyon.',
+        'releases'                    => [
+            'title'        => 'Mga paglalathala',
+            'release'      => 'Paglalathala',
+            'published-at' => 'Na-publish noong',
+            'published-by' => 'Na-publish ni',
+            'locales'      => 'Mga wika',
+            'none'         => 'Wala pang paglalathala.',
+        ],
+        'carrier' => [
+            'issue'        => 'Mag-isyu ng QR code',
+            'not-issuable' => 'Maaari lamang mag-isyu ng QR code para sa isang na-publish na pasaporte.',
+            'title'        => 'Mga na-isyung QR code',
+            'issued-at'    => 'Na-isyu noong',
+            'issued-by'    => 'Na-isyu ni',
+            'target'       => 'Naka-encode na link',
+            'none'         => 'Wala pang na-isyung QR code.',
+        ],
         'versions'                    => [
             'title'         => 'Kasaysayan ng bersyon ng pasaporte',
             'subtitle'      => 'SKU :sku · channel :channel',

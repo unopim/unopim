@@ -51,5 +51,11 @@ return [
             'heading' => 'Bu pasaport artık kullanılamıyor.',
             'notice'  => 'Bu kayıt şeffaflık amacıyla saklanmaktadır ancak artık aktif olarak güncellenmemektedir.',
         ],
+        'release' => [
+            'banner'       => 'Bu pasaportun :sequence numaralı yayını',
+            'superseded'   => 'Bu, pasaportun yayımlandığı haliyle aynen saklanan önceki bir durumudur. Daha yeni bir durum mevcut.',
+            'current'      => 'Bu, pasaportun güncel durumudur.',
+            'view-current' => 'Güncel pasaportu görüntüle',
+        ],
     ],
 ];

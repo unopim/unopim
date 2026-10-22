@@ -99,6 +99,23 @@ return [
         'republished'                 => 'Wersja została ponownie opublikowana.',
         'republish-invalid'           => 'Tej wersji nie można opublikować ponownie.',
         'republish-noop'              => 'Ta wersja jest już bieżąca.',
+        'releases'                    => [
+            'title'        => 'Publikacje',
+            'release'      => 'Publikacja',
+            'published-at' => 'Data publikacji',
+            'published-by' => 'Opublikował',
+            'locales'      => 'Języki',
+            'none'         => 'Brak publikacji.',
+        ],
+        'carrier' => [
+            'issue'        => 'Wygeneruj kod QR',
+            'not-issuable' => 'Kod QR można wygenerować tylko dla opublikowanego paszportu.',
+            'title'        => 'Wygenerowane kody QR',
+            'issued-at'    => 'Data wygenerowania',
+            'issued-by'    => 'Wygenerował',
+            'target'       => 'Zakodowany link',
+            'none'         => 'Nie wygenerowano jeszcze żadnych kodów QR.',
+        ],
         'versions'                    => [
             'title'         => 'Historia wersji paszportu',
             'subtitle'      => 'SKU :sku · kanał :channel',

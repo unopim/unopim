@@ -99,6 +99,23 @@ return [
         'republished'                 => 'Verzija je ponovno objavljena.',
         'republish-invalid'           => 'Ovu verziju nije moguće ponovno objaviti.',
         'republish-noop'              => 'Ova je verzija već trenutna.',
+        'releases'                    => [
+            'title'        => 'Izdanja',
+            'release'      => 'Izdanje',
+            'published-at' => 'Objavljeno',
+            'published-by' => 'Objavio',
+            'locales'      => 'Jezici',
+            'none'         => 'Još nema izdanja.',
+        ],
+        'carrier' => [
+            'issue'        => 'Izdaj QR kod',
+            'not-issuable' => 'QR kod može se izdati samo za objavljenu putovnicu proizvoda.',
+            'title'        => 'Izdani QR kodovi',
+            'issued-at'    => 'Izdano',
+            'issued-by'    => 'Izdao',
+            'target'       => 'Kodirana poveznica',
+            'none'         => 'Još nije izdan nijedan QR kod.',
+        ],
         'versions'                    => [
             'title'         => 'Povijest verzija putovnice',
             'subtitle'      => 'SKU :sku · kanal :channel',
