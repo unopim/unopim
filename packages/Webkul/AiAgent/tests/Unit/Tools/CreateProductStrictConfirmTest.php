@@ -11,6 +11,10 @@ use Webkul\Product\Models\Product;
 use Webkul\User\Models\Admin;
 use Webkul\User\Models\Role;
 
+arch('no agent tool queues writes for an approval flow that nothing applies')
+    ->expect('Webkul\AiAgent\Chat\Tools')
+    ->not->toUse('Webkul\AiAgent\Chat\Concerns\QueuesForApproval');
+
 it('creates the product right away in strict confirm mode instead of leaving it in a pending changeset', function () {
     Queue::fake();
 
