@@ -224,6 +224,8 @@ class ProductEmbeddingIndex
      * Fetch stored content hashes for the given product ids, so unchanged
      * products can be skipped without re-embedding.
      *
+     * @deprecated Use existingDocuments(); removal in the next major.
+     *
      * @param  array<int, int>  $productIds
      * @return array<int, string> content hash keyed by product id
      */

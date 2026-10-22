@@ -18,6 +18,9 @@ class InMemoryEmbeddingElasticSearch
     /** @var array<int, array<string, mixed>> */
     public array $searchBodies = [];
 
+    /** @var array<int, int> product ids whose bulk actions are rejected */
+    public array $rejectedIds = [];
+
     /**
      * @param  array<int, array<string, mixed>>  $documents  stored _source keyed by product id
      */
@@ -47,7 +50,20 @@ class InMemoryEmbeddingElasticSearch
     {
         $this->bulkBodies[] = $payload['body'];
 
+        $items = [];
+
         foreach (array_chunk($payload['body'], 2) as [$action, $source]) {
+            $type = array_key_first($action);
+            $id = (int) $action[$type]['_id'];
+
+            if (in_array($id, $this->rejectedIds, true)) {
+                $items[] = [$type => ['_id' => (string) $id, 'status' => 400, 'error' => ['type' => 'mapper_parsing_exception']]];
+
+                continue;
+            }
+
+            $items[] = [$type => ['_id' => (string) $id, 'status' => 200]];
+
             if (isset($action['index'])) {
                 $this->documents[(int) $action['index']['_id']] = $source;
             }
@@ -59,7 +75,7 @@ class InMemoryEmbeddingElasticSearch
             }
         }
 
-        return ['errors' => false, 'items' => []];
+        return ['errors' => array_filter($items, fn (array $item): bool => isset(reset($item)['error'])) !== [], 'items' => $items];
     }
 
     /**

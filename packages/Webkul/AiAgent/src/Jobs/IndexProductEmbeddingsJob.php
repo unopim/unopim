@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Webkul\AiAgent\Services\EmbeddingSimilarityService;
 use Webkul\AiAgent\Services\VectorStore\ProductEmbeddingDocumentBuilder;
 use Webkul\AiAgent\Services\VectorStore\ProductEmbeddingIndex;
+use Webkul\MagicAI\Models\MagicAIPlatform;
 
 /**
  * Embeds a batch of products' textual values and upserts them into the
@@ -39,6 +40,8 @@ class IndexProductEmbeddingsJob implements ShouldQueue
 
     /**
      * Embed the batch and upsert the vectors into the embedding index.
+     *
+     * @throws \RuntimeException when Elasticsearch rejects any document, so the queue retries the batch
      */
     public function handle(
         ProductEmbeddingIndex $index,
@@ -70,17 +73,35 @@ class IndexProductEmbeddingsJob implements ShouldQueue
 
         $index->ensureIndex();
 
-        $index->bulkUpdateAttributeFamilies($staleFamilies);
+        $failedIds = $index->bulkUpdateAttributeFamilies($staleFamilies);
 
-        if ($documents === []) {
-            return;
+        if ($documents !== []) {
+            $failedIds = [...$failedIds, ...$index->bulkUpsert($this->embed($documents, $similarityService, $platform, $index->dimensions(), $fingerprint))];
         }
 
+        if ($failedIds !== []) {
+            throw new \RuntimeException('Elasticsearch rejected product embedding documents for product ids: '.implode(', ', array_unique($failedIds)).'.');
+        }
+    }
+
+    /**
+     * Generate vectors for the changed documents and shape them for upsert.
+     *
+     * @param  array<int, array{product_id: int, sku: ?string, text: string, content_hash: string, attribute_family_id: ?int}>  $documents
+     * @return array<int, array{product_id: int, sku: ?string, attribute_family_id: ?int, content_hash: string, embedding_fingerprint: string, embedding: array<int, float>}>
+     */
+    protected function embed(
+        array $documents,
+        EmbeddingSimilarityService $similarityService,
+        ?MagicAIPlatform $platform,
+        int $dimensions,
+        string $fingerprint,
+    ): array {
         try {
             $vectors = $similarityService->generateEmbeddings(
                 array_column($documents, 'text'),
                 $platform,
-                $index->dimensions(),
+                $dimensions,
             );
         } catch (\Throwable $e) {
             Log::channel('elasticsearch')->error('Failed to generate product embeddings for vector store.', [
@@ -112,7 +133,7 @@ class IndexProductEmbeddingsJob implements ShouldQueue
             ];
         }
 
-        $index->bulkUpsert($upserts);
+        return $upserts;
     }
 
     /**
@@ -198,8 +219,10 @@ class IndexProductEmbeddingsJob implements ShouldQueue
                 continue;
             }
 
-            if ($stored['attribute_family_id'] !== $document['attribute_family_id']) {
-                $staleFamilies[$document['product_id']] = $document['attribute_family_id'];
+            $attributeFamilyId = $document['attribute_family_id'] ?? null;
+
+            if ($stored['attribute_family_id'] !== $attributeFamilyId) {
+                $staleFamilies[$document['product_id']] = $attributeFamilyId;
             }
         }
 
