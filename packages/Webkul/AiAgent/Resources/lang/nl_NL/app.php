@@ -12,7 +12,6 @@ return [
         'credentials'           => 'Inloggegevens',
         'agents'                => 'Agenten',
         'dashboard'             => 'Dashboard',
-        'approvals'             => 'Goedkeuringen',
         'platform'              => 'Platform',
         'create'                => 'Aanmaken',
         'edit'                  => 'Bewerken',

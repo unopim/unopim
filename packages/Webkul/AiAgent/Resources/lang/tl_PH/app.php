@@ -12,7 +12,6 @@ return [
         'credentials'           => 'Mga Kredensyal',
         'agents'                => 'Mga Ahente',
         'dashboard'             => 'Dashboard',
-        'approvals'             => 'Mga Pag-apruba',
         'platform'              => 'Plataporma',
         'create'                => 'Lumikha',
         'edit'                  => 'I-edit',

@@ -12,7 +12,6 @@ return [
         'credentials'           => 'Poświadczenia',
         'agents'                => 'Agenci',
         'dashboard'             => 'Panel',
-        'approvals'             => 'Zatwierdzenia',
         'platform'              => 'Platforma',
         'create'                => 'Utwórz',
         'edit'                  => 'Edytuj',

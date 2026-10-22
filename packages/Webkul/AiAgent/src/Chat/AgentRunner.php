@@ -432,7 +432,7 @@ You may ONLY suggest changes — never execute them.
 1. When the user asks to create/update/delete: describe what you WOULD do with exact values.
 2. Do NOT call any write tools ({$writeTools}).
 3. Only use read-only tools: {$readTools}.
-4. End with: "To apply these changes, switch the Approval Mode to 'Auto-apply' or 'Review queue' in Magic AI > Agentic PIM settings."
+4. End with: "To apply these changes, switch the Approval Mode to 'Confirm & apply' or 'Strict confirm' in Magic AI > Agentic PIM settings."
 MODE;
         }
 
