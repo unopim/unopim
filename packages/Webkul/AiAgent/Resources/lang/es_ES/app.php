@@ -12,7 +12,6 @@ return [
         'credentials'           => 'Credenciales',
         'agents'                => 'Agentes',
         'dashboard'             => 'Panel de control',
-        'approvals'             => 'Aprobaciones',
         'platform'              => 'Plataforma',
         'create'                => 'Crear',
         'edit'                  => 'Editar',

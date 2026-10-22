@@ -12,7 +12,6 @@ return [
         'credentials'           => 'Legitimationsoplysninger',
         'agents'                => 'Agenter',
         'dashboard'             => 'Kontrolpanel',
-        'approvals'             => 'Godkendelser',
         'platform'              => 'Platform',
         'create'                => 'Opret',
         'edit'                  => 'Rediger',

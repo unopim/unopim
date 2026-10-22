@@ -12,7 +12,6 @@ return [
         'credentials'           => 'Vjerodajnice',
         'agents'                => 'Agenti',
         'dashboard'             => 'Nadzorna ploča',
-        'approvals'             => 'Odobrenja',
         'platform'              => 'Platforma',
         'create'                => 'Kreirati',
         'edit'                  => 'Uredi',

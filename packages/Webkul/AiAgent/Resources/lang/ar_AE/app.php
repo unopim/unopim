@@ -12,7 +12,6 @@ return [
         'credentials'           => 'بيانات الاعتماد',
         'agents'                => 'الوكلاء',
         'dashboard'             => 'لوحة التحكم',
-        'approvals'             => 'الموافقات',
         'platform'              => 'المنصة',
         'create'                => 'يخلق',
         'edit'                  => 'يحرر',

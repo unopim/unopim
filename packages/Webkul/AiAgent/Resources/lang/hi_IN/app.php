@@ -12,7 +12,6 @@ return [
         'credentials'           => 'प्रमाणपत्र',
         'agents'                => 'एजेंट',
         'dashboard'             => 'डैशबोर्ड',
-        'approvals'             => 'अनुमोदन',
         'platform'              => 'प्लेटफ़ॉर्म',
         'create'                => 'बनाएं',
         'edit'                  => 'संपादन करना',
