@@ -463,12 +463,23 @@
 
                     tinyMCEHelper.initTinyMCE({
                         selector: this.selector,
-                        plugins: 'image media wordcount save fullscreen code table lists link',
+                        plugins: 'image wordcount save fullscreen code table lists link',
                         toolbar1: toolbar1,
                         image_advtab: true,
                         directionality: "ltr",
+                        convert_unsafe_embeds: true,
 
                         setup: editor => {
+                            editor.on('BeforeSetContent', (e) => {
+                                if (e.format !== 'raw') {
+                                    e.content = self.sanitizeEditorHtml(e.content);
+                                }
+                            });
+
+                            editor.on('PastePreProcess', (e) => {
+                                e.content = self.sanitizeEditorHtml(e.content);
+                            });
+
                             if (self.ai.enabled) {
                                 editor.ui.registry.addIcon('magic',
                                     '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"> <g clip-path="url(#clip0_3148_2242)"> <path fill-rule="evenodd" clip-rule="evenodd" d="M12.1484 9.31989L9.31995 12.1483L19.9265 22.7549L22.755 19.9265L12.1484 9.31989ZM12.1484 10.7341L10.7342 12.1483L13.5626 14.9767L14.9768 13.5625L12.1484 10.7341Z" fill="#6d28d9"/> <path d="M11.0877 3.30949L13.5625 4.44748L16.0374 3.30949L14.8994 5.78436L16.0374 8.25924L13.5625 7.12124L11.0877 8.25924L12.2257 5.78436L11.0877 3.30949Z" fill="#6d28d9"/> <path d="M2.39219 2.39217L5.78438 3.95197L9.17656 2.39217L7.61677 5.78436L9.17656 9.17655L5.78438 7.61676L2.39219 9.17655L3.95198 5.78436L2.39219 2.39217Z" fill="#6d28d9"/> <path d="M3.30947 11.0877L5.78434 12.2257L8.25922 11.0877L7.12122 13.5626L8.25922 16.0374L5.78434 14.8994L3.30947 16.0374L4.44746 13.5626L3.30947 11.0877Z" fill="#6d28d9"/> </g> <defs> <clipPath id="clip0_3148_2242"> <rect width="24" height="24" fill="white"/> </clipPath> </defs> </svg>'
@@ -509,6 +520,24 @@
                                 }
                             });
                         },
+                    });
+                },
+
+                /**
+                 * TinyMCE 6.8 is the last MIT release, so the XSS fixes Tiny shipped later
+                 * (nested SVG, data-mce-* attributes, unsafe embeds) are re-applied here
+                 * before any markup reaches the editor.
+                 */
+                sanitizeEditorHtml(html) {
+                    if (typeof html !== 'string' || typeof DOMPurify === 'undefined') {
+                        return html;
+                    }
+
+                    return DOMPurify.sanitize(html, {
+                        FORBID_TAGS: ['svg', 'math', 'object', 'embed'],
+                        ADD_FORBID_CONTENTS: ['svg', 'math', 'object', 'embed'],
+                        ALLOW_DATA_ATTR: false,
+                        ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|blob):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
                     });
                 },
 
