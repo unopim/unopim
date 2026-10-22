@@ -50,7 +50,7 @@ class CategoryFieldFactory extends Factory
 
         return [
             'name'             => fake()->word,
-            'code'             => fake()->regexify('/^[a-zA-Z]+\w+$/'),
+            'code'             => fake()->unique()->regexify('/^[a-z][a-z0-9_]{9,19}$/'),
             'type'             => $types[array_rand($types)],
             'validation'       => '',
             'position'         => fake()->randomDigit,

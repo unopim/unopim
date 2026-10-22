@@ -1580,9 +1580,11 @@ return [
                     'zip-upload-success'  => 'تم رفع واستخراج ZIP بنجاح.',
                     'zip-upload-error'    => 'فشل رفع ZIP. يرجى المحاولة مرة أخرى.',
                     'invalid-zip'         => 'الملف المرفوع ليس أرشيف ZIP صالح.',
-                    'zip-upload-or'       => 'أو ارفع ملف ZIP للصور',
-                    'zip-click-upload'    => 'انقر لرفع ملف ZIP للصور',
+                    'zip-upload-or'       => 'أو ارفع ملف ZIP للصور والمستندات',
+                    'zip-click-upload'    => 'انقر لرفع ملف ZIP للصور والمستندات',
                     'zip-files-extracted' => 'ملفات مستخرجة',
+                    'zip-files-skipped'   => ':skipped (نوع غير مدعوم أو محتوى غير صالح أو حجم كبير جدًا):',
+                    'zip-accepted-types'  => 'المقبول في ZIP: :types',
                     'zip-drop-hint'       => 'انقر أو اسحب وأفلت ملف ZIP هنا',
                     'file-upload-info'    => 'CSV, XLSX, JSON (بحد أقصى 2 ميغابايت)',
                     'images-directory'    => 'طريق',
@@ -1704,6 +1706,9 @@ return [
                 'setup-queue-error'          => 'يرجى تغيير برنامج قائمة الانتظار الخاص بك إلى "قاعدة البيانات" أو "redis" لبدء عملية الاستيراد.',
                 'update-success'             => 'استيراد تحديث بنجاح.',
                 'zip-upload-success'         => 'تم رفع واستخراج ZIP بنجاح.',
+                'zip-extracted-count'        => 'لم يتم استخراج أي ملف|تم استخراج ملف واحد|تم استخراج ملفين|تم استخراج :count ملفات|تم استخراج :count ملفًا|تم استخراج :count ملف',
+                'zip-skipped-count'          => 'لم يتم تخطي أي ملف|تم تخطي ملف واحد|تم تخطي ملفين|تم تخطي :count ملفات|تم تخطي :count ملفًا|تم تخطي :count ملف',
+                'zip-upload-partial'         => 'تم رفع ZIP. :extracted، و:skipped.',
             ],
             'exports' => [
                 'create' => [
