@@ -61,9 +61,14 @@ class SkuOrUniversalFilter extends AbstractElasticSearchAttributeFilter
             }
 
             /**
-             * For keyword fields (e.g., sku), use wildcard with
-             * rewrite: 'top_terms_1024' to cap internal clause expansion
-             * and avoid too_many_clauses error on large indexes.
+             * Every remaining type the indexer does not map as text, float or
+             * date lands on the fallback dynamic template, which maps it as a
+             * keyword (see ProductIndexer::dynamicAttributeMappings()); the
+             * option backed types are the ones that reach this in practice.
+             * rewrite: 'top_terms_1024' caps internal clause expansion and
+             * avoids a too_many_clauses error on large indexes. The product
+             * grid never gets here, because its quick search only ever looks
+             * in text attributes; only a direct caller of the filter does.
              */
             $clauses[] = [
                 'wildcard' => [
@@ -74,6 +79,22 @@ class SkuOrUniversalFilter extends AbstractElasticSearchAttributeFilter
                     ],
                 ],
             ];
+        }
+
+        if ($clauses === []) {
+            /**
+             * An empty `should` is not an empty result set. Elasticsearch
+             * builds the Lucene BooleanQuery first and answers a bool query
+             * that ended up with no clause at all with a MatchAllDocsQuery,
+             * before it looks at minimum_should_match -- which it only
+             * applies when there are should clauses to count. Emitting the
+             * empty bool would therefore answer a term that cannot be
+             * evaluated with the entire catalogue. match_none refuses it, the
+             * way the `1 = 0` of the database filter does.
+             */
+            $this->queryBuilder->where(['match_none' => new \stdClass]);
+
+            return $this;
         }
 
         $this->queryBuilder->where([
