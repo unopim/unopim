@@ -209,17 +209,10 @@ class AiApiClient
                 'messages'   => $this->convertToAnthropicFormat($messages),
             ];
 
-            $system = $this->extractSystemMessage($messages);
+            $system = $this->buildAnthropicSystemBlocks($messages);
 
-            if ($system !== '') {
-                // Mark the static system prefix for Anthropic prompt caching (issue #421).
-                $body['system'] = [
-                    [
-                        'type'          => 'text',
-                        'text'          => $system,
-                        'cache_control' => ['type' => 'ephemeral'],
-                    ],
-                ];
+            if ($system !== []) {
+                $body['system'] = $system;
             }
 
             return $body;
@@ -280,6 +273,37 @@ class AiApiClient
     protected function convertToAnthropicFormat(array $messages): array
     {
         return array_values(array_filter($messages, fn (array $m): bool => $m['role'] !== 'system'));
+    }
+
+    /**
+     * Build one Anthropic system block per system message, with the cache
+     * breakpoint on the first (static prompt) block only.
+     *
+     * The breakpoint must precede the dynamic context blocks so the cached
+     * prefix still hits when only the per-request context changes (issue #421).
+     *
+     * @param  array<int, array{role: string, content: string}>  $messages
+     * @return array<int, array{type: string, text: string, cache_control?: array{type: string}}>
+     */
+    protected function buildAnthropicSystemBlocks(array $messages): array
+    {
+        $blocks = [];
+
+        foreach ($messages as $message) {
+            if ($message['role'] !== 'system' || $message['content'] === '') {
+                continue;
+            }
+
+            $block = ['type' => 'text', 'text' => $message['content']];
+
+            if ($blocks === []) {
+                $block['cache_control'] = ['type' => 'ephemeral'];
+            }
+
+            $blocks[] = $block;
+        }
+
+        return $blocks;
     }
 
     /**

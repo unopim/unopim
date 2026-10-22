@@ -29,6 +29,23 @@ describe('PromptBuilder static-prefix ordering for prompt caching (Issue #421)',
             ->and($messages[2]['content'])->toBe('Enrich the product title.');
     });
 
+    it('keeps the static system prompt byte-identical and separate from changing context', function () {
+        $build = fn (string $sku): array => $this->builder->build(new AgentPayload(
+            agentId: 1,
+            credentialId: 1,
+            instruction: 'Enrich.',
+            context: ['sku' => $sku],
+            metadata: ['systemPrompt' => 'You are a PIM enrichment assistant.'],
+        ));
+
+        $first = $build('ABC-123');
+        $second = $build('XYZ-999');
+
+        expect($first[0])->toBe($second[0])
+            ->and($first[0]['content'])->not->toContain('Context data')
+            ->and($first[1])->not->toBe($second[1]);
+    });
+
     it('keeps the user instruction last when no system prompt is configured', function () {
         $payload = new AgentPayload(
             agentId: 1,
