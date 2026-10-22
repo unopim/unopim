@@ -115,6 +115,35 @@ test('actual send retains hidden model and snapshots composer attachments', asyn
     assert.equal(JSON.parse(request.body.get('extensions')).fixture.token, 'opaque-fixture');
 });
 
+test('actual send forwards the catalog scope of the page', async () => {
+    let request;
+    const inputs = {'input[name="channel"]': {value: 'mobile'}};
+    const {widget: w} = widget([], {
+        window: {location: {pathname: '/fixture', search: '?locale=de_DE'}, addEventListener() {}, removeEventListener() {}},
+        document: {hidden: false, querySelector: selector => inputs[selector] ?? null, addEventListener() {}, removeEventListener() {}},
+        fetch: (url, options) => { request = options; return new Promise(() => {}); },
+    });
+    w.inputText = 'set the German name'; w.activeSessionId = 'fixture-conversation';
+    w.resetTextarea = w.scrollBottom = () => {};
+    void w.send();
+    await Promise.resolve();
+    assert.equal(request.body.get('context[locale]'), 'de_DE');
+    assert.equal(request.body.get('context[channel]'), 'mobile');
+});
+
+test('actual send omits the catalog scope when the page has none', async () => {
+    let request;
+    const {widget: w} = widget([], {
+        fetch: (url, options) => { request = options; return new Promise(() => {}); },
+    });
+    w.inputText = 'hello'; w.activeSessionId = 'fixture-conversation';
+    w.resetTextarea = w.scrollBottom = () => {};
+    void w.send();
+    await Promise.resolve();
+    assert.equal(request.body.has('context[locale]'), false);
+    assert.equal(request.body.has('context[channel]'), false);
+});
+
 test('regenerate after reload restores the saved extension selection', async () => {
     const store = {};
     const sessionStorage = {getItem: key => store[key] ?? null, setItem: (key, value) => { store[key] = value; }};

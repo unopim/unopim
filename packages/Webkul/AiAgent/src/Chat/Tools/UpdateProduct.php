@@ -40,17 +40,34 @@ class UpdateProduct implements PimTool
 
             public function description(): string
             {
-                return 'Update product attributes by SKU. Pass changes as JSON in changes_json.';
+                return 'Update product attributes by SKU. Pass changes as JSON in changes_json. '
+                    .'For attributes that hold a value per locale (name, description, ...), pass "locale" '
+                    .'to choose which locale is written; without it the conversation locale is used.';
             }
 
             public function schema(JsonSchema $schema): array
             {
                 return [
                     'sku'          => $schema->string()->description('Product SKU to update (can be comma-separated for bulk)'),
-                    'changes_json' => $schema->string()->description('JSON string of attribute_code => new_value pairs to update (e.g. {"name": "New Name", "price": 29.99, "color": "Red"})'),
+                    'changes_json' => $schema->string()->description('JSON string of attribute_code => new_value pairs to update (e.g. {"name": "New Name", "price": 29.99, "color": "Red"}). A per-locale attribute may also take a locale map, e.g. {"description": {"en_US": "...", "de_DE": "..."}}'),
+                    'locale'       => $schema->string()->description('Locale code to write locale-scoped attributes to (e.g. de_DE). Defaults to the conversation locale. Attributes that are not per-locale ignore this.'),
                 ];
             }
 
+            /**
+             * Locale-scoped values go to the requested locale, or to the conversation
+             * locale when none is given. An unknown or inactive locale is rejected
+             * rather than written elsewhere: German copy landing in en_US because of a
+             * typo is worse than no write at all.
+             *
+             * A value counts as a locale map only when every key is an active locale,
+             * so {"de_DE": ..., "typo": ...} reaches the type check instead of having
+             * its unmatched entries dropped silently.
+             *
+             * Auto-translation is skipped when a locale is named explicitly: setting
+             * the German description must not overwrite the other locales with
+             * machine translations of that German text.
+             */
             public function handle(Request $request): string
             {
                 if ($denied = $this->denyUnlessAllowed($this->context, 'catalog.products.edit')) {
@@ -73,6 +90,17 @@ class UpdateProduct implements PimTool
                 $productRepo = resolve(ProductRepository::class);
                 $currencies = $this->writerService->getActiveCurrencyCodes();
                 $activeLocaleCodes = array_flip(core()->getAllActiveLocales()->pluck('code')->all());
+
+                $requestedLocale = trim($request->string('locale')->toString());
+
+                if ($requestedLocale !== '' && ! isset($activeLocaleCodes[$requestedLocale])) {
+                    return json_encode([
+                        'error'          => "Unknown or inactive locale: {$requestedLocale}",
+                        'active_locales' => array_keys($activeLocaleCodes),
+                    ]);
+                }
+
+                $targetLocale = $requestedLocale !== '' ? $requestedLocale : $this->context->locale;
 
                 foreach ($skus as $s) {
                     $product = $productRepo->findOneByField('sku', $s);
@@ -103,7 +131,10 @@ class UpdateProduct implements PimTool
                         // Detect and route each locale value to the correct bucket.
                         if (is_array($value) && $value !== []) {
                             $localeKeys = array_keys($value);
-                            $looksLikeLocaleMap = isset($activeLocaleCodes[(string) ($localeKeys[0] ?? '')]);
+                            $looksLikeLocaleMap = $localeKeys !== [] && array_all(
+                                $localeKeys,
+                                fn ($localeKey): bool => isset($activeLocaleCodes[(string) $localeKey])
+                            );
 
                             if ($looksLikeLocaleMap && isset($familyAttributes[$code])) {
                                 $meta = $familyAttributes[$code];
@@ -177,9 +208,9 @@ class UpdateProduct implements PimTool
                         // Route to correct bucket — source locale + translate others
                         if ($meta['value_per_channel'] && $meta['value_per_locale']) {
                             foreach ($allChannels as $ch) {
-                                $values['channel_locale_specific'][$ch->code][$this->context->locale][$code] = $value;
+                                $values['channel_locale_specific'][$ch->code][$targetLocale][$code] = $value;
                             }
-                            if (\in_array($meta['type'], ['text', 'textarea'], true) && is_string($value)) {
+                            if ($requestedLocale === '' && \in_array($meta['type'], ['text', 'textarea'], true) && is_string($value)) {
                                 $translatableFields[$code] = $value;
                             }
                         } elseif ($meta['value_per_channel']) {
@@ -187,8 +218,8 @@ class UpdateProduct implements PimTool
                                 $values['channel_specific'][$ch->code][$code] = $value;
                             }
                         } elseif ($meta['value_per_locale']) {
-                            $values['locale_specific'][$this->context->locale][$code] = $value;
-                            if (\in_array($meta['type'], ['text', 'textarea'], true) && is_string($value)) {
+                            $values['locale_specific'][$targetLocale][$code] = $value;
+                            if ($requestedLocale === '' && \in_array($meta['type'], ['text', 'textarea'], true) && is_string($value)) {
                                 $translatableFields[$code] = $value;
                             }
                         } else {
@@ -201,7 +232,7 @@ class UpdateProduct implements PimTool
 
                     // Dispatch translation for text fields
                     if ($translatableFields !== []) {
-                        dispatch(new TranslateProductValuesJob(productId: $productId, sourceLocale: $this->context->locale, fieldsToTranslate: $translatableFields, channel: $this->context->channel))->delay(now()->addSeconds(3));
+                        dispatch(new TranslateProductValuesJob(productId: $productId, sourceLocale: $targetLocale, fieldsToTranslate: $translatableFields, channel: $this->context->channel))->delay(now()->addSeconds(3));
                     }
                 }
 

@@ -37,10 +37,10 @@ function loadComponents(file, globals = {}, values = {}) {
     const components = {};
     vm.runInNewContext(javascript, {
         app: {component: (name, definition) => { components[name] = definition; }},
-        crypto: webcrypto, FormData, URL,
+        crypto: webcrypto, FormData, URL, URLSearchParams,
         sessionStorage: {getItem: () => null, setItem() {}},
-        window: {location: {pathname: '/fixture'}, addEventListener() {}, removeEventListener() {}},
-        document: {hidden: false, addEventListener() {}, removeEventListener() {}},
+        window: {location: {pathname: '/fixture', search: ''}, addEventListener() {}, removeEventListener() {}},
+        document: {hidden: false, querySelector: () => null, addEventListener() {}, removeEventListener() {}},
         setTimeout: () => 1, clearTimeout() {},
         fetch: () => { throw Error('Unexpected network request'); },
         ...globals,
