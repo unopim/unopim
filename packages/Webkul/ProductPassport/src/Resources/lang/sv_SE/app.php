@@ -99,6 +99,23 @@ return [
         'republished'                 => 'Versionen publicerades om.',
         'republish-invalid'           => 'Den här versionen kan inte publiceras om.',
         'republish-noop'              => 'Den här versionen är redan den aktuella.',
+        'releases'                    => [
+            'title'        => 'Utgåvor',
+            'release'      => 'Utgåva',
+            'published-at' => 'Publicerad',
+            'published-by' => 'Publicerad av',
+            'locales'      => 'Språk',
+            'none'         => 'Inga utgåvor ännu.',
+        ],
+        'carrier' => [
+            'issue'        => 'Utfärda QR-kod',
+            'not-issuable' => 'En QR-kod kan bara utfärdas för ett publicerat produktpass.',
+            'title'        => 'Utfärdade QR-koder',
+            'issued-at'    => 'Utfärdad',
+            'issued-by'    => 'Utfärdad av',
+            'target'       => 'Kodad länk',
+            'none'         => 'Inga QR-koder har utfärdats ännu.',
+        ],
         'versions'                    => [
             'title'         => 'Passets versionshistorik',
             'subtitle'      => 'SKU :sku · kanal :channel',

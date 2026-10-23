@@ -3,6 +3,7 @@
 namespace Webkul\ProductPassport\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -10,6 +11,7 @@ use Webkul\Core\Models\ChannelProxy;
 use Webkul\Product\Models\Product;
 use Webkul\ProductPassport\DataGrids\Catalog\PublicationDataGrid;
 use Webkul\ProductPassport\Http\Requests\BulkPublishPassportRequest;
+use Webkul\ProductPassport\Http\Requests\IssueCarrierRequest;
 use Webkul\ProductPassport\Http\Requests\MassPublishPassportRequest;
 use Webkul\ProductPassport\Http\Requests\MassTransitionPassportRequest;
 use Webkul\ProductPassport\Http\Requests\PublishPassportRequest;
@@ -27,12 +29,17 @@ use Webkul\Publication\Models\PublicationProxy;
 use Webkul\Publication\Models\PublicationPublishAttempt;
 use Webkul\Publication\Models\PublicationPublishAttemptProxy;
 use Webkul\Publication\Models\PublicationVersionProxy;
+use Webkul\Publication\Services\CarrierIssuer;
+use Webkul\Publication\Services\CarrierSvg;
 use Webkul\Publication\Services\PublicAccessGate;
+use Webkul\Publication\Services\PublicationResolver;
 use Webkul\Publication\Services\Publisher;
 
 class PublicationController extends Controller
 {
     private const MASS_TRANSITION_CHUNK = 1000;
+
+    private const HISTORY_PAGE_SIZE = 50;
 
     public function __construct(
         private readonly PassportFeature $feature,
@@ -418,6 +425,10 @@ class PublicationController extends Controller
      * The immutable version history for a passport: every version row for the
      * publication, newest first within each locale. Eager-loads `locale` and
      * `publishedBy` so the listing is a fixed number of queries, never N+1.
+     *
+     * Releases and issued carriers grow with every publish and every print run, so
+     * both lists are paged (HISTORY_PAGE_SIZE, newest first) with their own page
+     * parameter, and the page stays the same weight however long-lived the passport is.
      */
     public function versions(Publication $publication): View
     {
@@ -427,12 +438,60 @@ class PublicationController extends Controller
             'product',
             'channel',
             'versions' => fn ($query) => $query
-                ->with(['locale', 'publishedBy'])
+                ->with(['locale', 'publishedBy', 'release'])
                 ->orderBy('locale_id')
                 ->orderByDesc('version'),
         ]);
 
-        return view('passport::admin.versions.index', compact('publication'));
+        $releases = $publication->releases()
+            ->with(['publishedBy', 'versions.locale'])
+            ->orderByDesc('sequence')
+            ->simplePaginate(self::HISTORY_PAGE_SIZE, ['*'], 'releases_page')
+            ->withQueryString();
+
+        $issuances = $publication->carrierIssuances()
+            ->with(['release', 'issuedBy'])
+            ->orderByDesc('issued_at')
+            ->orderByDesc('id')
+            ->simplePaginate(self::HISTORY_PAGE_SIZE, ['*'], 'issuances_page')
+            ->withQueryString();
+
+        $canIssue = bouncer()->hasPermission('catalog.passport.publish') && $this->isIssuable($publication);
+
+        return view('passport::admin.versions.index', compact('publication', 'releases', 'issuances', 'canIssue'));
+    }
+
+    /**
+     * Issues a printable carrier for one release: records exactly what is encoded, then returns the SVG.
+     * The record, not the image, is the durable answer to "which QR code is in the manual and what did it point at".
+     *
+     * Only a Published passport can be issued (see `isIssuable()`).
+     */
+    public function issueCarrier(IssueCarrierRequest $request, Publication $publication, int $sequence, PublicationResolver $resolver, CarrierIssuer $issuer, CarrierSvg $svg): Response
+    {
+        abort_unless($this->isIssuable($publication), 422, trans('passport::app.publications.carrier.not-issuable'));
+
+        $release = $resolver->findRelease($publication, $sequence);
+
+        abort_if($release === null, 404);
+
+        $issuance = $issuer->issue($publication, $release, auth()->guard('admin')->id());
+
+        return response($svg->render($issuance->target), 200, [
+            'Content-Type'        => 'image/svg+xml',
+            'Content-Disposition' => 'attachment; filename="passport-'.$publication->uuid.'-r'.$release->sequence.'.svg"',
+            'Cache-Control'       => 'private, no-store',
+        ]);
+    }
+
+    /**
+     * A carrier is only issued for a Published passport. A withdrawn or redacted (GDPR-erased) one would put a
+     * code into print that can only ever land on a tombstone, so it is refused even though the public routes
+     * still resolve it.
+     */
+    private function isIssuable(Publication $publication): bool
+    {
+        return $publication->status === PublicationStatus::Published;
     }
 
     /**

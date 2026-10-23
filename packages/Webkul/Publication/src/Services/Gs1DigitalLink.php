@@ -27,6 +27,15 @@ class Gs1DigitalLink
     }
 
     /**
+     * Lot (AI 10) and serial (AI 21) values: 1 to 20 characters from the GS1 82-character set.
+     * Null means the qualifier is absent, which is well-formed.
+     */
+    public function isWellFormedQualifier(?string $value): bool
+    {
+        return $value === null || preg_match('/^[A-Za-z0-9!"%&\'()*+,\-.\/:;<=>?_]{1,20}$/', $value) === 1;
+    }
+
+    /**
      * The current link for a publication, or null when it does not own the GTIN
      * or the GTIN cannot route.
      */

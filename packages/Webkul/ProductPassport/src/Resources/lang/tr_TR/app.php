@@ -99,6 +99,23 @@ return [
         'republished'                 => 'Sürüm yeniden yayımlandı.',
         'republish-invalid'           => 'Bu sürüm yeniden yayımlanamaz.',
         'republish-noop'              => 'Bu sürüm zaten geçerli sürüm.',
+        'releases'                    => [
+            'title'        => 'Yayınlar',
+            'release'      => 'Yayın',
+            'published-at' => 'Yayımlanma tarihi',
+            'published-by' => 'Yayımlayan',
+            'locales'      => 'Diller',
+            'none'         => 'Henüz yayın yok.',
+        ],
+        'carrier' => [
+            'issue'        => 'QR kodu oluştur',
+            'not-issuable' => 'QR kodu yalnızca yayımlanmış bir pasaport için oluşturulabilir.',
+            'title'        => 'Oluşturulan QR kodları',
+            'issued-at'    => 'Oluşturulma tarihi',
+            'issued-by'    => 'Oluşturan',
+            'target'       => 'Kodlanmış bağlantı',
+            'none'         => 'Henüz QR kodu oluşturulmadı.',
+        ],
         'versions'                    => [
             'title'         => 'Pasaport sürüm geçmişi',
             'subtitle'      => 'SKU :sku · kanal :channel',

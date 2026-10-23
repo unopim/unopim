@@ -99,6 +99,23 @@ return [
         'republished'                 => 'Versió republicada correctament.',
         'republish-invalid'           => 'Aquesta versió no es pot republicar.',
         'republish-noop'              => 'Aquesta versió ja és l’actual.',
+        'releases'                    => [
+            'title'        => 'Publicacions',
+            'release'      => 'Publicació',
+            'published-at' => 'Publicat el',
+            'published-by' => 'Publicat per',
+            'locales'      => 'Idiomes',
+            'none'         => 'Encara no hi ha publicacions.',
+        ],
+        'carrier' => [
+            'issue'        => 'Emet el codi QR',
+            'not-issuable' => 'Només es pot emetre un codi QR per a un passaport publicat.',
+            'title'        => 'Codis QR emesos',
+            'issued-at'    => 'Emès el',
+            'issued-by'    => 'Emès per',
+            'target'       => 'Enllaç codificat',
+            'none'         => 'Encara no s\'ha emès cap codi QR.',
+        ],
         'versions'                    => [
             'title'         => 'Historial de versions del passaport',
             'subtitle'      => 'SKU :sku · canal :channel',

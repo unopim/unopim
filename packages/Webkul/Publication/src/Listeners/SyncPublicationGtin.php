@@ -3,6 +3,7 @@
 namespace Webkul\Publication\Listeners;
 
 use Webkul\Publication\Events\PublicationPublished;
+use Webkul\Publication\Models\PublicationGtinProxy;
 use Webkul\Publication\Models\PublicationProxy;
 use Webkul\Publication\Services\Gs1DigitalLink;
 
@@ -28,6 +29,13 @@ class SyncPublicationGtin
      * never aliased: the link it would produce cannot resolve, and a carrier must
      * not encode a dead URL.
      *
+     * Every well-formed GTIN a publication publishes under is also recorded in its history, so a `/01/{gtin}`
+     * link printed under an earlier GTIN keeps resolving after a correction. The history only serves that
+     * route, which requires a well-formed GTIN, so a GTIN outside the grammar is never recorded there (its
+     * column holds at most 14 digits). Taking a GTIN back (A to B to A) refreshes its `recorded_at`, so the
+     * fallback's "most recent carrier" reflects the latest time it was carried; `revoked_at` is left alone.
+     * A publish that carries the GTIN the publication already has skips these writes.
+     *
      * Query-builder writes (not Eloquent saves) keep this event-free: it must
      * neither re-fire PublicationPublished nor touch any immutable version row.
      */
@@ -43,7 +51,19 @@ class SyncPublicationGtin
 
         $model = PublicationProxy::modelClass();
 
-        $model::query()->whereKey($publication->id)->update(['gtin' => $gtin]);
+        if ($publication->gtin !== $gtin) {
+            $model::query()->whereKey($publication->id)->update(['gtin' => $gtin]);
+
+            if ($this->gs1->isWellFormed($gtin)) {
+                PublicationGtinProxy::modelClass()::query()->upsert([[
+                    'publication_id' => $publication->id,
+                    'gtin'           => $gtin,
+                    'recorded_at'    => now(),
+                    'created_at'     => now(),
+                    'updated_at'     => now(),
+                ]], ['publication_id', 'gtin'], ['recorded_at', 'updated_at']);
+            }
+        }
 
         $canonical = $model::query()
             ->where('gtin', $gtin)

@@ -99,6 +99,23 @@ return [
         'republished'                 => 'Đã xuất bản lại phiên bản thành công.',
         'republish-invalid'           => 'Không thể xuất bản lại phiên bản này.',
         'republish-noop'              => 'Phiên bản này đã là phiên bản hiện tại.',
+        'releases'                    => [
+            'title'        => 'Bản phát hành',
+            'release'      => 'Bản phát hành',
+            'published-at' => 'Xuất bản lúc',
+            'published-by' => 'Người xuất bản',
+            'locales'      => 'Ngôn ngữ',
+            'none'         => 'Chưa có bản phát hành nào.',
+        ],
+        'carrier' => [
+            'issue'        => 'Phát hành mã QR',
+            'not-issuable' => 'Chỉ có thể phát hành mã QR cho hộ chiếu đã được xuất bản.',
+            'title'        => 'Mã QR đã phát hành',
+            'issued-at'    => 'Phát hành lúc',
+            'issued-by'    => 'Người phát hành',
+            'target'       => 'Liên kết đã mã hóa',
+            'none'         => 'Chưa có mã QR nào được phát hành.',
+        ],
         'versions'                    => [
             'title'         => 'Lịch sử phiên bản hộ chiếu',
             'subtitle'      => 'SKU :sku · kênh :channel',

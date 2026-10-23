@@ -99,6 +99,23 @@ return [
         'republished'                 => 'Versi berhasil diterbitkan ulang.',
         'republish-invalid'           => 'Versi ini tidak dapat diterbitkan ulang.',
         'republish-noop'              => 'Versi ini sudah menjadi versi saat ini.',
+        'releases'                    => [
+            'title'        => 'Rilis',
+            'release'      => 'Rilis',
+            'published-at' => 'Diterbitkan pada',
+            'published-by' => 'Diterbitkan oleh',
+            'locales'      => 'Bahasa',
+            'none'         => 'Belum ada rilis.',
+        ],
+        'carrier' => [
+            'issue'        => 'Buat kode QR',
+            'not-issuable' => 'Kode QR hanya dapat dibuat untuk paspor yang telah diterbitkan.',
+            'title'        => 'Kode QR yang dibuat',
+            'issued-at'    => 'Dibuat pada',
+            'issued-by'    => 'Dibuat oleh',
+            'target'       => 'Tautan yang dikodekan',
+            'none'         => 'Belum ada kode QR yang dibuat.',
+        ],
         'versions'                    => [
             'title'         => 'Riwayat versi paspor',
             'subtitle'      => 'SKU :sku · saluran :channel',
