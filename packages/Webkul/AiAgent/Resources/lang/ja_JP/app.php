@@ -12,7 +12,6 @@ return [
         'credentials'           => '認証情報',
         'agents'                => 'エージェント',
         'dashboard'             => 'ダッシュボード',
-        'approvals'             => '承認',
         'platform'              => 'プラットフォーム',
         'create'                => '作成',
         'edit'                  => '編集',

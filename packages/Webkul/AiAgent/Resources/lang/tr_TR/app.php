@@ -12,7 +12,6 @@ return [
         'credentials'           => 'Kimlik Bilgileri',
         'agents'                => 'Ajanlar',
         'dashboard'             => 'Gösterge Paneli',
-        'approvals'             => 'Onaylar',
         'platform'              => 'Platform',
         'create'                => 'Oluştur',
         'edit'                  => 'Düzenle',

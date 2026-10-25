@@ -12,7 +12,6 @@ return [
         'credentials'           => '자격 증명',
         'agents'                => '에이전트',
         'dashboard'             => '대시보드',
-        'approvals'             => '승인',
         'platform'              => '플랫폼',
         'create'                => '생성',
         'edit'                  => '편집',

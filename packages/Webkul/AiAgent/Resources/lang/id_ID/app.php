@@ -12,7 +12,6 @@ return [
         'credentials'           => 'Kredensial',
         'agents'                => 'Agen',
         'dashboard'             => 'Dasbor',
-        'approvals'             => 'Persetujuan',
         'platform'              => 'Platform',
         'create'                => 'Membuat',
         'edit'                  => 'Edit',

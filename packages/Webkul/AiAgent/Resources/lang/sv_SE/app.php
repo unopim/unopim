@@ -12,7 +12,6 @@ return [
         'credentials'           => 'Autentiseringsuppgifter',
         'agents'                => 'Agenter',
         'dashboard'             => 'Instrumentpanel',
-        'approvals'             => 'Godkännanden',
         'platform'              => 'Plattform',
         'create'                => 'Skapa',
         'edit'                  => 'Redigera',

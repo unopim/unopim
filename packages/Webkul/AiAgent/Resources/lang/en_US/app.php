@@ -12,7 +12,6 @@ return [
         'credentials'           => 'Credentials',
         'agents'                => 'Agents',
         'dashboard'             => 'Dashboard',
-        'approvals'             => 'Approvals',
         'platform'              => 'Platform',
         'create'                => 'Create',
         'edit'                  => 'Edit',

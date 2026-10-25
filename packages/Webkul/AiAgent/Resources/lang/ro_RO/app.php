@@ -12,7 +12,6 @@ return [
         'credentials'           => 'Acreditări',
         'agents'                => 'Agenți',
         'dashboard'             => 'Panou',
-        'approvals'             => 'Aprobări',
         'platform'              => 'Platformă',
         'create'                => 'Creează',
         'edit'                  => 'Editează',

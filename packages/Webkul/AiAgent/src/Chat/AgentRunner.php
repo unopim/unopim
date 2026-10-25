@@ -80,8 +80,9 @@ class AgentRunner
             ),
             'action' => 'agent_response',
             'data'   => [
-                'steps'       => $response->steps->count(),
-                'tokens_used' => $tokensUsed,
+                'steps'         => $response->steps->count(),
+                'tokens_used'   => $tokensUsed,
+                'cached_tokens' => $usage->cacheReadInputTokens ?? 0,
             ],
         ];
 
@@ -207,8 +208,9 @@ class AgentRunner
 
                 $usage = $stream->usage;
                 $tokensUsed = ($usage?->inputTokens ?? 0) + ($usage?->outputTokens ?? 0);
+                $cachedTokens = $usage?->cacheReadInputTokens ?? 0;
 
-                $this->recordStreamingTokens($context, $tokensUsed);
+                $this->recordStreamingTokens($context, $tokensUsed, $cachedTokens);
 
                 $result = [
                     'reply' => app(ReplyGuard::class)->apply(
@@ -218,8 +220,9 @@ class AgentRunner
                     ),
                     'action' => 'agent_response',
                     'data'   => [
-                        'steps'       => $stepCount,
-                        'tokens_used' => $tokensUsed,
+                        'steps'         => $stepCount,
+                        'tokens_used'   => $tokensUsed,
+                        'cached_tokens' => $cachedTokens,
                     ],
                 ];
 
@@ -311,9 +314,9 @@ class AgentRunner
     /**
      * Record token usage from streaming requests for budget enforcement.
      */
-    protected function recordStreamingTokens(ChatContext $context, int $tokensUsed): void
+    protected function recordStreamingTokens(ChatContext $context, int $tokensUsed, int $cachedTokens = 0): void
     {
-        resolve(TokenUsageRecorder::class)->record($context->user?->id, $tokensUsed);
+        resolve(TokenUsageRecorder::class)->record($context->user?->id, $tokensUsed, $cachedTokens);
     }
 
     /**
@@ -474,7 +477,7 @@ You may ONLY suggest changes — never execute them.
 1. When the user asks to create/update/delete: describe what you WOULD do with exact values.
 2. Do NOT call any write tools ({$writeTools}).
 3. Only use read-only tools: {$readTools}.
-4. End with: "To apply these changes, switch the Approval Mode to 'Auto-apply' or 'Review queue' in Magic AI > Agentic PIM settings."
+4. End with: "To apply these changes, switch the Approval Mode to 'Confirm & apply' or 'Strict confirm' in Magic AI > Agentic PIM settings."
 MODE;
         }
 

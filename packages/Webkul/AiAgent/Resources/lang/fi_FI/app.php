@@ -12,7 +12,6 @@ return [
         'credentials'           => 'Tunnistetiedot',
         'agents'                => 'Agentit',
         'dashboard'             => 'Kojelauta',
-        'approvals'             => 'Hyväksynnät',
         'platform'              => 'Alusta',
         'create'                => 'Luo',
         'edit'                  => 'Muokkaa',
