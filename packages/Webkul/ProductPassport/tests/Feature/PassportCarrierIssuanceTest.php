@@ -80,15 +80,7 @@ it('refuses a carrier for a redacted release of a published passport and hides i
     $first = $this->publishedPassportFixture();
     $publication = $first->publication;
 
-    $other = $publication->channel->locales()->where('locales.id', '!=', $first->locale_id)->firstOrFail();
-
-    $product = $publication->product;
-    $product->values = array_replace_recursive($product->values, [
-        'locale_specific' => [$other->code => ['dpp_material_composition' => 'aluminium']],
-    ]);
-    $product->save();
-
-    resolve(Publisher::class)->publish($product, $publication->channel, $other, 'dpp');
+    PublicationReleaseProxy::modelClass()::factory()->create(['publication_id' => $publication->id, 'sequence' => 2]);
 
     $admin = $this->loginWithPermissions('all');
 
