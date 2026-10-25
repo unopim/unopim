@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\DB;
+use Webkul\Product\Models\ProductProxy;
 use Webkul\Publication\Exceptions\ImmutableVersionException;
 use Webkul\Publication\Services\Publisher;
 use Webkul\Publication\Tests\Support\DocumentStubPayloadBuilder;
@@ -170,4 +171,77 @@ it('backfills a release per existing version and continues a backfill that stopp
     expect($versions->map(fn ($version): int => $sequenceOf($version->id))->all())->toBe([1, 2, 3])
         ->and(DB::table('publication_releases')->where('publication_id', $publicationId)->count())->toBe(3)
         ->and(DB::table('publication_versions')->where('publication_id', $publicationId)->whereNull('release_id')->count())->toBe(0);
+});
+
+it('carries each publication\'s sequence across backfill chunks when their versions interleave', function (): void {
+    [$product, $channel, , $complete] = $this->seedPassportFixture();
+
+    $other = ProductProxy::factory()->create([
+        'attribute_family_id' => $product->attribute_family_id,
+        'values'              => $product->values,
+    ]);
+
+    $publisher = resolve(Publisher::class);
+
+    $versions = collect([[$product, 'a'], [$other, 'a'], [$product, 'b'], [$other, 'b'], [$product, 'c']])
+        ->map(function (array $publish) use ($publisher, $channel, $complete) {
+            DocumentStubPayloadBuilder::$documentPath = 'publication/release/'.$publish[1].'.pdf';
+
+            return $publisher->publish($publish[0], $channel, $complete, 'dpp');
+        });
+
+    $publicationIds = $versions->pluck('publication_id')->unique()->values()->all();
+
+    DB::table('publication_versions')->whereIn('publication_id', $publicationIds)->update(['release_id' => null]);
+    DB::table('publication_releases')->whereIn('publication_id', $publicationIds)->delete();
+
+    $migration = require base_path('packages/Webkul/Publication/src/Database/Migrations/2026_09_04_000011_add_release_id_to_publication_versions_table.php');
+    $migration->chunkSize = 2;
+    $migration->up();
+
+    $sequences = DB::table('publication_versions')
+        ->join('publication_releases', 'publication_releases.id', '=', 'publication_versions.release_id')
+        ->whereIn('publication_versions.id', $versions->pluck('id')->all())
+        ->orderBy('publication_versions.id')
+        ->pluck('publication_releases.sequence')
+        ->map(fn ($sequence): int => (int) $sequence)
+        ->all();
+
+    expect($publicationIds)->toHaveCount(2)
+        ->and($sequences)->toBe([1, 1, 2, 2, 3])
+        ->and(DB::table('publication_releases')->whereIn('publication_id', $publicationIds)->count())->toBe(5)
+        ->and(DB::table('publication_versions')->whereIn('publication_id', $publicationIds)->whereNull('release_id')->count())->toBe(0);
+});
+
+it('numbers backfilled releases by version id, not by published_at', function (): void {
+    [$product, $channel, , $complete] = $this->seedPassportFixture();
+
+    $publisher = resolve(Publisher::class);
+
+    $versions = collect(['a', 'b', 'c'])->map(function (string $file) use ($publisher, $product, $channel, $complete) {
+        DocumentStubPayloadBuilder::$documentPath = 'publication/release/'.$file.'.pdf';
+
+        return $publisher->publish($product, $channel, $complete, 'dpp');
+    });
+
+    $publicationId = $versions->first()->publication_id;
+
+    $versions->values()->each(fn ($version, int $index) => DB::table('publication_versions')
+        ->where('id', $version->id)
+        ->update(['release_id' => null, 'published_at' => now()->subDays($index)->startOfSecond()]));
+
+    DB::table('publication_releases')->where('publication_id', $publicationId)->delete();
+
+    $migration = require base_path('packages/Webkul/Publication/src/Database/Migrations/2026_09_04_000011_add_release_id_to_publication_versions_table.php');
+    $migration->up();
+
+    $releaseOf = fn (int $versionId) => DB::table('publication_versions')
+        ->join('publication_releases', 'publication_releases.id', '=', 'publication_versions.release_id')
+        ->where('publication_versions.id', $versionId)
+        ->first(['publication_releases.sequence', 'publication_releases.published_at', 'publication_versions.published_at as version_published_at']);
+
+    $releases = $versions->map(fn ($version) => $releaseOf($version->id));
+
+    expect($releases->map(fn ($release): int => (int) $release->sequence)->all())->toBe([1, 2, 3])
+        ->and($releases->every(fn ($release): bool => (string) $release->published_at === (string) $release->version_published_at))->toBeTrue();
 });
