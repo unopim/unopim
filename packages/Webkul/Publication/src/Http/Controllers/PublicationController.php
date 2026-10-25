@@ -95,6 +95,9 @@ class PublicationController extends Controller
      *
      * The locale switcher is built from the published versions, not the channel's
      * locales: a channel locale with no current version has no URL to switch to.
+     *
+     * A Redacted tombstone answers 410 Gone because redaction is irreversible; a Withdrawn one can be
+     * reinstated, so it stays 200. Neither may sit in a shared cache, as there is no purge hook to evict it.
      */
     public function show(Request $request, string $uuid, string $locale): Response
     {

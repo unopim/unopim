@@ -8,15 +8,34 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    private const BACKFILL_CHUNK = 1000;
+    /**
+     * Off, so the per-chunk transactions below are the only ones. PostgreSQL supports transactional DDL, so the
+     * migrator would otherwise wrap the whole of up() in one transaction there: a failure halfway would roll
+     * every committed chunk back with it, and the chunks would only be savepoints holding their locks to the end.
+     *
+     * @var bool
+     */
+    public $withinTransaction = false;
+
+    /**
+     * Versions per backfill chunk. Public so a test can push a handful of versions across a chunk boundary.
+     */
+    public int $chunkSize = 1000;
 
     /**
      * Backfill: every existing version becomes its own release, numbered per publication in the order the
-     * versions were minted (their primary key), so history reads the same way as anything minted from now on.
+     * versions were minted, so history reads the same way as anything minted from now on.
      *
-     * The versions are walked by primary key in chunks of BACKFILL_CHUNK, one transaction per chunk. Only
-     * versions without a release are visited and each publication's counter starts at its highest existing
-     * sequence, so a run that stopped halfway continues cleanly instead of colliding with its own releases.
+     * Mint order is the primary key, not published_at: versions are inserted under the publication row lock,
+     * so within a publication their ids grow in exactly the order they were minted, while published_at has
+     * second precision (two versions minted in the same second tie) and follows the clock of whichever worker
+     * minted them. The id is also the order chunkById walks in, which is what lets the per-publication counter
+     * carry across chunks.
+     *
+     * The versions are walked by primary key in chunks of $chunkSize, one transaction per chunk, on every
+     * driver ($withinTransaction is off). Only versions without a release are visited and each publication's
+     * counter starts at its highest existing sequence, so a run that stopped halfway continues cleanly instead
+     * of colliding with its own releases.
      */
     public function up(): void
     {
@@ -33,7 +52,7 @@ return new class extends Migration
         DB::table('publication_versions')
             ->select('id', 'publication_id', 'published_at', 'published_by_id')
             ->whereNull('release_id')
-            ->chunkById(self::BACKFILL_CHUNK, function (Collection $versions) use (&$sequences): void {
+            ->chunkById($this->chunkSize, function (Collection $versions) use (&$sequences): void {
                 DB::transaction(fn () => $this->backfillChunk($versions, $sequences));
             });
     }
