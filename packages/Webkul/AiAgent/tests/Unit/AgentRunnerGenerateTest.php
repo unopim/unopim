@@ -4,9 +4,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Laravel\Ai\AnonymousAgent;
 use Laravel\Ai\Responses\Data\Meta;
+use Laravel\Ai\Responses\Data\TextUsage;
 use Laravel\Ai\Responses\Data\ToolCall as ToolCallData;
 use Laravel\Ai\Responses\Data\ToolResult;
 use Laravel\Ai\Responses\StreamableAgentResponse;
+use Laravel\Ai\Streaming\Events\StreamEnd;
 use Laravel\Ai\Streaming\Events\TextDelta;
 use Laravel\Ai\Streaming\Events\ToolCall;
 use Laravel\Ai\Streaming\Events\ToolResult as ToolResultEvent;
@@ -80,6 +82,28 @@ it('emits progress events in order and returns the result for every transport', 
         ->and($result['data']['steps'])->toBe(1)
         ->and($result['product_url'])->toBe('/p/1');
     Http::assertNothingSent();
+});
+
+it('reports and records the cached input tokens of a generated reply', function () {
+    $context = generateContext();
+    $runner = replayingRunner([
+        new TextDelta('text-1', 'reply', 'Done.', time()),
+        new StreamEnd('end-1', 'stop', new TextUsage(40, 10, cacheReadInputTokens: 1500), time()),
+    ]);
+
+    DB::table('ai_agent_token_usage')->where('user_id', $context->user->id)->delete();
+
+    $result = $runner->generate($context, fn () => null);
+
+    $row = DB::table('ai_agent_token_usage')
+        ->where('user_id', $context->user->id)
+        ->where('usage_date', now()->toDateString())
+        ->first();
+
+    expect($result['data']['tokens_used'])->toBe(50)
+        ->and($result['data']['cached_tokens'])->toBe(1500)
+        ->and((int) $row->tokens_used)->toBe(50)
+        ->and((int) $row->cached_tokens)->toBe(1500);
 });
 
 it('sends the checked reply in the SSE complete event so a replaced reply wins over the streamed text', function () {
