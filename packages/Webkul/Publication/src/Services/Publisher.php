@@ -288,21 +288,6 @@ class Publisher
     }
 
     /**
-     * Mints the release a newly minted version belongs to. Callers hold the publication row lock,
-     * so MAX(sequence)+1 cannot race, for the same reason version numbers cannot.
-     */
-    private function mintRelease(Publication $publication, ?int $publishedById): PublicationRelease
-    {
-        $sequence = (int) $publication->releases()->max('sequence') + 1;
-
-        return $publication->releases()->create([
-            'sequence'        => $sequence,
-            'published_at'    => now(),
-            'published_by_id' => $publishedById,
-        ]);
-    }
-
-    /**
      * Withdrawn and Redacted are sticky: publishing into either needs an explicit transition first.
      * A row created a moment ago has no status loaded yet; the column defaults to Draft.
      */
@@ -385,5 +370,20 @@ class Publisher
         usort($items, fn (mixed $a, mixed $b): int => $sortKey($a) <=> $sortKey($b));
 
         return $items;
+    }
+
+    /**
+     * Mints the release a newly minted version belongs to. Callers hold the publication row lock,
+     * so MAX(sequence)+1 cannot race, for the same reason version numbers cannot.
+     */
+    private function mintRelease(Publication $publication, ?int $publishedById): PublicationRelease
+    {
+        $sequence = (int) $publication->releases()->max('sequence') + 1;
+
+        return $publication->releases()->create([
+            'sequence'        => $sequence,
+            'published_at'    => now(),
+            'published_by_id' => $publishedById,
+        ]);
     }
 }
