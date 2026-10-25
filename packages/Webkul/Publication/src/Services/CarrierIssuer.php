@@ -46,7 +46,9 @@ class CarrierIssuer
      *
      * Both checks run inside a transaction that holds the publication row lock. `Publisher::redactAll()` takes
      * the same lock and every status change writes that row, so neither a redaction nor a withdrawal can slip
-     * in between the checks and the record.
+     * in between the checks and the record. The release's versions are read with a shared lock as a whole,
+     * not filtered on `redacted_at` in SQL, so a version redacted on its own (which writes only the version
+     * row) cannot commit in between either: PostgreSQL only locks the rows a locking read returns.
      *
      * @throws CarrierNotIssuableException
      */
@@ -63,7 +65,7 @@ class CarrierIssuer
                 throw CarrierNotIssuableException::notPublished($locked);
             }
 
-            if ($release->versions()->whereNotNull('redacted_at')->exists()) {
+            if ($release->versions()->sharedLock()->pluck('redacted_at')->filter()->isNotEmpty()) {
                 throw CarrierNotIssuableException::releaseRedacted($release);
             }
 
