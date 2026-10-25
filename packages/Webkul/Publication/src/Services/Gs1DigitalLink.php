@@ -21,9 +21,23 @@ class Gs1DigitalLink
      */
     public const GTIN_PATTERN = '[0-9]{8,14}';
 
+    /**
+     * Anchored with `\A` and `\z`, not `^` and `$`: `$` also matches before a trailing line feed, which would
+     * let a 15-character value through to the 14-character history column.
+     */
     public function isWellFormed(?string $gtin): bool
     {
-        return $gtin !== null && preg_match('/^'.self::GTIN_PATTERN.'$/', $gtin) === 1;
+        return $gtin !== null && preg_match('/\A'.self::GTIN_PATTERN.'\z/', $gtin) === 1;
+    }
+
+    /**
+     * Lot (AI 10) and serial (AI 21) values: 1 to 20 characters from the GS1 82-character set.
+     * Null means the qualifier is absent, which is well-formed. Anchored with `\A` and `\z` for the same reason
+     * as `isWellFormed()`: a trailing line feed is outside the character set.
+     */
+    public function isWellFormedQualifier(?string $value): bool
+    {
+        return $value === null || preg_match('/\A[A-Za-z0-9!"%&\'()*+,\-.\/:;<=>?_]{1,20}\z/', $value) === 1;
     }
 
     /**
