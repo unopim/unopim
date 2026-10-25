@@ -37,7 +37,6 @@ class ChatController extends Controller
         protected AgentRunner $agentRunner,
         protected MagicAIPlatformRepository $platformRepository,
         protected ChatUploadStore $uploadStore,
-        protected ChatReplyRepository $chatReplyRepository,
     ) {}
 
     /**
@@ -134,7 +133,7 @@ class ChatController extends Controller
             return new JsonResponse(['reply_id' => null], 409);
         }
 
-        $reply = $this->chatReplyRepository->create([
+        $reply = resolve(ChatReplyRepository::class)->create([
             'user_id'         => $chatContext->user?->id,
             'conversation_id' => $chatContext->conversationId,
             'status'          => ChatReply::STATUS_QUEUED,
@@ -172,7 +171,7 @@ class ChatController extends Controller
     {
         abort_unless(bouncer()->hasPermission('ai-agent'), 403, trans('admin::app.common.unauthorized'));
 
-        $reply = $this->chatReplyRepository->findForUser($id, (int) auth()->guard('admin')->id());
+        $reply = resolve(ChatReplyRepository::class)->findForUser($id, (int) auth()->guard('admin')->id());
 
         if (! $reply) {
             return new JsonResponse([
@@ -205,7 +204,7 @@ class ChatController extends Controller
         abort_unless(bouncer()->hasPermission('ai-agent'), 403, trans('admin::app.common.unauthorized'));
 
         return new JsonResponse([
-            'cancelled' => $this->chatReplyRepository->cancelQueued($id, (int) auth()->guard('admin')->id()),
+            'cancelled' => resolve(ChatReplyRepository::class)->cancelQueued($id, (int) auth()->guard('admin')->id()),
         ]);
     }
 
