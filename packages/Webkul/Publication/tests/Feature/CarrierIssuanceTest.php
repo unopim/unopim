@@ -1,5 +1,6 @@
 <?php
 
+use Webkul\Publication\Exceptions\CarrierNotIssuableException;
 use Webkul\Publication\Exceptions\ImmutableVersionException;
 use Webkul\Publication\Services\CarrierIssuer;
 use Webkul\Publication\Services\Publisher;
@@ -18,6 +19,53 @@ it('records exactly what a release carrier encodes and refuses to change it afte
 
     expect(fn (): mixed => $issuance->update(['target' => 'https://elsewhere.test/']))->toThrow(ImmutableVersionException::class)
         ->and(fn (): mixed => $issuance->delete())->toThrow(ImmutableVersionException::class);
+});
+
+it('refuses in the issuer itself to issue a carrier for a withdrawn or redacted publication', function (string $state): void {
+    $version = $this->publishedPassportFixture();
+    $publication = $version->publication;
+
+    $admin = $this->loginAsAdmin();
+
+    $publisher = resolve(Publisher::class);
+
+    $state === 'withdrawn'
+        ? $publisher->withdraw($publication)
+        : $publisher->redactAll($publication, $admin->id, 'gdpr request');
+
+    $thrown = null;
+
+    try {
+        resolve(CarrierIssuer::class)->issue($publication, $version->release, $admin->id);
+    } catch (CarrierNotIssuableException $exception) {
+        $thrown = $exception;
+    }
+
+    expect($thrown)->toBeInstanceOf(CarrierNotIssuableException::class)
+        ->and($thrown->releaseRedacted)->toBeFalse()
+        ->and($publication->carrierIssuances()->count())->toBe(0);
+})->with(['withdrawn', 'redacted']);
+
+it('refuses in the issuer itself to issue a carrier for a release whose own version is redacted', function (): void {
+    $version = $this->publishedPassportFixture();
+    $publication = $version->publication;
+
+    $admin = $this->loginAsAdmin();
+
+    $version->redact($admin->id, 'erased on request');
+
+    $thrown = null;
+
+    try {
+        resolve(CarrierIssuer::class)->issue($publication->refresh(), $version->release, $admin->id);
+    } catch (CarrierNotIssuableException $exception) {
+        $thrown = $exception;
+    }
+
+    expect($publication->status->value)->toBe('published')
+        ->and($thrown)->toBeInstanceOf(CarrierNotIssuableException::class)
+        ->and($thrown->releaseRedacted)->toBeTrue()
+        ->and($publication->carrierIssuances()->count())->toBe(0);
 });
 
 it('redirects the release entry url to the strict per-locale url and 404s an unknown release', function (): void {

@@ -122,12 +122,16 @@
                             <x-admin::table.td>{{ $release->versions->map(fn ($version) => $version->locale?->code)->filter()->implode(', ') }}</x-admin::table.td>
                             @if ($canIssue)
                                 <x-admin::table.td class="text-right">
-                                    <form method="POST" action="{{ route('admin.catalog.passports.issue_carrier', [$publication->id, $release->sequence]) }}">
-                                        @csrf
-                                        <button type="submit" class="text-primary-700 dark:text-primary-300 font-semibold">
-                                            @lang('passport::app.publications.carrier.issue')
-                                        </button>
-                                    </form>
+                                    @if ($release->hasRedactedVersion())
+                                        <span class="text-gray-500 dark:text-gray-400">@lang('passport::app.publications.versions.redacted')</span>
+                                    @else
+                                        <form method="POST" action="{{ route('admin.catalog.passports.issue_carrier', [$publication->id, $release->sequence]) }}">
+                                            @csrf
+                                            <button type="submit" class="text-primary-700 dark:text-primary-300 font-semibold">
+                                                @lang('passport::app.publications.carrier.issue')
+                                            </button>
+                                        </form>
+                                    @endif
                                 </x-admin::table.td>
                             @endif
                         </x-admin::table.tbody.tr>

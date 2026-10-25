@@ -76,6 +76,38 @@ it('refuses to issue a carrier for a withdrawn or redacted passport and records 
         ->assertDontSee(trans('passport::app.publications.carrier.issue'));
 })->with(['withdrawn', 'redacted']);
 
+it('refuses a carrier for a redacted release of a published passport and hides its issue button', function (): void {
+    $first = $this->publishedPassportFixture();
+    $publication = $first->publication;
+
+    $other = $publication->channel->locales()->where('locales.id', '!=', $first->locale_id)->firstOrFail();
+
+    $product = $publication->product;
+    $product->values = array_replace_recursive($product->values, [
+        'locale_specific' => [$other->code => ['dpp_material_composition' => 'aluminium']],
+    ]);
+    $product->save();
+
+    resolve(Publisher::class)->publish($product, $publication->channel, $other, 'dpp');
+
+    $admin = $this->loginWithPermissions('all');
+
+    $first->redact($admin->id, 'erased on request');
+
+    $this->postJson(route('admin.catalog.passports.issue_carrier', [$publication->id, 1]))
+        ->assertStatus(422)
+        ->assertJsonPath('message', trans('passport::app.publications.carrier.release-redacted'));
+
+    expect(PublicationCarrierIssuanceProxy::modelClass()::query()->where('publication_id', $publication->id)->exists())->toBeFalse();
+
+    $this->get(route('admin.catalog.passports.versions', $publication->id))
+        ->assertOk()
+        ->assertSee(route('admin.catalog.passports.issue_carrier', [$publication->id, 2]))
+        ->assertDontSee(route('admin.catalog.passports.issue_carrier', [$publication->id, 1]));
+
+    $this->post(route('admin.catalog.passports.issue_carrier', [$publication->id, 2]))->assertOk();
+});
+
 it('pages the releases and the issued carriers on the versions page', function (): void {
     $version = $this->publishedPassportFixture();
     $publication = $version->publication;

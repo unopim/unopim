@@ -22,6 +22,7 @@ use Webkul\ProductPassport\Services\PassportFeature;
 use Webkul\ProductPassport\Services\PassportReadinessService;
 use Webkul\Publication\Enums\PublicationStatus;
 use Webkul\Publication\Enums\PublishAttemptStatus;
+use Webkul\Publication\Exceptions\CarrierNotIssuableException;
 use Webkul\Publication\Exceptions\InvalidPublicationTransitionException;
 use Webkul\Publication\Jobs\PublishPassportForProductChannelJob;
 use Webkul\Publication\Models\Publication;
@@ -465,17 +466,22 @@ class PublicationController extends Controller
      * Issues a printable carrier for one release: records exactly what is encoded, then returns the SVG.
      * The record, not the image, is the durable answer to "which QR code is in the manual and what did it point at".
      *
-     * Only a Published passport can be issued (see `isIssuable()`).
+     * `CarrierIssuer::issue()` owns the gate (a Published passport, a release whose own version is not redacted)
+     * and checks it under the publication row lock; its refusal is answered with a 422.
      */
     public function issueCarrier(IssueCarrierRequest $request, Publication $publication, int $sequence, PublicationResolver $resolver, CarrierIssuer $issuer, CarrierSvg $svg): Response
     {
-        abort_unless($this->isIssuable($publication), 422, trans('passport::app.publications.carrier.not-issuable'));
-
         $release = $resolver->findRelease($publication, $sequence);
 
         abort_if($release === null, 404);
 
-        $issuance = $issuer->issue($publication, $release, auth()->guard('admin')->id());
+        try {
+            $issuance = $issuer->issue($publication, $release, auth()->guard('admin')->id());
+        } catch (CarrierNotIssuableException $exception) {
+            abort(422, trans($exception->releaseRedacted
+                ? 'passport::app.publications.carrier.release-redacted'
+                : 'passport::app.publications.carrier.not-issuable'));
+        }
 
         return response($svg->render($issuance->target), 200, [
             'Content-Type'        => 'image/svg+xml',
@@ -485,9 +491,9 @@ class PublicationController extends Controller
     }
 
     /**
-     * A carrier is only issued for a Published passport. A withdrawn or redacted (GDPR-erased) one would put a
-     * code into print that can only ever land on a tombstone, so it is refused even though the public routes
-     * still resolve it.
+     * Whether the versions page offers carrier issuance at all: only for a Published passport, mirroring the gate
+     * in `CarrierIssuer::issue()`. A withdrawn or redacted (GDPR-erased) one would put a code into print that can
+     * only ever land on a tombstone, even though the public routes still resolve it.
      */
     private function isIssuable(Publication $publication): bool
     {

@@ -86,6 +86,17 @@ class PublicationRelease extends Model implements PublicationReleaseContract
     }
 
     /**
+     * Whether the version minted in this release has been redacted. Reads the loaded `versions` relation when
+     * there is one, so a listing that eager-loads it stays a fixed number of queries.
+     */
+    public function hasRedactedVersion(): bool
+    {
+        return $this->relationLoaded('versions')
+            ? $this->versions->contains(fn (PublicationVersion $version): bool => $version->redacted_at !== null)
+            : $this->versions()->whereNotNull('redacted_at')->exists();
+    }
+
+    /**
      * The state of the publication as of this release: for every locale, the most recent version minted at
      * or before it. Redacted versions are included; how they render is the caller's decision, not a question
      * of which state applied.
