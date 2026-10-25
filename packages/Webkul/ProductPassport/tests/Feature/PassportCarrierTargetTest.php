@@ -74,7 +74,18 @@ it('rejects gtins outside the route grammar', function (): void {
         ->and($gs1->isWellFormed('1010'))->toBeFalse()
         ->and($gs1->isWellFormed('123456789012345'))->toBeFalse()
         ->and($gs1->isWellFormed('40063813abcde'))->toBeFalse()
+        ->and($gs1->isWellFormed("40063813339310\n"))->toBeFalse()
         ->and($gs1->isWellFormed(null))->toBeFalse();
+});
+
+it('rejects lot and serial qualifiers outside the GS1 grammar, a trailing line feed included', function (): void {
+    $gs1 = resolve(Gs1DigitalLink::class);
+
+    expect($gs1->isWellFormedQualifier('LOT-42'))->toBeTrue()
+        ->and($gs1->isWellFormedQualifier(null))->toBeTrue()
+        ->and($gs1->isWellFormedQualifier("LOT-42\n"))->toBeFalse()
+        ->and($gs1->isWellFormedQualifier(''))->toBeFalse()
+        ->and($gs1->isWellFormedQualifier(str_repeat('A', 21)))->toBeFalse();
 });
 
 it('never aliases a gtin the public route cannot match', function (): void {

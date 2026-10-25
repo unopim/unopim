@@ -11,19 +11,38 @@ return new class extends Migration
     private const BACKFILL_CHUNK = 1000;
 
     /**
-     * Index names are explicit because the auto-generated ones include the table prefix and overrun
-     * MySQL's 64-character identifier limit on prefixed installs.
-     *
-     * `revoked_at` retires a GTIN that was published by mistake: the history fallback skips the row while the
-     * row itself stays.
-     *
      * Every well-formed GTIN a publication currently carries becomes the first entry of its history. The
      * backfill streams the publications by primary key and inserts one batch per chunk, so memory stays flat
      * on catalogs of any size. `publications.gtin` may hold values outside the GS1 grammar (it is routing
      * metadata), but the history only serves `/01/{gtin}`, so those rows are skipped in PHP, which stays
      * portable across engines.
+     *
+     * A run that stopped after the table was created (MySQL commits DDL implicitly, so a failed backfill leaves
+     * the table behind) is re-run safely: the table is only created when missing, and the backfill skips every
+     * publication whose current GTIN already has a history row.
      */
     public function up(): void
+    {
+        if (! Schema::hasTable('publication_gtins')) {
+            $this->createTable();
+        }
+
+        $this->backfill();
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('publication_gtins');
+    }
+
+    /**
+     * Index names are explicit because the auto-generated ones include the table prefix and overrun
+     * MySQL's 64-character identifier limit on prefixed installs.
+     *
+     * `revoked_at` retires a GTIN that was published by mistake: the history fallback skips the row while the
+     * row itself stays.
+     */
+    private function createTable(): void
     {
         Schema::create('publication_gtins', function (Blueprint $table): void {
             $table->id();
@@ -42,13 +61,6 @@ return new class extends Migration
             $table->unique(['publication_id', 'gtin'], 'pubgtin_pub_gtin_uq');
             $table->index('gtin', 'pubgtin_gtin_idx');
         });
-
-        $this->backfill();
-    }
-
-    public function down(): void
-    {
-        Schema::dropIfExists('publication_gtins');
     }
 
     private function backfill(): void
@@ -59,6 +71,11 @@ return new class extends Migration
         DB::table('publications')
             ->whereNotNull('gtin')
             ->where('gtin', '!=', '')
+            ->whereNotExists(fn ($history) => $history
+                ->select(DB::raw(1))
+                ->from('publication_gtins')
+                ->whereColumn('publication_gtins.publication_id', 'publications.id')
+                ->whereColumn('publication_gtins.gtin', 'publications.gtin'))
             ->select(['id', 'gtin', 'last_published_at', 'created_at'])
             ->chunkById(self::BACKFILL_CHUNK, function ($publications) use ($now, $gs1): void {
                 DB::table('publication_gtins')->insert($publications

@@ -62,6 +62,7 @@ it('404s a qualifier outside the GS1 grammar instead of guessing', function (): 
 
     $this->get('/01/4006381333931/10/'.str_repeat('A', 21))->assertNotFound();
     $this->get('/01/4006381333931/21/bad%7Cpipe')->assertNotFound();
+    $this->get('/01/4006381333931/10/LOT1%0A')->assertNotFound();
 });
 
 it('keeps resolving a gtin the publication carried before a correction', function (): void {
@@ -235,6 +236,7 @@ it('keeps a gtin outside the route grammar as routing metadata only, never in th
 })->with([
     'separator inside'   => ['4006381-333931'],
     'longer than gtin14' => ['4006381333931000'],
+    'trailing line feed' => ["40063813339310\n"],
 ]);
 
 it('refreshes recorded_at when a publication takes a gtin back, leaving a revocation alone', function (): void {
@@ -272,7 +274,7 @@ it('backfills only well-formed gtins into the history', function (): void {
     [, , $versions] = $this->publishGtinPassport('4006381333931', 2);
     [$wellFormed, $malformed] = [$versions[0]->publication_id, $versions[1]->publication_id];
 
-    DB::table('publications')->where('id', $malformed)->update(['gtin' => '4006381333931000']);
+    DB::table('publications')->where('id', $malformed)->update(['gtin' => "40063813339310\n"]);
     DB::table('publication_gtins')->delete();
 
     $migration = require base_path('packages/Webkul/Publication/src/Database/Migrations/2026_09_04_000013_create_publication_gtins_table.php');
@@ -281,4 +283,19 @@ it('backfills only well-formed gtins into the history', function (): void {
 
     expect(DB::table('publication_gtins')->where('publication_id', $wellFormed)->pluck('gtin')->all())->toBe(['4006381333931'])
         ->and(DB::table('publication_gtins')->where('publication_id', $malformed)->exists())->toBeFalse();
+});
+
+it('re-runs the gtin history migration without failing on the existing table or duplicating rows', function (): void {
+    [, , $versions] = $this->publishGtinPassport('4006381333931', 2);
+    $publicationIds = collect($versions)->pluck('publication_id')->all();
+
+    DB::table('publication_gtins')->where('publication_id', $publicationIds[1])->delete();
+
+    $migration = require base_path('packages/Webkul/Publication/src/Database/Migrations/2026_09_04_000013_create_publication_gtins_table.php');
+
+    $migration->up();
+    $migration->up();
+
+    expect(DB::table('publication_gtins')->whereIn('publication_id', $publicationIds)->orderBy('publication_id')->pluck('gtin')->all())
+        ->toBe(['4006381333931', '4006381333931']);
 });
