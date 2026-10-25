@@ -12,6 +12,7 @@ return new class extends Migration
      * Off, so the per-chunk transactions below are the only ones. PostgreSQL supports transactional DDL, so the
      * migrator would otherwise wrap the whole of up() in one transaction there: a failure halfway would roll
      * every committed chunk back with it, and the chunks would only be savepoints holding their locks to the end.
+     * The price is that the schema steps are no longer atomic on PostgreSQL either; see addReleaseColumn().
      *
      * @var bool
      */
@@ -33,19 +34,15 @@ return new class extends Migration
      * carry across chunks.
      *
      * The versions are walked by primary key in chunks of $chunkSize, one transaction per chunk, on every
-     * driver ($withinTransaction is off). Only versions without a release are visited and each publication's
+     * driver ($withinTransaction is off). The running sequences are passed by reference into each chunk's
+     * transaction (an arrow function would capture a copy), so a publication's highest sequence is looked up
+     * once per run, not once per chunk. Only versions without a release are visited and each publication's
      * counter starts at its highest existing sequence, so a run that stopped halfway continues cleanly instead
      * of colliding with its own releases.
      */
     public function up(): void
     {
-        if (! Schema::hasColumn('publication_versions', 'release_id')) {
-            Schema::table('publication_versions', function (Blueprint $table): void {
-                $table->unsignedBigInteger('release_id')->nullable()->after('checksum');
-                $table->foreign('release_id')->references('id')->on('publication_releases')->restrictOnDelete();
-                $table->index('release_id', 'pubver_release_idx');
-            });
-        }
+        $this->addReleaseColumn();
 
         $sequences = [];
 
@@ -53,8 +50,37 @@ return new class extends Migration
             ->select('id', 'publication_id', 'published_at', 'published_by_id')
             ->whereNull('release_id')
             ->chunkById($this->chunkSize, function (Collection $versions) use (&$sequences): void {
-                DB::transaction(fn () => $this->backfillChunk($versions, $sequences));
+                DB::transaction(function () use ($versions, &$sequences): void {
+                    $this->backfillChunk($versions, $sequences);
+                });
             });
+    }
+
+    /**
+     * The column, its foreign key and its index are each added only when missing, in three steps. No driver
+     * runs them atomically here (MySQL commits every DDL statement implicitly, and PostgreSQL runs without the
+     * wrapping transaction), so a run that stopped after adding the column must still get the foreign key and
+     * the index on the rerun instead of being skipped as a whole.
+     */
+    private function addReleaseColumn(): void
+    {
+        if (! Schema::hasColumn('publication_versions', 'release_id')) {
+            Schema::table('publication_versions', function (Blueprint $table): void {
+                $table->unsignedBigInteger('release_id')->nullable()->after('checksum');
+            });
+        }
+
+        if (! Schema::hasForeignKey('publication_versions', ['release_id'])) {
+            Schema::table('publication_versions', function (Blueprint $table): void {
+                $table->foreign('release_id')->references('id')->on('publication_releases')->restrictOnDelete();
+            });
+        }
+
+        if (! Schema::hasIndex('publication_versions', 'pubver_release_idx')) {
+            Schema::table('publication_versions', function (Blueprint $table): void {
+                $table->index('release_id', 'pubver_release_idx');
+            });
+        }
     }
 
     public function down(): void

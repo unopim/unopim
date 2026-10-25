@@ -1,6 +1,8 @@
 <?php
 
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Webkul\Product\Models\ProductProxy;
 use Webkul\Publication\Exceptions\ImmutableVersionException;
 use Webkul\Publication\Services\Publisher;
@@ -173,7 +175,7 @@ it('backfills a release per existing version and continues a backfill that stopp
         ->and(DB::table('publication_versions')->where('publication_id', $publicationId)->whereNull('release_id')->count())->toBe(0);
 });
 
-it('carries each publication\'s sequence across backfill chunks when their versions interleave', function (): void {
+it('carries each publication\'s sequence across backfill chunks in memory when their versions interleave', function (): void {
     [$product, $channel, , $complete] = $this->seedPassportFixture();
 
     $other = ProductProxy::factory()->create([
@@ -197,6 +199,15 @@ it('carries each publication\'s sequence across backfill chunks when their versi
 
     $migration = require base_path('packages/Webkul/Publication/src/Database/Migrations/2026_09_04_000011_add_release_id_to_publication_versions_table.php');
     $migration->chunkSize = 2;
+
+    $sequenceLookups = 0;
+
+    DB::listen(function ($query) use (&$sequenceLookups): void {
+        if (str_contains(strtolower($query->sql), 'max(') && str_contains($query->sql, 'publication_releases')) {
+            $sequenceLookups++;
+        }
+    });
+
     $migration->up();
 
     $sequences = DB::table('publication_versions')
@@ -209,6 +220,7 @@ it('carries each publication\'s sequence across backfill chunks when their versi
 
     expect($publicationIds)->toHaveCount(2)
         ->and($sequences)->toBe([1, 1, 2, 2, 3])
+        ->and($sequenceLookups)->toBe(1)
         ->and(DB::table('publication_releases')->whereIn('publication_id', $publicationIds)->count())->toBe(5)
         ->and(DB::table('publication_versions')->whereIn('publication_id', $publicationIds)->whereNull('release_id')->count())->toBe(0);
 });
@@ -244,4 +256,24 @@ it('numbers backfilled releases by version id, not by published_at', function ()
 
     expect($releases->map(fn ($release): int => (int) $release->sequence)->all())->toBe([1, 2, 3])
         ->and($releases->every(fn ($release): bool => (string) $release->published_at === (string) $release->version_published_at))->toBeTrue();
+});
+
+it('adds the release foreign key and index on a rerun that finds the column without them', function (): void {
+    Schema::table('publication_versions', function (Blueprint $table): void {
+        $table->dropForeign(['release_id']);
+    });
+
+    Schema::table('publication_versions', function (Blueprint $table): void {
+        $table->dropIndex('pubver_release_idx');
+    });
+
+    expect(Schema::hasColumn('publication_versions', 'release_id'))->toBeTrue()
+        ->and(Schema::hasForeignKey('publication_versions', ['release_id']))->toBeFalse()
+        ->and(Schema::hasIndex('publication_versions', 'pubver_release_idx'))->toBeFalse();
+
+    $migration = require base_path('packages/Webkul/Publication/src/Database/Migrations/2026_09_04_000011_add_release_id_to_publication_versions_table.php');
+    $migration->up();
+
+    expect(Schema::hasForeignKey('publication_versions', ['release_id']))->toBeTrue()
+        ->and(Schema::hasIndex('publication_versions', 'pubver_release_idx'))->toBeTrue();
 });
