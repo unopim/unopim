@@ -566,7 +566,11 @@
                                     }
                                 });
 
-                                this.applied.filters.columns = this.applied.filters.columns.filter(column => column.index === 'all' || (filterableColumns.includes(column.index)));
+                                const filterColumns = this.applied.filters.columns.filter(column => column.index === 'all' || (filterableColumns.includes(column.index)));
+
+                                if (filterColumns.length !== this.applied.filters.columns.length) {
+                                    this.applied.filters.columns = filterColumns;
+                                }
                             }
 
                             this.syncAttributeConditions();
