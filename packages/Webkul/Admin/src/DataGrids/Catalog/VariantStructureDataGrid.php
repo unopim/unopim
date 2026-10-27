@@ -44,19 +44,24 @@ class VariantStructureDataGrid extends DataGrid
      */
     protected function axisCodesSubQuery(string $level): string
     {
-        $prefix = DB::getTablePrefix();
+        $grammar = DB::getQueryGrammar();
+
+        $quotedLevel = DB::getPdo()->quote($level);
+
+        $axesTable = $grammar->wrapTable('variant_structure_axes');
+        $attributesTable = $grammar->wrapTable('attributes');
 
         $aggregate = GrammarQueryManager::getGrammar()->groupConcat(
-            "{$prefix}attributes.code",
-            orderBy: "{$prefix}variant_structure_axes.position",
+            $grammar->wrap('attributes.code'),
+            orderBy: $grammar->wrap('variant_structure_axes.position'),
         );
 
         return "(
             SELECT {$aggregate}
-            FROM {$prefix}variant_structure_axes
-            INNER JOIN {$prefix}attributes ON {$prefix}attributes.id = {$prefix}variant_structure_axes.attribute_id
-            WHERE {$prefix}variant_structure_axes.variant_structure_id = {$prefix}variant_structures.id
-                AND {$prefix}variant_structure_axes.level = '{$level}'
+            FROM {$axesTable}
+            INNER JOIN {$attributesTable} ON {$grammar->wrap('attributes.id')} = {$grammar->wrap('variant_structure_axes.attribute_id')}
+            WHERE {$grammar->wrap('variant_structure_axes.variant_structure_id')} = {$grammar->wrap('variant_structures.id')}
+                AND {$grammar->wrap('variant_structure_axes.level')} = {$quotedLevel}
         )";
     }
 

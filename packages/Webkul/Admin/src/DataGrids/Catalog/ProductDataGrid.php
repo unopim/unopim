@@ -111,9 +111,11 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
     public function prepareQueryBuilder()
     {
-        $tablePrefix = DB::getTablePrefix();
-
         $grammar = DB::rawQueryGrammar();
+
+        $familyNameColumn = DB::getQueryGrammar()->wrap('attribute_family_name.name');
+
+        $familyCodeColumn = DB::getQueryGrammar()->wrap('af.code');
 
         $this->prepareQuery = ProductQueryBuilderFactory::make()->prepareQueryBuilder();
 
@@ -134,10 +136,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'parent_products.sku as parent',
                 DB::raw(
                     "(CASE
-                        WHEN {$tablePrefix}attribute_family_name.name IS NULL
-                            OR {$grammar->length("TRIM({$tablePrefix}attribute_family_name.name)")} < 1
-                        THEN {$grammar->concat("'['", "{$tablePrefix}af.code", "']'")}
-                        ELSE {$tablePrefix}attribute_family_name.name
+                        WHEN {$familyNameColumn} IS NULL
+                            OR {$grammar->length("TRIM({$familyNameColumn})")} < 1
+                        THEN {$grammar->concat("'['", $familyCodeColumn, "']'")}
+                        ELSE {$familyNameColumn}
                     END) as attribute_family"
                 ),
                 'products.values as raw_values',
@@ -578,7 +580,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
             if (! empty($ids)) {
                 $this->queryBuilder->orderByRaw(
-                    DB::rawQueryGrammar()->orderByField(DB::getTablePrefix().'products.id', $ids)
+                    DB::rawQueryGrammar()->orderByField(DB::getQueryGrammar()->wrap('products.id'), $ids)
                 );
             }
 

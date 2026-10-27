@@ -143,8 +143,11 @@ class Installer extends Command
             $this->info('Elasticsearch Connected successfully');
         }
 
+        $this->warn('Step: Dropping existing tables for table prefix '.(DB::getTablePrefix() ?: '(none)').'...');
+        resolve(DatabaseManager::class)->dropCurrentPrefixTables();
+
         $this->warn('Step: Migrating all tables...');
-        $this->call('migrate:fresh');
+        $this->call('migrate');
 
         $this->warn('Step: Seeding basic data for UnoPim kickstart...');
         resolve(UnoPimDatabaseSeeder::class)->run([

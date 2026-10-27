@@ -4,6 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Webkul\Core\Database\Schema\PrefixedIndexNameBlueprint;
 
 return new class extends Migration
 {
@@ -26,14 +27,20 @@ return new class extends Migration
 
         $this->safeRenameIndex(
             'attribute_option_translations',
-            $prefix.'attribute_option_translations_attribute_option_id_locale_unique',
+            strtolower($prefix.'attribute_option_translations_attribute_option_id_locale_unique'),
             'attr_opt_translations_opt_id_locale_unique'
         );
 
         $this->safeRenameIndex(
             'attribute_group_translations',
-            $prefix.'attribute_group_translations_attribute_group_id_locale_unique',
+            strtolower($prefix.'attribute_group_translations_attribute_group_id_locale_unique'),
             'attr_grp_translations_grp_id_locale_unique'
+        );
+
+        $this->safeRenameIndex(
+            'attribute_family_translations',
+            'attribute_family_translations_name_locale_attribute_family_id',
+            'attribute_family_translations_name_locale_attribute_family_id'
         );
     }
 
@@ -55,19 +62,21 @@ return new class extends Migration
         }
 
         try {
-            $prefix = DB::getTablePrefix();
-            $indexes = Schema::getIndexes($prefix.$table);
-            $indexNames = array_column($indexes, 'name');
+            $indexNames = array_map(strtolower(...), array_column(Schema::getIndexes($table), 'name'));
+            $prefixedNewName = PrefixedIndexNameBlueprint::nameFor(DB::getTablePrefix(), $newName);
 
             // New name already exists — nothing to do
-            if (in_array($newName, $indexNames)) {
+            if (in_array(strtolower($prefixedNewName), $indexNames, true)) {
                 return;
             }
 
+            $existingOldName = collect([$oldName, substr($oldName, 0, PrefixedIndexNameBlueprint::MAX_INDEX_NAME_LENGTH), $newName])
+                ->first(fn (string $name): bool => in_array(strtolower($name), $indexNames, true));
+
             // Old long name exists — rename it
-            if (in_array($oldName, $indexNames)) {
-                Schema::table($table, function (Blueprint $t) use ($oldName, $newName): void {
-                    $t->renameIndex($oldName, $newName);
+            if ($existingOldName !== null) {
+                Schema::table($table, function (Blueprint $t) use ($existingOldName, $newName): void {
+                    $t->renameIndex($existingOldName, $newName);
                 });
             }
 

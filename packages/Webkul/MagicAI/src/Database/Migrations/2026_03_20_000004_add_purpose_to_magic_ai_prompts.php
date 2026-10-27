@@ -4,6 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Webkul\Core\Helpers\Database\PostgresCheckConstraintHelper;
 
 return new class extends Migration
 {
@@ -28,10 +29,10 @@ return new class extends Migration
             ->update(['purpose' => 'translation', 'type' => 'product']);
 
         // Revert type enum back to only product/category
-        $table = DB::getTablePrefix().'magic_ai_prompts';
+        $table = DB::getQueryGrammar()->wrapTable('magic_ai_prompts');
 
         if ($this->isPostgres()) {
-            DB::statement("ALTER TABLE {$table} DROP CONSTRAINT IF EXISTS magic_ai_prompts_type_check");
+            PostgresCheckConstraintHelper::dropColumnChecks('magic_ai_prompts', 'type');
             DB::statement("ALTER TABLE {$table} ALTER COLUMN type TYPE VARCHAR(20)");
             DB::statement("ALTER TABLE {$table} ADD CONSTRAINT magic_ai_prompts_type_check CHECK (type IN ('product', 'category'))");
             DB::statement("ALTER TABLE {$table} ALTER COLUMN type SET DEFAULT 'product'");

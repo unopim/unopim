@@ -22,7 +22,7 @@ class DatabaseManager
      */
     public function isInstalled(): bool
     {
-        $memo = app(RequestMemo::class);
+        $memo = resolve(RequestMemo::class);
 
         if ($memo->has(self::INSTALLED_MEMO_KEY)) {
             return true;
@@ -132,14 +132,16 @@ class DatabaseManager
     }
 
     /**
-     * Drop all the tables and migrate in the database
+     * Drop the tables of the configured table prefix and migrate in the database
      *
      * @return void|string
      */
     public function migration()
     {
         try {
-            Artisan::call('migrate:fresh');
+            $this->dropCurrentPrefixTables();
+
+            Artisan::call('migrate');
         } catch (Exception $e) {
             return response()->json([
                 'error' => $e->getMessage(),
@@ -148,10 +150,79 @@ class DatabaseManager
 
     }
 
+    public function dropCurrentPrefixTables(): void
+    {
+        $connection = DB::connection();
+        $schema = $connection->getSchemaBuilder();
+
+        if (! in_array($connection->getDriverName(), ['mysql', 'mariadb', 'pgsql'], true)) {
+            $schema->dropAllTables();
+
+            return;
+        }
+
+        $tables = $this->currentPrefixTables();
+
+        if ($tables === []) {
+            return;
+        }
+
+        $schema->withoutForeignKeyConstraints(fn () => $connection->statement(
+            $connection->getSchemaGrammar()->compileDropAllTables($tables)
+        ));
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function currentPrefixTables(): array
+    {
+        $connection = DB::connection();
+        $schema = $connection->getSchemaBuilder();
+        $prefix = $connection->getTablePrefix();
+        $prefixes = [...$this->otherInstallPrefixes(), $prefix];
+
+        return collect($schema->getTables($schema->getCurrentSchemaListing()))
+            ->filter(fn (array $table): bool => $this->owningPrefix($table['name'], $prefixes) === $prefix)
+            ->pluck('schema_qualified_name')
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @param  array<int, string>  $prefixes
+     */
+    protected function owningPrefix(string $table, array $prefixes): string
+    {
+        return collect($prefixes)
+            ->filter(fn (string $prefix): bool => str_starts_with($table, $prefix))
+            ->sortByDesc(fn (string $prefix): int => strlen($prefix))
+            ->first() ?? '';
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function otherInstallPrefixes(): array
+    {
+        $connection = DB::connection();
+        $schema = $connection->getSchemaBuilder();
+        $migrationsTable = config('database.migrations.table', 'migrations');
+
+        return collect($schema->getTableListing($schema->getCurrentSchemaListing(), false))
+            ->filter(fn (string $table): bool => str_ends_with($table, $migrationsTable))
+            ->map(fn (string $table): string => substr($table, 0, -strlen($migrationsTable)))
+            ->reject(fn (string $prefix): bool => $prefix === $connection->getTablePrefix())
+            ->unique()
+            ->sort()
+            ->values()
+            ->all();
+    }
+
     /**
      * Create the configured database if it does not already exist.
      *
-     * `migrate:fresh` will not create the schema itself. The name is validated
+     * `migrate` will not create the schema itself. The name is validated
      * against a strict pattern before interpolation to avoid SQL injection.
      */
     public function createDatabaseIfNotExists(): void

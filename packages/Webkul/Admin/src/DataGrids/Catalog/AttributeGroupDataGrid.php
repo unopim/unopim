@@ -15,10 +15,11 @@ class AttributeGroupDataGrid extends DataGrid
      */
     public function prepareQueryBuilder()
     {
-        $tablePrefix = DB::getTablePrefix();
         $grammar = DB::rawQueryGrammar();
 
-        $nameField = "{$tablePrefix}attribute_group_name.name";
+        $nameField = DB::getQueryGrammar()->wrap('attribute_group_name.name');
+
+        $codeField = DB::getQueryGrammar()->wrap('attribute_groups.code');
 
         $queryBuilder = DB::table('attribute_groups')
             ->leftJoin('attribute_group_translations as attribute_group_name', function ($join) {
@@ -32,7 +33,7 @@ class AttributeGroupDataGrid extends DataGrid
                     "(CASE 
                         WHEN $nameField IS NULL 
                             OR ".$grammar->length("TRIM($nameField)").' < 1 
-                        THEN '.$grammar->concat("'['", "{$tablePrefix}attribute_groups.code", "']'")."
+                        THEN '.$grammar->concat("'['", $codeField, "']'")."
                         ELSE $nameField 
                     END) as name"
                 )

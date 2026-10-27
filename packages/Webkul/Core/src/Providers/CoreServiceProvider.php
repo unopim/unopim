@@ -5,6 +5,7 @@ namespace Webkul\Core\Providers;
 use Elastic\Elasticsearch\Client as ElasticSearchClient;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Mail\MailManager;
 use Illuminate\Support\Facades\DB;
@@ -23,6 +24,7 @@ use Webkul\Core\Console\Commands\UnoPimPublish;
 use Webkul\Core\Console\Commands\UnoPimVersion;
 use Webkul\Core\Contracts\Database\Grammar;
 use Webkul\Core\Core;
+use Webkul\Core\Database\Schema\PrefixedIndexNameBlueprint;
 use Webkul\Core\ElasticSearch;
 use Webkul\Core\Exceptions\Handler;
 use Webkul\Core\Facades\Core as CoreFacade;
@@ -70,7 +72,7 @@ class CoreServiceProvider extends ServiceProvider
         });
 
         Event::listen('core.configuration.save.after', function (): void {
-            app(RequestMemo::class)->forget(self::MAIL_CONFIGURED_KEY);
+            resolve(RequestMemo::class)->forget(self::MAIL_CONFIGURED_KEY);
         });
 
         $this->app['router']->pushMiddlewareToGroup('web', EnableDebugForAllowedIps::class);
@@ -93,7 +95,7 @@ class CoreServiceProvider extends ServiceProvider
 
         // Redirect unauthenticated web requests to admin login (default `login` route 500s); let API fall through to JSON 401.
         Authenticate::redirectUsing(
-            fn ($request) => $request->is('api/*') ? null : route('admin.session.create')
+            fn ($request): ?string => $request->is('api/*') ? null : route('admin.session.create')
         );
 
         $this->loadViewsFrom(__DIR__.'/../Resources/views', 'core');
@@ -124,7 +126,7 @@ class CoreServiceProvider extends ServiceProvider
         DB::macro('rawQueryGrammar', fn (): Grammar => GrammarQueryManager::getGrammar());
 
         // Drop the request-scoped config memo on any config write so later reads in the same request see it.
-        $forgetConfigMemo = fn () => app(RequestMemo::class)->forget('core_config.');
+        $forgetConfigMemo = fn () => resolve(RequestMemo::class)->forget('core_config.');
         CoreConfig::saved($forgetConfigMemo);
         CoreConfig::deleted($forgetConfigMemo);
     }
@@ -152,7 +154,7 @@ class CoreServiceProvider extends ServiceProvider
      */
     protected function overrideMailConfiguration(): void
     {
-        $memo = app(RequestMemo::class);
+        $memo = resolve(RequestMemo::class);
 
         if ($memo->has(self::MAIL_CONFIGURED_KEY)) {
             return;
@@ -239,6 +241,8 @@ class CoreServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(dirname(__DIR__).'/Config/media.php', 'media');
+
+        $this->app->bind(Blueprint::class, PrefixedIndexNameBlueprint::class);
 
         $this->app->singleton('image_manager', function ($app): ImageManager {
             $driver = $app['config']->get('image.driver', 'gd');

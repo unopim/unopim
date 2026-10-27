@@ -56,9 +56,7 @@ class CategoryDataGrid extends DataGrid
      */
     public function prepareQueryBuilder()
     {
-        $tablePrefix = DB::getTablePrefix();
-
-        $categoryNameExpr = $this->categoryNameExpression("{$tablePrefix}cat");
+        $categoryNameExpr = $this->categoryNameExpression('cat');
 
         $queryBuilder = DB::table('categories as cat')
             ->select(
@@ -245,7 +243,7 @@ class CategoryDataGrid extends DataGrid
 
             if (! empty($ids)) {
                 $this->queryBuilder->whereIn('cat.id', $ids)
-                    ->orderByRaw(DB::rawQueryGrammar()->orderByField(DB::getTablePrefix().'cat.id', $ids));
+                    ->orderByRaw(DB::rawQueryGrammar()->orderByField(DB::getQueryGrammar()->wrap('cat.id'), $ids));
             }
 
             $total = $results['hits']['total']['value'];
@@ -420,9 +418,9 @@ class CategoryDataGrid extends DataGrid
 
         $localeCode = core()->getRequestedLocaleCode();
 
-        $jsonExpr = $grammar->jsonExtract("{$tableAlias}.additional_data", 'locale_specific', $localeCode, 'name');
+        $jsonExpr = $grammar->jsonExtract(DB::getTablePrefix()."{$tableAlias}.additional_data", 'locale_specific', $localeCode, 'name');
 
-        $codeFallback = $grammar->concat("'['", "{$tableAlias}.code", "']'");
+        $codeFallback = $grammar->concat("'['", DB::getQueryGrammar()->wrap("{$tableAlias}.code"), "']'");
 
         return "(CASE WHEN {$jsonExpr} IS NOT NULL THEN REPLACE({$jsonExpr}, '\"', '') ELSE {$codeFallback} END)";
     }
