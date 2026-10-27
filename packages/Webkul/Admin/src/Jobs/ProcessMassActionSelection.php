@@ -79,7 +79,7 @@ class ProcessMassActionSelection implements ShouldQueue
         $count = 0;
 
         $this->withGridRequest(function (DataGrid $dataGrid) use (&$count): void {
-            $dataGrid->getMatchingIds()
+            $dataGrid->getSelectedIds()
                 ->chunk(static::CHUNK_SIZE)
                 ->each(function (LazyCollection $ids) use (&$count): void {
                     $count += $ids->count();
