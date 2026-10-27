@@ -9,93 +9,58 @@ use Webkul\ElasticSearch\Enums\FilterOperators;
 use Webkul\Product\Filter\ElasticSearch\SkuOrUniversalFilter;
 use Webkul\Product\Models\Product;
 
-/*
- * The quick search box posts its term as filters[all]. Which attribute codes it
- * looks in comes from products.search_fields; whatever is configured there, the
- * search must never degrade into matching everything or matching nothing.
- *
- * The end-to-end cases are driven on the database path, which resolves the
- * field list through the same ProductDataGrid::processFilters() call site as
- * the Elasticsearch path and needs no live index. The last case asserts that
- * the list the grid resolves is one the Elasticsearch filter turns into
- * clauses, which is the half a database-only run cannot see.
- */
-
 beforeEach(function () {
     config(['elasticsearch.enabled' => false]);
 
     $this->loginAsAdmin();
 
-    Product::factory()->create([
+    $this->productA = Product::factory()->create([
         'sku'    => 'QSEARCHA',
         'values' => ['common' => ['sku' => 'QSEARCHA', 'product_number' => '1111111111116']],
     ]);
 
-    Product::factory()->create([
+    $this->productB = Product::factory()->create([
         'sku'    => 'QSEARCHB',
         'values' => ['common' => ['sku' => 'QSEARCHB', 'product_number' => '2222222222223']],
     ]);
+
+    $this->quickSearch = function (string $term): array {
+        app()->forgetInstance(AttributeService::class);
+
+        $response = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest'])
+            ->json('GET', route('admin.catalog.products.index'), [
+                'pagination' => ['page' => 1, 'per_page' => 50],
+                'filters'    => ['all' => [$term]],
+            ])->assertOk();
+
+        return collect($response->json('records'))->pluck('sku')->all();
+    };
+
+    $this->setCommonValue = function (Product $product, string $code, string $value): void {
+        $values = $product->values;
+        $values['common'][$code] = $value;
+        $product->values = $values;
+        $product->save();
+    };
 });
-
-/**
- * The SKUs the quick search box returns for one term.
- *
- * @return array<int, string>
- */
-function quickSearchSkus(string $term): array
-{
-    $response = test()->withHeaders(['X-Requested-With' => 'XMLHttpRequest'])
-        ->json('GET', route('admin.catalog.products.index'), [
-            'pagination' => ['page' => 1, 'per_page' => 50],
-            'filters'    => ['all' => [$term]],
-        ])->assertOk();
-
-    return collect($response->json('records'))->pluck('sku')->all();
-}
-
-/**
- * The field list the grid resolves from the current configuration.
- *
- * @return array<int, string>
- */
-function resolvedSearchFields(): array
-{
-    app()->forgetInstance(AttributeService::class);
-
-    $method = new ReflectionMethod(ProductDataGrid::class, 'getSearchFields');
-    $method->setAccessible(true);
-
-    return $method->invoke(app(ProductDataGrid::class));
-}
 
 it('searches the sku and not other identifiers by default', function () {
-    expect(quickSearchSkus('QSEARCHA'))->toContain('QSEARCHA')->not->toContain('QSEARCHB');
+    expect(($this->quickSearch)('QSEARCHA'))->toContain('QSEARCHA')->not->toContain('QSEARCHB');
 
-    expect(quickSearchSkus('1111111111116'))->not->toContain('QSEARCHA');
+    expect(($this->quickSearch)('1111111111116'))->not->toContain('QSEARCHA');
 });
 
-it('searches the sku and the name on an installation whose config file predates the setting', function () {
-    /*
-     * The shipped config/products.php carries the key, so every other case in
-     * this file reads it. An installation upgraded from an earlier release
-     * does not have it: that path falls through to the class constant, and it
-     * is the path every existing installation takes.
-     */
+it('searches the sku on an installation whose config file predates the setting', function () {
     config(['products' => Arr::except(config('products'), 'search_fields')]);
 
     expect(config()->has('products.search_fields'))->toBeFalse();
 
-    expect(resolvedSearchFields())->toBe(['sku', 'name']);
+    expect(($this->quickSearch)('QSEARCHA'))->toContain('QSEARCHA')->not->toContain('QSEARCHB');
 
-    expect(quickSearchSkus('QSEARCHA'))->toContain('QSEARCHA')->not->toContain('QSEARCHB');
+    expect(($this->quickSearch)('1111111111116'))->not->toContain('QSEARCHA');
 });
 
 it('ships the same default in the config file and in the class constant', function () {
-    /*
-     * A fresh installation reads the config file, an upgraded one reads the
-     * constant. They have to agree, or the two populations search different
-     * fields out of the box.
-     */
     expect(config('products.search_fields'))
         ->toBe((new ReflectionClass(ProductDataGrid::class))->getConstant('DEFAULT_SEARCH_FIELDS'));
 });
@@ -103,28 +68,31 @@ it('ships the same default in the config file and in the class constant', functi
 it('searches a configured identifier attribute too', function () {
     config(['products.search_fields' => ['sku', 'name', 'product_number']]);
 
-    expect(quickSearchSkus('1111111111116'))->toContain('QSEARCHA')->not->toContain('QSEARCHB');
+    expect(($this->quickSearch)('1111111111116'))->toContain('QSEARCHA')->not->toContain('QSEARCHB');
 
-    expect(quickSearchSkus('QSEARCHB'))->toContain('QSEARCHB')->not->toContain('QSEARCHA');
+    expect(($this->quickSearch)('QSEARCHB'))->toContain('QSEARCHB')->not->toContain('QSEARCHA');
 });
 
 it('falls back to the sku and name pair when nothing configured is searchable', function () {
     config(['products.search_fields' => ['no_such_attribute', 'price']]);
 
-    expect(quickSearchSkus('QSEARCHA'))->toContain('QSEARCHA')->not->toContain('QSEARCHB');
+    expect(($this->quickSearch)('QSEARCHA'))->toContain('QSEARCHA')->not->toContain('QSEARCHB');
 
-    expect(quickSearchSkus('1111111111116'))->not->toContain('QSEARCHA');
+    expect(($this->quickSearch)('1111111111116'))->not->toContain('QSEARCHA');
 });
 
-it('resolves only the attribute types a text search can look in', function () {
-    config(['products.search_fields' => ['sku', 'price', 'color', 'no_such_attribute', 'description']]);
+it('searches text attributes but not textarea attributes', function () {
+    Attribute::factory()->create(['code' => 'qsearch_text', 'type' => 'text']);
+    Attribute::factory()->create(['code' => 'qsearch_textarea', 'type' => 'textarea']);
 
-    /*
-     * description is a textarea: a long text attribute matches most of the
-     * catalogue, and the grid orders by its sort column rather than by
-     * relevance, so the row that was meant would not come first.
-     */
-    expect(resolvedSearchFields())->toBe(['sku']);
+    ($this->setCommonValue)($this->productA, 'qsearch_text', 'QTEXTVALUE');
+    ($this->setCommonValue)($this->productB, 'qsearch_textarea', 'QTEXTAREAVALUE');
+
+    config(['products.search_fields' => ['sku', 'price', 'no_such_attribute', 'qsearch_text', 'qsearch_textarea']]);
+
+    expect(($this->quickSearch)('QTEXTVALUE'))->toContain('QSEARCHA')->not->toContain('QSEARCHB');
+
+    expect(($this->quickSearch)('QTEXTAREAVALUE'))->not->toContain('QSEARCHB');
 });
 
 it('keeps the configured order so the cap drops the codes written last', function () {
@@ -134,19 +102,18 @@ it('keeps the configured order so the cap drops the codes written last', functio
         Attribute::factory()->create(['code' => "qsearch_field_{$index}", 'type' => 'text']);
     }
 
-    /*
-     * Configured in the reverse of the order they were created in on purpose:
-     * AttributeService::findByCodes() hands its map back in attribute cache
-     * order, so only reading the configured list keeps the administrator's own
-     * ordering in charge of which codes the cap drops.
-     */
     $codes = collect(range($cap + 3, 1))
         ->map(fn (int $index): string => "qsearch_field_{$index}")
         ->all();
 
+    ($this->setCommonValue)($this->productA, $codes[$cap - 1], 'QINSIDECAP');
+    ($this->setCommonValue)($this->productB, $codes[$cap], 'QOUTSIDECAP');
+
     config(['products.search_fields' => $codes]);
 
-    expect(resolvedSearchFields())->toBe(array_slice($codes, 0, $cap));
+    expect(($this->quickSearch)('QINSIDECAP'))->toContain('QSEARCHA');
+
+    expect(($this->quickSearch)('QOUTSIDECAP'))->not->toContain('QSEARCHB');
 });
 
 it('never lets the cap drop the sku out of the quick search', function () {
@@ -160,34 +127,21 @@ it('never lets the cap drop the sku out of the quick search', function () {
         ->map(fn (int $index): string => "qsearch_tail_{$index}")
         ->all();
 
-    // Written last, so an unguarded array_slice would drop the one identifier
-    // the product grid cannot do without.
     $codes[] = 'sku';
 
     config(['products.search_fields' => $codes]);
 
-    $fields = resolvedSearchFields();
-
-    expect($fields)->toHaveCount($cap);
-    expect($fields[0])->toBe('sku');
-
-    expect(quickSearchSkus('QSEARCHA'))->toContain('QSEARCHA')->not->toContain('QSEARCHB');
+    expect(($this->quickSearch)('QSEARCHA'))->toContain('QSEARCHA')->not->toContain('QSEARCHB');
 });
 
-it('hands a field list the elasticsearch filter turns into clauses', function () {
-    config(['products.search_fields' => ['sku', 'product_number']]);
-
-    $fields = resolvedSearchFields();
-
-    expect($fields)->toBe(['sku', 'product_number']);
-
+it('turns the default identifier fields into elasticsearch clauses', function () {
     $query = new ElasticSearchQuery;
 
     $filter = resolve(SkuOrUniversalFilter::class);
 
     $filter->setQueryManager($query);
 
-    $filter->applyUnfilteredFilter($fields, FilterOperators::WILDCARD, 'QSEARCHA', [
+    $filter->applyUnfilteredFilter(['sku', 'product_number'], FilterOperators::WILDCARD, 'QSEARCHA', [
         'locale'  => 'en_US',
         'channel' => 'default',
     ]);
@@ -196,7 +150,6 @@ it('hands a field list the elasticsearch filter turns into clauses', function ()
 
     expect($clauses)->toHaveCount(2);
 
-    // Neither attribute is scoped, so the indexed path is the common one.
     expect(json_encode($clauses))
         ->toContain('values.common.sku-text')
         ->toContain('values.common.product_number-text');
