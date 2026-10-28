@@ -12,7 +12,7 @@
         <div class="flex min-w-0 shrink gap-x-1">
             <div
                 class="flex w-full items-center gap-x-1"
-                v-if="applied.massActions.indices.length"
+                v-if="selectedCount"
             >
                 <x-admin::dropdown>
                     <x-slot:toggle>

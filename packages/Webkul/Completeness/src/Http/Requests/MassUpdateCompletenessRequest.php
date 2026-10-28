@@ -38,8 +38,8 @@ class MassUpdateCompletenessRequest extends FormRequest
             return $this->selectedIds(AttributeCompletenessDataGrid::class);
         }
 
-        return app(AttributeCompletenessDataGrid::class)
+        return resolve(AttributeCompletenessDataGrid::class)
             ->setAttributeFamilyId($this->integer('familyId'))
-            ->getMatchingIds();
+            ->getSelectedIds();
     }
 }
