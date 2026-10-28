@@ -73,11 +73,16 @@ class AgentRunner
         $tokensUsed = $usage->inputTokens + $usage->outputTokens;
 
         $result = [
-            'reply'  => $response->text ?: trans('ai-agent::app.common.operation-completed'),
+            'reply' => app(ReplyGuard::class)->apply(
+                $response->text ?: trans('ai-agent::app.common.operation-completed'),
+                collect($response->toolResults)->pluck('name')->all(),
+                $context->history,
+            ),
             'action' => 'agent_response',
             'data'   => [
-                'steps'       => $response->steps->count(),
-                'tokens_used' => $tokensUsed,
+                'steps'         => $response->steps->count(),
+                'tokens_used'   => $tokensUsed,
+                'cached_tokens' => $usage->cacheReadInputTokens ?? 0,
             ],
         ];
 
@@ -91,7 +96,9 @@ class AgentRunner
      *
      * Sends progress events during tool execution, then streams the final
      * text response. Subscribes to laravel/ai stream events (ToolCall,
-     * TextDelta) to provide real-time feedback to the chat widget.
+     * TextDelta) to provide real-time feedback to the chat widget. The
+     * `complete` event carries the checked final reply, which replaces the
+     * streamed text.
      */
     public function runStreaming(ChatContext $context): StreamedResponse
     {
@@ -105,115 +112,10 @@ class AgentRunner
 
             $this->disableOutputBuffering();
 
-            $statusMsg = $context->hasImages()
-                ? trans('ai-agent::app.common.status-analyzing-image')
-                : trans('ai-agent::app.common.status-thinking');
-            $this->sendSSE('status', ['message' => $statusMsg]);
-
             try {
-                $aiProvider = AiProvider::from($context->platform->provider);
-
-                $result = ScopedProviderConfig::run(
-                    $aiProvider->configKey(),
-                    $this->providerOverrides($context),
-                    function () use ($context, $aiProvider): array {
-                        $agent = $this->buildAgent($context);
-
-                        $stream = $agent->stream(
-                            $context->message,
-                            attachments: $this->buildAttachments($context),
-                            provider: $aiProvider->toLab(),
-                            model: $context->model,
-                            timeout: 120,
-                        );
-
-                        $textBuffer = '';
-                        $stepCount = 0;
-                        $statusSent = false;
-
-                        foreach ($stream as $event) {
-                            if ($event instanceof ToolResultEvent
-                                && $event->successful && ! $event->preliminary
-                                && ! $event->toolResult->failed && ! $event->toolResult->denied) {
-                                $raw = $event->toolResult->result;
-                                $partial = [];
-                                $this->mergeActionPayload(
-                                    is_string($raw) || $raw instanceof \Stringable ? json_decode((string) $raw, true) : null,
-                                    $partial,
-                                );
-                                if ($partial !== []) {
-                                    $this->sendSSE('tool_result', $partial);
-                                }
-                            }
-
-                            if ($event instanceof ToolCall) {
-                                $stepCount++;
-                                $this->sendSSE('tool_call', [
-                                    'step' => $stepCount,
-                                    'tool' => $event->toolCall->name,
-                                ]);
-
-                                continue;
-                            }
-
-                            if ($event instanceof TextDelta) {
-                                if (! $statusSent && $stepCount > 0) {
-                                    $this->sendSSE('status', ['message' => trans('ai-agent::app.common.status-generating')]);
-                                    $statusSent = true;
-                                }
-
-                                $textBuffer .= $event->delta;
-                                $this->sendSSE('text_delta', ['chunk' => $event->delta]);
-                            }
-                        }
-
-                        // After stream completes, the StreamableAgentResponse holds
-                        // final usage + text. Fall back to buffer if usage is null.
-                        $finalText = $stream->text ?: $textBuffer ?: trans('ai-agent::app.common.operation-completed');
-                        $usage = $stream->usage;
-                        $tokensUsed = ($usage?->inputTokens ?? 0) + ($usage?->outputTokens ?? 0);
-
-                        $this->recordStreamingTokens($context, $tokensUsed);
-
-                        $result = [
-                            'reply'  => $finalText,
-                            'action' => 'agent_response',
-                            'data'   => [
-                                'steps'       => $stepCount,
-                                'tokens_used' => $tokensUsed,
-                            ],
-                        ];
-
-                        $this->extractStreamActionResults($stream, $result, $context);
-
-                        return $result;
-                    },
-                );
-
-                // Already streamed as text_delta; strip from final payload.
-                unset($result['reply']);
-                $this->sendSSE('complete', $result);
+                $this->sendSSE('complete', $this->generate($context, fn (string $event, array $data) => $this->sendSSE($event, $data)));
             } catch (\Throwable $e) {
-                $resolved = AiErrorResolver::resolve($e);
-                $rejectsImages = AiErrorResolver::rejectsImageInput($e);
-
-                if ($rejectsImages) {
-                    resolve(ChatUploadStore::class)->forgetImages($context->uploadedImagePaths);
-                }
-
-                if ($resolved['is_known']) {
-                    Log::warning('AI Agent stream provider error', [
-                        'type'    => $e::class,
-                        'message' => $e->getMessage(),
-                    ]);
-                } else {
-                    Log::error('AI Agent stream error', ['exception' => $e]);
-                }
-
-                $this->sendSSE('error', [
-                    'message'        => $resolved['message'],
-                    'discard_images' => $rejectsImages,
-                ]);
+                $this->sendSSE('error', $this->handleGenerationError($e, $context));
             }
         }, 200, [
             'Content-Type'      => 'text/event-stream',
@@ -221,6 +123,146 @@ class AgentRunner
             'Connection'        => 'keep-alive',
             'X-Accel-Buffering' => 'no',
         ]);
+    }
+
+    /**
+     * Run the agent for one chat turn and report progress through $emit.
+     *
+     * The live SSE stream and the queued ChatReplyJob (which persists the reply
+     * so it survives a page reload) share this single generation loop. $emit
+     * receives (string $event, array $data) for these events:
+     *   status      {message}     a human status label
+     *   tool_call   {step, tool}  a tool invocation
+     *   tool_result {...}         action payload of a completed tool
+     *   text_delta  {chunk}       a chunk of assistant text
+     *
+     * The text is streamed before the turn is complete, so the final reply
+     * returned here (after ReplyGuard) can differ from the streamed deltas and
+     * must replace them.
+     *
+     * @param  int  $timeout  Per-request provider timeout in seconds.
+     * @return array{reply: string, action: string, data: array<string, mixed>}
+     */
+    public function generate(ChatContext $context, callable $emit, int $timeout = 120): array
+    {
+        $emit('status', ['message' => $context->hasImages()
+            ? trans('ai-agent::app.common.status-analyzing-image')
+            : trans('ai-agent::app.common.status-thinking')]);
+
+        $aiProvider = AiProvider::from($context->platform->provider);
+
+        return ScopedProviderConfig::run(
+            $aiProvider->configKey(),
+            $this->providerOverrides($context),
+            function () use ($context, $aiProvider, $emit, $timeout): array {
+                $stream = $this->buildAgent($context)->stream(
+                    $context->message,
+                    attachments: $this->buildAttachments($context),
+                    provider: $aiProvider->toLab(),
+                    model: $context->model,
+                    timeout: $timeout,
+                );
+
+                $textBuffer = '';
+                $stepCount = 0;
+                $statusSent = false;
+                $toolsUsed = [];
+
+                foreach ($stream as $event) {
+                    if ($event instanceof ToolResultEvent
+                        && $event->successful && ! $event->preliminary
+                        && ! $event->toolResult->failed && ! $event->toolResult->denied) {
+                        $raw = $event->toolResult->result;
+                        $partial = [];
+                        $this->mergeActionPayload(
+                            is_string($raw) || $raw instanceof \Stringable ? json_decode((string) $raw, true) : null,
+                            $partial,
+                        );
+
+                        if ($partial !== []) {
+                            $emit('tool_result', $partial);
+                        }
+                    }
+
+                    if ($event instanceof ToolCall) {
+                        $stepCount++;
+                        $toolsUsed[] = $event->toolCall->name;
+                        $emit('tool_call', [
+                            'step' => $stepCount,
+                            'tool' => $event->toolCall->name,
+                        ]);
+
+                        continue;
+                    }
+
+                    if ($event instanceof TextDelta) {
+                        if (! $statusSent && $stepCount > 0) {
+                            $emit('status', ['message' => trans('ai-agent::app.common.status-generating')]);
+                            $statusSent = true;
+                        }
+
+                        $textBuffer .= $event->delta;
+                        $emit('text_delta', ['chunk' => $event->delta]);
+                    }
+                }
+
+                $usage = $stream->usage;
+                $tokensUsed = ($usage?->inputTokens ?? 0) + ($usage?->outputTokens ?? 0);
+                $cachedTokens = $usage?->cacheReadInputTokens ?? 0;
+
+                $this->recordStreamingTokens($context, $tokensUsed, $cachedTokens);
+
+                $result = [
+                    'reply' => app(ReplyGuard::class)->apply(
+                        $stream->text ?: $textBuffer ?: trans('ai-agent::app.common.operation-completed'),
+                        $toolsUsed,
+                        $context->history,
+                    ),
+                    'action' => 'agent_response',
+                    'data'   => [
+                        'steps'         => $stepCount,
+                        'tokens_used'   => $tokensUsed,
+                        'cached_tokens' => $cachedTokens,
+                    ],
+                ];
+
+                $this->extractStreamActionResults($stream, $result, $context);
+
+                return $result;
+            },
+        );
+    }
+
+    /**
+     * Log a failed generation, drop stored images the model refused, and
+     * return the error payload shown to the user.
+     *
+     * A known provider error is logged as a warning, anything else as an error.
+     *
+     * @return array{message: string, discard_images: bool}
+     */
+    public function handleGenerationError(\Throwable $e, ChatContext $context): array
+    {
+        $resolved = AiErrorResolver::resolve($e);
+        $rejectsImages = AiErrorResolver::rejectsImageInput($e);
+
+        if ($rejectsImages) {
+            resolve(ChatUploadStore::class)->forgetImages($context->uploadedImagePaths);
+        }
+
+        if ($resolved['is_known']) {
+            Log::warning('AI Agent stream provider error', [
+                'type'    => $e::class,
+                'message' => $e->getMessage(),
+            ]);
+        } else {
+            Log::error('AI Agent stream error', ['exception' => $e]);
+        }
+
+        return [
+            'message'        => $resolved['message'],
+            'discard_images' => $rejectsImages,
+        ];
     }
 
     /**
@@ -272,9 +314,9 @@ class AgentRunner
     /**
      * Record token usage from streaming requests for budget enforcement.
      */
-    protected function recordStreamingTokens(ChatContext $context, int $tokensUsed): void
+    protected function recordStreamingTokens(ChatContext $context, int $tokensUsed, int $cachedTokens = 0): void
     {
-        resolve(TokenUsageRecorder::class)->record($context->user?->id, $tokensUsed);
+        resolve(TokenUsageRecorder::class)->record($context->user?->id, $tokensUsed, $cachedTokens);
     }
 
     /**
@@ -342,8 +384,11 @@ Core Rules:
 - For image editing: use edit_image with the product SKU — it fetches the image from the product, edits it with AI, and saves it back. For gallery attributes, specify image_index. For generating new images from text: use generate_image.
 - If a tool returns a permission error, explain to the user what permission they need.
 - When displaying product search results, ALWAYS include the edit_url as a clickable markdown link using the product name as the link text, e.g. [Nike Air Max 270](edit_url). This lets users click the product name to open the edit page directly.
+- SHOWING IMAGES: You can display images inline with markdown: ![description](image_url). Use ONLY an image URL you actually obtained from a tool result for a REAL product in this catalog: the exact media path returned by get_product_details (render it as {app_url}/storage/{that exact path}), or the download_url returned by generate_image / edit_image / export_products. NEVER invent, guess, or derive an image path/filename from a SKU or product name, and never show an image for a product you have not fetched with a tool. If a fetched product has no image value, tell the user it has no image instead of fabricating a URL. NEVER present a product (SKU, name, price, or image) that did not come from a tool result — do not make products up; if a search returns nothing, say so.
 - IMPORTANT: Follow the APPROVAL MODE instructions below for when to ask confirmation vs. execute directly.
 PROMPT;
+
+        $prompt = str_replace('{app_url}', rtrim((string) config('app.url'), '/'), $prompt);
 
         $prompt .= "\n\n".$this->buildToolGroupsSection();
 
@@ -432,7 +477,7 @@ You may ONLY suggest changes — never execute them.
 1. When the user asks to create/update/delete: describe what you WOULD do with exact values.
 2. Do NOT call any write tools ({$writeTools}).
 3. Only use read-only tools: {$readTools}.
-4. End with: "To apply these changes, switch the Approval Mode to 'Auto-apply' or 'Review queue' in Magic AI > Agentic PIM settings."
+4. End with: "To apply these changes, switch the Approval Mode to 'Confirm & apply' or 'Strict confirm' in Magic AI > Agentic PIM settings."
 MODE;
         }
 

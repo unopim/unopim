@@ -15,6 +15,10 @@ use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\ChatUploadStore;
 use Webkul\AiAgent\Chat\ExtensionRegistry;
 use Webkul\AiAgent\Http\Requests\ChatRequest;
+use Webkul\AiAgent\Jobs\ChatReplyJob;
+use Webkul\AiAgent\Models\ChatReply;
+use Webkul\AiAgent\Repositories\ChatReplyRepository;
+use Webkul\AiAgent\Services\TokenUsageRecorder;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
 use Webkul\MagicAI\Services\ManagedPlatform;
@@ -57,8 +61,11 @@ class ChatController extends Controller
         try {
             $result = $this->agentRunner->run($chatContext);
 
-            // Track token usage for budget enforcement
-            $this->recordTokenUsage($chatContext, $result['data']['tokens_used'] ?? 0);
+            $this->recordTokenUsage(
+                $chatContext,
+                $result['data']['tokens_used'] ?? 0,
+                $result['data']['cached_tokens'] ?? 0,
+            );
 
             return new JsonResponse($result);
         } catch (Throwable $e) {
@@ -102,6 +109,103 @@ class ChatController extends Controller
         }
 
         return $this->agentRunner->runStreaming($chatContext);
+    }
+
+    /**
+     * Start generating a reply on the queue and return its id immediately.
+     *
+     * ChatReplyJob writes the reply into its ai_agent_chat_replies row as it
+     * streams, so it survives a full page reload: the widget polls
+     * replyStatus() and resumes on the next page instead of holding an SSE
+     * connection that navigation would close. A platform that is not stored
+     * (an extension provider) cannot be rebuilt on a worker, so the widget is
+     * told to stream instead (409).
+     */
+    public function sendAsync(ChatRequest $request): JsonResponse
+    {
+        $chatContext = $this->buildChatContext($request);
+
+        if ($chatContext instanceof JsonResponse) {
+            return $chatContext;
+        }
+
+        if (! $chatContext->platform->exists) {
+            return new JsonResponse(['reply_id' => null], 409);
+        }
+
+        $reply = resolve(ChatReplyRepository::class)->create([
+            'user_id'         => $chatContext->user?->id,
+            'conversation_id' => $chatContext->conversationId,
+            'status'          => ChatReply::STATUS_QUEUED,
+        ]);
+
+        ChatReplyJob::dispatch($reply->id, [
+            'message'            => $chatContext->message,
+            'history'            => $chatContext->history,
+            'productId'          => $chatContext->productId,
+            'productSku'         => $chatContext->productSku,
+            'productName'        => $chatContext->productName,
+            'locale'             => $chatContext->locale,
+            'channel'            => $chatContext->channel,
+            'platform_id'        => $chatContext->platform->id,
+            'model'              => $chatContext->model,
+            'uploadedImagePaths' => $chatContext->uploadedImagePaths,
+            'uploadedFilePaths'  => $chatContext->uploadedFilePaths,
+            'currentPage'        => $chatContext->currentPage,
+            'admin_id'           => $chatContext->user?->id,
+            'conversationId'     => $chatContext->conversationId,
+            'requestId'          => $chatContext->requestId,
+            'hasNewImages'       => $chatContext->hasNewImages,
+            'extensions'         => $chatContext->extensions,
+        ]);
+
+        return new JsonResponse(['reply_id' => $reply->id, 'status' => ChatReply::STATUS_QUEUED]);
+    }
+
+    /**
+     * Poll one of the admin's async replies: status and the text so far.
+     *
+     * Another admin's reply id answers 404, the same as an unknown id.
+     */
+    public function replyStatus(string $id): JsonResponse
+    {
+        abort_unless(bouncer()->hasPermission('ai-agent'), 403, trans('admin::app.common.unauthorized'));
+
+        $reply = resolve(ChatReplyRepository::class)->findForUser($id, (int) auth()->guard('admin')->id());
+
+        if (! $reply) {
+            return new JsonResponse([
+                'status' => ChatReply::STATUS_ERROR,
+                'error'  => trans('ai-agent::app.common.reply-not-found'),
+                'done'   => true,
+            ], 404);
+        }
+
+        return new JsonResponse([
+            'status'       => $reply->status,
+            'content'      => $reply->content ?? '',
+            'agent_status' => $reply->agent_status,
+            'actions'      => $reply->actions,
+            'tokens_used'  => $reply->tokens_used,
+            'error'        => $reply->error,
+            'done'         => $reply->isFinished(),
+        ]);
+    }
+
+    /**
+     * Cancel one of the admin's replies that no worker has picked up yet.
+     *
+     * The widget calls this when a reply stays queued (no queue worker is
+     * running) and then streams the turn instead. `cancelled` is false once a
+     * worker claimed the reply; the widget then keeps polling.
+     */
+    public function cancelReply(string $id): JsonResponse
+    {
+        abort_unless(bouncer()->hasPermission('ai-agent'), 403, trans('admin::app.common.unauthorized'));
+
+        return new JsonResponse([
+            'cancelled' => resolve(ChatReplyRepository::class)->cancelQueued($id, (int) auth()->guard('admin')->id()),
+        ]);
     }
 
     /**
@@ -256,36 +360,9 @@ class ChatController extends Controller
     /**
      * Record token usage for budget tracking.
      */
-    protected function recordTokenUsage(ChatContext $context, int $tokensUsed): void
+    protected function recordTokenUsage(ChatContext $context, int $tokensUsed, int $cachedTokens = 0): void
     {
-        if ($tokensUsed <= 0) {
-            return;
-        }
-
-        DB::transaction(function () use ($context, $tokensUsed): void {
-            $row = DB::table('ai_agent_token_usage')
-                ->where('user_id', $context->user?->id)
-                ->where('usage_date', now()->toDateString())
-                ->lockForUpdate()
-                ->first();
-
-            if ($row) {
-                DB::table('ai_agent_token_usage')->where('id', $row->id)->update([
-                    'tokens_used'   => $row->tokens_used + $tokensUsed,
-                    'request_count' => $row->request_count + 1,
-                    'updated_at'    => now(),
-                ]);
-            } else {
-                DB::table('ai_agent_token_usage')->insert([
-                    'user_id'       => $context->user?->id,
-                    'usage_date'    => now()->toDateString(),
-                    'tokens_used'   => $tokensUsed,
-                    'request_count' => 1,
-                    'created_at'    => now(),
-                    'updated_at'    => now(),
-                ]);
-            }
-        });
+        resolve(TokenUsageRecorder::class)->record($context->user?->id, $tokensUsed, $cachedTokens);
     }
 
     /**
