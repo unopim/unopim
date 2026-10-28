@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Database\Connection;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -27,7 +28,7 @@ function indexNames(string $table): array
 
 function reportedName(string $index): string
 {
-    return strtolower(PrefixedIndexNameBlueprint::nameFor(DB::getTablePrefix(), $index));
+    return strtolower(PrefixedIndexNameBlueprint::nameFor(PrefixedIndexNameBlueprint::indexPrefix(), $index));
 }
 
 it('builds every schema blueprint as the prefixed index name blueprint', function () {
@@ -47,6 +48,22 @@ it('puts the table prefix in front of an explicit index name', function () {
     expect(PrefixedIndexNameBlueprint::nameFor('3X_', 'unique_code_attribute_id_index'))
         ->toBe('3X_unique_code_attribute_id_index');
 });
+
+it('does not put the table prefix in front of a name that already starts with it', function () {
+    expect(PrefixedIndexNameBlueprint::nameFor('3X_', '3X_conn_products_sku_index'))
+        ->toBe('3X_conn_products_sku_index');
+});
+
+it('follows the prefix_indexes setting of the connection', function (bool $prefixIndexes, string $expected) {
+    $connection = Mockery::mock(Connection::class);
+    $connection->allows('getConfig')->with('prefix_indexes')->andReturn($prefixIndexes);
+    $connection->allows('getTablePrefix')->andReturn('3X_');
+
+    expect(PrefixedIndexNameBlueprint::indexPrefix($connection))->toBe($expected);
+})->with([
+    'prefixed'   => [true, '3X_'],
+    'unprefixed' => [false, ''],
+]);
 
 it('shortens a prefixed index name to the identifier limit the same way every time', function () {
     $name = 'attribute_family_translations_name_locale_attribute_family_id';

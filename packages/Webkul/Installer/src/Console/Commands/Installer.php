@@ -17,6 +17,7 @@ use Webkul\Installer\Events\ComposerEvents;
 use Webkul\Installer\Helpers\DatabaseManager;
 use Webkul\Installer\Helpers\DemoDataInstaller;
 
+use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\multisearch;
 use function Laravel\Prompts\multiselect;
 use function Laravel\Prompts\password;
@@ -144,6 +145,13 @@ class Installer extends Command
         }
 
         $this->warn('Step: Dropping existing tables for table prefix '.(DB::getTablePrefix() ?: '(none)').'...');
+
+        if (! $this->confirmDroppingTables(resolve(DatabaseManager::class)->currentPrefixTables())) {
+            $this->error('Installation aborted. No tables were dropped.');
+
+            return;
+        }
+
         resolve(DatabaseManager::class)->dropCurrentPrefixTables();
 
         $this->warn('Step: Migrating all tables...');
@@ -247,6 +255,27 @@ class Installer extends Command
         }
 
         return array_values(array_unique($selected));
+    }
+
+    /**
+     * Lists the tables the reinstall drops and lets an interactive user stop it. Without a table prefix
+     * every table no other install claims is in the list, unrelated tables of the same database included.
+     *
+     * @param  array<int, string>  $tables
+     */
+    protected function confirmDroppingTables(array $tables): bool
+    {
+        if ($tables === []) {
+            return true;
+        }
+
+        $this->line('These '.count($tables).' tables will be dropped: '.implode(', ', $tables));
+
+        if (! $this->hasInteractiveTerminal()) {
+            return true;
+        }
+
+        return confirm(label: 'Drop these tables and reinstall?', default: true);
     }
 
     /**

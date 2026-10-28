@@ -172,6 +172,7 @@ jobs:
           sed -i "s|^\(DB_DATABASE=\s*\).*$|\1unopim|" .env
           sed -i "s|^\(DB_USERNAME=\s*\).*$|\1unopim|" .env
           sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1unopim|" .env
+          sed -i "s|^\(DB_PREFIX=\s*\).*$|\13X_|" .env
 
       - name: Running UnoPim Installer
         run: php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data

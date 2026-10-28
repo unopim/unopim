@@ -63,7 +63,7 @@ return new class extends Migration
 
         try {
             $indexNames = array_map(strtolower(...), array_column(Schema::getIndexes($table), 'name'));
-            $prefixedNewName = PrefixedIndexNameBlueprint::nameFor(DB::getTablePrefix(), $newName);
+            $prefixedNewName = PrefixedIndexNameBlueprint::nameFor(PrefixedIndexNameBlueprint::indexPrefix(), $newName);
 
             // New name already exists — nothing to do
             if (in_array(strtolower($prefixedNewName), $indexNames, true)) {

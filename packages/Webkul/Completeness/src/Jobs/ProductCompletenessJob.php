@@ -110,7 +110,7 @@ class ProductCompletenessJob implements ShouldQueue
             $idList = implode(',', array_map(intval(...), array_keys($avgScores)));
 
             foreach ($avgScores as $pid => $score) {
-                $cases .= ' WHEN '.((int) $pid).' THEN '.($score ?? 'NULL');
+                $cases .= ' WHEN '.((int) $pid).' THEN '.($score === null ? 'NULL' : (int) $score);
             }
 
             $productsTable = DB::getQueryGrammar()->wrapTable('products');

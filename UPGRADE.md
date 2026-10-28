@@ -77,6 +77,7 @@ most often bite:
 | AJAX navigation and the global save bar | Browser tests and extensions that assume full-page reloads or old DOM IDs |
 | Variant value storage | Extensions reading `products.values` directly must use `Product::resolvedValues()` |
 | Removed classes and services | `Webkul\FPC`, `spatie/laravel-responsecache`, `ThemeCustomizationRepository`, old webhook settings classes |
+| Prefixed index names | With a `DB_PREFIX` set and `prefix_indexes` on, an explicit index, unique or foreign key name gets the table prefix on fresh installs (`products_type_status_idx` becomes `3X_products_type_status_idx`). Installs that ran a migration before keep the old name. Check names with `PrefixedIndexNameBlueprint::indexExists()` and drop them through the Blueprint `drop*` methods instead of `Schema::hasIndex()`, raw `DROP INDEX` or `information_schema` lookups on a literal name. Names that already start with the prefix are left as they are. |
 
 ### Take a backup you have restored before
 

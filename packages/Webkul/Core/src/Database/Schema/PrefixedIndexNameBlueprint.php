@@ -2,8 +2,8 @@
 
 namespace Webkul\Core\Database\Schema;
 
+use Illuminate\Database\Connection;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class PrefixedIndexNameBlueprint extends Blueprint
@@ -17,12 +17,27 @@ class PrefixedIndexNameBlueprint extends Blueprint
 
     public function prefixIndexName(string $index): string
     {
-        return static::nameFor($this->connection->getTablePrefix(), $index);
+        return static::nameFor(static::indexPrefix($this->connection), $index);
     }
 
+    /**
+     * The prefix explicit index names get: the table prefix, unless the connection turns
+     * `prefix_indexes` off, the same rule Laravel applies to the names it generates.
+     */
+    public static function indexPrefix(?Connection $connection = null): string
+    {
+        $connection ??= Schema::getConnection();
+
+        return $connection->getConfig('prefix_indexes') ? $connection->getTablePrefix() : '';
+    }
+
+    /**
+     * A name that already starts with the prefix is kept as is, so packages that still
+     * prefix their names by hand do not end up with the prefix twice.
+     */
     public static function nameFor(string $prefix, string $index): string
     {
-        if ($prefix === '') {
+        if ($prefix === '' || str_starts_with($index, $prefix)) {
             return $index;
         }
 
@@ -38,7 +53,7 @@ class PrefixedIndexNameBlueprint extends Blueprint
     public static function indexExists(string $table, string $index): bool
     {
         $existing = array_map(strtolower(...), array_column(Schema::getIndexes($table), 'name'));
-        $candidates = [static::nameFor(DB::getTablePrefix(), $index), $index];
+        $candidates = [static::nameFor(static::indexPrefix(), $index), $index];
 
         return array_intersect(array_map(strtolower(...), $candidates), $existing) !== [];
     }
@@ -49,7 +64,7 @@ class PrefixedIndexNameBlueprint extends Blueprint
             return $found;
         }
 
-        $prefixed = static::nameFor(DB::getTablePrefix(), $name);
+        $prefixed = static::nameFor(static::indexPrefix(), $name);
 
         return match ($found) {
             strtolower($prefixed) => $prefixed,

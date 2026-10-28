@@ -2,7 +2,10 @@
 
 namespace Webkul\Installer\Helpers;
 
+use Closure;
 use Exception;
+use Illuminate\Database\Connection;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -150,6 +153,11 @@ class DatabaseManager
 
     }
 
+    /**
+     * Drops the tables of the configured prefix without CASCADE, so PostgreSQL refuses instead of removing
+     * views or keys of other installs that depend on them. MySQL drops with the key checks off, so foreign
+     * keys from tables outside the prefix are looked up first and stop the drop.
+     */
     public function dropCurrentPrefixTables(): void
     {
         $connection = DB::connection();
@@ -161,14 +169,16 @@ class DatabaseManager
             return;
         }
 
-        $tables = $this->currentPrefixTables();
+        $tables = $this->prefixTables();
 
-        if ($tables === []) {
+        if ($tables->isEmpty()) {
             return;
         }
 
+        $this->ensureNoOutsideForeignKeys($connection, $tables->pluck('name')->all());
+
         $schema->withoutForeignKeyConstraints(fn () => $connection->statement(
-            $connection->getSchemaGrammar()->compileDropAllTables($tables)
+            'drop table '.implode(', ', $connection->getSchemaGrammar()->escapeNames($tables->pluck('schema_qualified_name')->all()))
         ));
     }
 
@@ -177,16 +187,46 @@ class DatabaseManager
      */
     public function currentPrefixTables(): array
     {
+        return $this->prefixTables()->pluck('schema_qualified_name')->all();
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function otherInstallPrefixes(): array
+    {
         $connection = DB::connection();
         $schema = $connection->getSchemaBuilder();
-        $prefix = $connection->getTablePrefix();
+        $migrationsTable = config('database.migrations.table', 'migrations');
+        $comparable = $this->comparableName($connection);
+        $tableNames = collect($schema->getTableListing($schema->getCurrentSchemaListing(), false))->map($comparable);
+
+        return $tableNames
+            ->filter(fn (string $table): bool => str_ends_with($table, $migrationsTable))
+            ->map(fn (string $table): string => substr($table, 0, -strlen($migrationsTable)))
+            ->reject(fn (string $prefix): bool => $prefix === $comparable($connection->getTablePrefix()))
+            ->filter(fn (string $prefix): bool => $tableNames->contains($prefix.'admins')
+                && $this->isMigrationsTable($connection, $prefix.$migrationsTable))
+            ->unique()
+            ->sort()
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @return Collection<int, array<string, mixed>>
+     */
+    protected function prefixTables(): Collection
+    {
+        $connection = DB::connection();
+        $schema = $connection->getSchemaBuilder();
+        $comparable = $this->comparableName($connection);
+        $prefix = $comparable($connection->getTablePrefix());
         $prefixes = [...$this->otherInstallPrefixes(), $prefix];
 
         return collect($schema->getTables($schema->getCurrentSchemaListing()))
-            ->filter(fn (array $table): bool => $this->owningPrefix($table['name'], $prefixes) === $prefix)
-            ->pluck('schema_qualified_name')
-            ->values()
-            ->all();
+            ->filter(fn (array $table): bool => $this->owningPrefix($comparable($table['name']), $prefixes) === $prefix)
+            ->values();
     }
 
     /**
@@ -201,22 +241,56 @@ class DatabaseManager
     }
 
     /**
-     * @return array<int, string>
+     * MySQL and MariaDB store table names in lower case when `lower_case_table_names` is on, so a `3X_`
+     * prefix is then matched against `3x_attributes`. PostgreSQL keeps the case of quoted names.
      */
-    public function otherInstallPrefixes(): array
+    protected function comparableName(Connection $connection): Closure
     {
-        $connection = DB::connection();
-        $schema = $connection->getSchemaBuilder();
-        $migrationsTable = config('database.migrations.table', 'migrations');
+        return $this->ignoresTableNameCase($connection)
+            ? strtolower(...)
+            : fn (string $name): string => $name;
+    }
 
-        return collect($schema->getTableListing($schema->getCurrentSchemaListing(), false))
-            ->filter(fn (string $table): bool => str_ends_with($table, $migrationsTable))
-            ->map(fn (string $table): string => substr($table, 0, -strlen($migrationsTable)))
-            ->reject(fn (string $prefix): bool => $prefix === $connection->getTablePrefix())
-            ->unique()
-            ->sort()
-            ->values()
-            ->all();
+    protected function ignoresTableNameCase(Connection $connection): bool
+    {
+        if ($connection->getDriverName() === 'pgsql') {
+            return false;
+        }
+
+        return (int) $connection->scalar('select @@lower_case_table_names') !== 0;
+    }
+
+    protected function isMigrationsTable(Connection $connection, string $table): bool
+    {
+        $columns = $connection->getPostProcessor()->processColumns(
+            $connection->selectFromWriteConnection($connection->getSchemaGrammar()->compileColumns(null, $table))
+        );
+
+        return array_diff(['migration', 'batch'], array_column($columns, 'name')) === [];
+    }
+
+    /**
+     * @param  array<int, string>  $tables
+     */
+    protected function ensureNoOutsideForeignKeys(Connection $connection, array $tables): void
+    {
+        if ($connection->getDriverName() === 'pgsql') {
+            return;
+        }
+
+        $placeholders = implode(', ', array_fill(0, count($tables), '?'));
+
+        $references = $connection->select(
+            "select distinct TABLE_NAME as table_name, REFERENCED_TABLE_NAME as referenced_table_name
+                from information_schema.KEY_COLUMN_USAGE
+                where TABLE_SCHEMA = database() and REFERENCED_TABLE_SCHEMA = database()
+                and REFERENCED_TABLE_NAME in ({$placeholders}) and TABLE_NAME not in ({$placeholders})",
+            [...$tables, ...$tables]
+        );
+
+        throw_if($references !== [], Exception::class, 'Tables outside the table prefix reference the tables to drop: '.collect($references)
+            ->map(fn (object $reference): string => "{$reference->table_name} -> {$reference->referenced_table_name}")
+            ->implode(', ').'. Remove these foreign keys first.');
     }
 
     /**

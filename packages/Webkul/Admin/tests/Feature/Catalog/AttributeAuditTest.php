@@ -11,7 +11,7 @@ use Webkul\Core\Models\Locale;
 describe('audits composite index', function () {
     it('exists on the audits table covering (tags, history_id)', function () {
         $index = collect(Schema::getIndexes('audits'))
-            ->firstWhere('name', strtolower(PrefixedIndexNameBlueprint::nameFor(DB::getTablePrefix(), 'audits_tags_history_id_index')));
+            ->firstWhere('name', strtolower(PrefixedIndexNameBlueprint::nameFor(PrefixedIndexNameBlueprint::indexPrefix(), 'audits_tags_history_id_index')));
 
         expect($index)->not->toBeNull();
         expect($index['columns'])->toBe(['tags', 'history_id']);
