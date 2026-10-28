@@ -1690,9 +1690,10 @@ app.component('v-agenting-pim', {
 
         /**
          * Sends the message with the catalog scope of the page the user is looking at
-         * (locale/channel query parameters, else the scope inputs). The backend prefers
-         * these codes and otherwise falls back to the default locale, so without them a
-         * locale-scoped edit lands on the wrong translation.
+         * (locale/channel query parameters, else the inputs marked data-catalog-scope,
+         * so an unrelated locale field on a settings form is never sent as scope). The
+         * backend prefers these codes and otherwise falls back to the default locale, so
+         * without them a locale-scoped edit lands on the wrong translation.
          */
         async send(retryRequestId = null) {
             const text = this.inputText.trim();
@@ -1719,10 +1720,10 @@ app.component('v-agenting-pim', {
                 fd.append('context[current_page]', window.location.pathname);
                 const scopeParams = new URLSearchParams(window.location.search);
                 const scopeLocale = scopeParams.get('locale')
-                    || document.querySelector('input[name="locale"]')?.value
+                    || document.querySelector('input[data-catalog-scope][name="locale"]')?.value
                     || '';
                 const scopeChannel = scopeParams.get('channel')
-                    || document.querySelector('input[name="channel"]')?.value
+                    || document.querySelector('input[data-catalog-scope][name="channel"]')?.value
                     || '';
                 if (scopeLocale) fd.append('context[locale]', scopeLocale);
                 if (scopeChannel) fd.append('context[channel]', scopeChannel);

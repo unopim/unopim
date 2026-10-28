@@ -117,7 +117,7 @@ test('actual send retains hidden model and snapshots composer attachments', asyn
 
 test('actual send forwards the catalog scope of the page', async () => {
     let request;
-    const inputs = {'input[name="channel"]': {value: 'mobile'}};
+    const inputs = {'input[data-catalog-scope][name="channel"]': {value: 'mobile'}};
     const {widget: w} = widget([], {
         window: {location: {pathname: '/fixture', search: '?locale=de_DE'}, addEventListener() {}, removeEventListener() {}},
         document: {hidden: false, querySelector: selector => inputs[selector] ?? null, addEventListener() {}, removeEventListener() {}},
@@ -129,6 +129,21 @@ test('actual send forwards the catalog scope of the page', async () => {
     await Promise.resolve();
     assert.equal(request.body.get('context[locale]'), 'de_DE');
     assert.equal(request.body.get('context[channel]'), 'mobile');
+});
+
+test('actual send ignores locale and channel fields not marked as catalog scope', async () => {
+    let request;
+    const inputs = {'input[name="locale"]': {value: 'fr_FR'}, 'input[name="channel"]': {value: 'mobile'}};
+    const {widget: w} = widget([], {
+        document: {hidden: false, querySelector: selector => inputs[selector] ?? null, addEventListener() {}, removeEventListener() {}},
+        fetch: (url, options) => { request = options; return new Promise(() => {}); },
+    });
+    w.inputText = 'hello'; w.activeSessionId = 'fixture-conversation';
+    w.resetTextarea = w.scrollBottom = () => {};
+    void w.send();
+    await Promise.resolve();
+    assert.equal(request.body.has('context[locale]'), false);
+    assert.equal(request.body.has('context[channel]'), false);
 });
 
 test('actual send omits the catalog scope when the page has none', async () => {
