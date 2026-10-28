@@ -4,6 +4,7 @@ namespace Webkul\Admin\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\UploadedFile;
+use Webkul\Admin\Helpers\CustomCss;
 use Webkul\Core\Rules\FileMimeExtensionMatch;
 
 class AppearanceForm extends FormRequest
@@ -43,6 +44,7 @@ class AppearanceForm extends FormRequest
             'logo_image.*' => $logoImageRules,
             'favicon'      => $this->file('favicon') instanceof UploadedFile ? $faviconRules : ['nullable'],
             'favicon.*'    => $faviconRules,
+            'custom_css'   => ['nullable', 'string', 'max:'.CustomCss::MAX_LENGTH],
         ];
     }
 
