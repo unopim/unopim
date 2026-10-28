@@ -144,18 +144,21 @@ it('rejects a date filter that is not in the Y-m-d format with 422', function ()
     ]))->assertUnprocessable();
 });
 
-it('filters products by EMPTY and NOT EMPTY', function () {
+it('treats a blank string and a missing value as EMPTY', function () {
     $attribute = ($this->makeAttribute)('text');
+    $stamp = ['updated_at' => '2032-07-01 00:00:00'];
 
-    ($this->makeProduct)('EMPTY-FILLED', ['common' => [$attribute->code => 'something']]);
-    ($this->makeProduct)('EMPTY-BLANK', []);
+    ($this->makeProduct)('EMPTY-FILLED', ['common' => [$attribute->code => 'something']], $stamp);
+    ($this->makeProduct)('EMPTY-BLANK', ['common' => [$attribute->code => '']], $stamp);
+    ($this->makeProduct)('EMPTY-MISSING', [], $stamp);
 
-    expect(($this->listSkus)([$attribute->code => [['operator' => 'NOT EMPTY']]]))
+    $window = ['updated_at' => [['operator' => 'BETWEEN', 'value' => ['2032-06-30 00:00:00', '2032-07-02 00:00:00']]]];
+
+    expect(($this->listSkus)([$attribute->code => [['operator' => 'NOT EMPTY']]] + $window))
         ->toBe(['EMPTY-FILLED']);
 
-    expect(($this->listSkus)([$attribute->code => [['operator' => 'EMPTY']]]))
-        ->toContain('EMPTY-BLANK')
-        ->not->toContain('EMPTY-FILLED');
+    expect(($this->listSkus)([$attribute->code => [['operator' => 'EMPTY']]] + $window))
+        ->toBe(['EMPTY-BLANK', 'EMPTY-MISSING']);
 });
 
 it('scopes a localizable attribute filter to the requested locale', function () {
