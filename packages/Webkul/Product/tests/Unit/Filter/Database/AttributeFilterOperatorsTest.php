@@ -91,10 +91,11 @@ describe('TextFilter supports the operators offered by the product datagrid', fu
             ->and($queryBuilder->getBindings())->toContain('shirt');
     });
 
-    it('negates the match for not in list', function () use ($text) {
+    it('negates the whole match for not in list so every dialect parses it', function () use ($text) {
         $queryBuilder = applyDatabaseFilter(new TextFilter, $text(), FilterOperators::NOT_IN, ['Black']);
 
-        expect($queryBuilder->toSql())->toContain('NOT')
+        expect($queryBuilder->toSql())->toContain('where NOT (')
+            ->and($queryBuilder->toSql())->toEndWith(' ?)')
             ->and($queryBuilder->getBindings())->toContain('Black');
     });
 
