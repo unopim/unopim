@@ -11,7 +11,7 @@
     <title>{{ trans('passport::app.public.title') }}</title>
     @if ($release ?? false)
         <link rel="canonical" href="{{ $release['current_url'] }}">
-        <meta name="robots" content="noindex, noarchive">
+        <meta name="robots" content="noindex, noarchive, nofollow">
     @endif
     @if (! ($preview ?? false) && ! ($release ?? false) && ! $withdrawn && (! empty($payload['identifier']['gtin']) || ! empty($payload['sections'])))
         {{-- Emitted only for a live (Published) passport: a withdrawn/redacted
