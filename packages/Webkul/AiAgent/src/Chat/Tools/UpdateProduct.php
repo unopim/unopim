@@ -62,9 +62,11 @@ class UpdateProduct implements PimTool
              * rejected rather than written elsewhere: German copy landing in en_US
              * because of a typo is worse than no write at all.
              *
-             * A value counts as a locale map only when every key is an active locale,
-             * so {"de_DE": ..., "typo": ...} reaches the type check instead of having
-             * its unmatched entries dropped silently.
+             * A value counts as a locale map only when every key is an active locale.
+             * A map that mixes active locales with other keys, such as
+             * {"de_DE": ..., "typo": ...}, is rejected with the unknown keys and the
+             * active locales named, so the model can correct the payload instead of
+             * retrying it; nothing is dropped silently.
              *
              * Auto-translation is skipped when a locale is named explicitly: setting
              * the German description must not overwrite the other locales with
@@ -132,10 +134,18 @@ class UpdateProduct implements PimTool
                         // Detect and route each locale value to the correct bucket.
                         if (is_array($value) && $value !== []) {
                             $localeKeys = array_keys($value);
-                            $looksLikeLocaleMap = $localeKeys !== [] && array_all(
+                            $unknownLocaleKeys = array_values(array_filter(
                                 $localeKeys,
-                                fn ($localeKey): bool => isset($activeLocaleCodes[(string) $localeKey])
-                            );
+                                fn ($localeKey): bool => ! isset($activeLocaleCodes[(string) $localeKey])
+                            ));
+                            $looksLikeLocaleMap = $unknownLocaleKeys === [];
+
+                            if (! $looksLikeLocaleMap && \count($unknownLocaleKeys) < \count($localeKeys)) {
+                                $errors[] = "{$code}: unknown or inactive locale keys ".implode(', ', $unknownLocaleKeys)
+                                    ." on SKU {$s}; active locales: ".implode(', ', array_keys($activeLocaleCodes));
+
+                                continue;
+                            }
 
                             if ($looksLikeLocaleMap && isset($familyAttributes[$code])) {
                                 $meta = $familyAttributes[$code];
