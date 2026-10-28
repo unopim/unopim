@@ -2,6 +2,7 @@
 
 namespace Webkul\ProductPassport\Services;
 
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Attribute\Contracts\Attribute as AttributeContract;
 use Webkul\Product\Models\Product;
@@ -21,6 +22,11 @@ class PassportPayloadBuilder implements PayloadBuilder
     private const DOCUMENT_TYPES = ['file', 'image'];
 
     private const DEFAULT_SECTION = 'passport';
+
+    /**
+     * How much of a document the copy spool keeps in memory before it spills to a temp file.
+     */
+    private const SPOOL_MEMORY_BYTES = 2 * 1024 * 1024;
 
     public function __construct(
         private readonly PassportTemplateResolver $templates,
@@ -205,13 +211,14 @@ class PassportPayloadBuilder implements PayloadBuilder
             ];
         }
 
-        $copiedPath = $this->copyToAssetDisk($context->uuid, $localeCode, $field->code, $raw);
+        $copied = $this->copyToAssetDisk($context->uuid, $localeCode, $field->code, $raw);
 
         return array_filter([
-            'code'  => $field->code,
-            'label' => $label,
-            'path'  => $copiedPath,
-            'kind'  => $kind,
+            'code'   => $field->code,
+            'label'  => $label,
+            'path'   => $copied['path'] ?? null,
+            'sha256' => $copied['sha256'] ?? null,
+            'kind'   => $kind,
         ], fn ($value): bool => $value !== null);
     }
 
@@ -280,11 +287,25 @@ class PassportPayloadBuilder implements PayloadBuilder
     }
 
     /**
-     * Copies the file from the catalog default disk to the asset disk, stamping the final path into the payload.
+     * Copies the file from the catalog default disk to a content-addressed location on the asset disk,
+     * stamping the final path and the file's digest into the payload.
+     *
+     * The digest is part of the path on purpose. A re-issued file lands beside the previous one instead
+     * of being skipped as "already there", so the payload changes, the checksum changes and Publisher
+     * mints a new version, while every sealed version keeps pointing at the exact bytes it attested.
+     * The basename stays the field code, so the download filename is unchanged. An object already at the
+     * target path holds these exact bytes, so it is never written twice.
+     *
+     * The source is read once into a spool, and both the digest and the written bytes come from that
+     * spool, so they describe the same snapshot even if the source changes meanwhile; memory stays flat
+     * whatever the file size. Returns null, so the document gets no servable path, when the source is
+     * missing or unreadable or the write fails.
      *
      * Must run at build time: PublicationVersion::payload is immutable once the version row exists, so no path can be rewritten later.
+     *
+     * @return array{path: string, sha256: string}|null
      */
-    private function copyToAssetDisk(string $uuid, string $localeCode, string $fieldCode, string $sourcePath): ?string
+    private function copyToAssetDisk(string $uuid, string $localeCode, string $fieldCode, string $sourcePath): ?array
     {
         $source = Storage::disk(config('filesystems.default'));
 
@@ -292,15 +313,70 @@ class PassportPayloadBuilder implements PayloadBuilder
             return null;
         }
 
-        $extension = pathinfo($sourcePath, PATHINFO_EXTENSION);
-        $targetPath = "publication/{$uuid}/{$localeCode}/{$fieldCode}".($extension !== '' ? ".{$extension}" : '');
+        $spool = $this->spool($source, $sourcePath);
 
-        $target = Storage::disk(config('publication.asset_disk'));
-
-        if (! $target->exists($targetPath)) {
-            $target->put($targetPath, $source->get($sourcePath));
+        if ($spool === null) {
+            return null;
         }
 
-        return $targetPath;
+        try {
+            $context = hash_init('sha256');
+
+            hash_update_stream($context, $spool);
+
+            $digest = hash_final($context);
+
+            $extension = pathinfo($sourcePath, PATHINFO_EXTENSION);
+
+            $targetPath = "publication/{$uuid}/{$localeCode}/{$digest}/{$fieldCode}".($extension !== '' ? ".{$extension}" : '');
+
+            $target = Storage::disk(config('publication.asset_disk'));
+
+            if (! $target->exists($targetPath)
+                && (! rewind($spool) || $target->writeStream($targetPath, $spool) === false)) {
+                return null;
+            }
+
+            return ['path' => $targetPath, 'sha256' => $digest];
+        } finally {
+            if (is_resource($spool)) {
+                fclose($spool);
+            }
+        }
+    }
+
+    /**
+     * Reads the file once into a rewound local spool (memory up to SPOOL_MEMORY_BYTES, a temp file beyond).
+     * Null when the file cannot be read.
+     *
+     * @return resource|null
+     */
+    private function spool(Filesystem $disk, string $path)
+    {
+        $stream = $disk->readStream($path);
+
+        if (! is_resource($stream)) {
+            return null;
+        }
+
+        $spool = fopen('php://temp/maxmemory:'.self::SPOOL_MEMORY_BYTES, 'w+b');
+
+        try {
+            $copied = $spool !== false
+                && stream_copy_to_stream($stream, $spool) !== false
+                && rewind($spool);
+        } finally {
+            fclose($stream);
+        }
+
+        if (! $copied) {
+            if (is_resource($spool)) {
+                fclose($spool);
+            }
+
+            return null;
+        }
+
+        return $spool;
     }
 }
