@@ -29,6 +29,10 @@ class FileOrImageValidValue implements ValidationRule
      */
     protected array $storedPaths = [];
 
+    /**
+     * The mimes check defaults to the extension allowlist, since Laravel's
+     * `mimes` rule takes extensions and sniffs the content against them.
+     */
     public function __construct(
         protected bool $isImage = false,
         protected array $allowedMimes = [],
@@ -44,9 +48,7 @@ class FileOrImageValidValue implements ValidationRule
             $this->isImage ? self::IMAGE_ALLOWED_EXTENSIONS : self::FILE_ALLOWED_EXTENSION
         );
 
-        $this->allowedMimes = $allowedMimes ?: (
-            $this->isImage ? self::IMAGE_ALLOWED_EXTENSIONS : self::FILE_ALLOWED_EXTENSION
-        );
+        $this->allowedMimes = $allowedMimes ?: $this->allowedExtensions;
 
         $this->fileExtensionMatchRule = new FileMimeExtensionMatch;
     }
@@ -206,7 +208,7 @@ class FileOrImageValidValue implements ValidationRule
     {
         $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
 
-        if (! in_array($extension, $this->allowedExtensions, true)) {
+        if (MediaContent::isBlockedExtension($extension) || ! in_array($extension, $this->allowedExtensions, true)) {
             return false;
         }
 
@@ -227,7 +229,7 @@ class FileOrImageValidValue implements ValidationRule
     {
         $extension = $value instanceof UploadedFile ? $value->getClientOriginalExtension() : $value->getExtension();
 
-        if ($this->allowedExtensions && ! in_array(strtolower($extension), $this->allowedExtensions, true)) {
+        if (MediaContent::isBlockedExtension($extension) || ($this->allowedExtensions && ! in_array(strtolower($extension), $this->allowedExtensions, true))) {
             $fail('validation.extensions')->translate(['values' => implode(', ', $this->allowedExtensions)]);
 
             return false;
