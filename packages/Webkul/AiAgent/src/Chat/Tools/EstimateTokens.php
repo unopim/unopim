@@ -99,8 +99,9 @@ class EstimateTokens implements PimTool
                 }
 
                 $payload = $estimate + [
-                    'estimated_total_tokens' => $estimate['estimated_input_tokens'] + $estimate['max_output_tokens'],
-                    'note'                   => 'Approximate (~4 chars/token): input from the generate_content prompts of up to '.BulkEnrichmentEstimator::SAMPLE_SIZE.' sampled products, extrapolated to the selection; output is the per-call max_tokens budget, an upper bound. No cost is shown because no per-model pricing is configured.',
+                    'estimated_output_tokens' => $estimate['max_output_tokens'],
+                    'estimated_total_tokens'  => $estimate['estimated_input_tokens'] + $estimate['max_output_tokens'],
+                    'note'                    => 'Approximate (~4 chars/token): input from the generate_content prompts of up to '.BulkEnrichmentEstimator::SAMPLE_SIZE.' sampled products, extrapolated to the selection; output is the per-call max_tokens budget, an upper bound. No cost is shown because no per-model pricing is configured.',
                 ];
 
                 if ($estimate['products'] > BulkEnrichmentEstimator::BULK_THRESHOLD) {

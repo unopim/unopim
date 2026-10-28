@@ -75,7 +75,9 @@ it('does not attach a confirmation estimate for a small request', function () {
 
     $payload = runEstimateTool(3);
 
-    expect($payload)->toHaveKey('estimated_input_tokens')
+    expect($payload)->toHaveKeys(['products', 'sampled', 'estimated_input_tokens', 'estimated_output_tokens', 'estimated_total_tokens', 'note'])
+        ->and($payload['estimated_output_tokens'])->toBe($payload['max_output_tokens'])
+        ->and($payload['estimated_total_tokens'])->toBe($payload['estimated_input_tokens'] + $payload['estimated_output_tokens'])
         ->and($payload)->not->toHaveKey('token_estimate');
 });
 
