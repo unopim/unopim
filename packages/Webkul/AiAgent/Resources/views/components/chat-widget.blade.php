@@ -16,6 +16,20 @@
     // Default panel state for fresh sessions. Stored user preference in
     // sessionStorage still wins — see restoreState() below.
     $openByDefault = (bool) (core()->getConfigData('general.magic_ai.agentic_pim.open_by_default') ?? false);
+
+    // Chat images render inline only from the public storage path on the app's
+    // own host, or from a configured S3/CDN host. Anything else is a link.
+    $appImageHost = parse_url((string) config('app.url'), PHP_URL_HOST) ?: null;
+    $storageImagePath = app(\Webkul\AiAgent\Chat\ReplyGuard::class)->publicStoragePath();
+    $allowedImageHosts = collect([
+        parse_url((string) (config('filesystems.disks.s3.url') ?: ''), PHP_URL_HOST),
+    ])->filter()->unique()->values();
+
+    // Replies run on a queue worker (and survive navigation) only when the
+    // queue driver runs jobs out of the request; otherwise the turn streams
+    // over SSE as before.
+    $asyncReplies = \Webkul\AiAgent\Jobs\ChatReplyJob::runsAsync(config('queue.default'));
+    $replyPollLimitMs = (\Webkul\AiAgent\Jobs\ChatReplyJob::timeoutFor(config('queue.default')) + 30) * 1000;
 @endphp
 
 <v-agenting-pim></v-agenting-pim>
@@ -640,6 +654,9 @@ body.overlay-open .ap-fab { display: none; }
 
 /* AI response text styling */
 .ap-ai-response { word-break: break-word; }
+.ap-ai-response .ap-ai-img { display: block; max-width: 100%; height: auto; margin: 6px 0; border-radius: 8px; border: 1px solid rgb(var(--c-primary-100)); }
+.dark .ap-ai-response .ap-ai-img { border-color: rgb(var(--c-primary-500) / 0.25); }
+.ap-ai-response .ap-ai-img-missing { font-size: 0.85em; font-style: italic; color: rgb(var(--c-primary-400)); }
 .ap-ai-response strong { color: rgb(var(--c-primary-800)); font-weight: 700; }
 .dark .ap-ai-response strong { color: rgb(var(--c-primary-300)); }
 .ap-ai-response code { background: rgb(var(--c-primary-100)); color: rgb(var(--c-primary-700)); padding: 2px 6px; border-radius: 4px; font-size: 0.8em; font-weight: 500; }
@@ -919,6 +936,7 @@ const pickTextModel = (models) => {
     }
     return models[0];
 };
+const AGENTIC_PIM_REPLY_POLL = { intervalMs: 800, queueGraceMs: 6000, maxMs: @json($replyPollLimitMs) };
 const chatRequestId = () => {
     const bytes = crypto.getRandomValues(new Uint8Array(16));
     bytes[6] = (bytes[6] & 15) | 64;
@@ -987,6 +1005,8 @@ app.component('v-agenting-pim', {
             analyzingFiles: `@lang('ai-agent::app.widget.analyzing-files')`,
             thinking: `@lang('ai-agent::app.widget.thinking')`,
             refreshingPage: `@lang('ai-agent::app.widget.refreshing-page')`,
+            imageUnavailable: `@lang('ai-agent::app.widget.image-unavailable')`,
+            imageUnavailableAlt: `@lang('ai-agent::app.widget.image-unavailable-alt')`,
             runningTool: `@lang('ai-agent::app.widget.tool-status.running-tool')`,
             toolStatus: {
                 search_products: `@lang('ai-agent::app.widget.tool-status.search-products')`,
@@ -1056,6 +1076,10 @@ app.component('v-agenting-pim', {
             selectedPlatformId: initialPlatform ? initialPlatform.id : null,
             selectedModel: pickTextModel(initialModels),
             trans: trans,
+            allowedImageHosts: @json($allowedImageHosts),
+            appImageHost: @json($appImageHost),
+            storageImagePath: @json($storageImagePath),
+            asyncReplies: @json($asyncReplies),
             capabilities: [
                 // Row 1: Product creation & updates
                 { key: 'create_from_image', label: `@lang('ai-agent::app.widget.capabilities-list.create-from-image')`, description: `@lang('ai-agent::app.widget.capabilities-list.create-from-image-desc')`,
@@ -1230,6 +1254,9 @@ app.component('v-agenting-pim', {
         if (!this.activeSessionId) {
             this.activeSessionId = this.generateSessionId();
         }
+        this.resumePendingReply();
+        this._imgErrorHandler = (event) => this.replaceBrokenImage(event.target);
+        document.addEventListener('error', this._imgErrorHandler, true);
 
         // The isOpen watcher only fires on change, so the initial-open state
         // (either from sessionStorage or from the config-driven default) needs
@@ -1716,53 +1743,8 @@ app.component('v-agenting-pim', {
                     if (this.productContext.sku) fd.append('context[product_sku]', this.productContext.sku);
                     if (this.productContext.name) fd.append('context[product_name]', this.productContext.name);
                 }
-                // Try SSE streaming first, fallback to blocking JSON endpoint
-                let data = null;
-                try {
-                    const streamRes = await fetch("{{ route('ai-agent.chat.stream') }}", {
-                        method: 'POST',
-                        body: fd,
-                        credentials: 'same-origin',
-                        headers: {
-                            'Accept': 'text/event-stream',
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        },
-                    });
-
-                    const ct = streamRes.headers.get('content-type') || '';
-
-                    if (streamRes.ok && ct.includes('text/event-stream')) {
-                        // SSE streaming works — process the stream
-                        const completed = await this.processStream(streamRes, files);
-                        this.consumeExtensionContext(completed);
-                        return; // processStream handles everything
-                    } else if (streamRes.ok && ct.includes('application/json')) {
-                        data = await streamRes.json();
-                    } else {
-                        throw new Error('stream-fallback');
-                    }
-                } catch (streamErr) {
-                    // Streaming failed — fallback to blocking JSON endpoint
-                    this.streamingStatus = this.trans.processing;
-                    const res = await this.$axios.post("{{ route('ai-agent.chat.send') }}", fd, { headers: { 'Content-Type': 'multipart/form-data' } });
-                    data = res.data;
-                }
-                // Handle JSON response (from either stream JSON or blocking fallback)
-                this.consumeExtensionContext(data);
-                this.pendingFiles = [];
-                this.messages.push({ message_id: chatRequestId(), presentation: data.presentation || null, role: 'assistant', content: data.reply || this.trans.noResponse, action: data.action || null, result: data.result || null, product_url: data.product_url || null, download_url: data.download_url || null });
-
-                // Auto-navigate to the created product page
-                if (data.product_url && this.activeCapability?.key === 'create_from_image') {
-                    this.messages.push({ role: 'assistant', content: this.trans.openingProduct, isRedirect: true });
-                    this.saveState();
-                    setTimeout(() => { window.location.href = data.product_url; }, 1500);
-                } else if (this.shouldAutoRefreshAfterAction(data)) {
-                    this.saveState();
-                    this.streamingStatus = this.trans.refreshingPage;
-                    setTimeout(() => { window.location.reload(); }, 1500);
-                }
+                if (this.asyncReplies && await this.sendQueued(fd, files)) return;
+                await this.streamReply(fd, files);
             } catch (err) {
                 if (files.length > 0 && this.pendingFiles.length === 0) this.pendingFiles = files;
                 if (err.response?.data?.discard_images) this.pendingFiles = this.pendingFiles.filter(f => f.type !== 'image');
@@ -1773,6 +1755,274 @@ app.component('v-agenting-pim', {
                 this.scrollBottom(true);
                 this.focusInput();
             }
+        },
+
+        /**
+         * Stream the turn over SSE, falling back to the blocking JSON endpoint.
+         */
+        async streamReply(fd, files) {
+            // Try SSE streaming first, fallback to blocking JSON endpoint
+            let data = null;
+            try {
+                const streamRes = await fetch("{{ route('ai-agent.chat.stream') }}", {
+                    method: 'POST',
+                    body: fd,
+                    credentials: 'same-origin',
+                    headers: {
+                        'Accept': 'text/event-stream',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    },
+                });
+
+                const ct = streamRes.headers.get('content-type') || '';
+
+                if (streamRes.ok && ct.includes('text/event-stream')) {
+                    // SSE streaming works — process the stream
+                    const completed = await this.processStream(streamRes, files);
+                    this.consumeExtensionContext(completed);
+                    return; // processStream handles everything
+                } else if (streamRes.ok && ct.includes('application/json')) {
+                    data = await streamRes.json();
+                } else {
+                    throw new Error('stream-fallback');
+                }
+            } catch (streamErr) {
+                // Streaming failed — fallback to blocking JSON endpoint
+                this.streamingStatus = this.trans.processing;
+                const res = await this.$axios.post("{{ route('ai-agent.chat.send') }}", fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+                data = res.data;
+            }
+            // Handle JSON response (from either stream JSON or blocking fallback)
+            this.consumeExtensionContext(data);
+            this.pendingFiles = [];
+            this.messages.push({ message_id: chatRequestId(), presentation: data.presentation || null, role: 'assistant', content: data.reply || this.trans.noResponse, action: data.action || null, result: data.result || null, product_url: data.product_url || null, download_url: data.download_url || null });
+
+            // Auto-navigate to the created product page
+            if (data.product_url && this.activeCapability?.key === 'create_from_image') {
+                this.messages.push({ role: 'assistant', content: this.trans.openingProduct, isRedirect: true });
+                this.saveState();
+                setTimeout(() => { window.location.href = data.product_url; }, 1500);
+            } else if (this.shouldAutoRefreshAfterAction(data)) {
+                this.saveState();
+                this.streamingStatus = this.trans.refreshingPage;
+                setTimeout(() => { window.location.reload(); }, 1500);
+            }
+        },
+
+        /**
+         * Generate the reply on a queue worker and poll it, so the reply
+         * survives navigation: the reply id is saved on the placeholder message
+         * and mounted() resumes polling on the next page. A client error from
+         * the enqueue request is thrown for send() to show. Returns false when
+         * the turn should be streamed instead: the enqueue request failed on
+         * the server or network, the platform cannot run on a worker (409), or
+         * no worker picked the reply up in time. After PJAX navigation
+         * unmounted this instance it returns true: the next page resumes a
+         * reply that already has an id, and nothing is streamed for a widget
+         * nobody sees. A placeholder still waiting for its id is removed, and
+         * saveState() never stores an empty placeholder without an id, so the
+         * next page shows no empty bubble.
+         */
+        async sendQueued(fd, files) {
+            const msgIndex = this.messages.length;
+            this.messages.push({ role: 'assistant', content: '', isStreaming: true, replyId: null });
+
+            let response = null;
+            try {
+                response = await fetch("{{ route('ai-agent.chat.send-async') }}", {
+                    method: 'POST',
+                    body: fd,
+                    credentials: 'same-origin',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    },
+                });
+            } catch (e) {}
+
+            const payload = response ? await response.json().catch(() => ({})) : {};
+
+            if (this._unmounted) {
+                this.messages.splice(msgIndex, 1);
+                this.saveState();
+
+                return true;
+            }
+
+            if (! response?.ok || ! payload.reply_id) {
+                this.messages.splice(msgIndex, 1);
+                if (response && response.status >= 400 && response.status < 500 && response.status !== 409) {
+                    throw { response: { status: response.status, data: payload } };
+                }
+                return false;
+            }
+
+            this.pendingFiles = [];
+            this.messages[msgIndex].replyId = payload.reply_id;
+            this.saveState();
+
+            const data = await this.pollReply(payload.reply_id, msgIndex);
+
+            if (this._unmounted) return true;
+
+            if (data?.status === 'cancelled') {
+                this.messages.splice(msgIndex, 1);
+                this.pendingFiles = files;
+                return false;
+            }
+
+            if (data?.status === 'error' && data.actions?.discard_images !== undefined) {
+                this.pendingFiles = files.filter(f => ! data.actions.discard_images || f.type !== 'image');
+            }
+
+            return true;
+        },
+
+        /**
+         * Poll an async reply until it finishes, writing its text into the
+         * placeholder message, then finalize the message. Transient errors are
+         * retried and a 404 ends polling. A reply still queued after the grace
+         * period means no worker is running: it is cancelled and
+         * {status: 'cancelled'} is returned without finalizing. Returns null
+         * when the placeholder was replaced (for example a new session) or the
+         * widget was unmounted by navigation; the instance then stops without
+         * cancelling, finalizing or scheduling a redirect, so the next page's
+         * widget owns the reply.
+         */
+        async pollReply(replyId, msgIndex) {
+            const started = Date.now();
+            let data = { status: 'error', done: true };
+
+            while (Date.now() - started < AGENTIC_PIM_REPLY_POLL.maxMs) {
+                await new Promise(resolve => setTimeout(resolve, AGENTIC_PIM_REPLY_POLL.intervalMs));
+
+                if (this._unmounted || this.messages[msgIndex]?.replyId !== replyId) return null;
+
+                const polled = await this.fetchReply(replyId);
+
+                if (this._unmounted) return null;
+
+                if (! polled) continue;
+
+                if (polled.status === 'queued'
+                    && Date.now() - started > AGENTIC_PIM_REPLY_POLL.queueGraceMs
+                    && await this.cancelReply(replyId)) {
+                    return { status: 'cancelled' };
+                }
+
+                this.showReplyProgress(this.messages[msgIndex], polled);
+
+                if (polled.done) {
+                    data = polled;
+                    break;
+                }
+            }
+
+            this.finalizeReply(msgIndex, data);
+
+            return data;
+        },
+
+        /**
+         * Fetch one poll of an async reply; null on a transient error.
+         */
+        async fetchReply(replyId) {
+            try {
+                return (await this.$axios.get(this.replyUrl(replyId))).data;
+            } catch (e) {
+                return e.response?.status === 404 ? { ...(e.response.data || {}), status: 'error', done: true } : null;
+            }
+        },
+
+        /**
+         * Ask the server to drop a reply no worker picked up; true when it was cancelled.
+         */
+        cancelReply(replyId) {
+            return this.$axios.post(this.replyUrl(replyId, 'cancel')).then(res => res.data?.cancelled === true, () => false);
+        },
+
+        replyUrl(replyId, action = null) {
+            const url = action === 'cancel'
+                ? "{{ route('ai-agent.chat.reply.cancel', ['id' => '__ID__']) }}"
+                : "{{ route('ai-agent.chat.reply', ['id' => '__ID__']) }}";
+
+            return url.replace('__ID__', encodeURIComponent(replyId));
+        },
+
+        /**
+         * Show the text and status of a reply that is still generating. The
+         * job stores a tool call as "tool:<name>" and a status label as is.
+         */
+        showReplyProgress(msg, data) {
+            if (data.content && msg) {
+                msg.content = data.content;
+                this.scrollBottom();
+            }
+
+            const status = data.agent_status || '';
+
+            if (status) {
+                this.streamingStatus = status.startsWith('tool:') ? this.toolStatusLabel(status.slice(5)) : status;
+            }
+        },
+
+        /**
+         * Turn the polled placeholder into the finished message and run the
+         * same post-action navigation or refresh as a streamed reply.
+         */
+        finalizeReply(msgIndex, data) {
+            if (data.status !== 'done') {
+                this.messages[msgIndex] = { role: 'assistant', message_id: chatRequestId(), content: data.error || this.trans.errorGeneric, isStreaming: false };
+
+                return;
+            }
+
+            const actions = data.actions || {};
+            this.consumeExtensionContext(actions);
+            this.messages[msgIndex] = {
+                role: 'assistant',
+                message_id: chatRequestId(),
+                content: data.content || this.trans.noResponse,
+                action: actions.action || 'agent_response',
+                result: actions.result || null,
+                presentation: actions.presentation || null,
+                product_url: actions.product_url || null,
+                download_url: actions.download_url || null,
+                isStreaming: false,
+            };
+
+            if (actions.product_url && this.activeCapability?.key === 'create_from_image') {
+                this.messages.push({ role: 'assistant', content: this.trans.openingProduct, isRedirect: true });
+                this.saveState();
+                setTimeout(() => { window.location.href = actions.product_url; }, 1500);
+            } else if (this.shouldAutoRefreshAfterAction(actions)) {
+                this.saveState();
+                this.streamingStatus = this.trans.refreshingPage;
+                setTimeout(() => { window.location.reload(); }, 1500);
+            }
+        },
+
+        /**
+         * Resume a reply that was still generating when the previous page was
+         * left; it kept generating on the worker. One that no worker picked up
+         * is cancelled and shown as failed, since the request cannot be
+         * streamed again from here.
+         */
+        async resumePendingReply() {
+            const msgIndex = this.messages.findIndex(m => m?.isStreaming && m.replyId);
+
+            if (msgIndex === -1) return;
+
+            this.isLoading = true;
+
+            const data = await this.pollReply(this.messages[msgIndex].replyId, msgIndex);
+
+            if (data?.status === 'cancelled') this.finalizeReply(msgIndex, { status: 'error' });
+
+            this.isLoading = false;
+            this.streamingStatus = '';
         },
 
         async processStream(response, files) {
@@ -1844,7 +2094,7 @@ app.component('v-agenting-pim', {
                 : [];
             this.messages[msgIndex] = {
                 role: 'assistant',
-                content: streamedText || this.trans.noResponse,
+                content: (!streamFailed && resultData.reply) || streamedText || this.trans.noResponse,
                 action: resultData.action || 'agent_response',
                 result: resultData.result || null,
                 message_id: chatRequestId(),
@@ -2074,6 +2324,7 @@ app.component('v-agenting-pim', {
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                 .replace(/\*(.*?)\*/g, '<em>$1</em>')
                 .replace(/`([^`]+)`/g, '<code class="bg-gray-100 dark:bg-cherry-800 px-1 py-0.5 rounded text-xs font-mono text-primary-700 dark:text-primary-400">$1</code>')
+                .replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g, (_, alt, url) => this.renderImage(alt, url))
                 .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, url) => {
                     const isInternal = url.includes('/admin/');
                     return isInternal
@@ -2091,11 +2342,17 @@ app.component('v-agenting-pim', {
 
             // Sanitize HTML to prevent XSS from AI-generated or injected content.
             if (typeof DOMPurify !== 'undefined') {
-                return DOMPurify.sanitize(html, {
-                    ALLOWED_TAGS: ['strong', 'em', 'code', 'a', 'p', 'br', 'span', 'ul', 'ol', 'li', 'table', 'thead', 'tbody', 'tr', 'th', 'td'],
-                    ALLOWED_ATTR: ['href', 'target', 'class', 'style'],
+                DOMPurify.addHook('afterSanitizeAttributes', node => {
+                    if (node.tagName === 'IMG' && ! this.isAllowedImageUrl(node.getAttribute('src') || '')) node.remove();
+                });
+                const clean = DOMPurify.sanitize(html, {
+                    ALLOWED_TAGS: ['strong', 'em', 'code', 'a', 'p', 'br', 'span', 'ul', 'ol', 'li', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'img'],
+                    ALLOWED_ATTR: ['href', 'target', 'class', 'style', 'src', 'alt', 'loading'],
                     ADD_ATTR: ['data-internal-link'],
                 });
+                DOMPurify.removeHook('afterSanitizeAttributes');
+
+                return clean;
             }
 
             // Fail SAFE, not open: with no sanitizer available this string still
@@ -2150,6 +2407,65 @@ app.component('v-agenting-pim', {
             return line.trim().replace(/^\||\|$/g, '').split('|').map(cell => cell.trim());
         },
 
+        /**
+         * Render a markdown image. Only an allowed URL becomes an <img>; any
+         * other URL degrades to a plain link, so the agent can never point an
+         * <img> at a foreign host. Runs before the link rule (an image is "!"
+         * plus a link). The sanitizer hook in renderMarkdown() also drops any
+         * raw <img> with a foreign src.
+         */
+        renderImage(alt, url) {
+            const attr = value => String(value).replace(/"/g, '&quot;');
+
+            return this.isAllowedImageUrl(url)
+                ? `<img src="${attr(url)}" alt="${attr(alt)}" loading="lazy" class="ap-ai-img" />`
+                : `<a href="${attr(url)}" class="text-primary-600 underline hover:no-underline" target="_blank">${alt || url}</a>`;
+        },
+
+        /**
+         * An image URL renders only when it is http(s) and either a file under
+         * the public storage path on the app's own host, or on a configured
+         * media host. Relative paths resolve against the current origin (dot
+         * segments are normalised first). Other paths on the app host (admin
+         * routes) are rejected so a prompt-injected image cannot fire an
+         * authenticated request; data:, javascript: and foreign hosts are
+         * rejected so <img> cannot be a tracking or SSRF sink.
+         */
+        isAllowedImageUrl(url) {
+            let parsed;
+
+            try {
+                parsed = new URL(url, window.location.origin);
+            } catch (e) {
+                return false;
+            }
+
+            if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') return false;
+
+            if (parsed.host === window.location.host || parsed.hostname === this.appImageHost) {
+                return parsed.pathname.startsWith(this.storageImagePath) && parsed.pathname.length > this.storageImagePath.length;
+            }
+
+            return this.allowedImageHosts.includes(parsed.hostname);
+        },
+
+        /**
+         * Swap a chat image that failed to load for a short caption. `error`
+         * does not bubble, so mounted() listens in the capture phase on the
+         * document (the widget is a multi-root fragment); only chat images
+         * carry the ap-ai-img class.
+         */
+        replaceBrokenImage(target) {
+            if (target?.tagName !== 'IMG' || ! target.classList?.contains('ap-ai-img') || target.dataset.failed) return;
+
+            target.dataset.failed = '1';
+            const note = document.createElement('span');
+            const alt = target.getAttribute('alt');
+            note.className = 'ap-ai-img-missing';
+            note.textContent = alt ? this.trans.imageUnavailableAlt.replace(':alt', alt) : this.trans.imageUnavailable;
+            target.replaceWith(note);
+        },
+
         sanitizeSvg(svgHtml) {
             if (!svgHtml) return '';
             if (typeof DOMPurify !== 'undefined') {
@@ -2183,7 +2499,7 @@ app.component('v-agenting-pim', {
                     selectedModel: this.selectedModel,
                     activeSessionId: this.activeSessionId,
                     deletedMessageIds: this.deletedMessageIds,
-                    messages: this.messages.filter(m => !m.isRedirect).map(m => ({ message_id: m.message_id || null, request_id: m.request_id || null, presentation: m.presentation || null, extensions: m.extensions || null, role: m.role, content: m.content, action: m.action || null, result: m.result || null, product_url: m.product_url || null, download_url: m.download_url || null, _confirmed: m._confirmed || false })),
+                    messages: this.messages.filter(m => !m.isRedirect && !(m.isStreaming && !m.replyId && !m.content)).map(m => ({ message_id: m.message_id || null, request_id: m.request_id || null, presentation: m.presentation || null, extensions: m.extensions || null, role: m.role, content: m.content, action: m.action || null, result: m.result || null, product_url: m.product_url || null, download_url: m.download_url || null, _confirmed: m._confirmed || false, isStreaming: !!(m.isStreaming && m.replyId), replyId: m.replyId || null })),
                 }));
 
                 // Auto-save current session to localStorage
@@ -2220,6 +2536,10 @@ app.component('v-agenting-pim', {
     beforeUnmount() {
         this.messagesObserver?.disconnect();
         this.messagesObserver = null;
+
+        this._unmounted = true;
+
+        if (this._imgErrorHandler) document.removeEventListener('error', this._imgErrorHandler, true);
 
         const appEl = document.getElementById('app');
         if (appEl) appEl.style.marginRight = '';

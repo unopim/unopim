@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 use Webkul\ProductPassport\Services\PassportPayloadBuilder;
 
@@ -51,4 +52,108 @@ it('excludes the whole meta key from being treated as content by never placing c
     $payload = resolve(PassportPayloadBuilder::class)->build($product, $context);
 
     expect(array_keys($payload['meta']))->toEqualCanonicalizing(['uuid', 'url', 'locale', 'channel', 'built_at', 'template']);
+});
+
+it('addresses a copied document by its content so a re-issued file lands beside the old one', function (): void {
+    [$product, $context, $sourcePath] = $this->productWithSecretAndDppAttributes(withDocument: true);
+
+    $builder = resolve(PassportPayloadBuilder::class);
+    $assets = Storage::disk(config('publication.asset_disk'));
+
+    $first = $builder->build($product, $context)['documents'][0];
+
+    Storage::disk(config('filesystems.default'))->put($sourcePath, '%PDF-1.4 re-issued');
+
+    $second = $builder->build($product, $context)['documents'][0];
+
+    expect($second['path'])->not->toBe($first['path'])
+        ->and($second['sha256'])->toBe(hash('sha256', '%PDF-1.4 re-issued'))
+        ->and($second['sha256'])->not->toBe($first['sha256'])
+        ->and(basename($second['path']))->toBe(basename($first['path']))
+        ->and($assets->get($first['path']))->toBe('%PDF-1.4 stub')
+        ->and($assets->get($second['path']))->toBe('%PDF-1.4 re-issued');
+});
+
+it('reuses the same asset path while the document is unchanged', function (): void {
+    [$product, $context] = $this->productWithSecretAndDppAttributes(withDocument: true);
+
+    $builder = resolve(PassportPayloadBuilder::class);
+
+    expect($builder->build($product, $context)['documents'][0]['path'])
+        ->toBe($builder->build($product, $context)['documents'][0]['path']);
+});
+
+it('hashes and copies a multi-megabyte document intact', function (): void {
+    [$product, $context, $sourcePath] = $this->productWithSecretAndDppAttributes(withDocument: true);
+
+    $contents = random_bytes(2 * 1024 * 1024);
+
+    Storage::disk(config('filesystems.default'))->put($sourcePath, $contents);
+
+    $document = resolve(PassportPayloadBuilder::class)->build($product, $context)['documents'][0];
+
+    expect($document['sha256'])->toBe(hash('sha256', $contents))
+        ->and(Storage::disk(config('publication.asset_disk'))->get($document['path']))->toBe($contents);
+});
+
+it('stamps no path when the source document cannot be read', function (): void {
+    [$product, $context] = $this->productWithSecretAndDppAttributes(withDocument: true);
+
+    $disk = Storage::disk(config('filesystems.default'));
+
+    Storage::set(config('filesystems.default'), new class($disk->getDriver(), $disk->getAdapter(), $disk->getConfig()) extends FilesystemAdapter
+    {
+        public function readStream($path)
+        {
+            return null;
+        }
+    });
+
+    $document = resolve(PassportPayloadBuilder::class)->build($product, $context)['documents'][0];
+
+    expect($document)->not->toHaveKey('path')
+        ->and($document)->not->toHaveKey('sha256')
+        ->and(Storage::disk(config('publication.asset_disk'))->exists('publication/'.$context->uuid))->toBeFalse();
+});
+
+it('stamps no path when the asset disk refuses the write', function (): void {
+    [$product, $context] = $this->productWithSecretAndDppAttributes(withDocument: true);
+
+    $disk = Storage::disk(config('publication.asset_disk'));
+
+    Storage::set(config('publication.asset_disk'), new class($disk->getDriver(), $disk->getAdapter(), $disk->getConfig()) extends FilesystemAdapter
+    {
+        public function writeStream($path, $resource, array $options = [])
+        {
+            return false;
+        }
+    });
+
+    $document = resolve(PassportPayloadBuilder::class)->build($product, $context)['documents'][0];
+
+    expect($document)->not->toHaveKey('path')
+        ->and($document)->not->toHaveKey('sha256');
+});
+
+it('keeps the copied document when the asset disk closes the stream it was given', function (): void {
+    [$product, $context] = $this->productWithSecretAndDppAttributes(withDocument: true);
+
+    $disk = Storage::disk(config('publication.asset_disk'));
+
+    Storage::set(config('publication.asset_disk'), new class($disk->getDriver(), $disk->getAdapter(), $disk->getConfig()) extends FilesystemAdapter
+    {
+        public function writeStream($path, $resource, array $options = [])
+        {
+            $written = parent::writeStream($path, $resource, $options);
+
+            fclose($resource);
+
+            return $written;
+        }
+    });
+
+    $document = resolve(PassportPayloadBuilder::class)->build($product, $context)['documents'][0];
+
+    expect($document)->toHaveKey('path')
+        ->and(Storage::disk(config('publication.asset_disk'))->get($document['path']))->toBe('%PDF-1.4 stub');
 });
