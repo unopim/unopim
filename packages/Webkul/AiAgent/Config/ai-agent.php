@@ -90,6 +90,13 @@ return [
          */
         'max_document_length' => (int) env('AI_AGENT_VECTOR_STORE_MAX_DOCUMENT_LENGTH', 6000),
 
+        /**
+         * Attribute codes left out of the embedded text even when their type is
+         * descriptive: identifiers and operational flags that carry no meaning
+         * for similarity. Price, media, file and date types are always left out.
+         */
+        'excluded_attributes' => ['url_key', 'product_number', 'ean', 'tax_category_id', 'manage_stock'],
+
         'knn' => [
             /**
              * Upper bound for `k` on kNN queries regardless of the caller-supplied limit.

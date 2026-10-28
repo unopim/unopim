@@ -145,13 +145,26 @@ class IndexProductEmbeddingsJob implements ShouldQueue
     {
         $rows = DB::table('products')
             ->whereIn('id', array_map(intval(...), $this->productIds))
-            ->select('id', 'sku', 'values', 'attribute_family_id')
+            ->select('id', 'sku', 'values', 'attribute_family_id', 'parent_id')
             ->get();
+
+        $parentIds = $rows->pluck('parent_id')->filter()->map(intval(...))->unique()->values()->all();
+
+        $parentValues = $parentIds === [] ? collect() : DB::table('products')
+            ->whereIn('id', $parentIds)
+            ->pluck('values', 'id');
+
+        $built = $documentBuilder->buildMany($rows->map(fn (object $row): array => [
+            'id'            => (int) $row->id,
+            'sku'           => $row->sku,
+            'values'        => $row->values,
+            'parent_values' => $row->parent_id !== null ? $parentValues->get((int) $row->parent_id) : null,
+        ])->values()->all());
 
         $documents = [];
 
-        foreach ($rows as $row) {
-            $document = $documentBuilder->build((int) $row->id, $row->sku, $row->values);
+        foreach ($rows->values() as $position => $row) {
+            $document = $built[$position];
 
             if ($document['text'] === '') {
                 continue;

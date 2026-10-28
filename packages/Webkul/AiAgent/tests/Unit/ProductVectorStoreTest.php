@@ -105,7 +105,7 @@ it('builds an embedding document with sku, textual values and a stable content h
         ->and($document['text'])->toContain('sku: SKU-42')
         ->and($document['text'])->toContain('name: Red Running Shoes')
         ->and($document['text'])->toContain('description: Lightweight & breathable')
-        ->and($document['text'])->toContain('name: Chaussures de course rouges')
+        ->and($document['text'])->not->toContain('Chaussures de course rouges')
         ->and($document['text'])->not->toContain('<p>')
         ->and($document['content_hash'])->toBe(hash('sha256', $document['text']))
         ->and($builder->build(42, 'SKU-42', $values)['content_hash'])->toBe($document['content_hash']);
