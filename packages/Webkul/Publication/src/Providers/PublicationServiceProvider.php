@@ -74,8 +74,10 @@ class PublicationServiceProvider extends ServiceProvider
      * Public and idempotent so a consuming provider or a post-boot test can re-trigger registration.
      *
      * The release route `/{uuid}/r/{sequence}/{locale}` has a literal `r` segment, so it can never shadow
-     * the two-segment routes. Its `sequence` is bounded to a positive integer that fits the column;
-     * anything else 404s at the router.
+     * the two-segment routes. Its `sequence` is capped at 9 digits: the column is an unsigned integer,
+     * which PostgreSQL stores as a signed `integer` (max 2147483647), so a 10-digit value would fail the
+     * comparison there with a 500 instead of a 404. Nine digits stay in range on every engine and cover
+     * any sequence a publication will reach; anything else 404s at the router.
      */
     public function registerPublicRoutes(): void
     {
@@ -126,7 +128,7 @@ class PublicationServiceProvider extends ServiceProvider
                         ->name('publication.public.'.$type->code.'.carrier.svg');
 
                     Route::get('/{uuid}/r/{sequence}/{locale}', [PublicationController::class, 'showRelease'])
-                        ->where('sequence', '[1-9][0-9]{0,9}')
+                        ->where('sequence', '[1-9][0-9]{0,8}')
                         ->defaults('type', $type->code)
                         ->name('publication.public.'.$type->code.'.show.release');
 

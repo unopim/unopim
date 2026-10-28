@@ -160,6 +160,8 @@ it('404s a release that does not exist and a sequence the router rejects', funct
     $this->get('/p/'.$uuid.'/r/9/'.$locale)->assertNotFound();
     $this->get('/p/'.$uuid.'/r/0/'.$locale)->assertNotFound();
     $this->get('/p/'.$uuid.'/r/abc/'.$locale)->assertNotFound();
+    $this->get('/p/'.$uuid.'/r/2147483648/'.$locale)->assertNotFound();
+    $this->get('/p/'.$uuid.'/r/9999999999/'.$locale)->assertNotFound();
 });
 
 it('answers 410 for a release whose version was redacted, even while the publication stays published, and leaves the live page alone', function (): void {
