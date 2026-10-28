@@ -299,6 +299,7 @@ return [
             'column-not-found'       => 'Colunas necessárias não encontradas: %s.',
             'column-numbers'         => 'O número de colunas não corresponde ao número de linhas no cabeçalho.',
             'invalid-attribute'      => 'O cabeçalho contém atributos inválidos: "%s".',
+            'invalid-boolean'        => 'A coluna ":column" tem o valor ":value", que não é um booleano. Utilize true, false, yes, no, on, off, 1 or 0.',
             'system'                 => 'Ocorreu um erro do sistema inesperado.',
             'wrong-quotes'           => 'Aspas inclinadas usadas em vez de aspas diretas.',
             'file-empty'             => 'O ficheiro está vazio ou não contém uma linha de cabeçalho. Por favor, carregue um ficheiro válido com dados.',

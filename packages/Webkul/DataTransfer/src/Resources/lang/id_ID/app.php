@@ -299,6 +299,7 @@ return [
             'column-not-found'       => 'Kolom yang wajib diisi tidak ditemukan: %s.',
             'column-numbers'         => 'Jumlah kolom tidak sesuai dengan jumlah baris pada header.',
             'invalid-attribute'      => 'Header berisi atribut yang tidak valid: "%s".',
+            'invalid-boolean'        => 'Kolom ":column" memiliki nilai ":value", yang bukan boolean. Gunakan true, false, yes, no, on, off, 1 or 0.',
             'system'                 => 'Terjadi kesalahan sistem yang tidak terduga.',
             'wrong-quotes'           => 'Kutipan keriting digunakan sebagai pengganti tanda kutip lurus.',
             'file-empty'             => 'File kosong atau tidak memiliki baris header. Silakan unggah file yang valid dengan data.',

@@ -25,6 +25,11 @@ class Importer extends AbstractImporter
     public const ERROR_CODE_IS_SYSTEM = 'code_is_system';
 
     /**
+     * Boolean attribute columns
+     */
+    protected const BOOLEAN_COLUMNS = ['enable_wysiwyg', 'is_required', 'is_unique', 'value_per_locale', 'value_per_channel', 'is_filterable', 'ai_translate'];
+
+    /**
      * Permanent entity columns
      */
     protected array $validColumnNames = [
@@ -154,6 +159,10 @@ class Importer extends AbstractImporter
         if (empty($rowData['locale']) || ! in_array($rowData['locale'], $this->locales)) {
             $this->skipRow($rowNumber, self::ERROR_NOT_FOUND_LOCALE, 'locale', trans($this->messages[self::ERROR_NOT_FOUND_LOCALE]));
 
+            return false;
+        }
+
+        if ($this->skipRowWithInvalidBooleans($rowData, $rowNumber, self::BOOLEAN_COLUMNS)) {
             return false;
         }
 
@@ -287,8 +296,11 @@ class Importer extends AbstractImporter
 
         foreach ($fields as $field) {
             if (isset($rowData[$field]) && $rowData[$field] !== '') {
-                if (in_array($field, ['enable_wysiwyg', 'is_required', 'is_unique', 'value_per_locale', 'value_per_channel', 'is_filterable', 'ai_translate'])) {
-                    $data[$field] = (int) (bool) $rowData[$field];
+                if (in_array($field, self::BOOLEAN_COLUMNS)) {
+                    $data[$field] = (int) filter_var(
+                        $rowData[$field],
+                        FILTER_VALIDATE_BOOLEAN
+                    );
                 } elseif ($field === 'position') {
                     $data[$field] = (int) $rowData[$field];
                 } else {

@@ -299,6 +299,7 @@ return [
             'column-not-found'       => 'Mangler nødvendige kolonner: %s.',
             'column-numbers'         => 'Antall kolonner stemmer ikke med antall rader i overskriften.',
             'invalid-attribute'      => 'Overskrift inneholder ugyldige attributter: "%s".',
+            'invalid-boolean'        => 'Kolonnen ":column" har verdien ":value", som ikke er en boolsk verdi. Bruk true, false, yes, no, on, off, 1 or 0.',
             'system'                 => 'En uventet systemfeil oppstod.',
             'wrong-quotes'           => 'Skråstilt anførselstegn brukt i stedet for rette anførselstegn.',
             'file-empty'             => 'Filen er tom eller inneholder ingen overskriftsrad. Vennligst last opp en gyldig fil med data.',

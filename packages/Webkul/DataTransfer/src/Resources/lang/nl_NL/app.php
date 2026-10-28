@@ -299,6 +299,7 @@ return [
             'column-not-found'       => 'Vereiste kolommen niet gevonden: %s.',
             'column-numbers'         => 'Het aantal kolommen komt niet overeen met het aantal rijen in de koptekst.',
             'invalid-attribute'      => 'Koptekst bevat ongeldig(e) attribuut(en): "%s".',
+            'invalid-boolean'        => 'Kolom ":column" heeft de waarde ":value", die geen boolean is. Gebruik true, false, yes, no, on, off, 1 or 0.',
             'system'                 => 'Er is een onverwachte systeemfout opgetreden.',
             'wrong-quotes'           => 'Er worden gekrulde aanhalingstekens gebruikt in plaats van rechte aanhalingstekens.',
             'file-empty'             => 'Het bestand is leeg of bevat geen kopregel. Upload een geldig bestand met gegevens.',

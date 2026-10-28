@@ -299,6 +299,7 @@ return [
             'column-not-found'       => 'Erforderliche Spalten nicht gefunden: %s.',
             'column-numbers'         => 'Die Anzahl der Spalten entspricht nicht der Anzahl der Zeilen in der Kopfzeile.',
             'invalid-attribute'      => 'Header enthält ungültige Attribute: „%s“.',
+            'invalid-boolean'        => 'La colonne ":column" a la valeur ":value", qui n\'est pas un booléen. Utilisez true, false, yes, no, on, off, 1 or 0.',
             'system'                 => 'Es ist ein unerwarteter Systemfehler aufgetreten.',
             'wrong-quotes'           => 'Anstelle von geraden Anführungszeichen werden geschweifte Anführungszeichen verwendet.',
             'file-empty'             => 'Le fichier est vide ou ne contient pas de ligne d\'en-tête. Veuillez télécharger un fichier valide contenant des données.',
