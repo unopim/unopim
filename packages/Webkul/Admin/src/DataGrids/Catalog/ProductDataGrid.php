@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\LazyCollection;
+use Webkul\Admin\Filters\ProductFilterOperators;
 use Webkul\Admin\Filters\ProductPropertyFilters;
 use Webkul\Admin\Traits\AttributeColumnTrait;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
@@ -810,32 +811,16 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             return [null, null];
         }
 
-        $value = $condition['value'] ?? '';
-
-        if (in_array($operator, [FilterOperators::IS_EMPTY, FilterOperators::IS_NOT_EMPTY], true)) {
-            return [
+        return [
+            $operator,
+            ProductFilterOperators::engineValue(
+                $column->type,
                 $operator,
-                $column->type === 'price' ? [$condition['currency'] ?? '', ''] : [''],
-            ];
-        }
-
-        if ($column->type === 'price') {
-            return [$operator, [$condition['currency'] ?? '', $value, $condition['value2'] ?? '']];
-        }
-
-        if ($operator === FilterOperators::RANGE) {
-            return [$operator, [$value, $condition['value2'] ?? '']];
-        }
-
-        if (in_array($operator, [FilterOperators::IN, FilterOperators::NOT_IN], true)) {
-            if (is_array($value)) {
-                return [$operator, array_values($value)];
-            }
-
-            return [$operator, array_filter(explode(',', is_scalar($value) ? (string) $value : ''))];
-        }
-
-        return [$operator, is_array($value) ? array_values($value) : [$value]];
+                $condition['value'] ?? '',
+                $condition['value2'] ?? '',
+                $condition['currency'] ?? '',
+            ),
+        ];
     }
 
     /**

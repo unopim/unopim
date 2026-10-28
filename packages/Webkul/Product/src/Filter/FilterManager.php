@@ -14,13 +14,18 @@ class FilterManager implements FilterManagerContract
 
     protected Collection $propertyFilters;
 
-    public function __construct(Container $app)
+    /**
+     * Resolve the filters of one search engine; `$elasticsearch` defaults to the configured engine.
+     */
+    public function __construct(Container $app, ?bool $elasticsearch = null)
     {
-        $this->attributeFilters = config('elasticsearch.enabled')
+        $elasticsearch ??= (bool) config('elasticsearch.enabled');
+
+        $this->attributeFilters = $elasticsearch
             ? collect($app->tagged('unopim.elasticsearch.attribute.filters'))
             : collect($app->tagged('unopim.database.attribute.filters'));
 
-        $this->propertyFilters = config('elasticsearch.enabled')
+        $this->propertyFilters = $elasticsearch
             ? collect($app->tagged('unopim.elasticsearch.product.property.filters'))
             : collect($app->tagged('unopim.database.product.property.filters'));
     }
