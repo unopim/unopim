@@ -85,6 +85,51 @@ it('does NOT send temperature for gpt-5* reasoning models', function () {
     });
 });
 
+it('does NOT send temperature for gpt-6 and later reasoning models', function (string $model) {
+    (new LaravelAiAdapter(
+        platform: $this->platform,
+        model: $model,
+        prompt: 'hi',
+        temperature: 0.42,
+    ))->ask();
+
+    Http::assertSent(function (Request $request) use ($model) {
+        $body = json_decode($request->body(), true);
+
+        return $body['model'] === $model
+            && ! array_key_exists('temperature', $body);
+    });
+})->with([
+    'gpt-6',
+    'gpt-6.1-terra',
+    'gpt-6-mini',
+    'GPT-6.5',
+    'gpt-7',
+    'gpt-10-mini',
+]);
+
+it('sends temperature for chat and pre-reasoning OpenAI models', function (string $model) {
+    (new LaravelAiAdapter(
+        platform: $this->platform,
+        model: $model,
+        prompt: 'hi',
+        temperature: 0.42,
+    ))->ask();
+
+    Http::assertSent(function (Request $request) use ($model) {
+        $body = json_decode($request->body(), true);
+
+        return $body['model'] === $model
+            && ($body['temperature'] ?? null) === 0.42;
+    });
+})->with([
+    'gpt-4o',
+    'gpt-4.1-mini',
+    'gpt-3.5-turbo',
+    'gpt-35-turbo',
+    'gpt-5-chat-latest',
+]);
+
 it('raises max_output_tokens to at least 16000 for reasoning models', function () {
     (new LaravelAiAdapter(
         platform: $this->platform,

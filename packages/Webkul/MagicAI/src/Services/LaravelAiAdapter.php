@@ -15,6 +15,7 @@ use Webkul\MagicAI\Enums\AiProvider;
 use Webkul\MagicAI\MagicAI;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Responses\GeneratedContent;
+use Webkul\MagicAI\Support\OpenAiModel;
 
 /**
  * Adapter that bridges MagicAI's LLMModelInterface with the Laravel AI SDK.
@@ -177,18 +178,11 @@ class LaravelAiAdapter implements LLMModelInterface, ReportsTruncation, Supports
     }
 
     /**
-     * Determine if the model is an OpenAI reasoning model (o-series, gpt-5*).
+     * Determine if the model is an OpenAI reasoning model (o-series, gpt-5 and later).
      */
     protected function isReasoningModel(string $model): bool
     {
-        $model = strtolower($model);
-
-        // gpt-5-chat* models accept temperature and are not reasoning models.
-        if (str_starts_with($model, 'gpt-5-chat')) {
-            return false;
-        }
-
-        return (bool) preg_match('/^chat-latest|^o[1-9]\b|^o[1-9]-|^gpt-5/', $model);
+        return OpenAiModel::isReasoning($model);
     }
 
     /**

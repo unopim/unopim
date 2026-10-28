@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Log;
 use Webkul\AiAgent\DTOs\CredentialConfig;
 use Webkul\AiAgent\Exceptions\ApiException;
 use Webkul\AiAgent\Services\TokenEstimator;
+use Webkul\MagicAI\Support\OpenAiModel;
 use Webkul\Webhook\Validators\SafeWebhookUrl;
 
 /**
@@ -224,8 +225,7 @@ class AiApiClient
             'max_completion_tokens' => $maxTokens,
         ];
 
-        // Reasoning models (o-series, gpt-5*) reject `temperature` — only the default is allowed.
-        if (! preg_match('/^chat-latest|^o[1-9]|^o[1-9]-|^gpt-5/i', $this->model)) {
+        if (! OpenAiModel::isReasoning($this->model)) {
             $body['temperature'] = $temperature;
         }
 
