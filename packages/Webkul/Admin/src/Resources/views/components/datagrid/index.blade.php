@@ -163,6 +163,8 @@
 
                             indices: [],
 
+                            excludedIndices: [],
+
                             value: null,
                         },
 
@@ -282,14 +284,14 @@
                     const total = this.available.meta?.total ?? 0;
 
                     return total > 0 && (
-                        this.applied.massActions.meta.allMatching
+                        (this.applied.massActions.meta.allMatching && ! this.applied.massActions.excludedIndices.length)
                         || this.applied.massActions.indices.length >= total
                     );
                 },
 
                 selectedCount() {
                     return this.applied.massActions.meta.allMatching
-                        ? (this.available.meta?.total ?? 0)
+                        ? Math.max((this.available.meta?.total ?? 0) - this.applied.massActions.excludedIndices.length, 0)
                         : this.applied.massActions.indices.length;
                 },
 
@@ -309,17 +311,10 @@
                     immediate: true,
                 },
 
-                /**
-                 * Unticking any row on the page leaves "all matching" mode, falling back to the
-                 * rows still ticked.
-                 */
                 'applied.massActions.indices': {
                     handler() {
-                        if (
-                            this.applied.massActions.meta.allMatching
-                            && this.available.records.some(record => ! this.applied.massActions.indices.includes(record[this.available.meta.primary_column]))
-                        ) {
-                            this.applied.massActions.meta.allMatching = false;
+                        if (this.applied.massActions.meta.allMatching) {
+                            this.syncExcludedIndices();
                         }
 
                         this.setCurrentSelectionMode();
@@ -571,7 +566,11 @@
                                     }
                                 });
 
-                                this.applied.filters.columns = this.applied.filters.columns.filter(column => column.index === 'all' || (filterableColumns.includes(column.index)));
+                                const filterColumns = this.applied.filters.columns.filter(column => column.index === 'all' || (filterableColumns.includes(column.index)));
+
+                                if (filterColumns.length !== this.applied.filters.columns.length) {
+                                    this.applied.filters.columns = filterColumns;
+                                }
                             }
 
                             this.syncAttributeConditions();
@@ -1155,6 +1154,8 @@
                  * @returns {void}
                  */
                 selectAllMatching() {
+                    this.applied.massActions.excludedIndices = [];
+
                     this.addPageToSelection();
 
                     this.applied.massActions.meta.allMatching = true;
@@ -1164,10 +1165,30 @@
                     this.available.records.forEach(record => {
                         const id = record[this.available.meta.primary_column];
 
-                        if (! this.applied.massActions.indices.includes(id)) {
+                        if (
+                            ! this.applied.massActions.indices.includes(id)
+                            && ! this.applied.massActions.excludedIndices.includes(id)
+                        ) {
                             this.applied.massActions.indices.push(id);
                         }
                     });
+                },
+
+                syncExcludedIndices() {
+                    const pageIds = this.available.records.map(record => record[this.available.meta.primary_column]);
+
+                    const excludedIndices = [
+                        ...this.applied.massActions.excludedIndices.filter(id => ! pageIds.includes(id)),
+                        ...pageIds.filter(id => ! this.applied.massActions.indices.includes(id)),
+                    ];
+
+                    if (excludedIndices.length >= (this.available.meta?.total ?? 0)) {
+                        this.clearMassSelection();
+
+                        return;
+                    }
+
+                    this.applied.massActions.excludedIndices = excludedIndices;
                 },
 
                 /**
@@ -1185,6 +1206,10 @@
                         return Promise.resolve({ indices: this.applied.massActions.indices });
                     }
 
+                    const excludedIndices = [...this.applied.massActions.excludedIndices];
+
+                    const excludedKeys = new Set(excludedIndices.map(String));
+
                     if (action.supportsSelectAll) {
                         const { sort, filters, ...params } = this.queryParams();
 
@@ -1195,6 +1220,7 @@
                         return Promise.resolve({
                             ...params,
                             ...(Object.keys(appliedFilters).length ? { filters: appliedFilters } : {}),
+                            ...(excludedIndices.length ? { excluded_indices: excludedIndices } : {}),
                             select_all: 1,
                         });
                     }
@@ -1209,7 +1235,9 @@
 
                     return this.$axios
                         .get(this.src, { params: { ...this.queryParams(), mass_action_ids: 1 } })
-                        .then(response => ({ indices: response.data?.ids ?? [] }))
+                        .then(response => ({
+                            indices: (response.data?.ids ?? []).filter(id => ! excludedKeys.has(String(id))),
+                        }))
                         .finally(() => {
                             this.isSelectingAllMatching = false;
                         });
@@ -1238,12 +1266,13 @@
 
                 clearMassSelection() {
                     this.applied.massActions.indices = [];
+                    this.applied.massActions.excludedIndices = [];
                     this.applied.massActions.meta.mode = 'none';
                     this.applied.massActions.meta.allMatching = false;
                 },
 
                 validateMassAction() {
-                    if (! this.applied.massActions.indices.length) {
+                    if (! this.selectedCount) {
                         this.$emitter.emit('add-flash', { type: 'warning', message: "@lang('admin::app.components.datagrid.index.no-records-selected')" });
 
                         return false;
