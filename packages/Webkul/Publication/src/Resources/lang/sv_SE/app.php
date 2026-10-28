@@ -51,5 +51,11 @@ return [
             'heading' => 'Detta pass är inte längre tillgängligt.',
             'notice'  => 'Denna post behålls av öppenhetsskäl men underhålls inte längre aktivt.',
         ],
+        'release' => [
+            'banner'       => 'Utgåva :sequence av detta produktpass',
+            'superseded'   => 'Detta är ett tidigare läge av produktpasset, bevarat exakt som det publicerades. Det finns ett nyare läge.',
+            'current'      => 'Detta är produktpassets aktuella läge.',
+            'view-current' => 'Visa det aktuella produktpasset',
+        ],
     ],
 ];
