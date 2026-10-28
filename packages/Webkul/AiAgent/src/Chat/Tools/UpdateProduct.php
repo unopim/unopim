@@ -56,9 +56,11 @@ class UpdateProduct implements PimTool
 
             /**
              * Locale-scoped values go to the requested locale, or to the conversation
-             * locale when none is given. An unknown or inactive locale is rejected
-             * rather than written elsewhere: German copy landing in en_US because of a
-             * typo is worse than no write at all.
+             * locale when none is given. Both are checked against the active locales:
+             * the conversation locale comes from the page (?locale=), where the
+             * controller only checks its format. An unknown or inactive locale is
+             * rejected rather than written elsewhere: German copy landing in en_US
+             * because of a typo is worse than no write at all.
              *
              * A value counts as a locale map only when every key is an active locale,
              * so {"de_DE": ..., "typo": ...} reaches the type check instead of having
@@ -92,15 +94,14 @@ class UpdateProduct implements PimTool
                 $activeLocaleCodes = array_flip(core()->getAllActiveLocales()->pluck('code')->all());
 
                 $requestedLocale = trim($request->string('locale')->toString());
+                $targetLocale = $requestedLocale !== '' ? $requestedLocale : (string) $this->context->locale;
 
-                if ($requestedLocale !== '' && ! isset($activeLocaleCodes[$requestedLocale])) {
+                if (! isset($activeLocaleCodes[$targetLocale])) {
                     return json_encode([
-                        'error'          => "Unknown or inactive locale: {$requestedLocale}",
+                        'error'          => "Unknown or inactive locale: {$targetLocale}",
                         'active_locales' => array_keys($activeLocaleCodes),
                     ]);
                 }
-
-                $targetLocale = $requestedLocale !== '' ? $requestedLocale : $this->context->locale;
 
                 foreach ($skus as $s) {
                     $product = $productRepo->findOneByField('sku', $s);
