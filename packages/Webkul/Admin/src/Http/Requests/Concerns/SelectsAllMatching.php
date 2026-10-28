@@ -29,7 +29,7 @@ trait SelectsAllMatching
     public function selectedIds(string $dataGrid): LazyCollection
     {
         if ($this->selectsAllMatching()) {
-            return app($dataGrid)->getMatchingIds();
+            return app($dataGrid)->getSelectedIds();
         }
 
         return LazyCollection::make($this->input('indices', []));
@@ -42,7 +42,7 @@ trait SelectsAllMatching
      */
     public function selectionParams(): array
     {
-        return $this->only(['filters', 'channel', 'locale', 'managedColumns']);
+        return $this->only(['filters', 'channel', 'locale', 'managedColumns', 'excluded_indices']);
     }
 
     /**
@@ -51,11 +51,13 @@ trait SelectsAllMatching
     protected function selectionRules(): array
     {
         return [
-            'select_all' => ['sometimes', 'boolean'],
-            'indices'    => [Rule::requiredIf(fn (): bool => ! $this->selectsAllMatching()), 'array'],
-            'indices.*'  => ['integer'],
-            'filters'    => ['sometimes', 'array'],
-            'sort'       => ['sometimes', 'required', 'array'],
+            'select_all'         => ['sometimes', 'boolean'],
+            'indices'            => [Rule::requiredIf(fn (): bool => ! $this->selectsAllMatching()), 'array'],
+            'indices.*'          => ['integer'],
+            'excluded_indices'   => ['sometimes', 'array'],
+            'excluded_indices.*' => ['integer'],
+            'filters'            => ['sometimes', 'array'],
+            'sort'               => ['sometimes', 'required', 'array'],
         ];
     }
 }

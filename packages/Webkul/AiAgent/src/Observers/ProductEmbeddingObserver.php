@@ -30,12 +30,12 @@ class ProductEmbeddingObserver
 
     /**
      * Queue embedding re-indexing for an updated product. Skipped entirely
-     * when no embeddable column changed, so bulk status/stock updates don't
+     * when no indexed column changed, so bulk status/stock updates don't
      * flood the queue; the job additionally skips unchanged content hashes.
      */
     public function updated(Products $product): void
     {
-        if (! $product->wasChanged(['values', 'sku'])) {
+        if (! $product->wasChanged(['values', 'sku', 'attribute_family_id'])) {
             return;
         }
 
