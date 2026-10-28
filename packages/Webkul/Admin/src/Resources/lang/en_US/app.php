@@ -426,6 +426,16 @@ return [
                             'weight'          => 'Weight',
                         ],
 
+                        'filters' => [
+                            'any-option'         => 'All',
+                            'clear'              => 'Clear filters',
+                            'load-error'         => 'The variants could not be loaded. Please try again.',
+                            'no-results'         => 'No variants match the selected filters.',
+                            'range'              => ':from–:to of :total',
+                            'search'             => 'Search variants',
+                            'search-placeholder' => 'Search by SKU',
+                        ],
+
                         'mass-edit' => [
                             'add-images'          => 'Add Images',
                             'apply-to-all-btn'    => 'Apply to All',

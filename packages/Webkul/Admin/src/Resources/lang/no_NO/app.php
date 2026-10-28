@@ -382,6 +382,16 @@ return [
                             'title'           => 'Produkt',
                             'weight'          => 'Vekt',
                         ],
+                        'filters' => [
+                            'any-option'         => 'Alle',
+                            'clear'              => 'Fjern filtre',
+                            'load-error'         => 'Variantene kunne ikke lastes inn. Prøv igjen.',
+                            'no-results'         => 'Ingen varianter samsvarer med de valgte filtrene.',
+                            'range'              => ':from–:to av :total',
+                            'search'             => 'Søk i varianter',
+                            'search-placeholder' => 'Søk etter SKU',
+                        ],
+
                         'mass-edit' => [
                             'add-images'          => 'Legg til bilder',
                             'apply-to-all-btn'    => 'Bruk for alle',

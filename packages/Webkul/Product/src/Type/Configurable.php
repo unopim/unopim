@@ -139,6 +139,10 @@ class Configurable extends AbstractType
     /**
      * Update configurable product.
      *
+     * A `variants_partial` payload carries only the variants the paginated edit
+     * panel touched, so only the ids in `removed_variants` are deleted instead
+     * of every variant missing from the payload.
+     *
      * @param  int  $id
      * @param  string  $attribute
      * @return \Webkul\Product\Contracts\Product
@@ -161,15 +165,17 @@ class Configurable extends AbstractType
             return $this->updateVariantGroups($product, $data, $productSuperAttributes, $uniqueAttributes);
         }
 
-        if (! isset($data['variants'])) {
+        $isPartialPayload = ! empty($data['variants_partial']);
+
+        if (! isset($data['variants']) && ! $isPartialPayload) {
             return $product;
         }
 
-        $previousVariantIds = $product->variants->pluck('id');
+        $previousVariantIds = $product->variants()->pluck('id');
 
         $this->product->loadMissing('variantStructure.placements.attribute');
 
-        foreach ($data['variants'] as $variantId => $variantData) {
+        foreach ($data['variants'] ?? [] as $variantId => $variantData) {
             if (Str::contains($variantId, 'variant_')) {
                 $variant = $this->createVariant($product, $productSuperAttributes, $variantData, $uniqueAttributes);
 
@@ -183,6 +189,10 @@ class Configurable extends AbstractType
 
                 $this->updateVariant($variantData, $variantId);
             }
+        }
+
+        if ($isPartialPayload) {
+            $previousVariantIds = $previousVariantIds->intersect(array_map(intval(...), (array) ($data['removed_variants'] ?? [])));
         }
 
         foreach ($previousVariantIds as $variantId) {
@@ -537,6 +547,9 @@ class Configurable extends AbstractType
                 'required',
                 new ConfigurableUniqueSku($this->getChildrenIds()),
             ],
+            'variants_partial'   => ['nullable', 'boolean'],
+            'removed_variants'   => ['nullable', 'array'],
+            'removed_variants.*' => ['integer'],
         ];
     }
 

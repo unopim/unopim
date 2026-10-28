@@ -381,6 +381,16 @@ return [
                             'title'           => 'उत्पाद',
                             'weight'          => 'वज़न',
                         ],
+                        'filters' => [
+                            'any-option'         => 'सभी',
+                            'clear'              => 'फ़िल्टर साफ़ करें',
+                            'load-error'         => 'वेरिएंट लोड नहीं हो सके। कृपया पुनः प्रयास करें।',
+                            'no-results'         => 'चयनित फ़िल्टर से कोई वेरिएंट मेल नहीं खाता।',
+                            'range'              => ':total में से :from–:to',
+                            'search'             => 'वेरिएंट खोजें',
+                            'search-placeholder' => 'SKU से खोजें',
+                        ],
+
                         'mass-edit' => [
                             'add-images'          => 'छवियां जोड़ें',
                             'apply-to-all-btn'    => 'सभी पर लागू होते हैं',

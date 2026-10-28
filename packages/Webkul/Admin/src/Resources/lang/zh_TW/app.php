@@ -381,6 +381,16 @@ return [
                             'title'           => '產品',
                             'weight'          => '重量',
                         ],
+                        'filters' => [
+                            'any-option'         => '全部',
+                            'clear'              => '清除篩選',
+                            'load-error'         => '無法載入變體，請再試一次。',
+                            'no-results'         => '沒有符合所選篩選條件的變體。',
+                            'range'              => '第 :from–:to 筆，共 :total 筆',
+                            'search'             => '搜尋變體',
+                            'search-placeholder' => '依 SKU 搜尋',
+                        ],
+
                         'mass-edit' => [
                             'add-images'          => '添加圖片',
                             'apply-to-all-btn'    => '應用於所有',

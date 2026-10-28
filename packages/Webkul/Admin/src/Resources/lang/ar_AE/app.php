@@ -381,6 +381,16 @@ return [
                             'title'           => 'منتج',
                             'weight'          => 'وزن',
                         ],
+                        'filters' => [
+                            'any-option'         => 'الكل',
+                            'clear'              => 'مسح عوامل التصفية',
+                            'load-error'         => 'تعذّر تحميل المتغيرات. يرجى المحاولة مرة أخرى.',
+                            'no-results'         => 'لا توجد متغيرات تطابق عوامل التصفية المحددة.',
+                            'range'              => ':from–:to من :total',
+                            'search'             => 'البحث في المتغيرات',
+                            'search-placeholder' => 'البحث حسب SKU',
+                        ],
+
                         'mass-edit' => [
                             'add-images'          => 'إضافة الصور',
                             'apply-to-all-btn'    => 'تنطبق على الجميع',
