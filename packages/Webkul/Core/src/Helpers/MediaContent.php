@@ -36,6 +36,18 @@ class MediaContent
     ];
 
     /**
+     * Extensions a server or browser may execute, render as markup, or open
+     * with macros enabled. They are refused whatever an attribute configures,
+     * because uploads land on the public disk under the admin's own origin.
+     */
+    public const BLOCKED_EXTENSIONS = [
+        'asp', 'aspx', 'bash', 'bat', 'cgi', 'cjs', 'cmd', 'com', 'docm', 'dotm', 'exe', 'hta', 'htaccess',
+        'htm', 'html', 'inc', 'jar', 'js', 'jsp', 'jspx', 'mht', 'mhtml', 'mjs', 'msi', 'phar', 'php', 'php3',
+        'php4', 'php5', 'php7', 'php8', 'phps', 'pht', 'phtml', 'pl', 'potm', 'ppsm', 'pptm', 'ps1', 'py', 'rb',
+        'scr', 'sh', 'shtm', 'shtml', 'svgz', 'swf', 'vbs', 'xht', 'xhtml', 'xlsb', 'xlsm', 'xltm', 'xml', 'xsl', 'xslt',
+    ];
+
+    /**
      * Markers whose presence means the PDF asks a viewer to run something.
      */
     private const string PDF_ACTIVE_CONTENT = '/\/(OpenAction|AA|JavaScript|JS|Launch|EmbeddedFile|RichMedia)\b/';
@@ -68,6 +80,11 @@ class MediaContent
     public static function isInlineSafe(?string $extension): bool
     {
         return self::inlineType($extension) !== null;
+    }
+
+    public static function isBlockedExtension(?string $extension): bool
+    {
+        return in_array(strtolower(ltrim(trim((string) $extension), '.')), self::BLOCKED_EXTENSIONS, true);
     }
 
     /**

@@ -3,6 +3,8 @@
 namespace Webkul\AiAgent\Chat;
 
 use Laravel\Ai\AnonymousAgent;
+use Laravel\Ai\Attributes\CacheInstructions;
+use Laravel\Ai\Attributes\CacheToolDefinitions;
 
 /**
  * An AnonymousAgent that advertises a hard tool-loop step cap.
@@ -13,7 +15,14 @@ use Laravel\Ai\AnonymousAgent;
  * for the current tool set — and each iteration resends the full system
  * prompt, tool schemas, and history, so a single chat turn could burn
  * hundreds of thousands of tokens.
+ *
+ * The cache attributes let laravel/ai mark the tool schemas and system
+ * prompt as provider cache breakpoints (Anthropic cache_control, Bedrock
+ * cachePoint), so every loop step after the first re-reads them from the
+ * prompt cache; providers without explicit caching ignore them.
  */
+#[CacheToolDefinitions]
+#[CacheInstructions]
 class BoundedAgent extends AnonymousAgent
 {
     /**
