@@ -1213,6 +1213,19 @@
                     <template v-slot:option="{ option }">
                         {{ $option }}
                     </template>
+                @else
+                    <template v-slot:option="{ option }">
+                        <div class="flex items-center gap-2 py-1">
+                            <span
+                                v-if="multiple && ! option.isTag"
+                                class="text-2xl"
+                                :class="isSelected(option) ? 'icon-checkbox-check text-primary-700' : 'icon-checkbox-normal'"
+                                aria-hidden="true"
+                            ></span>
+
+                            <span v-text="optionLabel(option)"></span>
+                        </div>
+                    </template>
                 @endisset
 
                 @isset($singleLabel)
@@ -1602,6 +1615,22 @@
 
                             this.$emitter.emit('add-flash', { type: 'warning', message: message });
                         });
+                },
+
+                isSelected(option) {
+                    if (! this.multiple || ! Array.isArray(this.selectedValue)) {
+                        return false;
+                    }
+
+                    return this.selectedValue.some((selected) => selected?.[this.trackBy] === option?.[this.trackBy]);
+                },
+
+                optionLabel(option) {
+                    if (option?.isTag) {
+                        return option.label;
+                    }
+
+                    return option?.[this.labelBy] ?? option?.[this.trackBy] ?? '';
                 },
 
                 previewImage(option) {
