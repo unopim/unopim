@@ -22,29 +22,43 @@ function applyPropertyFilter($filter, string $property, FilterOperators $operato
 }
 
 describe('CompletenessFilter', function () {
+    // Container-resolved (not `new`) so the ChannelCompletenessColumn
+    // dependency is wired; no channel is requested in these tests, so it
+    // falls back to the pre-existing cross-channel average column.
     it('compares the average completeness score', function () {
-        $queryBuilder = applyPropertyFilter(new CompletenessFilter, 'completeness', FilterOperators::GREATER_THAN_OR_EQUAL, ['50']);
+        $queryBuilder = applyPropertyFilter(app(CompletenessFilter::class), 'completeness', FilterOperators::GREATER_THAN_OR_EQUAL, ['50']);
 
         expect($queryBuilder->toSql())->toContain('avg_completeness_score >= ?')
             ->and($queryBuilder->getBindings())->toContain(50.0);
     });
 
     it('builds a BETWEEN for a range', function () {
-        $queryBuilder = applyPropertyFilter(new CompletenessFilter, 'completeness', FilterOperators::RANGE, ['20', '80']);
+        $queryBuilder = applyPropertyFilter(app(CompletenessFilter::class), 'completeness', FilterOperators::RANGE, ['20', '80']);
 
         expect($queryBuilder->toSql())->toContain('BETWEEN ? AND ?')
             ->and($queryBuilder->getBindings())->toBe([20.0, 80.0]);
     });
 
     it('matches products without a score', function () {
-        $queryBuilder = applyPropertyFilter(new CompletenessFilter, 'completeness', FilterOperators::IS_EMPTY, ['']);
+        $queryBuilder = applyPropertyFilter(app(CompletenessFilter::class), 'completeness', FilterOperators::IS_EMPTY, ['']);
 
         expect($queryBuilder->toSql())->toContain('avg_completeness_score IS NULL');
     });
 
     it('rejects an unsupported property', function () {
-        applyPropertyFilter(new CompletenessFilter, 'sku', FilterOperators::EQUAL, ['10']);
+        applyPropertyFilter(app(CompletenessFilter::class), 'sku', FilterOperators::EQUAL, ['10']);
     })->throws(InvalidArgumentException::class);
+
+    it('filters on the requested channel\'s own score once a channel is in context', function () {
+        request()->merge(['channel' => 'does-not-exist']);
+
+        // An unresolvable channel code still falls back to the average —
+        // proves the fallback is driven by whether the channel actually
+        // resolves, not merely by the presence of a `channel` query param.
+        $queryBuilder = applyPropertyFilter(app(CompletenessFilter::class), 'completeness', FilterOperators::LESS_THAN, ['80']);
+
+        expect($queryBuilder->toSql())->toContain('avg_completeness_score < ?');
+    });
 });
 
 describe('CategoryFilter', function () {

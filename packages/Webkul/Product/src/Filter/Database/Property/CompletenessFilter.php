@@ -5,6 +5,7 @@ namespace Webkul\Product\Filter\Database\Property;
 use Illuminate\Support\Facades\DB;
 use Webkul\ElasticSearch\Enums\FilterOperators;
 use Webkul\Product\Filter\AbstractPropertyFilter;
+use Webkul\Product\Services\ChannelCompletenessColumn;
 
 /**
  * Completeness score filter for a database query
@@ -24,6 +25,7 @@ class CompletenessFilter extends AbstractPropertyFilter
     ];
 
     public function __construct(
+        protected ChannelCompletenessColumn $channelCompletenessColumn,
         array $supportedProperties = [self::PROPERTY],
         array $allowedOperators = [
             FilterOperators::EQUAL,
@@ -57,8 +59,7 @@ class CompletenessFilter extends AbstractPropertyFilter
             );
         }
 
-        /** raw statements bypass the builder, so the prefix is applied here */
-        $column = sprintf('%s%s.%s', DB::getTablePrefix(), $this->getSearchTablePath($options), self::COLUMN);
+        $column = $this->resolveColumn($options);
 
         if ($comparison = self::COMPARISONS[$operator->value] ?? null) {
             $this->queryBuilder->whereRaw("$column $comparison ?", [(float) $this->scalarValue($value)]);
@@ -77,5 +78,27 @@ class CompletenessFilter extends AbstractPropertyFilter
         };
 
         return $this;
+    }
+
+    /**
+     * When a channel is explicitly requested (e.g. a dashboard drill-down
+     * link), filter on that channel+locale's own `product_completeness`
+     * score instead of the product's cross-channel average, so "< 80" means
+     * "incomplete for this channel" rather than "incomplete on average
+     * everywhere".
+     *
+     * Relies on `ProductDataGrid::prepareQueryBuilder()` having already left
+     * joined `product_completeness` under that exact condition — both read
+     * the same `ChannelCompletenessColumn::resolve()` so they always agree
+     * on whether that join is present.
+     */
+    protected function resolveColumn(array $options): string
+    {
+        if ($this->channelCompletenessColumn->resolve()) {
+            return DB::getTablePrefix().'product_completeness.score';
+        }
+
+        /** raw statements bypass the builder, so the prefix is applied here */
+        return sprintf('%s%s.%s', DB::getTablePrefix(), $this->getSearchTablePath($options), self::COLUMN);
     }
 }
