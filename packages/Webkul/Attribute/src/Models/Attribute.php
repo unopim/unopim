@@ -43,6 +43,7 @@ use Webkul\Product\Validator\Rule\TemplateExpressionRule;
     'usable_in_grid',
     'allowed_extensions',
     'max_file_size',
+    'formula',
 ])]
 class Attribute extends TranslatableModel implements AttributeContract, HistoryContract, PresentableHistoryInterface
 {
@@ -74,6 +75,8 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
     const GALLERY_ATTRIBUTE_TYPE = 'gallery';
 
     const MEASUREMENT_FIELD_TYPE = 'measurement';
+
+    const CALCULATED_FIELD_TYPE = 'calculated';
 
     public $translatedAttributes = ['name', 'instructions'];
 

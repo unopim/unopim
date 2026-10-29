@@ -17,8 +17,15 @@ class CalculatedAttributeEventServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        /*
+         * Two different hooks because the two templates nest differently: on
+         * edit, `card.label.after` sits inside the left column, while on create
+         * the equivalent point is already outside it, so the panel is hung
+         * below both columns instead. Both are still inside <x-admin::form>,
+         * which is what matters for the field to be submitted.
+         */
         foreach ([
-            'unopim.admin.catalog.attributes.create.card.label.after',
+            'unopim.admin.catalog.attributes.create_form_controls.after',
             'unopim.admin.catalog.attributes.edit.card.label.after',
         ] as $event) {
             Event::listen($event, function ($viewRenderEventManager, $attribute = null): void {

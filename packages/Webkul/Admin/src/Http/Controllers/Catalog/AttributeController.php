@@ -15,6 +15,7 @@ use Webkul\Attribute\Enums\SwatchTypeEnum;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Rules\NotSupportedAttributes;
 use Webkul\Attribute\Rules\SwatchTypes;
+use Webkul\CalculatedAttribute\Rules\ValidFormula;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Core\Rules\Code;
 use Webkul\Product\Repositories\ProductRepository;
@@ -30,6 +31,8 @@ class AttributeController extends Controller
     public const TEXT = 'text';
 
     public const TEXTAREA = 'textarea';
+
+    public const CALCULATED = 'calculated';
 
     /**
      * Create a new controller instance.
@@ -77,6 +80,7 @@ class AttributeController extends Controller
                 'prohibited_unless:type,select,multiselect',
                 new SwatchTypes,
             ],
+            'formula' => $this->formulaRules((string) request('code'), request('type')),
         ]);
 
         $requestData = request()->all();
@@ -84,6 +88,8 @@ class AttributeController extends Controller
         if (($requestData['validation'] ?? null) === 'none') {
             $requestData['validation'] = null;
         }
+
+        $requestData['formula'] = $this->normalizeFormula($requestData);
 
         $requestData['ai_translate'] = self::AI_TRANSLATE_DISABLED;
 
@@ -125,6 +131,12 @@ class AttributeController extends Controller
      */
     public function update(int $id): RedirectResponse
     {
+        /*
+         * The type is not editable after creation, so the stored one — not the
+         * posted one — decides whether this attribute carries a formula.
+         */
+        $storedType = $this->attributeRepository->find($id)?->type;
+
         $this->validate(request(), [
             'code'        => ['required', 'unique:attributes,code,'.$id, new Code],
             'type'        => 'required',
@@ -133,6 +145,7 @@ class AttributeController extends Controller
                 'prohibited_unless:type,select,multiselect',
                 new SwatchTypes,
             ],
+            'formula' => $this->formulaRules((string) request('code'), $storedType),
         ]);
 
         $requestData = request()->except(['type', 'code', 'value_per_locale', 'value_per_channel', 'is_unique']);
@@ -140,6 +153,8 @@ class AttributeController extends Controller
         if (empty($requestData['ai_translate'])) {
             $requestData['ai_translate'] = self::AI_TRANSLATE_DISABLED;
         }
+
+        $requestData['formula'] = $this->normalizeFormula($requestData + ['type' => $storedType]);
 
         Event::dispatch('catalog.attribute.update.before', $id);
 
@@ -150,6 +165,42 @@ class AttributeController extends Controller
         session()->flash('success', trans('admin::app.catalog.attributes.update-success'));
 
         return redirect()->route('admin.catalog.attributes.edit', $id);
+    }
+
+    /**
+     * Validation rules for the formula field.
+     *
+     * A formula is required for a calculated attribute — one without a formula
+     * would be an attribute that silently renders empty everywhere — and
+     * ignored for every other type, since the field is posted by a hidden
+     * textarea whenever the form is submitted.
+     *
+     * @return array<int, mixed>
+     */
+    protected function formulaRules(string $code, mixed $type): array
+    {
+        if ($type !== self::CALCULATED) {
+            return ['nullable'];
+        }
+
+        return ['required', 'string', new ValidFormula($code)];
+    }
+
+    /**
+     * The formula to persist: trimmed for a calculated attribute, null for
+     * anything else so a type change cannot leave a stale formula behind.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    protected function normalizeFormula(array $data): ?string
+    {
+        if (($data['type'] ?? null) !== self::CALCULATED) {
+            return null;
+        }
+
+        $formula = trim((string) ($data['formula'] ?? ''));
+
+        return $formula === '' ? null : $formula;
     }
 
     /**

@@ -14,6 +14,14 @@
 
     $groupLabel = $group->name;
     $groupLabel = empty($groupLabel) ? "[{$group->code}]" : $groupLabel;
+
+    /**
+     * Calculated attributes hold no stored value, so they are computed here and
+     * merged on top of the product's own values. The resolver returns the array
+     * untouched when no calculated attribute exists, which is the normal case.
+     */
+    $fieldValues = app(\Webkul\CalculatedAttribute\Services\CalculatedValueResolver::class)
+        ->mergeForProduct($product, $currentChannel->code, $currentLocale->code);
 @endphp
 
 {!! view_render_event('unopim.admin.catalog.product.edit.form.column_before', ['product' => $product]) !!}
@@ -40,7 +48,7 @@
             <x-slot:content>
                 <x-admin::products.dynamic-attribute-fields
                     :fields="$customAttributes"
-                    :fieldValues="$product->values"
+                    :fieldValues="$fieldValues"
                     :currentLocaleCode="$currentLocale->code"
                     :currentChannelCode="$currentChannel->code"
                     :channelCurrencies="$currentChannel->currencies"
