@@ -162,6 +162,7 @@ return [
             'of'                   => 'of',
             'products-ready'       => 'proizvodi spremni',
             'no-readiness-data'    => 'Nema dostupnih podataka o potpunosti.',
+            'readiness-drilldown'  => 'Prikaži preostale nepotpune proizvode za kanal :channel',
             'no-products'          => 'Još nema proizvoda.',
             'last-7-days'          => 'Posljednjih 7 dana',
             'days'                 => [
