@@ -106,6 +106,30 @@ it('computes a locale-scoped calculated value for every locale in the response',
     }
 });
 
+it('passes a null values block through untouched', function (): void {
+    app(AttributeRegistry::class)->flush();
+
+    /*
+     * A product's `values` may legitimately be null and the API has always
+     * carried that through. Coercing it to an array here would change the
+     * payload shape for every catalogue that does not use the feature — which
+     * is exactly what an earlier version of this code did.
+     */
+    $family = AttributeFamily::factory()->create(['code' => 'fam_'.Str::random(6)]);
+
+    $product = Product::create([
+        'sku'                 => 'CALC-'.Str::random(6),
+        'type'                => 'simple',
+        'status'              => 1,
+        'attribute_family_id' => $family->id,
+    ]);
+
+    $row = $product->fresh()->load('attribute_family')->toArray();
+    $row['values'] = null;
+
+    expect(calcApiNormalize($row)['values'])->toBeNull();
+});
+
 it('does not disturb stored values already present in the payload', function (): void {
     $plain = Attribute::factory()->create([
         'code'              => 'plain_'.Str::random(6),
