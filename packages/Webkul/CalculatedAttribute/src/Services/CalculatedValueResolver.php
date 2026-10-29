@@ -114,6 +114,31 @@ class CalculatedValueResolver
     }
 
     /**
+     * Merge computed values for every channel/locale combination at once.
+     *
+     * The admin API returns the whole `values` structure rather than one scope,
+     * so a single (channel, locale) pass would leave most of it unpopulated.
+     *
+     * @param  array<string, mixed>  $values
+     * @param  array<string, array<int, string>>  $channelsAndLocales  channel code => locale codes
+     * @return array<string, mixed>
+     */
+    public function mergeAllScopes(array $values, ProductContext $product, array $channelsAndLocales): array
+    {
+        if (! $this->hasCalculatedAttributes()) {
+            return $values;
+        }
+
+        foreach ($channelsAndLocales as $channel => $locales) {
+            foreach ($locales === [] ? [null] : $locales as $locale) {
+                $values = $this->mergeInto($values, $product, (string) $channel, $locale);
+            }
+        }
+
+        return $values;
+    }
+
+    /**
      * @param  array<string, mixed>  $resolved  memo of values already computed
      *                                          for this product and scope
      */
