@@ -8,6 +8,7 @@ use Webkul\Admin\Tests\AdminTestCase;
 use Webkul\AdminApi\Tests\ApiTestCase;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\Attribute\Tests\AttributeTestCase;
+use Webkul\CalculatedAttribute\Tests\CalculatedAttributeTestCase;
 use Webkul\Category\Tests\CategoryTestCase;
 use Webkul\Completeness\Tests\CompletenessTestCase;
 use Webkul\Core\Models\Channel;
@@ -58,6 +59,7 @@ uses(AdminTestCase::class)->in('../packages/Webkul/AppUrlGuard/tests');
 uses(ResourceTestCase::class)->in('../packages/Webkul/Resource/tests/Feature');
 uses(PublicationTestCase::class)->in('../packages/Webkul/Publication/tests');
 uses(ProductPassportTestCase::class)->in('../packages/Webkul/ProductPassport/tests');
+uses(CalculatedAttributeTestCase::class)->in('../packages/Webkul/CalculatedAttribute/tests');
 
 /*
 |--------------------------------------------------------------------------

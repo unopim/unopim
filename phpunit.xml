@@ -110,6 +110,14 @@
         <testsuite name="ProductPassport Feature Test">
             <directory suffix="Test.php">packages/Webkul/ProductPassport/tests/Feature</directory>
         </testsuite>
+
+        <testsuite name="Calculated Attribute Unit Test">
+            <directory suffix="Test.php">packages/Webkul/CalculatedAttribute/tests/Unit</directory>
+        </testsuite>
+
+        <testsuite name="Calculated Attribute Feature Test">
+            <directory suffix="Test.php">packages/Webkul/CalculatedAttribute/tests/Feature</directory>
+        </testsuite>
     </testsuites>
 
     <source>
