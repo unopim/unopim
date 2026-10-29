@@ -17,14 +17,6 @@
 </p>
 
 <p align="center">
-  <a href="https://sonarcloud.io/summary/new_code?id=unopim_unopim"><img src="https://sonarcloud.io/api/project_badges/measure?project=unopim_unopim&metric=alert_status" alt="Quality Gate Status"></a>
-  <a href="https://sonarcloud.io/summary/new_code?id=unopim_unopim"><img src="https://sonarcloud.io/api/project_badges/measure?project=unopim_unopim&metric=security_rating" alt="Security Rating"></a>
-  <a href="https://sonarcloud.io/summary/new_code?id=unopim_unopim"><img src="https://sonarcloud.io/api/project_badges/measure?project=unopim_unopim&metric=sqale_rating" alt="Maintainability Rating"></a>
-  <a href="https://sonarcloud.io/summary/new_code?id=unopim_unopim"><img src="https://sonarcloud.io/api/project_badges/measure?project=unopim_unopim&metric=reliability_rating" alt="Reliability Rating"></a>
-  <a href="https://scorecard.dev/viewer/?uri=github.com/unopim/unopim"><img src="https://api.scorecard.dev/projects/github.com/unopim/unopim/badge" alt="OpenSSF Scorecard"></a>
-</p>
-
-<p align="center">
   <a href="https://github.com/unopim/unopim/stargazers"><img src="https://img.shields.io/github/stars/unopim/unopim?style=social" alt="GitHub Stars"></a>
   <a href="https://github.com/unopim/unopim/network/members"><img src="https://img.shields.io/github/forks/unopim/unopim?style=social" alt="GitHub Forks"></a>
 </p>
