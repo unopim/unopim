@@ -162,6 +162,7 @@ return [
             'of'                   => 'z',
             'products-ready'       => 'produktów gotowych',
             'no-readiness-data'    => 'Brak danych o kompletności.',
+            'readiness-drilldown'  => 'Wyświetl pozostałe niekompletne produkty dla kanału :channel',
             'no-products'          => 'Brak produktów.',
             'last-7-days'          => 'Ostatnie 7 dni',
 

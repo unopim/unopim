@@ -188,8 +188,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     {
         $scope = $this->channelCompletenessColumn->resolve();
 
+        $tablePrefix = DB::getTablePrefix();
+
         if (! $scope) {
-            return 'products.avg_completeness_score';
+            return $tablePrefix.'products.avg_completeness_score';
         }
 
         $queryBuilder->leftJoin('product_completeness', function ($join) use ($scope) {
@@ -198,7 +200,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 ->where('product_completeness.locale_id', '=', $scope['locale']->id);
         });
 
-        return 'product_completeness.score';
+        return $tablePrefix.'product_completeness.score';
     }
 
     /**
