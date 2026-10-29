@@ -5,6 +5,7 @@ namespace Webkul\ProductPassport\Services;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Attribute\Contracts\Attribute as AttributeContract;
+use Webkul\Core\Traits\HtmlPurifier;
 use Webkul\Product\Models\Product;
 use Webkul\ProductPassport\Contracts\PassportTemplateField as PassportTemplateFieldContract;
 use Webkul\ProductPassport\Enums\PassportFieldRole;
@@ -19,6 +20,8 @@ use Webkul\Publication\DataTransferObjects\PublicationContext;
  */
 class PassportPayloadBuilder implements PayloadBuilder
 {
+    use HtmlPurifier;
+
     private const DOCUMENT_TYPES = ['file', 'image'];
 
     private const DEFAULT_SECTION = 'passport';
@@ -83,11 +86,19 @@ class PassportPayloadBuilder implements PayloadBuilder
                 continue;
             }
 
+            $isRichText = $this->isRichText($field);
+            $formattedValue = $this->formatValue($field, $raw, $channelCode);
+
             $tiers[$tier]['fields'][] = [
-                'code'    => $field->code,
-                'label'   => $label,
-                'value'   => $this->formatValue($field, $raw, $channelCode),
-                'section' => $sectionKey,
+                'code'         => $field->code,
+                'label'        => $label,
+                'value'        => $formattedValue,
+                // Plain-text sibling for consumers that must not receive markup (JSON-LD
+                // `additionalProperty.value`, exports, search index). Rich-text fields keep
+                // their sanitized HTML in `value` for the passport page itself to render.
+                'value_text'   => $isRichText ? $this->toPlainText($formattedValue) : $formattedValue,
+                'is_rich_text' => $isRichText,
+                'section'      => $sectionKey,
             ];
         }
 
@@ -233,6 +244,13 @@ class PassportPayloadBuilder implements PayloadBuilder
             return (string) $value;
         }
 
+        // WYSIWYG-authored content is genuine formatted text (paragraphs, lists), not
+        // markup to discard: sanitize and keep it as HTML so the passport page renders
+        // it the way the editor wrote it, instead of dumping raw `<p>` tags as text.
+        if ($this->isRichText($field)) {
+            return $this->purifyText((string) $value);
+        }
+
         return match ($attribute->type) {
             'multiselect', 'checkbox' => implode(', ', $this->resolveOptionLabels($attribute, is_array($value) ? $value : explode(',', (string) $value))),
             'select'                  => $this->resolveOptionLabels($attribute, [(string) $value])[0] ?? (string) $value,
@@ -241,6 +259,35 @@ class PassportPayloadBuilder implements PayloadBuilder
             'measurement'             => $this->formatMeasurement($value),
             default                   => is_array($value) ? implode(', ', array_map(strval(...), $value)) : (string) $value,
         };
+    }
+
+    /**
+     * A field only counts as rich text when it is actually sourced from a WYSIWYG
+     * attribute — a fixed value or a plain textarea never carries markup, so they
+     * stay on the escaped-text path instead of being sent through the purifier.
+     */
+    private function isRichText(PassportTemplateFieldContract $field): bool
+    {
+        $attribute = $field->attribute;
+
+        return $field->source_type === PassportFieldSource::Attribute
+            && $attribute instanceof AttributeContract
+            && $attribute->type === 'textarea'
+            && (bool) $attribute->enable_wysiwyg;
+    }
+
+    /**
+     * Strips the sanitized HTML back down to plain text for consumers that must not
+     * receive markup (JSON-LD, exports): block-level tags become line breaks first,
+     * so "paragraph, paragraph" does not collapse into one run-on sentence.
+     */
+    private function toPlainText(string $html): string
+    {
+        $withBreaks = preg_replace('/<(p|br|li|h[1-6]|tr)\b[^>]*>/i', "\n", $html) ?? $html;
+
+        $text = html_entity_decode(strip_tags($withBreaks), ENT_QUOTES);
+
+        return trim(preg_replace('/[ \t]+/', ' ', preg_replace('/\n{2,}/', "\n", $text) ?? $text) ?? $text);
     }
 
     /**

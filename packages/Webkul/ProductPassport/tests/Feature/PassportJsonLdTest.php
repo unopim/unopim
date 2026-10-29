@@ -53,3 +53,21 @@ it('embeds a JSON-LD script block in the HTML passport page', function (): void 
         ->assertSee('<script type="application/ld+json">', false)
         ->assertSee('"@type":"Product"', false);
 });
+
+it('carries a WYSIWYG field as plain text in JSON-LD, never as markup', function (): void {
+    $version = $this->publishedRichTextPassportFixture('<p>Hand wash only.</p><ul><li>Do not bleach</li></ul>');
+
+    $response = $this->withHeaders(['Accept' => 'application/ld+json'])
+        ->get('/p/'.$version->publication->uuid.'/'.$version->locale->code);
+
+    $response->assertOk();
+
+    $properties = collect($response->json('additionalProperty'));
+    $careInstructions = $properties->firstWhere('name', 'Care Instructions');
+
+    expect($careInstructions)->not->toBeNull()
+        ->and($careInstructions['value'])->not->toContain('<p>')
+        ->and($careInstructions['value'])->not->toContain('<ul>')
+        ->and($careInstructions['value'])->toContain('Hand wash only.')
+        ->and($careInstructions['value'])->toContain('Do not bleach');
+});

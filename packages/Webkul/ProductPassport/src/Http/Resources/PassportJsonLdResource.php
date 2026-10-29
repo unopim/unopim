@@ -36,10 +36,12 @@ class PassportJsonLdResource extends JsonResource
                 'name'  => $payload['operator']['name'] ?? null,
             ], fn ($v): bool => $v !== null && $v !== ''),
             'additionalProperty' => array_map(
+                // schema.org PropertyValue.value is plain text; `value_text` strips the
+                // sanitized HTML a rich-text field keeps in `value` for the HTML page.
                 fn (array $field): array => [
                     '@type' => 'PropertyValue',
                     'name'  => $field['label'],
-                    'value' => $field['value'],
+                    'value' => $field['value_text'] ?? $field['value'],
                 ],
                 array_merge(...array_map(
                     fn (array $section): array => $section['fields'] ?? [],
