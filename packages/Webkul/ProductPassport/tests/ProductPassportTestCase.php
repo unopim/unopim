@@ -243,6 +243,55 @@ class ProductPassportTestCase extends TestCase
     }
 
     /**
+     * A product whose template sources one field from a WYSIWYG `textarea` attribute
+     * — the fixture the rich-text rendering/XSS tests drive. `$html` lets a caller
+     * inject a hostile payload to prove the purifier, not just the formatter, gates it.
+     *
+     * @return array{0: Product, 1: PublicationContext}
+     */
+    protected function productWithRichTextPassportField(string $html = '<p>Hand wash only.</p><ul><li>Do not bleach</li></ul>'): array
+    {
+        $careInstructions = $this->passportSourceAttribute(['type' => 'textarea', 'enable_wysiwyg' => true]);
+
+        $family = AttributeFamilyProxy::factory()->withMinimalAttributesForProductTypes()->create();
+
+        $this->passportTemplateFor($family, [
+            'dpp_care_instructions' => ['attribute' => $careInstructions, 'label' => 'Care Instructions'],
+        ]);
+
+        $channel = ChannelProxy::factory()->create();
+        $locale = $channel->locales()->first() ?: tap(Locale::factory()->create(), fn ($l) => $channel->locales()->attach($l));
+
+        $product = ProductProxy::factory()->create([
+            'attribute_family_id' => $family->id,
+            'values'              => ['common' => [$careInstructions->code => $html]],
+        ]);
+
+        $context = new PublicationContext(
+            uuid: (string) Str::uuid(),
+            channel: $channel,
+            locale: $locale,
+            url: 'https://example.test/p/'.$product->id.'/'.$locale->code,
+        );
+
+        return [$product, $context];
+    }
+
+    /**
+     * Publishes {@see productWithRichTextPassportField()} through the real `Publisher`,
+     * for the page-render/JSON-LD tests that need a public route to hit.
+     */
+    protected function publishedRichTextPassportFixture(string $html = '<p>Hand wash only.</p><ul><li>Do not bleach</li></ul>'): PublicationVersion
+    {
+        [$product, $context] = $this->productWithRichTextPassportField($html);
+
+        $this->enablePublicTier($context->channel->code);
+        $this->enablePassportPublishing($context->channel->code);
+
+        return resolve(Publisher::class)->publish($product, $context->channel, $context->locale, 'dpp');
+    }
+
+    /**
      * Writes a `core_config` row directly rather than through
      * `CoreConfigRepository::create()` — that repository's
      * `recursiveArray()` uses a `static $data` cache that re-writes every
