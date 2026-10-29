@@ -2326,6 +2326,7 @@ return [
                 'title'               => 'Aufforderung',
                 'create-btn'          => 'Aufforderung erstellen',
                 'edit-title'          => 'Aufforderung bearbeiten',
+                'insert-attribute'    => 'Attribut einfügen',
                 'create-title'        => 'Neue Aufforderung erstellen',
                 'label-title'         => 'Titel',
                 'purpose'             => 'Zweck',

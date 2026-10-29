@@ -23,7 +23,7 @@
                     <button
                         type="button"
                         class="primary-button"
-                        @click="selectedPrompt=0;resetForm();$refs.promptUpdateOrCreateModal.toggle();toggleMagicAIModal()"
+                        @click="selectedPrompt=0;resetForm();$refs.promptUpdateOrCreateModal.toggle()"
                     >
                         @lang('admin::app.configuration.prompt.create.create-btn')
                     </button>
@@ -233,23 +233,11 @@
                                     <x-admin::form.control-group.label class="required">
                                         @lang('admin::app.configuration.prompt.create.prompt')
                                     </x-admin::form.control-group.label>
-                                    <div class="relative w-full">
-                                        <x-admin::form.control-group.control
-                                            type="textarea"
-                                            class="h-[180px]"
-                                            name="prompt"
-                                            rules="required"
-                                            v-model="ai.prompt"
-                                            ref="promptInput"
-                                            :label="trans('admin::app.components.tinymce.ai-generation.prompt')"
-                                        />
-                                        <div
-                                            class="absolute bottom-2.5 left-1 text-gray-400 cursor-pointer text-2xl"
-                                            @click="openSuggestions"
-                                        >
-                                            <span class="icon-at"></span>
-                                        </div>
-                                    </div>
+                                    <x-admin::magic-ai.prompt-input
+                                        class="h-[180px]"
+                                        v-model="ai.prompt"
+                                        ::entity-name="entityName"
+                                    />
                                     <x-admin::form.control-group.error control-name="prompt" />
                                 </x-admin::form.control-group>
                             </x-slot>
@@ -351,56 +339,6 @@
                                     setErrors(error.response.data.errors);
                                 }
                             });
-                    },
-
-                    toggleMagicAIModal() {
-                        this.$nextTick(() => {
-                            if (this.$refs.promptInput) {
-
-                                const tribute = this.$tribute.init({
-                                    values: this.fetchSuggestionValues,
-                                    lookup: 'name',
-                                    fillAttr: 'code',
-                                    noMatchTemplate: "@lang('admin::app.common.no-match-found')",
-                                    selectTemplate: (item) => `@${item.original.code}`,
-                                    menuItemTemplate: (item) => {
-                                        const element = document.createElement('div');
-                                        element.className = 'p-1.5 rounded-md text-base cursor-pointer transition-all max-sm:place-self-center';
-                                        element.textContent = item.original.name || '[' + item.original.code + ']';
-
-                                        return element.outerHTML;
-                                    },
-                                });
-                                tribute.attach(this.$refs.promptInput);
-
-                            }
-                        });
-                    },
-
-                    openSuggestions() {
-                        this.ai.prompt += ' @';
-                        this.$nextTick(() => {
-                            this.$refs.promptInput.focus();
-                            const textarea = this.$refs.promptInput;
-                            const keydownEvent = new KeyboardEvent("keydown", {
-                                key: "@",
-                                bubbles: true
-                            });
-                            textarea.dispatchEvent(keydownEvent);
-                            const event = new KeyboardEvent("keyup", {
-                                key: "@",
-                                bubbles: true
-                            });
-                            textarea.dispatchEvent(event);
-                        });
-                    },
-                    async fetchSuggestionValues(text, cb) {
-                        const response = await fetch(
-                            `{{ route('admin.magic_ai.suggestion_values') }}?query=${encodeURIComponent(text)}&entity_name=${encodeURIComponent(this.entityName)}&locale={{ core()->getRequestedLocaleCode() }}`
-                        );
-                        const data = await response.json();
-                        this.suggestionValues = data;
-                        cb(this.suggestionValues);
                     },
 
                     editModal(url) {

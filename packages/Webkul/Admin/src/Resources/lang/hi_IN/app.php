@@ -2326,6 +2326,7 @@ return [
                 'title'               => 'प्रॉम्प्ट',
                 'create-btn'          => 'प्रॉम्प्ट बनाएं',
                 'edit-title'          => 'प्रॉम्प्ट संपादित करें',
+                'insert-attribute'    => 'एट्रिब्यूट डालें',
                 'create-title'        => 'नया प्रॉम्प्ट बनाएं',
                 'label-title'         => 'शीर्षक',
                 'purpose'             => 'उद्देश्य',

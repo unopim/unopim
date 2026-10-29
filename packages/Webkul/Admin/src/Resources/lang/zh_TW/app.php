@@ -2328,6 +2328,7 @@ return [
                 'title'               => '提示',
                 'create-btn'          => '建立提示',
                 'edit-title'          => '編輯提示',
+                'insert-attribute'    => '插入屬性',
                 'create-title'        => '建立新提示',
                 'label-title'         => '標題',
                 'purpose'             => '用途',

@@ -2326,6 +2326,7 @@ return [
                 'title'               => 'Prompt',
                 'create-btn'          => 'Opret Prompt',
                 'edit-title'          => 'Rediger Prompt',
+                'insert-attribute'    => 'Indsæt attribut',
                 'create-title'        => 'Opret Ny Prompt',
                 'label-title'         => 'Titel',
                 'purpose'             => 'Formål',

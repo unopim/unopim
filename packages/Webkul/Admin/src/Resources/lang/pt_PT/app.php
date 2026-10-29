@@ -2328,6 +2328,7 @@ return [
                 'title'               => 'Prompt',
                 'create-btn'          => 'Criar Prompt',
                 'edit-title'          => 'Editar Prompt',
+                'insert-attribute'    => 'Inserir atributo',
                 'create-title'        => 'Criar Novo Prompt',
                 'label-title'         => 'Título',
                 'purpose'             => 'Finalidade',
