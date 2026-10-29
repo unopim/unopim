@@ -85,6 +85,35 @@ class CalculatedValueResolver
     }
 
     /**
+     * Whether anything needs computing at all. Callers on hot paths check this
+     * before assembling a ProductContext.
+     */
+    public function hasCalculatedAttributes(): bool
+    {
+        return $this->registry->calculatedCodes() !== [];
+    }
+
+    /**
+     * The product's stored values with calculated attributes merged in, for the
+     * product form.
+     *
+     * The stored values are the base, so nothing a user actually entered is
+     * disturbed; only the calculated codes are added.
+     *
+     * @return array<string, mixed>
+     */
+    public function mergeForProduct(object $product, ?string $channel, ?string $locale): array
+    {
+        $values = (array) ($product->values ?? []);
+
+        if (! $this->hasCalculatedAttributes()) {
+            return $values;
+        }
+
+        return $this->mergeInto($values, ProductContext::fromProduct($product), $channel, $locale);
+    }
+
+    /**
      * @param  array<string, mixed>  $resolved  memo of values already computed
      *                                          for this product and scope
      */
