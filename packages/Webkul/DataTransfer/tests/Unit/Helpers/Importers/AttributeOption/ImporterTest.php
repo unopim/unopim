@@ -3,6 +3,8 @@
 namespace Tests\Webkul\DataTransfer\Unit\Helpers\Importers\AttributeOption;
 
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\PresenceVerifierInterface;
 use stdClass;
 use Webkul\Attribute\Repositories\AttributeOptionRepository;
 use Webkul\Core\Repositories\LocaleRepository;
@@ -129,7 +131,13 @@ describe('validateRow', function () {
         $importer->setImport(makeImport(Import::ACTION_APPEND));
 
         $attrStorage->shouldReceive('has')->with('color')->andReturn(true);
-        $storage->shouldReceive('has')->with('opt1')->andReturn(false);
+        $attrStorage->shouldReceive('get')->with('color')->andReturn(5);
+        $storage->shouldReceive('has')->with('opt1', 5)->andReturn(false);
+
+        $presenceVerifier = \Mockery::mock(PresenceVerifierInterface::class);
+        $presenceVerifier->shouldReceive('getCount')->once()
+            ->with('attribute_options', 'code', 'opt1', null, 'id', ['attribute_id' => '5'])->andReturn(0);
+        Validator::setPresenceVerifier($presenceVerifier);
 
         expect($importer->validateRow(['code' => 'opt1', 'attribute_code' => 'color', 'locale' => 'en'], 1))->toBeTrue();
     });
@@ -140,7 +148,8 @@ describe('validateRow', function () {
         $importer->setImport(makeImport(Import::ACTION_APPEND));
 
         $attrStorage->shouldReceive('has')->with('color')->andReturn(true);
-        $storage->shouldReceive('has')->with('opt1')->andReturn(true);
+        $attrStorage->shouldReceive('get')->with('color')->andReturn(5);
+        $storage->shouldReceive('has')->with('opt1', 5)->andReturn(true);
 
         expect($importer->validateRow(['code' => 'opt1', 'attribute_code' => 'color', 'locale' => 'en'], 1))->toBeTrue();
     });
@@ -151,7 +160,7 @@ describe('prepareAttributeOptions', function () {
     it('adds new option to insert', function () {
         ['importer' => $importer, 'storage' => $storage, 'attrStorage' => $attrStorage] = makeImporter();
 
-        $storage->shouldReceive('has')->with('opt')->andReturn(false);
+        $storage->shouldReceive('has')->with('opt', 5)->andReturn(false);
         $attrStorage->shouldReceive('get')->with('color')->andReturn(5);
 
         $data = [];
@@ -162,14 +171,14 @@ describe('prepareAttributeOptions', function () {
         );
 
         expect($data)->toHaveKey('insert')
-            ->and($data['insert'])->toHaveKey('opt')
-            ->and($data['insert']['opt']['attribute_id'])->toEqual(5);
+            ->and($data['insert'])->toHaveKey('5:opt')
+            ->and($data['insert']['5:opt']['attribute_id'])->toEqual(5);
     });
 
     it('adds existing option to update', function () {
         ['importer' => $importer, 'storage' => $storage, 'attrStorage' => $attrStorage] = makeImporter();
 
-        $storage->shouldReceive('has')->with('opt')->andReturn(true);
+        $storage->shouldReceive('has')->with('opt', 5)->andReturn(true);
         $attrStorage->shouldReceive('get')->with('color')->andReturn(5);
 
         $data = [];
@@ -185,7 +194,7 @@ describe('prepareAttributeOptions', function () {
     it('merges locales', function () {
         ['importer' => $importer, 'storage' => $storage, 'attrStorage' => $attrStorage] = makeImporter();
 
-        $storage->shouldReceive('has')->with('opt')->andReturn(false);
+        $storage->shouldReceive('has')->with('opt', 5)->andReturn(false);
         $attrStorage->shouldReceive('get')->with('color')->andReturn(5);
 
         $data = [];
@@ -193,7 +202,7 @@ describe('prepareAttributeOptions', function () {
         $importer->prepareAttributeOptions(['code' => 'opt', 'attribute_code' => 'color', 'locale' => 'en', 'label' => 'Option'], $data);
         $importer->prepareAttributeOptions(['code' => 'opt', 'attribute_code' => 'color', 'locale' => 'fr', 'label' => 'Option Fr'], $data);
 
-        expect($data['insert']['opt'])->toHaveKeys(['en', 'fr']);
+        expect($data['insert']['5:opt'])->toHaveKeys(['en', 'fr']);
     });
 });
 
@@ -206,10 +215,10 @@ describe('saveAttributeOptions', function () {
         $model->id = 5;
 
         $repo->shouldReceive('create')->once()->andReturn($model);
-        $storage->shouldReceive('set')->with('opt', 5);
+        $storage->shouldReceive('set')->with('opt', 5, 5);
 
         $importer->saveAttributeOptions([
-            'insert' => ['opt' => ['code' => 'opt']],
+            'insert' => ['5:opt' => ['code' => 'opt', 'attribute_id' => 5]],
         ]);
 
         expect($importer->getCreatedItemsCount())->toBe(1);
@@ -218,12 +227,12 @@ describe('saveAttributeOptions', function () {
     it('updates existing options', function () {
         ['importer' => $importer, 'optionRepo' => $repo, 'storage' => $storage] = makeImporter();
 
-        $storage->shouldReceive('get')->with('opt')->andReturn(10);
+        $storage->shouldReceive('get')->with('opt', 5)->andReturn(10);
 
         $repo->shouldReceive('update')->once();
 
         $importer->saveAttributeOptions([
-            'update' => ['opt' => ['code' => 'opt']],
+            'update' => ['5:opt' => ['code' => 'opt', 'attribute_id' => 5]],
         ]);
 
         expect($importer->getUpdatedItemsCount())->toBe(1);
@@ -242,14 +251,14 @@ describe('importBatch', function () {
         ]);
 
         $storage->shouldReceive('load')->with(['opt']);
-        $storage->shouldReceive('has')->with('opt')->andReturn(false);
+        $storage->shouldReceive('has')->with('opt', 5)->andReturn(false);
         $attrStorage->shouldReceive('get')->with('color')->andReturn(5);
 
         $model = new stdClass;
         $model->id = 2;
 
         $repo->shouldReceive('create')->andReturn($model);
-        $storage->shouldReceive('set')->with('opt', 2);
+        $storage->shouldReceive('set')->with('opt', 2, 5);
 
         $batchRepo->shouldReceive('update')->andReturn($batch);
 
@@ -267,7 +276,6 @@ describe('importBatch', function () {
         ]);
 
         $storage->shouldReceive('load')->with(['opt']);
-        $storage->shouldReceive('has')->with('opt')->andReturn(true);
         $storage->shouldReceive('get')->with('opt')->andReturn(9);
 
         $repo->shouldReceive('deleteWhere')->once()->with([['id', 'IN', [9]]]);

@@ -7,7 +7,7 @@ use Webkul\Attribute\Repositories\AttributeOptionRepository;
 class Storage
 {
     /**
-     * Items contains code as key and attribute option information as value
+     * Attribute ID => option code => option ID.
      */
     protected array $items = [];
 
@@ -17,6 +17,7 @@ class Storage
     protected array $selectColumns = [
         'id',
         'code',
+        'attribute_id',
     ];
 
     /**
@@ -29,16 +30,16 @@ class Storage
      */
     public function init(): void
     {
-        $this->items = [];
-
         $this->load();
     }
 
     /**
-     * Load the Attribute Options
+     * Load all identities for the requested codes, including ambiguous codes.
      */
     public function load(array $codes = []): void
     {
+        $this->items = [];
+
         $query = $this->attributeOptionRepository->query()
             ->select($this->selectColumns);
 
@@ -46,41 +47,60 @@ class Storage
             $query->whereIn('attribute_options.code', $codes);
         }
 
-        $attributeOptions = $query->get();
-
-        foreach ($attributeOptions as $attributeOption) {
-            $this->set($attributeOption->code, $attributeOption->id);
+        foreach ($query->get() as $attributeOption) {
+            $this->set($attributeOption->code, $attributeOption->id, $attributeOption->attribute_id);
         }
     }
 
     /**
-     * Get Code information
+     * Legacy writes resolve the persisted ID and require its code to match.
+     * Unknown IDs or mismatched codes leave storage unchanged. Internal callers
+     * may supply the known attribute ID to avoid another database lookup.
      */
-    public function set(string $code, int $id): self
+    public function set(string $code, int $id, ?int $attributeId = null): self
     {
-        $this->items[$code] = $id;
+        if ($attributeId === null) {
+            $option = $this->attributeOptionRepository->find($id, $this->selectColumns);
+
+            if ($option === null || $option->code !== $code) {
+                return $this;
+            }
+
+            $attributeId = $option->attribute_id;
+        }
+
+        $this->items[$attributeId][$code] = $id;
 
         return $this;
     }
 
-    /**
-     * Check if code exists
-     */
-    public function has(string $code): bool
+    public function has(string $code, ?int $attributeId = null): bool
     {
-        return isset($this->items[$code]);
+        return $this->get($code, $attributeId) !== null;
     }
 
     /**
-     * Get code information
+     * Legacy code-only lookups are safe only when exactly one attribute owns it.
      */
-    public function get(string $code): ?int
+    public function get(string $code, ?int $attributeId = null): ?int
     {
-        if (! $this->has($code)) {
-            return null;
+        if ($attributeId !== null) {
+            return $this->items[$attributeId][$code] ?? null;
         }
 
-        return $this->items[$code];
+        $id = null;
+
+        foreach ($this->items as $options) {
+            if (isset($options[$code])) {
+                if ($id !== null) {
+                    return null;
+                }
+
+                $id = $options[$code];
+            }
+        }
+
+        return $id;
     }
 
     /**
