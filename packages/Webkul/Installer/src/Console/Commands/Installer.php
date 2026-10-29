@@ -147,13 +147,7 @@ class Installer extends Command
 
         $this->warn('Step: Dropping existing tables for table prefix '.(DB::getTablePrefix() ?: '(none)').'...');
 
-        if (! $this->confirmDroppingTables(resolve(DatabaseManager::class)->currentPrefixTables(), DB::getTablePrefix())) {
-            $this->error(trans('installer::app.installer.console.drop-aborted'));
-
-            return;
-        }
-
-        resolve(DatabaseManager::class)->dropCurrentPrefixTables();
+        $this->dropExistingTables();
 
         $this->warn('Step: Migrating all tables...');
         $this->call('migrate');
@@ -256,6 +250,20 @@ class Installer extends Command
         }
 
         return array_values(array_unique($selected));
+    }
+
+    /**
+     * Drop the tables of the current table prefix, failing the command when the drop is not confirmed.
+     */
+    protected function dropExistingTables(): void
+    {
+        $databaseManager = resolve(DatabaseManager::class);
+
+        if (! $this->confirmDroppingTables($databaseManager->currentPrefixTables(), DB::getTablePrefix())) {
+            $this->fail(trans('installer::app.installer.console.drop-aborted'));
+        }
+
+        $databaseManager->dropCurrentPrefixTables();
     }
 
     /**

@@ -1,9 +1,12 @@
 <?php
 
+use Illuminate\Console\ManuallyFailedException;
 use Illuminate\Console\OutputStyle;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Webkul\Installer\Console\Commands\Installer;
+use Webkul\Installer\Helpers\DatabaseManager;
 
 function confirmDroppingTablesUnattended(array $tables, string $tablePrefix, array $options = []): array
 {
@@ -50,4 +53,44 @@ it('has nothing to confirm when no tables would be dropped', function () {
 
     expect($confirmed)->toBeTrue()
         ->and($output)->toBe('');
+});
+
+function dropExistingTablesWithoutPrefix(DatabaseManager $databaseManager, array $options = []): void
+{
+    app()->instance(DatabaseManager::class, $databaseManager);
+
+    $command = app(Installer::class);
+
+    $input = new ArrayInput($options, $command->getDefinition());
+    $input->setInteractive(false);
+
+    $command->setInput($input);
+    $command->setOutput(new OutputStyle($input, new BufferedOutput));
+
+    $connection = DB::connection();
+    $tablePrefix = $connection->getTablePrefix();
+    $connection->setTablePrefix('');
+
+    try {
+        (new ReflectionMethod($command, 'dropExistingTables'))->invoke($command);
+    } finally {
+        $connection->setTablePrefix($tablePrefix);
+    }
+}
+
+it('fails the install command without dropping anything when the unattended drop is refused', function () {
+    $databaseManager = Mockery::mock(DatabaseManager::class);
+    $databaseManager->shouldReceive('currentPrefixTables')->once()->andReturn(['admins', 'legacy_app_users']);
+    $databaseManager->shouldNotReceive('dropCurrentPrefixTables');
+
+    expect(fn () => dropExistingTablesWithoutPrefix($databaseManager))
+        ->toThrow(ManuallyFailedException::class, trans('installer::app.installer.console.drop-aborted'));
+});
+
+it('drops the tables without a table prefix when --force is passed', function () {
+    $databaseManager = Mockery::mock(DatabaseManager::class);
+    $databaseManager->shouldReceive('currentPrefixTables')->once()->andReturn(['admins', 'legacy_app_users']);
+    $databaseManager->shouldReceive('dropCurrentPrefixTables')->once();
+
+    dropExistingTablesWithoutPrefix($databaseManager, ['--force' => true]);
 });
