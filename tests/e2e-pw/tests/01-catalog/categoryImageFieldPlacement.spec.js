@@ -7,6 +7,7 @@ const {
   confirmDelete,
   generateUid,
 } = require('../../utils/helpers');
+const { createCategory, deleteCategory } = require('../../utils/category-helpers');
 
 /**
  * An image category field in the General section must render its Add Image
@@ -17,7 +18,9 @@ test.describe('Category edit — image field in the General section', () => {
 
   test('the Add Image tile is aligned with its label', async ({ adminPage }) => {
     const page = adminPage;
-    const code = `pw_image_${generateUid()}`;
+    const uid = generateUid();
+    const code = `pw_image_${uid}`;
+    const categoryCode = `pw_cat_${uid}`;
 
     await navigateTo(page, 'categoryFields');
     await page.getByRole('button', { name: 'Create Category Field' }).click();
@@ -29,8 +32,13 @@ test.describe('Category edit — image field in the General section', () => {
     await clickSaveAndExpect(page, 'Save Category Field', /Category Field Created Successfully/i);
 
     try {
+      await createCategory(page, categoryCode, `PW Category ${uid}`);
+
       await navigateTo(page, 'categoriesList');
-      await page.locator('span[title="Edit"]').first().click();
+      await page.getByRole('textbox', { name: 'Search', exact: true }).fill(categoryCode);
+      await page.keyboard.press('Enter');
+      await page.waitForLoadState('networkidle');
+      await page.locator('div', { hasText: categoryCode }).locator('span[title="Edit"]').first().click();
       await expect(page).toHaveURL(/\/admin\/catalog\/categories\/edit/);
 
       const label = page.getByText(`PW Image ${code}`, { exact: true });
@@ -51,6 +59,8 @@ test.describe('Category edit — image field in the General section', () => {
 
       expect(Math.abs(tileBox.x - labelBox.x)).toBeLessThan(4);
     } finally {
+      await deleteCategory(page, categoryCode);
+
       await navigateTo(page, 'categoryFields');
       await searchInDataGrid(page, code);
       await clickDeleteOnRow(page, code).catch(() => {});
