@@ -47,7 +47,7 @@ class FieldProcessor
             return $this->handleMeasurementField($field, $value);
         }
 
-        if (empty($value)) {
+        if ($value === null || $value === '' || $value === []) {
             return;
         }
 
