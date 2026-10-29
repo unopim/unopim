@@ -18,9 +18,12 @@
             <div class="bg-white dark:bg-cherry-900 rounded-lg box-shadow p-4">
                 <template v-if="channels.length > 0">
                     <div class="space-y-4">
-                        <div
+                        <a
                             v-for="ch in channels"
                             :key="ch.channel"
+                            :href="productsUrl(ch.channel)"
+                            :title="incompleteLinkTitle(ch)"
+                            class="block rounded-md -m-1 p-1 transition-colors hover:bg-gray-50 dark:hover:bg-cherry-800"
                         >
                             <div class="flex items-center justify-between mb-1.5">
                                 <span class="text-sm font-semibold text-zinc-700 dark:text-slate-300">
@@ -49,7 +52,7 @@
                                     @{{ ch.percentage }}%
                                 </span>
                             </div>
-                        </div>
+                        </a>
                     </div>
                 </template>
 
@@ -108,6 +111,25 @@
 
                 getColor(percentage) {
                     return this.cssVar('--chart-' + this.$completeness.level(percentage));
+                },
+
+                /**
+                 * Deep-links to the products this channel and locale still counts as not ready.
+                 */
+                productsUrl(ch) {
+                    const params = new URLSearchParams({
+                        channel: ch.channel,
+                        locale: ch.locale,
+                        'filters[completeness][operator]': 'lt',
+                        'filters[completeness][value]': '80',
+                    });
+
+                    return "{{ route('admin.catalog.products.index') }}?" + params.toString();
+                },
+
+                incompleteLinkTitle(ch) {
+                    return @json(trans('admin::app.dashboard.index.channel-readiness-drilldown'))
+                        .replace(':channel', ch.channel);
                 }
             }
         });

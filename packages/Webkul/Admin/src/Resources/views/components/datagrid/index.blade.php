@@ -977,25 +977,51 @@
 
                 /**
                  * Parse filter parameters from URL query string.
-                 * Supports format: ?filters[column][]=value
+                 *
+                 * Supports two shapes:
+                 * - value-list filters:     ?filters[column][]=value
+                 * - operator/condition filters (for integer/date/price columns
+                 *   with an operator control, e.g. a dashboard drill-down link
+                 *   that needs "less than 80"): ?filters[column][operator]=lt&filters[column][value]=80
                  *
                  * @returns {object}
                  */
                 parseUrlFilters() {
                     const filters = {};
+                    const conditions = {};
                     const params = new URLSearchParams(window.location.search);
 
                     for (const [key, value] of params.entries()) {
-                        const match = key.match(/^filters\[([^\]]+)\]\[\]$/);
+                        const listMatch = key.match(/^filters\[([^\]]+)\]\[\]$/);
 
-                        if (match) {
-                            const filterIndex = match[1];
+                        if (listMatch) {
+                            const filterIndex = listMatch[1];
 
                             if (! filters[filterIndex]) {
                                 filters[filterIndex] = [];
                             }
 
                             filters[filterIndex].push(value);
+
+                            continue;
+                        }
+
+                        const conditionMatch = key.match(/^filters\[([^\]]+)\]\[(operator|value|value2|currency)\]$/);
+
+                        if (conditionMatch) {
+                            const [, filterIndex, field] = conditionMatch;
+
+                            if (! conditions[filterIndex]) {
+                                conditions[filterIndex] = {};
+                            }
+
+                            conditions[filterIndex][field] = value;
+                        }
+                    }
+
+                    for (const [filterIndex, condition] of Object.entries(conditions)) {
+                        if (condition.operator) {
+                            filters[filterIndex] = [condition];
                         }
                     }
 
