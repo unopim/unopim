@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Event;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Rules\AttributeTypes;
+use Webkul\CalculatedAttribute\Services\CalculatedValueResolver;
+use Webkul\CalculatedAttribute\Support\ProductContext;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
 use Webkul\DataTransfer\Enums\ProductExportScope;
@@ -93,6 +95,8 @@ class Exporter extends AbstractExporter
     protected $optionLabelMaps = [];
 
     protected ?VariantValueResolver $variantValueResolver = null;
+
+    protected ?CalculatedValueResolver $calculatedValueResolver = null;
 
     /**
      * Create a new instance.
@@ -557,6 +561,15 @@ class Exporter extends AbstractExporter
                         $channelLocaleSpecificFields
                     );
 
+                    /*
+                     * Calculated attributes are injected here, after the scopes
+                     * have been flattened for this row: setAttributesValues()
+                     * then treats them exactly like stored values, so they pick
+                     * up the same escaping and the same selected-attribute
+                     * filtering with no special-casing downstream.
+                     */
+                    $mergedFields = $this->applyCalculatedValues($mergedFields, $rowData, $productValues, $channel, $locale);
+
                     $values = $this->setAttributesValues($mergedFields, $filePath, $locale);
 
                     $row = array_merge($baseFields, [
@@ -572,6 +585,46 @@ class Exporter extends AbstractExporter
 
             $this->createdItemsCount++;
         }
+    }
+
+    /**
+     * Overlay the product's calculated attribute values onto one flattened
+     * export row.
+     *
+     * Resolved lazily and skipped entirely when the catalogue has no calculated
+     * attribute, so an export that does not use the feature pays nothing beyond
+     * one memoised array check — the same lazy pattern as measurementHelper().
+     *
+     * @param  array<string, mixed>  $mergedFields  scope-flattened values for this row
+     * @param  array<string, mixed>  $rowData  the product's export row data
+     * @param  array<string, mixed>  $productValues  variant-resolved product values
+     * @return array<string, mixed>
+     */
+    protected function applyCalculatedValues(
+        array $mergedFields,
+        array $rowData,
+        array $productValues,
+        string $channel,
+        string $locale,
+    ): array {
+        $resolver = $this->calculatedValueResolver();
+
+        if (! $resolver->hasCalculatedAttributes()) {
+            return $mergedFields;
+        }
+
+        $calculated = $resolver->resolve(
+            ProductContext::fromExportRow($rowData, $productValues),
+            $channel,
+            $locale
+        );
+
+        return array_merge($mergedFields, $calculated);
+    }
+
+    protected function calculatedValueResolver(): CalculatedValueResolver
+    {
+        return $this->calculatedValueResolver ??= resolve(CalculatedValueResolver::class);
     }
 
     public function getSuperAttributes(array $data): ?string
