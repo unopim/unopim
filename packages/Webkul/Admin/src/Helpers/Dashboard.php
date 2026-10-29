@@ -279,8 +279,11 @@ class Dashboard
                 ->groupBy('channels.code')
                 ->get();
 
+            $labelsByCode = $this->channel->getLabelsByCode();
+
             return $readiness->map(fn ($row) => [
                 'channel'    => $row->channel,
+                'label'      => $labelsByCode[$row->channel] ?? $row->channel,
                 'total'      => (int) $row->total,
                 'ready'      => (int) $row->ready,
                 'percentage' => $row->total > 0 ? round(($row->ready / $row->total) * 100) : 0,
