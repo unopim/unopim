@@ -162,6 +162,7 @@ return [
             'of'                   => 'of',
             'products-ready'       => 'productes llestos',
             'no-readiness-data'    => 'No hi ha dades de completitud disponibles encara.',
+            'readiness-drilldown'  => 'Mostra els productes incomplets restants per al canal :channel',
             'no-products'          => 'Encara no hi ha productes.',
             'last-7-days'          => 'Últims 7 dies',
             'days'                 => [

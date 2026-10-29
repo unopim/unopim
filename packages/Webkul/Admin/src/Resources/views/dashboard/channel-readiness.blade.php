@@ -133,7 +133,7 @@
                 },
 
                 incompleteLinkTitle(ch) {
-                    return "{{ trans('admin::app.dashboard.index.channel-readiness-drilldown') }}"
+                    return "{{ trans('admin::app.dashboard.index.readiness-drilldown') }}"
                         .replace(':channel', ch.channel);
                 }
             }

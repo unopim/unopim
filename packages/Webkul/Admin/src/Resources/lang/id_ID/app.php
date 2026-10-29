@@ -162,6 +162,7 @@ return [
             'of'                   => 'of',
             'products-ready'       => 'produk siap',
             'no-readiness-data'    => 'Tidak ada data kelengkapan yang tersedia.',
+            'readiness-drilldown'  => 'Lihat produk yang belum lengkap untuk saluran :channel',
             'no-products'          => 'Belum ada produk.',
             'last-7-days'          => '7 hari terakhir',
             'days'                 => [

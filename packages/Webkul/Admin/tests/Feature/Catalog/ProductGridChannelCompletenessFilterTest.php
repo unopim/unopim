@@ -44,6 +44,13 @@ function drilldownProduct(Channel $channel, int $locale_id, int $channelScore, i
 
 beforeEach(function () {
     $this->loginAsAdmin();
+
+    // This feature is database-filter only: Elasticsearch's CompletenessFilter
+    // still filters on the global average document field regardless of
+    // channel, since per-channel scores aren't indexed into ES documents.
+    // Extending that is a larger, separate change (indexing product_completeness
+    // per channel/locale into the ES mapping) — out of scope here.
+    config(['elasticsearch.enabled' => false]);
 });
 
 it('filters by the requested channel\'s own completeness score, not the cross-channel average', function () {
