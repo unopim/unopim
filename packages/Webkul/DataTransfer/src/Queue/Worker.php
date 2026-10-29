@@ -8,7 +8,7 @@ use ReflectionMethod;
 
 class Worker extends BaseWorker
 {
-    protected ?bool $timeoutHandlerTakesQueueContext = null;
+    protected ?int $timeoutHandlerArity = null;
 
     /**
      * Listen to the given queue in a loop.
@@ -52,15 +52,15 @@ class Worker extends BaseWorker
 
     /**
      * Register the timeout handler against whichever framework signature is installed.
+     *
+     * Laravel 13.32 prepended $connectionName and $queue to ($job, $options), so the trailing arguments always match.
      */
     protected function registerJobTimeoutHandler(string $connectionName, string $queue, $job, WorkerOptions $options): void
     {
-        $this->timeoutHandlerTakesQueueContext ??= new ReflectionMethod(parent::class, 'registerTimeoutHandler')->getNumberOfParameters() >= 4;
+        $this->timeoutHandlerArity ??= new ReflectionMethod(parent::class, 'registerTimeoutHandler')->getNumberOfParameters();
 
-        $arguments = $this->timeoutHandlerTakesQueueContext
-            ? [$connectionName, $queue, $job, $options]
-            : [$job, $options];
-
-        $this->registerTimeoutHandler(...$arguments);
+        $this->registerTimeoutHandler(
+            ...array_slice([$connectionName, $queue, $job, $options], -$this->timeoutHandlerArity)
+        );
     }
 }
