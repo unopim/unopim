@@ -16,6 +16,14 @@
 
     $idAttribute = '' === $controlId ? [] : ['id' => $controlId];
 
+    /** Labels are rarely linked with `for`, so the validation label doubles as the accessible name. */
+    $idAttribute += match (true) {
+        'hidden' === $type, $attributes->hasAny(['aria-label', ':aria-label']) => [],
+        $attributes->has(':label') => [':aria-label' => $attributes->get(':label')],
+        $attributes->has('label')  => ['aria-label' => $attributes->get('label')],
+        default                    => [],
+    };
+
     /** Re-emitted from $controlId so the rendered id always matches what labels target. */
     $attributes = $attributes->except(['id']);
 @endphp
