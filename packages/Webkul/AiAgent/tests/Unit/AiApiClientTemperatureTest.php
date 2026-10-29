@@ -3,12 +3,8 @@
 use Webkul\AiAgent\DTOs\CredentialConfig;
 use Webkul\AiAgent\Http\Client\AiApiClient;
 
-/**
- * Test double: captures the request body instead of performing a cURL call.
- */
 class AiApiClientTemperatureDouble extends AiApiClient
 {
-    /** @var array<string, mixed> */
     public array $capturedBody = [];
 
     protected function execute(string $method, string $url, ?array $data = null): array
