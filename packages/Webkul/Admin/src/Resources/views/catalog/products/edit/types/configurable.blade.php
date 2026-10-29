@@ -1083,7 +1083,7 @@
                         params[key] = formValue.pop();
                     }
 
-                    let filteredVariants = this.rows.filter((variant) => {
+                    let filteredVariants = [...this.rows, ...Object.values(this.editedVariants)].filter((variant) => {
                         let matchCount = 0;
 
                         for (let key in params) {
