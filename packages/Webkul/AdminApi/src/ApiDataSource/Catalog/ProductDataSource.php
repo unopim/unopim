@@ -379,17 +379,23 @@ class ProductDataSource extends ApiDataSource
      * skipped outright when the catalogue has no calculated attribute, and the
      * channel/locale map is read once per request rather than once per row.
      *
+     * A product's `values` may legitimately be null, and the response has always
+     * carried that through. So the argument is untyped and returned untouched
+     * when there is nothing to add — turning a null into an empty array here
+     * would change the payload shape for every catalogue that does not use the
+     * feature.
+     *
      * @param  array<string, mixed>  $product
-     * @param  array<string, mixed>  $values
-     * @return array<string, mixed>
      */
-    protected function withCalculatedValues(array $product, array $values): array
+    protected function withCalculatedValues(array $product, mixed $values): mixed
     {
         $resolver = $this->calculatedValueResolver ??= app(CalculatedValueResolver::class);
 
         if (! $resolver->hasCalculatedAttributes()) {
             return $values;
         }
+
+        $values = is_array($values) ? $values : [];
 
         return $resolver->mergeAllScopes(
             $values,
