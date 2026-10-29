@@ -152,7 +152,7 @@ Only these are callable. Anything else is a validation error at save time.
 | `substr(s, start, len)` | |
 | `replace(s, search, replace)` | |
 | `length(s)` | |
-| `contains(s, needle)`, `starts_with(s, p)`, `ends_with(s, p)` | |
+| `split(s, sep)` | |
 | `pad_left(s, len, ch)`, `pad_right(s, len, ch)` | |
 
 **Logic**
@@ -164,7 +164,14 @@ Only these are callable. Anything else is a validation error at save time.
 | `default(v, fallback)` | `v` unless empty, else `fallback` |
 
 The ternary `a ? b : c` and the operators `and or not == != < > <= >= + - * / %` come from the
-grammar itself.
+grammar itself, as do the string predicates `contains`, `starts with` and `ends with` — which
+is why they are not re-declared as functions here.
+
+The grammar's fourth string operator, `matches`, **is** rejected at validation. It takes a
+user-supplied regular expression, so a catastrophically backtracking pattern inside an export
+worker would be a denial of service, and the feature never advertised regex matching. The
+rejection happens by walking the parsed AST for a `BinaryNode` whose operator is `matches`,
+rather than by scanning the source text.
 
 **Numbers**
 
@@ -313,7 +320,7 @@ or the API. The design note to carry forward is that such a cache must be keyed 
 | CSV/XLSX export | the exporter already builds its column list from *all* attributes, so a calculated attribute is selectable in the profile like any other; values are injected into the scope-merged field array before `setAttributesValues()` |
 | CSV import | calculated columns are ignored rather than written |
 | Completeness | calculated attributes are excluded from the completeness attribute picker, so they can never become a required field |
-| Admin API | calculated values are added to the product response under the scope they belong to |
+| Admin API | the response carries every scope at once, so the values are computed for each channel/locale combination and placed under the scope each attribute declares |
 | Variants | calculated values are computed from variant-resolved values; a variant computes its own value from its own effective inputs |
 
 ### 5.1 Why export injection happens at the merged-fields stage
