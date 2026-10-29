@@ -227,6 +227,7 @@
                                 item-key="id"
                                 group="groups"
                                 :disabled="Boolean(assignedSearchTerm)"
+                                @change="signalUnsaved"
                             >
                                 <template #item="{ element, index }">
                                     <div class="ltr:pr-3 rtl:pl-3">
