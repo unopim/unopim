@@ -219,6 +219,14 @@ return [
     ],
 
     'installer' => [
+        'console' => [
+            'confirm-drop'        => 'Poistetaanko nämä taulut ja asennetaan uudelleen?',
+            'drop-aborted'        => 'Asennus keskeytettiin. Yhtään taulua ei poistettu.',
+            'force-required'      => 'Taulun etuliitettä ei ole asetettu, joten kaikki taulut, joita mikään muu asennus ei omista, poistettaisiin. Suorita komento uudelleen valitsimella --force poistaaksesi ne tai aseta DB_PREFIX.',
+            'outside-references'  => 'Taulun etuliitteen ulkopuoliset taulut viittaavat poistettaviin tauluihin: :references. Poista nämä vierasavaimet ensin.',
+            'tables-to-drop'      => 'Nämä :count taulua poistetaan: :tables',
+        ],
+
         'index' => [
             'create-administrator' => [
                 'admin'                   => 'Ylläpitäjä',

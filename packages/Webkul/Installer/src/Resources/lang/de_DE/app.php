@@ -219,6 +219,14 @@ return [
     ],
 
     'installer' => [
+        'console' => [
+            'confirm-drop'        => 'Diese Tabellen löschen und neu installieren?',
+            'drop-aborted'        => 'Installation abgebrochen. Es wurden keine Tabellen gelöscht.',
+            'force-required'      => 'Es ist kein Tabellenpräfix festgelegt, daher würde jede Tabelle gelöscht, die keine andere Installation beansprucht. Führen Sie den Befehl erneut mit --force aus, um sie zu löschen, oder legen Sie DB_PREFIX fest.',
+            'outside-references'  => 'Tabellen außerhalb des Tabellenpräfixes verweisen auf die zu löschenden Tabellen: :references. Entfernen Sie zuerst diese Fremdschlüssel.',
+            'tables-to-drop'      => 'Diese :count Tabellen werden gelöscht: :tables',
+        ],
+
         'index' => [
             'create-administrator' => [
                 'admin'                   => 'Admin',

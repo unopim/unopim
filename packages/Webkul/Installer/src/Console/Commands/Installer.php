@@ -29,7 +29,8 @@ use function Laravel\Prompts\text;
         { --skip-env-check : Skip env check. }
         { --skip-admin-creation : Skip admin creation. }
         { --with-demo-data : Seed sample products and demo data. }
-        { --with-packages= : Comma-separated optional packages to install (dam, shopify, bagisto). }')]
+        { --with-packages= : Comma-separated optional packages to install (dam, shopify, bagisto). }
+        { --force : Drop the existing tables without asking, also when the table prefix is empty. }')]
 class Installer extends Command
 {
     /**
@@ -146,8 +147,8 @@ class Installer extends Command
 
         $this->warn('Step: Dropping existing tables for table prefix '.(DB::getTablePrefix() ?: '(none)').'...');
 
-        if (! $this->confirmDroppingTables(resolve(DatabaseManager::class)->currentPrefixTables())) {
-            $this->error('Installation aborted. No tables were dropped.');
+        if (! $this->confirmDroppingTables(resolve(DatabaseManager::class)->currentPrefixTables(), DB::getTablePrefix())) {
+            $this->error(trans('installer::app.installer.console.drop-aborted'));
 
             return;
         }
@@ -259,23 +260,37 @@ class Installer extends Command
 
     /**
      * Lists the tables the reinstall drops and lets an interactive user stop it. Without a table prefix
-     * every table no other install claims is in the list, unrelated tables of the same database included.
+     * every table no other install claims is in the list, unrelated tables of the same database included,
+     * so an unattended run then refuses unless --force is passed.
      *
      * @param  array<int, string>  $tables
      */
-    protected function confirmDroppingTables(array $tables): bool
+    protected function confirmDroppingTables(array $tables, string $tablePrefix): bool
     {
         if ($tables === []) {
             return true;
         }
 
-        $this->line('These '.count($tables).' tables will be dropped: '.implode(', ', $tables));
+        $this->line(trans('installer::app.installer.console.tables-to-drop', [
+            'count'  => count($tables),
+            'tables' => implode(', ', $tables),
+        ]));
 
-        if (! $this->hasInteractiveTerminal()) {
+        if ($this->option('force')) {
             return true;
         }
 
-        return confirm(label: 'Drop these tables and reinstall?', default: true);
+        if ($this->hasInteractiveTerminal()) {
+            return confirm(label: trans('installer::app.installer.console.confirm-drop'), default: true);
+        }
+
+        if ($tablePrefix === '') {
+            $this->error(trans('installer::app.installer.console.force-required'));
+
+            return false;
+        }
+
+        return true;
     }
 
     /**

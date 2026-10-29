@@ -219,6 +219,14 @@ return [
     ],
 
     'installer' => [
+        'console' => [
+            'confirm-drop'        => 'これらのテーブルを削除して再インストールしますか?',
+            'drop-aborted'        => 'インストールを中止しました。テーブルは削除されていません。',
+            'force-required'      => 'テーブルプレフィックスが設定されていないため、他のインストールが使用していないすべてのテーブルが削除されます。削除するには --force を付けて再実行するか、DB_PREFIX を設定してください。',
+            'outside-references'  => 'テーブルプレフィックス外のテーブルが、削除対象のテーブルを参照しています: :references。先にこれらの外部キーを削除してください。',
+            'tables-to-drop'      => '次の :count 個のテーブルが削除されます: :tables',
+        ],
+
         'index' => [
             'create-administrator' => [
                 'admin'                   => '管理者',

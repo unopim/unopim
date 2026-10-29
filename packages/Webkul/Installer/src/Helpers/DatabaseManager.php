@@ -288,9 +288,11 @@ class DatabaseManager
             [...$tables, ...$tables]
         );
 
-        throw_if($references !== [], Exception::class, 'Tables outside the table prefix reference the tables to drop: '.collect($references)
-            ->map(fn (object $reference): string => "{$reference->table_name} -> {$reference->referenced_table_name}")
-            ->implode(', ').'. Remove these foreign keys first.');
+        throw_if($references !== [], Exception::class, trans('installer::app.installer.console.outside-references', [
+            'references' => collect($references)
+                ->map(fn (object $reference): string => "{$reference->table_name} -> {$reference->referenced_table_name}")
+                ->implode(', '),
+        ]));
     }
 
     /**

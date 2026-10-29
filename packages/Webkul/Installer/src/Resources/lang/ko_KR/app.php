@@ -219,6 +219,14 @@ return [
     ],
 
     'installer' => [
+        'console' => [
+            'confirm-drop'        => '이 테이블을 삭제하고 다시 설치하시겠습니까?',
+            'drop-aborted'        => '설치가 중단되었습니다. 삭제된 테이블이 없습니다.',
+            'force-required'      => '테이블 접두사가 설정되지 않아 다른 설치에서 사용하지 않는 모든 테이블이 삭제됩니다. 삭제하려면 --force 옵션으로 다시 실행하거나 DB_PREFIX를 설정하세요.',
+            'outside-references'  => '테이블 접두사 외부의 테이블이 삭제할 테이블을 참조하고 있습니다: :references. 먼저 이 외래 키를 제거하세요.',
+            'tables-to-drop'      => '다음 :count개 테이블이 삭제됩니다: :tables',
+        ],
+
         'index' => [
             'create-administrator' => [
                 'admin'                   => '관리자',
