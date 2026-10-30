@@ -63,6 +63,33 @@ updates:
       prefix: "chore(deps-major)"
       include: "scope"
 
+  # npm — root build and test tooling, current release line
+  - package-ecosystem: "npm"
+    directory: "/"
+    target-branch: "3.x"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Asia/Kolkata"
+    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 7
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+    labels:
+      - "dependencies"
+      - "javascript"
+    commit-message:
+      prefix: "chore(deps-js)"
+      include: "scope"
+    groups:
+      js-dependencies:
+        patterns:
+          - "*"
+
   # npm — Playwright e2e tests, current release line
   - package-ecosystem: "npm"
     directory: "/tests/e2e-pw"
