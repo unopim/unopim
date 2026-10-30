@@ -16,8 +16,8 @@ describe('Gravatar avatar fallback when no image is uploaded', function () {
     });
 
     it('reports a gravatar exists only when the upstream lookup succeeds', function () {
-        $hasHash = md5('has-gravatar@example.com');
-        $noHash = md5('no-gravatar@example.com');
+        $hasHash = hash('sha256', 'has-gravatar@example.com');
+        $noHash = hash('sha256', 'no-gravatar@example.com');
 
         Http::fake([
             "gravatar.com/avatar/{$hasHash}*" => Http::response('img-bytes', 200, ['Content-Type' => 'image/png']),
@@ -44,7 +44,7 @@ describe('Gravatar avatar fallback when no image is uploaded', function () {
 
         $this->loginAsAdmin($admin);
 
-        $expected = route('admin.avatar.public', ['hash' => md5('opted-out@example.com')]);
+        $expected = route('admin.avatar.public', ['hash' => hash('sha256', 'opted-out@example.com')]);
 
         $this->get(route('admin.account.edit'))->assertDontSee($expected, false);
     });
@@ -61,7 +61,7 @@ describe('Gravatar avatar fallback when no image is uploaded', function () {
 
         $this->loginAsAdmin($admin);
 
-        $expected = route('admin.avatar.public', ['hash' => md5('gravatar-user@example.com')]);
+        $expected = route('admin.avatar.public', ['hash' => hash('sha256', 'gravatar-user@example.com')]);
 
         $response = $this->get(route('admin.account.edit'));
 
@@ -70,7 +70,7 @@ describe('Gravatar avatar fallback when no image is uploaded', function () {
     });
 
     it('serves the cached gravatar bytes through the proxy route', function () {
-        $hash = md5('gravatar-user@example.com');
+        $hash = hash('sha256', 'gravatar-user@example.com');
 
         Http::fake([
             "gravatar.com/avatar/{$hash}*" => Http::response('img-bytes', 200, ['Content-Type' => 'image/png']),
@@ -84,7 +84,7 @@ describe('Gravatar avatar fallback when no image is uploaded', function () {
     });
 
     it('returns 404 through the proxy route when the email has no gravatar', function () {
-        $hash = md5('no-gravatar@example.com');
+        $hash = hash('sha256', 'no-gravatar@example.com');
 
         Http::fake([
             "gravatar.com/avatar/{$hash}*" => Http::response('', 404),
