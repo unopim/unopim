@@ -2,6 +2,37 @@
 
 use Webkul\DataTransfer\Helpers\Importers\FieldProcessor;
 
+it('preserves numeric zero field values', function (string $type, mixed $value) {
+    $field = (object) [
+        'type'           => $type,
+        'enable_wysiwyg' => false,
+    ];
+
+    expect((new FieldProcessor)->handleField($field, $value, null))->toBe($value);
+})->with(['text', 'textarea', 'number', 'boolean', 'select'])->with([
+    'string zero'  => ['0'],
+    'integer zero' => [0],
+]);
+
+it('ignores absent field values', function (string $type, mixed $value) {
+    $field = (object) ['type' => $type];
+
+    expect((new FieldProcessor)->handleField($field, $value, null))->toBeNull();
+})->with(['text', 'textarea', 'number', 'boolean', 'measurement'])->with([
+    'null'         => [null],
+    'empty string' => [''],
+    'empty array'  => [[]],
+]);
+
+it('preserves explicit boolean field values', function (bool $value) {
+    $field = (object) ['type' => 'boolean'];
+
+    expect((new FieldProcessor)->handleField($field, $value, null))->toBe($value);
+})->with([
+    'false' => [false],
+    'true'  => [true],
+]);
+
 it('should not throw when path is null for non-media field types', function () {
     $fieldProcessor = new FieldProcessor;
 
