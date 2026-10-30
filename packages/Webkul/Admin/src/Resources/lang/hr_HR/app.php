@@ -2326,6 +2326,7 @@ return [
                 'title'               => 'Upit',
                 'create-btn'          => 'Kreiraj upit',
                 'edit-title'          => 'Uredi upit',
+                'insert-attribute'    => 'Umetni atribut',
                 'create-title'        => 'Kreiraj novi upit',
                 'label-title'         => 'Naslov',
                 'purpose'             => 'Namjena',

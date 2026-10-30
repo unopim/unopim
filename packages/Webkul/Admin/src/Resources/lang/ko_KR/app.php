@@ -2328,6 +2328,7 @@ return [
                 'title'               => '프롬프트',
                 'create-btn'          => '프롬프트 생성',
                 'edit-title'          => '프롬프트 편집',
+                'insert-attribute'    => '속성 삽입',
                 'create-title'        => '새 프롬프트 생성',
                 'label-title'         => '제목',
                 'purpose'             => '용도',

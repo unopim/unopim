@@ -2328,6 +2328,7 @@ return [
                 'title'               => 'Prompt',
                 'create-btn'          => 'Lumikha ng Prompt',
                 'edit-title'          => 'I-edit ang Prompt',
+                'insert-attribute'    => 'Magsingit ng attribute',
                 'create-title'        => 'Lumikha ng Bagong Prompt',
                 'label-title'         => 'Pamagat',
                 'purpose'             => 'Layunin',

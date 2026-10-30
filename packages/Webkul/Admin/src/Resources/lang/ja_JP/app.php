@@ -2326,6 +2326,7 @@ return [
                 'title'               => 'プロンプト',
                 'create-btn'          => 'プロンプトを作成',
                 'edit-title'          => 'プロンプトを編集',
+                'insert-attribute'    => '属性を挿入',
                 'create-title'        => '新しいプロンプトを作成',
                 'label-title'         => 'タイトル',
                 'purpose'             => '用途',

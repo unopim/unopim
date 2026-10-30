@@ -2325,6 +2325,7 @@ return [
                 'title'               => 'Invite',
                 'create-btn'          => 'Créer une invite',
                 'edit-title'          => 'Modifier l\'invite',
+                'insert-attribute'    => 'Insérer un attribut',
                 'create-title'        => 'Créer une nouvelle invite',
                 'label-title'         => 'Titre',
                 'purpose'             => 'Objectif',
