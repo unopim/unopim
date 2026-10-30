@@ -1,0 +1,54 @@
+name: Release Artifacts
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to build and attest
+        required: true
+        type: string
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.release.tag_name || inputs.tag }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    if: github.repository == 'unopim/unopim'
+    runs-on: ubuntu-24.04
+    name: Build, attest and upload source archive
+
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+
+    env:
+      TAG: ${{ github.event.release.tag_name || inputs.tag }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          ref: ${{ env.TAG }}
+          persist-credentials: false
+
+      - name: Build source archive
+        run: |
+          git archive --format=zip --prefix="unopim-${TAG}/" --output="unopim-${TAG}.zip" "$TAG"
+          sha256sum "unopim-${TAG}.zip" > SHA256SUMS
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: unopim-${{ env.TAG }}.zip
+
+      - name: Upload to release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$TAG" "unopim-${TAG}.zip" SHA256SUMS --clobber --repo "$GITHUB_REPOSITORY"
