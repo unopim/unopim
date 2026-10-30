@@ -21,8 +21,8 @@
                             :key="ch.channel"
                         >
                             <div class="flex items-center justify-between mb-1.5">
-                                <span class="text-sm font-semibold text-zinc-700 dark:text-slate-300 capitalize">
-                                    @{{ ch.channel }}
+                                <span class="text-sm font-semibold text-zinc-700 dark:text-slate-300">
+                                    @{{ ch.label }}
                                 </span>
 
                                 <span class="text-xs text-zinc-500 dark:text-slate-400">
