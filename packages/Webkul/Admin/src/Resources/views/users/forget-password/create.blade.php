@@ -6,26 +6,7 @@
     <div class="flex min-h-screen w-full items-center justify-center p-6 bg-gradient-to-b from-primary-50 to-gray-50 dark:from-cherry-900 dark:to-cherry-900">
         <div class="w-full max-w-[400px]">
             <div class="mb-8 flex justify-center">
-                @if ($logo = core()->getConfigData('general.design.admin_logo.logo_image'))
-                    <img
-                        class="h-10"
-                        src="{{ Storage::url($logo) }}"
-                        alt="{{ config('app.name') }}"
-                    />
-                @else
-                    {{-- Default UnoPim logo — swaps with the theme. --}}
-                    <img
-                        class="h-10 w-max dark:hidden"
-                        src="{{ unopim_asset('images/logo.svg') }}"
-                        alt="{{ config('app.name') }}"
-                    />
-
-                    <img
-                        class="h-10 w-max hidden dark:block"
-                        src="{{ unopim_asset('images/dark_logo.svg') }}"
-                        alt="{{ config('app.name') }}"
-                    />
-                @endif
+                <x-admin::layouts.logo default-class="h-10 w-max" />
             </div>
 
             <div class="rounded-xl border border-gray-100 dark:border-cherry-700 bg-white dark:bg-cherry-800 shadow-[0_8px_30px_rgba(0,0,0,0.08)] p-6 sm:p-8">
