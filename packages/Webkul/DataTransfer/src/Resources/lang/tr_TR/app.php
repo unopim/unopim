@@ -299,6 +299,7 @@ return [
             'column-not-found'       => 'Gerekli kolonlar bulunamadı: %s.',
             'column-numbers'         => 'Kolon sayısı, başlıktaki satır sayısı ile uyumsuz.',
             'invalid-attribute'      => 'Başlık geçersiz attribute(s) içeriyor: "%s".',
+            'invalid-boolean'        => '":column" sütunu ":value" değerine sahip, bu bir boolean değil. true, false, yes, no, on, off, 1 or 0 kullanın.',
             'system'                 => 'Beklenmeyen bir sistem hatası oluştu.',
             'wrong-quotes'           => 'Kıvrık tırnaklar, doğru tırnaklar yerine kullanıldı.',
             'file-empty'             => 'Dosya boş veya başlık satırı içermiyor. Lütfen veri içeren geçerli bir dosya yükleyin.',

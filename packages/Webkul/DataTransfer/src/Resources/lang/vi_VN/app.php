@@ -299,6 +299,7 @@ return [
             'column-not-found'       => 'Các cột yêu cầu không được tìm thấy: %s.',
             'column-numbers'         => 'Số cột không khớp với số hàng trong tiêu đề.',
             'invalid-attribute'      => 'Tiêu đề chứa thuộc tính không hợp lệ: "%s".',
+            'invalid-boolean'        => 'Cột ":column" có giá trị ":value", không phải là boolean. Hãy dùng true, false, yes, no, on, off, 1 or 0.',
             'system'                 => 'Lỗi hệ thống không mong muốn xảy ra.',
             'wrong-quotes'           => 'Dùng dấu ngoặc kép cong thay cho dấu ngoặc kép thẳng.',
             'file-empty'             => 'Tệp trống hoặc không chứa dòng tiêu đề. Vui lòng tải lên tệp hợp lệ có dữ liệu.',

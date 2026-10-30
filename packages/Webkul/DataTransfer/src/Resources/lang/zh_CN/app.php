@@ -299,6 +299,7 @@ return [
             'column-not-found'       => '未找到所需的列：%s。',
             'column-numbers'         => '列数与标题中的行数不对应。',
             'invalid-attribute'      => '标头包含无效属性：“%s”。',
+            'invalid-boolean'        => '列“:column”的值为“:value”，不是布尔值。请使用 true, false, yes, no, on, off, 1 or 0。',
             'system'                 => '发生意外的系统错误。',
             'wrong-quotes'           => '使用弯引号代替直引号。',
             'file-empty'             => '文件为空或不包含标题行。请上传包含数据的有效文件。',

@@ -299,6 +299,7 @@ return [
             'column-not-found'       => '必須列が見つかりません: %s。',
             'column-numbers'         => '列の数がヘッダーの行数と一致しません。',
             'invalid-attribute'      => 'ヘッダーに無効な属性が含まれています: 「%s」。',
+            'invalid-boolean'        => '列 ":column" の値 ":value" は真偽値ではありません。true, false, yes, no, on, off, 1 or 0 を使用してください。',
             'system'                 => '予期しないシステムエラーが発生しました。',
             'wrong-quotes'           => 'ストレート引用符の代わりに波型引用符が使用されています。',
             'file-empty'             => 'ファイルが空であるか、ヘッダー行が含まれていません。データを含む有効なファイルをアップロードしてください。',

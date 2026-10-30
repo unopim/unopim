@@ -299,6 +299,7 @@ return [
             'column-not-found'       => 'Krævede kolonner findes ikke: %s.',
             'column-numbers'         => 'Antallet af kolonner svarer ikke til antallet af rækker i overskriften.',
             'invalid-attribute'      => 'Overskriften indeholder ugyldige attributter: "%s".',
+            'invalid-boolean'        => 'Kolonnen ":column" har værdien ":value", som ikke er en boolsk værdi. Brug true, false, yes, no, on, off, 1 or 0.',
             'system'                 => 'En uventet systemfejl opstod.',
             'wrong-quotes'           => 'Korte citationstegn blev brugt i stedet for lige citationstegn.',
             'file-empty'             => 'Filen er tom eller indeholder ingen headerrække. Upload venligst en gyldig fil med data.',

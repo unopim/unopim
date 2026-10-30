@@ -299,6 +299,7 @@ return [
             'column-not-found'       => 'Vaadittuja sarakkeita ei löytynyt: %s.',
             'column-numbers'         => 'Sarakkeiden määrä ei vastaa otsikoiden rivien määrää.',
             'invalid-attribute'      => 'Otsikko sisältää virheellisiä attribuutteja: "%s".',
+            'invalid-boolean'        => 'Sarakkeen ":column" arvo on ":value", joka ei ole totuusarvo. Käytä arvoja true, false, yes, no, on, off, 1 or 0.',
             'system'                 => 'Odottamaton järjestelmävirhe tapahtui.',
             'wrong-quotes'           => 'Käyrät lainausmerkit käytetty suoran lainausmerkin sijaan.',
             'file-empty'             => 'Tiedosto on tyhjä tai siinä ei ole otsikkoriviä. Lataa kelvollinen tiedosto, jossa on tietoja.',

@@ -299,6 +299,7 @@ return [
             'column-not-found'       => 'Hindi natagpuan ang mga kinakailangang kolum: %s.',
             'column-numbers'         => 'Ang bilang ng mga kolum ay hindi tumutugma sa bilang ng mga linya sa ulo.',
             'invalid-attribute'      => 'Ang ulo ay may hindi wasto na mga attribute: "%s".',
+            'invalid-boolean'        => 'Ang column na ":column" ay may value na ":value", na hindi boolean. Gamitin ang true, false, yes, no, on, off, 1 or 0.',
             'system'                 => 'Isang hindi inaasahang error ng sistema ang nangyari.',
             'wrong-quotes'           => 'Ginamit ang mga kurbadong mga quote sa halip na mga tuwid na quote.',
             'file-empty'             => 'Ang file ay walang laman o walang header row. Mangyaring mag-upload ng wastong file na may datos.',

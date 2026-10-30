@@ -299,6 +299,7 @@ return [
             'column-not-found'       => 'Coloanele necesare nu au fost găsite: %s.',
             'column-numbers'         => 'Numărul de coloane nu corespunde numărului de rânduri din antet.',
             'invalid-attribute'      => 'Antetul conține atribute invalide: "%s".',
+            'invalid-boolean'        => 'Coloana ":column" are valoarea ":value", care nu este un boolean. Utilizați true, false, yes, no, on, off, 1 or 0.',
             'system'                 => 'A apărut o eroare sistemică neașteptată.',
             'wrong-quotes'           => 'A fost utilizată virgulă în loc de virgulă directă.',
             'file-empty'             => 'Fișierul este gol sau nu conține un rând de antet. Vă rugăm să încărcați un fișier valid cu date.',

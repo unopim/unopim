@@ -218,6 +218,46 @@ describe('prepareCategoryFields', function () {
             ->and($data['insert']['req']['status'])->toBe(1);
     });
 
+    it('casts boolean words to the matching integer', function (mixed $value, int $expected) {
+        ['importer' => $importer, 'storage' => $storage] = makeCategoryFieldImporter();
+
+        $storage->shouldReceive('has')->with('req')->andReturn(false);
+
+        $data = [];
+        $importer->prepareCategoryFields([
+            'code'             => 'req',
+            'locale'           => 'en_US',
+            'enable_wysiwyg'   => $value,
+            'status'           => $value,
+            'is_required'      => $value,
+            'is_unique'        => $value,
+            'value_per_locale' => $value,
+        ], $data);
+
+        expect($data['insert']['req'])->toMatchArray([
+            'enable_wysiwyg'   => $expected,
+            'status'           => $expected,
+            'is_required'      => $expected,
+            'is_unique'        => $expected,
+            'value_per_locale' => $expected,
+        ]);
+    })->with([
+        'false'      => ['false', 0],
+        'FALSE'      => ['FALSE', 0],
+        'no'         => ['no', 0],
+        'off'        => ['off', 0],
+        '0'          => ['0', 0],
+        'bool false' => [false, 0],
+        'int 0'      => [0, 0],
+        'true'       => ['true', 1],
+        'TRUE'       => ['TRUE', 1],
+        'yes'        => ['yes', 1],
+        'on'         => ['on', 1],
+        '1'          => ['1', 1],
+        'bool true'  => [true, 1],
+        'int 1'      => [1, 1],
+    ]);
+
     it('casts position to integer', function () {
         ['importer' => $importer, 'storage' => $storage] = makeCategoryFieldImporter();
 
@@ -355,4 +395,28 @@ describe('isCategoryFieldExist', function () {
 
         expect($importer->isCategoryFieldExist('missing'))->toBeFalse();
     });
+});
+
+it('skips the row when a boolean column holds an unrecognised value', function (string $value) {
+    ['importer' => $importer, 'errorHelper' => $errorHelper] = makeCategoryFieldImporter();
+
+    $importer->setImport(makeCFImport(Import::ACTION_APPEND));
+
+    $errorHelper->shouldReceive('addError')->once()->with('invalid_boolean', 1, 'is_required', \Mockery::any());
+    $errorHelper->shouldReceive('addRowToSkip')->once()->with(1);
+
+    expect($importer->validateRow(['code' => 'req', 'locale' => 'en_US', 'is_required' => $value], 1))->toBeFalse();
+})->with(['Y', 'y', '2', 'maybe']);
+
+it('records a readable error for an unrecognised boolean value containing a percent sign', function () {
+    ['importer' => $importer] = makeCategoryFieldImporter();
+
+    $errorHelper = new Error;
+    $importer->setErrorHelper($errorHelper);
+    $importer->setImport(makeCFImport(Import::ACTION_APPEND));
+
+    expect($importer->validateRow(['code' => 'req', 'locale' => 'en_US', 'status' => '100%'], 1))->toBeFalse()
+        ->and($errorHelper->isRowInvalid(1))->toBeTrue()
+        ->and($errorHelper->getAllErrors()[1][0])->toMatchArray(['code' => 'invalid_boolean', 'column' => 'status'])
+        ->and($errorHelper->getAllErrors()[1][0]['message'])->toContain('status')->toContain('100%');
 });

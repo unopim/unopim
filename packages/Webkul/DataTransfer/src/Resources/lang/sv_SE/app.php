@@ -299,6 +299,7 @@ return [
             'column-not-found'       => 'Krävda kolumner hittades inte: %s.',
             'column-numbers'         => 'Antalet kolumner överensstämmer inte med antalet rader i rubriken.',
             'invalid-attribute'      => 'Rubriken innehåller ogiltiga attribut: "%s".',
+            'invalid-boolean'        => 'Kolumnen ":column" har värdet ":value", som inte är ett booleskt värde. Använd true, false, yes, no, on, off, 1 or 0.',
             'system'                 => 'Ett oväntat systemfel inträffade.',
             'wrong-quotes'           => 'Krokiga citattecken användes i stället för raka citattecken.',
             'file-empty'             => 'Filen är tom eller innehåller ingen rubrikrad. Vänligen ladda upp en giltig fil med data.',

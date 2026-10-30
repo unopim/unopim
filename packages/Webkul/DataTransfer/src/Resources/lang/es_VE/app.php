@@ -299,6 +299,7 @@ return [
             'column-not-found'       => 'Columnas requeridas no encontradas: %s.',
             'column-numbers'         => 'La cantidad de columnas no coincide con la cantidad de filas en el encabezado.',
             'invalid-attribute'      => 'El encabezado contiene atributos no válidos: "%s".',
+            'invalid-boolean'        => 'La columna ":column" tiene el valor ":value", que no es un booleano. Use true, false, yes, no, on, off, 1 or 0.',
             'system'                 => 'Ocurrió un error del sistema inesperado.',
             'wrong-quotes'           => 'Se utilizaron comillas curvas en lugar de comillas rectas.',
             'file-empty'             => 'El archivo está vacío o no contiene una fila de encabezado. Por favor, suba un archivo válido con datos.',

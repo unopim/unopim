@@ -299,6 +299,7 @@ return [
             'column-not-found'       => 'Columnes requerides no trobades: %s.',
             'column-numbers'         => 'El nombre de columnes no correspon al nombre de files a la capçalera.',
             'invalid-attribute'      => 'Capçalera conté atribut(s) invàlid(s): "%s".',
+            'invalid-boolean'        => 'La columna ":column" té el valor ":value", que no és un booleà. Utilitzeu true, false, yes, no, on, off, 1 or 0.',
             'system'                 => 'S\'ha produït un error de sistema inesperat.',
             'wrong-quotes'           => 'S\'han utilitzat guions curts en lloc de guions rectes.',
             'file-empty'             => 'El fitxer està buit o no conté una fila de capçalera. Si us plau, pengeu un fitxer vàlid amb dades.',

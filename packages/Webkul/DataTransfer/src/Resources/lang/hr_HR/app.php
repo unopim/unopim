@@ -299,6 +299,7 @@ return [
             'column-not-found'       => 'Potrebne kolone nisu pronađene: %s.',
             'column-numbers'         => 'Broj kolona ne odgovara broju redaka u zaglavlju.',
             'invalid-attribute'      => 'Zaglavlje sadrži neispravne atribut(e): "%s".',
+            'invalid-boolean'        => 'Stupac ":column" ima vrijednost ":value", koja nije boolean. Koristite true, false, yes, no, on, off, 1 or 0.',
             'system'                 => 'Došlo je do neočekivane sistemske greške.',
             'wrong-quotes'           => 'Kovrčave navodnike koristite umjesto ravnih navodnika.',
             'file-empty'             => 'Datoteka je prazna ili ne sadrži redak zaglavlja. Molimo učitajte valjanu datoteku s podacima.',

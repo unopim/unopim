@@ -299,6 +299,7 @@ return [
             'column-not-found'       => '필수 열을 찾을 수 없습니다: %s.',
             'column-numbers'         => '열 수가 헤더의 행 수와 일치하지 않습니다.',
             'invalid-attribute'      => '헤더에 유효하지 않은 속성이 있습니다: "%s".',
+            'invalid-boolean'        => '열 ":column"의 값 ":value"은(는) 불리언이 아닙니다. true, false, yes, no, on, off, 1 or 0을 사용하세요.',
             'system'                 => '예기치 않은 시스템 오류가 발생했습니다.',
             'wrong-quotes'           => '쌍따옴표 대신 곧은 따옴표가 사용되었습니다.',
             'file-empty'             => '파일이 비어 있거나 헤더 행이 없습니다. 데이터가 포함된 유효한 파일을 업로드하세요.',

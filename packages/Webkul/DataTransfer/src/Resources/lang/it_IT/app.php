@@ -299,6 +299,7 @@ return [
             'column-not-found'       => 'Le colonne richieste non sono trovate: %s.',
             'column-numbers'         => 'Il numero di colonne non corrisponde al numero di righe nell\'intestazione.',
             'invalid-attribute'      => 'L\'intestazione contiene attributi non validi: "%s".',
+            'invalid-boolean'        => 'La colonna ":column" ha il valore ":value", che non è un booleano. Usa true, false, yes, no, on, off, 1 or 0.',
             'system'                 => 'Si è verificato un errore di sistema imprevisto.',
             'wrong-quotes'           => 'Virgolette a parentesi usate al posto delle virgolette diritte.',
             'file-empty'             => 'Il file è vuoto o non contiene una riga di intestazione. Si prega di caricare un file valido con dati.',
