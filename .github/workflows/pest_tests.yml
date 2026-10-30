@@ -69,7 +69,7 @@ jobs:
           restore-keys: ${{ runner.os }}-npm-
 
       - name: Install Node dependencies
-        run: npm install --omit=dev --no-audit --no-fund --no-progress --prefer-offline
+        run: npm ci --omit=dev --no-audit --no-fund --no-progress --prefer-offline
 
       - name: Setting Environment
         run: |
@@ -170,7 +170,7 @@ jobs:
           restore-keys: ${{ runner.os }}-npm-
 
       - name: Install Node dependencies
-        run: npm install --omit=dev --no-audit --no-fund --no-progress --prefer-offline
+        run: npm ci --omit=dev --no-audit --no-fund --no-progress --prefer-offline
 
       - name: Setting Environment
         run: |
@@ -270,7 +270,7 @@ jobs:
           restore-keys: ${{ runner.os }}-npm-
 
       - name: Install Node dependencies
-        run: npm install --omit=dev --no-audit --no-fund --no-progress --prefer-offline
+        run: npm ci --omit=dev --no-audit --no-fund --no-progress --prefer-offline
 
       - name: Anchor the impact diff to the base branch
         env:
