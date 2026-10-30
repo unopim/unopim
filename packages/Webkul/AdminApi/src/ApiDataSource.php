@@ -154,6 +154,8 @@ abstract class ApiDataSource
                 }
             }
 
+            $scopeQueryBuilder = $this->applyAdditionalFilters($scopeQueryBuilder);
+
             if ($this->searchAfter !== null) {
                 $scopeQueryBuilder->where($this->cursorColumn(), '>', $this->searchAfter);
             }
@@ -163,6 +165,17 @@ abstract class ApiDataSource
     }
 
     public function setDefaultFilters($queryBuilder)
+    {
+        return $queryBuilder;
+    }
+
+    /**
+     * Apply filters that are not plain column filters, after the requested column filters.
+     *
+     * @param  mixed  $queryBuilder
+     * @return mixed
+     */
+    protected function applyAdditionalFilters($queryBuilder)
     {
         return $queryBuilder;
     }

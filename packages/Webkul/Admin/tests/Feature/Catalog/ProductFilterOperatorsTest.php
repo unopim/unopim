@@ -219,3 +219,21 @@ describe('operators are config-driven, so packages can extend them without touch
         ]);
     });
 });
+
+describe('engine values', function () {
+
+    it('shapes a price condition as currency, value and upper bound', function () {
+        expect(ProductFilterOperators::engineValue(Attribute::PRICE_FIELD_TYPE, FilterOperators::RANGE, 10, 20, 'USD'))
+            ->toBe(['USD', 10, 20])
+            ->and(ProductFilterOperators::engineValue(Attribute::PRICE_FIELD_TYPE, FilterOperators::IS_EMPTY, '', '', 'USD'))
+            ->toBe(['USD', '']);
+    });
+
+    it('shapes list, range and scalar conditions for other types', function () {
+        expect(ProductFilterOperators::engineValue('select', FilterOperators::IN, 'a,b'))->toBe(['a', 'b'])
+            ->and(ProductFilterOperators::engineValue('select', FilterOperators::NOT_IN, ['x' => 'a']))->toBe(['a'])
+            ->and(ProductFilterOperators::engineValue('date', FilterOperators::RANGE, '2026-01-01', '2026-02-01'))->toBe(['2026-01-01', '2026-02-01'])
+            ->and(ProductFilterOperators::engineValue('text', FilterOperators::CONTAINS, 'shoe'))->toBe(['shoe'])
+            ->and(ProductFilterOperators::engineValue('text', FilterOperators::IS_NOT_EMPTY, 'ignored'))->toBe(['']);
+    });
+});

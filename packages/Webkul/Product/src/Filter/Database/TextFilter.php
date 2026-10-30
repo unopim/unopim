@@ -62,7 +62,7 @@ class TextFilter extends AbstractDatabaseAttributeFilter
                 }
             }),
             FilterOperators::NOT_IN => $this->queryBuilder->whereRaw(
-                $searchPath.' NOT '.$grammar->getRegexOperator().' ?',
+                'NOT ('.$searchPath.' '.$grammar->getRegexOperator().' ?)',
                 is_array($value) ? implode('|', $value) : $value
             ),
             FilterOperators::EQUAL => $this->queryBuilder->whereRaw(
