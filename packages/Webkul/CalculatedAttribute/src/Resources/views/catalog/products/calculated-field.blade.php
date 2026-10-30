@@ -15,6 +15,7 @@
 
 <div class="flex flex-col gap-1">
     <input
+        id="{{ form_control_id($fieldName) }}"
         type="text"
         readonly
         tabindex="-1"
