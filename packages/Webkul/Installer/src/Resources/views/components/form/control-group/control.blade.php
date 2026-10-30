@@ -4,10 +4,13 @@
 ])
 
 @php
+    $labelledBy = 'hidden' === $type ? null : pull_form_label_id();
+
     $accessibleName = match (true) {
-        'hidden' === $type, $attributes->hasAny(['aria-label', ':aria-label', 'id']) => [],
+        'hidden' === $type, $attributes->hasAny(['aria-label', ':aria-label', 'aria-labelledby', ':aria-labelledby', 'id']) => [],
         $attributes->has(':label') => [':aria-label' => $attributes->get(':label')],
         $attributes->has('label')  => ['aria-label' => $attributes->get('label')],
+        null !== $labelledBy       => ['aria-labelledby' => $labelledBy],
         default                    => [],
     };
 @endphp
