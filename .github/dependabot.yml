@@ -137,6 +137,29 @@ updates:
       prefix: "chore(deps-admin)"
       include: "scope"
 
+  # Docker base images — digests pinned for supply-chain integrity
+  - package-ecosystem: "docker"
+    directory: "/dockerfiles"
+    target-branch: "3.x"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Asia/Kolkata"
+    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 7
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "chore(docker)"
+      include: "scope"
+
   # GitHub Actions — current release line
   - package-ecosystem: "github-actions"
     directory: "/"
