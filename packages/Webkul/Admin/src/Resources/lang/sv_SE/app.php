@@ -381,6 +381,16 @@ return [
                             'title'           => 'Produkt',
                             'weight'          => 'Vikt',
                         ],
+                        'filters' => [
+                            'any-option'         => 'Alla',
+                            'clear'              => 'Rensa filter',
+                            'load-error'         => 'Varianterna kunde inte läsas in. Försök igen.',
+                            'no-results'         => 'Inga varianter matchar de valda filtren.',
+                            'range'              => ':from–:to av :total',
+                            'search'             => 'Sök varianter',
+                            'search-placeholder' => 'Sök på SKU',
+                        ],
+
                         'mass-edit' => [
                             'add-images'          => 'Lägg till bilder',
                             'apply-to-all-btn'    => 'Tillämpa för alla',

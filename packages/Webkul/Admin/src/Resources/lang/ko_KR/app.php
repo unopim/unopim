@@ -382,6 +382,16 @@ return [
                             'title'           => '제품',
                             'weight'          => '무게',
                         ],
+                        'filters' => [
+                            'any-option'         => '전체',
+                            'clear'              => '필터 지우기',
+                            'load-error'         => '변형을 불러오지 못했습니다. 다시 시도해 주세요.',
+                            'no-results'         => '선택한 필터와 일치하는 변형이 없습니다.',
+                            'range'              => ':total개 중 :from–:to',
+                            'search'             => '변형 검색',
+                            'search-placeholder' => 'SKU로 검색',
+                        ],
+
                         'mass-edit' => [
                             'add-images'          => '이미지 추가',
                             'apply-to-all-btn'    => '모두에게 적용',

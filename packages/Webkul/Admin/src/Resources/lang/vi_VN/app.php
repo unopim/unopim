@@ -381,6 +381,16 @@ return [
                             'title'           => 'Sản phẩm',
                             'weight'          => 'Cân nặng',
                         ],
+                        'filters' => [
+                            'any-option'         => 'Tất cả',
+                            'clear'              => 'Xóa bộ lọc',
+                            'load-error'         => 'Không thể tải các biến thể. Vui lòng thử lại.',
+                            'no-results'         => 'Không có biến thể nào khớp với bộ lọc đã chọn.',
+                            'range'              => ':from–:to trên :total',
+                            'search'             => 'Tìm biến thể',
+                            'search-placeholder' => 'Tìm theo SKU',
+                        ],
+
                         'mass-edit' => [
                             'add-images'          => 'Thêm hình ảnh',
                             'apply-to-all-btn'    => 'Áp dụng cho tất cả',

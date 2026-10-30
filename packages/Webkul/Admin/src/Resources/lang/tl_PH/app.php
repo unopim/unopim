@@ -381,6 +381,16 @@ return [
                             'title'           => 'Produkto',
                             'weight'          => 'Timbang',
                         ],
+                        'filters' => [
+                            'any-option'         => 'Lahat',
+                            'clear'              => 'I-clear ang mga filter',
+                            'load-error'         => 'Hindi ma-load ang mga variant. Pakisubukang muli.',
+                            'no-results'         => 'Walang variant na tumutugma sa mga napiling filter.',
+                            'range'              => ':from–:to sa :total',
+                            'search'             => 'Maghanap ng mga variant',
+                            'search-placeholder' => 'Maghanap ayon sa SKU',
+                        ],
+
                         'mass-edit' => [
                             'add-images'          => 'Magdagdag ng mga larawan',
                             'apply-to-all-btn'    => 'I-apply sa lahat',
