@@ -3055,22 +3055,26 @@ class Importer extends AbstractImporter
 
         if (! empty($oldValues[AbstractType::COMMON_VALUES_KEY])) {
             $newValues[AbstractType::COMMON_VALUES_KEY] = array_filter(
-                array_merge($oldValues[AbstractType::COMMON_VALUES_KEY] ?? [], $newValues[AbstractType::COMMON_VALUES_KEY])
+                array_merge($oldValues[AbstractType::COMMON_VALUES_KEY] ?? [], $newValues[AbstractType::COMMON_VALUES_KEY]),
+                is_filled_value(...)
             );
         }
 
         foreach ($this->channelsAndLocales as $channelCode => $locales) {
             $newValues[AbstractType::CHANNEL_VALUES_KEY][$channelCode] = array_filter(
-                array_merge($oldValues[AbstractType::CHANNEL_VALUES_KEY][$channelCode] ?? [], $newValues[AbstractType::CHANNEL_VALUES_KEY][$channelCode] ?? [])
+                array_merge($oldValues[AbstractType::CHANNEL_VALUES_KEY][$channelCode] ?? [], $newValues[AbstractType::CHANNEL_VALUES_KEY][$channelCode] ?? []),
+                is_filled_value(...)
             );
 
             foreach ($locales as $localeCode) {
                 $newValues[AbstractType::LOCALE_VALUES_KEY][$localeCode] = array_filter(
-                    array_merge($oldValues[AbstractType::LOCALE_VALUES_KEY][$localeCode] ?? [], $newValues[AbstractType::LOCALE_VALUES_KEY][$localeCode] ?? [])
+                    array_merge($oldValues[AbstractType::LOCALE_VALUES_KEY][$localeCode] ?? [], $newValues[AbstractType::LOCALE_VALUES_KEY][$localeCode] ?? []),
+                    is_filled_value(...)
                 );
 
                 $newValues[AbstractType::CHANNEL_LOCALE_VALUES_KEY][$channelCode][$localeCode] = array_filter(
-                    array_merge($oldValues[AbstractType::CHANNEL_LOCALE_VALUES_KEY][$channelCode][$localeCode] ?? [], $newValues[AbstractType::CHANNEL_LOCALE_VALUES_KEY][$channelCode][$localeCode] ?? [])
+                    array_merge($oldValues[AbstractType::CHANNEL_LOCALE_VALUES_KEY][$channelCode][$localeCode] ?? [], $newValues[AbstractType::CHANNEL_LOCALE_VALUES_KEY][$channelCode][$localeCode] ?? []),
+                    is_filled_value(...)
                 );
 
                 if (empty($newValues[AbstractType::LOCALE_VALUES_KEY][$localeCode])) {
