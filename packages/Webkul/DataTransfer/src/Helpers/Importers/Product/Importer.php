@@ -150,7 +150,8 @@ class Importer extends AbstractImporter
     /**
      * Permanent entity columns
      */
-    protected array $permanentAttributes = ['sku', 'locale', 'channel', 'type', 'parent', 'variant_structure', self::ATTRIBUTE_FAMILY_CODE];
+    // Legacy files select axes via configurable_attributes instead of variant_structure.
+    protected array $permanentAttributes = ['sku', 'locale', 'channel', 'type', 'parent', self::ATTRIBUTE_FAMILY_CODE];
 
     /**
      * Permanent entity column
@@ -549,7 +550,7 @@ class Importer extends AbstractImporter
                     'parent'     => $rowData['parent'] ?? null,
                     'structure'  => $rowData['variant_structure'] ?? null,
                     'attributes' => array_keys(array_filter(
-                        array_diff_key($rowData, array_flip($this->permanentAttributes)),
+                        array_diff_key($rowData, array_flip([...$this->permanentAttributes, 'variant_structure'])),
                         fn ($value): bool => $value !== null && $value !== ''
                     )),
                 ];
