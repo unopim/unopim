@@ -59,7 +59,9 @@ class Excel extends AbstractSource
             $rowData[] = $cellValue !== null ? (string) $cellValue : null;
         }
 
-        if (filled_values($rowData) === []) {
+        $filteredRowData = array_filter($rowData, is_filled_value(...));
+
+        if ($filteredRowData === []) {
             return false;
         }
 
