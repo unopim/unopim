@@ -56,9 +56,7 @@
 
         @stack('styles')
 
-        <style>
-            {!! core()->getConfigData('general.content.custom_scripts.custom_css') !!}
-        </style>
+        <x-admin::layouts.custom-css />
 
         {!! view_render_event('unopim.admin.layout.head') !!}
     </head>

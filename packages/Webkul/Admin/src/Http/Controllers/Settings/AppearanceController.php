@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Prettus\Repository\Events\RepositoryEntityUpdated;
+use Webkul\Admin\Helpers\CustomCss;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\AppearanceForm;
 use Webkul\Core\Filesystem\FileStorer;
@@ -20,7 +21,8 @@ class AppearanceController extends Controller
      */
     public function __construct(
         protected FileStorer $fileStorer,
-        protected CoreConfigRepository $coreConfigRepository
+        protected CoreConfigRepository $coreConfigRepository,
+        protected CustomCss $customCss
     ) {}
 
     /**
@@ -32,13 +34,15 @@ class AppearanceController extends Controller
     }
 
     /**
-     * Update logo and favicon.
+     * Update logo, favicon and custom CSS.
      */
     public function update(AppearanceForm $request): RedirectResponse
     {
         $this->handleUpload($request, 'logo_image', 'general.design.admin_logo.logo_image');
 
         $this->handleUpload($request, 'favicon', 'general.design.admin_logo.favicon');
+
+        $this->handleCustomCss($request);
 
         $this->flushConfigCache();
 
@@ -79,6 +83,37 @@ class AppearanceController extends Controller
         }
 
         $this->clearConfigFile($code);
+    }
+
+    /**
+     * Persist the sanitized custom CSS, or clear it when the field is emptied.
+     */
+    private function handleCustomCss(AppearanceForm $request): void
+    {
+        if (! $request->has('custom_css')) {
+            return;
+        }
+
+        $css = $this->customCss->sanitize($request->input('custom_css'));
+
+        if ($css === '') {
+            CoreConfig::query()
+                ->where('code', CustomCss::CONFIG_CODE)
+                ->whereNull('channel_code')
+                ->whereNull('locale_code')
+                ->delete();
+
+            return;
+        }
+
+        CoreConfig::query()->updateOrCreate(
+            [
+                'code'         => CustomCss::CONFIG_CODE,
+                'channel_code' => null,
+                'locale_code'  => null,
+            ],
+            ['value' => $css]
+        );
     }
 
     /**
