@@ -204,9 +204,7 @@ class VisionService
      */
     protected function openaiMessages(string $imageContent, string $systemPrompt, string $localeNote): array
     {
-        $imageBlock = str_starts_with($imageContent, 'data:')
-            ? ['type' => 'image_url', 'image_url' => ['url' => $imageContent, 'detail' => 'high']]
-            : ['type' => 'image_url', 'image_url' => ['url' => $imageContent, 'detail' => 'high']];
+        $imageBlock = ['type' => 'image_url', 'image_url' => ['url' => $imageContent, 'detail' => 'high']];
 
         return [
             ['role' => 'system', 'content' => $systemPrompt],

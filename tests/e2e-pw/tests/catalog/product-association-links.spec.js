@@ -151,8 +151,8 @@ async function ensureBundleKitAssociationTypeExists(page) {
 			.filter({ has: page.getByRole('button', { name: 'Save Association Type' }) })
 			.last();
 
-		await createModal.getByRole('textbox', { name: 'Enter Name' }).fill(BUNDLE_KIT_NAME);
-		await createModal.getByRole('textbox', { name: 'Enter Code' }).fill(BUNDLE_KIT_CODE);
+		await createModal.getByPlaceholder('Enter Name').fill(BUNDLE_KIT_NAME);
+		await createModal.getByPlaceholder('Enter Code').fill(BUNDLE_KIT_CODE);
 		await createModal.getByRole('button', { name: 'Save Association Type' }).click();
 	}
 

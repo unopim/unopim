@@ -8,6 +8,10 @@ return [
         'max_messages' => (int) env('AI_AGENT_HISTORY_MAX_MESSAGES', 500),
     ],
 
+    'chat' => [
+        'max_file_kilobytes' => (int) env('AI_AGENT_CHAT_MAX_FILE_KB', 102400),
+    ],
+
     /**
      * Agent chat tools.
      *
