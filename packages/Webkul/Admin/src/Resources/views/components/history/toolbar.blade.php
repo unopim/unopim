@@ -128,6 +128,7 @@
                 </p>
 
                 <input
+                    aria-label="@lang('admin::app.components.datagrid.toolbar.pagination.page-number')"
                     type="text"
                     class="inline-flex min-h-[38px] max-w-[60px] appearance-none items-center justify-center gap-x-1 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-900 px-3 py-1.5 text-center leading-6 text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:border-gray-400 dark:hover:border-gray-400 focus:outline-none focus:border-gray-400 dark:focus:border-gray-400 max-sm:hidden"
                     :value="available.meta.current_page"

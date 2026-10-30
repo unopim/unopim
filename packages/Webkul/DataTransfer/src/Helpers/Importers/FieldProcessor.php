@@ -43,11 +43,11 @@ class FieldProcessor
      */
     public function handleField($field, mixed $value, ?string $path)
     {
-        if ($field->type === 'measurement' && ! empty($value)) {
+        if ($field->type === 'measurement' && is_filled_value($value)) {
             return $this->handleMeasurementField($field, $value);
         }
 
-        if (empty($value)) {
+        if (! is_filled_value($value)) {
             return;
         }
 
