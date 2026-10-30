@@ -175,7 +175,11 @@ rather than by scanning the source text.
 
 **Numbers**
 
-`round(n, p)`, `floor(n)`, `ceil(n)`, `abs(n)`, `number_format(n, decimals, dec_point, thousands_sep)`
+`round(n, p)`, `floor(n)`, `ceil(n)`, `abs(n)`, `min(...)`, `max(...)`,
+`number_format(n, decimals, dec_point, thousands_sep)`
+
+`min`/`max` are re-declared by the whitelist rather than inherited: dropping Symfony's
+built-in function table to get rid of `constant()` takes them with it.
 
 **Dates**
 
