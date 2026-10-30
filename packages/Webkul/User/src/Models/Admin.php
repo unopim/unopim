@@ -348,8 +348,8 @@ class Admin extends Authenticatable implements AdminContract, HistoryAuditable, 
     }
 
     /**
-     * SHA-256 rather than MD5: gravatar accepts both, and an MD5 of an email is trivially reversed
-     * from a list of known addresses, which matters because the hash is exposed in a public URL.
+     * SHA-256 rather than MD5: gravatar recommends it and MD5 email lookup tables are widespread.
+     * The hash is unsalted and public, so it still matches a known address; it narrows exposure only.
      */
     private static function gravatarHash(?string $email): ?string
     {
