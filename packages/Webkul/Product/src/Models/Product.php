@@ -24,6 +24,7 @@ use Webkul\HistoryControl\Interfaces\PresentableHistoryInterface;
 use Webkul\HistoryControl\Presenters\BooleanPresenter;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\Product\Contracts\Product as ProductContract;
+use Webkul\Product\Contracts\ProductImageFallbackResolver;
 use Webkul\Product\Contracts\VariantStructurePlanner;
 use Webkul\Product\Contracts\VariantValueResolver;
 use Webkul\Product\Database\Eloquent\Builder;
@@ -284,21 +285,56 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
     {
         $imageAttributes ??= $this->getImageAttributes();
 
-        $productImage = null;
-
-        $productValues = $this->values;
-
         $currentChannelCode ??= core()->getRequestedChannelCode();
 
         $currentLocaleCode ??= core()->getRequestedLocaleCode();
 
+        if ($productImage = $this->getOwnDisplayImage($imageAttributes, $currentChannelCode, $currentLocaleCode)) {
+            return $productImage;
+        }
+
+        if ($inheritedImage = $this->getInheritedDisplayImage($imageAttributes, $currentChannelCode, $currentLocaleCode)) {
+            return $inheritedImage;
+        }
+
+        return $this->getVariantDisplayImage($currentChannelCode, $currentLocaleCode, $imageAttributes);
+    }
+
+    /**
+     * Checks only this product's own stored values, without walking the family tree.
+     */
+    protected function getOwnDisplayImage(iterable $imageAttributes, string $currentChannelCode, string $currentLocaleCode): ?string
+    {
         foreach ($imageAttributes as $attribute) {
-            if ($productImage = $attribute->getValueFromProductValues($productValues, $currentChannelCode, $currentLocaleCode)) {
-                break;
+            if ($image = $attribute->getValueFromProductValues($this->values, $currentChannelCode, $currentLocaleCode)) {
+                return $image;
             }
         }
 
-        return $productImage ?: $this->getVariantDisplayImage($currentChannelCode, $currentLocaleCode, $imageAttributes);
+        return null;
+    }
+
+    /**
+     * Walks up to a configurable ancestor for an image attribute placed at the
+     * common level, so a variant with no own value shows the one its parent
+     * owns instead of nothing. Bounded the same way
+     * `ProductController::resolveConfigurableForVariantTree()` is, to tolerate
+     * a cyclical `parent_id` rather than looping forever.
+     */
+    protected function getInheritedDisplayImage(iterable $imageAttributes, string $currentChannelCode, string $currentLocaleCode): ?string
+    {
+        $ancestor = $this->parent;
+        $guard = 0;
+
+        while ($ancestor && $guard++ < 10) {
+            if ($image = $ancestor->getOwnDisplayImage($imageAttributes, $currentChannelCode, $currentLocaleCode)) {
+                return $image;
+            }
+
+            $ancestor = $ancestor->parent;
+        }
+
+        return null;
     }
 
     public function getVariantDisplayImage(?string $currentChannelCode = null, ?string $currentLocaleCode = null, mixed $imageAttributes = null): ?string
@@ -323,7 +359,9 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
     {
         $image = $this->getProductDisplayImage($currentChannelCode, $currentLocaleCode, $imageAttributes);
 
-        $image = $image ? Storage::url($image) : null;
+        $image = $image
+            ? Storage::url($image)
+            : app(ProductImageFallbackResolver::class)->resolveFallbackUrl($this, $currentChannelCode, $currentLocaleCode);
 
         return [
             'id'              => $this->id,
