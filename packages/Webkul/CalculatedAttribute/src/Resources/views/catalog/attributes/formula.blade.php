@@ -31,7 +31,7 @@
 
     <div class="px-4 pb-4">
         <x-admin::form.control-group>
-            <x-admin::form.control-group.label class="required">
+            <x-admin::form.control-group.label for="formula" class="required">
                 @lang('calculated_attribute::app.formula.label')
             </x-admin::form.control-group.label>
 
