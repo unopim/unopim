@@ -16,11 +16,17 @@
 
     $idAttribute = '' === $controlId ? [] : ['id' => $controlId];
 
+    /** Vue-rendered pickers own their focusable element, so only native inputs take the group's visible label. */
+    $labelledBy = in_array($type, ['text', 'email', 'password', 'number', 'price', 'color', 'textarea', 'date', 'datetime', 'checkbox', 'radio', 'switch'], true)
+        ? pull_form_label_id()
+        : null;
+
     /** Labels are rarely linked with `for`, so the validation label doubles as the accessible name. */
     $idAttribute += match (true) {
-        'hidden' === $type, $attributes->hasAny(['aria-label', ':aria-label']) => [],
+        'hidden' === $type, $attributes->hasAny(['aria-label', ':aria-label', 'aria-labelledby', ':aria-labelledby']) => [],
         $attributes->has(':label') => [':aria-label' => $attributes->get(':label')],
         $attributes->has('label')  => ['aria-label' => $attributes->get('label')],
+        null !== $labelledBy       => ['aria-labelledby' => $labelledBy],
         default                    => [],
     };
 
