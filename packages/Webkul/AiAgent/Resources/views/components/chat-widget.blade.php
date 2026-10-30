@@ -1715,6 +1715,13 @@ app.component('v-agenting-pim', {
             if (key) delete this.extensionContext[key];
         },
 
+        /**
+         * Sends the message with the catalog scope of the page the user is looking at
+         * (locale/channel query parameters, else the inputs marked data-catalog-scope,
+         * so an unrelated locale field on a settings form is never sent as scope). The
+         * backend prefers these codes and otherwise falls back to the default locale, so
+         * without them a locale-scoped edit lands on the wrong translation.
+         */
         async send(retryRequestId = null) {
             const text = this.inputText.trim();
             const files = [...this.pendingFiles];
@@ -1738,6 +1745,15 @@ app.component('v-agenting-pim', {
                 fd.append('extensions', JSON.stringify(selectedContext));
                 fd.append('history', JSON.stringify(this.messages.slice(0, -1).map(m => ({ role: m.role, content: m.content || '' }))));
                 fd.append('context[current_page]', window.location.pathname);
+                const scopeParams = new URLSearchParams(window.location.search);
+                const scopeLocale = scopeParams.get('locale')
+                    || document.querySelector('input[data-catalog-scope][name="locale"]')?.value
+                    || '';
+                const scopeChannel = scopeParams.get('channel')
+                    || document.querySelector('input[data-catalog-scope][name="channel"]')?.value
+                    || '';
+                if (scopeLocale) fd.append('context[locale]', scopeLocale);
+                if (scopeChannel) fd.append('context[channel]', scopeChannel);
                 if (this.productContext) {
                     fd.append('context[product_id]', this.productContext.id);
                     if (this.productContext.sku) fd.append('context[product_sku]', this.productContext.sku);

@@ -56,7 +56,7 @@
 
                             {{ $currentLocale->name }}
 
-                            <input type="hidden" name="locale" value="{{ $currentLocale->code }}"/>
+                            <input type="hidden" name="locale" value="{{ $currentLocale->code }}" data-catalog-scope/>
 
                             <span class="icon-chevron-down text-2xl"></span>
                         </button>
