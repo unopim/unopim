@@ -13,6 +13,11 @@
         null !== $labelledBy       => ['aria-labelledby' => $labelledBy],
         default                    => [],
     };
+
+    $controlId = (string) $attributes->get('id');
+
+    /** Re-emitted from $controlId so the label sharing this bag does not duplicate the id. */
+    $attributes = $attributes->except(['id']);
 @endphp
 
 @switch($type)
@@ -27,6 +32,7 @@
             {{ $attributes->only(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label']) }}
         >
             <input
+                @if ('' !== $controlId) id="{{ $controlId }}" @endif
                 type="{{ $type }}"
                 name="{{ $name }}"
                 v-bind="field"
@@ -44,6 +50,7 @@
             {{ $attributes->only(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label']) }}
         >
             <select
+                @if ('' !== $controlId) id="{{ $controlId }}" @endif
                 name="{{ $name }}"
                 v-bind="field"
                 :class="[errors['{{ $name }}'] ? 'border border-red-500' : '']"
@@ -64,6 +71,7 @@
             {{ $attributes->only(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label']) }}
         >
             <input
+                @if ('' !== $controlId) id="{{ $controlId }}" @endif
                 type="checkbox"
                 name="{{ $name }}"
                 v-bind="field"
