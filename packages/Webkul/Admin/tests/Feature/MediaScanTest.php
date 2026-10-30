@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\UploadedFile;
+use Webkul\Admin\Http\Requests\MediaScanRequest;
 
 it('redirects a guest to login', function () {
     $this->postJson(route('admin.media.scan'), [
@@ -57,4 +58,18 @@ it('requires a file', function () {
     $this->loginAsAdmin();
 
     $this->postJson(route('admin.media.scan'))->assertStatus(422)->assertJsonValidationErrors('file');
+});
+
+it('rejects a file larger than the configured scan limit', function () {
+    $this->loginAsAdmin();
+
+    config(['media.scan.max_file_size_kilobytes' => 1]);
+
+    $this->postJson(route('admin.media.scan'), [
+        'file' => UploadedFile::fake()->create('large.pdf', 2, 'application/pdf'),
+    ])->assertUnprocessable()->assertJsonValidationErrors('file');
+});
+
+it('reads the scan size limit from the package config', function () {
+    expect((new MediaScanRequest)->rules()['file'])->toContain('max:102400');
 });

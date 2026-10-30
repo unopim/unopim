@@ -94,7 +94,7 @@ describe('Gravatar opt-out persistence', function () {
         // The grid only renders a gravatar the cached upstream lookup already confirmed, so prime
         // both rows: the opted-out row must then stay empty because of the flag, not a cache miss.
         foreach ([$optedIn, $optedOut] as $user) {
-            Cache::put('admin.gravatar.'.md5(mb_strtolower(trim($user->email))), [
+            Cache::put('admin.gravatar.'.hash('sha256', mb_strtolower(trim($user->email))), [
                 'found'        => true,
                 'body'         => '',
                 'content_type' => 'image/png',
