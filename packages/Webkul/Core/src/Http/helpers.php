@@ -99,6 +99,16 @@ if (! function_exists('is_filled_value')) {
     }
 }
 
+if (! function_exists('filled_values')) {
+    /**
+     * Drop the blank entries of an array by the is_filled_value() rule, keeping keys.
+     */
+    function filled_values(array $values): array
+    {
+        return array_filter($values, is_filled_value(...));
+    }
+}
+
 if (! function_exists('form_control_id')) {
     /**
      * Build the DOM id a form control renders for the given field name, so labels

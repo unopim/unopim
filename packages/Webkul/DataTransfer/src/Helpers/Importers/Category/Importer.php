@@ -517,16 +517,14 @@ class Importer extends AbstractImporter
     protected function mergeCategoryFieldValues(array $newValues, array $oldValues): array
     {
         if (! empty($oldValues[CategoryRepository::COMMON_VALUES_KEY])) {
-            $newValues[CategoryRepository::COMMON_VALUES_KEY] = array_filter(
-                array_merge($oldValues[CategoryRepository::COMMON_VALUES_KEY] ?? [], $newValues[CategoryRepository::COMMON_VALUES_KEY]),
-                is_filled_value(...)
+            $newValues[CategoryRepository::COMMON_VALUES_KEY] = filled_values(
+                array_merge($oldValues[CategoryRepository::COMMON_VALUES_KEY] ?? [], $newValues[CategoryRepository::COMMON_VALUES_KEY])
             );
         }
 
         foreach ($this->locales as $localeCode) {
-            $newValues[CategoryRepository::LOCALE_VALUES_KEY][$localeCode] = array_filter(
-                array_merge($oldValues[CategoryRepository::LOCALE_VALUES_KEY][$localeCode] ?? [], $newValues[CategoryRepository::LOCALE_VALUES_KEY][$localeCode] ?? []),
-                is_filled_value(...)
+            $newValues[CategoryRepository::LOCALE_VALUES_KEY][$localeCode] = filled_values(
+                array_merge($oldValues[CategoryRepository::LOCALE_VALUES_KEY][$localeCode] ?? [], $newValues[CategoryRepository::LOCALE_VALUES_KEY][$localeCode] ?? [])
             );
 
             if (empty($newValues[CategoryRepository::LOCALE_VALUES_KEY][$localeCode])) {

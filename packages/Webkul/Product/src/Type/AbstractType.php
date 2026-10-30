@@ -482,11 +482,10 @@ abstract class AbstractType
      */
     protected function processValues(int $productId, array $values, array $productValues = [], bool $isCommonAttribute = false): array
     {
-        $values = array_filter(
+        $values = filled_values(
             $productValues === []
                 ? $values
-                : array_merge($productValues, $values),
-            is_filled_value(...)
+                : array_merge($productValues, $values)
         );
 
         $attributes = $this->attributeRepository->findWhereIn('code', array_keys($values))->keyBy('code');
@@ -555,7 +554,7 @@ abstract class AbstractType
             }
 
             if (is_array($fieldValue)) {
-                $fieldValue = array_filter($fieldValue, is_filled_value(...));
+                $fieldValue = filled_values($fieldValue);
 
                 if ($fieldValue === []) {
                     unset($values[$field]);

@@ -48,7 +48,7 @@ class CSV extends AbstractSource
 
             if (
                 in_array($headerRow, [false, null, [null]], true)
-                || count(array_filter($headerRow, fn ($v): bool => $v !== null && $v !== '')) === 0
+                || filled_values($headerRow) === []
             ) {
                 throw new \LogicException(trans('data_transfer::app.validation.errors.file-empty'));
             }
