@@ -215,6 +215,7 @@
                     <div class="col-span-2 flex items-center gap-2">
                         <x-admin::flat-picker.date ::allow-input="false">
                             <input
+                                aria-label="@lang('admin::app.settings.data-transfer.exports.create.range-from')"
                                 data-filter-value
                                 autocomplete="off"
                                 class="flex min-h-[39px] w-full rounded-md border px-3 py-1.5 text-sm leading-6 text-gray-600 transition-all hover:border-gray-400 focus:border-gray-400 dark:border-cherry-800 dark:bg-cherry-800 dark:text-gray-300 dark:hover:border-gray-400"
@@ -228,6 +229,7 @@
 
                         <x-admin::flat-picker.date ::allow-input="false">
                             <input
+                                aria-label="@lang('admin::app.settings.data-transfer.exports.create.range-to')"
                                 data-filter-value2
                                 autocomplete="off"
                                 class="flex min-h-[39px] w-full rounded-md border px-3 py-1.5 text-sm leading-6 text-gray-600 transition-all hover:border-gray-400 focus:border-gray-400 dark:border-cherry-800 dark:bg-cherry-800 dark:text-gray-300 dark:hover:border-gray-400"
@@ -242,6 +244,7 @@
                 <template v-else-if="attributeValueControl(column) === 'number_range'">
                     <div class="col-span-2 flex items-center gap-2">
                         <input
+                            aria-label="@lang('admin::app.settings.data-transfer.exports.create.range-from')"
                             type="number"
                             data-filter-value
                             class="flex min-h-[39px] w-full rounded-md border px-3 py-1.5 text-sm leading-6 text-gray-600 transition-all hover:border-gray-400 focus:border-gray-400 dark:border-cherry-800 dark:bg-cherry-800 dark:text-gray-300 dark:hover:border-gray-400"
@@ -253,6 +256,7 @@
                         <span class="text-gray-400">&ndash;</span>
 
                         <input
+                            aria-label="@lang('admin::app.settings.data-transfer.exports.create.range-to')"
                             type="number"
                             data-filter-value2
                             class="flex min-h-[39px] w-full rounded-md border px-3 py-1.5 text-sm leading-6 text-gray-600 transition-all hover:border-gray-400 focus:border-gray-400 dark:border-cherry-800 dark:bg-cherry-800 dark:text-gray-300 dark:hover:border-gray-400"
@@ -266,6 +270,7 @@
                 <template v-else-if="attributeValueControl(column) === 'date'">
                     <x-admin::flat-picker.date ::allow-input="false">
                         <input
+                            :aria-label="filterLabel(column)"
                             data-filter-value
                             autocomplete="off"
                             class="flex min-h-[39px] w-full rounded-md border px-3 py-1.5 text-sm leading-6 text-gray-600 transition-all hover:border-gray-400 focus:border-gray-400 dark:border-cherry-800 dark:bg-cherry-800 dark:text-gray-300 dark:hover:border-gray-400"
@@ -278,6 +283,7 @@
 
                 <template v-else>
                     <input
+                        :aria-label="filterLabel(column)"
                         :type="attributeValueControl(column)"
                         data-filter-value
                         :class="attributeValueSpansRow(column) ? 'col-span-2' : ''"
@@ -426,6 +432,7 @@
 
                 <x-admin::flat-picker.date ::allow-input="false">
                     <input
+                        :aria-label="filterLabel(column)"
                         value=""
                         class="flex min-h-[39px] w-full rounded-md border px-3 py-2 text-sm text-gray-600 transition-all hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400 dark:border-cherry-800 dark:bg-cherry-800 dark:text-gray-300"
                         :type="column.input_type"
@@ -442,6 +449,7 @@
 
                 <x-admin::flat-picker.date ::allow-input="false">
                     <input
+                        :aria-label="filterLabel(column)"
                         type="column.input_type"
                         value=""
                         class="flex min-h-[39px] w-full rounded-md border px-3 py-2 text-sm text-gray-600 transition-all hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400 dark:border-cherry-800 dark:bg-cherry-800 dark:text-gray-300"
@@ -477,6 +485,7 @@
         <div v-else-if="column.type === 'price'">
             <div class="grid grid-cols-2 gap-2">
                     <input
+                        :aria-label="filterLabel(column)"
                         type="text"
                         class="flex min-h-[39px] w-full rounded-md border px-3 py-1.5 text-sm leading-6 text-gray-600 transition-all hover:border-gray-400 focus:border-gray-400 dark:border-cherry-800 dark:bg-cherry-800 dark:text-gray-300 dark:hover:border-gray-400"
                         :name="column.index"
@@ -548,6 +557,7 @@
 
                 <x-admin::flat-picker.datetime ::allow-input="false">
                     <input
+                        :aria-label="filterLabel(column)"
                         value=""
                         class="flex min-h-[39px] w-full rounded-md border px-3 py-2 text-sm text-gray-600 transition-all hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400 dark:border-cherry-800 dark:bg-cherry-800 dark:text-gray-300"
                         :type="column.input_type"
@@ -564,6 +574,7 @@
 
                 <x-admin::flat-picker.datetime ::allow-input="false">
                     <input
+                        :aria-label="filterLabel(column)"
                         type="column.input_type"
                         value=""
                         class="flex min-h-[39px] w-full rounded-md border px-3 py-2 text-sm text-gray-600 transition-all hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400 dark:border-cherry-800 dark:bg-cherry-800 dark:text-gray-300"

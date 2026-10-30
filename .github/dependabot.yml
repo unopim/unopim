@@ -17,6 +17,8 @@ updates:
       time: "06:00"
       timezone: "Asia/Kolkata"
     open-pull-requests-limit: 10
+    cooldown:
+      default-days: 7
     ignore:
       - dependency-name: "*"
         update-types:
@@ -71,6 +73,8 @@ updates:
       time: "06:00"
       timezone: "Asia/Kolkata"
     open-pull-requests-limit: 5
+    cooldown:
+      default-days: 7
     ignore:
       - dependency-name: "*"
         update-types:
@@ -143,6 +147,8 @@ updates:
       time: "06:00"
       timezone: "Asia/Kolkata"
     open-pull-requests-limit: 5
+    cooldown:
+      default-days: 7
     ignore:
       - dependency-name: "*"
         update-types:

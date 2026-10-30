@@ -50,6 +50,6 @@ class PublicationRateLimit
 
     private function key(object $limit): string
     {
-        return md5(self::LIMITER_NAME.$limit->key);
+        return hash('xxh128', self::LIMITER_NAME.$limit->key);
     }
 }
