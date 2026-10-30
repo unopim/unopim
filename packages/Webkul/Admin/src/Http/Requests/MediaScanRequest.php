@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Webkul\Admin\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\File;
 use Webkul\Core\Rules\FileMimeExtensionMatch;
 
 class MediaScanRequest extends FormRequest
@@ -20,16 +21,15 @@ class MediaScanRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, array<int, string>>
+     * @return array<string, array<int, mixed>>
      */
     public function rules(): array
     {
         return [
             'file'                  => [
                 'required',
-                'file',
-                'mimes:jpg,jpeg,png,gif,jfif,jif,webp,bmp,tif,tiff,psd,pdf,mp4,webm,mkv,csv,doc,docx,mp3,ppt,pptx,rtf,txt,wav',
-                'max:'.(int) config('media.scan.max_file_size_kilobytes'),
+                File::types(['jpg', 'jpeg', 'png', 'gif', 'jfif', 'jif', 'webp', 'bmp', 'tif', 'tiff', 'psd', 'pdf', 'mp4', 'webm', 'mkv', 'csv', 'doc', 'docx', 'mp3', 'ppt', 'pptx', 'rtf', 'txt', 'wav'])
+                    ->max((int) config('media.scan.max_file_size_kilobytes')),
                 new FileMimeExtensionMatch,
             ],
             'is_image'              => ['nullable', 'boolean'],
