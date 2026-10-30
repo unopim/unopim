@@ -2,16 +2,14 @@
 
 ## Supported Versions
 
-UnoPim follows Laravel's release cadence. Each minor receives bug
-fixes and security fixes from its release date until the underlying
-Laravel version reaches End of Life.
+UnoPim follows Laravel's release cadence. Only the 3.x line, built on
+Laravel 13, receives security fixes; earlier lines are End of Life
+and users should upgrade to the latest 3.x release.
 
 | Version | PHP required | PHP tested | Laravel | Release             | Bug Fixes Until      | Security Fixes Until |
 | ------- | ------------ | ---------- | ------- | ------------------- | -------------------- | -------------------- |
 | 3.1     | 8.4.1+       | 8.4        | 13.x    | August 27th, 2026   | TBD                  | TBD                  |
 | 3.0     | 8.4.1+       | 8.4        | 13.x    | July 31st, 2026     | August 27th, 2026    | TBD                  |
-| 2.1     | 8.3+         | 8.3        | 12.x    | May 13th, 2026      | August 13th, 2026    | February 24th, 2027  |
-| 2.0     | 8.3+         | 8.3        | 12.x    | March 27th, 2026    | August 13th, 2026    | February 24th, 2027  |
 
 **Current:** 3.1.x
 
@@ -22,6 +20,8 @@ version.
 
 | Version | PHP       | Laravel | Release             | End of Life          |
 | ------- | --------- | ------- | ------------------- | -------------------- |
+| 2.1     | 8.3+      | 12.x    | May 13th, 2026      | October 30th, 2026   |
+| 2.0     | 8.3+      | 12.x    | March 27th, 2026    | October 30th, 2026   |
 | 1.0     | 8.2 - 8.3 | 10.x    | November 21st, 2025 | May 26th, 2026       |
 
 ---
