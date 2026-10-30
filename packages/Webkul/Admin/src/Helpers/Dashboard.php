@@ -267,14 +267,15 @@ class Dashboard
                 return [];
             }
 
-            $completenessTable = DB::getTablePrefix().'product_completeness';
+            $productIdColumn = DB::getQueryGrammar()->wrap('product_completeness.product_id');
+            $scoreColumn = DB::getQueryGrammar()->wrap('product_completeness.score');
 
             $readiness = DB::table('product_completeness')
                 ->join('channels', 'channels.id', '=', 'product_completeness.channel_id')
                 ->select(
                     'channels.code as channel',
-                    DB::raw("COUNT(DISTINCT {$completenessTable}.product_id) as total"),
-                    DB::raw("COUNT(DISTINCT CASE WHEN {$completenessTable}.score >= 80 THEN {$completenessTable}.product_id END) as ready")
+                    DB::raw("COUNT(DISTINCT {$productIdColumn}) as total"),
+                    DB::raw("COUNT(DISTINCT CASE WHEN {$scoreColumn} >= 80 THEN {$productIdColumn} END) as ready")
                 )
                 ->groupBy('channels.code')
                 ->get();

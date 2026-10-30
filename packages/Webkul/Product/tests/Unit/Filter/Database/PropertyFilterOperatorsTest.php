@@ -25,7 +25,7 @@ describe('CompletenessFilter', function () {
     it('compares the average completeness score', function () {
         $queryBuilder = applyPropertyFilter(new CompletenessFilter, 'completeness', FilterOperators::GREATER_THAN_OR_EQUAL, ['50']);
 
-        expect($queryBuilder->toSql())->toContain('avg_completeness_score >= ?')
+        expect($queryBuilder->toSql())->toContain(DB::getQueryGrammar()->wrap('products.avg_completeness_score').' >= ?')
             ->and($queryBuilder->getBindings())->toContain(50.0);
     });
 
@@ -39,7 +39,7 @@ describe('CompletenessFilter', function () {
     it('matches products without a score', function () {
         $queryBuilder = applyPropertyFilter(new CompletenessFilter, 'completeness', FilterOperators::IS_EMPTY, ['']);
 
-        expect($queryBuilder->toSql())->toContain('avg_completeness_score IS NULL');
+        expect($queryBuilder->toSql())->toContain(DB::getQueryGrammar()->wrap('products.avg_completeness_score').' IS NULL');
     });
 
     it('rejects an unsupported property', function () {
@@ -84,14 +84,14 @@ describe('DateTimeFilter', function () {
     it('covers the whole day for before', function () {
         $queryBuilder = applyPropertyFilter(new DateTimeFilter, 'created_at', FilterOperators::LESS_THAN, ['2026-01-31']);
 
-        expect($queryBuilder->toSql())->toContain('created_at < ?')
+        expect($queryBuilder->toSql())->toContain(DB::getQueryGrammar()->wrap('products.created_at').' < ?')
             ->and($queryBuilder->getBindings())->toBe(['2026-01-31 00:00:01']);
     });
 
     it('covers the whole day for after', function () {
         $queryBuilder = applyPropertyFilter(new DateTimeFilter, 'updated_at', FilterOperators::GREATER_THAN, ['2026-01-31']);
 
-        expect($queryBuilder->toSql())->toContain('updated_at > ?')
+        expect($queryBuilder->toSql())->toContain(DB::getQueryGrammar()->wrap('products.updated_at').' > ?')
             ->and($queryBuilder->getBindings())->toBe(['2026-01-31 23:59:59']);
     });
 

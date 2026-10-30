@@ -219,6 +219,14 @@ return [
     ],
 
     'installer' => [
+        'console' => [
+            'confirm-drop'        => 'I-drop ang mga talahanayang ito at mag-install muli?',
+            'drop-aborted'        => 'Ibinasura ang pag-install. Walang talahanayang na-drop.',
+            'force-required'      => 'Walang nakatakdang table prefix, kaya made-drop ang bawat talahanayang hindi inaangkin ng ibang install. Patakbuhin muli gamit ang --force para i-drop ang mga ito, o itakda ang DB_PREFIX.',
+            'outside-references'  => 'May mga talahanayang nasa labas ng table prefix na tumutukoy sa mga talahanayang ide-drop: :references. Alisin muna ang mga foreign key na ito.',
+            'tables-to-drop'      => 'Made-drop ang :count talahanayang ito: :tables',
+        ],
+
         'index' => [
             'create-administrator' => [
                 'admin'                   => 'Tagapangasiwa',

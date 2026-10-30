@@ -29,18 +29,14 @@ class DatabaseSequenceHelper
             return;
         }
 
-        $tablePrefix ??= DB::getTablePrefix();
-
-        $tableName = $tablePrefix.$table;
-
-        $sequence = "{$tableName}_id_seq";
+        $tableName = DB::getQueryGrammar()->wrapTable($table, $tablePrefix);
 
         DB::statement("
             SELECT setval(
-                '{$sequence}',
+                pg_get_serial_sequence(?, 'id'),
                 (SELECT COALESCE(MAX(id), 0) + 1 FROM {$tableName}),
                 false
             )
-        ");
+        ", [$tableName]);
     }
 }

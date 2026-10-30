@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Webkul\Core\Database\Schema\PrefixedIndexNameBlueprint;
 
 return new class extends Migration
 {
@@ -16,7 +16,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (Schema::hasTable('audits') && ! $this->indexExists('audits', 'audits_tags_history_id_index')) {
+        if (Schema::hasTable('audits') && ! PrefixedIndexNameBlueprint::indexExists('audits', 'audits_tags_history_id_index')) {
             Schema::table('audits', function (Blueprint $table): void {
                 $table->index(['tags', 'history_id'], 'audits_tags_history_id_index');
             });
@@ -28,7 +28,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        if (Schema::hasTable('audits') && $this->indexExists('audits', 'audits_tags_history_id_index')) {
+        if (Schema::hasTable('audits') && PrefixedIndexNameBlueprint::indexExists('audits', 'audits_tags_history_id_index')) {
             Schema::table('audits', function (Blueprint $table): void {
                 $table->dropIndex('audits_tags_history_id_index');
             });
@@ -38,20 +38,4 @@ return new class extends Migration
     /**
      * Check whether an index exists (prefix-aware, mysql + pgsql).
      */
-    private function indexExists(string $table, string $index): bool
-    {
-        $prefix = DB::getTablePrefix();
-
-        if (DB::getDriverName() === 'pgsql') {
-            return (bool) DB::select('SELECT 1 FROM pg_indexes WHERE indexname = ?', [$index]);
-        }
-
-        foreach (DB::select("SHOW INDEX FROM `{$prefix}{$table}`") as $row) {
-            if (($row->Key_name ?? null) === $index) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 };

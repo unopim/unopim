@@ -219,6 +219,14 @@ return [
     ],
 
     'installer' => [
+        'console' => [
+            'confirm-drop'        => 'Voleu eliminar aquestes taules i reinstal·lar?',
+            'drop-aborted'        => 'Instal·lació cancel·lada. No s\'ha eliminat cap taula.',
+            'force-required'      => 'No s\'ha definit cap prefix de taula, per la qual cosa s\'eliminarien totes les taules que cap altra instal·lació no reclami. Torneu a executar amb --force per eliminar-les, o definiu DB_PREFIX.',
+            'outside-references'  => 'Hi ha taules fora del prefix de taula que fan referència a les taules que s\'han d\'eliminar: :references. Elimineu primer aquestes claus foranes.',
+            'tables-to-drop'      => 'S\'eliminaran aquestes :count taules: :tables',
+        ],
+
         'index' => [
             'create-administrator' => [
                 'admin'                   => 'Administrador',

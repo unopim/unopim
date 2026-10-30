@@ -17,6 +17,7 @@ use Webkul\Installer\Events\ComposerEvents;
 use Webkul\Installer\Helpers\DatabaseManager;
 use Webkul\Installer\Helpers\DemoDataInstaller;
 
+use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\multisearch;
 use function Laravel\Prompts\multiselect;
 use function Laravel\Prompts\password;
@@ -28,7 +29,8 @@ use function Laravel\Prompts\text;
         { --skip-env-check : Skip env check. }
         { --skip-admin-creation : Skip admin creation. }
         { --with-demo-data : Seed sample products and demo data. }
-        { --with-packages= : Comma-separated optional packages to install (dam, shopify, bagisto). }')]
+        { --with-packages= : Comma-separated optional packages to install (dam, shopify, bagisto). }
+        { --force : Drop the existing tables without asking, also when the table prefix is empty. }')]
 class Installer extends Command
 {
     /**
@@ -143,8 +145,12 @@ class Installer extends Command
             $this->info('Elasticsearch Connected successfully');
         }
 
+        $this->warn('Step: Dropping existing tables for table prefix '.(DB::getTablePrefix() ?: '(none)').'...');
+
+        $this->dropExistingTables();
+
         $this->warn('Step: Migrating all tables...');
-        $this->call('migrate:fresh');
+        $this->call('migrate');
 
         $this->warn('Step: Seeding basic data for UnoPim kickstart...');
         resolve(UnoPimDatabaseSeeder::class)->run([
@@ -244,6 +250,55 @@ class Installer extends Command
         }
 
         return array_values(array_unique($selected));
+    }
+
+    /**
+     * Drop the tables of the current table prefix, failing the command when the drop is not confirmed.
+     */
+    protected function dropExistingTables(): void
+    {
+        $databaseManager = resolve(DatabaseManager::class);
+
+        if (! $this->confirmDroppingTables($databaseManager->currentPrefixTables(), DB::getTablePrefix())) {
+            $this->fail(trans('installer::app.installer.console.drop-aborted'));
+        }
+
+        $databaseManager->dropCurrentPrefixTables();
+    }
+
+    /**
+     * Lists the tables the reinstall drops and lets an interactive user stop it. Without a table prefix
+     * every table no other install claims is in the list, unrelated tables of the same database included,
+     * so an unattended run then refuses unless --force is passed.
+     *
+     * @param  array<int, string>  $tables
+     */
+    protected function confirmDroppingTables(array $tables, string $tablePrefix): bool
+    {
+        if ($tables === []) {
+            return true;
+        }
+
+        $this->line(trans('installer::app.installer.console.tables-to-drop', [
+            'count'  => count($tables),
+            'tables' => implode(', ', $tables),
+        ]));
+
+        if ($this->option('force')) {
+            return true;
+        }
+
+        if ($this->hasInteractiveTerminal()) {
+            return confirm(label: trans('installer::app.installer.console.confirm-drop'), default: true);
+        }
+
+        if ($tablePrefix === '') {
+            $this->error(trans('installer::app.installer.console.force-required'));
+
+            return false;
+        }
+
+        return true;
     }
 
     /**
