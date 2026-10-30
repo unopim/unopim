@@ -16,6 +16,7 @@ permissions:
 
 jobs:
   baseline:
+    if: github.repository == 'unopim/unopim'
     runs-on: ubuntu-24.04
     name: Record the test impact baseline
 

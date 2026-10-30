@@ -18,6 +18,7 @@ permissions:
 
 jobs:
   pest-pgsql:
+    if: github.repository == 'unopim/unopim'
     runs-on: ubuntu-24.04
     name: Pest Tests (PostgreSQL)
     continue-on-error: true
@@ -95,6 +96,7 @@ jobs:
           vendor/bin/pest --parallel --processes=3 --colors=always --testsuite "Installer Feature Test,ElasticSearch Feature Test,Completeness Feature Test,Product Unit Test,Product Feature Test,Attribute Unit Test,Category Unit Test,Measurement Feature Test,AiAgent Unit Test,AppUrlGuard Unit Test,Webhook Unit Test,Webhook Feature Test,AppUrlGuard Feature Test,Resource Unit Test,Resource Feature Test,Publication Feature Test,ProductPassport Feature Test"
 
   pest-pgsql-elasticsearch:
+    if: github.repository == 'unopim/unopim'
     runs-on: ubuntu-24.04
     name: Pest Tests (PostgreSQL + Elasticsearch)
     continue-on-error: true

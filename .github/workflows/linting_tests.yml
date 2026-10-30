@@ -18,6 +18,7 @@ permissions:
 
 jobs:
   linting_tests:
+    if: github.repository == 'unopim/unopim'
     runs-on: ubuntu-24.04
     name: Laravel Pint Code Style
 

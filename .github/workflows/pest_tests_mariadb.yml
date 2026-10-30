@@ -15,6 +15,7 @@ permissions:
 
 jobs:
   pest-mariadb:
+    if: github.repository == 'unopim/unopim'
     runs-on: ubuntu-24.04
     name: Pest Tests (MariaDB ${{ matrix.mariadb }})
     strategy:

@@ -18,6 +18,7 @@ permissions:
 
 jobs:
   phpstan:
+    if: github.repository == 'unopim/unopim'
     runs-on: ubuntu-24.04
     name: PHPStan (Larastan)
 
@@ -40,6 +41,7 @@ jobs:
         run: vendor/bin/phpstan analyse --memory-limit=2G --no-progress
 
   rector:
+    if: github.repository == 'unopim/unopim'
     runs-on: ubuntu-24.04
     name: Rector (dry-run, advisory)
 

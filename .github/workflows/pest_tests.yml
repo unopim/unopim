@@ -18,6 +18,7 @@ permissions:
 
 jobs:
   pest:
+    if: github.repository == 'unopim/unopim'
     runs-on: ubuntu-24.04
     name: Pest Tests (MySQL)
 
@@ -104,6 +105,7 @@ jobs:
           if-no-files-found: ignore
 
   pest-elasticsearch:
+    if: github.repository == 'unopim/unopim'
     runs-on: ubuntu-24.04
     name: Pest Tests (MySQL + Elasticsearch)
 
@@ -209,7 +211,7 @@ jobs:
   # test-impact analysis, whose coverage recording is memory-fragile on the
   # shared runners.
   pest-impacted:
-    if: github.event_name == 'pull_request'
+    if: github.repository == 'unopim/unopim' && github.event_name == 'pull_request'
     runs-on: ubuntu-24.04
     name: Pest Tests (impacted)
     continue-on-error: true

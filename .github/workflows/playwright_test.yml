@@ -21,6 +21,7 @@ env:
 
 jobs:
   playwright_tests:
+    if: github.repository == 'unopim/unopim'
     name: Playwright E2E | Shard ${{ matrix.shard-index }}/${{ matrix.shard-total }}
     runs-on: ubuntu-24.04
 

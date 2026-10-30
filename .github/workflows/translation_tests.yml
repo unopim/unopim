@@ -18,6 +18,7 @@ permissions:
 
 jobs:
   translation_tests:
+    if: github.repository == 'unopim/unopim'
     runs-on: ubuntu-24.04
     name: Translation Integrity Audit
 

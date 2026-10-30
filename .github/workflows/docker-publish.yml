@@ -19,6 +19,7 @@ concurrency:
 
 jobs:
   publish:
+    if: github.repository == 'unopim/unopim'
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
