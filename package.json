@@ -16,6 +16,6 @@
         "axios": "^1.6.4",
         "fast-check": "^4.10.2",
         "laravel-vite-plugin": "^1.2.0",
-        "vite": "^6.3.0"
+        "vite": "^6.4.5"
     }
 }
