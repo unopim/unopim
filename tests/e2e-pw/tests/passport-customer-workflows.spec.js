@@ -126,9 +126,12 @@ test.describe.serial('DPP customer workflows', () => {
     const rows = await waitForAutoPublish(page, product.id);
     expect(rows.length, 'auto-published live locale(s)').toBeGreaterThanOrEqual(1);
 
-    const gridRow = await passportRowForSku(page, sku);
-    expect(gridRow, 'publication row in grid').toBeTruthy();
-    expect(String(gridRow.publication_status).toLowerCase()).toContain('publish');
+    await expect
+      .poll(async () => String((await passportRowForSku(page, sku))?.publication_status ?? '').toLowerCase(), {
+        message: 'grid publication status',
+        timeout: 30000,
+      })
+      .toContain('publish');
   });
 
   test('CSV export carries the public URL, gtin and gs1 link for the print hand-off', async ({ adminPage }) => {

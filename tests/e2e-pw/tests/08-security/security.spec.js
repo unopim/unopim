@@ -66,7 +66,7 @@ test.describe('Security Vulnerability Fixes', () => {
 
     // Modal form uses role-based textbox selectors
     await page.getByRole('textbox', { name: 'Name' }).fill('Weak Pass User');
-    await page.getByRole('textbox', { name: 'email@example.com' }).fill(`weakpwd_${Date.now()}@example.com`);
+    await page.getByPlaceholder('email@example.com').fill(`weakpwd_${Date.now()}@example.com`);
     await page.getByRole('textbox', { name: 'Password', exact: true }).fill('abc');
     await page.getByRole('textbox', { name: 'Confirm Password' }).fill('abc');
 

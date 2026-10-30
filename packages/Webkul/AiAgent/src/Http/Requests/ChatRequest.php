@@ -35,7 +35,7 @@ class ChatRequest extends FormRequest
             'images'      => ['nullable', 'array', 'max:5'],
             'images.*'    => ['image', 'mimes:jpeg,png,webp,gif', 'max:10240'],
             'files'       => ['nullable', 'array', 'max:3'],
-            'files.*'     => ['file', 'mimes:csv,xls,xlsx,txt', 'max:102400', function (string $attribute, mixed $value, Closure $fail): void {
+            'files.*'     => ['file', 'mimes:csv,xls,xlsx,txt', 'max:'.(int) config('ai-agent.chat.max_file_kilobytes', 102400), function (string $attribute, mixed $value, Closure $fail): void {
                 $allowed = ['csv', 'xlsx', 'xls'];
                 $extension = strtolower((string) $value->getClientOriginalExtension());
 
