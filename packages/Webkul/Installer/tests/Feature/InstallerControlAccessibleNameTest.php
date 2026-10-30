@@ -25,3 +25,18 @@ it('keeps an explicit accessible name and leaves hidden inputs unnamed', functio
         ->and(substr_count($named, 'aria-label='))->toBe(1)
         ->and($hidden)->not->toContain('aria-label');
 });
+
+it('names a control after the visible label of its group', function (string $type) {
+    $html = Blade::render('<x-installer::form.control-group><x-installer::form.control-group.label>Field</x-installer::form.control-group.label><x-installer::form.control-group.control type="'.$type.'" name="field" /></x-installer::form.control-group>');
+
+    preg_match('/<label[^>]*\bid="([^"]+)"/', $html, $label);
+
+    expect($label)->toHaveKey(1)
+        ->and($html)->toContain('aria-labelledby="'.$label[1].'"');
+})->with(['text', 'select', 'checkbox']);
+
+it('does not carry a label over to a control in another group', function () {
+    $html = Blade::render('<x-installer::form.control-group><x-installer::form.control-group.label>Field</x-installer::form.control-group.label></x-installer::form.control-group><x-installer::form.control-group><x-installer::form.control-group.control name="other" /></x-installer::form.control-group>');
+
+    expect($html)->not->toContain('aria-labelledby');
+});

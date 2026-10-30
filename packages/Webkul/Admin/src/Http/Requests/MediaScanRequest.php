@@ -29,7 +29,7 @@ class MediaScanRequest extends FormRequest
                 'required',
                 'file',
                 'mimes:jpg,jpeg,png,gif,jfif,jif,webp,bmp,tif,tiff,psd,pdf,mp4,webm,mkv,csv,doc,docx,mp3,ppt,pptx,rtf,txt,wav',
-                'max:'.(int) config('media.scan.max_file_size_kilobytes', 102400),
+                'max:'.(int) config('media.scan.max_file_size_kilobytes'),
                 new FileMimeExtensionMatch,
             ],
             'is_image'              => ['nullable', 'boolean'],
