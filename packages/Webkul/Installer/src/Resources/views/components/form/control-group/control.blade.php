@@ -3,6 +3,15 @@
     'name' => '',
 ])
 
+@php
+    $accessibleName = match (true) {
+        'hidden' === $type, $attributes->hasAny(['aria-label', ':aria-label', 'id']) => [],
+        $attributes->has(':label') => [':aria-label' => $attributes->get(':label')],
+        $attributes->has('label')  => ['aria-label' => $attributes->get('label')],
+        default                    => [],
+    };
+@endphp
+
 @switch($type)
     @case('hidden')
     @case('text')
@@ -19,7 +28,7 @@
                 name="{{ $name }}"
                 v-bind="field"
                 :class="[errors['{{ $name }}'] ? 'border border-red-600 hover:border-red-600' : '']"
-                {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'text-[14px] text-gray-600 appearance-none border rounded-md w-full py-2 px-3 transition-all hover:border-gray-400']) }}
+                {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'text-[14px] text-gray-600 appearance-none border rounded-md w-full py-2 px-3 transition-all hover:border-gray-400'] + $accessibleName) }}
             >
         </v-field>
 
@@ -35,7 +44,7 @@
                 name="{{ $name }}"
                 v-bind="field"
                 :class="[errors['{{ $name }}'] ? 'border border-red-500' : '']"
-                {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'inline-flex gap-x-1 items-center justify-between text-gray-600 text-[14px] font-normal py-[0.8rem] px-3 w-full bg-white border border-gray-300 rounded-md cursor-pointer transition-all hover:border-gray-400']) }}
+                {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'inline-flex gap-x-1 items-center justify-between text-gray-600 text-[14px] font-normal py-[0.8rem] px-3 w-full bg-white border border-gray-300 rounded-md cursor-pointer transition-all hover:border-gray-400'] + $accessibleName) }}
             >
                 {{ $slot }}
             </select>
@@ -56,7 +65,7 @@
                 name="{{ $name }}"
                 v-bind="field"
                 class="sr-only peer"
-                {{ $attributes->except(['rules', 'label', ':label']) }}
+                {{ $attributes->except(['rules', 'label', ':label'])->merge($accessibleName) }}
             />
 
             <v-checkbox-handler
