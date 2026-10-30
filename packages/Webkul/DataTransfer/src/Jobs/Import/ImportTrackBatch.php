@@ -49,6 +49,13 @@ class ImportTrackBatch implements ShouldQueue
      */
     protected function runImport(): void
     {
+        // A duplicate delivery must not restart a track that has already failed.
+        $this->importBatch->refresh();
+
+        if ($this->importBatch->state === ImportHelper::STATE_FAILED) {
+            return;
+        }
+
         $importHelper = resolve(ImportHelper::class);
 
         $importHelper->setImport($this->importBatch);
@@ -65,6 +72,13 @@ class ImportTrackBatch implements ShouldQueue
         $import = $importHelper->validate();
 
         $this->importBatch = $import->getImport();
+
+        // Validation can leave pending batches even when the configured error limit is exceeded.
+        if ($import->isErrorLimitExceeded() || $this->importBatch->state === ImportHelper::STATE_FAILED) {
+            $importHelper->stateUpdate(ImportHelper::STATE_FAILED, ['completed_at' => now()]);
+
+            return;
+        }
 
         if ($import->isValid() && $this->importBatch->state === ImportHelper::STATE_VALIDATED) {
             // Don't overwrite started_at — it was set at validation start
