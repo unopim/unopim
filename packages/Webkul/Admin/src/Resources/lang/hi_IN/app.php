@@ -162,6 +162,7 @@ return [
             'of'                   => 'में से',
             'products-ready'       => 'उत्पाद तैयार',
             'no-readiness-data'    => 'अभी तक कोई पूर्णता डेटा उपलब्ध नहीं।',
+            'readiness-drilldown'  => ':channel चैनल के लिए शेष अधूरे उत्पाद देखें',
             'no-products'          => 'अभी तक कोई उत्पाद नहीं।',
             'last-7-days'          => 'पिछले 7 दिन',
             'days'                 => [

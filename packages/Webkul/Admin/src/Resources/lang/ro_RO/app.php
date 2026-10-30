@@ -162,6 +162,7 @@ return [
             'of'                   => 'of',
             'products-ready'       => 'produse gata',
             'no-readiness-data'    => 'Nu sunt disponibile date de completitudine încă.',
+            'readiness-drilldown'  => 'Vizualizați produsele incomplete rămase pentru canalul :channel',
             'no-products'          => 'Încă nu există produse.',
             'last-7-days'          => 'Ultimele 7 zile',
 

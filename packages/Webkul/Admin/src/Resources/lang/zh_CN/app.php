@@ -162,6 +162,7 @@ return [
             'of'                   => '/',
             'products-ready'       => '产品就绪',
             'no-readiness-data'    => '暂无完整度数据。',
+            'readiness-drilldown'  => '查看渠道 :channel 中剩余的未完成产品',
             'no-products'          => '暂无产品。',
             'last-7-days'          => '最近 7 天',
             'days'                 => [

@@ -27,6 +27,7 @@ use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Normalizer\ProductAttributeValuesNormalizer;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Services\AttributeValueNormalizer;
+use Webkul\Product\Services\ChannelCompletenessColumn;
 use Webkul\Product\Type\AbstractType;
 
 class ProductDataGrid extends DataGrid implements ExportableInterface
@@ -123,6 +124,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         protected AttributeFamilyRepository $attributeFamilyRepository,
         protected ProductRepository $productRepository,
         protected ChannelRepository $channelRepository,
+        protected ChannelCompletenessColumn $channelCompletenessColumn,
         protected ProductAttributeValuesNormalizer $valuesNormalizer,
         protected AttributeService $attributeService,
         protected AttributeValueNormalizer $attributeValueNormalizer,
@@ -161,10 +163,44 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                     END) as attribute_family"
                 ),
                 'products.values as raw_values',
-                'products.avg_completeness_score as completeness',
+                DB::raw($this->completenessExpression($queryBuilder).' as completeness'),
             );
 
         return $queryBuilder;
+    }
+
+    /**
+     * Completeness column backing the grid's "completeness" filter/sort.
+     *
+     * When a specific channel is requested (e.g. a drill-down link from the
+     * dashboard's channel-readiness widget), the column reflects that
+     * channel+locale's own score from `product_completeness` instead of the
+     * product's cross-channel average, so filtering "< 80" means "incomplete
+     * for this channel" rather than "incomplete on average everywhere".
+     * Falls back to the pre-existing cross-channel average when no channel
+     * is explicitly requested, to preserve the default product-list view.
+     *
+     * The join added here is what `CompletenessFilter` relies on for the
+     * WHERE side of the same scoping — see `ChannelCompletenessColumn` for
+     * the single shared resolution the two must agree on.
+     */
+    protected function completenessExpression($queryBuilder): string
+    {
+        $scope = $this->channelCompletenessColumn->resolve();
+
+        $tablePrefix = DB::getTablePrefix();
+
+        if (! $scope) {
+            return $tablePrefix.'products.avg_completeness_score';
+        }
+
+        $queryBuilder->leftJoin('product_completeness', function ($join) use ($scope) {
+            $join->on('product_completeness.product_id', '=', 'products.id')
+                ->where('product_completeness.channel_id', '=', $scope['channel']->id)
+                ->where('product_completeness.locale_id', '=', $scope['locale']->id);
+        });
+
+        return $tablePrefix.'product_completeness.score';
     }
 
     /**

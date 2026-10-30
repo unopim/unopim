@@ -162,6 +162,7 @@ return [
             'of'                   => '/',
             'products-ready'       => '제품 준비 완료',
             'no-readiness-data'    => '아직 완전성 데이터가 없습니다.',
+            'readiness-drilldown'  => ':channel 채널에 남아 있는 미완료 제품 보기',
             'no-products'          => '아직 제품이 없습니다.',
             'last-7-days'          => '지난 7일',
 
