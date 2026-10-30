@@ -9,7 +9,7 @@
 # ---------------------------------------------------------------------------
 # Stage 1: Composer dependencies
 # ---------------------------------------------------------------------------
-FROM composer:2 AS composer
+FROM composer:2@sha256:c7f68260503e3c1f0ece10bdbe84519fd98d48ba091f2c02f16ea94a7faae337 AS composer
 
 WORKDIR /app
 COPY composer.json composer.lock ./
@@ -25,7 +25,7 @@ RUN composer install \
 # ---------------------------------------------------------------------------
 # Stage 2: Production image
 # ---------------------------------------------------------------------------
-FROM php:8.4-fpm
+FROM php:8.4-fpm@sha256:f3397667c5dbd19225fe1f4ba1e3485d4fdf840818d179423ccdc5e0b0ed35eb
 
 LABEL maintainer="Webkul <support@webkul.com>"
 LABEL org.opencontainers.image.title="UnoPim FPM"
@@ -86,7 +86,7 @@ COPY dockerfiles/php.ini "$PHP_INI_DIR/conf.d/unopim.ini"
 COPY dockerfiles/www.conf /usr/local/etc/php-fpm.d/www.conf
 
 # Install Composer (for runtime use in entrypoint)
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2@sha256:c7f68260503e3c1f0ece10bdbe84519fd98d48ba091f2c02f16ea94a7faae337 /usr/bin/composer /usr/bin/composer
 
 # Application code + Composer vendor from stage 1
 WORKDIR /var/www/html
