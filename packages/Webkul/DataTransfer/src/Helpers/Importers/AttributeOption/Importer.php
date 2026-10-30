@@ -5,6 +5,7 @@ namespace Webkul\DataTransfer\Helpers\Importers\AttributeOption;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Webkul\Attribute\Repositories\AttributeOptionRepository;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Core\Rules\Code;
@@ -109,7 +110,7 @@ class Importer extends AbstractImporter
         $this->validatedRows[$rowNumber] = true;
 
         if ($this->import->action == Import::ACTION_DELETE) {
-            $id = $this->attributeOptionStorage->get($rowData['code']);
+            $id = $this->getAttributeOptionIdForDelete($rowData);
 
             if (! $id) {
                 $this->skipRow($rowNumber, self::ERROR_CODE_NOT_FOUND_FOR_DELETE, $rowData['code']);
@@ -132,12 +133,14 @@ class Importer extends AbstractImporter
             return false;
         }
 
-        $isUpdate = $this->attributeOptionStorage->has($rowData['code']) || in_array($rowData['code'], $this->attributeOptionCodesInBatch);
+        $attributeId = $this->attributeStorage->get($rowData['attribute_code']);
+        $key = $attributeId.':'.$rowData['code'];
+        $isUpdate = $this->attributeOptionStorage->has($rowData['code'], $attributeId) || isset($this->attributeOptionCodesInBatch[$key]);
 
         $codeRules = ['required', 'string', new Code];
 
         if (! $isUpdate) {
-            $codeRules[] = 'unique:attribute_options,code';
+            $codeRules[] = Rule::unique('attribute_options', 'code')->where('attribute_id', $attributeId);
         }
 
         $validator = Validator::make($rowData, [
@@ -158,7 +161,7 @@ class Importer extends AbstractImporter
         $isValidRow = ! $this->errorHelper->isRowInvalid($rowNumber);
 
         if ($isValidRow) {
-            $this->attributeOptionCodesInBatch[] = $rowData['code'];
+            $this->attributeOptionCodesInBatch[$key] = true;
         }
 
         return $isValidRow;
@@ -190,16 +193,19 @@ class Importer extends AbstractImporter
 
     protected function deleteAttributeOptionData(JobTrackBatchContract $batch): bool
     {
+        $this->attributeStorage->init();
         $this->attributeOptionStorage->load(Arr::pluck($batch->data, 'code'));
 
         $idsToDelete = [];
 
         foreach ($batch->data as $rowData) {
-            if (! $this->isAttributeOptionExist($rowData['code'])) {
+            $id = $this->getAttributeOptionIdForDelete($rowData);
+
+            if (! $id) {
                 continue;
             }
 
-            $idsToDelete[] = $this->attributeOptionStorage->get($rowData['code']);
+            $idsToDelete[] = $id;
         }
 
         $idsToDelete = array_unique($idsToDelete);
@@ -208,6 +214,20 @@ class Importer extends AbstractImporter
         $this->attributeOptionRepository->deleteWhere([['id', 'IN', $idsToDelete]]);
 
         return true;
+    }
+
+    /**
+     * Preserve unambiguous legacy deletes; never fall back for an invalid attribute.
+     */
+    protected function getAttributeOptionIdForDelete(array $rowData): ?int
+    {
+        if (isset($rowData['attribute_code']) && $rowData['attribute_code'] !== '') {
+            $attributeId = $this->attributeStorage->get($rowData['attribute_code']);
+
+            return $attributeId ? $this->attributeOptionStorage->get($rowData['code'], $attributeId) : null;
+        }
+
+        return $this->attributeOptionStorage->get($rowData['code']);
     }
 
     protected function saveAttributeOptionData(JobTrackBatchContract $batch): bool
@@ -230,12 +250,14 @@ class Importer extends AbstractImporter
 
     public function prepareAttributeOptions(array $rowData, array &$attributeOptions): void
     {
-        $isAttributeOption = $this->isAttributeOptionExist($rowData['code']);
         $attributeId = $this->attributeStorage->get($rowData['attribute_code']);
 
         if (! $attributeId) {
             return;
         }
+
+        $isAttributeOption = $this->isAttributeOptionExist($rowData['code'], $attributeId);
+        $key = $attributeId.':'.$rowData['code'];
 
         $data = [
             'code'             => $rowData['code'],
@@ -251,19 +273,19 @@ class Importer extends AbstractImporter
             $data['swatch_value'] = $rowData['swatch_value'];
         }
 
-        if ($isAttributeOption || isset($attributeOptions['insert'][$rowData['code']])) {
+        if ($isAttributeOption || isset($attributeOptions['insert'][$key])) {
             $type = $isAttributeOption ? 'update' : 'insert';
 
-            if (isset($attributeOptions[$type][$rowData['code']])) {
-                $attributeOptions[$type][$rowData['code']] = array_replace_recursive(
-                    $attributeOptions[$type][$rowData['code']],
+            if (isset($attributeOptions[$type][$key])) {
+                $attributeOptions[$type][$key] = array_replace_recursive(
+                    $attributeOptions[$type][$key],
                     $data
                 );
             } else {
-                $attributeOptions[$type][$rowData['code']] = $data;
+                $attributeOptions[$type][$key] = $data;
             }
         } else {
-            $attributeOptions['insert'][$rowData['code']] = $data;
+            $attributeOptions['insert'][$key] = $data;
         }
     }
 
@@ -272,8 +294,8 @@ class Importer extends AbstractImporter
         if (! empty($attributeOptions['update'])) {
             $this->updatedItemsCount += count($attributeOptions['update']);
 
-            foreach ($attributeOptions['update'] as $code => $optionData) {
-                $id = $this->attributeOptionStorage->get($code);
+            foreach ($attributeOptions['update'] as $optionData) {
+                $id = $this->attributeOptionStorage->get($optionData['code'], $optionData['attribute_id']);
                 $this->attributeOptionRepository->update($optionData, $id);
             }
         }
@@ -281,18 +303,20 @@ class Importer extends AbstractImporter
         if (! empty($attributeOptions['insert'])) {
             $this->createdItemsCount += count($attributeOptions['insert']);
 
-            foreach ($attributeOptions['insert'] as $code => $optionData) {
+            foreach ($attributeOptions['insert'] as $optionData) {
                 $newOption = $this->attributeOptionRepository->create($optionData);
 
                 if ($newOption) {
-                    $this->attributeOptionStorage->set($code, $newOption->id);
+                    $this->attributeOptionStorage->set($optionData['code'], $newOption->id, $optionData['attribute_id']);
                 }
             }
         }
     }
 
-    public function isAttributeOptionExist(string $code): bool
+    public function isAttributeOptionExist(string $code, ?int $attributeId = null): bool
     {
-        return $this->attributeOptionStorage->has($code);
+        return $attributeId === null
+            ? $this->attributeOptionStorage->has($code)
+            : $this->attributeOptionStorage->has($code, $attributeId);
     }
 }
