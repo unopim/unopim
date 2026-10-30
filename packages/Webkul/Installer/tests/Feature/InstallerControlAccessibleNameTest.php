@@ -40,3 +40,11 @@ it('does not carry a label over to a control in another group', function () {
 
     expect($html)->not->toContain('aria-labelledby');
 });
+
+it('renders a caller id once, on the control and not on its checkbox label', function () {
+    $html = Blade::render('<x-installer::form.control-group.control type="checkbox" id="currency_usd" for="currency_usd" name="usd" />');
+
+    expect(substr_count($html, 'id="currency_usd"'))->toBe(1)
+        ->and($html)->toMatch('/<input[^>]*\bid="currency_usd"/')
+        ->and($html)->toMatch('/<label[^>]*\bfor="currency_usd"/');
+});
