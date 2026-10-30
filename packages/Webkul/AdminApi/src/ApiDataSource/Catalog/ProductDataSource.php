@@ -6,7 +6,10 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Webkul\AdminApi\ApiDataSource;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
+use Webkul\CalculatedAttribute\Services\CalculatedValueResolver;
+use Webkul\CalculatedAttribute\Support\ProductContext;
 use Webkul\Completeness\Repositories\ProductCompletenessScoreRepository;
+use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Product\Contracts\VariantValueResolver;
 use Webkul\Product\Database\Eloquent\Builder;
 use Webkul\Product\Enums\ProductType;
@@ -23,6 +26,13 @@ class ProductDataSource extends ApiDataSource
     protected $sortColumn = 'products.id';
 
     protected ?VariantValueResolver $variantValueResolver = null;
+
+    protected ?CalculatedValueResolver $calculatedValueResolver = null;
+
+    /**
+     * @var array<string, array<int, string>>|null
+     */
+    protected ?array $channelsAndLocales = null;
 
     /**
      * Create a new DataSource instance.
@@ -308,7 +318,7 @@ class ProductDataSource extends ApiDataSource
             'additional' => $product['additional'],
             'created_at' => $product['created_at'],
             'updated_at' => $product['updated_at'],
-            'values'     => $mergedValues ?? $product['values'],
+            'values'     => $this->withCalculatedValues($product, $mergedValues ?? $product['values']),
         ];
 
         if (in_array($product['type'], ProductType::VARIANT_PARENT_VALUES, true)) {
@@ -359,6 +369,67 @@ class ProductDataSource extends ApiDataSource
         }
 
         return $grouped;
+    }
+
+    /**
+     * Add calculated attribute values to a product's `values` block.
+     *
+     * The response carries every scope at once rather than one channel/locale,
+     * so the values are computed for each combination. Resolved lazily and
+     * skipped outright when the catalogue has no calculated attribute, and the
+     * channel/locale map is read once per request rather than once per row.
+     *
+     * A product's `values` may legitimately be null, and the response has always
+     * carried that through. So the argument is untyped and returned untouched
+     * when there is nothing to add — turning a null into an empty array here
+     * would change the payload shape for every catalogue that does not use the
+     * feature.
+     *
+     * @param  array<string, mixed>  $product
+     */
+    protected function withCalculatedValues(array $product, mixed $values): mixed
+    {
+        $resolver = $this->calculatedValueResolver ??= app(CalculatedValueResolver::class);
+
+        if (! $resolver->hasCalculatedAttributes()) {
+            return $values;
+        }
+
+        $values = is_array($values) ? $values : [];
+
+        return $resolver->mergeAllScopes(
+            $values,
+            new ProductContext(
+                values: $values,
+                sku: $product['sku'] ?? null,
+                type: $product['type'] ?? null,
+                status: (bool) ($product['status'] ?? false),
+                family: $product['attribute_family']['code'] ?? null,
+                parent: $product['parent']['sku'] ?? null,
+                categories: array_values(array_filter((array) ($values['categories'] ?? []), 'is_string')),
+            ),
+            $this->channelsAndLocales(),
+        );
+    }
+
+    /**
+     * Channel code => locale codes, memoised per request.
+     *
+     * @return array<string, array<int, string>>
+     */
+    protected function channelsAndLocales(): array
+    {
+        if ($this->channelsAndLocales !== null) {
+            return $this->channelsAndLocales;
+        }
+
+        $map = [];
+
+        foreach (app(ChannelRepository::class)->with('locales')->all() as $channel) {
+            $map[$channel->code] = $channel->locales->pluck('code')->all();
+        }
+
+        return $this->channelsAndLocales = $map;
     }
 
     protected function getCompletenessScores(string $id): array

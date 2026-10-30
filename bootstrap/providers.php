@@ -6,6 +6,7 @@ use Webkul\AdminApi\Providers\AdminApiServiceProvider;
 use Webkul\AiAgent\Providers\AiAgentServiceProvider;
 use Webkul\AppUrlGuard\Providers\AppUrlGuardServiceProvider;
 use Webkul\Attribute\Providers\AttributeServiceProvider;
+use Webkul\CalculatedAttribute\Providers\CalculatedAttributeServiceProvider;
 use Webkul\Category\Providers\CategoryServiceProvider;
 use Webkul\Completeness\Providers\CompletenessServiceProvider;
 use Webkul\Core\Providers\CoreServiceProvider;
@@ -54,4 +55,5 @@ return [
     AppUrlGuardServiceProvider::class,
     ProductPassportServiceProvider::class,
     PublicationServiceProvider::class,
+    CalculatedAttributeServiceProvider::class,
 ];

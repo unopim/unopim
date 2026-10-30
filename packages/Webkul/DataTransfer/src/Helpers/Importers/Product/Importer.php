@@ -2642,6 +2642,16 @@ class Importer extends AbstractImporter
                 continue;
             }
 
+            /*
+             * Calculated attributes are derived, never stored. The column stays
+             * a *valid* one on purpose — an exported file contains it, and
+             * rejecting it would make the export/import round trip fail — but
+             * whatever it holds is discarded rather than written.
+             */
+            if ($attribute->type === 'calculated') {
+                continue;
+            }
+
             if ($attribute->type === 'gallery') {
                 $value = explode(',', $value);
             }

@@ -56,6 +56,15 @@ class AttributeCompletenessDataGrid extends DataGrid
                 "),
                 DB::raw(DB::rawQueryGrammar()->groupConcat("{$tablePrefix}channels.code", 'channel_required', "{$tablePrefix}channels.code", true)),
             )
+            /*
+             * Calculated attributes are derived, so they can never be "filled
+             * in" by a user. Letting one become a completeness requirement
+             * would make a product permanently incomplete through no action
+             * anyone could take. Excluding them here also keeps them out of the
+             * mass-update "select all", which resolves ids through this same
+             * query.
+             */
+            ->where('attributes.type', '!=', 'calculated')
             ->groupBy(
                 'attributes.id',
                 'attributes.code',
