@@ -44,12 +44,7 @@ test-results
 
 .cursor
 .github/skills
-# docs/ is a local scratch area for generated output, except for the feature
-# documentation that ships with the code. Written as docs/* rather than docs,
-# because git cannot re-include a file whose parent directory is excluded.
-docs/*
-!docs/calculated-attributes-design.md
-!docs/calculated-attributes-usage.md
+docs
 graphify-out
 .mcp.json
 boost.json
