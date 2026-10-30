@@ -101,7 +101,7 @@ jobs:
       - name: Install npm & Playwright browsers
         run: |
           cd tests/e2e-pw
-          npm install --no-progress --prefer-offline
+          npm ci --no-progress --prefer-offline
           npx playwright install --with-deps chromium
 
       - name: Setting Environment
