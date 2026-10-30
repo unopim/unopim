@@ -164,6 +164,7 @@
                     <div class="border-b border-gray-200 p-2 dark:border-cherry-800">
                         <div class="relative">
                             <input
+                                aria-label="@lang('admin::app.components.datagrid.filters.search-filter')"
                                 type="text"
                                 data-view-search
                                 class="w-full rounded-md border bg-white py-1.5 text-sm text-gray-600 transition-all hover:border-gray-400 focus:border-gray-400 focus:outline-none dark:border-cherry-800 dark:bg-cherry-800 dark:text-gray-300 dark:hover:border-gray-400 ltr:pl-3 ltr:pr-8 rtl:pl-8 rtl:pr-3"
@@ -244,6 +245,7 @@
                         </p>
 
                         <input
+                            aria-label="@lang('admin::app.components.datagrid.filters.saved-filters.name')"
                             type="text"
                             data-view-name
                             class="w-full rounded-md border bg-white px-3 py-1.5 text-sm text-gray-600 transition-all hover:border-gray-400 focus:border-gray-400 focus:outline-none dark:border-cherry-800 dark:bg-cherry-800 dark:text-gray-300 dark:hover:border-gray-400"
@@ -344,6 +346,7 @@
                             <div class="sticky top-0 p-2 bg-white dark:bg-cherry-800 border-b dark:border-cherry-900">
                                 <div class="relative">
                                     <input
+                                        aria-label="@lang('admin::app.components.datagrid.filters.search-filter')"
                                         type="text"
                                         class="w-full rounded-md border dark:border-cherry-900 bg-white dark:bg-cherry-900 ltr:pl-3 rtl:pr-3 ltr:pr-8 rtl:pl-8 py-1.5 text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:outline-none focus:border-gray-400 dark:focus:border-gray-400"
                                         placeholder="@lang('admin::app.components.datagrid.filters.search-filter')"
