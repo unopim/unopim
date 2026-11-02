@@ -147,7 +147,7 @@ test.describe.serial('DPP customer workflows', () => {
     await saveProduct(page);
 
     const localeMap = await passportLocaleMap(page);
-    const rows = await publishAndWait(page, product.id, channelId, [localeMap.en_US], { expected: 1 });
+    const rows = await publishAndWait(page, product.id, channelId, [localeMap.en_US], { expected: 1, codes: ['en_US'] });
     expect(rows.length, 'published locale').toBe(1);
 
     const gridRow = await passportRowForSku(page, sku);

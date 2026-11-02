@@ -415,7 +415,7 @@ test.describe('Product Actions', () => {
 
     await navigateTo(adminPage, 'products');
     await searchInDataGrid(adminPage, sku);
-    await adminPage.locator('span[title="Copy"]').first().click();
+    await adminPage.locator('div.row.grid').filter({ hasText: sku }).locator('span[title="Copy"]').first().click();
     await expect(adminPage.locator('#app').getByText('Are you sure?')).toBeVisible();
     await adminPage.getByRole('button', { name: 'Agree', exact: true }).click();
     await expect(adminPage.locator('#app').getByText(/Product copied successfully/i)).toBeVisible({ timeout: 20000 });
