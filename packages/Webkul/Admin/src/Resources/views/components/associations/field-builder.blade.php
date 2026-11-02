@@ -580,6 +580,7 @@
                                                         <x-admin::form.control-group.control
                                                             type="text"
                                                             ::name="'draft_option_code_' + index"
+                                                            :label="trans('admin::app.catalog.category_fields.create.code')"
                                                             v-model="element.code"
                                                         />
                                                     </x-admin::table.td>
@@ -588,6 +589,7 @@
                                                         <x-admin::form.control-group.control
                                                             type="text"
                                                             ::name="'draft_option_label_' + locale.code + '_' + index"
+                                                            ::label="locale.name"
                                                             v-model="element.locales[locale.code]"
                                                         />
                                                     </x-admin::table.td>

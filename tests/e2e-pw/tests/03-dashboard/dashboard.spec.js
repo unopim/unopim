@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo } = require('../../utils/helpers');
+const { navigateTo, waitForShimmerGone } = require('../../utils/helpers');
 
 test.describe('UnoPim Dashboard (v2.1.0)', () => {
 
@@ -218,8 +218,7 @@ test('6.2 - Shows Product Statistics card heading', async ({ adminPage }) => {
 });
 
 test('6.3 - Product Statistics shows Total Products with numeric count', async ({ adminPage }) => {
-  // Wait for Product Statistics AJAX to complete
-  await adminPage.waitForLoadState('networkidle');
+  await waitForShimmerGone(adminPage);
   const emptyState = adminPage.getByText('No products yet.');
   const emptyVisible = await emptyState.isVisible().catch(() => false);
   test.skip(emptyVisible, 'No products in current environment');
@@ -227,7 +226,7 @@ test('6.3 - Product Statistics shows Total Products with numeric count', async (
 });
 
 test('6.4 - Product Statistics shows Active count with green indicator', async ({ adminPage }) => {
-  await adminPage.waitForLoadState('networkidle');
+  await waitForShimmerGone(adminPage);
   const emptyState = adminPage.getByText('No products yet.');
   const emptyVisible = await emptyState.isVisible().catch(() => false);
   test.skip(emptyVisible, 'No products in current environment');
@@ -235,7 +234,7 @@ test('6.4 - Product Statistics shows Active count with green indicator', async (
 });
 
 test('6.5 - Product Statistics shows Inactive count with orange indicator', async ({ adminPage }) => {
-  await adminPage.waitForLoadState('networkidle');
+  await waitForShimmerGone(adminPage);
   const emptyState = adminPage.getByText('No products yet.');
   const emptyVisible = await emptyState.isVisible().catch(() => false);
   test.skip(emptyVisible, 'No products in current environment');
@@ -243,7 +242,7 @@ test('6.5 - Product Statistics shows Inactive count with orange indicator', asyn
 });
 
 test('6.6 - Product Statistics shows Product Type Distribution heading', async ({ adminPage }) => {
-  await adminPage.waitForLoadState('networkidle');
+  await waitForShimmerGone(adminPage);
   const emptyState = adminPage.getByText('No products yet.');
   const emptyVisible = await emptyState.isVisible().catch(() => false);
   test.skip(emptyVisible, 'No products in current environment');
@@ -251,7 +250,7 @@ test('6.6 - Product Statistics shows Product Type Distribution heading', async (
 });
 
 test('6.7 - Product Type Distribution shows type breakdown with counts and percentages', async ({ adminPage }) => {
-  await adminPage.waitForLoadState('networkidle');
+  await waitForShimmerGone(adminPage);
   const emptyState = adminPage.getByText('No products yet.');
   const emptyVisible = await emptyState.isVisible().catch(() => false);
   test.skip(emptyVisible, 'No products in current environment');
@@ -268,7 +267,7 @@ test('6.7 - Product Type Distribution shows type breakdown with counts and perce
 });
 
 test('6.8 - Product Statistics shows New This Week metric', async ({ adminPage }) => {
-  await adminPage.waitForLoadState('networkidle');
+  await waitForShimmerGone(adminPage);
   const emptyState = adminPage.getByText('No products yet.');
   const emptyVisible = await emptyState.isVisible().catch(() => false);
   test.skip(emptyVisible, 'No products in current environment');
@@ -276,7 +275,7 @@ test('6.8 - Product Statistics shows New This Week metric', async ({ adminPage }
 });
 
 test('6.9 - Product Statistics shows With Variants metric', async ({ adminPage }) => {
-  await adminPage.waitForLoadState('networkidle');
+  await waitForShimmerGone(adminPage);
   const emptyState = adminPage.getByText('No products yet.');
   const emptyVisible = await emptyState.isVisible().catch(() => false);
   test.skip(emptyVisible, 'No products in current environment');
@@ -284,7 +283,7 @@ test('6.9 - Product Statistics shows With Variants metric', async ({ adminPage }
 });
 
 test('6.10 - Product Statistics shows Avg Completeness metric', async ({ adminPage }) => {
-  await adminPage.waitForLoadState('networkidle');
+  await waitForShimmerGone(adminPage);
   const emptyState = adminPage.getByText('No products yet.');
   const emptyVisible = await emptyState.isVisible().catch(() => false);
   test.skip(emptyVisible, 'No products in current environment');
@@ -292,7 +291,7 @@ test('6.10 - Product Statistics shows Avg Completeness metric', async ({ adminPa
 });
 
 test('6.11 - Product Statistics shows Enriched metric', async ({ adminPage }) => {
-  await adminPage.waitForLoadState('networkidle');
+  await waitForShimmerGone(adminPage);
   const emptyState = adminPage.getByText('No products yet.');
   const emptyVisible = await emptyState.isVisible().catch(() => false);
   test.skip(emptyVisible, 'No products in current environment');
@@ -300,7 +299,7 @@ test('6.11 - Product Statistics shows Enriched metric', async ({ adminPage }) =>
 });
 
 test('6.12 - Total Products card links to products page (unfiltered)', async ({ adminPage }) => {
-  await adminPage.waitForLoadState('networkidle');
+  await waitForShimmerGone(adminPage);
   const emptyState = adminPage.getByText('No products yet.');
   const emptyVisible = await emptyState.isVisible().catch(() => false);
   test.skip(emptyVisible, 'No products in current environment');
@@ -310,7 +309,7 @@ test('6.12 - Total Products card links to products page (unfiltered)', async ({ 
 });
 
 test('6.13 - Active card links to products filtered by status=1', async ({ adminPage }) => {
-  await adminPage.waitForLoadState('networkidle');
+  await waitForShimmerGone(adminPage);
   const emptyState = adminPage.getByText('No products yet.');
   const emptyVisible = await emptyState.isVisible().catch(() => false);
   test.skip(emptyVisible, 'No products in current environment');
@@ -320,7 +319,7 @@ test('6.13 - Active card links to products filtered by status=1', async ({ admin
 });
 
 test('6.14 - Inactive card links to products filtered by status=0', async ({ adminPage }) => {
-  await adminPage.waitForLoadState('networkidle');
+  await waitForShimmerGone(adminPage);
   const emptyState = adminPage.getByText('No products yet.');
   const emptyVisible = await emptyState.isVisible().catch(() => false);
   test.skip(emptyVisible, 'No products in current environment');
@@ -330,7 +329,7 @@ test('6.14 - Inactive card links to products filtered by status=0', async ({ adm
 });
 
 test('6.15 - Clicking Inactive card navigates to product listing with status filter applied', async ({ adminPage }) => {
-  await adminPage.waitForLoadState('networkidle');
+  await waitForShimmerGone(adminPage);
   const emptyState = adminPage.getByText('No products yet.');
   const emptyVisible = await emptyState.isVisible().catch(() => false);
   test.skip(emptyVisible, 'No products in current environment');
@@ -359,7 +358,7 @@ test('7.3 - Product Activity chart shows Updated legend', async ({ adminPage }) 
 });
 
 test('7.4 - Product Activity chart shows all 7 day labels', async ({ adminPage }) => {
-  await adminPage.waitForLoadState('networkidle');
+  await waitForShimmerGone(adminPage);
   const noActivity = adminPage.getByText(/no.*activity|no.*products/i);
   test.skip(await noActivity.isVisible().catch(() => false), 'No product activity in current environment');
 
@@ -377,7 +376,7 @@ test('7.4 - Product Activity chart shows all 7 day labels', async ({ adminPage }
 });
 
 test('7.5 - Product Activity chart shows date numbers for each day', async ({ adminPage }) => {
-  await adminPage.waitForLoadState('networkidle');
+  await waitForShimmerGone(adminPage);
   const noActivity = adminPage.getByText(/no.*activity|no.*products/i);
   test.skip(await noActivity.isVisible().catch(() => false), 'No product activity in current environment');
 
@@ -398,7 +397,7 @@ test('7.7 - Product Activity shows "Last 7 days" label', async ({ adminPage }) =
 });
 
 test('7.8 - Product Activity bars show created/updated counts per day', async ({ adminPage }) => {
-  await adminPage.waitForLoadState('networkidle');
+  await waitForShimmerGone(adminPage);
   const noActivity = adminPage.getByText(/no.*activity|no.*products/i);
   test.skip(await noActivity.isVisible().catch(() => false), 'No product activity in current environment');
 
@@ -439,7 +438,7 @@ test('8.4 - Completeness shows locale names with progress percentage', async ({ 
 });
 
 test('8.5 - Completeness shows multiple locale entries', async ({ adminPage }) => {
-  await adminPage.waitForLoadState('networkidle');
+  await waitForShimmerGone(adminPage);
   const noProducts = adminPage.getByText('No products yet.');
   test.skip(await noProducts.isVisible().catch(() => false), 'No products in current environment');
 
@@ -468,7 +467,7 @@ test('9.2 - Channel Readiness shows data or empty state message', async ({ admin
 // SECTION 10: Operations — Recent Activity
 
 test('10.1 - Shows Operations section heading', async ({ adminPage }) => {
-  await adminPage.waitForLoadState('networkidle');
+  await waitForShimmerGone(adminPage);
   const heading = adminPage.getByText('Operations', { exact: true });
   await heading.scrollIntoViewIfNeeded();
   await expect(heading).toBeVisible();
