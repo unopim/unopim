@@ -2054,28 +2054,41 @@ class Importer extends AbstractImporter
         $changed = false;
 
         foreach ($values as $scope => &$scoped) {
-            if (! is_array($scoped) || $scope === 'categories' || $scope === 'associations') {
+            if (! is_array($scoped)) {
                 continue;
             }
 
-            if ($scope === 'common') {
-                $changed = $this->stripUnownedBag($scoped, $product, $planner) || $changed;
+            $depth = match ($scope) {
+                AbstractType::COMMON_VALUES_KEY                                   => 0,
+                AbstractType::LOCALE_VALUES_KEY, AbstractType::CHANNEL_VALUES_KEY => 1,
+                AbstractType::CHANNEL_LOCALE_VALUES_KEY                           => 2,
+                default                                                           => null,
+            };
 
+            if ($depth === null) {
                 continue;
             }
 
-            foreach ($scoped as &$inner) {
-                if (! is_array($inner)) {
-                    continue;
-                }
+            $changed = $this->stripUnownedBagsAt($scoped, $depth, $product, $planner) || $changed;
+        }
 
-                $changed = $this->stripUnownedBag($inner, $product, $planner) || $changed;
+        return $changed;
+    }
 
-                foreach ($inner as &$deeper) {
-                    if (is_array($deeper) && ! array_is_list($deeper)) {
-                        $changed = $this->stripUnownedBag($deeper, $product, $planner) || $changed;
-                    }
-                }
+    /**
+     * @param  array<string, mixed>  $node
+     */
+    protected function stripUnownedBagsAt(array &$node, int $depth, Product $product, VariantStructurePlannerContract $planner): bool
+    {
+        if ($depth === 0) {
+            return $this->stripUnownedBag($node, $product, $planner);
+        }
+
+        $changed = false;
+
+        foreach ($node as &$child) {
+            if (is_array($child)) {
+                $changed = $this->stripUnownedBagsAt($child, $depth - 1, $product, $planner) || $changed;
             }
         }
 
