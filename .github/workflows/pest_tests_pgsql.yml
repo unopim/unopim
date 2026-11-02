@@ -120,23 +120,14 @@ jobs:
           --health-retries=3
           --tmpfs /var/lib/postgresql/data:rw,noexec,nosuid,size=600m
 
-      elasticsearch:
-        image: elasticsearch:8.17.0
-        env:
-          discovery.type: single-node
-          xpack.security.enabled: 'false'
-          ES_JAVA_OPTS: '-Xms256m -Xmx256m'
-        ports:
-          - 9200:9200
-        options: >-
-          --health-cmd="curl -s http://localhost:9200/_cluster/health || exit 1"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=10
-
     steps:
       - name: Checkout
         uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+
+      - name: Start Elasticsearch
+        uses: ./.github/actions/elasticsearch
+        with:
+          step: start
 
       - name: Setup PHP
         uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
@@ -182,13 +173,17 @@ jobs:
       - name: Running UnoPim Installer
         run: php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
 
+      - name: Wait for Elasticsearch
+        uses: ./.github/actions/elasticsearch
+        with:
+          step: wait
+
       - name: Enable Elasticsearch and build indexes
         run: |
           sed -i "s|^\(ELASTICSEARCH_ENABLED=\s*\).*$|\1true|" .env
           sed -i "s|^\(ELASTICSEARCH_HOST=\s*\).*$|\1http://127.0.0.1:9200|" .env
           sed -i "s|^\(ELASTICSEARCH_INDEX_PREFIX=\s*\).*$|\1unopim_test|" .env
           php artisan config:clear
-          curl -s "http://127.0.0.1:9200/_cluster/health?pretty"
           php artisan unopim:product:index
           php artisan unopim:category:index
 
