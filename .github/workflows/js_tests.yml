@@ -29,7 +29,7 @@ jobs:
           node-version: '22'
 
       - name: Install npm dependencies
-        run: npm install --no-audit --no-fund
+        run: npm ci --no-audit --no-fund
 
       - name: Run property tests
         run: npm run test:js
