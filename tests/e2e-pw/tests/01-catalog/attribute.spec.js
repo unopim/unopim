@@ -14,6 +14,9 @@ const {
   waitForShimmerGone,
 } = require('../../utils/helpers');
 
+/* Every test creates and removes its own uniquely coded attribute, so they can spread over workers. */
+test.describe.configure({ mode: 'parallel' });
+
 /**
  * Helper: Create an attribute via UI and land on the edit page.
  * @param {import('@playwright/test').Page} adminPage

@@ -162,9 +162,11 @@ jobs:
         env:
           PASSPORT_E2E_LOCAL: '1'
           PW_WORKERS: '3'
+          # Duration-balanced file sets instead of --shard's equal test counts (see shard-balance.js).
+          PW_SHARD: ${{ matrix.shard-index }}/${{ matrix.shard-total }}
         run: |
           cd tests/e2e-pw
-          npx playwright test --reporter=list,html --shard=${{ matrix.shard-index }}/${{ matrix.shard-total }}
+          npx playwright test --reporter=list,html
 
       - name: Upload test results
         if: failure()

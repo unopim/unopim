@@ -4,6 +4,7 @@ const os = require('os');
 const fs = require('fs');
 
 const { loadEnv } = require('./utils/load-env');
+const { filesForShard } = require('./shard-balance');
 
 loadEnv();
 
@@ -27,6 +28,9 @@ module.exports = defineConfig({
 
   /* Scratch specs under 99-debug are for local diagnosis only, never CI. */
   testIgnore: '**/99-debug/**',
+
+  /* PW_SHARD="2/8" runs one duration-balanced slice of the files (see shard-balance.js). */
+  ...(process.env.PW_SHARD ? { testMatch: filesForShard(process.env.PW_SHARD, workerCount) } : {}),
 
   /* Run tests within each file sequentially, but files in parallel across workers */
   fullyParallel: false,
