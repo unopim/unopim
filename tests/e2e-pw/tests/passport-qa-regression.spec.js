@@ -23,6 +23,7 @@ const {
   withFamilyPage,
   adminPost,
 } = require('../fixtures/passport');
+const { submitDataGridSearch } = require('../utils/helpers');
 
 /**
  * The publications grid row for a SKU, read through the grid's own JSON branch.
@@ -43,24 +44,24 @@ async function gridRow(page, sku) {
 /** Click a row action by title, confirm the modal, and return the flash payloads emitted. */
 async function runRowAction(page, sku, title) {
   await page.goto('/admin/catalog/passports', { waitUntil: 'domcontentloaded' });
-  await page.getByRole('textbox', { name: 'Search', exact: true }).fill(sku);
-  await page.getByRole('textbox', { name: 'Search', exact: true }).press('Enter');
+  await submitDataGridSearch(page, page.getByRole('textbox', { name: 'Search', exact: true }), sku);
 
   const row = page.locator('.row', { hasText: sku }).first();
   await row.locator(`span[title='${title}']`).waitFor({ state: 'visible', timeout: 15000 });
 
-  const flashes = await page.evaluate(async ({ title }) => {
+  const flashes = await page.evaluate(async ({ sku, title }) => {
     const wait = (ms) => new Promise((r) => setTimeout(r, ms));
     const seen = [];
     window.app.config.globalProperties.$emitter.on('add-flash', (flash) => seen.push(flash));
 
-    document.querySelector(`span[title='${title}']`).click();
+    [...document.querySelectorAll('.row')].find((row) => row.textContent.includes(sku))
+      .querySelector(`span[title='${title}']`).click();
     await wait(500);
     [...document.querySelectorAll('button.primary-button')].find((b) => b.textContent.trim() === 'Agree').click();
     await wait(3000);
 
     return seen;
-  }, { title });
+  }, { sku, title });
 
   return flashes;
 }
