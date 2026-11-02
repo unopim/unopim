@@ -155,12 +155,12 @@ test.describe('UnoPim Measurement Feature', () => {
      * or for the client-side field error that blocked it.
      */
     async function submitAttribute(page, saveButton) {
-        const loaded = page.waitForEvent('load', { timeout: 30000 });
+        const from = page.url();
         const fieldError = page.locator('p.text-red-600:visible').filter({ hasText: /\S/ }).first();
         await saveButton.click();
 
         const landed = await Promise.race([
-            loaded.then(() => true),
+            page.waitForURL((url) => url.toString() !== from, { timeout: 30000 }).then(() => true),
             fieldError.waitFor({ state: 'visible', timeout: 30000 }).then(() => false),
         ]);
 
