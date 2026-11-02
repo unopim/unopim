@@ -14,12 +14,12 @@ const STORAGE_STATE = path.resolve(__dirname, process.env.PW_STATE_DIR || '.stat
 
 /**
  * Worker count strategy:
- * - CI: half the available CPUs (nginx + PHP-FPM handles concurrency)
+ * - CI: PW_WORKERS per shard (default 1); the workflow raises it together with
+ *   PHP_CLI_SERVER_WORKERS so `artisan serve` can answer workers concurrently
  * - Local: all CPUs minus 1 (leave one for the dev server)
- * - Minimum 2 workers to parallelize across test files
  */
 const workerCount = isCI
-  ? 1  // artisan serve is single-threaded — 1 worker per shard (shards run in parallel; count set in CI workflow)
+  ? Math.max(1, Number(process.env.PW_WORKERS) || 1)
   : Math.max(2, os.cpus().length - 1);
 
 module.exports = defineConfig({
