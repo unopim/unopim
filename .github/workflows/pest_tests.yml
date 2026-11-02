@@ -191,7 +191,7 @@ jobs:
           sed -i "s|^\(ELASTICSEARCH_HOST=\s*\).*$|\1http://127.0.0.1:9200|" .env
           sed -i "s|^\(ELASTICSEARCH_INDEX_PREFIX=\s*\).*$|\1unopim_test|" .env
           php artisan config:clear
-          curl -s http://127.0.0.1:9200/_cluster/health | python3 -m json.tool
+          curl -s "http://127.0.0.1:9200/_cluster/health?pretty"
           php artisan unopim:product:index
           php artisan unopim:category:index
 
