@@ -1,5 +1,14 @@
 const { test, expect } = require('../../utils/fixtures');
-const { clickSave, navigateTo, generateUid, searchInDataGrid, openFilterDrawer, closeDropdown } = require('../../utils/helpers');
+const {
+  clickSave,
+  navigateTo,
+  generateUid,
+  searchInDataGrid,
+  openFilterDrawer,
+  closeDropdown,
+  clickAndWaitForPage,
+  waitForAppReady,
+} = require('../../utils/helpers');
 const { deleteProductBySku } = require('../../utils/product-helpers');
 
 /** Fill a TinyMCE editor by textarea ID, then sync content to the textarea for VeeValidate. */
@@ -43,13 +52,13 @@ async function selectMultiselect(page, fieldName, optionLabel) {
 async function createSimpleProduct(adminPage, sku) {
   await navigateTo(adminPage, 'products');
   await adminPage.getByRole('button', { name: 'Create Product' }).click();
-  await adminPage.waitForLoadState('networkidle');
+  await adminPage.locator('input[name="sku"]').waitFor({ state: 'visible' });
   await selectMultiselect(adminPage, 'type', 'Simple');
   await selectMultiselect(adminPage, 'attribute_family_id');
   await adminPage.locator('input[name="sku"]').fill(sku);
   await clickSave(adminPage, 'Save Product');
   await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { waitUntil: 'domcontentloaded', timeout: 30000 });
-  await adminPage.waitForLoadState('networkidle').catch(() => {});
+  await waitForAppReady(adminPage);
   return sku;
 }
 
@@ -103,7 +112,7 @@ async function createConfigurableProduct(adminPage, sku) {
   await ensureVariantStructure(adminPage);
   await navigateTo(adminPage, 'products');
   await adminPage.getByRole('button', { name: 'Create Product' }).click();
-  await adminPage.waitForLoadState('networkidle');
+  await adminPage.locator('input[name="sku"]').waitFor({ state: 'visible' });
   await selectMultiselect(adminPage, 'type', 'Configurable');
   await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
   await adminPage.locator('input[name="sku"]').fill(sku);
@@ -116,7 +125,7 @@ async function createConfigurableProduct(adminPage, sku) {
   await clickSave(adminPage, 'Save Product');
 
   await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { waitUntil: 'domcontentloaded', timeout: 30000 });
-  await adminPage.waitForLoadState('networkidle').catch(() => {});
+  await waitForAppReady(adminPage);
   return sku;
 }
 
@@ -308,8 +317,7 @@ test.describe('Simple Product CRUD', () => {
 
     await navigateTo(adminPage, 'products');
     await searchInDataGrid(adminPage, sku);
-    await adminPage.locator('span[title="Edit"]').first().click();
-    await adminPage.waitForLoadState('networkidle');
+    await clickAndWaitForPage(adminPage, adminPage.locator('div.row.grid').filter({ hasText: sku }).locator('span[title="Edit"]').first());
 
     const uid = generateUid();
     await adminPage.locator('#name').fill(`Test Product ${uid}`);
@@ -358,8 +366,7 @@ test.describe('Configurable Product CRUD', () => {
 
     await navigateTo(adminPage, 'products');
     await searchInDataGrid(adminPage, sku);
-    await adminPage.locator('span[title="Edit"]').first().click();
-    await adminPage.waitForLoadState('networkidle');
+    await clickAndWaitForPage(adminPage, adminPage.locator('div.row.grid').filter({ hasText: sku }).locator('span[title="Edit"]').first());
 
     const uid = generateUid();
     await adminPage.locator('#name').fill(`Config Product ${uid}`);
@@ -478,7 +485,6 @@ test.describe('Product Listing Features', () => {
     await createSimpleProduct(adminPage, sku);
 
     await navigateTo(adminPage, 'products');
-    await adminPage.waitForLoadState('networkidle');
 
     // Row mass-action checkbox is display:none by design; click its label to select one row.
     const rowCheckboxLabel = adminPage.locator('label[for^="mass_action_select_record_"]').first();
