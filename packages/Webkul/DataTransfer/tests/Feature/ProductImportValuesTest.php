@@ -239,6 +239,12 @@ it('leaves a product outside any variant structure untouched', function () {
     expect($product->refresh()->values['common'][$attribute->code])->toBe('product/9/image/kept.png');
 });
 
+/**
+ * Two-level variant structure whose levels own values scoped per channel,
+ * per locale and per channel and locale, including prices keyed by currency.
+ *
+ * @return array{suffix: string, family: AttributeFamily, structure: VariantStructure, color: Attribute, size: Attribute, codes: array<string, string>}
+ */
 function scopedPlacementTree(): array
 {
     $suffix = Str::lower(Str::random(6));
@@ -246,7 +252,7 @@ function scopedPlacementTree(): array
     $color = Attribute::factory()->create(['code' => 'scolor_'.$suffix, 'type' => 'select']);
     $size = Attribute::factory()->create(['code' => 'ssize_'.$suffix, 'type' => 'select']);
 
-    $scoped = fn (string $code, string $type, int $perLocale, int $perChannel) => Attribute::factory()->create([
+    $scoped = fn (string $code, string $type, int $perLocale, int $perChannel): Attribute => Attribute::factory()->create([
         'code'              => $code.'_'.$suffix,
         'type'              => $type,
         'value_per_locale'  => $perLocale,
@@ -268,7 +274,7 @@ function scopedPlacementTree(): array
     AttributeFamily::factory()->linkAttributeGroupToFamily($family);
     AttributeFamily::factory()->linkAttributesToFamily($family, Attribute::whereIn('id', array_merge(
         [$color->id, $size->id],
-        array_map(fn (array $entry) => $entry[0]->id, $codes),
+        array_map(fn (array $entry): int => $entry[0]->id, $codes),
     ))->get());
 
     $structure = VariantStructure::create([
@@ -283,7 +289,7 @@ function scopedPlacementTree(): array
         ['variant_structure_id' => $structure->id, 'attribute_id' => $size->id, 'level' => 'level_2', 'position' => 0],
     ]);
 
-    VariantStructureAttribute::insert(array_values(array_map(fn (array $entry) => [
+    VariantStructureAttribute::insert(array_values(array_map(fn (array $entry): array => [
         'variant_structure_id' => $structure->id,
         'attribute_id'         => $entry[0]->id,
         'level'                => $entry[1],
@@ -295,10 +301,18 @@ function scopedPlacementTree(): array
         'structure' => $structure,
         'color'     => $color,
         'size'      => $size,
-        'codes'     => array_map(fn (array $entry) => $entry[0]->code, $codes),
+        'codes'     => array_map(fn (array $entry): string => $entry[0]->code, $codes),
     ];
 }
 
+/**
+ * Configurable, variant group and simple built on a scoped placement tree.
+ *
+ * @param  array{suffix: string, family: AttributeFamily, structure: VariantStructure}  $tree
+ * @param  array<string, mixed>  $groupValues
+ * @param  array<string, mixed>  $simpleValues
+ * @return array{0: Product, 1: Product, 2: Product}
+ */
 function scopedPlacementProducts(array $tree, array $groupValues, array $simpleValues): array
 {
     $sku = 'scoped-'.$tree['suffix'];
