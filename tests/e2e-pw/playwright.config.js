@@ -58,6 +58,9 @@ module.exports = defineConfig({
   /* Pre-authenticate admin session before all tests */
   globalSetup: require.resolve('./global-setup.js'),
 
+  /* Remove fixtures that must outlive every worker (see global-teardown.js) */
+  globalTeardown: require.resolve('./global-teardown.js'),
+
   use: {
     /* Base URL — must point at THIS project's server and match its APP_URL so the
      * app-url guard doesn't redirect. Set BASE_URL (env or tests/e2e-pw/.env) per

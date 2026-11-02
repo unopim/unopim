@@ -1,5 +1,15 @@
 const { test, expect } = require('../../utils/fixtures');
-const { clickSave, navigateTo, generateUid, clickSaveAndExpect, openFilterDrawer } = require('../../utils/helpers');
+const {
+  clickSave,
+  navigateTo,
+  generateUid,
+  clickSaveAndExpect,
+  openFilterDrawer,
+  searchInDataGrid,
+  clickEditOnRow,
+  clickDeleteOnRow,
+  confirmDelete,
+} = require('../../utils/helpers');
 
 /**
  * Helper: Open the Create Category form and let the unsaved-changes tracker
@@ -38,16 +48,17 @@ async function createCategory(adminPage, code, name) {
  * Helper: Delete a category by code.
  */
 async function deleteCategory(adminPage, code) {
+  await searchCategory(adminPage, code);
+  await clickDeleteOnRow(adminPage, code);
+  await confirmDelete(adminPage);
+}
+
+/**
+ * Helper: Open the flat category list filtered to a single code.
+ */
+async function searchCategory(adminPage, code) {
   await navigateTo(adminPage, 'categoriesList');
-  await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
-  await adminPage.keyboard.press('Enter');
-  await adminPage.waitForLoadState('networkidle');
-  const deleteBtn = adminPage.locator('div', { hasText: code }).locator('span[title="Delete"]').first();
-  if (await deleteBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-    await deleteBtn.click();
-    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
-    await adminPage.waitForLoadState('networkidle');
-  }
+  await searchInDataGrid(adminPage, code);
 }
 
 test.describe('UnoPim Category Tests', () => {
@@ -76,8 +87,9 @@ test.describe('UnoPim Category Tests', () => {
     // Parent is now a drawer picker defaulting to "Root level"; open it and pick
     // an actual category node to fire the change.
     await adminPage.getByText('Root level', { exact: true }).first().click();
-    await adminPage.locator('input[type="radio"]').nth(1).locator('..').click();
-    await adminPage.locator('.icon-cancel').first().click();
+    const drawerPanel = adminPage.locator('[data-drawer-panel]');
+    await drawerPanel.locator('input[type="radio"][name="parent_id_picker"]:not([value=""])').first().locator('..').click();
+    await expect(drawerPanel).toHaveCount(0);
     await clickSaveChanges(adminPage);
     await expect(adminPage.locator('#app').getByText('The code field is required').first()).toBeVisible();
     await expect(adminPage.locator('#app').getByText('The Name field is required').first()).toBeVisible();
@@ -125,21 +137,13 @@ test.describe('UnoPim Category Tests', () => {
     await createCategory(adminPage, code, `Action Cat ${uid}`);
 
     // Search and verify Edit action
-    await navigateTo(adminPage, 'categoriesList');
-    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
-    await adminPage.keyboard.press('Enter');
-    await adminPage.waitForLoadState('networkidle');
-    const row = adminPage.locator('div', { hasText: code });
-    await row.locator('span[title="Edit"]').first().click();
+    await searchCategory(adminPage, code);
+    await clickEditOnRow(adminPage, code);
     await expect(adminPage).toHaveURL(/\/admin\/catalog\/categories\/edit/);
 
     // Go back, search again, verify Delete shows confirmation
-    await navigateTo(adminPage, 'categoriesList');
-    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
-    await adminPage.keyboard.press('Enter');
-    await adminPage.waitForLoadState('networkidle');
-    const row2 = adminPage.locator('div', { hasText: code });
-    await row2.locator('span[title="Delete"]').first().click();
+    await searchCategory(adminPage, code);
+    await clickDeleteOnRow(adminPage, code);
     await expect(adminPage.locator('#app').getByText('Are you sure you want to delete?')).toBeVisible();
 
     // Cleanup — confirm delete
@@ -161,13 +165,8 @@ test.describe('UnoPim Category Tests', () => {
     await createCategory(adminPage, code, `Before Update ${uid}`);
 
     // Search and edit
-    await navigateTo(adminPage, 'categoriesList');
-    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
-    await adminPage.keyboard.press('Enter');
-    await adminPage.waitForLoadState('networkidle');
-    const row = adminPage.locator('div', { hasText: code });
-    await row.locator('span[title="Edit"]').first().click();
-    await adminPage.waitForLoadState('networkidle');
+    await searchCategory(adminPage, code);
+    await clickEditOnRow(adminPage, code);
     await adminPage.locator('#name').waitFor({ state: 'visible' });
     await adminPage.waitForTimeout(1200);
     await adminPage.locator('#name').fill(`Updated ${uid}`);
@@ -185,13 +184,9 @@ test.describe('UnoPim Category Tests', () => {
     await createCategory(adminPage, code, `Delete Me ${uid}`);
 
     // Search and delete
-    await navigateTo(adminPage, 'categoriesList');
-    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
-    await adminPage.keyboard.press('Enter');
-    await adminPage.waitForLoadState('networkidle');
-    const row = adminPage.locator('div', { hasText: code });
-    await row.locator('span[title="Delete"]').first().click();
-    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
+    await searchCategory(adminPage, code);
+    await clickDeleteOnRow(adminPage, code);
+    await confirmDelete(adminPage);
     await expect(adminPage.locator('#app').getByText(/category has been successfully deleted/i)).toBeVisible({ timeout: 20000 });
   });
 
