@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, openFilterDrawer: clickFilterToggle } = require('../../utils/helpers');
+const { navigateTo, waitForAppReady, openFilterDrawer: clickFilterToggle } = require('../../utils/helpers');
 
 async function openFilterDrawer(adminPage) {
   await navigateTo(adminPage, 'products');
@@ -253,24 +253,26 @@ test.describe('Product DataGrid saved filters', () => {
   test('Clearing drops every applied filter', async ({ adminPage }) => {
     await navigateTo(adminPage, 'products');
     await adminPage.evaluate(() => localStorage.removeItem('datagrids'));
-    await adminPage.reload({ waitUntil: 'networkidle' });
+    await adminPage.reload({ waitUntil: 'load' });
+    await waitForAppReady(adminPage);
 
     await applyStatusFilter(adminPage);
 
     await openSavedFilters(adminPage);
 
-    // Other workers add and delete products meanwhile, so the grid total is not
-    // stable; assert on the request the clear sends instead.
-    const [cleared] = await Promise.all([
-      adminPage.waitForResponse((response) => new URL(response.url()).pathname === '/admin/catalog/products'
-        && response.request().resourceType() === 'xhr'),
-      adminPage.locator('[data-clear-filters]').click(),
-    ]);
+    /**
+     * Other workers add and delete products meanwhile, so the unfiltered total is read
+     * from the refresh the clear triggers rather than from a count taken before filtering.
+     */
+    const refreshed = adminPage.waitForResponse((response) => response.request().method() === 'GET'
+      && ['xhr', 'fetch'].includes(response.request().resourceType())
+      && new URL(response.url()).pathname.endsWith('/catalog/products'));
+    await adminPage.locator('[data-clear-filters]').click();
+    const response = await refreshed;
 
-    expect(decodeURIComponent(cleared.url())).not.toContain('filters[status]');
+    expect(decodeURIComponent(response.url())).not.toContain('[status]');
 
-    const { meta } = await cleared.json();
-
+    const { meta } = await response.json();
     await expect(adminPage.locator('#app').getByText(/\d+ Results?/).first()).toHaveText(new RegExp(`^${meta.total} Results?$`));
 
     await clickFilterToggle(adminPage);
@@ -398,7 +400,8 @@ test.describe('Product DataGrid saved filters', () => {
 
     await navigateTo(adminPage, 'products');
     await adminPage.evaluate(() => localStorage.removeItem('datagrids'));
-    await adminPage.reload({ waitUntil: 'networkidle' });
+    await adminPage.reload({ waitUntil: 'load' });
+    await waitForAppReady(adminPage);
 
     await openSavedFilters(adminPage);
 
