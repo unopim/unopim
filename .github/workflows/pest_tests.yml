@@ -108,7 +108,7 @@ jobs:
           if-no-files-found: ignore
 
   pest-elasticsearch:
-    if: github.repository == 'unopim/unopim'
+    if: github.repository == 'unopim/unopim' && github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
     name: Pest Tests (MySQL + Elasticsearch)
 
