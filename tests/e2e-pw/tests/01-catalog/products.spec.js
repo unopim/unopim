@@ -1,5 +1,6 @@
 const { test, expect } = require('../../utils/fixtures');
 const { clickSave, navigateTo, generateUid, searchInDataGrid, openFilterDrawer, closeDropdown } = require('../../utils/helpers');
+const { deleteProductBySku } = require('../../utils/product-helpers');
 
 /** Fill a TinyMCE editor by textarea ID, then sync content to the textarea for VeeValidate. */
 async function fillTinyMCE(page, editorId, text) {
@@ -117,19 +118,6 @@ async function createConfigurableProduct(adminPage, sku) {
   await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { waitUntil: 'domcontentloaded', timeout: 30000 });
   await adminPage.waitForLoadState('networkidle').catch(() => {});
   return sku;
-}
-
-/** Delete a product by SKU via the row delete icon; searches first to isolate the row. */
-async function deleteProductBySku(adminPage, sku) {
-  await navigateTo(adminPage, 'products');
-  await searchInDataGrid(adminPage, sku);
-  const editIcon = adminPage.locator('span[title="Delete"]').first();
-  const visible = await editIcon.isVisible({ timeout: 3000 }).catch(() => false);
-  if (!visible) return;
-  await editIcon.click();
-  await adminPage.getByRole('button', { name: 'Delete' }).click();
-  await adminPage.locator('#app').getByText(/Product deleted successfully/i).waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
-  await adminPage.waitForLoadState('networkidle');
 }
 
 test.describe('Product Creation - Validation', () => {
@@ -527,14 +515,14 @@ test.describe('Product Listing Features', () => {
 test.describe('Dynamic Columns', () => {
   test('34 - Dynamic Column should be clickable', async ({ adminPage }) => {
     await navigateTo(adminPage, 'products');
-    await expect(adminPage.locator('#app').getByTitle('Columns', { exact: true })).toBeVisible();
-    await adminPage.locator('#app').getByTitle('Columns', { exact: true }).click();
+    await expect(adminPage.locator('#app').getByText('Columns', { exact: true })).toBeVisible();
+    await adminPage.locator('#app').getByText('Columns', { exact: true }).click();
     await expect(adminPage.locator('#app').getByText('Manage columns')).toBeVisible();
   });
 
   test('35 - Dynamic Column search bar should be visible and clickable', async ({ adminPage }) => {
     await navigateTo(adminPage, 'products');
-    await adminPage.locator('#app').getByTitle('Columns', { exact: true }).click();
+    await adminPage.locator('#app').getByText('Columns', { exact: true }).click();
     const columnsForm = adminPage.locator('form').filter({ hasText: 'Manage columns' });
     await columnsForm.getByPlaceholder('Search').click();
     await expect(columnsForm.getByPlaceholder('Search')).toBeEnabled();
@@ -542,7 +530,7 @@ test.describe('Dynamic Columns', () => {
 
   test('36 - Dynamic Column search the default fields', async ({ adminPage }) => {
     await navigateTo(adminPage, 'products');
-    await adminPage.locator('#app').getByTitle('Columns', { exact: true }).click();
+    await adminPage.locator('#app').getByText('Columns', { exact: true }).click();
     const columnsForm = adminPage.locator('form').filter({ hasText: 'Manage columns' });
     await columnsForm.getByPlaceholder('Search').fill('parent');
     await adminPage.keyboard.press('Enter');
@@ -551,7 +539,7 @@ test.describe('Dynamic Columns', () => {
 
   test('37 - Attributes should be visible in columns panel', async ({ adminPage }) => {
     await navigateTo(adminPage, 'products');
-    await adminPage.locator('#app').getByTitle('Columns', { exact: true }).click();
+    await adminPage.locator('#app').getByText('Columns', { exact: true }).click();
     const columnsForm = adminPage.locator('form').filter({ hasText: 'Manage columns' });
     await expect(adminPage.locator('#app').getByText('Manage columns')).toBeVisible();
     await expect(adminPage.locator('#app').getByText('Available Columns')).toBeVisible();

@@ -16,10 +16,13 @@ const STATE_DIR = path.resolve(__dirname, '..', process.env.PW_STATE_DIR || '.st
  *    server (APP_DEBUG) sits over the unsaved-changes bar and intercepts pointer
  *    events on its Save/Discard buttons. Absent in CI, so the rule is a no-op there.
  * Hiding via CSS also removes them from the accessibility tree so getByRole()
- * no longer matches them.
+ * no longer matches them. The panel is also kept closed: open, it docks by
+ * adding a 420px right margin to #app even while hidden, which the demo data's
+ * `agentic_pim.open_by_default` turns on and narrows every page under test.
  */
 const HIDE_WIDGET_SCRIPT = `
   (function() {
+    try { sessionStorage.setItem('agenting_pim_state', JSON.stringify({ isOpen: false })); } catch (e) {}
     var s = document.createElement('style');
     s.id = 'pw-hide-widget';
     s.textContent = '.ap-shell, .ap-panel, .ap-backdrop, .phpdebugbar { display: none !important; }';
