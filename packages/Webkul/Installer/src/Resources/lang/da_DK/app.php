@@ -219,6 +219,14 @@ return [
     ],
 
     'installer' => [
+        'console' => [
+            'confirm-drop'        => 'Vil du slette disse tabeller og geninstallere?',
+            'drop-aborted'        => 'Installationen blev afbrudt. Ingen tabeller blev slettet.',
+            'force-required'      => 'Der er ikke angivet noget tabelpræfiks, så alle tabeller, som ingen anden installation gør krav på, ville blive slettet. Kør igen med --force for at slette dem, eller angiv DB_PREFIX.',
+            'outside-references'  => 'Tabeller uden for tabelpræfikset refererer til de tabeller, der skal slettes: :references. Fjern først disse fremmednøgler.',
+            'tables-to-drop'      => 'Disse :count tabeller vil blive slettet: :tables',
+        ],
+
         'index' => [
             'create-administrator' => [
                 'admin'                   => 'Administrator',

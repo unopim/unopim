@@ -219,6 +219,14 @@ return [
     ],
 
     'installer' => [
+        'console' => [
+            'confirm-drop'        => 'Eliminare queste tabelle e reinstallare?',
+            'drop-aborted'        => 'Installazione annullata. Nessuna tabella è stata eliminata.',
+            'force-required'      => 'Nessun prefisso di tabella è impostato, quindi verrebbero eliminate tutte le tabelle che nessun\'altra installazione rivendica. Esegui di nuovo con --force per eliminarle, oppure imposta DB_PREFIX.',
+            'outside-references'  => 'Tabelle esterne al prefisso di tabella fanno riferimento alle tabelle da eliminare: :references. Rimuovi prima queste chiavi esterne.',
+            'tables-to-drop'      => 'Queste :count tabelle verranno eliminate: :tables',
+        ],
+
         'index' => [
             'create-administrator' => [
                 'admin'                   => 'Amministratore',
