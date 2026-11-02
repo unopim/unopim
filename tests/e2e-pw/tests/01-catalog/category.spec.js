@@ -125,7 +125,7 @@ test.describe('UnoPim Category Tests', () => {
     const perPageBtn = adminPage.getByRole('button', { name: 'Per Page' });
     await expect(perPageBtn).toBeVisible({ timeout: 20000 });
     await perPageBtn.click();
-    await adminPage.locator('#app').getByText('20', { exact: true }).click();
+    await adminPage.getByRole('list').getByText('20', { exact: true }).click();
     await expect(perPageBtn).toContainText('20');
   });
 

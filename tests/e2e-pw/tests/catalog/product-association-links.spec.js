@@ -1,11 +1,11 @@
 const { test, expect } = require('../../utils/fixtures');
 const {
 	navigateTo,
-	searchInDataGrid,
 	submitDataGridSearch,
 	waitForAppReady,
 	closeDropdown,
 } = require('../../utils/helpers');
+const { deleteProductBySku } = require('../../utils/product-helpers');
 
 /**
  * Product edit "Links" panel — Plan 3 slice (rich association links).
@@ -274,28 +274,6 @@ async function fillRequiredProductAttributes(page, { name, urlKey, price }) {
 	for (let i = 0; i < count; i++) {
 		await prices.nth(i).fill(price);
 	}
-}
-
-/**
- * Best-effort cleanup: deletes a product by SKU. Silently no-ops if it's
- * already gone (e.g. a previous, interrupted run already removed it).
- */
-async function deleteProductBySku(page, sku) {
-	await navigateTo(page, 'products');
-	await searchInDataGrid(page, sku);
-
-	const deleteIcon = page.locator('span[title="Delete"]').first();
-	const visible = await deleteIcon.isVisible({ timeout: 3000 }).catch(() => false);
-
-	if (!visible) {
-		return;
-	}
-
-	await deleteIcon.click();
-
-	const deleted = page.waitForResponse((response) => response.request().method() === 'DELETE');
-	await page.getByRole('button', { name: 'Delete' }).click();
-	await deleted;
 }
 
 test.describe('Product Edit — rich association Links (bundle_kit custom type)', () => {

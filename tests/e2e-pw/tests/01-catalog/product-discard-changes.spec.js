@@ -1,6 +1,7 @@
 const path = require('path');
 const { test, expect } = require('../../utils/fixtures');
 const { clickSave, navigateTo, generateUid, searchInDataGrid, clickEditOnRow, closeDropdown } = require('../../utils/helpers');
+const { deleteProductBySku } = require('../../utils/product-helpers');
 
 // Regression: Discard must revert rich fields (WYSIWYG/Select/Multiselect/Image/Gallery/File)
 // whose value lives in Vue state; each now restores itself on the bar's `unsaved-changes:reset`.
@@ -54,18 +55,6 @@ async function selectFirstOption(page, fieldName, optionLabel) {
       .click();
   }
   await closeDropdown(page);
-}
-
-async function deleteProductBySku(adminPage, sku) {
-  await navigateTo(adminPage, 'products');
-  await searchInDataGrid(adminPage, sku);
-  const deleteIcon = adminPage.locator('span[title="Delete"]').first();
-  if (!(await deleteIcon.isVisible({ timeout: 3000 }).catch(() => false))) {
-    return;
-  }
-  await deleteIcon.click();
-  await adminPage.getByRole('button', { name: 'Delete' }).click();
-  await adminPage.waitForLoadState('networkidle').catch(() => {});
 }
 
 /**
