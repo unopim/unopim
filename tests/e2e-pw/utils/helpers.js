@@ -28,6 +28,48 @@ const ROUTES = {
 };
 
 /**
+ * Wait until the admin page is usable: the document has loaded, the Vue app is
+ * mounted (an ajax navigation has finished swapping and remounting #app), and
+ * no loading shimmer is left on screen (datagrid records, dashboard widgets…).
+ * Image placeholders are ignored: a missing image keeps its shimmer forever.
+ *
+ * This replaces `networkidle`, which never settles reliably here because the
+ * header polls notifications and costs at least 500ms on every call.
+ * @param {import('@playwright/test').Page} page
+ * @param {number} [timeout=30000]
+ */
+async function waitForAppReady(page, timeout = 30000) {
+  await page.waitForLoadState('load', { timeout });
+  await page.waitForFunction(() => {
+    const bar = document.getElementById('ajax-nav-progress');
+
+    return (!bar || bar.style.opacity === '0') && !!document.querySelector('#app[data-v-app]');
+  }, null, { timeout });
+  await waitForShimmerGone(page, timeout);
+}
+
+/**
+ * Wait until no DataGrid/widget loading shimmer is visible (image placeholders ignored).
+ * @param {import('@playwright/test').Page} page
+ * @param {number} [timeout=15000]
+ */
+async function waitForShimmerGone(page, timeout = 15000) {
+  await page.waitForFunction(() => ![...document.querySelectorAll('.shimmer')].some(
+    (el) => el.getClientRects().length > 0 && el.nextElementSibling?.tagName !== 'IMG',
+  ), null, { timeout });
+}
+
+/**
+ * Open an admin URL and wait for the page to be ready.
+ * @param {import('@playwright/test').Page} page
+ * @param {string} url
+ */
+async function gotoPage(page, url) {
+  await page.goto(url, { waitUntil: 'load', timeout: 60000 });
+  await waitForAppReady(page);
+}
+
+/**
  * Navigate directly to an admin route (replaces 2-click sidebar navigation).
  * @param {import('@playwright/test').Page} page
  * @param {keyof ROUTES} route — key from ROUTES map
@@ -35,14 +77,51 @@ const ROUTES = {
 async function navigateTo(page, route) {
   const url = ROUTES[route];
   if (!url) throw new Error(`Unknown route: "${route}". Available: ${Object.keys(ROUTES).join(', ')}`);
-  await page.goto(url, { waitUntil: 'networkidle', timeout: 60000 }).catch(async () => {
-    // networkidle may timeout due to debugbar — fallback to checking Vue rendered
-    await page.waitForLoadState('load', { timeout: 10000 }).catch(() => {});
-  });
+  await gotoPage(page, url);
 }
 
 /**
- * Search in a DataGrid using the search input.
+ * Whether a response is the DataGrid's own XHR refresh carrying the given search text.
+ * @param {import('@playwright/test').Response} response
+ * @param {string} text
+ * @returns {boolean}
+ */
+function isDataGridSearchResponse(response, text) {
+  const request = response.request();
+
+  if (request.method() !== 'GET' || !['xhr', 'fetch'].includes(request.resourceType())) {
+    return false;
+  }
+
+  let url = response.url().replace(/\+/g, ' ');
+
+  try {
+    url = decodeURIComponent(url);
+  } catch {
+    return false;
+  }
+
+  return url.includes('filters') && url.includes(text);
+}
+
+/**
+ * Submit a search typed into a DataGrid search input and wait for the grid to
+ * render the refreshed records.
+ * @param {import('@playwright/test').Page} page
+ * @param {import('@playwright/test').Locator} input — the DataGrid search input
+ * @param {string} text — search query
+ */
+async function submitDataGridSearch(page, input, text) {
+  await input.fill(text);
+
+  const refreshed = page.waitForResponse((response) => isDataGridSearchResponse(response, text), { timeout: 30000 });
+  await input.press('Enter');
+  await refreshed;
+  await waitForShimmerGone(page);
+}
+
+/**
+ * Search in a DataGrid using the search input and wait for the grid to show the result.
  * @param {import('@playwright/test').Page} page
  * @param {string} text — search query
  * @param {string} [placeholder='Search'] — placeholder text of search input
@@ -50,15 +129,45 @@ async function navigateTo(page, route) {
 async function searchInDataGrid(page, text, placeholder = 'Search') {
   const searchInput = page.getByPlaceholder(placeholder).first();
   await searchInput.waitFor({ state: 'visible', timeout: 30000 });
-  await searchInput.fill(text);
-  await page.keyboard.press('Enter');
-  // Wait for the DataGrid to refresh after search
-  await page.waitForLoadState('load');
-  await page.waitForTimeout(500);
+  await submitDataGridSearch(page, searchInput, text);
 }
 
 /**
- * Click the Edit action button on a DataGrid row matching the given text.
+ * Click something that navigates (full load or ajax navigation) and wait for
+ * the destination page to be ready.
+ * @param {import('@playwright/test').Page} page
+ * @param {import('@playwright/test').Locator} target
+ * @param {RegExp} [urlPattern] — destination URL; any URL change when omitted
+ */
+async function clickAndWaitForPage(page, target, urlPattern) {
+  const from = page.url();
+  await target.click();
+  await page.waitForURL(urlPattern ?? ((url) => url.toString() !== from), { timeout: 30000 });
+  await waitForAppReady(page);
+}
+
+/**
+ * Click a submit control and wait for its outcome: the request it sends gets
+ * answered, or client-side validation blocks it and shows a field error.
+ * @param {import('@playwright/test').Page} page
+ * @param {import('@playwright/test').Locator} submit
+ * @param {(request: import('@playwright/test').Request) => boolean} isSubmitRequest
+ * @returns {Promise<import('@playwright/test').Response|null>} the response, or null when validation blocked it
+ */
+async function submitAndSettle(page, submit, isSubmitRequest) {
+  const answered = page.waitForResponse((response) => isSubmitRequest(response.request()), { timeout: 30000 });
+  const fieldError = page.locator('p.text-red-600:visible').filter({ hasText: /\S/ }).first();
+  await submit.click();
+
+  return Promise.race([
+    answered,
+    fieldError.waitFor({ state: 'visible', timeout: 30000 }).then(() => null),
+  ]);
+}
+
+/**
+ * Click the Edit action button on a DataGrid row matching the given text and
+ * wait for the edit page it opens to be ready.
  * @param {import('@playwright/test').Page} page
  * @param {string} rowText — text to identify the row
  */
@@ -67,8 +176,7 @@ async function clickEditOnRow(page, rowText) {
   // Edit icon belongs to the matched row and not to some earlier row folded into
   // a broader container match.
   const row = page.locator('div.row.grid.cursor-pointer').filter({ hasText: rowText }).first();
-  await row.locator('span[title="Edit"]').first().click();
-  await page.waitForLoadState('networkidle');
+  await clickAndWaitForPage(page, row.locator('span[title="Edit"]').first());
 }
 
 /**
@@ -89,8 +197,13 @@ async function confirmDelete(page) {
   // Scoped to the confirm modal: the AI agent shell's suggestion cards can also
   // carry "Delete" in their accessible name (e.g. "Delete Products Remove"),
   // which turns an unscoped match ambiguous.
+  const deleted = page.waitForResponse(
+    (response) => ['DELETE', 'POST'].includes(response.request().method()) && ['xhr', 'fetch'].includes(response.request().resourceType()),
+    { timeout: 30000 },
+  );
   await page.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
-  await page.waitForLoadState('networkidle');
+  await deleted;
+  await waitForAppReady(page);
 }
 
 /**
@@ -258,11 +371,17 @@ async function visiblePaginationSymbols(page) {
 
 module.exports = {
   ROUTES,
+  waitForAppReady,
+  waitForShimmerGone,
+  gotoPage,
   navigateTo,
   openFilterDrawer,
   closeDropdown,
   visiblePaginationSymbols,
+  submitDataGridSearch,
   searchInDataGrid,
+  clickAndWaitForPage,
+  submitAndSettle,
   clickEditOnRow,
   clickDeleteOnRow,
   confirmDelete,
