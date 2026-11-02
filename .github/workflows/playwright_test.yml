@@ -147,7 +147,7 @@ jobs:
           php artisan db:seed --class=DiscardQaFixtureSeeder
           php artisan tinker tests/e2e-pw/scripts/seed-dpp-e2e.php
           # Several PHP workers so parallel Playwright workers are not queued behind one request.
-          PHP_CLI_SERVER_WORKERS=4 php artisan serve --no-reload --host=0.0.0.0 --port=8000 > /tmp/server.log 2>&1 &
+          PHP_CLI_SERVER_WORKERS=6 php artisan serve --no-reload --host=0.0.0.0 --port=8000 > /tmp/server.log 2>&1 &
           php artisan queue:work --queue=webhooks,default,system,completeness,publication > /tmp/queue.log 2>&1 &
           echo "Waiting for server..."
           timeout 30 bash -c 'until curl -s http://127.0.0.1:8000 > /dev/null; do sleep 1; done' || (cat /tmp/server.log && exit 1)
@@ -155,7 +155,7 @@ jobs:
       - name: Run Playwright tests
         env:
           PASSPORT_E2E_LOCAL: '1'
-          PW_WORKERS: '1'
+          PW_WORKERS: '3'
         run: |
           cd tests/e2e-pw
           npx playwright test --reporter=list,html --shard=${{ matrix.shard-index }}/${{ matrix.shard-total }}
