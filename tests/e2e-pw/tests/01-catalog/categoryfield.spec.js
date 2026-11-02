@@ -33,7 +33,7 @@ async function searchCategoryField(adminPage, code) {
   await searchInDataGrid(adminPage, code);
 }
 
-test.describe('UnoPim Category Field Tests', { tag: '@global-state' }, () => {
+test.describe('UnoPim Category Field Tests', () => {
 
   test('Create category field with empty Code', async ({ adminPage }) => {
     await navigateTo(adminPage, 'categoryFields');

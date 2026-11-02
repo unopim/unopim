@@ -92,7 +92,7 @@ async function waitForAutoPublish(page, productId, { timeout = 60000 } = {}) {
   return [];
 }
 
-test.describe.serial('DPP customer workflows', () => {
+test.describe.serial('DPP customer workflows', { tag: '@global-state' }, () => {
   let channelId;
 
   test.beforeAll(async ({ browser }) => {

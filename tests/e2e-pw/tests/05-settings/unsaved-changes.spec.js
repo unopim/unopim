@@ -1,7 +1,7 @@
 const { test, expect } = require('../../utils/fixtures');
 const { clickSave, clickSaveAndExpect, gotoPage } = require('../../utils/helpers');
 
-test.describe('Unsaved changes bar', () => {
+test.describe('Unsaved changes bar', { tag: '@global-state' }, () => {
   const URL = '/admin/configuration/system/system.email';
 
   const gotoSettings = (page) => gotoPage(page, URL);

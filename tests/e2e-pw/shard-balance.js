@@ -9,6 +9,12 @@
 // shard-timings.json holds seconds per spec file from a full CI run. A file it
 // does not list counts as the median, so a new spec still lands in a shard.
 // Refresh the timings when the shards drift apart again.
+//
+// A spec tagged @global-state changes store-wide settings that other specs
+// read. Each shard runs those files in a second, single-worker pass (PW_PASS=
+// serial) after everything else (PW_PASS=parallel), so they never overlap with
+// anything. The whole file moves, because its other tests may rely on what the
+// tagged ones set.
 
 const fs = require('fs');
 const path = require('path');
@@ -29,9 +35,18 @@ function specFiles(dir = TEST_DIR) {
   });
 }
 
+function source(file) {
+  return fs.readFileSync(path.join(TEST_DIR, file), 'utf8');
+}
+
 /** Whether a spec opts its tests into parallel mode, so they spread over workers. */
 function runsInParallel(file) {
-  return /test\.describe\.configure\(\{\s*mode:\s*'parallel'/.test(fs.readFileSync(path.join(TEST_DIR, file), 'utf8'));
+  return /test\.describe\.configure\(\{\s*mode:\s*'parallel'/.test(source(file));
+}
+
+/** Whether a spec changes store-wide state and must run in the serial pass. */
+function changesGlobalState(file) {
+  return source(file).includes('@global-state');
 }
 
 /**
@@ -65,18 +80,21 @@ function plan(total, workers = 1) {
     .map((file) => ({ file, seconds: timings[file] ?? median }))
     .sort((a, b) => b.seconds - a.seconds || a.file.localeCompare(b.file));
 
-  const shards = Array.from({ length: total }, () => ({ units: [], files: [] }));
+  const shards = Array.from({ length: total }, () => ({ units: [], serial: 0, files: [] }));
+  const duration = (shard, units, serial) => estimate([...shard.units, ...units], workers) + shard.serial + serial;
 
   for (const { file, seconds } of files) {
-    const units = runsInParallel(file)
+    const serial = changesGlobalState(file) ? seconds : 0;
+    const units = serial ? [] : runsInParallel(file)
       ? Array.from({ length: workers }, (_, i) => ({ file: `${file}#${i}`, seconds: seconds / workers }))
       : [{ file, seconds }];
 
     const target = shards
-      .map((shard) => ({ shard, after: estimate([...shard.units, ...units], workers) }))
+      .map((shard) => ({ shard, after: duration(shard, units, serial) }))
       .reduce((best, candidate) => (candidate.after < best.after ? candidate : best)).shard;
 
     target.units.push(...units);
+    target.serial += serial;
     target.files.push(file);
   }
 
@@ -84,19 +102,27 @@ function plan(total, workers = 1) {
 }
 
 /**
- * The absolute paths of the files for one shard, given as "current/total".
+ * The absolute paths of the files for one shard, given as "current/total",
+ * limited to one pass ("parallel" or "serial") when given.
  * @param {string} spec
  * @param {number} workers
+ * @param {string} [pass]
  * @returns {string[]}
  */
-function filesForShard(spec, workers = 1) {
+function filesForShard(spec, workers = 1, pass = undefined) {
   const [current, total] = spec.split('/').map(Number);
 
   if (! (total >= 1 && current >= 1 && current <= total)) {
     throw new Error(`PW_SHARD must look like "2/8", got "${spec}"`);
   }
 
-  return plan(total, workers)[current - 1].map((file) => path.join(TEST_DIR, file));
+  if (pass !== undefined && pass !== 'parallel' && pass !== 'serial') {
+    throw new Error(`PW_PASS must be "parallel" or "serial", got "${pass}"`);
+  }
+
+  return plan(total, workers)[current - 1]
+    .filter((file) => pass === undefined || changesGlobalState(file) === (pass === 'serial'))
+    .map((file) => path.join(TEST_DIR, file));
 }
 
 module.exports = { plan, filesForShard };

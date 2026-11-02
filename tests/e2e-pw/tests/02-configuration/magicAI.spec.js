@@ -303,7 +303,7 @@ test('2.6 - Verify platform dropdown shows OpenAI platform on config page', asyn
   await expect(adminPage.getByText(/OpenAI/i).first()).toBeVisible();
 });
 
-test('2.7 - Configure Magic AI with OpenAI platform for Text Generation', async ({ adminPage }) => {
+test('2.7 - Configure Magic AI with OpenAI platform for Text Generation', { tag: '@global-state' }, async ({ adminPage }) => {
   test.setTimeout(30000);
   await gotoPage(adminPage, MAGIC_AI_CONFIG_URL);
 
@@ -323,7 +323,7 @@ test('2.7 - Configure Magic AI with OpenAI platform for Text Generation', async 
   await expect(adminPage.locator('#app').getByText('Text Generation', { exact: true })).toBeVisible();
 });
 
-test('2.8 - Configure Image Generation with OpenAI platform', async ({ adminPage }) => {
+test('2.8 - Configure Image Generation with OpenAI platform', { tag: '@global-state' }, async ({ adminPage }) => {
   test.setTimeout(30000);
   await gotoPage(adminPage, MAGIC_AI_CONFIG_URL);
   await adminPage.locator('input[type="checkbox"]').first().click({ force: true });
@@ -348,7 +348,7 @@ test('2.8 - Configure Image Generation with OpenAI platform', async ({ adminPage
   await expect(adminPage.locator('#app').getByText('Text Generation', { exact: true })).toBeVisible();
 });
 
-test('2.9 - Save Configuration without any changes', async ({ adminPage }) => {
+test('2.9 - Save Configuration without any changes', { tag: '@global-state' }, async ({ adminPage }) => {
   await gotoPage(adminPage, MAGIC_AI_CONFIG_URL);
   await adminPage.locator('input[type="checkbox"]').first().click({ force: true });
 
@@ -721,7 +721,7 @@ test('6.2 - Enable AI Translate on short_description attribute', async ({ adminP
 
 // SECTION 7: Product - Magic AI Content Generation
 
-test('7.1 - Create product, verify Magic AI button, and clean up', async ({ adminPage }) => {
+test('7.1 - Create product, verify Magic AI button, and clean up', { tag: '@global-state' }, async ({ adminPage }) => {
   test.skip(!OPENAI_API_KEY, 'OPENAI_API_KEY not set — Magic AI button requires configured platform');
   test.setTimeout(60000);
   await ensureMagicAITextEnabled(adminPage);
@@ -755,7 +755,7 @@ test('7.1 - Create product, verify Magic AI button, and clean up', async ({ admi
   await expect(adminPage.locator('#app').getByText(/Product Deleted Successfully/i)).toBeVisible({ timeout: 20000 });
 });
 
-test('7.3 - Open AI Assistance modal and verify fields', async ({ adminPage }) => {
+test('7.3 - Open AI Assistance modal and verify fields', { tag: '@global-state' }, async ({ adminPage }) => {
   test.skip(!OPENAI_API_KEY, 'OPENAI_API_KEY not set — Magic AI button requires configured platform');
   test.setTimeout(90000);
   await ensureMagicAITextEnabled(adminPage);
@@ -796,7 +796,7 @@ test('7.3 - Open AI Assistance modal and verify fields', async ({ adminPage }) =
   await expect(adminPage.locator('#app').getByText(/Product Deleted Successfully/i)).toBeVisible({ timeout: 20000 });
 });
 
-test('7.5 - Verify More Actions menu on product edit page', async ({ adminPage }) => {
+test('7.5 - Verify More Actions menu on product edit page', { tag: '@global-state' }, async ({ adminPage }) => {
   await ensureMagicAITranslationEnabled(adminPage);
 
   const uid = generateUid();
@@ -830,7 +830,7 @@ test('7.5 - Verify More Actions menu on product edit page', async ({ adminPage }
   await expect(adminPage.locator('#app').getByText(/Product Deleted Successfully/i)).toBeVisible({ timeout: 20000 });
 });
 
-test('7.5b - More Actions button is hidden when AI translation is disabled', async ({ adminPage }) => {
+test('7.5b - More Actions button is hidden when AI translation is disabled', { tag: '@global-state' }, async ({ adminPage }) => {
   await gotoPage(adminPage, MAGIC_AI_CONFIG_URL);
   const cbSelector = 'input[type="checkbox"][name="general[magic_ai][translation][enabled]"]';
   await adminPage.locator(cbSelector).first().waitFor({ state: 'attached', timeout: 10000 });
@@ -885,7 +885,7 @@ test('7.5b - More Actions button is hidden when AI translation is disabled', asy
   await ensureMagicAITranslationEnabled(adminPage);
 });
 
-test('7.6 - Verify Translate Step 1 fields', async ({ adminPage }) => {
+test('7.6 - Verify Translate Step 1 fields', { tag: '@global-state' }, async ({ adminPage }) => {
   test.setTimeout(30000);
   await ensureMagicAITranslationEnabled(adminPage);
 
@@ -927,7 +927,7 @@ test('7.6 - Verify Translate Step 1 fields', async ({ adminPage }) => {
   await expect(adminPage.locator('#app').getByText(/Product Deleted Successfully/i)).toBeVisible({ timeout: 20000 });
 });
 
-test('7.7 - Translate product content to Hindi and verify', async ({ adminPage }) => {
+test('7.7 - Translate product content to Hindi and verify', { tag: '@global-state' }, async ({ adminPage }) => {
   test.skip(!OPENAI_API_KEY, 'OPENAI_API_KEY not set — translation requires configured platform');
   test.setTimeout(120000);
   await ensureMagicAITranslationEnabled(adminPage);

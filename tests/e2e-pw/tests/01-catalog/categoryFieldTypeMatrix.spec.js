@@ -48,7 +48,7 @@ async function createField(page, code, type) {
   deferCategoryFieldCleanup(page);
 }
 
-test.describe('Category field — create modal never offers Input Validation', { tag: '@global-state' }, () => {
+test.describe('Category field — create modal never offers Input Validation', () => {
   test('Input Validation is absent for every field type', async ({ adminPage }) => {
     await openCreateModal(adminPage);
 
@@ -68,7 +68,7 @@ test.describe('Category field — create modal never offers Input Validation', {
   });
 });
 
-test.describe('Category field — option changes are tracked and saved', { tag: '@global-state' }, () => {
+test.describe('Category field — option changes are tracked and saved', () => {
   for (const type of ['Select', 'Multiselect', 'Checkbox']) {
     test(`${type} raises the unsaved bar for a new option and persists it`, async ({ adminPage }) => {
       const code = `cfo_${type.toLowerCase()}_${generateUid()}`;
@@ -127,7 +127,7 @@ test.describe('Category field — option changes are tracked and saved', { tag: 
   });
 });
 
-test.describe('Category field — edit form control matrix', { tag: '@global-state' }, () => {
+test.describe('Category field — edit form control matrix', () => {
   for (const row of TYPE_MATRIX) {
     test(`${row.type} exposes only its applicable controls`, async ({ adminPage }) => {
       const code = `cfm_${row.code}_${generateUid()}`;

@@ -164,9 +164,14 @@ jobs:
           PW_WORKERS: '3'
           # Duration-balanced file sets instead of --shard's equal test counts (see shard-balance.js).
           PW_SHARD: ${{ matrix.shard-index }}/${{ matrix.shard-total }}
+        # @global-state specs change store-wide settings, so they run after the
+        # rest on one worker. Both passes always run and either one fails the step.
         run: |
           cd tests/e2e-pw
-          npx playwright test --reporter=list,html
+          status=0
+          PW_PASS=parallel npx playwright test --pass-with-no-tests || status=$?
+          PW_PASS=serial npx playwright test --pass-with-no-tests || status=$?
+          exit $status
 
       - name: Upload test results
         if: failure()
@@ -175,7 +180,9 @@ jobs:
           name: playwright-report-shard-${{ matrix.shard-index }}-${{ github.run_id }}
           path: |
             tests/e2e-pw/playwright-report
+            tests/e2e-pw/playwright-report-serial
             tests/e2e-pw/test-results
+            tests/e2e-pw/test-results-serial
             storage/logs/*.log
             /tmp/server.log
             /tmp/queue.log
