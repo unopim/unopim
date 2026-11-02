@@ -155,7 +155,7 @@ jobs:
       - name: Run Playwright tests
         env:
           PASSPORT_E2E_LOCAL: '1'
-          PW_WORKERS: '2'
+          PW_WORKERS: '1'
         run: |
           cd tests/e2e-pw
           npx playwright test --reporter=list,html --shard=${{ matrix.shard-index }}/${{ matrix.shard-total }}
