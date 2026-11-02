@@ -2,15 +2,11 @@ name: Release Provenance
 
 # Attaches a source archive and its SLSA build provenance to every GitHub
 # release, so users can verify a download came from this repository at that
-# tag. Run it manually with a tag to backfill an existing release.
+# tag. Release-only: the generator attests the triggering ref, so a manual run
+# for an older tag would describe the wrong source.
 on:
   release:
     types: [published]
-  workflow_dispatch:
-    inputs:
-      tag:
-        description: 'Existing release tag, e.g. v3.1.3'
-        required: true
 
 permissions: read-all
 
@@ -28,7 +24,7 @@ jobs:
       - name: Resolve tag
         id: tag
         env:
-          TAG: ${{ github.event.release.tag_name || inputs.tag }}
+          TAG: ${{ github.event.release.tag_name }}
         run: |
           if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
             echo "::error::Invalid tag: $TAG"
