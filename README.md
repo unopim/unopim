@@ -14,6 +14,7 @@
   <a href="https://packagist.org/packages/unopim/unopim"><img src="https://poser.pugx.org/unopim/unopim/license.svg" alt="License"></a>
   <a href="https://github.com/unopim/unopim/actions"><img src="https://img.shields.io/github/actions/workflow/status/unopim/unopim/pest_tests.yml?branch=3.x&label=tests" alt="Tests"></a>
   <a href="https://github.com/unopim/unopim/actions"><img src="https://img.shields.io/github/actions/workflow/status/unopim/unopim/linting_tests.yml?branch=3.x&label=lint" alt="Lint"></a>
+  <a href="https://www.bestpractices.dev/projects/16085"><img src="https://www.bestpractices.dev/projects/16085/badge" alt="OpenSSF Best Practices"></a>
 </p>
 
 <p align="center">
