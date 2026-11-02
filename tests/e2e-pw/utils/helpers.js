@@ -150,14 +150,14 @@ async function clickAndWaitForPage(page, target, urlPattern) {
  * Click a submit control and wait for its outcome: the request it sends gets
  * answered, or client-side validation blocks it and shows a field error.
  * @param {import('@playwright/test').Page} page
- * @param {import('@playwright/test').Locator} submit
+ * @param {import('@playwright/test').Locator|(() => Promise<void>)} submit — the control, or a function that submits
  * @param {(request: import('@playwright/test').Request) => boolean} isSubmitRequest
  * @returns {Promise<import('@playwright/test').Response|null>} the response, or null when validation blocked it
  */
 async function submitAndSettle(page, submit, isSubmitRequest) {
   const answered = page.waitForResponse((response) => isSubmitRequest(response.request()), { timeout: 30000 });
   const fieldError = page.locator('p.text-red-600:visible').filter({ hasText: /\S/ }).first();
-  await submit.click();
+  await (typeof submit === 'function' ? submit() : submit.click());
 
   return Promise.race([
     answered,

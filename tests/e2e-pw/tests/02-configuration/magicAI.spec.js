@@ -6,6 +6,7 @@ const {
   generateUid,
   searchInDataGrid,
   submitDataGridSearch,
+  submitAndSettle,
   clickAndWaitForPage,
   waitForAppReady,
   waitForShimmerGone,
@@ -978,11 +979,11 @@ test('7.7 - Translate product content to Hindi and verify', async ({ adminPage }
   const nameField = adminPage.locator('input[name*="[name]"]').first();
   if (await nameField.isVisible({ timeout: 5000 }).catch(() => false)) {
     await nameField.fill(`Test Product ${uid}`);
-    const productSaved = adminPage.waitForResponse(
-      (response) => response.request().method() !== 'GET' && new URL(response.url()).pathname.includes('/catalog/products/edit/'),
+    await submitAndSettle(
+      adminPage,
+      () => clickSave(adminPage, 'Save Product'),
+      (request) => request.method() !== 'GET' && new URL(request.url()).pathname.includes('/catalog/products/edit/'),
     );
-    await clickSave(adminPage, 'Save Product');
-    await productSaved;
   }
 
   const moreBtn = adminPage.locator('[title="More Actions"]').first();
