@@ -99,9 +99,15 @@ test.describe.serial('Passport QA regressions', () => {
     const versioned = await publishAndWait(page, product.id, channelId, localeIds);
     expect(versioned.length).toBe(localeCodes.length);
 
-    const row = await passportRowForSku(page, product.sku);
-    uuid = row.uuid;
-    expect(row.publication_status).toMatch(/^published$/i);
+    // The grid status settles after the queued publish jobs, so poll it rather than read it once.
+    await expect
+      .poll(async () => String((await passportRowForSku(page, product.sku))?.publication_status ?? ''), {
+        message: 'grid publication status',
+        timeout: 30000,
+      })
+      .toMatch(/^published$/i);
+
+    uuid = (await passportRowForSku(page, product.sku)).uuid;
   });
 
   test('1+3. withdrawing flashes success, flips the row and zeroes Live Locales', async ({ adminPage }) => {

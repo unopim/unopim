@@ -1,5 +1,11 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, searchInDataGrid, closeDropdown } = require('../../utils/helpers');
+const {
+	navigateTo,
+	searchInDataGrid,
+	submitDataGridSearch,
+	waitForAppReady,
+	closeDropdown,
+} = require('../../utils/helpers');
 
 /**
  * Product edit "Links" panel — Plan 3 slice (rich association links).
@@ -48,9 +54,13 @@ const { navigateTo, searchInDataGrid, closeDropdown } = require('../../utils/hel
  */
 
 const ASSOCIATION_TYPES_INDEX_URL = '/admin/catalog/association-types';
-const BUNDLE_KIT_CODE = 'bundle_kit';
-const BUNDLE_KIT_NAME = 'Bundle / Kit';
-const QUANTITY_INPUT_SELECTOR = 'input[name="associations[bundle_kit][0][additional_data][common][quantity]"]';
+/**
+ * Own type code, not `bundle_kit`: `association-types.spec.js` deletes and recreates
+ * `bundle_kit` in its CRUD test, which races this spec when both run in parallel workers.
+ */
+const BUNDLE_KIT_CODE = 'links_kit';
+const BUNDLE_KIT_NAME = 'Links Kit';
+const QUANTITY_INPUT_SELECTOR = `input[name="associations[${BUNDLE_KIT_CODE}][0][additional_data][common][quantity]"]`;
 
 /**
  * Every `x-admin::form` on this app (product edit and association-type
@@ -133,14 +143,13 @@ async function addAssociationTypeField(page, { name, code, type, validation, req
  */
 async function ensureBundleKitAssociationTypeExists(page) {
 	await page.goto(ASSOCIATION_TYPES_INDEX_URL, { waitUntil: 'load' });
-	await page.waitForLoadState('networkidle');
+	await waitForAppReady(page);
 
-	await page.getByRole('textbox', { name: 'Search' }).first().fill(BUNDLE_KIT_CODE);
-	await page.keyboard.press('Enter');
+	await submitDataGridSearch(page, page.getByRole('textbox', { name: 'Search' }).first(), BUNDLE_KIT_CODE);
 	await expect(page.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 15000 });
 
-	const editIcon = page.locator('span[title="Edit"]').first();
-	const alreadyExists = await editIcon.isVisible({ timeout: 3000 }).catch(() => false);
+	const editIcon = page.locator('div.row.grid').filter({ hasText: BUNDLE_KIT_CODE }).locator('span[title="Edit"]').first();
+	const alreadyExists = await editIcon.isVisible();
 
 	if (alreadyExists) {
 		await editIcon.click();
@@ -157,7 +166,7 @@ async function ensureBundleKitAssociationTypeExists(page) {
 	}
 
 	await expect(page).toHaveURL(/\/admin\/catalog\/association-types\/edit\//);
-	await page.waitForLoadState('networkidle');
+	await waitForAppReady(page);
 
 	// The create modal already set the current locale's name (`{currentLocale}[name]`
 	// on `create.blade.php`), which is all the controller requires — an empty locale
@@ -212,13 +221,13 @@ async function selectMultiselect(page, fieldName, optionLabel) {
 async function createSimpleProduct(page, sku) {
 	await navigateTo(page, 'products');
 	await page.getByRole('button', { name: 'Create Product' }).click();
-	await page.waitForLoadState('networkidle');
+	await page.locator('input[name="sku"]').waitFor({ state: 'visible' });
 	await selectMultiselect(page, 'type', 'Simple');
 	await selectMultiselect(page, 'attribute_family_id');
 	await page.locator('input[name="sku"]').fill(sku);
 	await page.getByRole('button', { name: 'Save Product' }).click();
 	await page.waitForURL(/\/admin\/catalog\/products\/edit\//, { waitUntil: 'domcontentloaded', timeout: 30000 });
-	await page.waitForLoadState('networkidle').catch(() => {});
+	await waitForAppReady(page);
 
 	return sku;
 }
@@ -283,8 +292,10 @@ async function deleteProductBySku(page, sku) {
 	}
 
 	await deleteIcon.click();
+
+	const deleted = page.waitForResponse((response) => response.request().method() === 'DELETE');
 	await page.getByRole('button', { name: 'Delete' }).click();
-	await page.waitForLoadState('networkidle').catch(() => {});
+	await deleted;
 }
 
 test.describe('Product Edit — rich association Links (bundle_kit custom type)', () => {
@@ -353,9 +364,10 @@ test.describe('Product Edit — rich association Links (bundle_kit custom type)'
 				// rendered DOM never gets a real `placeholder` attribute (see task report).
 				const searchInput = typeSearchDrawer.locator('input[type="text"]').first();
 				await searchInput.fill(BUNDLE_KIT_CODE);
-				await adminPage.waitForTimeout(600);
 
-				await typeSearchDrawer.locator('[role="checkbox"]').filter({ hasText: BUNDLE_KIT_NAME }).first().click();
+				const typeCheckbox = typeSearchDrawer.locator('[role="checkbox"]').filter({ hasText: BUNDLE_KIT_NAME }).first();
+				await expect(typeCheckbox).toBeVisible();
+				await typeCheckbox.click();
 				await typeSearchDrawer.getByText('Add', { exact: true }).click();
 
 				await expect(bundleKitTab).toBeVisible();
