@@ -168,5 +168,8 @@ jobs:
           path: |
             tests/e2e-pw/playwright-report
             tests/e2e-pw/test-results
+            storage/logs/*.log
+            /tmp/server.log
+            /tmp/queue.log
             storage/logs/laravel.log
           retention-days: 1
