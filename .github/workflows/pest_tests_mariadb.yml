@@ -1,9 +1,14 @@
 name: Pest Tests (MariaDB)
 
+# A pull request gets the fast signal (code style, static analysis, translations
+# and Pest on MySQL); the full database matrix and the end-to-end suite run in
+# the merge queue and on the release lines, so they gate every merge without
+# holding up review.
 on:
   push:
     branches: [master, '3.0', '3.x']
   pull_request:
+  merge_group:
   workflow_dispatch:
 
 concurrency:
@@ -15,7 +20,7 @@ permissions:
 
 jobs:
   pest-mariadb:
-    if: github.repository == 'unopim/unopim'
+    if: github.repository == 'unopim/unopim' && github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
     name: Pest Tests (MariaDB ${{ matrix.mariadb }})
     strategy:
@@ -106,3 +111,17 @@ jobs:
           name: pest-mariadb-${{ matrix.mariadb }}-teamcity
           path: pest-teamcity.log
           if-no-files-found: ignore
+
+  # A skipped matrix job reports its check under the unexpanded name, which can
+  # never satisfy a required check. This stand-in reports the expanded names on
+  # a pull request so it can enter the merge queue, where the real job runs.
+  pest-mariadb-pull-request:
+    if: github.repository == 'unopim/unopim' && github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    name: Pest Tests (MariaDB ${{ matrix.mariadb }})
+    strategy:
+      matrix:
+        mariadb: ['10.11', '11.8']
+    steps:
+      - name: Defer to the merge queue
+        run: echo "::notice::Pest on MariaDB runs in the merge queue and on the release lines."

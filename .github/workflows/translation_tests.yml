@@ -6,6 +6,7 @@ on:
   push:
     branches: [master, '3.x']
   pull_request:
+  merge_group:
 
 # head_ref is the branch on a pull request and empty elsewhere, which keeps a
 # branch's runs in one group no matter which event opened them.
