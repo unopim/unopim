@@ -1,6 +1,7 @@
 const path = require('path');
 const { test, expect } = require('../../utils/fixtures');
-const { clickSave, generateUid, searchInDataGrid, closeDropdown } = require('../../utils/helpers');
+const { clickSave, generateUid, closeDropdown } = require('../../utils/helpers');
+const { deleteProductBySku } = require('../../utils/product-helpers');
 
 const STORAGE_STATE = path.resolve(__dirname, '../..', process.env.PW_STATE_DIR || '.state', 'admin-auth.json');
 const BASE = process.env.BASE_URL || 'http://127.0.0.1:8000';
@@ -324,20 +325,6 @@ async function saveProduct(page) {
   const target = (await bar.isVisible().catch(() => false)) ? bar : named;
   await target.scrollIntoViewIfNeeded().catch(() => {});
   await target.evaluate((el) => el.click());
-}
-
-async function deleteProductBySku(page, sku) {
-  await gotoAdmin(page, '/admin/catalog/products');
-  await searchInDataGrid(page, sku);
-
-  const deleteIcon = page.locator('span[title="Delete"]').first();
-  if (!(await deleteIcon.isVisible({ timeout: 3000 }).catch(() => false))) {
-    return;
-  }
-
-  await deleteIcon.click();
-  await page.getByRole('button', { name: 'Delete' }).click();
-  await page.locator('#app').getByText(/Product deleted successfully/i).waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
 }
 
 test.describe('Measurement - Attribute Family', () => {

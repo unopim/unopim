@@ -1,11 +1,10 @@
 const { test, expect } = require('../../utils/fixtures');
-const { clickSave, clickSaveAndExpect } = require('../../utils/helpers');
+const { clickSave, clickSaveAndExpect, gotoPage } = require('../../utils/helpers');
 
-test.describe('Unsaved changes bar', () => {
+test.describe('Unsaved changes bar', { tag: '@global-state' }, () => {
   const URL = '/admin/configuration/system/system.email';
 
-  const gotoSettings = (page) =>
-    page.goto(URL, { waitUntil: 'networkidle', timeout: 60000 }).catch(() => {});
+  const gotoSettings = (page) => gotoPage(page, URL);
 
   const bar = (page) => page.getByText('You have unsaved changes');
   const firstField = (page) =>
@@ -125,7 +124,7 @@ test.describe('Unsaved changes bar', () => {
     let nativeDialog = false;
     adminPage.on('dialog', async (d) => { nativeDialog = true; await d.dismiss().catch(() => {}); });
 
-    await adminPage.goto('/admin/dashboard', { waitUntil: 'networkidle', timeout: 60000 }).catch(() => {});
+    await gotoPage(adminPage, '/admin/dashboard');
 
     // The sidebar is icon-only by default; its Configuration flyout (and the
     // System Settings link inside it) only renders on hover.
@@ -171,15 +170,13 @@ test.describe('Unsaved changes bar', () => {
     await field.fill(original + 'Q');
     await expect(bar(adminPage)).toBeVisible({ timeout: 10000 });
 
-    await clickSave(adminPage, 'Save changes');
-    await adminPage.waitForLoadState('networkidle').catch(() => {});
+    await clickSaveAndExpect(adminPage, 'Save changes', /Settings saved successfully/i);
 
     await expect(adminPage.getByText('Leave this page?', { exact: false })).toBeHidden();
 
     await gotoSettings(adminPage);
     await firstField(adminPage).fill(original);
-    await clickSave(adminPage, 'Save changes');
-    await adminPage.waitForLoadState('networkidle').catch(() => {});
+    await clickSaveAndExpect(adminPage, 'Save changes', /Settings saved successfully/i);
   });
 
   test('navigating away while dirty registers a beforeunload guard', async ({ adminPage }) => {
@@ -203,7 +200,7 @@ test.describe('Unsaved changes bar', () => {
   });
 
   test('confirm stays open on the user edit page after a save fails validation', async ({ adminPage }) => {
-    await adminPage.goto('/admin/settings/users/edit/1', { waitUntil: 'networkidle', timeout: 60000 }).catch(() => {});
+    await gotoPage(adminPage, '/admin/settings/users/edit/1');
 
     const email = adminPage.locator('input[name="email"]');
     await email.waitFor({ state: 'visible', timeout: 15000 });
