@@ -1,8 +1,9 @@
 // utils/fixtures.js
 const base = require('@playwright/test');
+const fs = require('fs');
 const path = require('path');
 
-const STORAGE_STATE = path.resolve(__dirname, '..', process.env.PW_STATE_DIR || '.state', 'admin-auth.json');
+const STATE_DIR = path.resolve(__dirname, '..', process.env.PW_STATE_DIR || '.state');
 
 /**
  * Init-script injected into every page to hide overlays that collide with the
@@ -29,12 +30,36 @@ const HIDE_WIDGET_SCRIPT = `
 
 exports.test = base.test.extend({
   /**
+   * One admin session per Playwright worker. Workers running in parallel must
+   * not share a session: Laravel keeps flash data (success/error toasts and the
+   * ajax-form error bag) in the session, so a flash written by one worker's
+   * request is consumed or reported by another worker's request — a save that
+   * succeeded then answers 422 with someone else's error, or loses its toast.
+   */
+  workerStorageState: [async ({ browser }, use, workerInfo) => {
+    const file = path.join(STATE_DIR, `admin-auth-worker-${workerInfo.parallelIndex}.json`);
+
+    if (! fs.existsSync(file)) {
+      const { login } = await import('./login.js');
+      const page = await browser.newPage({ storageState: undefined });
+
+      await login(page);
+      await page.context().storageState({ path: file });
+      await page.context().close();
+    }
+
+    await use(file);
+  }, { scope: 'worker' }],
+
+  storageState: ({ workerStorageState }, use) => use(workerStorageState),
+
+  /**
    * Authenticated admin page fixture (widget hidden).
    * Creates a browser context with pre-saved admin session.
    * Each test navigates to its own page via navigateTo().
    */
-  adminPage: async ({ browser }, use) => {
-    const context = await browser.newContext({ storageState: STORAGE_STATE });
+  adminPage: async ({ browser, storageState }, use) => {
+    const context = await browser.newContext({ storageState });
     await context.addInitScript(HIDE_WIDGET_SCRIPT);
     const page = await context.newPage();
 
@@ -55,8 +80,8 @@ exports.test = base.test.extend({
    * restoreState() reads this and keeps the panel closed regardless of the
    * server-side default.
    */
-  adminPageWithWidget: async ({ browser }, use) => {
-    const context = await browser.newContext({ storageState: STORAGE_STATE });
+  adminPageWithWidget: async ({ browser, storageState }, use) => {
+    const context = await browser.newContext({ storageState });
     await context.addInitScript(() => {
       try {
         sessionStorage.setItem('agenting_pim_state', JSON.stringify({ isOpen: false }));
@@ -78,8 +103,8 @@ exports.test = base.test.extend({
    * browser would, so tests can assert that a manually-closed panel stays closed
    * after PJAX navigation (navigation.js unmounts/remounts the Vue app per page).
    */
-  adminPageWithWidgetNoSeed: async ({ browser }, use) => {
-    const context = await browser.newContext({ storageState: STORAGE_STATE });
+  adminPageWithWidgetNoSeed: async ({ browser, storageState }, use) => {
+    const context = await browser.newContext({ storageState });
     const page = await context.newPage();
 
     await use(page);
