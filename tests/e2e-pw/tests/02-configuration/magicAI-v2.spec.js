@@ -1,5 +1,6 @@
 const { test, expect } = require('../../utils/fixtures');
 const { clickSave, gotoPage, generateUid, closeDropdown, visiblePaginationSymbols } = require('../../utils/helpers');
+const { ensureAiPlatform } = require('../../utils/magic-ai-helpers');
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 const MAGIC_AI_CONFIG_URL = '/admin/magic-ai/settings';
@@ -125,10 +126,9 @@ test('3.3 - Text Generation Default Platform lists configured platforms with pro
 
 test('3.4 - Text Generation shows help text about default platform with asterisk', async ({ adminPage }) => {
   test.skip(!OPENAI_API_KEY, 'OPENAI_API_KEY not set — no platforms available');
+  await ensureAiPlatform(adminPage, OPENAI_API_KEY);
   await gotoPage(adminPage, MAGIC_AI_CONFIG_URL);
   const helpText = adminPage.locator('#app').getByText(/Leave empty to use the platform marked as default/).first();
-  const visible = await helpText.isVisible({ timeout: 3000 }).catch(() => false);
-  test.skip(!visible, 'Magic AI platform help text not rendered (no usable platform in env)');
   await expect(helpText).toBeVisible();
   await expect(adminPage.locator('#app').getByText(/Platforms marked with \* are default/).first()).toBeVisible();
 });

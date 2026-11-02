@@ -11,7 +11,6 @@ const {
   saveProduct,
   settingsIdByCode,
   fetchGridRows,
-  gridRecords,
   passportLocaleMap,
   publishAndWait,
   passportRowForSku,

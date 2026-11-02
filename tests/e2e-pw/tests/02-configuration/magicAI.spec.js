@@ -14,6 +14,7 @@ const {
   clickEditOnRow,
   closeDropdown,
 } = require('../../utils/helpers');
+const { ensureMagicAITextEnabled, ensureMagicAITranslationEnabled } = require('../../utils/magic-ai-helpers');
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 
@@ -21,84 +22,6 @@ const MAGIC_AI_CONFIG_URL = '/admin/magic-ai/settings';
 const MAGIC_AI_PLATFORM_URL = '/admin/magic-ai/platforms';
 const MAGIC_AI_PROMPT_URL = '/admin/magic-ai/prompts';
 const MAGIC_AI_SYSTEM_PROMPT_URL = '/admin/magic-ai/system-prompts';
-
-async function ensureMagicAITextEnabled(adminPage) {
-  await gotoPage(adminPage, MAGIC_AI_CONFIG_URL);
-
-  const cbSelector = 'input[type="checkbox"][name="general[magic_ai][settings][enabled]"]';
-  await adminPage.locator(cbSelector).first().waitFor({ state: 'attached', timeout: 10000 });
-
-  const result = await adminPage.evaluate(async () => {
-    // Page has two forms (logout + config); pick the one owning the Magic AI checkbox.
-    const cb = document.querySelector('input[type="checkbox"][name="general[magic_ai][settings][enabled]"]');
-    if (!cb) return { ok: false, reason: 'no-cb' };
-    const form = cb.closest('form');
-    if (!form) return { ok: false, reason: 'no-form' };
-
-    // Force the boolean toggle on, regardless of the current Vue render state.
-    cb.checked = true;
-    cb.dispatchEvent(new Event('change', { bubbles: true }));
-
-    const fd = new FormData(form);
-    const xsrf = (document.cookie.split('; ').find((c) => c.startsWith('XSRF-TOKEN=')) || '').split('=')[1] || '';
-    const action = form.getAttribute('action') || window.location.pathname;
-    const res = await fetch(action || window.location.pathname, {
-      method:      'POST',
-      credentials: 'same-origin',
-      headers: {
-        'X-XSRF-TOKEN': decodeURIComponent(xsrf),
-        Accept:         'text/html,*/*',
-      },
-      body:     fd,
-      redirect: 'follow',
-    });
-    return { ok: res.ok, status: res.status };
-  });
-
-  expect(result, `Magic AI config save failed: ${JSON.stringify(result)}`).toMatchObject({ ok: true });
-
-  await gotoPage(adminPage, MAGIC_AI_CONFIG_URL);
-  await expect(adminPage.locator(cbSelector).first()).toBeChecked({ timeout: 10000 });
-}
-
-// Enable Magic AI translation config; the product "More Actions" dropdown is gated by it.
-// Direct-POST like ensureMagicAITextEnabled to bypass the Vue toggle render race.
-async function ensureMagicAITranslationEnabled(adminPage) {
-  await gotoPage(adminPage, MAGIC_AI_CONFIG_URL);
-
-  const cbSelector = 'input[type="checkbox"][name="general[magic_ai][translation][enabled]"]';
-  await adminPage.locator(cbSelector).first().waitFor({ state: 'attached', timeout: 10000 });
-
-  const result = await adminPage.evaluate(async () => {
-    const cb = document.querySelector('input[type="checkbox"][name="general[magic_ai][translation][enabled]"]');
-    if (!cb) return { ok: false, reason: 'no-cb' };
-    const form = cb.closest('form');
-    if (!form) return { ok: false, reason: 'no-form' };
-
-    cb.checked = true;
-    cb.dispatchEvent(new Event('change', { bubbles: true }));
-
-    const fd = new FormData(form);
-    const xsrf = (document.cookie.split('; ').find((c) => c.startsWith('XSRF-TOKEN=')) || '').split('=')[1] || '';
-    const action = form.getAttribute('action') || window.location.pathname;
-    const res = await fetch(action || window.location.pathname, {
-      method:      'POST',
-      credentials: 'same-origin',
-      headers: {
-        'X-XSRF-TOKEN': decodeURIComponent(xsrf),
-        Accept:         'text/html,*/*',
-      },
-      body:     fd,
-      redirect: 'follow',
-    });
-    return { ok: res.ok, status: res.status };
-  });
-
-  expect(result, `Magic AI translation config save failed: ${JSON.stringify(result)}`).toMatchObject({ ok: true });
-
-  await gotoPage(adminPage, MAGIC_AI_CONFIG_URL);
-  await expect(adminPage.locator(cbSelector).first()).toBeChecked({ timeout: 10000 });
-}
 
 // Open datagrid on Prompt pages: "Create" loads the grid AND a modal, so close the modal to reach the grid.
 async function openDatagrid(adminPage, createBtnName) {

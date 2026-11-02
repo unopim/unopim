@@ -1,5 +1,5 @@
 const { test, expect } = require('../utils/fixtures');
-const { navigateTo, clickSave, generateUid, closeDropdown } = require('../utils/helpers');
+const { navigateTo, generateUid, closeDropdown } = require('../utils/helpers');
 const { deleteProductBySku } = require('../utils/product-helpers');
 
 /** Select a value from a Vue-multiselect dropdown by field name (mirrors products.spec.js). */

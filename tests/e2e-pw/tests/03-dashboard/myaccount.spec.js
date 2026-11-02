@@ -1,4 +1,4 @@
-const { test, expect } = require('../../utils/fixtures');
+const { test } = require('../../utils/fixtures');
 const { clickSave, navigateTo, clickAndWaitForPage } = require('../../utils/helpers');
 
 test.describe('UnoPim MyAccount', () => {
