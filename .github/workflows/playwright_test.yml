@@ -1,11 +1,17 @@
 name: Playwright Tests
 
+# A pull request gets the fast signal (code style, static analysis, translations
+# and Pest on MySQL); the full database matrix and the end-to-end suite run in
+# the merge queue and on the release lines, so they gate every merge without
+# holding up review.
+#
 # A branch push and its own pull request are the same commit, so pushes are
 # limited to the release lines and everything else arrives through the PR event.
 on:
   push:
     branches: [master, '3.x']
   pull_request:
+  merge_group:
 
 # head_ref is the branch on a pull request and empty elsewhere, which keeps a
 # branch's runs in one group no matter which event opened them.
@@ -21,7 +27,7 @@ env:
 
 jobs:
   playwright_tests:
-    if: github.repository == 'unopim/unopim'
+    if: github.repository == 'unopim/unopim' && github.event_name != 'pull_request'
     name: Playwright E2E | Shard ${{ matrix.shard-index }}/${{ matrix.shard-total }}
     runs-on: ubuntu-24.04
 
@@ -173,3 +179,18 @@ jobs:
             /tmp/queue.log
             storage/logs/laravel.log
           retention-days: 1
+
+  # A skipped matrix job reports its check under the unexpanded name, which can
+  # never satisfy a required check. This stand-in reports the expanded names on
+  # a pull request so it can enter the merge queue, where the real job runs.
+  playwright_tests_pull_request:
+    if: github.repository == 'unopim/unopim' && github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    name: Playwright E2E | Shard ${{ matrix.shard-index }}/${{ matrix.shard-total }}
+    strategy:
+      matrix:
+        shard-index: [1,2,3,4,5,6,7,8]
+        shard-total: [8]
+    steps:
+      - name: Defer to the merge queue
+        run: echo "::notice::Playwright E2E runs in the merge queue and on the release lines."

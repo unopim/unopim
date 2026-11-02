@@ -1,11 +1,17 @@
 name: Pest Tests (PostgreSQL)
 
+# A pull request gets the fast signal (code style, static analysis, translations
+# and Pest on MySQL); the full database matrix and the end-to-end suite run in
+# the merge queue and on the release lines, so they gate every merge without
+# holding up review.
+#
 # A branch push and its own pull request are the same commit, so pushes are
 # limited to the release lines and everything else arrives through the PR event.
 on:
   push:
     branches: [master, '3.x']
   pull_request:
+  merge_group:
 
 # head_ref is the branch on a pull request and empty elsewhere, which keeps a
 # branch's runs in one group no matter which event opened them.
@@ -18,7 +24,7 @@ permissions:
 
 jobs:
   pest-pgsql:
-    if: github.repository == 'unopim/unopim'
+    if: github.repository == 'unopim/unopim' && github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
     name: Pest Tests (PostgreSQL)
     continue-on-error: true
@@ -93,7 +99,7 @@ jobs:
         run: vendor/bin/pest --parallel --processes=4 --colors=always --testsuite "Api Feature Test,Core Unit Test,DataTransfer Unit Test,User Feature Test,Admin Feature Test,Installer Feature Test,ElasticSearch Feature Test,Completeness Feature Test,Product Unit Test,Product Feature Test,Attribute Unit Test,Category Unit Test,Measurement Feature Test,AiAgent Unit Test,AppUrlGuard Unit Test,Webhook Unit Test,Webhook Feature Test,AppUrlGuard Feature Test,Resource Unit Test,Resource Feature Test,Publication Feature Test,ProductPassport Feature Test"
 
   pest-pgsql-elasticsearch:
-    if: github.repository == 'unopim/unopim'
+    if: github.repository == 'unopim/unopim' && github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
     name: Pest Tests (PostgreSQL + Elasticsearch)
     continue-on-error: true
