@@ -9,12 +9,20 @@
 </p>
 
 <p align="center">
-  <a href="https://packagist.org/packages/unopim/unopim"><img src="https://poser.pugx.org/unopim/unopim/d/total.svg" alt="Total Downloads"></a>
   <a href="https://packagist.org/packages/unopim/unopim"><img src="https://poser.pugx.org/unopim/unopim/v/stable.svg" alt="Latest Stable Version"></a>
+  <a href="https://packagist.org/packages/unopim/unopim"><img src="https://poser.pugx.org/unopim/unopim/d/total.svg" alt="Total Downloads"></a>
+  <a href="https://hub.docker.com/r/webkul/unopim"><img src="https://img.shields.io/docker/pulls/webkul/unopim?logo=docker&logoColor=white" alt="Docker Pulls"></a>
+  <a href="https://packagist.org/packages/unopim/unopim"><img src="https://img.shields.io/packagist/dependency-v/unopim/unopim/php?logo=php&logoColor=white" alt="PHP Version"></a>
+  <a href="https://laravel.com/"><img src="https://img.shields.io/packagist/dependency-v/unopim/unopim/laravel/framework?label=laravel&logo=laravel&logoColor=white" alt="Laravel Version"></a>
   <a href="https://packagist.org/packages/unopim/unopim"><img src="https://poser.pugx.org/unopim/unopim/license.svg" alt="License"></a>
+</p>
+
+<p align="center">
   <a href="https://github.com/unopim/unopim/actions"><img src="https://img.shields.io/github/actions/workflow/status/unopim/unopim/pest_tests.yml?branch=3.x&label=tests" alt="Tests"></a>
   <a href="https://github.com/unopim/unopim/actions"><img src="https://img.shields.io/github/actions/workflow/status/unopim/unopim/linting_tests.yml?branch=3.x&label=lint" alt="Lint"></a>
+  <a href="https://sonarcloud.io/summary/new_code?id=unopim_unopim"><img src="https://sonarcloud.io/api/project_badges/measure?project=unopim_unopim&metric=alert_status" alt="Quality Gate Status"></a>
   <a href="https://www.bestpractices.dev/projects/16085"><img src="https://www.bestpractices.dev/projects/16085/badge" alt="OpenSSF Best Practices"></a>
+  <a href="https://scorecard.dev/viewer/?uri=github.com/unopim/unopim"><img src="https://api.scorecard.dev/projects/github.com/unopim/unopim/badge" alt="OpenSSF Scorecard"></a>
 </p>
 
 <p align="center">
