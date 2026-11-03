@@ -25,7 +25,6 @@ class CompletenessFilter extends AbstractPropertyFilter
     ];
 
     public function __construct(
-        protected ChannelCompletenessColumn $channelCompletenessColumn,
         array $supportedProperties = [self::PROPERTY],
         array $allowedOperators = [
             FilterOperators::EQUAL,
@@ -36,10 +35,12 @@ class CompletenessFilter extends AbstractPropertyFilter
             FilterOperators::RANGE,
             FilterOperators::IS_EMPTY,
             FilterOperators::IS_NOT_EMPTY,
-        ]
+        ],
+        protected ?ChannelCompletenessColumn $channelCompletenessColumn = null,
     ) {
         $this->allowedOperators = $allowedOperators;
         $this->supportedProperties = $supportedProperties;
+        $this->channelCompletenessColumn ??= app(ChannelCompletenessColumn::class);
     }
 
     /**
@@ -81,16 +82,7 @@ class CompletenessFilter extends AbstractPropertyFilter
     }
 
     /**
-     * When a channel is explicitly requested (e.g. a dashboard drill-down
-     * link), filter on that channel+locale's own `product_completeness`
-     * score instead of the product's cross-channel average, so "< 80" means
-     * "incomplete for this channel" rather than "incomplete on average
-     * everywhere".
-     *
-     * Relies on `ProductDataGrid::prepareQueryBuilder()` having already left
-     * joined `product_completeness` under that exact condition — both read
-     * the same `ChannelCompletenessColumn::resolve()` so they always agree
-     * on whether that join is present.
+     * Column the comparison runs against, scoped to the requested channel when there is one.
      */
     protected function resolveColumn(array $options): string
     {
