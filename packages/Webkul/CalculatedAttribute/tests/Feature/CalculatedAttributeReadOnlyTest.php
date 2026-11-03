@@ -85,10 +85,8 @@ it('discards a calculated column instead of writing it during import', function 
         $handle->setValue($importer, $value);
     };
 
-    // The property is typed to the JobTrack contract, so a stub will not do.
     $setPrivate('import', new JobTrack(['images_directory_path' => null]));
 
-    // Pre-seed the caches so the pass runs without a real family in the DB.
     $setPrivate('typeFamilyAttributes', [
         'simple' => ['fam' => collect([$calculated, $plain])],
     ]);

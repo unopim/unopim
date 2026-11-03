@@ -49,7 +49,6 @@ function calcFormFixture(?string $formula = null): array
         'attribute_family_id' => $family->id,
     ]);
 
-    // `values` is not mass assignable on Product, so set it explicitly.
     $product->values = ['common' => [$plainCode => 'ACME', 'sku' => $sku]];
     $product->save();
 

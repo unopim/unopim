@@ -42,7 +42,6 @@ function calcApiProduct(array $values): Product
         'attribute_family_id' => $family->id,
     ]);
 
-    // `values` is not mass assignable on Product, so set it explicitly.
     $values['common']['sku'] = $sku;
     $product->values = $values;
     $product->save();

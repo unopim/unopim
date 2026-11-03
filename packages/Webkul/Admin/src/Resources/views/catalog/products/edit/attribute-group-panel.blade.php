@@ -15,11 +15,6 @@
     $groupLabel = $group->name;
     $groupLabel = empty($groupLabel) ? "[{$group->code}]" : $groupLabel;
 
-    /**
-     * A view composer may supply these instead — that is how a package whose
-     * attribute values are derived rather than stored gets them in front of the
-     * fields without this template knowing the package exists.
-     */
     $fieldValues = $fieldValues ?? $product->values;
 @endphp
 
