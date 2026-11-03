@@ -311,5 +311,6 @@ return [
         'completed' => 'Conclusão da execução do trabalho',
         'stalled'   => 'A tarefa deixou de responder durante mais de :minutes minutos e foi marcada como falhada. O processo que a executava foi provavelmente terminado.',
         'reaped'    => ':count tarefas bloqueadas foram marcadas como falhadas.',
+        'stopped'   => 'A importação foi interrompida após a validação com :count erros. Nenhuma linha foi importada.',
     ],
 ];

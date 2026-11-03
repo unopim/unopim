@@ -311,5 +311,6 @@ return [
         'completed' => 'Työn suoritus saatiin päätökseen',
         'stalled'   => 'Työ lakkasi vastaamasta yli :minutes minuutin ajan ja merkittiin epäonnistuneeksi. Sen suoritusprosessi todennäköisesti keskeytyi.',
         'reaped'    => ':count jumittunutta työtä merkittiin epäonnistuneiksi.',
+        'stopped'   => 'Tuonti pysäytettiin validoinnin jälkeen, virheitä :count. Yhtään riviä ei tuotu.',
     ],
 ];
