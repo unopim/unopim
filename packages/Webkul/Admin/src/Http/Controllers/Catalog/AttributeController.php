@@ -10,14 +10,13 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Catalog\AttributeDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Http\Requests\AttributeStoreForm;
+use Webkul\Admin\Http\Requests\AttributeUpdateForm;
 use Webkul\Admin\Http\Requests\SelectableMassDestroyRequest;
 use Webkul\Attribute\Enums\SwatchTypeEnum;
 use Webkul\Attribute\Repositories\AttributeRepository;
-use Webkul\Attribute\Rules\NotSupportedAttributes;
-use Webkul\Attribute\Rules\SwatchTypes;
-use Webkul\CalculatedAttribute\Rules\ValidFormula;
+use Webkul\Attribute\Support\AttributeDeletionGuard;
 use Webkul\Core\Repositories\LocaleRepository;
-use Webkul\Core\Rules\Code;
 use Webkul\Product\Repositories\ProductRepository;
 
 class AttributeController extends Controller
@@ -31,8 +30,6 @@ class AttributeController extends Controller
     public const TEXT = 'text';
 
     public const TEXTAREA = 'textarea';
-
-    public const CALCULATED = 'calculated';
 
     /**
      * Create a new controller instance.
@@ -70,26 +67,13 @@ class AttributeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(): RedirectResponse
+    public function store(AttributeStoreForm $request): RedirectResponse
     {
-        $this->validate(request(), [
-            'code'        => ['required', 'unique:attributes,code', new Code, new NotSupportedAttributes],
-            'type'        => 'required',
-            'swatch_type' => [
-                'required_if:type,select,multiselect',
-                'prohibited_unless:type,select,multiselect',
-                new SwatchTypes,
-            ],
-            'formula' => $this->formulaRules((string) request('code'), request('type')),
-        ]);
-
-        $requestData = request()->all();
+        $requestData = $request->all();
 
         if (($requestData['validation'] ?? null) === 'none') {
             $requestData['validation'] = null;
         }
-
-        $requestData['formula'] = $this->normalizeFormula($requestData);
 
         $requestData['ai_translate'] = self::AI_TRANSLATE_DISABLED;
 
@@ -129,32 +113,13 @@ class AttributeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(int $id): RedirectResponse
+    public function update(AttributeUpdateForm $request, int $id): RedirectResponse
     {
-        /*
-         * The type is not editable after creation, so the stored one — not the
-         * posted one — decides whether this attribute carries a formula.
-         */
-        $storedType = $this->attributeRepository->find($id)?->type;
-
-        $this->validate(request(), [
-            'code'        => ['required', 'unique:attributes,code,'.$id, new Code],
-            'type'        => 'required',
-            'swatch_type' => [
-                'required_if:type,select,multiselect',
-                'prohibited_unless:type,select,multiselect',
-                new SwatchTypes,
-            ],
-            'formula' => $this->formulaRules((string) request('code'), $storedType),
-        ]);
-
-        $requestData = request()->except(['type', 'code', 'value_per_locale', 'value_per_channel', 'is_unique']);
+        $requestData = $request->except(['type', 'code', 'value_per_locale', 'value_per_channel', 'is_unique']);
 
         if (empty($requestData['ai_translate'])) {
             $requestData['ai_translate'] = self::AI_TRANSLATE_DISABLED;
         }
-
-        $requestData['formula'] = $this->normalizeFormula($requestData + ['type' => $storedType]);
 
         Event::dispatch('catalog.attribute.update.before', $id);
 
@@ -165,42 +130,6 @@ class AttributeController extends Controller
         session()->flash('success', trans('admin::app.catalog.attributes.update-success'));
 
         return redirect()->route('admin.catalog.attributes.edit', $id);
-    }
-
-    /**
-     * Validation rules for the formula field.
-     *
-     * A formula is required for a calculated attribute — one without a formula
-     * would be an attribute that silently renders empty everywhere — and
-     * ignored for every other type, since the field is posted by a hidden
-     * textarea whenever the form is submitted.
-     *
-     * @return array<int, mixed>
-     */
-    protected function formulaRules(string $code, mixed $type): array
-    {
-        if ($type !== self::CALCULATED) {
-            return ['nullable'];
-        }
-
-        return ['required', 'string', new ValidFormula($code)];
-    }
-
-    /**
-     * The formula to persist: trimmed for a calculated attribute, null for
-     * anything else so a type change cannot leave a stale formula behind.
-     *
-     * @param  array<string, mixed>  $data
-     */
-    protected function normalizeFormula(array $data): ?string
-    {
-        if (($data['type'] ?? null) !== self::CALCULATED) {
-            return null;
-        }
-
-        $formula = trim((string) ($data['formula'] ?? ''));
-
-        return $formula === '' ? null : $formula;
     }
 
     /**
@@ -220,6 +149,12 @@ class AttributeController extends Controller
             return new JsonResponse([
                 'message' => trans('admin::app.catalog.attributes.index.datagrid.delete-attribute-failure'),
             ], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        $objection = AttributeDeletionGuard::reason($attribute);
+
+        if ($objection !== null) {
+            return new JsonResponse(['message' => $objection], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         try {
@@ -279,6 +214,12 @@ class AttributeController extends Controller
                 }
 
                 if ($superAttributeIds->has($index)) {
+                    $inUse++;
+
+                    continue;
+                }
+
+                if (AttributeDeletionGuard::reason($attribute) !== null) {
                     $inUse++;
 
                     continue;
