@@ -6,6 +6,8 @@ class OpenAiModel
 {
     /**
      * Determine if the model is an OpenAI reasoning model (o-series, gpt-5 and later).
+     *
+     * Azure names GPT-3.5 deployments "gpt-35-turbo", so major version 35 is excluded.
      */
     public static function isReasoning(string $model): bool
     {
@@ -15,6 +17,16 @@ class OpenAiModel
             return false;
         }
 
-        return (bool) preg_match('/^chat-latest|^o[1-9]\b|^o[1-9]-|^gpt-([5-9]|1\d)/', $model);
+        if (preg_match('/^chat-latest|^o[1-9]\b|^o[1-9]-/', $model)) {
+            return true;
+        }
+
+        if (! preg_match('/^gpt-(\d+)/', $model, $matches)) {
+            return false;
+        }
+
+        $major = (int) $matches[1];
+
+        return $major >= 5 && $major !== 35;
     }
 }

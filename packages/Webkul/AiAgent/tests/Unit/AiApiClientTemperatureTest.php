@@ -46,6 +46,8 @@ describe('AiApiClient temperature for OpenAI models', function () {
         'GPT-6-mini',
         'gpt-7',
         'gpt-10-mini',
+        'gpt-20',
+        'gpt-21-mini',
     ]);
 
     it('sends temperature for models that accept it', function (string $model) {
@@ -55,6 +57,7 @@ describe('AiApiClient temperature for OpenAI models', function () {
         'gpt-4.1-mini',
         'gpt-3.5-turbo',
         'gpt-35-turbo',
+        'gpt-35-turbo-16k',
         'gpt-5-chat-latest',
     ]);
 });

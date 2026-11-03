@@ -108,6 +108,8 @@ it('does NOT send temperature for gpt-6 and later reasoning models', function (s
     'GPT-6.5',
     'gpt-7',
     'gpt-10-mini',
+    'gpt-20',
+    'gpt-21-mini',
 ]);
 
 it('sends temperature for chat and pre-reasoning OpenAI models', function (string $model) {
