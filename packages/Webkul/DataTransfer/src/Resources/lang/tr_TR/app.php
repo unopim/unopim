@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'Nitelik seçenek kodu :code zaten kullanımda.',
                     'code_not_found_to_delete' => 'Silinecek nitelik seçenek kodu bulunamadı.',
+                    'ambiguous-code-to-delete' => 'Seçenek kodu :code birden fazla nitelikte mevcut; attribute_code ekleyin.',
                     'locale-not-exist'         => 'Yerel ":code" mevcut değil.',
                     'invalid-attribute'        => 'Nitelik ":code" mevcut değil.',
                 ],
@@ -311,5 +312,6 @@ return [
         'completed' => 'İş yürütme tamamlandı',
         'stalled'   => 'İş :minutes dakikadan uzun süre yanıt vermedi ve başarısız olarak işaretlendi. Onu çalıştıran işlem büyük olasılıkla sonlandırıldı.',
         'reaped'    => ':count takılı kalan iş başarısız olarak işaretlendi.',
+        'stopped'   => 'İçe aktarma, doğrulamada :count hata bulunduğu için durduruldu. Hiçbir satır içe aktarılmadı.',
     ],
 ];

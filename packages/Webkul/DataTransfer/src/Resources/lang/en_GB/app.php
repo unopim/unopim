@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'Attribute option code :code is already in use.',
                     'code_not_found_to_delete' => 'Attribute option code not found for deletion.',
+                    'ambiguous-code-to-delete' => 'Option code :code exists on more than one attribute; add attribute_code.',
                     'locale-not-exist'         => 'Locale ":code" does not exist.',
                     'invalid-attribute'        => 'Attribute ":code" does not exist.',
                 ],
@@ -311,5 +312,6 @@ return [
         'completed' => 'Job execution completed',
         'stalled'   => 'The job stopped responding for more than :minutes minutes and was marked as failed. Its worker was most likely terminated.',
         'reaped'    => 'Marked :count stalled jobs as failed.',
+        'stopped'   => 'Import stopped after validation with :count errors. No rows were imported.',
     ],
 ];

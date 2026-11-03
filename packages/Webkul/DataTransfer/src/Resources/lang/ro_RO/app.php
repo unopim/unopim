@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'Codul opțiunii atributului :code este deja utilizat.',
                     'code_not_found_to_delete' => 'Codul opțiunii atributului nu a fost găsit pentru ștergere.',
+                    'ambiguous-code-to-delete' => 'Codul opțiunii :code există la mai multe atribute; adăugați attribute_code.',
                     'locale-not-exist'         => 'Numele de localizare ":code" nu există.',
                     'invalid-attribute'        => 'Atributul ":code" nu există.',
                 ],
@@ -311,5 +312,6 @@ return [
         'completed' => 'Finalizare executie job',
         'stalled'   => 'Sarcina nu a mai răspuns timp de peste :minutes minute și a fost marcată ca eșuată. Procesul care o executa a fost probabil oprit.',
         'reaped'    => 'Au fost marcate :count sarcini blocate ca eșuate.',
+        'stopped'   => 'Importul a fost oprit după validare cu :count erori. Niciun rând nu a fost importat.',
     ],
 ];

@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'Ang code ng opsyon ng tampok na :code ay ginagamit na.',
                     'code_not_found_to_delete' => 'Hindi natagpuan ang code ng opsyon ng tampok para burahin.',
+                    'ambiguous-code-to-delete' => 'Ang code ng opsyon na :code ay nasa higit sa isang tampok; idagdag ang attribute_code.',
                     'locale-not-exist'         => 'Ang locale na ":code" ay hindi umiiral.',
                     'invalid-attribute'        => 'Ang tampok na ":code" ay hindi umiiral.',
                 ],
@@ -311,5 +312,6 @@ return [
         'completed' => 'Nagtapos ang trabaho sa trabaho',
         'stalled'   => 'Huminto sa pagtugon ang trabaho nang mahigit :minutes minuto at minarkahan itong nabigo. Malamang na natapos ang proseso na nagpapatakbo nito.',
         'reaped'    => 'Minarkahang nabigo ang :count na na-stuck na trabaho.',
+        'stopped'   => 'Itinigil ang import pagkatapos ng validation na may :count na error. Walang row na na-import.',
     ],
 ];

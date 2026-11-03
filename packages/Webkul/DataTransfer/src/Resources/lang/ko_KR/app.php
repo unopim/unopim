@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => '속성 옵션 코드 :code는 이미 사용 중입니다.',
                     'code_not_found_to_delete' => '삭제할 속성 옵션 코드를 찾을 수 없습니다.',
+                    'ambiguous-code-to-delete' => '옵션 코드 :code이(가) 둘 이상의 속성에 존재합니다. attribute_code를 추가하세요.',
                     'locale-not-exist'         => '로캘 ":code"가 존재하지 않습니다.',
                     'invalid-attribute'        => '속성 ":code"가 존재하지 않습니다.',
                 ],
@@ -311,5 +312,6 @@ return [
         'completed' => '작업 실행 완료됨',
         'stalled'   => '작업이 :minutes분 넘게 응답하지 않아 실패로 표시되었습니다. 작업을 실행하던 워커가 종료된 것으로 보입니다.',
         'reaped'    => '중단된 작업 :count건을 실패로 표시했습니다.',
+        'stopped'   => '검증 결과 오류 :count건으로 가져오기를 중단했습니다. 가져온 행이 없습니다.',
     ],
 ];

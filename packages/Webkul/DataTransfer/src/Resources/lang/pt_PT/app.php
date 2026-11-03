@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'O código de opção de atributo :code já está em uso.',
                     'code_not_found_to_delete' => 'Código de opção de atributo não encontrado para exclusão.',
+                    'ambiguous-code-to-delete' => 'O código de opção :code existe em mais do que um atributo; adicione attribute_code.',
                     'locale-not-exist'         => 'A localidade ":code" não existe.',
                     'invalid-attribute'        => 'O atributo ":code" não existe.',
                 ],
@@ -311,5 +312,6 @@ return [
         'completed' => 'Conclusão da execução do trabalho',
         'stalled'   => 'A tarefa deixou de responder durante mais de :minutes minutos e foi marcada como falhada. O processo que a executava foi provavelmente terminado.',
         'reaped'    => ':count tarefas bloqueadas foram marcadas como falhadas.',
+        'stopped'   => 'A importação foi interrompida após a validação com :count erros. Nenhuma linha foi importada.',
     ],
 ];

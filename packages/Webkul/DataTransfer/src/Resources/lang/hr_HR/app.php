@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'Kod opcije značajki :code već se koristi.',
                     'code_not_found_to_delete' => 'Kod opcije značajki nije pronađen za brisanje.',
+                    'ambiguous-code-to-delete' => 'Kod opcije :code postoji na više od jedne značajke; dodajte attribute_code.',
                     'locale-not-exist'         => 'Lokalizacija ":code" ne postoji.',
                     'invalid-attribute'        => 'Značajka ":code" ne postoji.',
                 ],
@@ -311,5 +312,6 @@ return [
         'completed' => 'Izvršenje posla je završeno',
         'stalled'   => 'Zadatak nije odgovarao više od :minutes minuta i označen je kao neuspješan. Proces koji ga je izvršavao vjerojatno je prekinut.',
         'reaped'    => 'Označeno je :count zaustavljenih zadataka kao neuspješnih.',
+        'stopped'   => 'Uvoz je zaustavljen nakon provjere s :count pogrešaka. Nijedan redak nije uvezen.',
     ],
 ];
