@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\DB;
+use Webkul\Core\Models\Channel;
 use Webkul\ElasticSearch\Enums\FilterOperators;
 use Webkul\Product\Filter\Database\Property\CategoryFilter;
 use Webkul\Product\Filter\Database\Property\CompletenessFilter;
@@ -22,9 +23,6 @@ function applyPropertyFilter($filter, string $property, FilterOperators $operato
 }
 
 describe('CompletenessFilter', function () {
-    // Container-resolved (not `new`) so the ChannelCompletenessColumn
-    // dependency is wired; no channel is requested in these tests, so it
-    // falls back to the pre-existing cross-channel average column.
     it('compares the average completeness score', function () {
         $queryBuilder = applyPropertyFilter(app(CompletenessFilter::class), 'completeness', FilterOperators::GREATER_THAN_OR_EQUAL, ['50']);
 
@@ -49,15 +47,24 @@ describe('CompletenessFilter', function () {
         applyPropertyFilter(app(CompletenessFilter::class), 'sku', FilterOperators::EQUAL, ['10']);
     })->throws(InvalidArgumentException::class);
 
-    it('filters on the requested channel\'s own score once a channel is in context', function () {
+    it('falls back to the average when the requested channel code does not resolve', function () {
         request()->merge(['channel' => 'does-not-exist']);
 
-        // An unresolvable channel code still falls back to the average —
-        // proves the fallback is driven by whether the channel actually
-        // resolves, not merely by the presence of a `channel` query param.
         $queryBuilder = applyPropertyFilter(app(CompletenessFilter::class), 'completeness', FilterOperators::LESS_THAN, ['80']);
 
         expect($queryBuilder->toSql())->toContain('avg_completeness_score < ?');
+    });
+
+    it('compares the requested channel\'s own score once a real channel is in context', function () {
+        $channel = Channel::factory()->create(['code' => 'drilldown-scope']);
+
+        request()->merge(['channel' => $channel->code, 'locale' => $channel->locales->first()->code]);
+
+        $queryBuilder = applyPropertyFilter(app(CompletenessFilter::class), 'completeness', FilterOperators::LESS_THAN, ['80']);
+
+        expect($queryBuilder->toSql())
+            ->toContain(DB::getTablePrefix().'product_completeness.score < ?')
+            ->and($queryBuilder->getBindings())->toContain(80.0);
     });
 });
 
