@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'El codi d\'opció d\'atribut :code ja està en ús.',
                     'code_not_found_to_delete' => 'Codi d\'opció d\'atribut no trobat per a supressió.',
+                    'ambiguous-code-to-delete' => 'El codi d\'opció :code existeix en més d\'un atribut; afegiu attribute_code.',
                     'locale-not-exist'         => 'L\'idioma ":code" no existeix.',
                     'invalid-attribute'        => 'L\'atribut ":code" no existeix.',
                 ],
@@ -299,6 +300,7 @@ return [
             'column-not-found'       => 'Columnes requerides no trobades: %s.',
             'column-numbers'         => 'El nombre de columnes no correspon al nombre de files a la capçalera.',
             'invalid-attribute'      => 'Capçalera conté atribut(s) invàlid(s): "%s".',
+            'invalid-boolean'        => 'La columna ":column" té el valor ":value", que no és un booleà. Utilitzeu true, false, yes, no, on, off, 1 o 0.',
             'system'                 => 'S\'ha produït un error de sistema inesperat.',
             'wrong-quotes'           => 'S\'han utilitzat guions curts en lloc de guions rectes.',
             'file-empty'             => 'El fitxer està buit o no conté una fila de capçalera. Si us plau, pengeu un fitxer vàlid amb dades.',
@@ -310,5 +312,6 @@ return [
         'completed' => 'Finalització de l\'execució de la feina',
         'stalled'   => 'La tasca ha deixat de respondre durant més de :minutes minuts i s\'ha marcat com a fallida. Probablement el procés que l\'executava s\'ha aturat.',
         'reaped'    => 'S\'han marcat :count tasques aturades com a fallides.',
+        'stopped'   => 'La importació s\'ha aturat després de la validació amb :count errors. No s\'ha importat cap fila.',
     ],
 ];

@@ -265,6 +265,7 @@ class ProductObserver
                     }
                 }
 
+                unset($localeValues);
             } elseif ($scope === 'channel_specific') {
                 foreach ($scopedValues as &$channelValues) {
                     if (is_array($channelValues)) {
@@ -272,6 +273,7 @@ class ProductObserver
                     }
                 }
 
+                unset($channelValues);
             } elseif ($scope === 'channel_locale_specific') {
                 foreach ($scopedValues as &$channelValues) {
                     if (! is_array($channelValues)) {
@@ -283,9 +285,15 @@ class ProductObserver
                             $this->processScope($localeValues);
                         }
                     }
+
+                    unset($localeValues);
                 }
+
+                unset($channelValues);
             }
         }
+
+        unset($scopedValues);
     }
 
     /**

@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'El código de opción de atributo :code ya está en uso.',
                     'code_not_found_to_delete' => 'Código de opción de atributo no encontrado para su eliminación.',
+                    'ambiguous-code-to-delete' => 'El código de opción :code existe en más de un atributo; añada attribute_code.',
                     'locale-not-exist'         => 'La configuración regional ":code" no existe.',
                     'invalid-attribute'        => 'El atributo ":code" no existe.',
                 ],
@@ -299,6 +300,7 @@ return [
             'column-not-found'       => 'Columnas obligatorias no encontradas: %s.',
             'column-numbers'         => 'El número de columnas no corresponde al número de filas del encabezado.',
             'invalid-attribute'      => 'El encabezado contiene atributos no válidos: "%s".',
+            'invalid-boolean'        => 'La columna ":column" tiene el valor ":value", que no es un booleano. Use true, false, yes, no, on, off, 1 o 0.',
             'system'                 => 'Se produjo un error inesperado del sistema.',
             'wrong-quotes'           => 'Se utilizan comillas rizadas en lugar de comillas rectas.',
             'file-empty'             => 'El archivo está vacío o no contiene una fila de encabezado. Por favor, suba un archivo válido con datos.',
@@ -310,5 +312,6 @@ return [
         'completed' => 'Ejecución del trabajo completada',
         'stalled'   => 'La tarea dejó de responder durante más de :minutes minutos y se marcó como fallida. Es probable que el proceso que la ejecutaba se detuviera.',
         'reaped'    => 'Se marcaron :count tareas detenidas como fallidas.',
+        'stopped'   => 'La importación se detuvo tras la validación con :count errores. No se importó ninguna fila.',
     ],
 ];

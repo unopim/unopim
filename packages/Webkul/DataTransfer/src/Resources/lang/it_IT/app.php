@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'Il codice dell\'opzione attributo :code è già in uso.',
                     'code_not_found_to_delete' => 'Codice dell\'opzione attributo non trovato per l\'eliminazione.',
+                    'ambiguous-code-to-delete' => 'Il codice opzione :code esiste in più di un attributo; aggiungi attribute_code.',
                     'locale-not-exist'         => 'La lingua ":code" non esiste.',
                     'invalid-attribute'        => 'L\'attributo ":code" non esiste.',
                 ],
@@ -299,6 +300,7 @@ return [
             'column-not-found'       => 'Le colonne richieste non sono trovate: %s.',
             'column-numbers'         => 'Il numero di colonne non corrisponde al numero di righe nell\'intestazione.',
             'invalid-attribute'      => 'L\'intestazione contiene attributi non validi: "%s".',
+            'invalid-boolean'        => 'La colonna ":column" ha il valore ":value", che non è un booleano. Usa true, false, yes, no, on, off, 1 o 0.',
             'system'                 => 'Si è verificato un errore di sistema imprevisto.',
             'wrong-quotes'           => 'Virgolette a parentesi usate al posto delle virgolette diritte.',
             'file-empty'             => 'Il file è vuoto o non contiene una riga di intestazione. Si prega di caricare un file valido con dati.',
@@ -310,5 +312,6 @@ return [
         'completed' => 'Esecuzione del lavoro completata',
         'stalled'   => 'Il processo non ha risposto per più di :minutes minuti ed è stato contrassegnato come fallito. Il worker che lo eseguiva è stato probabilmente terminato.',
         'reaped'    => 'Contrassegnati :count processi bloccati come falliti.',
+        'stopped'   => 'Importazione interrotta dopo la convalida con :count errori. Nessuna riga è stata importata.',
     ],
 ];

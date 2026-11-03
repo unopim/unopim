@@ -564,10 +564,6 @@ class InstallerController extends Controller
     {
         $this->abortIfInstalled();
 
-        // processInstall runs `migrate:fresh` (drops every table). Guard it the
-        // same way runMigration() does: if the DB is already populated (an
-        // installed instance whose storage marker was lost), refuse — otherwise a
-        // reachable install endpoint would wipe the live database.
         $this->abortIfDatabasePopulated();
 
         $statePath = $this->installerStatePath();
@@ -643,7 +639,8 @@ class InstallerController extends Controller
 
                 // b. Migrate
                 $emit(trans('installer::app.installer.index.terminal.migrating'));
-                Artisan::call('migrate:fresh', ['--force' => true]);
+                $this->databaseManager->dropCurrentPrefixTables();
+                Artisan::call('migrate', ['--force' => true]);
                 $emitLines(Artisan::output());
                 $emit(trans('installer::app.installer.index.terminal.migrated'));
 

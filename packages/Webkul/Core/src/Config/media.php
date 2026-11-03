@@ -7,4 +7,8 @@ return [
         'max_file_size_kilobytes'    => env('MEDIA_GALLERY_MAX_FILE_SIZE_KB', 15360),
         'max_total_size_kilobytes'   => env('MEDIA_GALLERY_MAX_TOTAL_SIZE_KB', 102400),
     ],
+
+    'scan' => [
+        'max_file_size_kilobytes' => env('MEDIA_SCAN_MAX_FILE_SIZE_KB', 102400),
+    ],
 ];

@@ -1,11 +1,17 @@
 name: Pest Tests (PostgreSQL)
 
+# A pull request gets the fast signal (code style, static analysis, translations
+# and Pest on MySQL); the full database matrix and the end-to-end suite run in
+# the merge queue and on the release lines, so they gate every merge without
+# holding up review.
+#
 # A branch push and its own pull request are the same commit, so pushes are
 # limited to the release lines and everything else arrives through the PR event.
 on:
   push:
     branches: [master, '3.x']
   pull_request:
+  merge_group:
 
 # head_ref is the branch on a pull request and empty elsewhere, which keeps a
 # branch's runs in one group no matter which event opened them.
@@ -18,6 +24,7 @@ permissions:
 
 jobs:
   pest-pgsql:
+    if: github.repository == 'unopim/unopim' && github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
     name: Pest Tests (PostgreSQL)
     continue-on-error: true
@@ -40,10 +47,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@2.40.0
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
         with:
           php-version: '8.4'
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_pgsql, tokenizer, zip
@@ -52,24 +59,24 @@ jobs:
           coverage: none
 
       - name: Install Composer dependencies
-        uses: ramsey/composer-install@v4
+        uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
         with:
           composer-options: "--optimize-autoloader"
 
       - name: Setup Node
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '22'
 
       - name: Cache Node dependencies
-        uses: actions/cache@v5
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
         with:
           path: node_modules
           key: ${{ runner.os }}-npm-${{ hashFiles('package.json') }}
           restore-keys: ${{ runner.os }}-npm-
 
       - name: Install Node dependencies
-        run: npm install --omit=dev --no-audit --no-fund --no-progress --prefer-offline
+        run: npm ci --omit=dev --no-audit --no-fund --no-progress --prefer-offline
 
       - name: Setting Environment
         run: |
@@ -86,15 +93,13 @@ jobs:
         run: php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
 
       - name: Running Pest Tests
-        # Each worker owns a database clone. The suite runs as two halves so
-        # every half starts with fresh workers: per-process memory grows over
-        # thousands of tests and a single long run ends with a worker
-        # OOM-killed (exit 137), which aborts paratest mid-run.
-        run: |
-          vendor/bin/pest --parallel --processes=3 --colors=always --testsuite "Api Feature Test,Core Unit Test,DataTransfer Unit Test,User Feature Test,Admin Feature Test"
-          vendor/bin/pest --parallel --processes=3 --colors=always --testsuite "Installer Feature Test,ElasticSearch Feature Test,Completeness Feature Test,Product Unit Test,Product Feature Test,Attribute Unit Test,Category Unit Test,Measurement Feature Test,AiAgent Unit Test,AppUrlGuard Unit Test,Webhook Unit Test,Webhook Feature Test,AppUrlGuard Feature Test,Resource Unit Test,Resource Feature Test,Publication Feature Test,ProductPassport Feature Test"
+        # Each worker owns a database clone. One pool of four workers (one per
+        # runner vCPU) boots the framework once and keeps every core busy until
+        # the last test, instead of idling at the tail of two separate halves.
+        run: vendor/bin/pest --parallel --processes=4 --colors=always --testsuite "Api Feature Test,Core Unit Test,DataTransfer Unit Test,User Feature Test,Admin Feature Test,Installer Feature Test,ElasticSearch Feature Test,Completeness Feature Test,Product Unit Test,Product Feature Test,Attribute Unit Test,Category Unit Test,Measurement Feature Test,AiAgent Unit Test,AppUrlGuard Unit Test,Webhook Unit Test,Webhook Feature Test,AppUrlGuard Feature Test,Resource Unit Test,Resource Feature Test,Publication Feature Test,ProductPassport Feature Test"
 
   pest-pgsql-elasticsearch:
+    if: github.repository == 'unopim/unopim' && github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
     name: Pest Tests (PostgreSQL + Elasticsearch)
     continue-on-error: true
@@ -115,26 +120,17 @@ jobs:
           --health-retries=3
           --tmpfs /var/lib/postgresql/data:rw,noexec,nosuid,size=600m
 
-      elasticsearch:
-        image: elasticsearch:8.17.0
-        env:
-          discovery.type: single-node
-          xpack.security.enabled: 'false'
-          ES_JAVA_OPTS: '-Xms256m -Xmx256m'
-        ports:
-          - 9200:9200
-        options: >-
-          --health-cmd="curl -s http://localhost:9200/_cluster/health || exit 1"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=10
-
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+
+      - name: Start Elasticsearch
+        uses: ./.github/actions/elasticsearch
+        with:
+          step: start
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@2.40.0
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
         with:
           php-version: '8.4'
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_pgsql, tokenizer, zip
@@ -143,24 +139,24 @@ jobs:
           coverage: none
 
       - name: Install Composer dependencies
-        uses: ramsey/composer-install@v4
+        uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
         with:
           composer-options: "--optimize-autoloader"
 
       - name: Setup Node
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '22'
 
       - name: Cache Node dependencies
-        uses: actions/cache@v5
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
         with:
           path: node_modules
           key: ${{ runner.os }}-npm-${{ hashFiles('package.json') }}
           restore-keys: ${{ runner.os }}-npm-
 
       - name: Install Node dependencies
-        run: npm install --omit=dev --no-audit --no-fund --no-progress --prefer-offline
+        run: npm ci --omit=dev --no-audit --no-fund --no-progress --prefer-offline
 
       - name: Setting Environment
         run: |
@@ -172,9 +168,15 @@ jobs:
           sed -i "s|^\(DB_DATABASE=\s*\).*$|\1unopim|" .env
           sed -i "s|^\(DB_USERNAME=\s*\).*$|\1unopim|" .env
           sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1unopim|" .env
+          sed -i "s|^\(DB_PREFIX=\s*\).*$|\13X_|" .env
 
       - name: Running UnoPim Installer
         run: php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
+
+      - name: Wait for Elasticsearch
+        uses: ./.github/actions/elasticsearch
+        with:
+          step: wait
 
       - name: Enable Elasticsearch and build indexes
         run: |
@@ -182,15 +184,11 @@ jobs:
           sed -i "s|^\(ELASTICSEARCH_HOST=\s*\).*$|\1http://127.0.0.1:9200|" .env
           sed -i "s|^\(ELASTICSEARCH_INDEX_PREFIX=\s*\).*$|\1unopim_test|" .env
           php artisan config:clear
-          curl -s http://127.0.0.1:9200/_cluster/health | python3 -m json.tool
           php artisan unopim:product:index
           php artisan unopim:category:index
 
       - name: Running Pest Tests
-        # Each worker owns a database clone. The suite runs as two halves so
-        # every half starts with fresh workers: per-process memory grows over
-        # thousands of tests and a single long run ends with a worker
-        # OOM-killed (exit 137), which aborts paratest mid-run.
-        run: |
-          vendor/bin/pest --parallel --processes=3 --colors=always --testsuite "Api Feature Test,Core Unit Test,DataTransfer Unit Test,User Feature Test,Admin Feature Test"
-          vendor/bin/pest --parallel --processes=3 --colors=always --testsuite "Installer Feature Test,ElasticSearch Feature Test,Completeness Feature Test,Product Unit Test,Product Feature Test,Attribute Unit Test,Category Unit Test,Measurement Feature Test,AiAgent Unit Test,AppUrlGuard Unit Test,Webhook Unit Test,Webhook Feature Test,AppUrlGuard Feature Test,Resource Unit Test,Resource Feature Test,Publication Feature Test,ProductPassport Feature Test"
+        # Each worker owns a database clone. One pool of four workers (one per
+        # runner vCPU) boots the framework once and keeps every core busy until
+        # the last test, instead of idling at the tail of two separate halves.
+        run: vendor/bin/pest --parallel --processes=4 --colors=always --testsuite "Api Feature Test,Core Unit Test,DataTransfer Unit Test,User Feature Test,Admin Feature Test,Installer Feature Test,ElasticSearch Feature Test,Completeness Feature Test,Product Unit Test,Product Feature Test,Attribute Unit Test,Category Unit Test,Measurement Feature Test,AiAgent Unit Test,AppUrlGuard Unit Test,Webhook Unit Test,Webhook Feature Test,AppUrlGuard Feature Test,Resource Unit Test,Resource Feature Test,Publication Feature Test,ProductPassport Feature Test"

@@ -1,5 +1,12 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
+const {
+  navigateTo,
+  generateUid,
+  clickSaveAndExpect,
+  searchInDataGrid,
+  clickDeleteOnRow,
+  confirmDelete,
+} = require('../../utils/helpers');
 
 /**
  * Opens the Create Category form and lets the unsaved-changes tracker snapshot
@@ -45,17 +52,9 @@ async function createCategory(adminPage, code, name) {
 async function deleteCategory(adminPage, code) {
   try {
     await navigateTo(adminPage, 'categoriesList');
-    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
-    await adminPage.keyboard.press('Enter');
-    await adminPage.waitForLoadState('networkidle');
-
-    const deleteBtn = adminPage.locator('div', { hasText: code }).locator('span[title="Delete"]').first();
-
-    if (await deleteBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await deleteBtn.click();
-      await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
-      await adminPage.waitForLoadState('networkidle');
-    }
+    await searchInDataGrid(adminPage, code);
+    await clickDeleteOnRow(adminPage, code);
+    await confirmDelete(adminPage);
   } catch {}
 }
 

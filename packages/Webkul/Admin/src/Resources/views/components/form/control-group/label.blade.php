@@ -4,9 +4,10 @@
     $isRequired = preg_match('/(^|\s)required(\s|$)/', $class);
     $labelClass = $isLocalizable && $isRequired ? trim(preg_replace('/\brequired\b/', '', $class)) : $class;
     $currentLocaleCode = $attributes->get('currentLocaleCode') ?? $attributes->get('current-locale-code') ?? core()->getRequestedLocaleCode();
+    $labelId = $attributes->hasAny(['for', ':for', 'id', ':id']) ? [] : ['id' => remember_form_label_id()];
 @endphp
 
-<label {{ $attributes->except(['class', 'localizable', 'currentLocaleCode', 'current-locale-code'])->merge(['class' => trim('flex gap-1 items-center mb-1.5 text-xs text-gray-800 dark:text-white font-medium '.$labelClass)]) }}>
+<label {{ $attributes->except(['class', 'localizable', 'currentLocaleCode', 'current-locale-code'])->merge(['class' => trim('flex gap-1 items-center mb-1.5 text-xs text-gray-800 dark:text-white font-medium '.$labelClass)] + $labelId) }}>
     <span class="inline-flex items-center gap-1">
         <span @class(['required' => $isLocalizable && $isRequired])>{{ $slot }}</span>
 

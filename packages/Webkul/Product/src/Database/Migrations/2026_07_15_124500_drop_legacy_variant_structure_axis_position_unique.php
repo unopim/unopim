@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Webkul\Core\Database\Schema\PrefixedIndexNameBlueprint;
 
 return new class extends Migration
 {
@@ -22,7 +22,7 @@ return new class extends Migration
             return;
         }
 
-        if ($this->indexExists('variant_structure_axes', self::LEGACY_INDEX)) {
+        if (PrefixedIndexNameBlueprint::indexExists('variant_structure_axes', self::LEGACY_INDEX)) {
             Schema::table('variant_structure_axes', function (Blueprint $table): void {
                 $table->dropUnique(self::LEGACY_INDEX);
             });
@@ -35,7 +35,7 @@ return new class extends Migration
             return;
         }
 
-        if (! $this->indexExists('variant_structure_axes', self::LEGACY_INDEX)) {
+        if (! PrefixedIndexNameBlueprint::indexExists('variant_structure_axes', self::LEGACY_INDEX)) {
             Schema::table('variant_structure_axes', function (Blueprint $table): void {
                 $table->unique(['variant_structure_id', 'position'], self::LEGACY_INDEX);
             });
@@ -45,20 +45,4 @@ return new class extends Migration
     /**
      * Check whether an index exists (prefix-aware, mysql + pgsql).
      */
-    private function indexExists(string $table, string $index): bool
-    {
-        $prefix = DB::getTablePrefix();
-
-        if (DB::getDriverName() === 'pgsql') {
-            return (bool) DB::select('SELECT 1 FROM pg_indexes WHERE indexname = ?', [$index]);
-        }
-
-        foreach (DB::select("SHOW INDEX FROM `{$prefix}{$table}`") as $row) {
-            if (($row->Key_name ?? null) === $index) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 };

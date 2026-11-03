@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'Attribuuttivaihtoehdon koodi :code on jo käytössä.',
                     'code_not_found_to_delete' => 'Attribuuttivaihtoehdon koodia ei löytynyt poistettavaksi.',
+                    'ambiguous-code-to-delete' => 'Vaihtoehtokoodi :code on käytössä useammassa kuin yhdessä attribuutissa; lisää attribute_code.',
                     'locale-not-exist'         => 'Kieltä ":code" ei ole olemassa.',
                     'invalid-attribute'        => 'Attribuuttia ":code" ei ole olemassa.',
                 ],
@@ -299,6 +300,7 @@ return [
             'column-not-found'       => 'Vaadittuja sarakkeita ei löytynyt: %s.',
             'column-numbers'         => 'Sarakkeiden määrä ei vastaa otsikoiden rivien määrää.',
             'invalid-attribute'      => 'Otsikko sisältää virheellisiä attribuutteja: "%s".',
+            'invalid-boolean'        => 'Sarakkeen ":column" arvo on ":value", joka ei ole totuusarvo. Käytä arvoja true, false, yes, no, on, off, 1 tai 0.',
             'system'                 => 'Odottamaton järjestelmävirhe tapahtui.',
             'wrong-quotes'           => 'Käyrät lainausmerkit käytetty suoran lainausmerkin sijaan.',
             'file-empty'             => 'Tiedosto on tyhjä tai siinä ei ole otsikkoriviä. Lataa kelvollinen tiedosto, jossa on tietoja.',
@@ -310,5 +312,6 @@ return [
         'completed' => 'Työn suoritus saatiin päätökseen',
         'stalled'   => 'Työ lakkasi vastaamasta yli :minutes minuutin ajan ja merkittiin epäonnistuneeksi. Sen suoritusprosessi todennäköisesti keskeytyi.',
         'reaped'    => ':count jumittunutta työtä merkittiin epäonnistuneiksi.',
+        'stopped'   => 'Tuonti pysäytettiin validoinnin jälkeen, virheitä :count. Yhtään riviä ei tuotu.',
     ],
 ];
