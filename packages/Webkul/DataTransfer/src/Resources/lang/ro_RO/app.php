@@ -32,6 +32,7 @@ return [
                     'incorrect-family-for-variant'             => 'Familia trebuie să fie aceeași cu familia principală',
                     'parent-not-exist'                         => 'Părintele nu există.',
                     'variant-structure-not-found'              => 'Structura de variante :code nu există pentru această familie de atribute.',
+                    'variant-structure-levels-mismatch'        => 'Structura de variante :code are un singur nivel, deci nu poate conține rânduri variant_group. Setați nivelurile la 2 sau importați variantele ca produse simple sub produsul configurabil.',
                 ],
             ],
         ],

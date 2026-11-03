@@ -28,6 +28,11 @@ class Import
     use TracksJobHeartbeat;
 
     /**
+     * Summary of an import whose batches created, updated and deleted nothing.
+     */
+    protected const EMPTY_SUMMARY = ['created' => 0, 'updated' => 0, 'deleted' => 0];
+
+    /**
      * Import state for pending import
      */
     public const STATE_PENDING = 'pending';
@@ -163,7 +168,7 @@ class Import
      */
     public function getLogger(): LoggerInterface
     {
-        return $this->jobLogger;
+        return $this->jobLogger ??= JobLogger::make($this->import->id);
     }
 
     /**
@@ -291,12 +296,12 @@ class Import
     }
 
     /**
-     * Check if error limit has been exceeded
+     * Whether a stop-on-errors import found any validation error, so nothing may be imported.
      */
     public function isErrorLimitExceeded(): bool
     {
         return $this->import->validation_strategy == self::VALIDATION_STRATEGY_STOP_ON_ERROR
-        && $this->import->errors_count > $this->import->allowed_errors;
+        && $this->import->errors_count > 0;
     }
 
     /**
@@ -442,11 +447,7 @@ class Import
 
         $this->setImport($import);
 
-        if (! $this->jobLogger) {
-            $this->setLogger(JobLogger::make($this->import->id));
-        }
-
-        $this->jobLogger->info('Import resumed — re-dispatching pending batches.');
+        $this->getLogger()->info('Import resumed — re-dispatching pending batches.');
 
         $this->start();
 
@@ -458,22 +459,9 @@ class Import
      */
     public function cancel(): void
     {
-        $grammar = DB::rawQueryGrammar();
-
-        $summary = $this->jobTrackBatchRepository
-            ->select(
-                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'created')} as DECIMAL)) AS created"),
-                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'updated')} as DECIMAL)) AS updated"),
-                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'deleted')} as DECIMAL)) AS deleted"),
-            )
-            ->where('job_track_id', $this->import->id)
-            ->groupBy('job_track_id')
-            ->first()
-            ?->toArray();
-
         $import = $this->jobTrackRepository->update([
             'state'        => self::STATE_CANCELLED,
-            'summary'      => $summary ?? ['created' => 0, 'updated' => 0, 'deleted' => 0],
+            'summary'      => $this->batchSummary() ?? self::EMPTY_SUMMARY,
             'completed_at' => now(),
         ], $this->import->id);
 
@@ -497,31 +485,56 @@ class Import
      */
     public function completed(): void
     {
+        $summary = $this->batchSummary();
+
+        if ($summary) {
+            $this->markCompleted($summary);
+        }
+    }
+
+    /**
+     * Complete an import that validation left with no batches, so the tracker shows when it finished.
+     */
+    public function completedWithoutBatches(): void
+    {
+        $this->markCompleted(self::EMPTY_SUMMARY);
+    }
+
+    /**
+     * Mark the import completed with the given summary and announce it.
+     */
+    protected function markCompleted(array $summary): void
+    {
+        $import = $this->jobTrackRepository->update([
+            'state'        => self::STATE_COMPLETED,
+            'summary'      => $summary,
+            'completed_at' => now(),
+        ], $this->import->id);
+
+        $this->setImport($import);
+
+        Event::dispatch('data_transfer.imports.completed', $import);
+
+        $this->getLogger()->info(trans('data_transfer::app.job.completed'));
+    }
+
+    /**
+     * Created, updated and deleted totals summed across the import's batches, null when it has none.
+     */
+    protected function batchSummary(): ?array
+    {
         $grammar = DB::rawQueryGrammar();
 
-        $summary = $this->jobTrackBatchRepository
+        return $this->jobTrackBatchRepository
             ->select(
-                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'created')} as DECIMAl)) AS created"),
-                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'updated')} as DECIMAl)) AS updated"),
-                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'deleted')} as DECIMAl)) AS deleted"),
+                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'created')} as DECIMAL)) AS created"),
+                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'updated')} as DECIMAL)) AS updated"),
+                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'deleted')} as DECIMAL)) AS deleted"),
             )
             ->where('job_track_id', $this->import->id)
             ->groupBy('job_track_id')
-            ->first()?->toArray();
-
-        if ($summary) {
-            $import = $this->jobTrackRepository->update([
-                'state'        => self::STATE_COMPLETED,
-                'summary'      => $summary,
-                'completed_at' => now(),
-            ], $this->import->id);
-
-            $this->setImport($import);
-
-            Event::dispatch('data_transfer.imports.completed', $import);
-
-            $this->jobLogger->info(trans('data_transfer::app.job.completed'));
-        }
+            ->first()
+            ?->toArray();
     }
 
     /**

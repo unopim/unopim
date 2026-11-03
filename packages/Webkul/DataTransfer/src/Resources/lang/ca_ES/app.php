@@ -32,6 +32,7 @@ return [
                     'incorrect-family-for-variant'             => 'La família ha de ser la mateixa que la família parent',
                     'parent-not-exist'                         => 'El parent no existeix.',
                     'variant-structure-not-found'              => 'L\'estructura de variants :code no existeix per a aquesta família d\'atributs.',
+                    'variant-structure-levels-mismatch'        => 'L\'estructura de variants :code només té un nivell, per tant no pot contenir files variant_group. Establiu-ne els nivells a 2 o importeu les variants com a productes simples sota el producte configurable.',
                 ],
             ],
         ],

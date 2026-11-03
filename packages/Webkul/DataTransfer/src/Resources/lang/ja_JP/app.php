@@ -32,6 +32,7 @@ return [
                     'incorrect-family-for-variant'             => 'ファミリーは親ファミリーと同じでなければなりません',
                     'parent-not-exist'                         => '親が存在しません。',
                     'variant-structure-not-found'              => 'バリアント構造 :code はこの属性ファミリーに存在しません。',
+                    'variant-structure-levels-mismatch'        => 'バリアント構造 :code にはレベルが1つしかないため、variant_group 行を保持できません。レベルを2に設定するか、バリアントを設定可能商品の配下にシンプル商品としてインポートしてください。',
                 ],
             ],
         ],

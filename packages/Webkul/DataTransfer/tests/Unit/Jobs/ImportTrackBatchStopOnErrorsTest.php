@@ -36,6 +36,7 @@ beforeEach(function (): void {
 
 dataset('stopping validations', [
     'stop on first error'                        => [Import::VALIDATION_STRATEGY_STOP_ON_ERROR, 0, false],
+    'stop on errors ignores allowed errors'      => [Import::VALIDATION_STRATEGY_STOP_ON_ERROR, 10, false],
     'validation exception even with skip errors' => [Import::VALIDATION_STRATEGY_SKIP_ERRORS, 10, true],
 ]);
 
@@ -172,7 +173,23 @@ it('executes permitted pending batches and completes the import', function (stri
     Event::assertDispatchedTimes('data_transfer.imports.completed', 1);
 })->with([
     'valid stop-on-errors import'              => [Import::VALIDATION_STRATEGY_STOP_ON_ERROR, 0, false],
-    'stop-on-errors at allowed limit'          => [Import::VALIDATION_STRATEGY_STOP_ON_ERROR, 1, true],
     'skip-errors below allowance'              => [Import::VALIDATION_STRATEGY_SKIP_ERRORS, 2, true],
     'skip-errors ignores stop-on-errors limit' => [Import::VALIDATION_STRATEGY_SKIP_ERRORS, 0, true],
 ]);
+
+it('completes a skip-errors import whose rows are all invalid with a completion time', function (): void {
+    StopOnErrorsTestImporter::$rows = [['code' => 'invalid-only', 'status' => 'invalid']];
+    $track = makeStopOnErrorsTrack(Import::VALIDATION_STRATEGY_SKIP_ERRORS, 10);
+
+    (new ImportTrackBatch($track))->handle();
+
+    $track->refresh();
+    expect($track->batches)->toHaveCount(0)
+        ->and(StopOnErrorsTestImporter::$importedCodes)->toBe([])
+        ->and($track->state)->toBe(Import::STATE_COMPLETED)
+        ->and($track->completed_at)->not->toBeNull()
+        ->and($track->errors_count)->toBe(1)
+        ->and($track->summary)->toEqual(['created' => 0, 'updated' => 0, 'deleted' => 0]);
+    Event::assertNotDispatched('data_transfer.imports.started');
+    Event::assertDispatchedTimes('data_transfer.imports.completed', 1);
+});

@@ -32,6 +32,7 @@ return [
                     'incorrect-family-for-variant'             => '家庭必须与父母家庭相同',
                     'parent-not-exist'                         => '父级不存在。',
                     'variant-structure-not-found'              => '该属性族不存在变体结构 :code。',
+                    'variant-structure-levels-mismatch'        => '变体结构 :code 只有一个层级，因此无法包含 variant_group 行。请将其层级设置为 2，或将变体作为简单产品导入到可配置产品下。',
                 ],
             ],
         ],

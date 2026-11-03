@@ -32,6 +32,7 @@ return [
                     'incorrect-family-for-variant'             => 'Ang pamilya ay dapat na parehong-pareho sa pangunahing pamilya',
                     'parent-not-exist'                         => 'Walang magulang.',
                     'variant-structure-not-found'              => 'Walang variant structure na :code para sa attribute family na ito.',
+                    'variant-structure-levels-mismatch'        => 'Isang level lang ang variant structure na :code, kaya hindi ito maaaring maglaman ng mga hilera ng variant_group. Itakda ang mga level nito sa 2 o i-import ang mga variant bilang simpleng produkto sa ilalim ng configurable na produkto.',
                 ],
             ],
         ],

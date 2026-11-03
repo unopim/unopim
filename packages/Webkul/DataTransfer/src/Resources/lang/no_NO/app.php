@@ -32,6 +32,7 @@ return [
                     'incorrect-family-for-variant'             => 'Familien må være den samme som foreldrefamilien',
                     'parent-not-exist'                         => 'Forelderen eksisterer ikke.',
                     'variant-structure-not-found'              => 'Variantstrukturen :code finnes ikke for denne attributtfamilien.',
+                    'variant-structure-levels-mismatch'        => 'Variantstrukturen :code har bare ett nivå, så den kan ikke inneholde variant_group-rader. Sett nivåene til 2, eller importer variantene som enkle produkter under det konfigurerbare produktet.',
                 ],
             ],
         ],

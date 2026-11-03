@@ -32,6 +32,7 @@ return [
                     'incorrect-family-for-variant'             => 'A família deve ser a mesma que a família principal',
                     'parent-not-exist'                         => 'O pai não existe.',
                     'variant-structure-not-found'              => 'A estrutura de variantes :code não existe para esta família de atributos.',
+                    'variant-structure-levels-mismatch'        => 'A estrutura de variantes :code tem apenas um nível, portanto não pode conter linhas variant_group. Defina seus níveis como 2 ou importe as variantes como produtos simples sob o produto configurável.',
                 ],
             ],
         ],

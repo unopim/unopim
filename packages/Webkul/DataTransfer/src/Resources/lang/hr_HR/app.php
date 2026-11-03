@@ -32,6 +32,7 @@ return [
                     'incorrect-family-for-variant'             => 'Obitelj mora biti ista kao obitelj roditelja',
                     'parent-not-exist'                         => 'Roditelj ne postoji.',
                     'variant-structure-not-found'              => 'Struktura varijanti :code ne postoji za ovu obitelj atributa.',
+                    'variant-structure-levels-mismatch'        => 'Struktura varijanti :code ima samo jednu razinu pa ne može sadržavati retke variant_group. Postavite njezine razine na 2 ili uvezite varijante kao jednostavne proizvode unutar konfigurabilnog proizvoda.',
                 ],
             ],
         ],

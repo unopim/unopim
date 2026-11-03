@@ -32,6 +32,7 @@ return [
                     'incorrect-family-for-variant'             => 'Aile ana aile ile aynı olmalıdır',
                     'parent-not-exist'                         => 'Baba yok.',
                     'variant-structure-not-found'              => 'Bu öznitelik ailesi için :code varyant yapısı mevcut değil.',
+                    'variant-structure-levels-mismatch'        => ':code varyant yapısı yalnızca bir seviyeye sahip olduğundan variant_group satırlarını barındıramaz. Seviyelerini 2 olarak ayarlayın veya varyantları yapılandırılabilir ürünün altında basit ürünler olarak içe aktarın.',
                 ],
             ],
         ],
