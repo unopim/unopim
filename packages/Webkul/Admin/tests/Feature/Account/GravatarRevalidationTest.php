@@ -21,7 +21,7 @@ function gravatarCacheEntry(array $overrides = []): array
 
 describe('Gravatar revalidation', function () {
     it('does not contact gravatar while the cached payload is fresh', function () {
-        $hash = md5('fresh@example.com');
+        $hash = hash('sha256', 'fresh@example.com');
 
         Cache::put("admin.gravatar.{$hash}", gravatarCacheEntry(), 86400);
 
@@ -35,7 +35,7 @@ describe('Gravatar revalidation', function () {
     });
 
     it('serves stale bytes immediately and revalidates conditionally in the background', function () {
-        $hash = md5('stale@example.com');
+        $hash = hash('sha256', 'stale@example.com');
 
         Cache::put("admin.gravatar.{$hash}", gravatarCacheEntry([
             'fetched_at' => now()->getTimestamp() - 400,
@@ -61,7 +61,7 @@ describe('Gravatar revalidation', function () {
     });
 
     it('keeps the cached bytes when the upstream answers 304', function () {
-        $hash = md5('unchanged@example.com');
+        $hash = hash('sha256', 'unchanged@example.com');
 
         Cache::put("admin.gravatar.{$hash}", gravatarCacheEntry([
             'fetched_at' => now()->getTimestamp() - 400,
@@ -81,7 +81,7 @@ describe('Gravatar revalidation', function () {
     });
 
     it('revalidates a stale miss so a newly created gravatar surfaces', function () {
-        $hash = md5('new-gravatar@example.com');
+        $hash = hash('sha256', 'new-gravatar@example.com');
 
         Cache::put("admin.gravatar.{$hash}", [
             'found'        => false,
@@ -100,7 +100,7 @@ describe('Gravatar revalidation', function () {
     });
 
     it('revalidates a legacy cache entry that predates freshness tracking', function () {
-        $hash = md5('legacy@example.com');
+        $hash = hash('sha256', 'legacy@example.com');
 
         Cache::put("admin.gravatar.{$hash}", [
             'found'        => true,
@@ -118,7 +118,7 @@ describe('Gravatar revalidation', function () {
     });
 
     it('refreshes a given hash at most once per freshness window', function () {
-        $hash = md5('throttled@example.com');
+        $hash = hash('sha256', 'throttled@example.com');
 
         Cache::put("admin.gravatar.{$hash}", gravatarCacheEntry([
             'fetched_at' => now()->getTimestamp() - 400,
@@ -137,7 +137,7 @@ describe('Gravatar revalidation', function () {
 
 describe('Gravatar proxy cache headers', function () {
     it('sends a short revalidating cache header and the upstream last-modified date', function () {
-        $hash = md5('headers@example.com');
+        $hash = hash('sha256', 'headers@example.com');
 
         Cache::put("admin.gravatar.{$hash}", gravatarCacheEntry(), 86400);
 
@@ -152,7 +152,7 @@ describe('Gravatar proxy cache headers', function () {
     });
 
     it('answers 304 when the browser revalidates an unchanged avatar', function () {
-        $hash = md5('conditional@example.com');
+        $hash = hash('sha256', 'conditional@example.com');
 
         Cache::put("admin.gravatar.{$hash}", gravatarCacheEntry(), 86400);
 
@@ -169,7 +169,7 @@ describe('Gravatar proxy cache headers', function () {
     });
 
     it('sends the bytes when the browser holds an older copy', function () {
-        $hash = md5('outdated-copy@example.com');
+        $hash = hash('sha256', 'outdated-copy@example.com');
 
         Cache::put("admin.gravatar.{$hash}", gravatarCacheEntry(), 86400);
 
@@ -190,11 +190,11 @@ describe('Gravatar cache invalidation on admin writes', function () {
     it('forgets the cached gravatar when the admin email changes', function () {
         $admin = Admin::factory()->create(['email' => 'before@example.com']);
 
-        Cache::put('admin.gravatar.'.md5('before@example.com'), gravatarCacheEntry(), 86400);
+        Cache::put('admin.gravatar.'.hash('sha256', 'before@example.com'), gravatarCacheEntry(), 86400);
 
         $admin->update(['email' => 'after@example.com']);
 
-        expect(Cache::has('admin.gravatar.'.md5('before@example.com')))->toBeFalse();
+        expect(Cache::has('admin.gravatar.'.hash('sha256', 'before@example.com')))->toBeFalse();
     });
 
     it('forgets the cached gravatar when the gravatar toggle changes', function () {
@@ -203,20 +203,20 @@ describe('Gravatar cache invalidation on admin writes', function () {
             'use_gravatar' => false,
         ]);
 
-        Cache::put('admin.gravatar.'.md5('toggled@example.com'), gravatarCacheEntry(), 86400);
+        Cache::put('admin.gravatar.'.hash('sha256', 'toggled@example.com'), gravatarCacheEntry(), 86400);
 
         $admin->update(['use_gravatar' => true]);
 
-        expect(Cache::has('admin.gravatar.'.md5('toggled@example.com')))->toBeFalse();
+        expect(Cache::has('admin.gravatar.'.hash('sha256', 'toggled@example.com')))->toBeFalse();
     });
 
     it('keeps the cached gravatar when an unrelated field changes', function () {
         $admin = Admin::factory()->create(['email' => 'stable@example.com']);
 
-        Cache::put('admin.gravatar.'.md5('stable@example.com'), gravatarCacheEntry(), 86400);
+        Cache::put('admin.gravatar.'.hash('sha256', 'stable@example.com'), gravatarCacheEntry(), 86400);
 
         $admin->update(['name' => 'Renamed Admin']);
 
-        expect(Cache::has('admin.gravatar.'.md5('stable@example.com')))->toBeTrue();
+        expect(Cache::has('admin.gravatar.'.hash('sha256', 'stable@example.com')))->toBeTrue();
     });
 });

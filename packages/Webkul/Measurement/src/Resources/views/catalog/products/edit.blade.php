@@ -63,6 +63,7 @@
         <x-admin::form.control-group.control
             type="select"
             name="{{ $fieldName }}[unit]"
+            :label="trans('measurement::app.attribute_type.measurement_unit')"
             async="true"
             track-by="id"
             label-by="label"

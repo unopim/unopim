@@ -3,11 +3,9 @@ const {
   navigateTo,
   clickSave,
   clickSaveAndExpect,
-  searchInDataGrid,
-  clickDeleteOnRow,
-  confirmDelete,
   generateUid,
 } = require('../../utils/helpers');
+const { deferCategoryFieldCleanup } = require('../../utils/category-field-helpers');
 
 const TYPE_MATRIX = [
   { type: 'Text',        code: 'text',        inputValidation: true,  isUnique: true,  valuePerLocale: true, wysiwyg: false, options: false },
@@ -46,13 +44,8 @@ async function createField(page, code, type) {
   await page.locator('input[name="code"]').fill(code);
   await selectType(page, type);
   await clickSaveAndExpect(page, 'Save Category Field', /Category Field Created Successfully/i);
-}
-
-async function deleteField(page, code) {
-  await navigateTo(page, 'categoryFields');
-  await searchInDataGrid(page, code);
-  await clickDeleteOnRow(page, code).catch(() => {});
-  await confirmDelete(page).catch(() => {});
+  await expect(page).toHaveURL(/category-fields\/edit\/\d+/);
+  deferCategoryFieldCleanup(page);
 }
 
 test.describe('Category field — create modal never offers Input Validation', () => {
@@ -72,8 +65,6 @@ test.describe('Category field — create modal never offers Input Validation', (
 
     await createField(adminPage, code, 'Textarea');
     await expect(adminPage).toHaveURL(/category-fields\/edit/);
-
-    await deleteField(adminPage, code);
   });
 });
 
@@ -105,8 +96,6 @@ test.describe('Category field — option changes are tracked and saved', () => {
 
       await adminPage.reload({ waitUntil: 'load' });
       await expect(adminPage.getByText(optionCode).first()).toBeVisible({ timeout: 20000 });
-
-      await deleteField(adminPage, code);
     });
   }
 
@@ -135,8 +124,6 @@ test.describe('Category field — option changes are tracked and saved', () => {
     await confirmModal.getByRole('button', { name: 'Discard' }).click();
 
     await expect(adminPage.getByText(optionCode).first()).toBeVisible({ timeout: 20000 });
-
-    await deleteField(adminPage, code);
   });
 });
 
@@ -164,8 +151,6 @@ test.describe('Category field — edit form control matrix', () => {
 
       const optionsEmptyState = adminPage.getByText('Add Category Field Options');
       await expect(optionsEmptyState).toHaveCount(row.options ? 1 : 0);
-
-      await deleteField(adminPage, code);
     });
   }
 });
