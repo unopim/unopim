@@ -48,13 +48,6 @@ class BooleanFilter extends AbstractElasticSearchAttributeFilter
 
                 $this->queryBuilder->where($clause);
                 break;
-
-            case FilterOperators::EQUAL:
-                $this->queryBuilder->where([
-                    'term' => [$attributePath => current((array) $value)],
-                ]);
-
-                break;
         }
 
         return $this;

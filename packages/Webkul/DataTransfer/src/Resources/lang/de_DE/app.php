@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'Attributoptionscode :code wird bereits verwendet.',
                     'code_not_found_to_delete' => 'Attributoptionscode zum Löschen nicht gefunden.',
+                    'ambiguous-code-to-delete' => 'Optionscode :code existiert bei mehr als einem Attribut; bitte attribute_code angeben.',
                     'locale-not-exist'         => 'Gebietsschema ":code" existiert nicht.',
                     'invalid-attribute'        => 'Attribut ":code" existiert nicht.',
                 ],
@@ -299,6 +300,7 @@ return [
             'column-not-found'       => 'Erforderliche Spalten nicht gefunden: %s.',
             'column-numbers'         => 'Die Anzahl der Spalten entspricht nicht der Anzahl der Zeilen in der Kopfzeile.',
             'invalid-attribute'      => 'Header enthält ungültige Attribute: „%s“.',
+            'invalid-boolean'        => 'Die Spalte ":column" hat den Wert ":value", der kein Boolean ist. Verwenden Sie true, false, yes, no, on, off, 1 oder 0.',
             'system'                 => 'Es ist ein unerwarteter Systemfehler aufgetreten.',
             'wrong-quotes'           => 'Anstelle von geraden Anführungszeichen werden geschweifte Anführungszeichen verwendet.',
             'file-empty'             => 'Die Datei ist leer oder enthält keine Kopfzeile. Bitte laden Sie eine gültige Datei mit Daten hoch.',
@@ -310,5 +312,6 @@ return [
         'completed' => 'Jobausführung abgeschlossen',
         'stalled'   => 'Der Auftrag hat länger als :minutes Minuten nicht reagiert und wurde als fehlgeschlagen markiert. Der ausführende Worker wurde vermutlich beendet.',
         'reaped'    => ':count hängengebliebene Aufträge wurden als fehlgeschlagen markiert.',
+        'stopped'   => 'Import nach der Validierung mit :count Fehlern abgebrochen. Es wurden keine Zeilen importiert.',
     ],
 ];

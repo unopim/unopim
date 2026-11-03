@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'Attribuutoptiecode :code is al in gebruik.',
                     'code_not_found_to_delete' => 'Attribuutoptiecode niet gevonden voor verwijdering.',
+                    'ambiguous-code-to-delete' => 'Optiecode :code bestaat bij meer dan één attribuut; voeg attribute_code toe.',
                     'locale-not-exist'         => 'Landinstelling ":code" bestaat niet.',
                     'invalid-attribute'        => 'Attribuut ":code" bestaat niet.',
                 ],
@@ -299,6 +300,7 @@ return [
             'column-not-found'       => 'Vereiste kolommen niet gevonden: %s.',
             'column-numbers'         => 'Het aantal kolommen komt niet overeen met het aantal rijen in de koptekst.',
             'invalid-attribute'      => 'Koptekst bevat ongeldig(e) attribuut(en): "%s".',
+            'invalid-boolean'        => 'Kolom ":column" heeft de waarde ":value", die geen boolean is. Gebruik true, false, yes, no, on, off, 1 of 0.',
             'system'                 => 'Er is een onverwachte systeemfout opgetreden.',
             'wrong-quotes'           => 'Er worden gekrulde aanhalingstekens gebruikt in plaats van rechte aanhalingstekens.',
             'file-empty'             => 'Het bestand is leeg of bevat geen kopregel. Upload een geldig bestand met gegevens.',
@@ -310,5 +312,6 @@ return [
         'completed' => 'Taak succesvol voltooid.',
         'stalled'   => 'De taak reageerde langer dan :minutes minuten niet en is als mislukt gemarkeerd. De uitvoerende worker is waarschijnlijk beëindigd.',
         'reaped'    => ':count vastgelopen taken zijn als mislukt gemarkeerd.',
+        'stopped'   => 'Import gestopt na validatie met :count fouten. Er zijn geen rijen geïmporteerd.',
     ],
 ];

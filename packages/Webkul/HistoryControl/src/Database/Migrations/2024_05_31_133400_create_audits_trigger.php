@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
+use Webkul\Core\Database\Schema\PrefixedIndexNameBlueprint;
 
 return new class extends Migration
 {
@@ -11,16 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         $driver = DB::getDriverName();
-        $tablePrefix = DB::getTablePrefix();
+        $auditsTable = DB::getQueryGrammar()->wrapTable('audits');
+        $triggerName = PrefixedIndexNameBlueprint::nameFor(DB::getTablePrefix(), 'audit_before_insert');
+        $functionName = DB::getQueryGrammar()->wrap(PrefixedIndexNameBlueprint::nameFor(DB::getTablePrefix(), 'audit_before_insert_func'));
 
         switch ($driver) {
             case 'mysql':
             case 'mariadb':
                 // MySQL trigger
-                if (! DB::select("SELECT * FROM information_schema.TRIGGERS WHERE TRIGGER_NAME = 'audit_before_insert' AND EVENT_OBJECT_SCHEMA = '".DB::getDatabaseName()."'")) {
+                if (! DB::select('SELECT * FROM information_schema.TRIGGERS WHERE TRIGGER_NAME = ? AND EVENT_OBJECT_SCHEMA = ?', [$triggerName, DB::getDatabaseName()])) {
                     DB::unprepared('
-                        CREATE TRIGGER audit_before_insert
-                        BEFORE INSERT ON '.$tablePrefix.'audits
+                        CREATE TRIGGER '.DB::getQueryGrammar()->wrap($triggerName).'
+                        BEFORE INSERT ON '.$auditsTable.'
                         FOR EACH ROW
                         BEGIN
                             DECLARE max_version_id INT DEFAULT 0;
@@ -28,13 +31,13 @@ return new class extends Migration
 
                             -- Find existing version_id with the same tags and exact created_at timestamp
                             SELECT version_id INTO old_version_id
-                            FROM '.$tablePrefix.'audits
+                            FROM '.$auditsTable.'
                             WHERE tags = NEW.tags AND url = NEW.url AND created_at = NEW.created_at
                             LIMIT 1;
 
                             -- Get the maximum version_id for the same tags
                             SELECT MAX(version_id) INTO max_version_id
-                            FROM '.$tablePrefix.'audits
+                            FROM '.$auditsTable.'
                             WHERE tags = NEW.tags AND url = NEW.url;
 
                             -- Assign version_id based on the findings
@@ -53,7 +56,7 @@ return new class extends Migration
             case 'pgsql':
                 // PostgreSQL trigger function + trigger
                 DB::unprepared('
-                    CREATE OR REPLACE FUNCTION audit_before_insert_func()
+                    CREATE OR REPLACE FUNCTION '.$functionName.'()
                     RETURNS TRIGGER AS $$
                     DECLARE
                         max_version_id INT DEFAULT 0;
@@ -61,13 +64,13 @@ return new class extends Migration
                     BEGIN
                         -- Find existing version_id with the same tags and exact created_at timestamp
                         SELECT version_id INTO old_version_id
-                        FROM '.$tablePrefix.'audits
+                        FROM '.$auditsTable.'
                         WHERE tags = NEW.tags AND url = NEW.url AND created_at = NEW.created_at
                         LIMIT 1;
 
                         -- Get the maximum version_id for the same tags
                         SELECT MAX(version_id) INTO max_version_id
-                        FROM '.$tablePrefix.'audits
+                        FROM '.$auditsTable.'
                         WHERE tags = NEW.tags AND url = NEW.url;
 
                         -- Assign version_id based on the findings
@@ -83,12 +86,12 @@ return new class extends Migration
                     END;
                     $$ LANGUAGE plpgsql;
 
-                    DROP TRIGGER IF EXISTS audit_before_insert ON '.$tablePrefix.'audits;
+                    DROP TRIGGER IF EXISTS audit_before_insert ON '.$auditsTable.';
 
                     CREATE TRIGGER audit_before_insert
-                    BEFORE INSERT ON '.$tablePrefix.'audits
+                    BEFORE INSERT ON '.$auditsTable.'
                     FOR EACH ROW
-                    EXECUTE FUNCTION audit_before_insert_func();
+                    EXECUTE FUNCTION '.$functionName.'();
                 ');
                 break;
         }
@@ -100,18 +103,18 @@ return new class extends Migration
     public function down(): void
     {
         $driver = DB::getDriverName();
-        $tablePrefix = DB::getTablePrefix();
+        $auditsTable = DB::getQueryGrammar()->wrapTable('audits');
 
         switch ($driver) {
             case 'mysql':
             case 'mariadb':
-                DB::unprepared('DROP TRIGGER IF EXISTS `audit_before_insert`');
+                DB::unprepared('DROP TRIGGER IF EXISTS '.DB::getQueryGrammar()->wrap(PrefixedIndexNameBlueprint::nameFor(DB::getTablePrefix(), 'audit_before_insert')));
                 break;
 
             case 'pgsql':
                 DB::unprepared('
-                    DROP TRIGGER IF EXISTS audit_before_insert ON '.$tablePrefix.'audits;
-                    DROP FUNCTION IF EXISTS audit_before_insert_func();
+                    DROP TRIGGER IF EXISTS audit_before_insert ON '.$auditsTable.';
+                    DROP FUNCTION IF EXISTS '.DB::getQueryGrammar()->wrap(PrefixedIndexNameBlueprint::nameFor(DB::getTablePrefix(), 'audit_before_insert_func')).'();
                 ');
                 break;
         }
