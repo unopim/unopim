@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'O código de opção de atributo :code já está em uso.',
                     'code_not_found_to_delete' => 'Código de opção de atributo não encontrado para exclusão.',
+                    'ambiguous-code-to-delete' => 'O código de opção :code existe em mais do que um atributo; adicione attribute_code.',
                     'locale-not-exist'         => 'A localidade ":code" não existe.',
                     'invalid-attribute'        => 'O atributo ":code" não existe.',
                 ],

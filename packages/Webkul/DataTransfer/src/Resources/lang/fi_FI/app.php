@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'Attribuuttivaihtoehdon koodi :code on jo käytössä.',
                     'code_not_found_to_delete' => 'Attribuuttivaihtoehdon koodia ei löytynyt poistettavaksi.',
+                    'ambiguous-code-to-delete' => 'Vaihtoehtokoodi :code on käytössä useammassa kuin yhdessä attribuutissa; lisää attribute_code.',
                     'locale-not-exist'         => 'Kieltä ":code" ei ole olemassa.',
                     'invalid-attribute'        => 'Attribuuttia ":code" ei ole olemassa.',
                 ],

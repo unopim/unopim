@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'विशेषता विकल्प कोड :code पहले से ही उपयोग में है।',
                     'code_not_found_to_delete' => 'हटाने के लिए विशेषता विकल्प कोड नहीं मिला।',
+                    'ambiguous-code-to-delete' => 'विकल्प कोड :code एक से अधिक विशेषताओं में मौजूद है; attribute_code जोड़ें।',
                     'locale-not-exist'         => 'लोकेल ":code" मौजूद नहीं है।',
                     'invalid-attribute'        => 'विशेषता ":code" मौजूद नहीं है।',
                 ],

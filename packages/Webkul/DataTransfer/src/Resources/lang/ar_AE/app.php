@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'كود خيار السمة :code مستخدم بالفعل.',
                     'code_not_found_to_delete' => 'لم يتم العثور على كود خيار السمة للحذف.',
+                    'ambiguous-code-to-delete' => 'كود الخيار :code موجود في أكثر من سمة؛ أضف attribute_code.',
                     'locale-not-exist'         => 'اللغة المحلية ":code" غير موجودة.',
                     'invalid-attribute'        => 'السمة ":code" غير موجودة.',
                 ],
