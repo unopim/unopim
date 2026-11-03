@@ -1,16 +1,4 @@
 @php
-    /**
-     * Shared by the create and the edit form. `$attribute` only exists on edit,
-     * so every read of it is guarded.
-     *
-     * The panel uses v-show rather than v-if so the control stays in the DOM:
-     * switching the type back and forth must not discard what was typed. A
-     * formula submitted for a non-calculated type is discarded when it is
-     * saved.
-     *
-     * The function list and the variable list are supplied by a view composer,
-     * so nothing here has to reach into the container.
-     */
     $calculatedAttribute = $attribute ?? null;
 
     $formulaValue = old('formula', $calculatedAttribute->formula ?? '');
