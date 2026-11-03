@@ -393,10 +393,16 @@ exports.publishViaFetch = publishViaFetch;
 /**
  * Publish and wait until every requested locale has a live version. Absorbs the async gap between the
  * queued publish job (publication queue) and the completeness job (system queue) by re-dispatching the
- * idempotent publish until versions appear or the deadline passes.
+ * idempotent publish until versions appear or the deadline passes. Each dispatch is waited on until its
+ * publish attempt settles, so no queued job outlives this call and re-publishes behind a later withdraw.
+ * An attempt can stay queued when the unique job lock already holds another job for the product, so the
+ * wait per attempt is bounded and the loop re-dispatches after it.
+ *
+ * Pass `codes` to count only those locales: another worker may switch auto-publish on, which makes a
+ * save publish every channel locale on its own.
  * @returns {Promise<Array<{locale_code: string, version: number|null}>>}
  */
-async function publishAndWait(page, productId, channelId, localeIds, { expected = localeIds.length, timeout = 45000 } = {}) {
+async function publishAndWait(page, productId, channelId, localeIds, { expected = localeIds.length, timeout = 45000, codes = null } = {}) {
   const deadline = Date.now() + timeout;
   let rows = [];
 
@@ -404,10 +410,15 @@ async function publishAndWait(page, productId, channelId, localeIds, { expected 
     const publish = await publishViaFetch(page, productId, channelId, localeIds);
     base.expect(publish.status, JSON.stringify(publish.body)).toBe(200);
 
-    await page.waitForTimeout(1500);
+    await base.expect
+      .poll(async () => (await fetchGridRows(page, publish.body.attempt_url)).settled === true, {
+        timeout: Math.max(1000, Math.min(15000, deadline - Date.now())),
+      })
+      .toBe(true)
+      .catch(() => {});
 
     const status = await fetchGridRows(page, `/admin/products/${productId}/passport`);
-    rows = (status.rows || []).filter((row) => row.version != null);
+    rows = (status.rows || []).filter((row) => row.version != null && (!codes || codes.includes(row.locale_code)));
 
     if (rows.length >= expected) {
       return rows;
@@ -418,9 +429,12 @@ async function publishAndWait(page, productId, channelId, localeIds, { expected 
 }
 exports.publishAndWait = publishAndWait;
 
-/** The publications datagrid row for a SKU (its uuid, id, status). */
+/**
+ * The publications datagrid row for a SKU (its uuid, id, status), searched through the grid's own
+ * filter: parallel workers publish enough passports to push a row off the unfiltered first page.
+ */
 async function passportRowForSku(page, sku) {
-  const grid = await fetchGridRows(page, '/admin/catalog/passports');
+  const grid = await fetchGridRows(page, `/admin/catalog/passports?${new URLSearchParams({ 'filters[all][]': sku })}`);
 
   return gridRecords(grid).find((r) => r.sku === sku);
 }

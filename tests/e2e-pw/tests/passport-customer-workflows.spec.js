@@ -11,7 +11,6 @@ const {
   saveProduct,
   settingsIdByCode,
   fetchGridRows,
-  gridRecords,
   passportLocaleMap,
   publishAndWait,
   passportRowForSku,
@@ -92,7 +91,7 @@ async function waitForAutoPublish(page, productId, { timeout = 60000 } = {}) {
   return [];
 }
 
-test.describe.serial('DPP customer workflows', () => {
+test.describe.serial('DPP customer workflows', { tag: '@global-state' }, () => {
   let channelId;
 
   test.beforeAll(async ({ browser }) => {
@@ -126,9 +125,12 @@ test.describe.serial('DPP customer workflows', () => {
     const rows = await waitForAutoPublish(page, product.id);
     expect(rows.length, 'auto-published live locale(s)').toBeGreaterThanOrEqual(1);
 
-    const gridRow = await passportRowForSku(page, sku);
-    expect(gridRow, 'publication row in grid').toBeTruthy();
-    expect(String(gridRow.publication_status).toLowerCase()).toContain('publish');
+    await expect
+      .poll(async () => String((await passportRowForSku(page, sku))?.publication_status ?? '').toLowerCase(), {
+        message: 'grid publication status',
+        timeout: 30000,
+      })
+      .toContain('publish');
   });
 
   test('CSV export carries the public URL, gtin and gs1 link for the print hand-off', async ({ adminPage }) => {
@@ -144,7 +146,7 @@ test.describe.serial('DPP customer workflows', () => {
     await saveProduct(page);
 
     const localeMap = await passportLocaleMap(page);
-    const rows = await publishAndWait(page, product.id, channelId, [localeMap.en_US], { expected: 1 });
+    const rows = await publishAndWait(page, product.id, channelId, [localeMap.en_US], { expected: 1, codes: ['en_US'] });
     expect(rows.length, 'published locale').toBe(1);
 
     const gridRow = await passportRowForSku(page, sku);

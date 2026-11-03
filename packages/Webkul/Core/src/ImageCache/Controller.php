@@ -203,7 +203,7 @@ class Controller extends BaseController
     protected function buildResponse(string $content): Response
     {
         $mime = finfo_buffer(finfo_open(FILEINFO_MIME_TYPE), $content);
-        $eTag = md5($content);
+        $eTag = hash('xxh128', $content);
         $notModified = isset($_SERVER['HTTP_IF_NONE_MATCH']) && Request::server('HTTP_IF_NONE_MATCH') === $eTag;
         $statusCode = $notModified ? 304 : 200;
         $responseContent = $notModified ? null : $content;

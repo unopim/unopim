@@ -146,7 +146,7 @@ class ImageCache
         $properties = serialize($this->properties);
         $calls = serialize($this->getSanitizedCalls());
 
-        return md5($properties.$calls);
+        return hash('xxh128', $properties.$calls);
     }
 
     /**

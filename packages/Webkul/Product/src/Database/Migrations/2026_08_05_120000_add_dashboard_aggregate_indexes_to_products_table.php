@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Webkul\Core\Database\Schema\PrefixedIndexNameBlueprint;
 
 /**
  * Covering indexes for the dashboard's catalog-wide aggregates, which
@@ -14,26 +15,26 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('products', function (Blueprint $table) {
-            if (! Schema::hasIndex('products', 'products_type_status_idx')) {
+        Schema::table('products', function (Blueprint $table): void {
+            if (! PrefixedIndexNameBlueprint::indexExists('products', 'products_type_status_idx')) {
                 $table->index(['type', 'status'], 'products_type_status_idx');
             }
 
-            if (! Schema::hasIndex('products', 'products_created_at_idx')) {
+            if (! PrefixedIndexNameBlueprint::indexExists('products', 'products_created_at_idx')) {
                 $table->index('created_at', 'products_created_at_idx');
             }
 
-            if (! Schema::hasIndex('products', 'products_updated_created_idx')) {
+            if (! PrefixedIndexNameBlueprint::indexExists('products', 'products_updated_created_idx')) {
                 $table->index(['updated_at', 'created_at'], 'products_updated_created_idx');
             }
 
-            if (! Schema::hasIndex('products', 'products_completeness_idx')) {
+            if (! PrefixedIndexNameBlueprint::indexExists('products', 'products_completeness_idx')) {
                 $table->index('avg_completeness_score', 'products_completeness_idx');
             }
         });
 
-        if (Schema::hasIndex('products', 'products_updated_at_idx')) {
-            Schema::table('products', function (Blueprint $table) {
+        if (PrefixedIndexNameBlueprint::indexExists('products', 'products_updated_at_idx')) {
+            Schema::table('products', function (Blueprint $table): void {
                 $table->dropIndex('products_updated_at_idx');
             });
         }
@@ -41,8 +42,8 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('products', function (Blueprint $table) {
-            if (! Schema::hasIndex('products', 'products_updated_at_idx')) {
+        Schema::table('products', function (Blueprint $table): void {
+            if (! PrefixedIndexNameBlueprint::indexExists('products', 'products_updated_at_idx')) {
                 $table->index('updated_at', 'products_updated_at_idx');
             }
 
@@ -52,7 +53,7 @@ return new class extends Migration
                 'products_updated_created_idx',
                 'products_completeness_idx',
             ] as $index) {
-                if (Schema::hasIndex('products', $index)) {
+                if (PrefixedIndexNameBlueprint::indexExists('products', $index)) {
                     $table->dropIndex($index);
                 }
             }

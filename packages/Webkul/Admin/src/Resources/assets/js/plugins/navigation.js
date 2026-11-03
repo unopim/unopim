@@ -46,7 +46,7 @@ export default function initAjaxNavigation() {
 
         event.preventDefault();
 
-        visit(link.href, true);
+        visit(link.href, true).catch(() => window.location.assign(link.href));
     }
 
     function isEligible(link) {
@@ -338,12 +338,26 @@ export default function initAjaxNavigation() {
                 return;
             }
 
-            try {
-                new Function(remapReferences(original.textContent))();
-            } catch (error) {
-                console.error('Ajax navigation: a page script failed to run', error);
-            }
+            runInlineScript(original, remapReferences(original.textContent));
         });
+    }
+
+    /**
+     * Runs a page script through a <script> element instead of eval so a nonce-based CSP applies.
+     * The function wrapper keeps top-level let/const local, so revisiting a page cannot redeclare them.
+     */
+    function runInlineScript(original, source) {
+        const script = document.createElement('script');
+
+        if (original.nonce) {
+            script.nonce = original.nonce;
+        }
+
+        script.textContent = '(function () {\ntry {\n' + source + '\n} catch (error) {\n'
+            + "console.error('Ajax navigation: a page script failed to run', error);\n}\n})();";
+
+        document.body.appendChild(script);
+        script.remove();
     }
 
     function toggleProgress(active) {

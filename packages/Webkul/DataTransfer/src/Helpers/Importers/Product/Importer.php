@@ -1400,21 +1400,55 @@ class Importer extends AbstractImporter
      */
     protected function valueCodes(array $values): array
     {
-        $codes = array_keys($values[AbstractType::COMMON_VALUES_KEY] ?? []);
+        $codes = [];
 
-        foreach ([AbstractType::LOCALE_VALUES_KEY, AbstractType::CHANNEL_VALUES_KEY] as $scope) {
-            foreach ($values[$scope] ?? [] as $scopeValues) {
-                $codes = array_merge($codes, array_keys($scopeValues));
-            }
-        }
+        foreach ($values as $scope => $scoped) {
+            $depth = is_array($scoped) ? $this->scopeDepth($scope) : null;
 
-        foreach ($values[AbstractType::CHANNEL_LOCALE_VALUES_KEY] ?? [] as $localeValues) {
-            foreach ($localeValues as $scopeValues) {
-                $codes = array_merge($codes, array_keys($scopeValues));
+            if ($depth !== null) {
+                $codes = array_merge($codes, $this->valueCodesAt($scoped, $depth));
             }
         }
 
         return $codes;
+    }
+
+    /**
+     * Attribute codes held by the bags nested `$depth` levels below a scope.
+     *
+     * @param  array<string, mixed>  $node
+     * @return array<int, string>
+     */
+    protected function valueCodesAt(array $node, int $depth): array
+    {
+        if ($depth === 0) {
+            return array_keys($node);
+        }
+
+        $codes = [];
+
+        foreach ($node as $child) {
+            if (is_array($child)) {
+                $codes = array_merge($codes, $this->valueCodesAt($child, $depth - 1));
+            }
+        }
+
+        return $codes;
+    }
+
+    /**
+     * Levels of channel and locale keys between a values scope and its attribute codes.
+     *
+     * Returns null for keys that hold no attribute values, such as categories and associations.
+     */
+    protected function scopeDepth(int|string $scope): ?int
+    {
+        return match ($scope) {
+            AbstractType::COMMON_VALUES_KEY                                   => 0,
+            AbstractType::LOCALE_VALUES_KEY, AbstractType::CHANNEL_VALUES_KEY => 1,
+            AbstractType::CHANNEL_LOCALE_VALUES_KEY                           => 2,
+            default                                                           => null,
+        };
     }
 
     /**
@@ -2047,35 +2081,47 @@ class Importer extends AbstractImporter
     }
 
     /**
+     * Strip the attribute values the product's variant level does not own, in every scope.
+     *
      * @param  array<string, mixed>  $values
      */
-    protected function stripUnownedScopes(array &$values, Product $product, $planner): bool
+    protected function stripUnownedScopes(array &$values, Product $product, VariantStructurePlannerContract $planner): bool
     {
         $changed = false;
 
         foreach ($values as $scope => &$scoped) {
-            if (! is_array($scoped) || $scope === 'categories' || $scope === 'associations') {
+            $depth = is_array($scoped) ? $this->scopeDepth($scope) : null;
+
+            if ($depth === null) {
                 continue;
             }
 
-            if ($scope === 'common') {
-                $changed = $this->stripUnownedBag($scoped, $product, $planner) || $changed;
+            $changed = $this->stripUnownedBagsAt($scoped, $depth, $product, $planner) || $changed;
+        }
 
-                continue;
-            }
+        return $changed;
+    }
 
-            foreach ($scoped as &$inner) {
-                if (! is_array($inner)) {
-                    continue;
-                }
+    /**
+     * Strip unowned attribute codes from the bags nested `$depth` levels below a scope.
+     *
+     * Channel, locale and currency codes sit above or below that depth, so only
+     * keys at the depth are attribute codes; checking any other level deletes
+     * whole locale bags or the currency keys of a price.
+     *
+     * @param  array<string, mixed>  $node
+     */
+    protected function stripUnownedBagsAt(array &$node, int $depth, Product $product, VariantStructurePlannerContract $planner): bool
+    {
+        if ($depth === 0) {
+            return $this->stripUnownedBag($node, $product, $planner);
+        }
 
-                $changed = $this->stripUnownedBag($inner, $product, $planner) || $changed;
+        $changed = false;
 
-                foreach ($inner as &$deeper) {
-                    if (is_array($deeper) && ! array_is_list($deeper)) {
-                        $changed = $this->stripUnownedBag($deeper, $product, $planner) || $changed;
-                    }
-                }
+        foreach ($node as &$child) {
+            if (is_array($child)) {
+                $changed = $this->stripUnownedBagsAt($child, $depth - 1, $product, $planner) || $changed;
             }
         }
 
@@ -2083,9 +2129,11 @@ class Importer extends AbstractImporter
     }
 
     /**
+     * Drop the codes in one attribute bag that the product's variant level does not own.
+     *
      * @param  array<string, mixed>  $bag
      */
-    protected function stripUnownedBag(array &$bag, Product $product, $planner): bool
+    protected function stripUnownedBag(array &$bag, Product $product, VariantStructurePlannerContract $planner): bool
     {
         $changed = false;
 
@@ -3055,22 +3103,26 @@ class Importer extends AbstractImporter
 
         if (! empty($oldValues[AbstractType::COMMON_VALUES_KEY])) {
             $newValues[AbstractType::COMMON_VALUES_KEY] = array_filter(
-                array_merge($oldValues[AbstractType::COMMON_VALUES_KEY] ?? [], $newValues[AbstractType::COMMON_VALUES_KEY])
+                array_merge($oldValues[AbstractType::COMMON_VALUES_KEY] ?? [], $newValues[AbstractType::COMMON_VALUES_KEY]),
+                is_filled_value(...)
             );
         }
 
         foreach ($this->channelsAndLocales as $channelCode => $locales) {
             $newValues[AbstractType::CHANNEL_VALUES_KEY][$channelCode] = array_filter(
-                array_merge($oldValues[AbstractType::CHANNEL_VALUES_KEY][$channelCode] ?? [], $newValues[AbstractType::CHANNEL_VALUES_KEY][$channelCode] ?? [])
+                array_merge($oldValues[AbstractType::CHANNEL_VALUES_KEY][$channelCode] ?? [], $newValues[AbstractType::CHANNEL_VALUES_KEY][$channelCode] ?? []),
+                is_filled_value(...)
             );
 
             foreach ($locales as $localeCode) {
                 $newValues[AbstractType::LOCALE_VALUES_KEY][$localeCode] = array_filter(
-                    array_merge($oldValues[AbstractType::LOCALE_VALUES_KEY][$localeCode] ?? [], $newValues[AbstractType::LOCALE_VALUES_KEY][$localeCode] ?? [])
+                    array_merge($oldValues[AbstractType::LOCALE_VALUES_KEY][$localeCode] ?? [], $newValues[AbstractType::LOCALE_VALUES_KEY][$localeCode] ?? []),
+                    is_filled_value(...)
                 );
 
                 $newValues[AbstractType::CHANNEL_LOCALE_VALUES_KEY][$channelCode][$localeCode] = array_filter(
-                    array_merge($oldValues[AbstractType::CHANNEL_LOCALE_VALUES_KEY][$channelCode][$localeCode] ?? [], $newValues[AbstractType::CHANNEL_LOCALE_VALUES_KEY][$channelCode][$localeCode] ?? [])
+                    array_merge($oldValues[AbstractType::CHANNEL_LOCALE_VALUES_KEY][$channelCode][$localeCode] ?? [], $newValues[AbstractType::CHANNEL_LOCALE_VALUES_KEY][$channelCode][$localeCode] ?? []),
+                    is_filled_value(...)
                 );
 
                 if (empty($newValues[AbstractType::LOCALE_VALUES_KEY][$localeCode])) {
