@@ -21,7 +21,7 @@
                         <a
                             v-for="ch in channels"
                             :key="ch.channel"
-                            :href="productsUrl(ch.channel)"
+                            :href="productsUrl(ch)"
                             :title="incompleteLinkTitle(ch)"
                             class="block rounded-md -m-1 p-1 transition-colors hover:bg-gray-50 dark:hover:bg-cherry-800"
                         >
