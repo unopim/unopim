@@ -311,5 +311,6 @@ return [
         'completed' => 'İş yürütme tamamlandı',
         'stalled'   => 'İş :minutes dakikadan uzun süre yanıt vermedi ve başarısız olarak işaretlendi. Onu çalıştıran işlem büyük olasılıkla sonlandırıldı.',
         'reaped'    => ':count takılı kalan iş başarısız olarak işaretlendi.',
+        'stopped'   => 'İçe aktarma, doğrulamada :count hata bulunduğu için durduruldu. Hiçbir satır içe aktarılmadı.',
     ],
 ];

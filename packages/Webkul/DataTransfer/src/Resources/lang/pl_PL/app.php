@@ -311,5 +311,6 @@ return [
         'completed' => 'Zakończenie pracy',
         'stalled'   => 'Zadanie przestało odpowiadać przez ponad :minutes minut i zostało oznaczone jako nieudane. Proces, który je wykonywał, prawdopodobnie został zakończony.',
         'reaped'    => 'Oznaczono :count zatrzymanych zadań jako nieudane.',
+        'stopped'   => 'Import zatrzymano po walidacji z liczbą błędów: :count. Nie zaimportowano żadnych wierszy.',
     ],
 ];

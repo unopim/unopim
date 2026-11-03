@@ -311,5 +311,6 @@ return [
         'completed' => 'Eksekusi pekerjaan selesai',
         'stalled'   => 'Tugas berhenti merespons selama lebih dari :minutes menit dan ditandai gagal. Proses yang menjalankannya kemungkinan besar dihentikan.',
         'reaped'    => ':count tugas yang macet ditandai sebagai gagal.',
+        'stopped'   => 'Impor dihentikan setelah validasi dengan :count kesalahan. Tidak ada baris yang diimpor.',
     ],
 ];

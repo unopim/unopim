@@ -311,5 +311,6 @@ return [
         'completed' => 'Jobbutförande slutfört',
         'stalled'   => 'Jobbet slutade svara i mer än :minutes minuter och markerades som misslyckat. Processen som körde det avbröts sannolikt.',
         'reaped'    => ':count fastnade jobb markerades som misslyckade.',
+        'stopped'   => 'Importen stoppades efter validering med :count fel. Inga rader importerades.',
     ],
 ];
