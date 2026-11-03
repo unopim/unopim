@@ -74,6 +74,9 @@ class Storage
         return $this;
     }
 
+    /**
+     * Check if the option code exists, optionally scoped to an attribute.
+     */
     public function has(string $code, ?int $attributeId = null): bool
     {
         return $this->get($code, $attributeId) !== null;
@@ -101,6 +104,22 @@ class Storage
         }
 
         return $id;
+    }
+
+    /**
+     * Check if more than one attribute owns the option code.
+     */
+    public function isAmbiguous(string $code): bool
+    {
+        $owners = 0;
+
+        foreach ($this->items as $options) {
+            if (isset($options[$code]) && ++$owners > 1) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'Attributindstillingskoden :code er allerede i brug.',
                     'code_not_found_to_delete' => 'Attributindstillingskode blev ikke fundet til sletning.',
+                    'ambiguous-code-to-delete' => 'Indstillingskoden :code findes på mere end én attribut; tilføj attribute_code.',
                     'locale-not-exist'         => 'Sprog ":code" findes ikke.',
                     'invalid-attribute'        => 'Attributten ":code" findes ikke.',
                 ],

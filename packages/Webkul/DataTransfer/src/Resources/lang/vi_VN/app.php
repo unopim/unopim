@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'Mã tùy chọn thuộc tính :code đã được sử dụng.',
                     'code_not_found_to_delete' => 'Không tìm thấy mã tùy chọn thuộc tính để xóa.',
+                    'ambiguous-code-to-delete' => 'Mã tùy chọn :code tồn tại ở nhiều thuộc tính; hãy thêm attribute_code.',
                     'locale-not-exist'         => 'Vị trí ":code" không tồn tại.',
                     'invalid-attribute'        => 'Thuộc tính ":code" không tồn tại.',
                 ],

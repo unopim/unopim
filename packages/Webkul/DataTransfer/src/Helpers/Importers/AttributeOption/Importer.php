@@ -21,6 +21,8 @@ class Importer extends AbstractImporter
 
     public const ERROR_CODE_NOT_FOUND_FOR_DELETE = 'code_not_found_to_delete';
 
+    public const ERROR_AMBIGUOUS_CODE_FOR_DELETE = 'ambiguous_code_to_delete';
+
     public const ERROR_NOT_FOUND_LOCALE = 'locale_not_exist';
 
     public const ERROR_INVALID_ATTRIBUTE = 'invalid_attribute';
@@ -58,6 +60,7 @@ class Importer extends AbstractImporter
     protected array $messages = [
         self::ERROR_DUPLICATE_CODE            => 'data_transfer::app.importers.attribute-options.validation.errors.duplicate-code',
         self::ERROR_CODE_NOT_FOUND_FOR_DELETE => 'data_transfer::app.importers.attribute-options.validation.errors.code_not_found_to_delete',
+        self::ERROR_AMBIGUOUS_CODE_FOR_DELETE => 'data_transfer::app.importers.attribute-options.validation.errors.ambiguous-code-to-delete',
         self::ERROR_NOT_FOUND_LOCALE          => 'data_transfer::app.importers.attribute-options.validation.errors.locale-not-exist',
         self::ERROR_INVALID_ATTRIBUTE         => 'data_transfer::app.importers.attribute-options.validation.errors.invalid-attribute',
     ];
@@ -112,13 +115,24 @@ class Importer extends AbstractImporter
         if ($this->import->action == Import::ACTION_DELETE) {
             $id = $this->getAttributeOptionIdForDelete($rowData);
 
-            if (! $id) {
-                $this->skipRow($rowNumber, self::ERROR_CODE_NOT_FOUND_FOR_DELETE, $rowData['code']);
+            if ($id) {
+                return true;
+            }
+
+            if ($this->isAmbiguousCodeOnlyDelete($rowData)) {
+                $this->skipRow(
+                    $rowNumber,
+                    self::ERROR_AMBIGUOUS_CODE_FOR_DELETE,
+                    'code',
+                    trans($this->messages[self::ERROR_AMBIGUOUS_CODE_FOR_DELETE], ['code' => $rowData['code']])
+                );
 
                 return false;
             }
 
-            return true;
+            $this->skipRow($rowNumber, self::ERROR_CODE_NOT_FOUND_FOR_DELETE, $rowData['code']);
+
+            return false;
         }
 
         if (empty($rowData['locale']) || ! in_array($rowData['locale'], $this->locales)) {
@@ -134,7 +148,7 @@ class Importer extends AbstractImporter
         }
 
         $attributeId = $this->attributeStorage->get($rowData['attribute_code']);
-        $key = $attributeId.':'.$rowData['code'];
+        $key = $this->optionKey($attributeId, $rowData['code']);
         $isUpdate = $this->attributeOptionStorage->has($rowData['code'], $attributeId) || isset($this->attributeOptionCodesInBatch[$key]);
 
         $codeRules = ['required', 'string', new Code];
@@ -230,6 +244,23 @@ class Importer extends AbstractImporter
         return $this->attributeOptionStorage->get($rowData['code']);
     }
 
+    /**
+     * A code-only delete is ambiguous when more than one attribute owns the code.
+     */
+    protected function isAmbiguousCodeOnlyDelete(array $rowData): bool
+    {
+        return (! isset($rowData['attribute_code']) || $rowData['attribute_code'] === '')
+            && $this->attributeOptionStorage->isAmbiguous($rowData['code']);
+    }
+
+    /**
+     * Build the batch key that identifies an option within its attribute.
+     */
+    protected function optionKey(int $attributeId, string $code): string
+    {
+        return $attributeId.':'.$code;
+    }
+
     protected function saveAttributeOptionData(JobTrackBatchContract $batch): bool
     {
         $this->attributeStorage->init();
@@ -257,7 +288,7 @@ class Importer extends AbstractImporter
         }
 
         $isAttributeOption = $this->isAttributeOptionExist($rowData['code'], $attributeId);
-        $key = $attributeId.':'.$rowData['code'];
+        $key = $this->optionKey($attributeId, $rowData['code']);
 
         $data = [
             'code'             => $rowData['code'],
@@ -315,8 +346,6 @@ class Importer extends AbstractImporter
 
     public function isAttributeOptionExist(string $code, ?int $attributeId = null): bool
     {
-        return $attributeId === null
-            ? $this->attributeOptionStorage->has($code)
-            : $this->attributeOptionStorage->has($code, $attributeId);
+        return $this->attributeOptionStorage->has($code, $attributeId);
     }
 }

@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'Код варіанта атрибута :code вже використовується.',
                     'code_not_found_to_delete' => 'Код варіанта атрибута для видалення не знайдено.',
+                    'ambiguous-code-to-delete' => 'Код варіанта :code існує в кількох атрибутах; додайте attribute_code.',
                     'locale-not-exist'         => 'Локаль ":code" не існує.',
                     'invalid-attribute'        => 'Атрибут ":code" не існує.',
                 ],

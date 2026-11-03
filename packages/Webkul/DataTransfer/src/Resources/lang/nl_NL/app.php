@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'Attribuutoptiecode :code is al in gebruik.',
                     'code_not_found_to_delete' => 'Attribuutoptiecode niet gevonden voor verwijdering.',
+                    'ambiguous-code-to-delete' => 'Optiecode :code bestaat bij meer dan één attribuut; voeg attribute_code toe.',
                     'locale-not-exist'         => 'Landinstelling ":code" bestaat niet.',
                     'invalid-attribute'        => 'Attribuut ":code" bestaat niet.',
                 ],

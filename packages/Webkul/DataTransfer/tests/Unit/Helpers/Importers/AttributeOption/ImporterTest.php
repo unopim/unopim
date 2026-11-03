@@ -36,6 +36,7 @@ function makeImporter(array $overrides = []): array
 
     $storage->shouldReceive('init')->byDefault();
     $storage->shouldReceive('load')->byDefault();
+    $storage->shouldReceive('isAmbiguous')->andReturn(false)->byDefault();
 
     $attrStorage->shouldReceive('init')->byDefault();
     $attrStorage->shouldReceive('load')->byDefault();
@@ -291,7 +292,7 @@ describe('isAttributeOptionExist', function () {
     it('returns true if exists', function () {
         ['importer' => $importer, 'storage' => $storage] = makeImporter();
 
-        $storage->shouldReceive('has')->with('opt')->andReturn(true);
+        $storage->shouldReceive('has')->with('opt', null)->andReturn(true);
 
         expect($importer->isAttributeOptionExist('opt'))->toBeTrue();
     });
@@ -299,7 +300,7 @@ describe('isAttributeOptionExist', function () {
     it('returns false if not exists', function () {
         ['importer' => $importer, 'storage' => $storage] = makeImporter();
 
-        $storage->shouldReceive('has')->with('opt')->andReturn(false);
+        $storage->shouldReceive('has')->with('opt', null)->andReturn(false);
 
         expect($importer->isAttributeOptionExist('opt'))->toBeFalse();
     });

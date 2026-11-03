@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'Kod opcji atrybutu :code jest już w użyciu.',
                     'code_not_found_to_delete' => 'Nie znaleziono kodu opcji atrybutu do usunięcia.',
+                    'ambiguous-code-to-delete' => 'Kod opcji :code istnieje w więcej niż jednym atrybucie; dodaj attribute_code.',
                     'locale-not-exist'         => 'Ustawienia regionalne ":code" nie istnieją.',
                     'invalid-attribute'        => 'Atrybut ":code" nie istnieje.',
                 ],

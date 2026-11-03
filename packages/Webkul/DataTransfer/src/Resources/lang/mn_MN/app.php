@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'Шиж чанарын сонголтын код :code аль хэдийн ашиглагдаж байна.',
                     'code_not_found_to_delete' => 'Устгах шинж чанарын сонголтын код олдсонгүй.',
+                    'ambiguous-code-to-delete' => 'Сонголтын код :code нэгээс олон шинж чанарт байна; attribute_code нэмнэ үү.',
                     'locale-not-exist'         => '":code" хэл байхгүй байна.',
                     'invalid-attribute'        => '":code" шинж чанар байхгүй байна.',
                 ],

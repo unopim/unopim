@@ -1,9 +1,12 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
+namespace Tests\Webkul\DataTransfer\Unit\Helpers\Importers\AttributeOption;
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Schema;
+use Mockery;
+use Webkul\Attribute\Models\Attribute;
+use Webkul\Attribute\Models\AttributeOption;
 use Webkul\Attribute\Repositories\AttributeOptionRepository;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\DataTransfer\Helpers\Error;
@@ -15,49 +18,36 @@ use Webkul\DataTransfer\Models\JobTrack;
 use Webkul\DataTransfer\Models\JobTrackBatch;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 
-beforeEach(function () {
-    $this->originalConnection = DB::getDefaultConnection();
-    config(['database.connections.option_identity' => [
-        'driver'                  => 'sqlite',
-        'database'                => ':memory:',
-        'foreign_key_constraints' => true,
-    ]]);
-    DB::setDefaultConnection('option_identity');
+const IDENTITY_SHARED_CODE = 'identity_shared_code';
+
+const IDENTITY_OTHER_CODE = 'identity_other_code';
+
+const IDENTITY_MISSING_CODE = 'identity_missing_code';
+
+beforeEach(function (): void {
     config(['audit.enabled' => false]);
     Event::fake(['data_transfer.imports.batch.import.before', 'data_transfer.imports.batch.import.after']);
 
-    (require base_path('packages/Webkul/Core/src/Database/Migrations/2018_07_10_055143_create_locales_table.php'))->up();
-    DB::table('locales')->insert([
-        ['code' => 'en', 'status' => 1],
-        ['code' => 'fr', 'status' => 1],
-    ]);
-
-    Schema::create('attributes', function (Blueprint $table) {
-        $table->increments('id');
-        $table->string('code')->unique();
-    });
-    foreach (['2018_07_05_140832_create_attribute_options_table.php', '2018_07_05_140856_create_attribute_option_translations_table.php'] as $migration) {
-        (require base_path('packages/Webkul/Attribute/src/Database/Migrations/'.$migration))->up();
-    }
-    DB::table('attributes')->insert([['id' => 1, 'code' => 'color'], ['id' => 2, 'code' => 'size']]);
+    $this->color = Attribute::factory()->create(['type' => 'text']);
+    $this->size = Attribute::factory()->create(['type' => 'text']);
 
     $this->optionStorage = app(Storage::class);
     $attributes = app(AttributeStorage::class);
     $attributes->init();
+
     $locales = Mockery::mock(LocaleRepository::class);
-    $locales->shouldReceive('getActiveLocales')->andReturn(collect([(object) ['code' => 'en'], (object) ['code' => 'fr']]));
+    $locales->shouldReceive('getActiveLocales')->andReturn(collect([(object) ['code' => 'en_US'], (object) ['code' => 'fr_FR']]));
     $batches = Mockery::mock(JobTrackBatchRepository::class);
-    $batches->shouldReceive('update')->andReturnUsing(fn ($data, $id) => new JobTrackBatch(['id' => $id]));
+    $batches->shouldReceive('update')->andReturnUsing(fn (array $data, int $id): JobTrackBatch => new JobTrackBatch(['id' => $id]));
+
     $this->optionImporter = new Importer($batches, app(AttributeOptionRepository::class), $this->optionStorage, $locales, $attributes);
     $this->optionImporter->setErrorHelper(new Error);
     $this->optionImporter->setImport(new JobTrack(['action' => Import::ACTION_APPEND]));
 });
 
-afterEach(function () {
-    DB::setDefaultConnection($this->originalConnection);
-    DB::purge('option_identity');
-});
-
+/**
+ * Build an import batch for the given action and rows.
+ */
 function identityBatch(string $action, array $rows): JobTrackBatch
 {
     $batch = new JobTrackBatch(['data' => $rows]);
@@ -67,152 +57,253 @@ function identityBatch(string $action, array $rows): JobTrackBatch
     return $batch;
 }
 
-function identityRow(string $attribute, string $locale = 'en', string $label = 'Shared'): array
+/**
+ * Build an import row for the shared option code.
+ */
+function identityRow(Attribute $attribute, string $locale = 'en_US', string $label = 'Shared'): array
 {
-    return ['code' => 'shared', 'attribute_code' => $attribute, 'locale' => $locale, 'label' => $label];
+    return ['code' => IDENTITY_SHARED_CODE, 'attribute_code' => $attribute->code, 'locale' => $locale, 'label' => $label];
 }
 
-function seedIdentityOptions(): void
+/**
+ * Persist an option with the given code for the attribute.
+ */
+function identityOption(Attribute $attribute, string $code = IDENTITY_SHARED_CODE): AttributeOption
 {
-    DB::table('attribute_options')->insert([
-        ['id' => 11, 'attribute_id' => 1, 'code' => 'shared', 'sort_order' => 1],
-        ['id' => 22, 'attribute_id' => 2, 'code' => 'shared', 'sort_order' => 2],
-    ]);
+    return AttributeOption::factory()->create(['attribute_id' => $attribute->id, 'code' => $code]);
 }
 
-it('imports the same code independently for two attributes and merges each translation', function () {
-    $rows = [identityRow('color', 'en', 'Color'), identityRow('size', 'en', 'Size'), identityRow('color', 'fr', 'Couleur'), identityRow('size', 'fr', 'Taille')];
+/**
+ * Count the persisted options that use the code.
+ */
+function identityOptionCount(string $code = IDENTITY_SHARED_CODE): int
+{
+    return DB::table('attribute_options')->where('code', $code)->count();
+}
+
+/**
+ * Return the error codes recorded for a row.
+ */
+function identityErrorCodes(Error $errors, int $rowNumber = 1): array
+{
+    return array_column($errors->getAllErrors()[$rowNumber] ?? [], 'code');
+}
+
+it('imports the same code independently for two attributes and merges each translation', function (): void {
+    $rows = [
+        identityRow($this->color, 'en_US', 'Color'),
+        identityRow($this->size, 'en_US', 'Size'),
+        identityRow($this->color, 'fr_FR', 'Couleur'),
+        identityRow($this->size, 'fr_FR', 'Taille'),
+    ];
+
     foreach ($rows as $number => $row) {
         expect($this->optionImporter->validateRow($row, $number + 1))->toBeTrue();
     }
+
     $this->optionImporter->importBatch(identityBatch(Import::ACTION_APPEND, $rows));
 
-    expect(DB::table('attribute_options')->count())->toBe(2)
+    expect(identityOptionCount())->toBe(2)
         ->and($this->optionImporter->getCreatedItemsCount())->toBe(2);
-    foreach ([1 => ['en' => 'Color', 'fr' => 'Couleur'], 2 => ['en' => 'Size', 'fr' => 'Taille']] as $attributeId => $labels) {
-        $id = DB::table('attribute_options')->where('attribute_id', $attributeId)->value('id');
-        expect(DB::table('attribute_option_translations')->where('attribute_option_id', $id)->pluck('label', 'locale')->all())->toBe($labels);
+
+    foreach ([[$this->color, ['en_US' => 'Color', 'fr_FR' => 'Couleur']], [$this->size, ['en_US' => 'Size', 'fr_FR' => 'Taille']]] as [$attribute, $labels]) {
+        $id = DB::table('attribute_options')->where('code', IDENTITY_SHARED_CODE)->where('attribute_id', $attribute->id)->value('id');
+
+        expect(DB::table('attribute_option_translations')->where('attribute_option_id', $id)->orderBy('locale')->pluck('label', 'locale')->all())->toBe($labels);
     }
 });
 
-it('updates only the requested attribute and preserves its translated rows', function () {
-    seedIdentityOptions();
-    $this->optionImporter->importBatch(identityBatch(Import::ACTION_APPEND, [identityRow('color', 'en', 'Updated'), identityRow('color', 'fr', 'Modifie')]));
+it('updates only the requested attribute and preserves its translated rows', function (): void {
+    $color = identityOption($this->color);
+    $size = identityOption($this->size);
 
-    expect(DB::table('attribute_options')->where('id', 11)->value('attribute_id'))->toBe(1)
-        ->and(DB::table('attribute_options')->where('id', 22)->value('attribute_id'))->toBe(2)
-        ->and(DB::table('attribute_option_translations')->where('attribute_option_id', 11)->pluck('label', 'locale')->all())->toBe(['en' => 'Updated', 'fr' => 'Modifie'])
-        ->and(DB::table('attribute_option_translations')->where('attribute_option_id', 22)->count())->toBe(0)
+    $this->optionImporter->importBatch(identityBatch(Import::ACTION_APPEND, [
+        identityRow($this->color, 'en_US', 'Updated'),
+        identityRow($this->color, 'fr_FR', 'Modifie'),
+    ]));
+
+    expect((int) DB::table('attribute_options')->where('id', $color->id)->value('attribute_id'))->toBe($this->color->id)
+        ->and((int) DB::table('attribute_options')->where('id', $size->id)->value('attribute_id'))->toBe($this->size->id)
+        ->and(DB::table('attribute_option_translations')->where('attribute_option_id', $color->id)->orderBy('locale')->pluck('label', 'locale')->all())->toBe(['en_US' => 'Updated', 'fr_FR' => 'Modifie'])
+        ->and(DB::table('attribute_option_translations')->where('attribute_option_id', $size->id)->count())->toBe(0)
         ->and($this->optionImporter->getUpdatedItemsCount())->toBe(1);
 });
 
-it('accepts a new option code already used by another attribute', function () {
-    DB::table('attribute_options')->insert(['id' => 22, 'attribute_id' => 2, 'code' => 'shared']);
-    expect($this->optionImporter->validateRow(identityRow('color'), 1))->toBeTrue();
-    $this->optionImporter->importBatch(identityBatch(Import::ACTION_APPEND, [identityRow('color')]));
-    expect(DB::table('attribute_options')->count())->toBe(2);
+it('accepts a new option code already used by another attribute', function (): void {
+    identityOption($this->size);
+
+    expect($this->optionImporter->validateRow(identityRow($this->color), 1))->toBeTrue();
+
+    $this->optionImporter->importBatch(identityBatch(Import::ACTION_APPEND, [identityRow($this->color)]));
+
+    expect(identityOptionCount())->toBe(2);
 });
 
-it('deletes only the specified attribute option', function () {
-    seedIdentityOptions();
+it('deletes only the specified attribute option', function (): void {
+    identityOption($this->color);
+    $size = identityOption($this->size);
+    $row = ['code' => IDENTITY_SHARED_CODE, 'attribute_code' => $this->color->code];
+
     $this->optionStorage->init();
     $this->optionImporter->setImport(new JobTrack(['action' => Import::ACTION_DELETE]));
-    expect($this->optionImporter->validateRow(['code' => 'shared', 'attribute_code' => 'color'], 1))->toBeTrue();
-    $this->optionImporter->importBatch(identityBatch(Import::ACTION_DELETE, [['code' => 'shared', 'attribute_code' => 'color']]));
-    expect(DB::table('attribute_options')->pluck('id')->all())->toBe([22])
+
+    expect($this->optionImporter->validateRow($row, 1))->toBeTrue();
+
+    $this->optionImporter->importBatch(identityBatch(Import::ACTION_DELETE, [$row]));
+
+    expect(DB::table('attribute_options')->where('code', IDENTITY_SHARED_CODE)->pluck('id')->map(fn ($id): int => (int) $id)->all())->toBe([$size->id])
         ->and($this->optionImporter->getDeletedItemsCount())->toBe(1);
 });
 
-it('rejects an ambiguous legacy delete and leaves all matching options untouched', function () {
-    seedIdentityOptions();
+it('rejects an ambiguous legacy delete with a dedicated error and leaves all matching options untouched', function (): void {
+    identityOption($this->color);
+    identityOption($this->size);
+    $errors = new Error;
+    $row = ['code' => IDENTITY_SHARED_CODE];
+
     $this->optionStorage->init();
+    $this->optionImporter->setErrorHelper($errors);
     $this->optionImporter->setImport(new JobTrack(['action' => Import::ACTION_DELETE]));
-    expect($this->optionImporter->validateRow(['code' => 'shared'], 1))->toBeFalse();
-    $this->optionImporter->importBatch(identityBatch(Import::ACTION_DELETE, [['code' => 'shared']]));
-    expect(DB::table('attribute_options')->count())->toBe(2)
+
+    expect($this->optionImporter->validateRow($row, 1))->toBeFalse()
+        ->and(identityErrorCodes($errors))->toBe([Importer::ERROR_AMBIGUOUS_CODE_FOR_DELETE])
+        ->and($errors->getAllErrors()[1][0]['message'])->toBe(trans('data_transfer::app.importers.attribute-options.validation.errors.ambiguous-code-to-delete', ['code' => IDENTITY_SHARED_CODE]));
+
+    $this->optionImporter->importBatch(identityBatch(Import::ACTION_DELETE, [$row]));
+
+    expect(identityOptionCount())->toBe(2)
         ->and($this->optionImporter->getDeletedItemsCount())->toBe(0);
 });
 
-it('retains unambiguous code-only deletes', function () {
-    DB::table('attribute_options')->insert(['id' => 11, 'attribute_id' => 1, 'code' => 'shared']);
+it('reports a missing code-only delete as not found', function (): void {
+    $errors = new Error;
+
+    $this->optionStorage->init();
+    $this->optionImporter->setErrorHelper($errors);
+    $this->optionImporter->setImport(new JobTrack(['action' => Import::ACTION_DELETE]));
+
+    expect($this->optionImporter->validateRow(['code' => IDENTITY_MISSING_CODE], 1))->toBeFalse()
+        ->and(identityErrorCodes($errors))->toBe([Importer::ERROR_CODE_NOT_FOUND_FOR_DELETE]);
+});
+
+it('retains unambiguous code-only deletes', function (): void {
+    identityOption($this->color);
+    $row = ['code' => IDENTITY_SHARED_CODE];
+
     $this->optionStorage->init();
     $this->optionImporter->setImport(new JobTrack(['action' => Import::ACTION_DELETE]));
-    expect($this->optionImporter->validateRow(['code' => 'shared'], 1))->toBeTrue();
-    $this->optionImporter->importBatch(identityBatch(Import::ACTION_DELETE, [['code' => 'shared']]));
-    expect(DB::table('attribute_options')->count())->toBe(0);
+
+    expect($this->optionImporter->validateRow($row, 1))->toBeTrue();
+
+    $this->optionImporter->importBatch(identityBatch(Import::ACTION_DELETE, [$row]));
+
+    expect(identityOptionCount())->toBe(0);
 });
 
-it('never falls back to a global code when the delete attribute has no matching option', function (string $attributeCode) {
-    DB::table('attribute_options')->insert(['id' => 11, 'attribute_id' => 1, 'code' => 'shared']);
+it('never falls back to a global code when the delete attribute has no matching option', function (string $scope): void {
+    identityOption($this->color);
+    $errors = new Error;
+    $row = ['code' => IDENTITY_SHARED_CODE, 'attribute_code' => $scope === 'other attribute' ? $this->size->code : $scope];
+
     $this->optionStorage->init();
+    $this->optionImporter->setErrorHelper($errors);
     $this->optionImporter->setImport(new JobTrack(['action' => Import::ACTION_DELETE]));
-    expect($this->optionImporter->validateRow(['code' => 'shared', 'attribute_code' => $attributeCode], 1))->toBeFalse();
-    $this->optionImporter->importBatch(identityBatch(Import::ACTION_DELETE, [['code' => 'shared', 'attribute_code' => $attributeCode]]));
-    expect(DB::table('attribute_options')->count())->toBe(1);
-})->with(['unknown attribute' => 'missing', 'numeric attribute code' => '0', 'another existing attribute' => 'size']);
 
-it('loads scoped identities and resets stale storage on initialization', function () {
-    seedIdentityOptions();
-    DB::table('attribute_options')->insert(['id' => 33, 'attribute_id' => 1, 'code' => 'other']);
-    $this->optionStorage->load(['shared']);
-    expect($this->optionStorage->get('shared', 1))->toBe(11)
-        ->and($this->optionStorage->get('shared', 2))->toBe(22)
-        ->and($this->optionStorage->get('shared'))->toBeNull()
-        ->and($this->optionStorage->has('other'))->toBeFalse();
-    DB::table('attribute_options')->where('id', 11)->delete();
+    expect($this->optionImporter->validateRow($row, 1))->toBeFalse()
+        ->and(identityErrorCodes($errors))->toBe([Importer::ERROR_CODE_NOT_FOUND_FOR_DELETE]);
+
+    $this->optionImporter->importBatch(identityBatch(Import::ACTION_DELETE, [$row]));
+
+    expect(identityOptionCount())->toBe(1);
+})->with([
+    'unknown attribute'      => 'identity_missing_attribute',
+    'numeric attribute code' => '0',
+    'another attribute'      => 'other attribute',
+]);
+
+it('loads scoped identities and resets stale storage on initialization', function (): void {
+    $color = identityOption($this->color);
+    $size = identityOption($this->size);
+    $other = identityOption($this->color, IDENTITY_OTHER_CODE);
+
+    $this->optionStorage->load([IDENTITY_SHARED_CODE]);
+
+    expect($this->optionStorage->get(IDENTITY_SHARED_CODE, $this->color->id))->toBe($color->id)
+        ->and($this->optionStorage->get(IDENTITY_SHARED_CODE, $this->size->id))->toBe($size->id)
+        ->and($this->optionStorage->get(IDENTITY_SHARED_CODE))->toBeNull()
+        ->and($this->optionStorage->isAmbiguous(IDENTITY_SHARED_CODE))->toBeTrue()
+        ->and($this->optionStorage->has(IDENTITY_OTHER_CODE))->toBeFalse();
+
+    DB::table('attribute_options')->where('id', $color->id)->delete();
     $this->optionStorage->init();
-    expect($this->optionStorage->has('shared', 1))->toBeFalse()
-        ->and($this->optionStorage->get('shared'))->toBe(22)
-        ->and($this->optionStorage->get('other', 1))->toBe(33);
 
-    $this->optionStorage->load(['other']);
-    expect($this->optionStorage->has('shared', 2))->toBeFalse()
-        ->and($this->optionStorage->get('other', 1))->toBe(33);
+    expect($this->optionStorage->has(IDENTITY_SHARED_CODE, $this->color->id))->toBeFalse()
+        ->and($this->optionStorage->get(IDENTITY_SHARED_CODE))->toBe($size->id)
+        ->and($this->optionStorage->isAmbiguous(IDENTITY_SHARED_CODE))->toBeFalse()
+        ->and($this->optionStorage->get(IDENTITY_OTHER_CODE, $this->color->id))->toBe($other->id);
+
+    $this->optionStorage->load([IDENTITY_OTHER_CODE]);
+
+    expect($this->optionStorage->has(IDENTITY_SHARED_CODE, $this->size->id))->toBeFalse()
+        ->and($this->optionStorage->get(IDENTITY_OTHER_CODE, $this->color->id))->toBe($other->id);
 });
 
-it('resolves persisted identities for legacy two-argument writes without crossing attributes', function () {
-    seedIdentityOptions();
+it('resolves persisted identities for legacy two-argument writes without crossing attributes', function (): void {
+    $color = identityOption($this->color);
+    $size = identityOption($this->size);
 
-    expect($this->optionStorage->set('shared', 11))->toBe($this->optionStorage)
-        ->and($this->optionStorage->get('shared', 1))->toBe(11)
-        ->and($this->optionStorage->get('shared', 2))->toBeNull()
-        ->and($this->optionStorage->get('shared'))->toBe(11);
+    expect($this->optionStorage->set(IDENTITY_SHARED_CODE, $color->id))->toBe($this->optionStorage)
+        ->and($this->optionStorage->get(IDENTITY_SHARED_CODE, $this->color->id))->toBe($color->id)
+        ->and($this->optionStorage->get(IDENTITY_SHARED_CODE, $this->size->id))->toBeNull()
+        ->and($this->optionStorage->get(IDENTITY_SHARED_CODE))->toBe($color->id);
 
-    expect($this->optionStorage->set('shared', 22))->toBe($this->optionStorage)
-        ->and($this->optionStorage->get('shared', 1))->toBe(11)
-        ->and($this->optionStorage->get('shared', 2))->toBe(22)
-        ->and($this->optionStorage->get('shared'))->toBeNull();
+    expect($this->optionStorage->set(IDENTITY_SHARED_CODE, $size->id))->toBe($this->optionStorage)
+        ->and($this->optionStorage->get(IDENTITY_SHARED_CODE, $this->color->id))->toBe($color->id)
+        ->and($this->optionStorage->get(IDENTITY_SHARED_CODE, $this->size->id))->toBe($size->id)
+        ->and($this->optionStorage->get(IDENTITY_SHARED_CODE))->toBeNull();
 });
 
-it('leaves storage unchanged for invalid legacy identities', function (string $code, int $id) {
-    seedIdentityOptions();
-    DB::table('attribute_options')->insert(['id' => 33, 'attribute_id' => 1, 'code' => 'other']);
+it('leaves storage unchanged for invalid legacy identities', function (string $code, string $identity): void {
+    $color = identityOption($this->color);
+    $size = identityOption($this->size);
+    $other = identityOption($this->color, IDENTITY_OTHER_CODE);
+    $id = match ($identity) {
+        'unknown' => (int) DB::table('attribute_options')->max('id') + 1000,
+        'other'   => $other->id,
+        default   => $color->id,
+    };
 
     expect($this->optionStorage->set($code, $id))->toBe($this->optionStorage)
         ->and($this->optionStorage->isEmpty())->toBe(1);
 
-    $this->optionStorage->init();
+    $this->optionStorage->load([IDENTITY_SHARED_CODE, IDENTITY_OTHER_CODE, IDENTITY_MISSING_CODE]);
 
     expect($this->optionStorage->set($code, $id))->toBe($this->optionStorage)
-        ->and($this->optionStorage->get('shared', 1))->toBe(11)
-        ->and($this->optionStorage->get('shared', 2))->toBe(22)
-        ->and($this->optionStorage->get('shared'))->toBeNull()
-        ->and($this->optionStorage->get('other', 1))->toBe(33)
-        ->and($this->optionStorage->get('other', 2))->toBeNull()
-        ->and($this->optionStorage->get('missing'))->toBeNull();
+        ->and($this->optionStorage->get(IDENTITY_SHARED_CODE, $this->color->id))->toBe($color->id)
+        ->and($this->optionStorage->get(IDENTITY_SHARED_CODE, $this->size->id))->toBe($size->id)
+        ->and($this->optionStorage->get(IDENTITY_SHARED_CODE))->toBeNull()
+        ->and($this->optionStorage->get(IDENTITY_OTHER_CODE, $this->color->id))->toBe($other->id)
+        ->and($this->optionStorage->get(IDENTITY_OTHER_CODE, $this->size->id))->toBeNull()
+        ->and($this->optionStorage->get(IDENTITY_MISSING_CODE))->toBeNull();
 })->with([
-    'unknown ID'          => ['shared', 999],
-    'wrong existing code' => ['shared', 33],
-    'unknown code'        => ['missing', 11],
+    'unknown ID'          => [IDENTITY_SHARED_CODE, 'unknown'],
+    'wrong existing code' => [IDENTITY_SHARED_CODE, 'other'],
+    'unknown code'        => [IDENTITY_MISSING_CODE, 'color'],
 ]);
 
-it('keeps newly stored options scoped and makes duplicate code-only lookups ambiguous', function () {
+it('keeps newly stored options scoped and makes duplicate code-only lookups ambiguous', function (): void {
     expect($this->optionStorage->isEmpty())->toBe(1);
-    $this->optionStorage->set('shared', 11, 1);
-    expect($this->optionStorage->get('shared'))->toBe(11);
-    $this->optionStorage->set('shared', 22, 2);
-    expect($this->optionStorage->get('shared', 1))->toBe(11)
-        ->and($this->optionStorage->get('shared', 2))->toBe(22)
-        ->and($this->optionStorage->has('shared'))->toBeFalse()
-        ->and($this->optionStorage->get('missing', 1))->toBeNull();
+
+    $this->optionStorage->set(IDENTITY_SHARED_CODE, 11, $this->color->id);
+
+    expect($this->optionStorage->get(IDENTITY_SHARED_CODE))->toBe(11)
+        ->and($this->optionStorage->isAmbiguous(IDENTITY_SHARED_CODE))->toBeFalse();
+
+    $this->optionStorage->set(IDENTITY_SHARED_CODE, 22, $this->size->id);
+
+    expect($this->optionStorage->get(IDENTITY_SHARED_CODE, $this->color->id))->toBe(11)
+        ->and($this->optionStorage->get(IDENTITY_SHARED_CODE, $this->size->id))->toBe(22)
+        ->and($this->optionStorage->has(IDENTITY_SHARED_CODE))->toBeFalse()
+        ->and($this->optionStorage->isAmbiguous(IDENTITY_SHARED_CODE))->toBeTrue()
+        ->and($this->optionStorage->get(IDENTITY_MISSING_CODE, $this->color->id))->toBeNull();
 });

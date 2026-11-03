@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'Attributtalternativkoden :code er allerede i bruk.',
                     'code_not_found_to_delete' => 'Attributtalternativkoden ble ikke funnet for sletting.',
+                    'ambiguous-code-to-delete' => 'Alternativkoden :code finnes på mer enn ett attributt; legg til attribute_code.',
                     'locale-not-exist'         => 'Språket ":code" eksisterer ikke.',
                     'invalid-attribute'        => 'Attributtet ":code" eksisterer ikke.',
                 ],
