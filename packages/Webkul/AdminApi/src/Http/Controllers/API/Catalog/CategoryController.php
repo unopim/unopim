@@ -211,14 +211,12 @@ class CategoryController extends ApiController
         }
 
         $requestData = request()->only(['parent', 'additional_data']);
-        $parentId = null;
 
-        if (isset($requestData['parent'])) {
-            $parentId = $this->getParentIdByCode($requestData['parent']);
+        if (array_key_exists('parent', $requestData)) {
+            $requestData['parent_id'] = $this->getParentIdByCode($requestData['parent']);
         }
 
         unset($requestData['parent']);
-        $requestData['parent_id'] = $parentId;
 
         $validator = $this->categoryValidator->validate($requestData, $category->id);
         if ($validator instanceof Validator && $validator->fails()) {
