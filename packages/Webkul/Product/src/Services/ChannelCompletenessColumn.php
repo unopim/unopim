@@ -8,35 +8,48 @@ use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Repositories\LocaleRepository;
 
 /**
- * Resolves whether the current request is explicitly scoped to one channel
- * (e.g. a dashboard drill-down link landing on the product grid with
- * ?channel=<code>) for the purposes of the "completeness" property.
- *
- * Used by both `ProductDataGrid::prepareQueryBuilder()` (to decide whether to
- * join `product_completeness` and which column to SELECT/ORDER BY) and
- * `CompletenessFilter` (to decide which column to filter WHERE on). Both
- * callers MUST share this single source of truth: the filter assumes the
- * `product_completeness` join already exists whenever this resolves to a
- * result, and the grid is the one place that join actually gets added.
+ * Resolves the channel/locale scope the completeness property is read in.
  */
 class ChannelCompletenessColumn
 {
+    /**
+     * Requested channel code the memoized scope below was resolved for.
+     * `false` means nothing has been resolved yet, since `null` is itself a
+     * valid outcome (no channel requested).
+     */
+    protected string|false|null $resolvedFor = false;
+
+    protected ?array $scope = null;
+
     public function __construct(
         protected ChannelRepository $channelRepository,
         protected LocaleRepository $localeRepository,
     ) {}
 
     /**
-     * @return array{channel: Channel, locale: Locale}|null Null means: no
-     *                                                      channel was explicitly requested, or it (or its locale)
-     *                                                      couldn't be resolved — callers should fall back to the
-     *                                                      product's pre-computed cross-channel average.
+     * @return array{channel: Channel, locale: Locale}|null
      */
     public function resolve(): ?array
     {
         $channelCode = core()->getRequestedChannelCode(false);
 
-        if (! $channelCode) {
+        if ($this->resolvedFor === $channelCode) {
+            return $this->scope;
+        }
+
+        $this->resolvedFor = $channelCode;
+
+        return $this->scope = $this->resolveScope($channelCode);
+    }
+
+    /**
+     * Elasticsearch indexes the cross-channel average only, so per-channel
+     * scoping stays off while it is enabled and both the displayed column and
+     * the filtered rows keep reading that average.
+     */
+    protected function resolveScope(?string $channelCode): ?array
+    {
+        if (! $channelCode || config('elasticsearch.enabled')) {
             return null;
         }
 

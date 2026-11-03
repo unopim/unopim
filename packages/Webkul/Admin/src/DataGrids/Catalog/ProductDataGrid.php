@@ -2,6 +2,9 @@
 
 namespace Webkul\Admin\DataGrids\Catalog;
 
+use Illuminate\Contracts\Database\Query\Expression;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Crypt;
@@ -124,12 +127,14 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         protected AttributeFamilyRepository $attributeFamilyRepository,
         protected ProductRepository $productRepository,
         protected ChannelRepository $channelRepository,
-        protected ChannelCompletenessColumn $channelCompletenessColumn,
         protected ProductAttributeValuesNormalizer $valuesNormalizer,
         protected AttributeService $attributeService,
         protected AttributeValueNormalizer $attributeValueNormalizer,
         protected VariantValueResolver $variantValueResolver,
-    ) {}
+        protected ?ChannelCompletenessColumn $channelCompletenessColumn = null,
+    ) {
+        $this->channelCompletenessColumn ??= app(ChannelCompletenessColumn::class);
+    }
 
     public function prepareQueryBuilder()
     {
@@ -142,6 +147,12 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $this->prepareQuery = ProductQueryBuilderFactory::make()->prepareQueryBuilder();
 
         $queryBuilder = $this->prepareQuery->getQueryManager();
+
+        $completenessScope = $this->channelCompletenessColumn->resolve();
+
+        if ($completenessScope) {
+            $this->joinChannelCompleteness($queryBuilder, $completenessScope);
+        }
 
         $queryBuilder->leftJoin('attribute_family_translations as attribute_family_name', function ($join) {
             $join->on('attribute_family_name.attribute_family_id', '=', 'af.id')
@@ -165,44 +176,35 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                     END) as attribute_family"
                 ),
                 'products.values as raw_values',
-                DB::raw($this->completenessExpression($queryBuilder).' as completeness'),
+                $this->completenessColumn($completenessScope),
             );
 
         return $queryBuilder;
     }
 
     /**
-     * Completeness column backing the grid's "completeness" filter/sort.
-     *
-     * When a specific channel is requested (e.g. a drill-down link from the
-     * dashboard's channel-readiness widget), the column reflects that
-     * channel+locale's own score from `product_completeness` instead of the
-     * product's cross-channel average, so filtering "< 80" means "incomplete
-     * for this channel" rather than "incomplete on average everywhere".
-     * Falls back to the pre-existing cross-channel average when no channel
-     * is explicitly requested, to preserve the default product-list view.
-     *
-     * The join added here is what `CompletenessFilter` relies on for the
-     * WHERE side of the same scoping — see `ChannelCompletenessColumn` for
-     * the single shared resolution the two must agree on.
+     * Column selected as the grid's "completeness" value, filter and sort target.
      */
-    protected function completenessExpression($queryBuilder): string
+    protected function completenessColumn(?array $scope): string|Expression
     {
-        $scope = $this->channelCompletenessColumn->resolve();
-
-        $tablePrefix = DB::getTablePrefix();
-
         if (! $scope) {
-            return $tablePrefix.'products.avg_completeness_score';
+            return 'products.avg_completeness_score as completeness';
         }
 
-        $queryBuilder->leftJoin('product_completeness', function ($join) use ($scope) {
+        /** raw statements bypass the builder, so the prefix is applied here */
+        return DB::raw(DB::getTablePrefix().'product_completeness.score as completeness');
+    }
+
+    /**
+     * Narrows the completeness scores to one channel and locale.
+     */
+    protected function joinChannelCompleteness(Builder $queryBuilder, array $scope): void
+    {
+        $queryBuilder->leftJoin('product_completeness', function (JoinClause $join) use ($scope): void {
             $join->on('product_completeness.product_id', '=', 'products.id')
                 ->where('product_completeness.channel_id', '=', $scope['channel']->id)
                 ->where('product_completeness.locale_id', '=', $scope['locale']->id);
         });
-
-        return $tablePrefix.'product_completeness.score';
     }
 
     /**
