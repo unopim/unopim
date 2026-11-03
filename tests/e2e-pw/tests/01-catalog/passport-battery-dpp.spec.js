@@ -184,7 +184,7 @@ async function openFieldModal(page) {
   return modal;
 }
 
-test.describe.serial('EU battery Digital Product Passport', () => {
+test.describe.serial('EU battery Digital Product Passport', { tag: '@global-state' }, () => {
   test.beforeAll(() => {
     fixture = seed();
 

@@ -219,6 +219,14 @@ return [
     ],
 
     'installer' => [
+        'console' => [
+            'confirm-drop'        => 'Bu tablolar silinip yeniden kurulsun mu?',
+            'drop-aborted'        => 'Kurulum iptal edildi. Hiçbir tablo silinmedi.',
+            'force-required'      => 'Tablo öneki ayarlanmadığından, başka hiçbir kurulumun sahiplenmediği tüm tablolar silinecek. Silmek için --force ile yeniden çalıştırın veya DB_PREFIX ayarlayın.',
+            'outside-references'  => 'Tablo önekinin dışındaki tablolar silinecek tablolara başvuruyor: :references. Önce bu yabancı anahtarları kaldırın.',
+            'tables-to-drop'      => 'Bu :count tablo silinecek: :tables',
+        ],
+
         'index' => [
             'create-administrator' => [
                 'admin'                   => 'Yönetici',
