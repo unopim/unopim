@@ -412,7 +412,7 @@ class ProductRepository extends Repository
     {
         $query = $this->with([
             'attribute_family',
-            'parent',
+            'parent.parent',
             'super_attributes',
             'variants',
         ])->scopeQuery(function ($query) use ($params) {
