@@ -52,7 +52,7 @@ describe('CompletenessFilter', function () {
 
         $queryBuilder = applyPropertyFilter(app(CompletenessFilter::class), 'completeness', FilterOperators::LESS_THAN, ['80']);
 
-        expect($queryBuilder->toSql())->toContain('avg_completeness_score < ?');
+        expect($queryBuilder->toSql())->toContain(DB::getQueryGrammar()->wrap('products.avg_completeness_score').' < ?');
     });
 
     it('compares the requested channel\'s own score once a real channel is in context', function () {
@@ -63,7 +63,7 @@ describe('CompletenessFilter', function () {
         $queryBuilder = applyPropertyFilter(app(CompletenessFilter::class), 'completeness', FilterOperators::LESS_THAN, ['80']);
 
         expect($queryBuilder->toSql())
-            ->toContain(DB::getTablePrefix().'product_completeness.score < ?')
+            ->toContain(DB::getQueryGrammar()->wrap('product_completeness.score').' < ?')
             ->and($queryBuilder->getBindings())->toContain(80.0);
     });
 });
