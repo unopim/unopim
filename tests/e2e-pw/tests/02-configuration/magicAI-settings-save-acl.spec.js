@@ -3,7 +3,7 @@ const { navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = requir
 const path = require('path');
 
 
-test.describe('Magic AI settings — save with Magic AI permission only', () => {
+test.describe('Magic AI settings — save with Magic AI permission only', { tag: '@global-state' }, () => {
   test.setTimeout(180000);
 
   const ADMIN_STATE = path.resolve(__dirname, '../..', process.env.PW_STATE_DIR || '.state', 'admin-auth.json');

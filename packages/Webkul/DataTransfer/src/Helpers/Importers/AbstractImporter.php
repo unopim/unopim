@@ -57,6 +57,11 @@ abstract class AbstractImporter
     public const ERROR_CODE_COLUMNS_NUMBER = 'wrong_columns_number';
 
     /**
+     * Error code for a boolean column holding an unrecognised value.
+     */
+    public const ERROR_CODE_INVALID_BOOLEAN = 'invalid_boolean';
+
+    /**
      * Error message templates.
      */
     protected array $errorMessages = [
@@ -436,6 +441,35 @@ abstract class AbstractImporter
         $this->indexBatch($importBatch);
 
         return true;
+    }
+
+    /**
+     * Skip the row for each boolean column holding a value that is not recognised as true or false
+     */
+    protected function skipRowWithInvalidBooleans(array $rowData, int $rowNumber, array $columns): bool
+    {
+        $hasInvalidBoolean = false;
+
+        foreach ($columns as $column) {
+            if (! isset($rowData[$column]) || $rowData[$column] === '') {
+                continue;
+            }
+
+            if (filter_var($rowData[$column], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) !== null) {
+                continue;
+            }
+
+            $message = trans('data_transfer::app.validation.errors.invalid-boolean', [
+                'column' => $column,
+                'value'  => $rowData[$column],
+            ]);
+
+            $this->skipRow($rowNumber, self::ERROR_CODE_INVALID_BOOLEAN, $column, str_replace('%', '%%', $message));
+
+            $hasInvalidBoolean = true;
+        }
+
+        return $hasInvalidBoolean;
     }
 
     /**
