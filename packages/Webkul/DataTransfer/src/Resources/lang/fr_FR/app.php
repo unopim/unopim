@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'Le code de l\'option d\'attribut :code est déjà utilisé.',
                     'code_not_found_to_delete' => 'Code de l\'option d\'attribut introuvable pour la suppression.',
+                    'ambiguous-code-to-delete' => 'Le code d\'option :code existe pour plusieurs attributs ; ajoutez attribute_code.',
                     'locale-not-exist'         => 'La langue ":code" n\'existe pas.',
                     'invalid-attribute'        => 'L\'attribut ":code" n\'existe pas.',
                 ],
@@ -299,6 +300,7 @@ return [
             'column-not-found'       => 'Erforderliche Spalten nicht gefunden: %s.',
             'column-numbers'         => 'Die Anzahl der Spalten entspricht nicht der Anzahl der Zeilen in der Kopfzeile.',
             'invalid-attribute'      => 'Header enthält ungültige Attribute: „%s“.',
+            'invalid-boolean'        => 'La colonne ":column" a la valeur ":value", qui n\'est pas un booléen. Utilisez true, false, yes, no, on, off, 1 ou 0.',
             'system'                 => 'Es ist ein unerwarteter Systemfehler aufgetreten.',
             'wrong-quotes'           => 'Anstelle von geraden Anführungszeichen werden geschweifte Anführungszeichen verwendet.',
             'file-empty'             => 'Le fichier est vide ou ne contient pas de ligne d\'en-tête. Veuillez télécharger un fichier valide contenant des données.',
@@ -310,5 +312,6 @@ return [
         'completed' => 'Exécution du travail terminée',
         'stalled'   => 'La tâche n\'a plus répondu pendant plus de :minutes minutes et a été marquée comme échouée. Le processus qui l\'exécutait a probablement été interrompu.',
         'reaped'    => ':count tâches bloquées ont été marquées comme échouées.',
+        'stopped'   => 'Importation arrêtée après la validation avec :count erreurs. Aucune ligne n\'a été importée.',
     ],
 ];

@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => '속성 옵션 코드 :code는 이미 사용 중입니다.',
                     'code_not_found_to_delete' => '삭제할 속성 옵션 코드를 찾을 수 없습니다.',
+                    'ambiguous-code-to-delete' => '옵션 코드 :code이(가) 둘 이상의 속성에 존재합니다. attribute_code를 추가하세요.',
                     'locale-not-exist'         => '로캘 ":code"가 존재하지 않습니다.',
                     'invalid-attribute'        => '속성 ":code"가 존재하지 않습니다.',
                 ],
@@ -299,6 +300,7 @@ return [
             'column-not-found'       => '필수 열을 찾을 수 없습니다: %s.',
             'column-numbers'         => '열 수가 헤더의 행 수와 일치하지 않습니다.',
             'invalid-attribute'      => '헤더에 유효하지 않은 속성이 있습니다: "%s".',
+            'invalid-boolean'        => '열 ":column"의 값 ":value"은(는) 불리언이 아닙니다. true, false, yes, no, on, off, 1 또는 0을 사용하세요.',
             'system'                 => '예기치 않은 시스템 오류가 발생했습니다.',
             'wrong-quotes'           => '쌍따옴표 대신 곧은 따옴표가 사용되었습니다.',
             'file-empty'             => '파일이 비어 있거나 헤더 행이 없습니다. 데이터가 포함된 유효한 파일을 업로드하세요.',
@@ -310,5 +312,6 @@ return [
         'completed' => '작업 실행 완료됨',
         'stalled'   => '작업이 :minutes분 넘게 응답하지 않아 실패로 표시되었습니다. 작업을 실행하던 워커가 종료된 것으로 보입니다.',
         'reaped'    => '중단된 작업 :count건을 실패로 표시했습니다.',
+        'stopped'   => '검증 결과 오류 :count건으로 가져오기를 중단했습니다. 가져온 행이 없습니다.',
     ],
 ];

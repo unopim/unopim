@@ -2330,6 +2330,7 @@ return [
                 'title'               => 'Prompt',
                 'create-btn'          => 'Buat Prompt',
                 'edit-title'          => 'Edit Prompt',
+                'insert-attribute'    => 'Sisipkan atribut',
                 'create-title'        => 'Buat Prompt Baru',
                 'label-title'         => 'Judul',
                 'purpose'             => 'Tujuan',

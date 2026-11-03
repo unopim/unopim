@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'Attributalternativkoden :code används redan.',
                     'code_not_found_to_delete' => 'Attributalternativkoden för borttagning hittades inte.',
+                    'ambiguous-code-to-delete' => 'Alternativkoden :code finns på mer än ett attribut; lägg till attribute_code.',
                     'locale-not-exist'         => 'Språkinställningen ":code" existerar inte.',
                     'invalid-attribute'        => 'Attributet ":code" existerar inte.',
                 ],
@@ -299,6 +300,7 @@ return [
             'column-not-found'       => 'Krävda kolumner hittades inte: %s.',
             'column-numbers'         => 'Antalet kolumner överensstämmer inte med antalet rader i rubriken.',
             'invalid-attribute'      => 'Rubriken innehåller ogiltiga attribut: "%s".',
+            'invalid-boolean'        => 'Kolumnen ":column" har värdet ":value", som inte är ett booleskt värde. Använd true, false, yes, no, on, off, 1 eller 0.',
             'system'                 => 'Ett oväntat systemfel inträffade.',
             'wrong-quotes'           => 'Krokiga citattecken användes i stället för raka citattecken.',
             'file-empty'             => 'Filen är tom eller innehåller ingen rubrikrad. Vänligen ladda upp en giltig fil med data.',
@@ -310,5 +312,6 @@ return [
         'completed' => 'Jobbutförande slutfört',
         'stalled'   => 'Jobbet slutade svara i mer än :minutes minuter och markerades som misslyckat. Processen som körde det avbröts sannolikt.',
         'reaped'    => ':count fastnade jobb markerades som misslyckade.',
+        'stopped'   => 'Importen stoppades efter validering med :count fel. Inga rader importerades.',
     ],
 ];

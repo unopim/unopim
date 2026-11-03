@@ -2332,6 +2332,7 @@ return [
                 'title'               => 'İstem',
                 'create-btn'          => 'İstem Oluştur',
                 'edit-title'          => 'İstemi Düzenle',
+                'insert-attribute'    => 'Özellik ekle',
                 'create-title'        => 'Yeni İstem Oluştur',
                 'label-title'         => 'Başlık',
                 'purpose'             => 'Amaç',

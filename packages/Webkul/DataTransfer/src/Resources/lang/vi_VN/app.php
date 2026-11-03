@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'Mã tùy chọn thuộc tính :code đã được sử dụng.',
                     'code_not_found_to_delete' => 'Không tìm thấy mã tùy chọn thuộc tính để xóa.',
+                    'ambiguous-code-to-delete' => 'Mã tùy chọn :code tồn tại ở nhiều thuộc tính; hãy thêm attribute_code.',
                     'locale-not-exist'         => 'Vị trí ":code" không tồn tại.',
                     'invalid-attribute'        => 'Thuộc tính ":code" không tồn tại.',
                 ],
@@ -299,6 +300,7 @@ return [
             'column-not-found'       => 'Các cột yêu cầu không được tìm thấy: %s.',
             'column-numbers'         => 'Số cột không khớp với số hàng trong tiêu đề.',
             'invalid-attribute'      => 'Tiêu đề chứa thuộc tính không hợp lệ: "%s".',
+            'invalid-boolean'        => 'Cột ":column" có giá trị ":value", không phải là boolean. Hãy dùng true, false, yes, no, on, off, 1 hoặc 0.',
             'system'                 => 'Lỗi hệ thống không mong muốn xảy ra.',
             'wrong-quotes'           => 'Dùng dấu ngoặc kép cong thay cho dấu ngoặc kép thẳng.',
             'file-empty'             => 'Tệp trống hoặc không chứa dòng tiêu đề. Vui lòng tải lên tệp hợp lệ có dữ liệu.',
@@ -310,5 +312,6 @@ return [
         'completed' => 'Công việc đã hoàn thành',
         'stalled'   => 'Tác vụ đã ngừng phản hồi hơn :minutes phút và được đánh dấu là thất bại. Tiến trình chạy nó nhiều khả năng đã bị dừng.',
         'reaped'    => 'Đã đánh dấu :count tác vụ bị treo là thất bại.',
+        'stopped'   => 'Đã dừng nhập sau khi xác thực có :count lỗi. Không có dòng nào được nhập.',
     ],
 ];

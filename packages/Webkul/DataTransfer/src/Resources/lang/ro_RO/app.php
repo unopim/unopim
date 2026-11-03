@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'Codul opțiunii atributului :code este deja utilizat.',
                     'code_not_found_to_delete' => 'Codul opțiunii atributului nu a fost găsit pentru ștergere.',
+                    'ambiguous-code-to-delete' => 'Codul opțiunii :code există la mai multe atribute; adăugați attribute_code.',
                     'locale-not-exist'         => 'Numele de localizare ":code" nu există.',
                     'invalid-attribute'        => 'Atributul ":code" nu există.',
                 ],
@@ -299,6 +300,7 @@ return [
             'column-not-found'       => 'Coloanele necesare nu au fost găsite: %s.',
             'column-numbers'         => 'Numărul de coloane nu corespunde numărului de rânduri din antet.',
             'invalid-attribute'      => 'Antetul conține atribute invalide: "%s".',
+            'invalid-boolean'        => 'Coloana ":column" are valoarea ":value", care nu este un boolean. Utilizați true, false, yes, no, on, off, 1 sau 0.',
             'system'                 => 'A apărut o eroare sistemică neașteptată.',
             'wrong-quotes'           => 'A fost utilizată virgulă în loc de virgulă directă.',
             'file-empty'             => 'Fișierul este gol sau nu conține un rând de antet. Vă rugăm să încărcați un fișier valid cu date.',
@@ -310,5 +312,6 @@ return [
         'completed' => 'Finalizare executie job',
         'stalled'   => 'Sarcina nu a mai răspuns timp de peste :minutes minute și a fost marcată ca eșuată. Procesul care o executa a fost probabil oprit.',
         'reaped'    => 'Au fost marcate :count sarcini blocate ca eșuate.',
+        'stopped'   => 'Importul a fost oprit după validare cu :count erori. Niciun rând nu a fost importat.',
     ],
 ];

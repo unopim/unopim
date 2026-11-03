@@ -11,4 +11,9 @@ return [
     'copy' => [
         'skip_attributes' => [],
     ],
+
+    /**
+     * Attribute codes the product grid quick search looks in (text attributes only, max 10).
+     */
+    'search_fields' => ['sku', 'name'],
 ];

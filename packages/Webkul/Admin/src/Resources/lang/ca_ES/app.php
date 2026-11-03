@@ -2330,6 +2330,7 @@ return [
                 'title'               => 'Missatge',
                 'create-btn'          => 'Crear Missatge',
                 'edit-title'          => 'Editar Missatge',
+                'insert-attribute'    => 'Insereix un atribut',
                 'create-title'        => 'Crear un Nou Missatge',
                 'label-title'         => 'Títol',
                 'purpose'             => 'Propòsit',

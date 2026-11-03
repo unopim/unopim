@@ -106,7 +106,7 @@ describe('#1266 Find Product result navigation', function () {
         expect($source)
             ->toContain("document.addEventListener('click', onDocumentClick, true);")
             ->toContain('event.defaultPrevented')
-            ->toContain('visit(link.href, true);');
+            ->toContain('visit(link.href, true).catch(');
     });
 
     it('shows the working View Product anchor carries no data-internal-link', function () {

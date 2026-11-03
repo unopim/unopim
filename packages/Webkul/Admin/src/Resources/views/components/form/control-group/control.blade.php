@@ -14,7 +14,19 @@
         default            => unique_form_control_id(form_control_id($name, 'radio' === $type ? $attributes->get('value') : null)),
     };
 
-    $idAttribute = '' === $controlId ? [] : ['id' => $controlId];
+    /** Vue-rendered pickers own their focusable element, so only native inputs take the group's visible label. */
+    $labelledBy = in_array($type, ['text', 'email', 'password', 'number', 'price', 'color', 'textarea', 'date', 'datetime', 'checkbox', 'radio', 'switch'], true)
+        ? pull_form_label_id()
+        : null;
+
+    /** Labels are rarely linked with `for`, so the validation label doubles as the accessible name. */
+    $accessibleName = match (true) {
+        'hidden' === $type, $attributes->hasAny(['aria-label', ':aria-label', 'aria-labelledby', ':aria-labelledby']) => [],
+        $attributes->has(':label') => [':aria-label' => $attributes->get(':label')],
+        $attributes->has('label')  => ['aria-label' => $attributes->get('label')],
+        null !== $labelledBy       => ['aria-labelledby' => $labelledBy],
+        default                    => [],
+    };
 
     /** Re-emitted from $controlId so the rendered id always matches what labels target. */
     $attributes = $attributes->except(['id']);
@@ -32,12 +44,13 @@
             name="{{ $name }}"
         >
             <input
+                @if ('' !== $controlId) id="{{ $controlId }}" @endif
                 type="{{ $type }}"
                 name="{{ $name }}"
                 v-bind="field"
                 @if ('password' === $type) v-no-value-attr @endif
                 :class="[errors.length ? 'border !border-red-600 hover:border-red-600' : '']"
-                {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600'] + $idAttribute) }}
+                {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600'] + $accessibleName) }}
             />
         </v-field>
 
@@ -64,10 +77,11 @@
                 @endif
 
                 <input
+                    @if ('' !== $controlId) id="{{ $controlId }}" @endif
                     type="text"
                     name="{{ $name }}"
                     v-bind="field"
-                    {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'no-focus-ring w-full p-2.5 text-sm text-gray-600 dark:text-gray-300 dark:bg-cherry-900'] + $idAttribute) }}
+                    {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'no-focus-ring w-full p-2.5 text-sm text-gray-600 dark:text-gray-300 dark:bg-cherry-900'] + $accessibleName) }}
                 />
             </div>
         </v-field>
@@ -100,10 +114,11 @@
             {{ $attributes->except('class') }}
         >
             <input
+                @if ('' !== $controlId) id="{{ $controlId }}" @endif
                 type="{{ $type }}"
                 :class="[errors.length ? 'border border-red-500' : '']"
                 v-bind="field"
-                {{ $attributes->except(['value'])->merge(['class' => 'w-full appearance-none border rounded-md text-sm text-gray-600 dark:text-gray-300 dark:border-gray-600 transition-all hover:border-gray-400 dark:hover:border-gray-400'] + $idAttribute) }}
+                {{ $attributes->except(['value'])->merge(['class' => 'w-full appearance-none border rounded-md text-sm text-gray-600 dark:text-gray-300 dark:border-gray-600 transition-all hover:border-gray-400 dark:hover:border-gray-400'] + $accessibleName) }}
             >
         </v-field>
         @break
@@ -115,11 +130,12 @@
             name="{{ $name }}"
         >
             <textarea
+                @if ('' !== $controlId) id="{{ $controlId }}" @endif
                 type="{{ $type }}"
                 name="{{ $name }}"
                 v-bind="field"
                 :class="[errors.length ? 'border !border-red-600 hover:border-red-600' : '']"
-                {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600'] + $idAttribute) }}
+                {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600'] + $accessibleName) }}
             >
             </textarea>
 
@@ -144,10 +160,11 @@
         >
             <x-admin::flat-picker.date>
                 <input
+                    @if ('' !== $controlId) id="{{ $controlId }}" @endif
                     name="{{ $name }}"
                     v-bind="field"
                     :class="[errors.length ? 'border !border-red-600 hover:border-red-600' : '']"
-                    {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600'] + $idAttribute) }}
+                    {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600'] + $accessibleName) }}
                     autocomplete="off"
                 />
             </x-admin::flat-picker.date>
@@ -163,10 +180,11 @@
         >
             <x-admin::flat-picker.datetime>
                 <input
+                    @if ('' !== $controlId) id="{{ $controlId }}" @endif
                     name="{{ $name }}"
                     v-bind="field"
                     :class="[errors.length ? 'border !border-red-600 hover:border-red-600' : '']"
-                    {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600'] + $idAttribute) }}
+                    {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600'] + $accessibleName) }}
                     autocomplete="off"
                 >
             </x-admin::flat-picker.datetime>
@@ -286,11 +304,12 @@
             name="{{ $name }}"
         >
             <input
+                @if ('' !== $controlId) id="{{ $controlId }}" @endif
                 type="checkbox"
                 name="{{ $name }}"
                 v-bind="field"
                 class="sr-only peer"
-                {{ $attributes->except(['for', 'rules', 'label', ':label'])->merge($idAttribute) }}
+                {{ $attributes->except(['for', 'rules', 'label', ':label'])->merge($accessibleName) }}
             />
 
             <v-checkbox-handler
@@ -322,11 +341,12 @@
             name="{{ $name }}"
         >
             <input
+                @if ('' !== $controlId) id="{{ $controlId }}" @endif
                 type="radio"
                 name="{{ $name }}"
                 v-bind="field"
                 class="sr-only peer"
-                {{ $attributes->except(['for', 'rules', 'label', ':label'])->merge($idAttribute) }}
+                {{ $attributes->except(['for', 'rules', 'label', ':label'])->merge($accessibleName) }}
             />
         </v-field>
 
@@ -349,11 +369,12 @@
                 name="{{ $name }}"
             >
                 <input
+                    @if ('' !== $controlId) id="{{ $controlId }}" @endif
                     type="checkbox"
                     name="{{ $name }}"
                     class="sr-only peer"
                     v-bind="field"
-                    {{ $attributes->except(['for', ':for', 'v-model', 'rules', ':rules', 'label', ':label'])->merge($idAttribute) }}
+                    {{ $attributes->except(['for', ':for', 'v-model', 'rules', ':rules', 'label', ':label'])->merge($accessibleName) }}
                 />
 
                 <v-checkbox-handler

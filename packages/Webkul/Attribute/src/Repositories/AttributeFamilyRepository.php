@@ -78,7 +78,7 @@ class AttributeFamilyRepository extends Repository
      */
     protected function copyGroupsFromSource(AttributeFamily $family, AttributeFamily $source): void
     {
-        $table = DB::getTablePrefix().'attribute_group_mappings';
+        $table = DB::getQueryGrammar()->wrapTable('attribute_group_mappings');
 
         foreach ($source->attributeFamilyGroupMappings()->get() as $mapping) {
             $familyGroupMapping = $this->attributeFamilyGroupMappingRepository->create([

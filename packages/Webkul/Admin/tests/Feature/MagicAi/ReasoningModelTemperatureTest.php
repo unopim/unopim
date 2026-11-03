@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
+use Laravel\Ai\Prompts\AgentPrompt;
+use Webkul\MagicAI\Agents\MagicContentAgent;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Services\LaravelAiAdapter;
 
@@ -178,6 +180,21 @@ it('sends temperature for Claude models that still accept sampling parameters', 
     'claude-haiku-4-5',
     'claude-sonnet-4-20250514',
     'claude-3-5-sonnet-20241022',
+]);
+
+it('keeps temperature on the agent for Bedrock and Vertex Claude ids that accept sampling parameters', function (string $model) {
+    MagicContentAgent::fake(['ok']);
+
+    (new LaravelAiAdapter(
+        platform: anthropicPlatform(),
+        model: $model,
+        prompt: 'hi',
+        temperature: 0.42,
+    ))->ask();
+
+    MagicContentAgent::assertPrompted(fn (AgentPrompt $prompt) => $prompt->model === $model
+        && $prompt->agent->temperature() === 0.42);
+})->with([
     'anthropic.claude-opus-4-6-v1:0',
     'us.anthropic.claude-sonnet-4-5-20250929-v1:0',
     'anthropic.claude-3-5-sonnet-20240620-v1:0',

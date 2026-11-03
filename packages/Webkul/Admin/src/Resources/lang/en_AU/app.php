@@ -2330,6 +2330,7 @@ return [
                 'title'               => 'Prompt',
                 'create-btn'          => 'Create Prompt',
                 'edit-title'          => 'Edit Prompt',
+                'insert-attribute'    => 'Insert attribute',
                 'create-title'        => 'Create New Prompt',
                 'label-title'         => 'Title',
                 'purpose'             => 'Purpose',

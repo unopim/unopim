@@ -2330,6 +2330,7 @@ return [
                 'title'               => 'Solicitud',
                 'create-btn'          => 'Crear Solicitud',
                 'edit-title'          => 'Editar Solicitud',
+                'insert-attribute'    => 'Insertar atributo',
                 'create-title'        => 'Crear Nueva Solicitud',
                 'label-title'         => 'Título',
                 'purpose'             => 'Finalidad',

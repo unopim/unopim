@@ -2330,6 +2330,7 @@ return [
                 'title'               => 'الموجه',
                 'create-btn'          => 'إنشاء موجه',
                 'edit-title'          => 'تعديل الموجه',
+                'insert-attribute'    => 'إدراج سمة',
                 'create-title'        => 'إنشاء موجه جديد',
                 'label-title'         => 'العنوان',
                 'purpose'             => 'الغرض',

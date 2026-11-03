@@ -1,13 +1,15 @@
 # Dependabot configuration
 # https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 #
-# Major dependency bumps are breaking, so they target `master`, the next-major
-# integration branch. The current release line `3.x` only accepts minor and
-# patch bumps. Dependabot reads this file from the default branch only.
+# The current release line `3.x` only accepts patch bumps: a minor release can
+# change framework internals the codebase extends (Laravel 13.32 changed the
+# queue worker's protected timeout handler), so minor and major bumps target
+# `master`, the next-major integration branch. Dependabot reads this file from
+# the default branch only.
 
 version: 2
 updates:
-  # Composer (PHP) — current release line: minor + patch only
+  # Composer (PHP) — current release line: patch only
   - package-ecosystem: "composer"
     directory: "/"
     target-branch: "3.x"
@@ -17,10 +19,13 @@ updates:
       time: "06:00"
       timezone: "Asia/Kolkata"
     open-pull-requests-limit: 10
+    cooldown:
+      default-days: 7
     ignore:
       - dependency-name: "*"
         update-types:
           - "version-update:semver-major"
+          - "version-update:semver-minor"
     labels:
       - "dependencies"
       - "php"
@@ -38,7 +43,7 @@ updates:
       dev-dependencies:
         dependency-type: "development"
 
-  # Composer (PHP) — next major: breaking bumps only
+  # Composer (PHP) — next major: minor and major bumps
   - package-ecosystem: "composer"
     directory: "/"
     target-branch: "master"
@@ -51,7 +56,6 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types:
-          - "version-update:semver-minor"
           - "version-update:semver-patch"
     labels:
       - "dependencies"
@@ -60,6 +64,34 @@ updates:
     commit-message:
       prefix: "chore(deps-major)"
       include: "scope"
+
+  # npm — root build and test tooling, current release line
+  - package-ecosystem: "npm"
+    directory: "/"
+    target-branch: "3.x"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Asia/Kolkata"
+    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 7
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+    labels:
+      - "dependencies"
+      - "javascript"
+    commit-message:
+      prefix: "chore(deps-js)"
+      include: "scope"
+    groups:
+      js-dependencies:
+        patterns:
+          - "*"
 
   # npm — Playwright e2e tests, current release line
   - package-ecosystem: "npm"
@@ -71,10 +103,13 @@ updates:
       time: "06:00"
       timezone: "Asia/Kolkata"
     open-pull-requests-limit: 5
+    cooldown:
+      default-days: 7
     ignore:
       - dependency-name: "*"
         update-types:
           - "version-update:semver-major"
+          - "version-update:semver-minor"
     labels:
       - "dependencies"
       - "javascript"
@@ -101,7 +136,6 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types:
-          - "version-update:semver-minor"
           - "version-update:semver-patch"
     labels:
       - "dependencies"
@@ -133,6 +167,29 @@ updates:
       prefix: "chore(deps-admin)"
       include: "scope"
 
+  # Docker base images — digests pinned for supply-chain integrity
+  - package-ecosystem: "docker"
+    directory: "/dockerfiles"
+    target-branch: "3.x"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Asia/Kolkata"
+    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 7
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "chore(docker)"
+      include: "scope"
+
   # GitHub Actions — current release line
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -143,10 +200,13 @@ updates:
       time: "06:00"
       timezone: "Asia/Kolkata"
     open-pull-requests-limit: 5
+    cooldown:
+      default-days: 7
     ignore:
       - dependency-name: "*"
         update-types:
           - "version-update:semver-major"
+          - "version-update:semver-minor"
     labels:
       - "dependencies"
       - "ci"
@@ -174,5 +234,4 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types:
-          - "version-update:semver-minor"
           - "version-update:semver-patch"
