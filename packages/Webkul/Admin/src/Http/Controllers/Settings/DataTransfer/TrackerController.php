@@ -132,7 +132,9 @@ class TrackerController extends Controller
     }
 
     /**
-     * Download
+     * Download the file a job wrote, or an archive of its folder.
+     *
+     * The public disk is still checked because jobs tracked by earlier releases stored their files there.
      */
     public function download(int $id)
     {
@@ -144,10 +146,12 @@ class TrackerController extends Controller
 
         $this->abortIfDownloadForbidden($jobTrack);
 
-        $disk = Storage::disk('private');
+        foreach (filled($jobTrack->file_path) ? ['private', 'public'] : [] as $diskName) {
+            $disk = Storage::disk($diskName);
 
-        if (filled($jobTrack->file_path) && $disk->fileExists($jobTrack->file_path)) {
-            return $disk->download($jobTrack->file_path);
+            if ($disk->fileExists($jobTrack->file_path)) {
+                return $disk->download($jobTrack->file_path);
+            }
         }
 
         return $this->archiveJobFiles($jobTrack);
