@@ -1,10 +1,16 @@
 @php
-    $fields = [
-        ['name' => 'logo_image', 'label' => 'logo', 'hint' => 'logo-size', 'extensions' => \Webkul\Admin\Http\Requests\AppearanceForm::LOGO_EXTENSIONS, 'width' => '240px'],
-        ['name' => 'favicon', 'label' => 'favicon', 'hint' => 'favicon-size', 'extensions' => \Webkul\Admin\Http\Requests\AppearanceForm::FAVICON_EXTENSIONS, 'width' => '120px'],
-        ['name' => 'logo_image_dark', 'label' => 'dark-logo', 'hint' => 'dark-logo-info', 'extensions' => \Webkul\Admin\Http\Requests\AppearanceForm::LOGO_EXTENSIONS, 'width' => '240px'],
-        ['name' => 'favicon_dark', 'label' => 'dark-favicon', 'hint' => 'dark-icon-info', 'extensions' => \Webkul\Admin\Http\Requests\AppearanceForm::FAVICON_EXTENSIONS, 'width' => '120px'],
-    ];
+    $fields = collect([
+        ['name' => 'logo_image', 'label' => 'logo', 'hints' => ['logo-size'], 'extensions' => \Webkul\Admin\Http\Requests\AppearanceForm::LOGO_EXTENSIONS, 'width' => '240px', 'dark' => false],
+        ['name' => 'favicon', 'label' => 'favicon', 'hints' => ['favicon-size'], 'extensions' => \Webkul\Admin\Http\Requests\AppearanceForm::FAVICON_EXTENSIONS, 'width' => '120px', 'dark' => false],
+        ['name' => 'logo_image_dark', 'label' => 'dark-logo', 'hints' => ['logo-size', 'dark-logo-info'], 'extensions' => \Webkul\Admin\Http\Requests\AppearanceForm::LOGO_EXTENSIONS, 'width' => '240px', 'dark' => true],
+        ['name' => 'favicon_dark', 'label' => 'dark-favicon', 'hints' => ['favicon-size', 'dark-favicon-info'], 'extensions' => \Webkul\Admin\Http\Requests\AppearanceForm::FAVICON_EXTENSIONS, 'width' => '120px', 'dark' => true],
+    ])->map(function (array $field): array {
+        $value = core()->getConfigData('general.design.admin_logo.'.$field['name']);
+
+        $field['images'] = $value ? [['id' => $field['name'], 'url' => Storage::url($value), 'value' => $value]] : [];
+
+        return $field;
+    });
 @endphp
 
 <x-admin::page
@@ -23,10 +29,6 @@
 
     <div class="mt-6 grid grid-cols-1 gap-6 p-4 bg-white dark:bg-cherry-900 box-shadow rounded sm:grid-cols-2">
         @foreach ($fields as $field)
-            @php
-                $value = core()->getConfigData('general.design.admin_logo.'.$field['name']);
-            @endphp
-
             <div class="flex gap-4 flex-col">
                 <x-admin::form.control-group class="!mb-0 shrink-0">
                     <x-admin::form.control-group.label>
@@ -40,14 +42,17 @@
                         :width="$field['width']"
                         height="120px"
                         object-fit="contain"
-                        :uploaded-images="$value ? [['id' => $field['name'], 'url' => Storage::url($value), 'value' => $value]] : []"
+                        :dark-surface="$field['dark']"
+                        :uploaded-images="$field['images']"
                     />
 
                     <x-admin::form.control-group.error :control-name="$field['name']" />
                 </x-admin::form.control-group>
 
                 <p class="text-xs text-gray-600 dark:text-gray-300 leading-[140%]">
-                    @lang('admin::app.settings.appearance.'.$field['hint'])
+                    @foreach ($field['hints'] as $hint)
+                        <span class="block">@lang('admin::app.settings.appearance.'.$hint)</span>
+                    @endforeach
                 </p>
             </div>
         @endforeach

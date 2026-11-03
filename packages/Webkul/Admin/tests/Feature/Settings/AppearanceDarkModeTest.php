@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Storage;
 use Webkul\Admin\Http\Requests\AppearanceForm;
 use Webkul\Core\Models\CoreConfig;
 
+/**
+ * Persist an appearance setting the way the appearance form stores it.
+ */
 function storeAppearanceConfig(string $field, string $value): void
 {
     CoreConfig::query()->updateOrCreate(
@@ -13,6 +16,9 @@ function storeAppearanceConfig(string $field, string $value): void
     );
 }
 
+/**
+ * The stored value of an appearance setting, or null when it is not set.
+ */
 function appearanceConfigValue(string $field): ?string
 {
     return CoreConfig::query()->where('code', 'general.design.admin_logo.'.$field)->value('value');
@@ -91,11 +97,11 @@ it('rejects invalid dark mode logo and favicon uploads', function (string $field
 
     expect(appearanceConfigValue($field))->toBeNull();
 })->with([
-    'php logo'           => fn () => ['logo_image_dark', UploadedFile::fake()->create('malware.php', 10, 'application/x-php')],
-    'html-named logo'    => fn () => ['logo_image_dark', UploadedFile::fake()->image('payload.html')],
-    'svg logo'           => fn () => ['logo_image_dark', UploadedFile::fake()->create('logo.svg', 4, 'image/svg+xml')],
-    'php favicon'        => fn () => ['favicon_dark', UploadedFile::fake()->create('malware.php', 10, 'application/x-php')],
-    'svg favicon'        => fn () => ['favicon_dark', UploadedFile::fake()->create('favicon.svg', 4, 'image/svg+xml')],
+    'php logo'           => fn (): array => ['logo_image_dark', UploadedFile::fake()->create('malware.php', 10, 'application/x-php')],
+    'html-named logo'    => fn (): array => ['logo_image_dark', UploadedFile::fake()->image('payload.html')],
+    'svg logo'           => fn (): array => ['logo_image_dark', UploadedFile::fake()->create('logo.svg', 4, 'image/svg+xml')],
+    'php favicon'        => fn (): array => ['favicon_dark', UploadedFile::fake()->create('malware.php', 10, 'application/x-php')],
+    'svg favicon'        => fn (): array => ['favicon_dark', UploadedFile::fake()->create('favicon.svg', 4, 'image/svg+xml')],
 ]);
 
 it('offers dark mode logo and favicon uploads constrained to the accepted extensions', function () {
@@ -110,7 +116,7 @@ it('offers dark mode logo and favicon uploads constrained to the accepted extens
     preg_match_all('/<v-media-image\s[^>]*>/s', $content, $tags);
 
     $advertised = collect($tags[0])
-        ->mapWithKeys(function ($tag) {
+        ->mapWithKeys(function (string $tag): array {
             preg_match('/name="([a-z_]+)"/', $tag, $name);
             preg_match('/:accepted-extensions=\'([^\']*)\'/', $tag, $extensions);
 
@@ -119,6 +125,48 @@ it('offers dark mode logo and favicon uploads constrained to the accepted extens
 
     expect($advertised->get('logo_image_dark'))->toBe(AppearanceForm::LOGO_EXTENSIONS)
         ->and($advertised->get('favicon_dark'))->toBe(AppearanceForm::FAVICON_EXTENSIONS);
+});
+
+it('previews only the dark mode uploads on a dark surface', function () {
+    $this->loginAsAdmin();
+
+    $content = $this->get(route('admin.settings.appearance.index'))->assertOk()->getContent();
+
+    preg_match_all('/<v-media-image\s[^>]*>/s', $content, $tags);
+
+    $darkSurface = collect($tags[0])
+        ->mapWithKeys(function (string $tag): array {
+            preg_match('/name="([a-z_]+)"/', $tag, $name);
+            preg_match('/v-bind:dark-surface="(true|false)"/', $tag, $flag);
+
+            return [$name[1] => $flag[1] ?? null];
+        });
+
+    expect($darkSurface->all())->toBe([
+        'logo_image'      => 'false',
+        'favicon'         => 'false',
+        'logo_image_dark' => 'true',
+        'favicon_dark'    => 'true',
+    ]);
+});
+
+it('shows the recommended resolution and fallback hints for the dark mode uploads', function () {
+    $this->loginAsAdmin();
+
+    $hints = fn (string ...$keys): array => array_map(
+        fn (string $key): string => '<span class="block">'.e(trans('admin::app.settings.appearance.'.$key)).'</span>',
+        $keys,
+    );
+
+    $this->get(route('admin.settings.appearance.index'))
+        ->assertOk()
+        ->assertSee(trans('admin::app.settings.appearance.section-info'))
+        ->assertSeeInOrder([
+            ...$hints('logo-size'),
+            ...$hints('favicon-size'),
+            ...$hints('logo-size', 'dark-logo-info'),
+            ...$hints('favicon-size', 'dark-favicon-info'),
+        ], false);
 });
 
 it('swaps the custom light and dark logos with the theme in the header and on the login page', function () {
