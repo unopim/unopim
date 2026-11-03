@@ -13,11 +13,11 @@ use Webkul\Core\Repositories\LocaleRepository;
 class ChannelCompletenessColumn
 {
     /**
-     * Requested channel code the memoized scope below was resolved for.
-     * `false` means nothing has been resolved yet, since `null` is itself a
-     * valid outcome (no channel requested).
+     * Requested channel and locale codes the memoized scope below was resolved
+     * for. `false` means nothing has been resolved yet, since every string
+     * pair — including the empty one — is a valid request.
      */
-    protected string|false|null $resolvedFor = false;
+    protected array|false $resolvedFor = false;
 
     protected ?array $scope = null;
 
@@ -33,11 +33,13 @@ class ChannelCompletenessColumn
     {
         $channelCode = core()->getRequestedChannelCode(false);
 
-        if ($this->resolvedFor === $channelCode) {
+        $requestedFor = [$channelCode, core()->getRequestedLocaleCode('locale', false)];
+
+        if ($this->resolvedFor === $requestedFor) {
             return $this->scope;
         }
 
-        $this->resolvedFor = $channelCode;
+        $this->resolvedFor = $requestedFor;
 
         return $this->scope = $this->resolveScope($channelCode);
     }
