@@ -1,16 +1,6 @@
 @php
-    /**
-     * Rendered in place of an input for a `calculated` attribute. The value was
-     * already computed and merged into the form's field values before the panel
-     * rendered.
-     *
-     * The control is named outside the form's `values` wrapper on purpose: a
-     * read-only input is still submitted by the browser, and a derived value
-     * that reached `values` would be written to the database as though someone
-     * had typed it. The id still matches the label the product form rendered.
-     */
     $displayValue = is_array($value ?? null)
-        ? implode(', ', array_filter($value, static fn ($item): bool => $item !== null && $item !== ''))
+        ? implode(', ', array_filter($value, static fn (mixed $item): bool => $item !== null && $item !== ''))
         : (string) ($value ?? '');
 @endphp
 
