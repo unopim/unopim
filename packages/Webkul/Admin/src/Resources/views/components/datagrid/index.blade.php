@@ -95,6 +95,8 @@
 
                     viewScope: null,
 
+                    urlScope: null,
+
                     appliedViewId: null,
 
                     appliedViewLabel: null,
@@ -407,6 +409,8 @@
                     const urlFilters = this.parseUrlFilters();
                     const hasUrlFilters = Object.keys(urlFilters).length > 0;
 
+                    this.urlScope = this.parseUrlScope(urlParams);
+
                     if (urlParams.has('search')) {
                         let searchAppliedColumn = this.findAppliedColumn('all');
 
@@ -617,12 +621,16 @@
                         params.filters[column.index] = column.value;
                     });
 
-                    if (this.viewScope?.channel) {
-                        params.channel = this.viewScope.channel;
+                    const channel = this.urlScope?.channel ?? this.viewScope?.channel;
+
+                    if (channel) {
+                        params.channel = channel;
                     }
 
-                    if (this.viewScope?.locale) {
-                        params.locale = this.viewScope.locale;
+                    const locale = this.urlScope?.locale ?? this.viewScope?.locale;
+
+                    if (locale) {
+                        params.locale = locale;
                     }
 
                     params.managedColumns = this.available.meta?.managedColumn?.columns;
@@ -1026,6 +1034,27 @@
                     }
 
                     return filters;
+                },
+
+                /**
+                 * Read the channel/locale scope off the page URL, so a deep link such as the
+                 * dashboard's channel-readiness drill-down wins over a saved view's stored scope.
+                 *
+                 * @param {URLSearchParams} urlParams
+                 * @returns {object|null}
+                 */
+                parseUrlScope(urlParams) {
+                    const scope = {};
+
+                    ['channel', 'locale'].forEach(key => {
+                        const value = urlParams.get(key);
+
+                        if (value) {
+                            scope[key] = value;
+                        }
+                    });
+
+                    return Object.keys(scope).length ? scope : null;
                 },
 
                 /**
