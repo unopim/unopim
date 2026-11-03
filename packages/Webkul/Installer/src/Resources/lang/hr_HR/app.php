@@ -219,6 +219,14 @@ return [
     ],
 
     'installer' => [
+        'console' => [
+            'confirm-drop'        => 'Izbrisati ove tablice i ponovno instalirati?',
+            'drop-aborted'        => 'Instalacija je prekinuta. Nijedna tablica nije izbrisana.',
+            'force-required'      => 'Prefiks tablica nije postavljen, pa bi se izbrisale sve tablice koje nijedna druga instalacija ne potražuje. Ponovno pokrenite s --force za brisanje ili postavite DB_PREFIX.',
+            'outside-references'  => 'Tablice izvan prefiksa tablica upućuju na tablice koje treba izbrisati: :references. Najprije uklonite ove strane ključeve.',
+            'tables-to-drop'      => 'Ove tablice (:count) bit će izbrisane: :tables',
+        ],
+
         'index' => [
             'create-administrator' => [
                 'admin'                   => 'Administrator',
