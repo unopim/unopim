@@ -28,8 +28,8 @@ class Channel extends AbstractReporting
     }
 
     /**
-     * Translated channel display label (falling back to the code when the
-     * current locale has no translation), keyed by channel code.
+     * Channel display labels for the current locale, keyed by channel code.
+     * Channels without a name fall back to "[code]".
      *
      * @return array<string, string>
      */
