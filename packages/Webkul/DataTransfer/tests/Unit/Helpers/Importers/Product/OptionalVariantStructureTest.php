@@ -7,6 +7,7 @@ use Webkul\DataTransfer\Models\JobTrack;
 
 /**
  * Exercise the real header validator without loading a catalogue or writing batches.
+ * sku is registered as a valid column because it is the product identifier attribute in a real catalogue.
  */
 function productHeaderImporter(array $columns): Importer
 {
@@ -25,7 +26,6 @@ function productHeaderImporter(array $columns): Importer
     });
     $importer->setErrorHelper(new Error);
 
-    // sku is the product identifier attribute in a real catalogue.
     (new ReflectionProperty(Importer::class, 'validColumnNames'))->setValue(
         $importer, array_merge(Importer::BASE_COLUMN_NAMES, ['sku'])
     );
@@ -33,12 +33,15 @@ function productHeaderImporter(array $columns): Importer
     return $importer;
 }
 
+/**
+ * Read the importer's error helper to assert on collected validation errors.
+ */
 function productHeaderErrors(Importer $importer): Error
 {
     return (new ReflectionProperty(Importer::class, 'errorHelper'))->getValue($importer);
 }
 
-it('accepts legacy product headers with configurable_attributes and no variant_structure', function () {
+it('accepts legacy product headers with configurable_attributes and no variant_structure', function (): void {
     $importer = productHeaderImporter([
         'sku', 'locale', 'channel', 'type', 'parent', 'attribute_family', 'configurable_attributes',
     ]);
@@ -48,7 +51,7 @@ it('accepts legacy product headers with configurable_attributes and no variant_s
     expect(productHeaderErrors($importer)->getErrorsCount())->toBe(0);
 });
 
-it('accepts explicit variant_structure headers without configurable_attributes', function () {
+it('accepts explicit variant_structure headers without configurable_attributes', function (): void {
     $importer = productHeaderImporter([
         'sku', 'locale', 'channel', 'type', 'parent', 'attribute_family', 'variant_structure',
     ]);
@@ -58,7 +61,7 @@ it('accepts explicit variant_structure headers without configurable_attributes',
     expect(productHeaderErrors($importer)->getErrorsCount())->toBe(0);
 });
 
-it('still rejects a missing required product header', function (string $missing) {
+it('still rejects a missing required product header', function (string $missing): void {
     $columns = ['sku', 'locale', 'channel', 'type', 'parent', 'attribute_family', 'variant_structure'];
     $importer = productHeaderImporter(array_values(array_diff($columns, [$missing])));
 
@@ -69,12 +72,14 @@ it('still rejects a missing required product header', function (string $missing)
     expect(productHeaderErrors($importer)->getAllErrors()[''][0]['column'])->toBe($missing);
 })->with(['sku', 'locale', 'channel', 'type', 'parent', 'attribute_family']);
 
-it('does not inherit variant_structure as an attribute from a parent row', function (string $type) {
+/**
+ * Only external catalogue reads, row validation and batch writes are replaced;
+ * the production parent-row collection and inheritance logic both run.
+ */
+it('does not inherit variant_structure as an attribute from a parent row', function (string $type): void {
     config(['import.parallel_validation' => false]);
 
     $importer = Mockery::mock(Importer::class)->makePartial()->shouldAllowMockingProtectedMethods();
-    // Only external catalogue reads, row validation and batch writes are replaced.
-    // The production parent-row collection and inheritance logic both run here.
     foreach (['preloadCategoryCodes', 'preloadExistingProducts', 'preloadExistingUniqueValues',
         'sequentialValidateRows', 'createBatchesFromValidRows'] as $method) {
         $importer->shouldReceive($method)->once()->andReturnNull();
@@ -107,7 +112,7 @@ it('does not inherit variant_structure as an attribute from a parent row', funct
     expect($inherited)->toContain('name')->not->toContain('variant_structure');
 })->with(['configurable', 'variant_group']);
 
-it('rejects an explicit unknown variant structure instead of falling back to legacy axes', function () {
+it('rejects an explicit unknown variant structure instead of falling back to legacy axes', function (): void {
     $importer = productHeaderImporter([]);
     $importer->shouldReceive('validChannelsAndLocale')->once()->andReturnTrue();
     $importer->shouldReceive('getVariantStructure')->once()
