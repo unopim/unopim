@@ -42,6 +42,15 @@ class FormulaFunctions implements ExpressionFunctionProviderInterface
      */
     public const INTERNAL_PREFIX = '__';
 
+    /**
+     * Ceiling on any argument that decides how long a produced string is.
+     *
+     * A calculated attribute ends up in a grid cell, an export column or a JSON
+     * field, so nothing longer than this is useful — and an unbounded length
+     * argument is an out-of-memory exploit reachable from an admin text field.
+     */
+    public const MAX_LENGTH = 1000;
+
     public function __construct(
         protected CategoryPathProvider $categories,
     ) {}
@@ -75,28 +84,29 @@ class FormulaFunctions implements ExpressionFunctionProviderInterface
     }
 
     /**
+     * String handling.
+     *
+     * `concat(separator, ...parts)` is the workhorse: empty and null parts are
+     * dropped rather than joined, so a product missing its second component
+     * yields "ABC" and not "ABC-".
+     *
      * @return array<int, ExpressionFunction>
      */
     protected function stringFunctions(): array
     {
         return [
-            /*
-             * concat(separator, ...parts) — the workhorse. Empty and null parts
-             * are dropped rather than joined, so a product missing its second
-             * component yields "ABC" and not "ABC-".
-             */
-            $this->fn('concat', fn ($context, $separator, ...$parts): string => implode(
+            $this->fn('concat', fn (array $context, mixed $separator, mixed ...$parts): string => implode(
                 self::toString($separator),
                 self::stringifyPresent($parts)
             )),
 
-            $this->fn('join', function ($context, $separator, $list): string {
+            $this->fn('join', function (array $context, mixed $separator, mixed $list): string {
                 $items = is_array($list) ? $list : (self::isBlank($list) ? [] : [$list]);
 
                 return implode(self::toString($separator), self::stringifyPresent($items));
             }),
 
-            $this->fn('coalesce', function ($context, ...$values) {
+            $this->fn('coalesce', function (array $context, mixed ...$values): mixed {
                 foreach ($values as $value) {
                     if (! self::isBlank($value)) {
                         return $value;
@@ -106,38 +116,38 @@ class FormulaFunctions implements ExpressionFunctionProviderInterface
                 return null;
             }),
 
-            $this->fn('upper', fn ($context, $value): string => mb_strtoupper(self::toString($value))),
-            $this->fn('lower', fn ($context, $value): string => mb_strtolower(self::toString($value))),
-            $this->fn('trim', fn ($context, $value): string => trim(self::toString($value))),
-            $this->fn('length', fn ($context, $value): int => mb_strlen(self::toString($value))),
+            $this->fn('upper', fn (array $context, mixed $value): string => mb_strtoupper(self::toString($value))),
+            $this->fn('lower', fn (array $context, mixed $value): string => mb_strtolower(self::toString($value))),
+            $this->fn('trim', fn (array $context, mixed $value): string => trim(self::toString($value))),
+            $this->fn('length', fn (array $context, mixed $value): int => mb_strlen(self::toString($value))),
 
-            $this->fn('substr', fn ($context, $value, $start, $length = null): string => mb_substr(
+            $this->fn('substr', fn (array $context, mixed $value, mixed $start, mixed $length = null): string => mb_substr(
                 self::toString($value),
                 (int) $start,
                 $length === null ? null : (int) $length
             )),
 
-            $this->fn('replace', fn ($context, $value, $search, $replace): string => str_replace(
+            $this->fn('replace', fn (array $context, mixed $value, mixed $search, mixed $replace): string => str_replace(
                 self::toString($search),
                 self::toString($replace),
                 self::toString($value)
             )),
 
-            $this->fn('pad_left', fn ($context, $value, $length, $pad = ' '): string => self::pad(
+            $this->fn('pad_left', fn (array $context, mixed $value, mixed $length, mixed $pad = ' '): string => self::pad(
                 $value,
                 $length,
                 $pad,
                 STR_PAD_LEFT
             )),
 
-            $this->fn('pad_right', fn ($context, $value, $length, $pad = ' '): string => self::pad(
+            $this->fn('pad_right', fn (array $context, mixed $value, mixed $length, mixed $pad = ' '): string => self::pad(
                 $value,
                 $length,
                 $pad,
                 STR_PAD_RIGHT
             )),
 
-            $this->fn('split', function ($context, $value, $separator): array {
+            $this->fn('split', function (array $context, mixed $value, mixed $separator): array {
                 $separator = self::toString($separator);
 
                 if ($separator === '') {
@@ -150,22 +160,22 @@ class FormulaFunctions implements ExpressionFunctionProviderInterface
     }
 
     /**
+     * Conditionals.
+     *
+     * A named `if()` exists alongside the ternary because the ternary reads
+     * poorly once nested. Both branches are evaluated before the call, which is
+     * harmless here: no function in this provider has side effects.
+     *
      * @return array<int, ExpressionFunction>
      */
     protected function logicFunctions(): array
     {
         return [
-            /*
-             * Named if() rather than relying only on the ternary, because the
-             * requirement asks for an explicit conditional and the ternary reads
-             * poorly once nested. Both branches are evaluated before the call —
-             * harmless here, as no function in this provider has side effects.
-             */
-            $this->fn('if', fn ($context, $condition, $then, $otherwise = null) => $condition ? $then : $otherwise),
+            $this->fn('if', fn (array $context, mixed $condition, mixed $then, mixed $otherwise = null): mixed => $condition ? $then : $otherwise),
 
-            $this->fn('is_empty', fn ($context, $value): bool => self::isBlank($value)),
+            $this->fn('is_empty', fn (array $context, mixed $value): bool => self::isBlank($value)),
 
-            $this->fn('default', fn ($context, $value, $fallback) => self::isBlank($value) ? $fallback : $value),
+            $this->fn('default', fn (array $context, mixed $value, mixed $fallback): mixed => self::isBlank($value) ? $fallback : $value),
         ];
     }
 
@@ -175,15 +185,15 @@ class FormulaFunctions implements ExpressionFunctionProviderInterface
     protected function numberFunctions(): array
     {
         return [
-            $this->fn('round', fn ($context, $value, $precision = 0): float => round((float) $value, (int) $precision)),
-            $this->fn('floor', fn ($context, $value): float => floor((float) $value)),
-            $this->fn('ceil', fn ($context, $value): float => ceil((float) $value)),
-            $this->fn('abs', fn ($context, $value): float => abs((float) $value)),
+            $this->fn('round', fn (array $context, mixed $value, mixed $precision = 0): float => round((float) $value, (int) $precision)),
+            $this->fn('floor', fn (array $context, mixed $value): float => floor((float) $value)),
+            $this->fn('ceil', fn (array $context, mixed $value): float => ceil((float) $value)),
+            $this->fn('abs', fn (array $context, mixed $value): float => abs((float) $value)),
 
-            $this->fn('min', fn ($context, ...$values) => $values === [] ? null : min(...$values)),
-            $this->fn('max', fn ($context, ...$values) => $values === [] ? null : max(...$values)),
+            $this->fn('min', fn (array $context, mixed ...$values): mixed => $values === [] ? null : min(...$values)),
+            $this->fn('max', fn (array $context, mixed ...$values): mixed => $values === [] ? null : max(...$values)),
 
-            $this->fn('number_format', fn ($context, $value, $decimals = 2, $decimalPoint = '.', $thousandsSeparator = ''): string => number_format(
+            $this->fn('number_format', fn (array $context, mixed $value, mixed $decimals = 2, mixed $decimalPoint = '.', mixed $thousandsSeparator = ''): string => number_format(
                 (float) $value,
                 (int) $decimals,
                 self::toString($decimalPoint),
@@ -193,20 +203,21 @@ class FormulaFunctions implements ExpressionFunctionProviderInterface
     }
 
     /**
+     * Dates.
+     *
+     * `date_add` takes Carbon's relative-time strings ("+1 month"), the same
+     * vocabulary the rest of the application already uses.
+     *
      * @return array<int, ExpressionFunction>
      */
     protected function dateFunctions(): array
     {
         return [
-            $this->fn('now', fn ($context): string => Carbon::now()->toDateTimeString()),
+            $this->fn('now', fn (array $context): string => Carbon::now()->toDateTimeString()),
 
-            $this->fn('date_format', fn ($context, $value, $format): ?string => self::toDate($value)?->format(self::toString($format))),
+            $this->fn('date_format', fn (array $context, mixed $value, mixed $format): ?string => self::toDate($value)?->format(self::toString($format))),
 
-            /*
-             * date_add uses Carbon's relative-time strings ("+1 month"), the same
-             * vocabulary the rest of the application already uses.
-             */
-            $this->fn('date_add', function ($context, $value, $modifier): ?string {
+            $this->fn('date_add', function (array $context, mixed $value, mixed $modifier): ?string {
                 $date = self::toDate($value);
 
                 if (! $date instanceof Carbon) {
@@ -220,9 +231,9 @@ class FormulaFunctions implements ExpressionFunctionProviderInterface
                 }
             }),
 
-            $this->fn('year', fn ($context, $value): ?int => self::toDate($value)?->year),
-            $this->fn('month', fn ($context, $value): ?int => self::toDate($value)?->month),
-            $this->fn('day', fn ($context, $value): ?int => self::toDate($value)?->day),
+            $this->fn('year', fn (array $context, mixed $value): ?int => self::toDate($value)?->year),
+            $this->fn('month', fn (array $context, mixed $value): ?int => self::toDate($value)?->month),
+            $this->fn('day', fn (array $context, mixed $value): ?int => self::toDate($value)?->day),
         ];
     }
 
@@ -232,12 +243,12 @@ class FormulaFunctions implements ExpressionFunctionProviderInterface
     protected function categoryFunctions(): array
     {
         return [
-            $this->fn('category_path', fn ($context, $separator = '/'): string => implode(
+            $this->fn('category_path', fn (array $context, mixed $separator = '/'): string => implode(
                 self::toString($separator),
                 $this->categories->deepestPath(self::contextCategories($context))
             )),
 
-            $this->fn('category_label_path', fn ($context, $separator = '/'): string => implode(
+            $this->fn('category_label_path', fn (array $context, mixed $separator = '/'): string => implode(
                 self::toString($separator),
                 $this->categories->deepestPath(
                     self::contextCategories($context),
@@ -245,9 +256,9 @@ class FormulaFunctions implements ExpressionFunctionProviderInterface
                 )
             )),
 
-            $this->fn('category_codes', fn ($context): array => self::contextCategories($context)),
+            $this->fn('category_codes', fn (array $context): array => self::contextCategories($context)),
 
-            $this->fn('category_labels', fn ($context): array => $this->categories->labels(
+            $this->fn('category_labels', fn (array $context): array => $this->categories->labels(
                 self::contextCategories($context),
                 self::contextLocale($context)
             )),
@@ -302,11 +313,23 @@ class FormulaFunctions implements ExpressionFunctionProviderInterface
         return is_string($locale) && $locale !== '' ? $locale : null;
     }
 
+    /**
+     * Pad to at most {@see MAX_LENGTH} characters.
+     *
+     * Without the clamp, `pad_left(sku, 2000000000)` asks str_pad() for a two
+     * gigabyte string and takes the process down with it — from a text field
+     * any catalogue manager can edit.
+     */
     protected static function pad(mixed $value, mixed $length, mixed $pad, int $type): string
     {
         $pad = self::toString($pad);
 
-        return str_pad(self::toString($value), (int) $length, $pad === '' ? ' ' : $pad, $type);
+        return str_pad(
+            self::toString($value),
+            min(max((int) $length, 0), self::MAX_LENGTH),
+            $pad === '' ? ' ' : $pad,
+            $type
+        );
     }
 
     /**

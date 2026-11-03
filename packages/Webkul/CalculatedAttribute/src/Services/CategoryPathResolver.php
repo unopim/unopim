@@ -2,26 +2,32 @@
 
 namespace Webkul\CalculatedAttribute\Services;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Builder;
 use Webkul\CalculatedAttribute\Contracts\CategoryPathProvider;
+use Webkul\Category\Repositories\CategoryRepository;
 
 /**
- * Resolves category paths from a tree loaded once per process.
+ * Resolves category paths for the categories a product is actually in.
  *
- * The naive implementation would walk `parent_id` with a query per level per
- * product, which is the one thing that would make compute-on-read expensive on
- * a large export. Instead the whole tree is read once into two flat maps —
- * categories number in the hundreds even on big catalogues — and every
- * subsequent lookup is pointer-chasing in memory.
+ * Only the requested categories and their ancestors are read, and the result is
+ * kept for the rest of the request or job: a product sits in a handful of
+ * categories, and the products in one export mostly share them, so after the
+ * first few rows nearly every lookup is answered from memory without ever
+ * holding the whole tree.
+ *
+ * The naive alternative — walking `parent_id` with a query per level per
+ * product — is the one thing that would make compute-on-read expensive on a
+ * large export, which is why ancestors come back in a single nested-set query
+ * instead.
  */
 class CategoryPathResolver implements CategoryPathProvider
 {
     /**
      * id => ['code' => string, 'parent_id' => ?int, 'names' => array<string, string>]
      *
-     * @var array<int, array{code: string, parent_id: int|null, names: array<string, string>}>|null
+     * @var array<int, array{code: string, parent_id: int|null, names: array<string, string>}>
      */
-    protected ?array $byId = null;
+    protected array $byId = [];
 
     /**
      * code => id
@@ -31,6 +37,14 @@ class CategoryPathResolver implements CategoryPathProvider
     protected array $idByCode = [];
 
     /**
+     * Codes already looked up, including ones that matched nothing, so an
+     * unknown code costs one query rather than one per product.
+     *
+     * @var array<string, true>
+     */
+    protected array $resolvedCodes = [];
+
+    /**
      * Ancestor chains already computed, keyed by category id.
      *
      * @var array<int, array<int, int>>
@@ -38,11 +52,24 @@ class CategoryPathResolver implements CategoryPathProvider
     protected array $chainCache = [];
 
     /**
+     * How far {@see ancestorChain()} will walk before giving up.
+     */
+    protected const MAX_DEPTH = 100;
+
+    public function __construct(
+        protected CategoryRepository $categoryRepository,
+    ) {}
+
+    /**
      * {@inheritdoc}
+     *
+     * "Deepest" is the longest root-to-node chain. Ties keep the first one
+     * seen, so the result is stable for a given assignment order rather than
+     * depending on map iteration.
      */
     public function deepestPath(array $codes, ?string $locale = null): array
     {
-        $this->load();
+        $this->load($codes);
 
         $deepest = null;
         $deepestChain = [];
@@ -56,11 +83,6 @@ class CategoryPathResolver implements CategoryPathProvider
 
             $chain = $this->ancestorChain($id);
 
-            /*
-             * "Deepest" is the longest root-to-node chain. Ties keep the first
-             * one seen, so the result is stable for a given assignment order
-             * rather than depending on map iteration.
-             */
             if ($deepest === null || count($chain) > count($deepestChain)) {
                 $deepest = $id;
                 $deepestChain = $chain;
@@ -82,7 +104,7 @@ class CategoryPathResolver implements CategoryPathProvider
      */
     public function labels(array $codes, ?string $locale = null): array
     {
-        $this->load();
+        $this->load($codes);
 
         $labels = [];
 
@@ -98,13 +120,14 @@ class CategoryPathResolver implements CategoryPathProvider
     }
 
     /**
-     * Forget the loaded tree. Long-running workers call this when categories
+     * Forget everything loaded. Long-running workers call this when categories
      * change underneath them; a normal request never needs it.
      */
     public function flush(): void
     {
-        $this->byId = null;
+        $this->byId = [];
         $this->idByCode = [];
+        $this->resolvedCodes = [];
         $this->chainCache = [];
     }
 
@@ -113,6 +136,9 @@ class CategoryPathResolver implements CategoryPathProvider
      *
      * Every UnoPim category descends from a single root node, so including it
      * would prefix every path with the same meaningless segment.
+     *
+     * The step limit guards against a `parent_id` cycle in the data, which the
+     * nested set should prevent but which would otherwise hang an export.
      *
      * @return array<int, int>
      */
@@ -126,11 +152,7 @@ class CategoryPathResolver implements CategoryPathProvider
         $cursor = $id;
         $guard = 0;
 
-        /*
-         * The guard is against a parent_id cycle in the data, which the nested
-         * set should prevent but which would otherwise hang an export.
-         */
-        while ($cursor !== null && $guard++ < 100) {
+        while ($cursor !== null && $guard++ < self::MAX_DEPTH) {
             $node = $this->byId[$cursor] ?? null;
 
             if ($node === null) {
@@ -147,6 +169,14 @@ class CategoryPathResolver implements CategoryPathProvider
         return $this->chainCache[$id] = $chain;
     }
 
+    /**
+     * The label for one category: its localised name, or its code when the
+     * category has no name in this locale.
+     *
+     * Falling back to the bare code matches the "[code]" convention used
+     * elsewhere in the admin, minus the brackets, which would be noise in an
+     * export column.
+     */
     protected function render(int $id, ?string $locale): string
     {
         $node = $this->byId[$id] ?? null;
@@ -159,39 +189,108 @@ class CategoryPathResolver implements CategoryPathProvider
             return $node['code'];
         }
 
-        /*
-         * Falls back to the code when a category has no name in this locale,
-         * matching the "[code]" convention used elsewhere in the admin minus the
-         * brackets, which would be noise in an export column.
-         */
         return $node['names'][$locale] ?? $node['code'];
     }
 
-    protected function load(): void
+    /**
+     * Make sure the given codes, and every ancestor of them, are in memory.
+     *
+     * @param  array<int, string>  $codes
+     */
+    protected function load(array $codes): void
     {
-        if ($this->byId !== null) {
+        $missing = [];
+
+        foreach ($codes as $code) {
+            if (is_string($code) && $code !== '' && ! isset($this->resolvedCodes[$code])) {
+                $missing[$code] = true;
+            }
+        }
+
+        if ($missing === []) {
             return;
         }
 
-        $this->byId = [];
-        $this->idByCode = [];
+        $missing = array_keys($missing);
 
-        $rows = DB::table('categories')
-            ->select(['id', 'code', 'parent_id', 'additional_data'])
-            ->orderBy('id')
+        foreach ($missing as $code) {
+            $this->resolvedCodes[$code] = true;
+        }
+
+        $nodes = $this->query()->whereIn('code', $missing)->get();
+
+        if ($nodes->isEmpty()) {
+            return;
+        }
+
+        foreach ($nodes as $node) {
+            $this->remember($node);
+        }
+
+        $this->loadAncestors($nodes->all());
+    }
+
+    /**
+     * Pull in every ancestor of the given nodes, in one query.
+     *
+     * The nested set makes an ancestor exactly a row that encloses the node's
+     * `_lft`/`_rgt` bounds, so the whole chain comes back without walking it.
+     *
+     * @param  array<int, object>  $nodes
+     */
+    protected function loadAncestors(array $nodes): void
+    {
+        $bounds = [];
+
+        foreach ($nodes as $node) {
+            if ($node->parent_id !== null) {
+                $bounds[] = [(int) $node->_lft, (int) $node->_rgt];
+            }
+        }
+
+        if ($bounds === []) {
+            return;
+        }
+
+        $ancestors = $this->query()
+            ->where(function (Builder $query) use ($bounds): void {
+                foreach ($bounds as [$left, $right]) {
+                    $query->orWhere(fn (Builder $inner): Builder => $inner
+                        ->where('_lft', '<', $left)
+                        ->where('_rgt', '>', $right));
+                }
+            })
             ->get();
 
-        foreach ($rows as $row) {
-            $id = (int) $row->id;
-
-            $this->byId[$id] = [
-                'code'      => (string) $row->code,
-                'parent_id' => $row->parent_id === null ? null : (int) $row->parent_id,
-                'names'     => $this->extractNames($row->additional_data),
-            ];
-
-            $this->idByCode[(string) $row->code] = $id;
+        foreach ($ancestors as $ancestor) {
+            $this->remember($ancestor);
         }
+    }
+
+    protected function query(): Builder
+    {
+        return $this->categoryRepository
+            ->getModel()
+            ->newQuery()
+            ->select(['id', 'code', 'parent_id', '_lft', '_rgt', 'additional_data']);
+    }
+
+    protected function remember(object $node): void
+    {
+        $id = (int) $node->id;
+
+        if (isset($this->byId[$id])) {
+            return;
+        }
+
+        $this->byId[$id] = [
+            'code'      => (string) $node->code,
+            'parent_id' => $node->parent_id === null ? null : (int) $node->parent_id,
+            'names'     => $this->extractNames($node->additional_data),
+        ];
+
+        $this->idByCode[(string) $node->code] = $id;
+        $this->resolvedCodes[(string) $node->code] = true;
     }
 
     /**

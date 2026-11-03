@@ -13,7 +13,8 @@ use Webkul\CalculatedAttribute\Services\FormulaValidator;
  *
  * The rule is what turns a silent failure into a visible one: without it a
  * malformed formula would save happily and only show up as an empty export
- * column weeks later.
+ * column weeks later. It runs for the admin form and for both REST endpoints,
+ * which collect it through the core attribute rule event.
  */
 class ValidFormula implements ValidationRule
 {
@@ -25,15 +26,15 @@ class ValidFormula implements ValidationRule
 
     /**
      * Run the validation rule.
+     *
+     * The registry snapshot is dropped first: it is memoised for the request,
+     * and an attribute saved earlier in the same one would otherwise be
+     * invisible to the cycle check.
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $registry = $this->registry ?? app(AttributeRegistry::class);
 
-        /*
-         * The registry is memoised per process; an attribute saved earlier in
-         * the same request would otherwise be invisible to the cycle check.
-         */
         $registry->flush();
 
         $validator = $this->validator ?? app(FormulaValidator::class);

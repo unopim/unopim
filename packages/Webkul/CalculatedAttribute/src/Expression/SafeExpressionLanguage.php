@@ -28,12 +28,10 @@ class SafeExpressionLanguage extends ExpressionLanguage
 
     /**
      * Deliberately empty: the parent implementation is what registers the
-     * built-ins we are dropping. Do not call parent::registerFunctions().
+     * built-ins we are dropping, so every callable name comes from
+     * {@see FormulaFunctions}. Do not call parent::registerFunctions().
      */
-    protected function registerFunctions(): void
-    {
-        // No built-ins. Every callable name comes from FormulaFunctions.
-    }
+    protected function registerFunctions(): void {}
 
     /**
      * The names currently registered, used to produce a helpful message when a
