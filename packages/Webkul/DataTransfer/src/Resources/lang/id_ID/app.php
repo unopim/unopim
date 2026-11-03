@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'Kode opsi atribut :code sudah digunakan.',
                     'code_not_found_to_delete' => 'Kode opsi atribut tidak ditemukan untuk dihapus.',
+                    'ambiguous-code-to-delete' => 'Kode opsi :code ada pada lebih dari satu atribut; tambahkan attribute_code.',
                     'locale-not-exist'         => 'Lokal ":code" tidak ada.',
                     'invalid-attribute'        => 'Atribut ":code" tidak ada.',
                 ],
@@ -311,5 +312,6 @@ return [
         'completed' => 'Eksekusi pekerjaan selesai',
         'stalled'   => 'Tugas berhenti merespons selama lebih dari :minutes menit dan ditandai gagal. Proses yang menjalankannya kemungkinan besar dihentikan.',
         'reaped'    => ':count tugas yang macet ditandai sebagai gagal.',
+        'stopped'   => 'Impor dihentikan setelah validasi dengan :count kesalahan. Tidak ada baris yang diimpor.',
     ],
 ];

@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'Attributtalternativkoden :code er allerede i bruk.',
                     'code_not_found_to_delete' => 'Attributtalternativkoden ble ikke funnet for sletting.',
+                    'ambiguous-code-to-delete' => 'Alternativkoden :code finnes på mer enn ett attributt; legg til attribute_code.',
                     'locale-not-exist'         => 'Språket ":code" eksisterer ikke.',
                     'invalid-attribute'        => 'Attributtet ":code" eksisterer ikke.',
                 ],
@@ -311,5 +312,6 @@ return [
         'completed' => 'Jobbutførelse fullført',
         'stalled'   => 'Jobben sluttet å svare i mer enn :minutes minutter og ble markert som mislykket. Prosessen som kjørte den ble sannsynligvis avbrutt.',
         'reaped'    => ':count fastlåste jobber ble markert som mislykkede.',
+        'stopped'   => 'Importen ble stoppet etter validering med :count feil. Ingen rader ble importert.',
     ],
 ];

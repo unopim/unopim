@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'Attributoptionscode :code wird bereits verwendet.',
                     'code_not_found_to_delete' => 'Attributoptionscode zum Löschen nicht gefunden.',
+                    'ambiguous-code-to-delete' => 'Optionscode :code existiert bei mehr als einem Attribut; bitte attribute_code angeben.',
                     'locale-not-exist'         => 'Gebietsschema ":code" existiert nicht.',
                     'invalid-attribute'        => 'Attribut ":code" existiert nicht.',
                 ],
@@ -311,5 +312,6 @@ return [
         'completed' => 'Jobausführung abgeschlossen',
         'stalled'   => 'Der Auftrag hat länger als :minutes Minuten nicht reagiert und wurde als fehlgeschlagen markiert. Der ausführende Worker wurde vermutlich beendet.',
         'reaped'    => ':count hängengebliebene Aufträge wurden als fehlgeschlagen markiert.',
+        'stopped'   => 'Import nach der Validierung mit :count Fehlern abgebrochen. Es wurden keine Zeilen importiert.',
     ],
 ];

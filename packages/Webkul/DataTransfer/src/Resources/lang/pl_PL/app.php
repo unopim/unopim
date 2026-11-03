@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'Kod opcji atrybutu :code jest już w użyciu.',
                     'code_not_found_to_delete' => 'Nie znaleziono kodu opcji atrybutu do usunięcia.',
+                    'ambiguous-code-to-delete' => 'Kod opcji :code istnieje w więcej niż jednym atrybucie; dodaj attribute_code.',
                     'locale-not-exist'         => 'Ustawienia regionalne ":code" nie istnieją.',
                     'invalid-attribute'        => 'Atrybut ":code" nie istnieje.',
                 ],
@@ -311,5 +312,6 @@ return [
         'completed' => 'Zakończenie pracy',
         'stalled'   => 'Zadanie przestało odpowiadać przez ponad :minutes minut i zostało oznaczone jako nieudane. Proces, który je wykonywał, prawdopodobnie został zakończony.',
         'reaped'    => 'Oznaczono :count zatrzymanych zadań jako nieudane.',
+        'stopped'   => 'Import zatrzymano po walidacji z liczbą błędów: :count. Nie zaimportowano żadnych wierszy.',
     ],
 ];

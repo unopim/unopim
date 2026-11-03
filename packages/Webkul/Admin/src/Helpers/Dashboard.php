@@ -262,7 +262,7 @@ class Dashboard
      */
     public function getChannelReadiness()
     {
-        return Cache::remember('dashboard.channel_readiness', self::CACHE_TTL, function () {
+        $readiness = Cache::remember('dashboard.channel_readiness', self::CACHE_TTL, function () {
             if (! Schema::hasTable('product_completeness')) {
                 return [];
             }
@@ -287,6 +287,13 @@ class Dashboard
                 'percentage' => $row->total > 0 ? round(($row->ready / $row->total) * 100) : 0,
             ])->toArray();
         });
+
+        $labelsByCode = $this->channel->getLabelsByCode();
+
+        return array_map(fn (array $row) => [
+            ...$row,
+            'label' => $labelsByCode[$row['channel']] ?? "[{$row['channel']}]",
+        ], $readiness);
     }
 
     /**
