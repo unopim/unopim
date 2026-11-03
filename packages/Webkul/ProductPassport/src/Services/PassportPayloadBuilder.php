@@ -35,6 +35,13 @@ class PassportPayloadBuilder implements PayloadBuilder
         private readonly PassportTemplateResolver $templates,
     ) {}
 
+    /**
+     * A field sourced from a WYSIWYG attribute additionally carries `is_rich_text`
+     * and a markup-free `value_text` sibling for consumers such as JSON-LD; every
+     * other field keeps the plain `code`/`label`/`value`/`section` shape, so the
+     * checksum of a passport without rich text is unchanged and republishing it
+     * mints no new version.
+     */
     public function build(Product $product, PublicationContext $context): array
     {
         $channelCode = $context->channel->code;
@@ -86,20 +93,20 @@ class PassportPayloadBuilder implements PayloadBuilder
                 continue;
             }
 
-            $isRichText = $this->isRichText($field);
             $formattedValue = $this->formatValue($field, $raw, $channelCode);
 
-            $tiers[$tier]['fields'][] = [
-                'code'         => $field->code,
-                'label'        => $label,
-                'value'        => $formattedValue,
-                // Plain-text sibling for consumers that must not receive markup (JSON-LD
-                // `additionalProperty.value`, exports, search index). Rich-text fields keep
-                // their sanitized HTML in `value` for the passport page itself to render.
-                'value_text'   => $isRichText ? $this->toPlainText($formattedValue) : $formattedValue,
-                'is_rich_text' => $isRichText,
-                'section'      => $sectionKey,
+            $entry = [
+                'code'    => $field->code,
+                'label'   => $label,
+                'value'   => $formattedValue,
+                'section' => $sectionKey,
             ];
+
+            if ($this->isRichText($field)) {
+                $entry += ['value_text' => $this->toPlainText($formattedValue), 'is_rich_text' => true];
+            }
+
+            $tiers[$tier]['fields'][] = $entry;
         }
 
         $base = $order[0];
@@ -244,11 +251,8 @@ class PassportPayloadBuilder implements PayloadBuilder
             return (string) $value;
         }
 
-        // WYSIWYG-authored content is genuine formatted text (paragraphs, lists), not
-        // markup to discard: sanitize and keep it as HTML so the passport page renders
-        // it the way the editor wrote it, instead of dumping raw `<p>` tags as text.
         if ($this->isRichText($field)) {
-            return $this->purifyText((string) $value);
+            return $this->sanitizeRichText((string) $value);
         }
 
         return match ($attribute->type) {
@@ -274,6 +278,19 @@ class PassportPayloadBuilder implements PayloadBuilder
             && $attribute instanceof AttributeContract
             && $attribute->type === 'textarea'
             && (bool) $attribute->enable_wysiwyg;
+    }
+
+    /**
+     * Purifies WYSIWYG content to the shared safe subset, then drops `<img>` tags:
+     * the public passport CSP only allows same-origin and `data:` images, so an
+     * image the editor embedded from another host would render as a broken
+     * placeholder rather than the picture.
+     */
+    private function sanitizeRichText(string $html): string
+    {
+        $purified = (string) $this->purifyText($html);
+
+        return preg_replace('/<img\b[^>]*>/i', '', $purified) ?? $purified;
     }
 
     /**

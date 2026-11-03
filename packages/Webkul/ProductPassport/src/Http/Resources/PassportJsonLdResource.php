@@ -18,6 +18,9 @@ class PassportJsonLdResource extends JsonResource
     public static $wrap = null;
 
     /**
+     * `additionalProperty.value` is plain text in schema.org, so a rich-text field
+     * contributes its markup-free `value_text` instead of its sanitized HTML.
+     *
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array
@@ -36,8 +39,6 @@ class PassportJsonLdResource extends JsonResource
                 'name'  => $payload['operator']['name'] ?? null,
             ], fn ($v): bool => $v !== null && $v !== ''),
             'additionalProperty' => array_map(
-                // schema.org PropertyValue.value is plain text; `value_text` strips the
-                // sanitized HTML a rich-text field keeps in `value` for the HTML page.
                 fn (array $field): array => [
                     '@type' => 'PropertyValue',
                     'name'  => $field['label'],

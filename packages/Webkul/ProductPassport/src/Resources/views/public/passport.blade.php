@@ -186,10 +186,11 @@
                         @foreach ($section['fields'] as $field)
                             <div>
                                 <dt>{{ $field['label'] }}</dt>
-                                {{-- Rich-text fields were purified to a safe HTML subset in the payload
-                                     builder; wrapping in HtmlString lets Blade's `e()` pass it through
-                                     unescaped, without this file ever using a raw unescaped echo. --}}
-                                <dd class="{{ ($field['is_rich_text'] ?? false) ? 'rich-text' : '' }}">{{ ($field['is_rich_text'] ?? false) ? new \Illuminate\Support\HtmlString($field['value']) : $field['value'] }}</dd>
+                                @if ($field['is_rich_text'] ?? false)
+                                    <dd class="rich-text">{{ new \Illuminate\Support\HtmlString($field['value']) }}</dd>
+                                @else
+                                    <dd>{{ $field['value'] }}</dd>
+                                @endif
                             </div>
                         @endforeach
                     </dl>
