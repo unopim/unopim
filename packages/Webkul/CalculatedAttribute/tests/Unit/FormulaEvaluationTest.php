@@ -284,6 +284,25 @@ it('reports a broken formula once per process, not once per product', function (
     Exceptions::assertReportedCount(1);
 });
 
+it('clamps a padding length that would otherwise exhaust memory', function (): void {
+    [$resolver] = calcResolver([
+        'padded' => ['type' => 'calculated', 'formula' => "pad_left(sku, 2000000000, '0')"],
+    ]);
+
+    $value = $resolver->resolveOne('padded', new ProductContext(sku: 'A'), 'default', 'de_DE');
+
+    expect(mb_strlen((string) $value))->toBe(FormulaFunctions::MAX_LENGTH);
+});
+
+it('pads normally below the limit', function (): void {
+    [$resolver] = calcResolver([
+        'padded' => ['type' => 'calculated', 'formula' => "pad_left(sku, 5, '0')"],
+    ]);
+
+    expect($resolver->resolveOne('padded', new ProductContext(sku: '42'), 'default', 'de_DE'))
+        ->toBe('00042');
+});
+
 it('merges computed values into the scope each attribute declares', function (): void {
     [$resolver] = calcResolver([
         'sku_upper' => ['type' => 'calculated', 'formula' => 'upper(sku)'],
