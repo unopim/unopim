@@ -3,6 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Webkul\Core\Database\Schema\PrefixedIndexNameBlueprint;
 use Webkul\Product\Models\ProductProxy;
 use Webkul\Publication\Exceptions\ImmutableVersionException;
 use Webkul\Publication\Services\Publisher;
@@ -269,11 +270,11 @@ it('adds the release foreign key and index on a rerun that finds the column with
 
     expect(Schema::hasColumn('publication_versions', 'release_id'))->toBeTrue()
         ->and(Schema::hasForeignKey('publication_versions', ['release_id']))->toBeFalse()
-        ->and(Schema::hasIndex('publication_versions', 'pubver_release_idx'))->toBeFalse();
+        ->and(PrefixedIndexNameBlueprint::indexExists('publication_versions', 'pubver_release_idx'))->toBeFalse();
 
     $migration = require base_path('packages/Webkul/Publication/src/Database/Migrations/2026_09_04_000011_add_release_id_to_publication_versions_table.php');
     $migration->up();
 
     expect(Schema::hasForeignKey('publication_versions', ['release_id']))->toBeTrue()
-        ->and(Schema::hasIndex('publication_versions', 'pubver_release_idx'))->toBeTrue();
+        ->and(PrefixedIndexNameBlueprint::indexExists('publication_versions', 'pubver_release_idx'))->toBeTrue();
 });

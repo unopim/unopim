@@ -219,6 +219,14 @@ return [
     ],
 
     'installer' => [
+        'console' => [
+            'confirm-drop'        => 'Xóa các bảng này và cài đặt lại?',
+            'drop-aborted'        => 'Đã hủy cài đặt. Không có bảng nào bị xóa.',
+            'force-required'      => 'Chưa đặt tiền tố bảng, nên mọi bảng không thuộc bản cài đặt nào khác sẽ bị xóa. Chạy lại với --force để xóa chúng, hoặc đặt DB_PREFIX.',
+            'outside-references'  => 'Các bảng ngoài tiền tố bảng tham chiếu đến các bảng cần xóa: :references. Hãy gỡ các khóa ngoại này trước.',
+            'tables-to-drop'      => ':count bảng sau sẽ bị xóa: :tables',
+        ],
+
         'index' => [
             'create-administrator' => [
                 'admin'                   => 'Quản trị viên',
