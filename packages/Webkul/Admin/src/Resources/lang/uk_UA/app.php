@@ -2328,6 +2328,7 @@ return [
                 'title'               => 'Запит',
                 'create-btn'          => 'Створити Запит',
                 'edit-title'          => 'Редагувати Запит',
+                'insert-attribute'    => 'Вставити атрибут',
                 'create-title'        => 'Створити Новий Запит',
                 'label-title'         => 'Назва',
                 'purpose'             => 'Призначення',

@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => '属性选项代码 :code 已被使用。',
                     'code_not_found_to_delete' => '未找到要删除的属性选项代码。',
+                    'ambiguous-code-to-delete' => '选项代码 :code 存在于多个属性中；请添加 attribute_code。',
                     'locale-not-exist'         => '区域设置“:code”不存在。',
                     'invalid-attribute'        => '属性“:code”不存在。',
                 ],
@@ -311,5 +312,6 @@ return [
         'completed' => '作业执行完成',
         'stalled'   => '该任务超过 :minutes 分钟没有响应，已标记为失败。执行它的工作进程很可能已被终止。',
         'reaped'    => '已将 :count 个停滞的任务标记为失败。',
+        'stopped'   => '验证发现 :count 个错误，导入已停止。未导入任何行。',
     ],
 ];

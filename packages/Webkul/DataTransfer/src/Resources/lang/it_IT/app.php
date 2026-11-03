@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'Il codice dell\'opzione attributo :code è già in uso.',
                     'code_not_found_to_delete' => 'Codice dell\'opzione attributo non trovato per l\'eliminazione.',
+                    'ambiguous-code-to-delete' => 'Il codice opzione :code esiste in più di un attributo; aggiungi attribute_code.',
                     'locale-not-exist'         => 'La lingua ":code" non esiste.',
                     'invalid-attribute'        => 'L\'attributo ":code" non esiste.',
                 ],
@@ -311,5 +312,6 @@ return [
         'completed' => 'Esecuzione del lavoro completata',
         'stalled'   => 'Il processo non ha risposto per più di :minutes minuti ed è stato contrassegnato come fallito. Il worker che lo eseguiva è stato probabilmente terminato.',
         'reaped'    => 'Contrassegnati :count processi bloccati come falliti.',
+        'stopped'   => 'Importazione interrotta dopo la convalida con :count errori. Nessuna riga è stata importata.',
     ],
 ];

@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => '屬性選項代碼 :code 已被使用。',
                     'code_not_found_to_delete' => '未找到要刪除的屬性選項代碼。',
+                    'ambiguous-code-to-delete' => '選項代碼 :code 存在於多個屬性中；請新增 attribute_code。',
                     'locale-not-exist'         => '區域設置“:code”不存在。',
                     'invalid-attribute'        => '屬性“:code”不存在。',
                 ],
@@ -311,5 +312,6 @@ return [
         'completed' => '任務已完成',
         'stalled'   => '此工作超過 :minutes 分鐘沒有回應，已標記為失敗。執行它的工作程序很可能已被終止。',
         'reaped'    => '已將 :count 個停滯的工作標記為失敗。',
+        'stopped'   => '驗證發現 :count 個錯誤，匯入已停止。未匯入任何資料列。',
     ],
 ];

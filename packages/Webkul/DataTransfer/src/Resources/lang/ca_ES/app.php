@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'El codi d\'opció d\'atribut :code ja està en ús.',
                     'code_not_found_to_delete' => 'Codi d\'opció d\'atribut no trobat per a supressió.',
+                    'ambiguous-code-to-delete' => 'El codi d\'opció :code existeix en més d\'un atribut; afegiu attribute_code.',
                     'locale-not-exist'         => 'L\'idioma ":code" no existeix.',
                     'invalid-attribute'        => 'L\'atribut ":code" no existeix.',
                 ],
@@ -311,5 +312,6 @@ return [
         'completed' => 'Finalització de l\'execució de la feina',
         'stalled'   => 'La tasca ha deixat de respondre durant més de :minutes minuts i s\'ha marcat com a fallida. Probablement el procés que l\'executava s\'ha aturat.',
         'reaped'    => 'S\'han marcat :count tasques aturades com a fallides.',
+        'stopped'   => 'La importació s\'ha aturat després de la validació amb :count errors. No s\'ha importat cap fila.',
     ],
 ];

@@ -2328,6 +2328,7 @@ return [
                 'title'               => 'Gợi ý',
                 'create-btn'          => 'Tạo Gợi ý',
                 'edit-title'          => 'Chỉnh sửa Gợi ý',
+                'insert-attribute'    => 'Chèn thuộc tính',
                 'create-title'        => 'Tạo Gợi ý Mới',
                 'label-title'         => 'Tiêu đề',
                 'purpose'             => 'Mục đích',

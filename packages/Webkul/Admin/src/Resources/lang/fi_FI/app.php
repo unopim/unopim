@@ -2326,6 +2326,7 @@ return [
                 'title'               => 'Kehotus',
                 'create-btn'          => 'Luo Kehotus',
                 'edit-title'          => 'Muokkaa Kehotusta',
+                'insert-attribute'    => 'Lisää attribuutti',
                 'create-title'        => 'Luo Uusi Kehotus',
                 'label-title'         => 'Otsikko',
                 'purpose'             => 'Käyttötarkoitus',

@@ -126,6 +126,8 @@ class Importer extends AbstractImporter
 
     const ATTRIBUTE_FAMILY_CODE = 'attribute_family';
 
+    const VARIANT_STRUCTURE_CODE = 'variant_structure';
+
     /**
      * Error message templates
      */
@@ -148,9 +150,10 @@ class Importer extends AbstractImporter
     ];
 
     /**
-     * Permanent entity columns
+     * Permanent entity columns. variant_structure is optional because legacy files
+     * select axes through configurable_attributes.
      */
-    protected array $permanentAttributes = ['sku', 'locale', 'channel', 'type', 'parent', 'variant_structure', self::ATTRIBUTE_FAMILY_CODE];
+    protected array $permanentAttributes = ['sku', 'locale', 'channel', 'type', 'parent', self::ATTRIBUTE_FAMILY_CODE];
 
     /**
      * Permanent entity column
@@ -321,7 +324,7 @@ class Importer extends AbstractImporter
         'cross_sells',
         'up_sells',
         'configurable_attributes',
-        'variant_structure',
+        self::VARIANT_STRUCTURE_CODE,
         'associated_skus',
     ];
 
@@ -547,9 +550,9 @@ class Importer extends AbstractImporter
                     'type'       => $rowData['type'],
                     'family'     => $rowData[self::ATTRIBUTE_FAMILY_CODE] ?? null,
                     'parent'     => $rowData['parent'] ?? null,
-                    'structure'  => $rowData['variant_structure'] ?? null,
+                    'structure'  => $rowData[self::VARIANT_STRUCTURE_CODE] ?? null,
                     'attributes' => array_keys(array_filter(
-                        array_diff_key($rowData, array_flip($this->permanentAttributes)),
+                        array_diff_key($rowData, array_flip([...$this->permanentAttributes, self::VARIANT_STRUCTURE_CODE])),
                         fn ($value): bool => $value !== null && $value !== ''
                     )),
                 ];
@@ -1186,11 +1189,11 @@ class Importer extends AbstractImporter
             return false;
         }
 
-        if (! empty($rowData['variant_structure'])) {
+        if (! empty($rowData[self::VARIANT_STRUCTURE_CODE])) {
             $familyId = $this->attributeFamiliesByCode[$rowData[self::ATTRIBUTE_FAMILY_CODE]]->id;
 
-            if (! $this->getVariantStructure($rowData['variant_structure'], $familyId) instanceof VariantStructure) {
-                $this->skipRow($rowNumber, self::ERROR_VARIANT_STRUCTURE_NOT_FOUND, 'variant_structure');
+            if (! $this->getVariantStructure($rowData[self::VARIANT_STRUCTURE_CODE], $familyId) instanceof VariantStructure) {
+                $this->skipRow($rowNumber, self::ERROR_VARIANT_STRUCTURE_NOT_FOUND, self::VARIANT_STRUCTURE_CODE);
 
                 return false;
             }
@@ -1251,7 +1254,7 @@ class Importer extends AbstractImporter
 
         $this->validatUniqueAttributeValues($rowData, $rowNumber);
 
-        if ($rowData['type'] == ProductType::Configurable->value && empty($rowData['variant_structure'])) {
+        if ($rowData['type'] == ProductType::Configurable->value && empty($rowData[self::VARIANT_STRUCTURE_CODE])) {
             if (empty($rowData['configurable_attributes'])) {
                 $this->skipRow(
                     $rowNumber,
@@ -1463,8 +1466,8 @@ class Importer extends AbstractImporter
             return null;
         }
 
-        if (! empty($rowData['variant_structure'])) {
-            return $this->getVariantStructure($rowData['variant_structure'], $familyId);
+        if (! empty($rowData[self::VARIANT_STRUCTURE_CODE])) {
+            return $this->getVariantStructure($rowData[self::VARIANT_STRUCTURE_CODE], $familyId);
         }
 
         $parentSku = $rowData['parent'] ?? null;
@@ -1909,8 +1912,8 @@ class Importer extends AbstractImporter
             'status'              => $this->getProductStatus($rowData, $isExisting, $product),
         ];
 
-        if (! empty($rowData['variant_structure']) && $attributeFamilyId) {
-            $data['variant_structure_id'] = $this->getVariantStructure($rowData['variant_structure'], $attributeFamilyId)?->id;
+        if (! empty($rowData[self::VARIANT_STRUCTURE_CODE]) && $attributeFamilyId) {
+            $data['variant_structure_id'] = $this->getVariantStructure($rowData[self::VARIANT_STRUCTURE_CODE], $attributeFamilyId)?->id;
         }
 
         /**
@@ -2908,8 +2911,8 @@ class Importer extends AbstractImporter
     {
         $familyId = $this->attributeFamiliesByCode[$rowData[self::ATTRIBUTE_FAMILY_CODE]]?->id;
 
-        if (! empty($rowData['variant_structure']) && $familyId) {
-            $structure = $this->getVariantStructure($rowData['variant_structure'], $familyId);
+        if (! empty($rowData[self::VARIANT_STRUCTURE_CODE]) && $familyId) {
+            $structure = $this->getVariantStructure($rowData[self::VARIANT_STRUCTURE_CODE], $familyId);
 
             if ($structure instanceof VariantStructure) {
                 return $structure->axes

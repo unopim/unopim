@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => '属性オプションコード :code はすでに使用されています。',
                     'code_not_found_to_delete' => '削除する属性オプションコードが見つかりません。',
+                    'ambiguous-code-to-delete' => 'オプションコード :code は複数の属性に存在します。attribute_code を追加してください。',
                     'locale-not-exist'         => 'ロケール ":code" は存在しません。',
                     'invalid-attribute'        => '属性 ":code" は存在しません。',
                 ],
@@ -311,5 +312,6 @@ return [
         'completed' => 'ジョブの実行が完了しました',
         'stalled'   => ':minutes 分以上応答がなかったため、このジョブは失敗として記録されました。実行中のワーカーが終了した可能性があります。',
         'reaped'    => ':count 件の停止したジョブを失敗として記録しました。',
+        'stopped'   => '検証で :count 件のエラーが見つかったため、インポートを停止しました。行はインポートされていません。',
     ],
 ];
