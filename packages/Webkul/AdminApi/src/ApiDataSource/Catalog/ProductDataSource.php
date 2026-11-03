@@ -5,9 +5,9 @@ namespace Webkul\AdminApi\ApiDataSource\Catalog;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Webkul\AdminApi\ApiDataSource;
+use Webkul\Attribute\Contracts\DerivedValueResolver;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
-use Webkul\CalculatedAttribute\Services\CalculatedValueResolver;
-use Webkul\CalculatedAttribute\Support\ProductContext;
+use Webkul\Attribute\Support\ProductContext;
 use Webkul\Completeness\Repositories\ProductCompletenessScoreRepository;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Product\Contracts\VariantValueResolver;
@@ -27,7 +27,7 @@ class ProductDataSource extends ApiDataSource
 
     protected ?VariantValueResolver $variantValueResolver = null;
 
-    protected ?CalculatedValueResolver $calculatedValueResolver = null;
+    protected ?DerivedValueResolver $derivedValueResolver = null;
 
     /**
      * @var array<string, array<int, string>>|null
@@ -95,6 +95,8 @@ class ProductDataSource extends ApiDataSource
 
         $withCompleteness = filter_var(request()->input('with_completeness', false), FILTER_VALIDATE_BOOLEAN);
 
+        $withCalculated = $this->wantsCalculatedValues();
+
         $rows = $paginator['data'] ?? [];
 
         $completenessByProduct = $withCompleteness
@@ -104,7 +106,13 @@ class ProductDataSource extends ApiDataSource
         $mergedValuesById = $this->variantValueResolver()->resolveBatch($rows);
 
         return array_map(
-            fn ($item) => $this->normalizeProduct($item, $withCompleteness, $completenessByProduct, mergedValues: $mergedValuesById[$item['id']] ?? null),
+            fn ($item) => $this->normalizeProduct(
+                $item,
+                $withCompleteness,
+                $completenessByProduct,
+                mergedValues: $mergedValuesById[$item['id']] ?? null,
+                withCalculated: $withCalculated,
+            ),
             $rows,
         );
     }
@@ -146,7 +154,25 @@ class ProductDataSource extends ApiDataSource
 
         $mergedValues = $this->variantValueResolver()->resolveBatch([$product])[$product['id']] ?? null;
 
-        return $this->normalizeProduct($product, $withCompleteness, withAssociations: true, mergedValues: $mergedValues);
+        return $this->normalizeProduct(
+            $product,
+            $withCompleteness,
+            withAssociations: true,
+            mergedValues: $mergedValues,
+            withCalculated: $this->wantsCalculatedValues(),
+        );
+    }
+
+    /**
+     * Whether this request asked for calculated attribute values.
+     *
+     * Opt-in, mirroring `with_completeness`: a calculated value is produced for
+     * every channel/locale the response carries, so computing them for a paged
+     * listing that nobody asked for them in would be work thrown away.
+     */
+    protected function wantsCalculatedValues(): bool
+    {
+        return filter_var(request()->input('with_calculated', false), FILTER_VALIDATE_BOOLEAN);
     }
 
     public function getSuperAttributes($data)
@@ -307,8 +333,10 @@ class ProductDataSource extends ApiDataSource
      *                                    Falls back to the row's own `values` when absent
      *                                    (e.g. a row with no parent).
      */
-    protected function normalizeProduct(array $product, bool $withCompleteness = false, ?array $completenessByProduct = null, bool $withAssociations = false, ?array $mergedValues = null): array
+    protected function normalizeProduct(array $product, bool $withCompleteness = false, ?array $completenessByProduct = null, bool $withAssociations = false, ?array $mergedValues = null, bool $withCalculated = false): array
     {
+        $values = $mergedValues ?? $product['values'];
+
         $responseData = [
             'sku'        => $product['sku'],
             'status'     => (bool) $product['status'],
@@ -318,7 +346,7 @@ class ProductDataSource extends ApiDataSource
             'additional' => $product['additional'],
             'created_at' => $product['created_at'],
             'updated_at' => $product['updated_at'],
-            'values'     => $this->withCalculatedValues($product, $mergedValues ?? $product['values']),
+            'values'     => $withCalculated ? $this->withDerivedValues($product, $values) : $values,
         ];
 
         if (in_array($product['type'], ProductType::VARIANT_PARENT_VALUES, true)) {
@@ -372,12 +400,12 @@ class ProductDataSource extends ApiDataSource
     }
 
     /**
-     * Add calculated attribute values to a product's `values` block.
+     * Add derived attribute values to a product's `values` block.
      *
      * The response carries every scope at once rather than one channel/locale,
      * so the values are computed for each combination. Resolved lazily and
-     * skipped outright when the catalogue has no calculated attribute, and the
-     * channel/locale map is read once per request rather than once per row.
+     * skipped outright when nothing is derived, and the channel/locale map is
+     * read once per request rather than once per row.
      *
      * A product's `values` may legitimately be null, and the response has always
      * carried that through. So the argument is untyped and returned untouched
@@ -387,27 +415,19 @@ class ProductDataSource extends ApiDataSource
      *
      * @param  array<string, mixed>  $product
      */
-    protected function withCalculatedValues(array $product, mixed $values): mixed
+    protected function withDerivedValues(array $product, mixed $values): mixed
     {
-        $resolver = $this->calculatedValueResolver ??= app(CalculatedValueResolver::class);
+        $resolver = $this->derivedValueResolver ??= app(DerivedValueResolver::class);
 
-        if (! $resolver->hasCalculatedAttributes()) {
+        if (! $resolver->hasDerivedValues()) {
             return $values;
         }
 
-        $values = is_array($values) ? $values : [];
+        $resolved = is_array($values) ? $values : [];
 
         return $resolver->mergeAllScopes(
-            $values,
-            new ProductContext(
-                values: $values,
-                sku: $product['sku'] ?? null,
-                type: $product['type'] ?? null,
-                status: (bool) ($product['status'] ?? false),
-                family: $product['attribute_family']['code'] ?? null,
-                parent: $product['parent']['sku'] ?? null,
-                categories: array_values(array_filter((array) ($values['categories'] ?? []), 'is_string')),
-            ),
+            $resolved,
+            ProductContext::fromApiRow($product, $resolved),
             $this->channelsAndLocales(),
         );
     }

@@ -5,11 +5,11 @@ namespace Webkul\DataTransfer\Helpers\Exporters\Product;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Event;
+use Webkul\Attribute\Contracts\DerivedValueResolver;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Rules\AttributeTypes;
-use Webkul\CalculatedAttribute\Services\CalculatedValueResolver;
-use Webkul\CalculatedAttribute\Support\ProductContext;
+use Webkul\Attribute\Support\ProductContext;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
 use Webkul\DataTransfer\Enums\ProductExportScope;
@@ -96,7 +96,7 @@ class Exporter extends AbstractExporter
 
     protected ?VariantValueResolver $variantValueResolver = null;
 
-    protected ?CalculatedValueResolver $calculatedValueResolver = null;
+    protected ?DerivedValueResolver $derivedValueResolver = null;
 
     /**
      * Create a new instance.
@@ -561,14 +561,7 @@ class Exporter extends AbstractExporter
                         $channelLocaleSpecificFields
                     );
 
-                    /*
-                     * Calculated attributes are injected here, after the scopes
-                     * have been flattened for this row: setAttributesValues()
-                     * then treats them exactly like stored values, so they pick
-                     * up the same escaping and the same selected-attribute
-                     * filtering with no special-casing downstream.
-                     */
-                    $mergedFields = $this->applyCalculatedValues($mergedFields, $rowData, $productValues, $channel, $locale);
+                    $mergedFields = $this->applyDerivedValues($mergedFields, $rowData, $productValues, $channel, $locale);
 
                     $values = $this->setAttributesValues($mergedFields, $filePath, $locale);
 
@@ -588,43 +581,48 @@ class Exporter extends AbstractExporter
     }
 
     /**
-     * Overlay the product's calculated attribute values onto one flattened
-     * export row.
+     * Overlay the product's derived attribute values onto one flattened export
+     * row.
      *
-     * Resolved lazily and skipped entirely when the catalogue has no calculated
-     * attribute, so an export that does not use the feature pays nothing beyond
-     * one memoised array check — the same lazy pattern as measurementHelper().
+     * Applied here, after the scopes have been flattened for this row:
+     * setAttributesValues() then treats them exactly like stored values, so
+     * they pick up the same escaping and the same selected-attribute filtering
+     * with no special-casing downstream.
+     *
+     * Resolved lazily and skipped entirely when nothing is derived, so an
+     * installation without such attributes pays nothing beyond one memoised
+     * array check — the same lazy pattern as measurementHelper().
      *
      * @param  array<string, mixed>  $mergedFields  scope-flattened values for this row
      * @param  array<string, mixed>  $rowData  the product's export row data
      * @param  array<string, mixed>  $productValues  variant-resolved product values
      * @return array<string, mixed>
      */
-    protected function applyCalculatedValues(
+    protected function applyDerivedValues(
         array $mergedFields,
         array $rowData,
         array $productValues,
         string $channel,
         string $locale,
     ): array {
-        $resolver = $this->calculatedValueResolver();
+        $resolver = $this->derivedValueResolver();
 
-        if (! $resolver->hasCalculatedAttributes()) {
+        if (! $resolver->hasDerivedValues()) {
             return $mergedFields;
         }
 
-        $calculated = $resolver->resolve(
+        $derived = $resolver->resolve(
             ProductContext::fromExportRow($rowData, $productValues),
             $channel,
             $locale
         );
 
-        return array_merge($mergedFields, $calculated);
+        return array_merge($mergedFields, $derived);
     }
 
-    protected function calculatedValueResolver(): CalculatedValueResolver
+    protected function derivedValueResolver(): DerivedValueResolver
     {
-        return $this->calculatedValueResolver ??= resolve(CalculatedValueResolver::class);
+        return $this->derivedValueResolver ??= resolve(DerivedValueResolver::class);
     }
 
     public function getSuperAttributes(array $data): ?string
