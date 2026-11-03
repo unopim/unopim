@@ -2067,7 +2067,7 @@ return [
             'dark-logo'         => 'Logotyp för mörkt läge',
             'dark-logo-info'    => 'Visas i mörkt läge. Lämna tomt för att använda logotypen ovan.',
             'dark-favicon'      => 'Favicon för mörkt läge',
-            'dark-favicon-info' => 'Används när operativsystemet eller webbläsaren är i mörkt läge. Lämna tomt för att använda faviconen ovan.',
+            'dark-favicon-info' => 'Visas i mörkt läge. Lämna tomt för att använda faviconen ovan.',
             'no-logo'           => 'No logo uploaded yet.',
             'no-favicon'        => 'No favicon uploaded yet.',
             'upload-cta'        => 'Click to upload',

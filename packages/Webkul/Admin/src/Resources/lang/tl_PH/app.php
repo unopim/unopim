@@ -2067,7 +2067,7 @@ return [
             'dark-logo'         => 'Logo para sa Dark Mode',
             'dark-logo-info'    => 'Ipinapakita sa dark mode. Iwanang blangko para gamitin ang logo sa itaas.',
             'dark-favicon'      => 'Favicon para sa Dark Mode',
-            'dark-favicon-info' => 'Ginagamit kapag naka-dark mode ang operating system o browser. Iwanang blangko para gamitin ang favicon sa itaas.',
+            'dark-favicon-info' => 'Ipinapakita sa dark mode. Iwanang blangko para gamitin ang favicon sa itaas.',
             'no-logo'           => 'No logo uploaded yet.',
             'no-favicon'        => 'No favicon uploaded yet.',
             'upload-cta'        => 'Click to upload',

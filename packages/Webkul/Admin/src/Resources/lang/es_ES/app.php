@@ -2065,7 +2065,7 @@ return [
             'dark-logo'         => 'Logotipo del modo oscuro',
             'dark-logo-info'    => 'Se muestra en modo oscuro. Déjalo vacío para usar el logotipo de arriba.',
             'dark-favicon'      => 'Favicon del modo oscuro',
-            'dark-favicon-info' => 'Se usa cuando el sistema operativo o el navegador están en modo oscuro. Déjalo vacío para usar el favicon de arriba.',
+            'dark-favicon-info' => 'Se muestra en modo oscuro. Déjalo vacío para usar el favicon de arriba.',
             'no-logo'           => 'No logo uploaded yet.',
             'no-favicon'        => 'No favicon uploaded yet.',
             'upload-cta'        => 'Click to upload',

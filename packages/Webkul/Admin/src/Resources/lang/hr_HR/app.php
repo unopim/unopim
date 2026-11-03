@@ -2065,7 +2065,7 @@ return [
             'dark-logo'         => 'Logotip za tamni način',
             'dark-logo-info'    => 'Prikazuje se u tamnom načinu. Ostavite prazno za korištenje gornjeg logotipa.',
             'dark-favicon'      => 'Favicon za tamni način',
-            'dark-favicon-info' => 'Koristi se kada je operacijski sustav ili preglednik u tamnom načinu rada. Ostavite prazno za korištenje gornjeg favicona.',
+            'dark-favicon-info' => 'Prikazuje se u tamnom načinu. Ostavite prazno za korištenje gornjeg favicona.',
             'no-logo'           => 'No logo uploaded yet.',
             'no-favicon'        => 'No favicon uploaded yet.',
             'upload-cta'        => 'Click to upload',

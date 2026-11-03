@@ -2065,7 +2065,7 @@ return [
             'dark-logo'         => 'Logotip del mode fosc',
             'dark-logo-info'    => 'Es mostra en mode fosc. Deixeu-ho buit per utilitzar el logotip de dalt.',
             'dark-favicon'      => 'Favicon del mode fosc',
-            'dark-favicon-info' => 'S\'utilitza quan el sistema operatiu o el navegador estan en mode fosc. Deixeu-ho buit per utilitzar el favicon de dalt.',
+            'dark-favicon-info' => 'Es mostra en mode fosc. Deixeu-ho buit per utilitzar el favicon de dalt.',
             'no-logo'           => 'No logo uploaded yet.',
             'no-favicon'        => 'No favicon uploaded yet.',
             'upload-cta'        => 'Click to upload',

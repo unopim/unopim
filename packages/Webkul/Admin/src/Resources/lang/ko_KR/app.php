@@ -2067,7 +2067,7 @@ return [
             'dark-logo'         => '다크 모드 로고',
             'dark-logo-info'    => '다크 모드에서 표시됩니다. 비워 두면 위의 로고가 사용됩니다.',
             'dark-favicon'      => '다크 모드 파비콘',
-            'dark-favicon-info' => '운영 체제나 브라우저가 다크 모드일 때 사용됩니다. 비워 두면 위의 파비콘이 사용됩니다.',
+            'dark-favicon-info' => '다크 모드에서 표시됩니다. 비워 두면 위의 파비콘이 사용됩니다.',
             'no-logo'           => 'No logo uploaded yet.',
             'no-favicon'        => 'No favicon uploaded yet.',
             'upload-cta'        => 'Click to upload',

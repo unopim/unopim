@@ -2065,7 +2065,7 @@ return [
             'dark-logo'         => 'Logo Mode Gelap',
             'dark-logo-info'    => 'Ditampilkan dalam mode gelap. Biarkan kosong untuk menggunakan logo di atas.',
             'dark-favicon'      => 'Favicon Mode Gelap',
-            'dark-favicon-info' => 'Digunakan saat sistem operasi atau browser dalam mode gelap. Biarkan kosong untuk menggunakan favicon di atas.',
+            'dark-favicon-info' => 'Ditampilkan dalam mode gelap. Biarkan kosong untuk menggunakan favicon di atas.',
             'no-logo'           => 'No logo uploaded yet.',
             'no-favicon'        => 'No favicon uploaded yet.',
             'upload-cta'        => 'Click to upload',

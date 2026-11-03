@@ -2065,7 +2065,7 @@ return [
             'dark-logo'         => 'ダークモード用ロゴ',
             'dark-logo-info'    => 'ダークモードで表示されます。空欄の場合は上のロゴが使用されます。',
             'dark-favicon'      => 'ダークモード用ファビコン',
-            'dark-favicon-info' => 'OS またはブラウザがダークモードのときに使用されます。空欄の場合は上のファビコンが使用されます。',
+            'dark-favicon-info' => 'ダークモードで表示されます。空欄の場合は上のファビコンが使用されます。',
             'no-logo'           => 'No logo uploaded yet.',
             'no-favicon'        => 'No favicon uploaded yet.',
             'upload-cta'        => 'Click to upload',

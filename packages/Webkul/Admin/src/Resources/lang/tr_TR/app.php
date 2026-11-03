@@ -2067,7 +2067,7 @@ return [
             'dark-logo'         => 'Koyu Mod Logosu',
             'dark-logo-info'    => 'Koyu modda gösterilir. Yukarıdaki logoyu kullanmak için boş bırakın.',
             'dark-favicon'      => 'Koyu Mod Favicon\'u',
-            'dark-favicon-info' => 'İşletim sistemi veya tarayıcı koyu moddayken kullanılır. Yukarıdaki favicon\'u kullanmak için boş bırakın.',
+            'dark-favicon-info' => 'Koyu modda gösterilir. Yukarıdaki favicon\'u kullanmak için boş bırakın.',
             'no-logo'           => 'No logo uploaded yet.',
             'no-favicon'        => 'No favicon uploaded yet.',
             'upload-cta'        => 'Click to upload',

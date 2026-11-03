@@ -2067,7 +2067,7 @@ return [
             'dark-logo'         => '深色模式標誌',
             'dark-logo-info'    => '在深色模式下顯示。留空則使用上方的標誌。',
             'dark-favicon'      => '深色模式網站圖示',
-            'dark-favicon-info' => '當作業系統或瀏覽器處於深色模式時使用。留空則使用上方的網站圖示。',
+            'dark-favicon-info' => '在深色模式下顯示。留空則使用上方的網站圖示。',
             'no-logo'           => 'No logo uploaded yet.',
             'no-favicon'        => 'No favicon uploaded yet.',
             'upload-cta'        => 'Click to upload',

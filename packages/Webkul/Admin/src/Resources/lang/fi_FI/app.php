@@ -2065,7 +2065,7 @@ return [
             'dark-logo'         => 'Tumman tilan logo',
             'dark-logo-info'    => 'Näytetään tummassa tilassa. Jätä tyhjäksi, jos haluat käyttää yllä olevaa logoa.',
             'dark-favicon'      => 'Tumman tilan favicon',
-            'dark-favicon-info' => 'Käytetään, kun käyttöjärjestelmä tai selain on tummassa tilassa. Jätä tyhjäksi, jos haluat käyttää yllä olevaa faviconia.',
+            'dark-favicon-info' => 'Näytetään tummassa tilassa. Jätä tyhjäksi, jos haluat käyttää yllä olevaa faviconia.',
             'no-logo'           => 'No logo uploaded yet.',
             'no-favicon'        => 'No favicon uploaded yet.',
             'upload-cta'        => 'Click to upload',

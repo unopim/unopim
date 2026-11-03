@@ -2067,7 +2067,7 @@ return [
             'dark-logo'         => 'Logo chế độ tối',
             'dark-logo-info'    => 'Hiển thị ở chế độ tối. Để trống để dùng logo ở trên.',
             'dark-favicon'      => 'Favicon chế độ tối',
-            'dark-favicon-info' => 'Được dùng khi hệ điều hành hoặc trình duyệt ở chế độ tối. Để trống để dùng favicon ở trên.',
+            'dark-favicon-info' => 'Hiển thị ở chế độ tối. Để trống để dùng favicon ở trên.',
             'no-logo'           => 'No logo uploaded yet.',
             'no-favicon'        => 'No favicon uploaded yet.',
             'upload-cta'        => 'Click to upload',

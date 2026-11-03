@@ -2067,7 +2067,7 @@ return [
             'dark-logo'         => 'Logo voor donkere modus',
             'dark-logo-info'    => 'Wordt getoond in de donkere modus. Laat leeg om het logo hierboven te gebruiken.',
             'dark-favicon'      => 'Favicon voor donkere modus',
-            'dark-favicon-info' => 'Wordt gebruikt wanneer het besturingssysteem of de browser in de donkere modus staat. Laat leeg om de favicon hierboven te gebruiken.',
+            'dark-favicon-info' => 'Wordt getoond in de donkere modus. Laat leeg om de favicon hierboven te gebruiken.',
             'no-logo'           => 'No logo uploaded yet.',
             'no-favicon'        => 'No favicon uploaded yet.',
             'upload-cta'        => 'Click to upload',

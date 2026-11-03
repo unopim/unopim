@@ -219,29 +219,35 @@ it('shows a dark logo with the default light logo when only the dark logo is set
         ->not->toContain('dark_logo');
 });
 
-it('serves the dark mode favicon to dark colour schemes', function () {
+it('serves the favicon matching the admin theme and swaps it when the theme changes', function () {
     storeAppearanceConfig('favicon', 'configuration/favicon.png');
     storeAppearanceConfig('favicon_dark', 'configuration/favicon-dark.png');
 
     $light = preg_quote(Storage::url('configuration/favicon.png'), '/');
     $dark = preg_quote(Storage::url('configuration/favicon-dark.png'), '/');
 
-    $login = $this->get(route('admin.session.create'))->assertOk()->getContent();
+    $swappable = '/href="%s"[^>]*id="admin-favicon"\s+data-light="'.$light.'"\s+data-dark="'.$dark.'"/';
 
-    expect($login)->toMatch('/href="'.$light.'"[^>]*media="\(prefers-color-scheme: light\)"/')
-        ->toMatch('/href="'.$dark.'"[^>]*media="\(prefers-color-scheme: dark\)"/');
+    expect($this->get(route('admin.session.create'))->assertOk()->getContent())
+        ->toMatch(sprintf($swappable, $light))
+        ->toContain('new MutationObserver(sync)')
+        ->not->toContain('prefers-color-scheme: dark)"');
+
+    expect($this->withUnencryptedCookie('dark_mode', 'dark')->get(route('admin.session.create'))->assertOk()->getContent())
+        ->toMatch(sprintf($swappable, $dark));
 
     $this->loginAsAdmin();
 
-    expect($this->get(route('admin.dashboard.index'))->assertOk()->getContent())
-        ->toMatch('/href="'.$dark.'"[^>]*media="\(prefers-color-scheme: dark\)"/');
+    expect($this->withUnencryptedCookie('dark_mode', '1')->get(route('admin.dashboard.index'))->assertOk()->getContent())
+        ->toMatch(sprintf($swappable, $dark));
 });
 
-it('serves a single favicon for every colour scheme when no dark favicon is set', function () {
+it('serves a single favicon for every theme when no dark favicon is set', function () {
     storeAppearanceConfig('favicon', 'configuration/favicon.png');
 
-    $login = $this->get(route('admin.session.create'))->assertOk()->getContent();
+    $login = $this->withUnencryptedCookie('dark_mode', 'dark')->get(route('admin.session.create'))->assertOk()->getContent();
 
     expect($login)->toContain('href="'.Storage::url('configuration/favicon.png').'"')
-        ->not->toContain('prefers-color-scheme: dark)"');
+        ->not->toContain('admin-favicon')
+        ->not->toContain('MutationObserver(sync)');
 });

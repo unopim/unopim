@@ -2065,7 +2065,7 @@ return [
             'dark-logo'         => 'Logo für den Dunkelmodus',
             'dark-logo-info'    => 'Wird im Dunkelmodus angezeigt. Leer lassen, um das obige Logo zu verwenden.',
             'dark-favicon'      => 'Favicon für den Dunkelmodus',
-            'dark-favicon-info' => 'Wird verwendet, wenn sich das Betriebssystem oder der Browser im Dunkelmodus befindet. Leer lassen, um das obige Favicon zu verwenden.',
+            'dark-favicon-info' => 'Wird im Dunkelmodus angezeigt. Leer lassen, um das obige Favicon zu verwenden.',
             'no-logo'           => 'No logo uploaded yet.',
             'no-favicon'        => 'No favicon uploaded yet.',
             'upload-cta'        => 'Click to upload',

@@ -2067,7 +2067,7 @@ return [
             'dark-logo'         => 'Logo for mørk modus',
             'dark-logo-info'    => 'Vises i mørk modus. La feltet stå tomt for å bruke logoen ovenfor.',
             'dark-favicon'      => 'Favicon for mørk modus',
-            'dark-favicon-info' => 'Brukes når operativsystemet eller nettleseren er i mørk modus. La feltet stå tomt for å bruke faviconet ovenfor.',
+            'dark-favicon-info' => 'Vises i mørk modus. La feltet stå tomt for å bruke faviconet ovenfor.',
             'no-logo'           => 'No logo uploaded yet.',
             'no-favicon'        => 'No favicon uploaded yet.',
             'upload-cta'        => 'Click to upload',

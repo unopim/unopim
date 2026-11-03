@@ -2067,7 +2067,7 @@ return [
             'dark-logo'         => 'Logo trybu ciemnego',
             'dark-logo-info'    => 'Wyświetlane w trybie ciemnym. Pozostaw puste, aby użyć powyższego logo.',
             'dark-favicon'      => 'Favicon trybu ciemnego',
-            'dark-favicon-info' => 'Używany, gdy system operacyjny lub przeglądarka działa w trybie ciemnym. Pozostaw puste, aby użyć powyższego faviconu.',
+            'dark-favicon-info' => 'Wyświetlane w trybie ciemnym. Pozostaw puste, aby użyć powyższego faviconu.',
             'no-logo'           => 'No logo uploaded yet.',
             'no-favicon'        => 'No favicon uploaded yet.',
             'upload-cta'        => 'Click to upload',

@@ -2065,7 +2065,7 @@ return [
             'dark-logo'         => 'شعار الوضع الداكن',
             'dark-logo-info'    => 'يظهر في الوضع الداكن. اتركه فارغًا لاستخدام الشعار أعلاه.',
             'dark-favicon'      => 'أيقونة الموقع للوضع الداكن',
-            'dark-favicon-info' => 'تُستخدم عندما يكون نظام التشغيل أو المتصفح في الوضع الداكن. اتركها فارغة لاستخدام الأيقونة أعلاه.',
+            'dark-favicon-info' => 'يظهر في الوضع الداكن. اتركها فارغة لاستخدام الأيقونة أعلاه.',
             'no-logo'           => 'No logo uploaded yet.',
             'no-favicon'        => 'No favicon uploaded yet.',
             'upload-cta'        => 'Click to upload',

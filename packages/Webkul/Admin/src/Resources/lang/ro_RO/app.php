@@ -2067,7 +2067,7 @@ return [
             'dark-logo'         => 'Logo pentru modul întunecat',
             'dark-logo-info'    => 'Afișat în modul întunecat. Lăsați gol pentru a folosi logo-ul de mai sus.',
             'dark-favicon'      => 'Favicon pentru modul întunecat',
-            'dark-favicon-info' => 'Folosit când sistemul de operare sau browserul este în modul întunecat. Lăsați gol pentru a folosi favicon-ul de mai sus.',
+            'dark-favicon-info' => 'Afișat în modul întunecat. Lăsați gol pentru a folosi favicon-ul de mai sus.',
             'no-logo'           => 'No logo uploaded yet.',
             'no-favicon'        => 'No favicon uploaded yet.',
             'upload-cta'        => 'Click to upload',
