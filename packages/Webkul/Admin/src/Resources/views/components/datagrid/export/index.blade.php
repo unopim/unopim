@@ -54,6 +54,7 @@
                                 type="select"
                                 id="format"
                                 name="format"
+                                :label="trans('admin::app.settings.data-transfer.exports.export.file-format')"
                                 :value="old('format')"
                                 v-model="format"
                                 :options="$optionsInJson"

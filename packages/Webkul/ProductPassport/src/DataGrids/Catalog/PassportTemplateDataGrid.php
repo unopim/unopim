@@ -21,7 +21,7 @@ class PassportTemplateDataGrid extends DataGrid
      */
     public function prepareQueryBuilder(): Builder
     {
-        $prefix = DB::getTablePrefix();
+        $grammar = DB::getQueryGrammar();
 
         $fieldCounts = DB::table('passport_template_fields')
             ->select('passport_template_id')
@@ -48,10 +48,10 @@ class PassportTemplateDataGrid extends DataGrid
                 'passport_templates.is_enabled',
                 'requested_translation.name as name',
             )
-            ->selectRaw("coalesce({$prefix}family_counts.family_count, 0) as family_count")
-            ->selectRaw("coalesce({$prefix}field_counts.field_count, 0) as field_count")
-            ->selectRaw("coalesce({$prefix}field_counts.required_count, 0) as required_count")
-            ->selectRaw("coalesce({$prefix}field_counts.sourced_count, 0) as sourced_count");
+            ->selectRaw("coalesce({$grammar->wrap('family_counts.family_count')}, 0) as family_count")
+            ->selectRaw("coalesce({$grammar->wrap('field_counts.field_count')}, 0) as field_count")
+            ->selectRaw("coalesce({$grammar->wrap('field_counts.required_count')}, 0) as required_count")
+            ->selectRaw("coalesce({$grammar->wrap('field_counts.sourced_count')}, 0) as sourced_count");
 
         $this->addFilter('name', 'requested_translation.name');
         $this->addFilter('code', 'passport_templates.code');
