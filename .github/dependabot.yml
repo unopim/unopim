@@ -81,6 +81,7 @@ updates:
       - dependency-name: "*"
         update-types:
           - "version-update:semver-major"
+          - "version-update:semver-minor"
     labels:
       - "dependencies"
       - "javascript"
