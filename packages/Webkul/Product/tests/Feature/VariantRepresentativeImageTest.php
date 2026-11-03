@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Storage;
 use Webkul\Attribute\Models\Attribute;
+use Webkul\Product\Contracts\Product as ProductContract;
 use Webkul\Product\Contracts\ProductImageFallbackResolver as ProductImageFallbackResolverContract;
 use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
@@ -85,6 +86,16 @@ it('walks up through a sub-configurable to the top level parents own image', fun
     expect($child->getProductDisplayImage())->toBe('product/7/parent.jpg');
 });
 
+it('prefers a sibling variants own image over a top level parents generic image', function () {
+    Attribute::firstOrCreate(['code' => 'image'], ['type' => 'image']);
+
+    $parent = productWithImage(['type' => ProductType::Configurable->value], 'product/10/parent.jpg');
+    $subParent = productWithImage(['type' => ProductType::Configurable->value, 'parent_id' => $parent->id]);
+    $child = productWithImage(['type' => ProductType::Simple->value, 'parent_id' => $subParent->id], 'product/10/child.jpg');
+
+    expect($subParent->refresh()->getProductDisplayImage())->toBe('product/10/child.jpg');
+});
+
 it('never writes an inherited parent image back onto the childs own values', function () {
     Attribute::firstOrCreate(['code' => 'image'], ['type' => 'image']);
 
@@ -107,9 +118,9 @@ it('returns null from normalizeWithImage when nothing is bound and no image exis
 it('asks the bound fallback resolver only when no classic image was found', function () {
     Attribute::firstOrCreate(['code' => 'image'], ['type' => 'image']);
 
-    app()->bind(ProductImageFallbackResolverContract::class, fn () => new class implements ProductImageFallbackResolverContract
+    app()->bind(ProductImageFallbackResolverContract::class, fn (): ProductImageFallbackResolverContract => new class implements ProductImageFallbackResolverContract
     {
-        public function resolveFallbackUrl(Product $product, ?string $currentChannelCode = null, ?string $currentLocaleCode = null): ?string
+        public function resolveFallbackUrl(ProductContract $product, ?string $currentChannelCode = null, ?string $currentLocaleCode = null): ?string
         {
             return 'https://dam.example.test/assets/'.$product->id.'/thumbnail';
         }

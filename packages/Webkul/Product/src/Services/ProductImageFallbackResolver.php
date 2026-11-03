@@ -2,8 +2,8 @@
 
 namespace Webkul\Product\Services;
 
+use Webkul\Product\Contracts\Product;
 use Webkul\Product\Contracts\ProductImageFallbackResolver as ProductImageFallbackResolverContract;
-use Webkul\Product\Models\Product;
 
 /**
  * Core has no other place to find a display image once no `image`-type
@@ -13,6 +13,9 @@ use Webkul\Product\Models\Product;
  */
 class ProductImageFallbackResolver implements ProductImageFallbackResolverContract
 {
+    /**
+     * Resolve no fallback image; core has no other source.
+     */
     public function resolveFallbackUrl(Product $product, ?string $currentChannelCode = null, ?string $currentLocaleCode = null): ?string
     {
         return null;

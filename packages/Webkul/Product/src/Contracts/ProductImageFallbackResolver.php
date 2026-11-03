@@ -2,8 +2,6 @@
 
 namespace Webkul\Product\Contracts;
 
-use Webkul\Product\Models\Product;
-
 /**
  * Resolves a display image URL for a product when no classic `image`-type
  * attribute has a value anywhere in its variant tree.
@@ -17,11 +15,15 @@ use Webkul\Product\Models\Product;
  * The default binding (see `ProductServiceProvider::registerBindings()`)
  * always returns null, which keeps `normalizeWithImage()` behaving exactly
  * as before for every installation that has nothing bound here.
+ *
+ * Type-hinted against the `Webkul\Product\Contracts\Product` marker, not the
+ * concrete model, so an installation that swaps the product model via
+ * Concord can still implement this public extension point.
  */
 interface ProductImageFallbackResolver
 {
     /**
-     * @return string|null A ready-to-use URL, or null when this resolver has nothing to offer.
+     * Resolve a ready-to-use display image URL for the product, or null.
      */
     public function resolveFallbackUrl(Product $product, ?string $currentChannelCode = null, ?string $currentLocaleCode = null): ?string;
 }

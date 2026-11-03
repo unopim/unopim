@@ -279,7 +279,12 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
 
     /**
      * Find the first image which has value in the product to be displayed as display image
-     * This will be the image to be displayed as product thumbnail from product values
+     * This will be the image to be displayed as product thumbnail from product values.
+     *
+     * Order is own value, then the most specific variant image found by walking
+     * down the tree, and only as a last resort the value a configurable ancestor
+     * owns at the common level — so a variant group with its own representative
+     * variant photos never gets outranked by a generic parent image.
      */
     public function getProductDisplayImage(?string $currentChannelCode = null, ?string $currentLocaleCode = null, mixed $imageAttributes = null): ?string
     {
@@ -289,63 +294,54 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
 
         $currentLocaleCode ??= core()->getRequestedLocaleCode();
 
+        if ($image = $this->getOwnOrVariantDisplayImage($imageAttributes, $currentChannelCode, $currentLocaleCode)) {
+            return $image;
+        }
+
+        return $this->getOwnDisplayImage($imageAttributes, $currentChannelCode, $currentLocaleCode, $this->resolvedValues());
+    }
+
+    /**
+     * Checks this product's own value, then recurses down into its variants for
+     * a representative image. Never walks up to an ancestor itself, so that only
+     * the top-level `getProductDisplayImage()` call does that once: `variants()`
+     * is a plain `hasMany` with no `chaperone()`, so every level visited here is
+     * a fresh query, and each one already knows its ancestor has no image (we
+     * just came from there), so repeating the up-walk at every level would only
+     * add queries for nothing.
+     */
+    protected function getOwnOrVariantDisplayImage(iterable $imageAttributes, string $currentChannelCode, string $currentLocaleCode): ?string
+    {
         if ($productImage = $this->getOwnDisplayImage($imageAttributes, $currentChannelCode, $currentLocaleCode)) {
             return $productImage;
         }
 
-        if ($inheritedImage = $this->getInheritedDisplayImage($imageAttributes, $currentChannelCode, $currentLocaleCode)) {
-            return $inheritedImage;
-        }
-
-        return $this->getVariantDisplayImage($currentChannelCode, $currentLocaleCode, $imageAttributes);
-    }
-
-    /**
-     * Checks only this product's own stored values, without walking the family tree.
-     */
-    protected function getOwnDisplayImage(iterable $imageAttributes, string $currentChannelCode, string $currentLocaleCode): ?string
-    {
-        foreach ($imageAttributes as $attribute) {
-            if ($image = $attribute->getValueFromProductValues($this->values, $currentChannelCode, $currentLocaleCode)) {
-                return $image;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Walks up to a configurable ancestor for an image attribute placed at the
-     * common level, so a variant with no own value shows the one its parent
-     * owns instead of nothing. Bounded the same way
-     * `ProductController::resolveConfigurableForVariantTree()` is, to tolerate
-     * a cyclical `parent_id` rather than looping forever.
-     */
-    protected function getInheritedDisplayImage(iterable $imageAttributes, string $currentChannelCode, string $currentLocaleCode): ?string
-    {
-        $ancestor = $this->parent;
-        $guard = 0;
-
-        while ($ancestor && $guard++ < 10) {
-            if ($image = $ancestor->getOwnDisplayImage($imageAttributes, $currentChannelCode, $currentLocaleCode)) {
-                return $image;
-            }
-
-            $ancestor = $ancestor->parent;
-        }
-
-        return null;
-    }
-
-    public function getVariantDisplayImage(?string $currentChannelCode = null, ?string $currentLocaleCode = null, mixed $imageAttributes = null): ?string
-    {
         if (! $this->id) {
             return null;
         }
 
         foreach ($this->variants as $variant) {
-            if ($variantImage = $variant->getProductDisplayImage($currentChannelCode, $currentLocaleCode, $imageAttributes)) {
+            if ($variantImage = $variant->getOwnOrVariantDisplayImage($imageAttributes, $currentChannelCode, $currentLocaleCode)) {
                 return $variantImage;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Checks only the given values for an image, without walking the family
+     * tree. Defaults to this product's own stored values; pass
+     * `resolvedValues()` to check the value merged root -> leaf instead,
+     * which is how a configurable ancestor's common-level image is found.
+     */
+    protected function getOwnDisplayImage(iterable $imageAttributes, string $currentChannelCode, string $currentLocaleCode, ?array $values = null): ?string
+    {
+        $values ??= $this->values;
+
+        foreach ($imageAttributes as $attribute) {
+            if ($image = $attribute->getValueFromProductValues($values, $currentChannelCode, $currentLocaleCode)) {
+                return $image;
             }
         }
 
