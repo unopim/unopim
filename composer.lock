@@ -11115,21 +11115,21 @@
         },
         {
             "name": "driftingly/rector-laravel",
-            "version": "2.7.0",
+            "version": "2.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/driftingly/rector-laravel.git",
-                "reference": "64d0c56d948f81e80c40b813e33fc7a7d38bc74e"
+                "reference": "da8f5f6d52ba1df35465076e53981a5b20041550"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/driftingly/rector-laravel/zipball/64d0c56d948f81e80c40b813e33fc7a7d38bc74e",
-                "reference": "64d0c56d948f81e80c40b813e33fc7a7d38bc74e",
+                "url": "https://api.github.com/repos/driftingly/rector-laravel/zipball/da8f5f6d52ba1df35465076e53981a5b20041550",
+                "reference": "da8f5f6d52ba1df35465076e53981a5b20041550",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.3",
-                "rector/rector": "^2.7",
+                "rector/rector": "^2.8",
                 "symplify/rule-doc-generator-contracts": "^11.2",
                 "webmozart/assert": "^1.11 || ^2.0"
             },
@@ -11178,9 +11178,9 @@
             ],
             "support": {
                 "issues": "https://github.com/driftingly/rector-laravel/issues",
-                "source": "https://github.com/driftingly/rector-laravel/tree/2.7.0"
+                "source": "https://github.com/driftingly/rector-laravel/tree/2.7.2"
             },
-            "time": "2026-10-20T13:43:25+00:00"
+            "time": "2026-10-26T15:44:16+00:00"
         },
         {
             "name": "fakerphp/faker",
@@ -11535,16 +11535,16 @@
         },
         {
             "name": "larastan/larastan",
-            "version": "v3.13.1",
+            "version": "v3.13.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/larastan/larastan.git",
-                "reference": "043139b9829917363086d6b10f916772420a6102"
+                "reference": "0de9aec250ab498f97171b43cd1192ce11a8c8fc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/larastan/larastan/zipball/043139b9829917363086d6b10f916772420a6102",
-                "reference": "043139b9829917363086d6b10f916772420a6102",
+                "url": "https://api.github.com/repos/larastan/larastan/zipball/0de9aec250ab498f97171b43cd1192ce11a8c8fc",
+                "reference": "0de9aec250ab498f97171b43cd1192ce11a8c8fc",
                 "shasum": ""
             },
             "require": {
@@ -11612,7 +11612,7 @@
             ],
             "support": {
                 "issues": "https://github.com/larastan/larastan/issues",
-                "source": "https://github.com/larastan/larastan/tree/v3.13.1"
+                "source": "https://github.com/larastan/larastan/tree/v3.13.2"
             },
             "funding": [
                 {
@@ -11620,7 +11620,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-10-16T23:32:31+00:00"
+            "time": "2026-10-23T21:03:09+00:00"
         },
         {
             "name": "laravel/boost",
