@@ -114,28 +114,25 @@ foreach ($attributes as $code => $definition) {
 
 $product = ProductProxy::modelClass()::query()->where('sku', $sku)->first();
 
+/**
+ * `values` is not mass-assignable, so `create()` would drop it silently on a first run;
+ * `updateWithValues()` persists it on both the first run and every re-run.
+ */
 if ($product === null) {
     $product = ProductProxy::modelClass()::create([
         'sku'                 => $sku,
         'type'                => 'simple',
         'attribute_family_id' => $family->id,
         'status'              => 1,
-        'values'              => $values,
     ]);
 } else {
-    // A plain `$product->update(['values' => ...])` silently no-ops on a JSON-cast
-    // column here: Eloquent's dirty-check on re-run doesn't see the array as
-    // changed, so the write is dropped from the UPDATE and `values` stays whatever
-    // it was. The repository's `updateWithValues()` goes through the product type's
-    // own update path, which does mark it dirty and persists correctly — the same
-    // route a real product-edit save takes.
     $product->update(['attribute_family_id' => $family->id]);
-
-    app(ProductRepository::class)->updateWithValues(
-        ['values' => $values],
-        $product->id,
-    );
 }
+
+app(ProductRepository::class)->updateWithValues(
+    ['values' => $values],
+    $product->id,
+);
 
 foreach ([
     'catalog.product_passport.settings.enabled',

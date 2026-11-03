@@ -5,6 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Webkul\Core\Database\Schema\PrefixedIndexNameBlueprint;
 
 return new class extends Migration
 {
@@ -76,7 +77,7 @@ return new class extends Migration
             });
         }
 
-        if (! Schema::hasIndex('publication_versions', 'pubver_release_idx')) {
+        if (! PrefixedIndexNameBlueprint::indexExists('publication_versions', 'pubver_release_idx')) {
             Schema::table('publication_versions', function (Blueprint $table): void {
                 $table->index('release_id', 'pubver_release_idx');
             });
