@@ -311,5 +311,6 @@ return [
         'completed' => 'Nagtapos ang trabaho sa trabaho',
         'stalled'   => 'Huminto sa pagtugon ang trabaho nang mahigit :minutes minuto at minarkahan itong nabigo. Malamang na natapos ang proseso na nagpapatakbo nito.',
         'reaped'    => 'Minarkahang nabigo ang :count na na-stuck na trabaho.',
+        'stopped'   => 'Itinigil ang import pagkatapos ng validation na may :count na error. Walang row na na-import.',
     ],
 ];

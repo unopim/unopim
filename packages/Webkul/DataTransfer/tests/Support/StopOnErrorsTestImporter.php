@@ -8,8 +8,12 @@ class StopOnErrorsTestImporter extends FilelessTestImporter
 {
     public static bool $failValidation = false;
 
+    /** @var list<string> */
     public static array $importedCodes = [];
 
+    /**
+     * Report rows whose status is "invalid" as validation errors.
+     */
     public function validateRow(array $rowData, int $rowNumber): bool
     {
         if ($rowData['status'] === 'invalid') {
@@ -19,6 +23,9 @@ class StopOnErrorsTestImporter extends FilelessTestImporter
         return parent::validateRow($rowData, $rowNumber);
     }
 
+    /**
+     * Validate and persist batches, then optionally throw to simulate a failed validation.
+     */
     public function validateData(): void
     {
         parent::validateData();
@@ -28,6 +35,9 @@ class StopOnErrorsTestImporter extends FilelessTestImporter
         }
     }
 
+    /**
+     * Record the codes of every batch that actually gets imported.
+     */
     public function importBatch(JobTrackBatch $batch): bool
     {
         self::$importedCodes = array_merge(self::$importedCodes, array_column($batch->data, 'code'));

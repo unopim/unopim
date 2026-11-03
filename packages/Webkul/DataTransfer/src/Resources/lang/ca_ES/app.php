@@ -311,5 +311,6 @@ return [
         'completed' => 'Finalització de l\'execució de la feina',
         'stalled'   => 'La tasca ha deixat de respondre durant més de :minutes minuts i s\'ha marcat com a fallida. Probablement el procés que l\'executava s\'ha aturat.',
         'reaped'    => 'S\'han marcat :count tasques aturades com a fallides.',
+        'stopped'   => 'La importació s\'ha aturat després de la validació amb :count errors. No s\'ha importat cap fila.',
     ],
 ];
