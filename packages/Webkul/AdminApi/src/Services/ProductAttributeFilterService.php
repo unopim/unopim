@@ -5,6 +5,7 @@ namespace Webkul\AdminApi\Services;
 use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Webkul\Admin\Filters\ProductFilterOperators;
 use Webkul\Attribute\Models\Attribute;
@@ -12,6 +13,7 @@ use Webkul\Attribute\Services\AttributeService;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Repositories\CurrencyRepository;
 use Webkul\Core\Repositories\LocaleRepository;
+use Webkul\Core\Rules\Code;
 use Webkul\ElasticSearch\Cursor\MatchingIdCursor;
 use Webkul\ElasticSearch\Enums\FilterOperators;
 use Webkul\Product\Builders\DatabaseProductQueryBuilder;
@@ -246,7 +248,7 @@ class ProductAttributeFilterService
                 );
             }
 
-            $values = array_map(fn (mixed $item): string|int|float => $this->resolveScalar($code, $attribute, $apiOperator, $item), $value);
+            $values = array_map(fn (mixed $item): string => $this->optionCode($code, $this->resolveScalar($code, $attribute, $apiOperator, $item)), $value);
 
             return ProductFilterOperators::engineValue($attribute->type, $operator, $values, '', $currency);
         }
@@ -296,6 +298,20 @@ class ProductAttributeFilterService
             Attribute::DATETIME_FIELD_TYPE => $this->dateValue($code, $value),
             default                        => is_bool($value) ? (int) $value : $value,
         };
+    }
+
+    /**
+     * Ensure a list value is shaped like an option code, so it can never act as pattern syntax.
+     *
+     * @throws UnprocessableEntityHttpException
+     */
+    protected function optionCode(string $code, string|int|float $value): string
+    {
+        if (Validator::make(['value' => $value], ['value' => [new Code]])->fails()) {
+            throw new UnprocessableEntityHttpException(sprintf('Filter "%s" expects option codes as values.', $code));
+        }
+
+        return (string) $value;
     }
 
     protected function booleanValue(string $code, string|int|float|bool $value): string

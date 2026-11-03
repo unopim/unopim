@@ -84,6 +84,32 @@ it('filters products by a select attribute with IN and NOT IN', function () {
         ->not->toContain('SEL-ALPHA');
 });
 
+it('matches whole option codes only with IN and NOT IN', function () {
+    $attribute = ($this->makeAttribute)('multiselect');
+
+    ($this->makeProduct)('OPT-RED', ['common' => [$attribute->code => 'red']]);
+    ($this->makeProduct)('OPT-RED-DARK', ['common' => [$attribute->code => 'red_dark']]);
+    ($this->makeProduct)('OPT-MIXED', ['common' => [$attribute->code => 'blue,red']]);
+
+    expect(($this->listSkus)([$attribute->code => [['operator' => 'IN', 'value' => ['red']]]]))
+        ->toEqualCanonicalizing(['OPT-RED', 'OPT-MIXED']);
+
+    expect(($this->listSkus)([$attribute->code => [['operator' => 'NOT IN', 'value' => ['red']]]]))
+        ->toContain('OPT-RED-DARK')
+        ->not->toContain('OPT-RED', 'OPT-MIXED');
+});
+
+it('rejects an option filter value that is not an option code with 422', function () {
+    $attribute = ($this->makeAttribute)('select');
+
+    ($this->makeProduct)('OPT-REGEX', ['common' => [$attribute->code => 'red']]);
+
+    $this->withHeaders($this->headers)->json('GET', route('admin.api.products.index', [
+        'filters' => json_encode([$attribute->code => [['operator' => 'IN', 'value' => ['(']]]]),
+    ]))->assertUnprocessable()
+        ->assertJsonPath('message', sprintf('Filter "%s" expects option codes as values.', $attribute->code));
+});
+
 it('filters products by a boolean attribute', function () {
     $attribute = ($this->makeAttribute)('boolean');
 

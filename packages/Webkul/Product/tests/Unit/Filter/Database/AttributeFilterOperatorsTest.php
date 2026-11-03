@@ -96,7 +96,13 @@ describe('TextFilter supports the operators offered by the product datagrid', fu
 
         expect($queryBuilder->toSql())->toContain('where NOT (')
             ->and($queryBuilder->toSql())->toEndWith(' ?)')
-            ->and($queryBuilder->getBindings())->toContain('Black');
+            ->and($queryBuilder->getBindings())->toContain('(^|,)(Black)(,|$)');
+    });
+
+    it('anchors in list values to whole entries and quotes pattern syntax', function () use ($text) {
+        $queryBuilder = applyDatabaseFilter(new TextFilter, $text(), FilterOperators::IN, ['red', 'a.b(']);
+
+        expect($queryBuilder->getBindings())->toBe(['(^|,)(red|a\.b\()(,|$)']);
     });
 
     it('treats a blank value as empty', function () use ($text) {
