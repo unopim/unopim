@@ -2328,6 +2328,7 @@ return [
                 'title'               => 'Uppmaning',
                 'create-btn'          => 'Skapa Uppmaning',
                 'edit-title'          => 'Redigera Uppmaning',
+                'insert-attribute'    => 'Infoga attribut',
                 'create-title'        => 'Skapa Ny Uppmaning',
                 'label-title'         => 'Titel',
                 'purpose'             => 'Syfte',
