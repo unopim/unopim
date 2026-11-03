@@ -30,6 +30,7 @@
                     name="logo_image"
                     :show-suggestions="false"
                     :accepted-extensions="\Webkul\Admin\Http\Requests\AppearanceForm::LOGO_EXTENSIONS"
+                    :max-size="\Webkul\Admin\Http\Requests\AppearanceForm::LOGO_MAX_SIZE"
                     width="240px"
                     height="120px"
                     object-fit="contain"
@@ -37,6 +38,10 @@
                 />
 
                 <x-admin::form.control-group.error control-name="logo_image" />
+
+                @if ($errors->has('logo_image.*'))
+                    <p class="mt-2 text-red-600 text-xs italic">{{ $errors->first('logo_image.*') }}</p>
+                @endif
             </x-admin::form.control-group>
 
             <p class="text-xs text-gray-600 dark:text-gray-300 leading-[140%]">
@@ -55,6 +60,7 @@
                     name="favicon"
                     :show-suggestions="false"
                     :accepted-extensions="\Webkul\Admin\Http\Requests\AppearanceForm::FAVICON_EXTENSIONS"
+                    :max-size="\Webkul\Admin\Http\Requests\AppearanceForm::FAVICON_MAX_SIZE"
                     width="120px"
                     height="120px"
                     object-fit="contain"
@@ -62,6 +68,10 @@
                 />
 
                 <x-admin::form.control-group.error control-name="favicon" />
+
+                @if ($errors->has('favicon.*'))
+                    <p class="mt-2 text-red-600 text-xs italic">{{ $errors->first('favicon.*') }}</p>
+                @endif
             </x-admin::form.control-group>
 
             <p class="text-xs text-gray-600 dark:text-gray-300 leading-[140%]">

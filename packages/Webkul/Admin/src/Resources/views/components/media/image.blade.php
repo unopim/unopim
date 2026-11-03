@@ -11,6 +11,7 @@
     'hasContext'         => false,
     'fullPreview'        => true,
     'acceptedExtensions' => [],
+    'maxSize'            => 0,
     'instructions'         => '',
     'readOnly'           => false,
     'allowDownload'      => false,
@@ -43,6 +44,7 @@
     v-bind:read-only="{{ $readOnly ? 'true' : 'false' }}"
     v-bind:allow-download="{{ $allowDownload ? 'true' : 'false' }}"
     :accepted-extensions='@json($acceptedExtensions)'
+    v-bind:max-size="{{ (int) $maxSize }}"
     :errors="errors"
 >
     @if ($responsive)
@@ -77,6 +79,7 @@
                         :hint="showUploadHint ? @js(trans('admin::app.components.media.images.drag-drop-hint')) : ''"
                         :allowed-types="allowedTypesLabel"
                         :read-only="readOnly"
+                        :class="{ 'rounded-md ring-2 ring-red-500': sizeError }"
                         @trigger="resetAIModal(); $refs.choiceImageModal.open()"
                         @drop="onDrop"
                     ></v-media-add-tile>
@@ -91,6 +94,7 @@
                         :accept="acceptAttribute"
                         :input-id="$.uid + '_imageInput'"
                         :read-only="readOnly"
+                        :class="{ 'rounded-md ring-2 ring-red-500': sizeError }"
                         @change="add"
                         @drop="onDrop"
                     ></v-media-add-tile>
@@ -115,9 +119,11 @@
                             :responsive="responsive"
                             :fullPreview="fullPreview"
                             :accepted-extensions="acceptedExtensions"
+                            :max-size="maxSize"
                             :read-only="readOnly"
                             :allow-download="allowDownload"
                             @onRemove="remove($event)"
+                            @size-exceeded="sizeError = $event ? sizeErrorMessage() : null"
                         >
                         </v-media-image-item>
                     </template>
@@ -440,6 +446,12 @@
                     </form>
                 </x-admin::form>
             </div>
+
+            <p
+                v-if="sizeError"
+                class="mt-2 text-red-600 text-xs italic"
+                v-text="sizeError"
+            ></p>
         </div>
     </script>
 
@@ -558,6 +570,11 @@
                     default: () => [],
                 },
 
+                maxSize: {
+                    type: Number,
+                    default: 0,
+                },
+
                 errors: {
                     type: Object,
                     default: () => {}
@@ -592,6 +609,8 @@
             data() {
                 return {
                     images: [],
+
+                    sizeError: null,
 
                     placeholders: [
                     ],
@@ -778,6 +797,14 @@
                         return false;
                     }
 
+                    this.sizeError = null;
+
+                    if (Array.from(files).some(file => this.maxSize && file.size > this.maxSize * 1024)) {
+                        this.sizeError = this.sizeErrorMessage();
+
+                        return false;
+                    }
+
                     let anyAdded = false;
 
                     for (const file of Array.from(files)) {
@@ -800,7 +827,15 @@
                     return anyAdded;
                 },
 
+                sizeErrorMessage() {
+                    const max = this.maxSize >= 1024 ? `${this.maxSize / 1024} MB` : `${this.maxSize} KB`;
+
+                    return @json(trans('admin::app.common.file-size-exceeds')).replace(':max', max);
+                },
+
                 remove(image) {
+                    this.sizeError = null;
+
                     let index = this.images.indexOf(image);
 
                     this.images.splice(index, 1);
@@ -1046,7 +1081,9 @@
         app.component('v-media-image-item', {
             template: '#v-media-image-item-template',
 
-            props: ['index', 'image', 'name', 'width', 'height', 'objectFit', 'responsive', 'fullPreview', 'acceptedExtensions', 'readOnly', 'allowDownload'],
+            props: ['index', 'image', 'name', 'width', 'height', 'objectFit', 'responsive', 'fullPreview', 'acceptedExtensions', 'maxSize', 'readOnly', 'allowDownload'],
+
+            emits: ['onRemove', 'size-exceeded'],
 
             computed: {
                 acceptAttribute() {
@@ -1123,6 +1160,14 @@
                             message: @json(trans('admin::app.components.media.images.not-allowed-error'))
                         });
 
+                        return;
+                    }
+
+                    const exceedsMaxSize = !! this.maxSize && imageInput.files[0].size > this.maxSize * 1024;
+
+                    this.$emit('size-exceeded', exceedsMaxSize);
+
+                    if (exceedsMaxSize) {
                         return;
                     }
 

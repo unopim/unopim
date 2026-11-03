@@ -72,3 +72,37 @@ it('rejects a favicon whose type is outside the supported list', function () {
     expect(CoreConfig::query()->where('code', 'general.design.admin_logo.favicon')->value('value'))
         ->toBe($existing);
 });
+
+it('advertises the server size limits to the appearance upload controls', function () {
+    $this->loginAsAdmin();
+
+    $content = $this->get(route('admin.settings.appearance.index'))->assertOk()->getContent();
+
+    expect($content)
+        ->toMatch('/<v-media-image\s[^>]*name="logo_image"[^>]*v-bind:max-size="'.AppearanceForm::LOGO_MAX_SIZE.'"/s')
+        ->toMatch('/<v-media-image\s[^>]*name="favicon"[^>]*v-bind:max-size="'.AppearanceForm::FAVICON_MAX_SIZE.'"/s');
+});
+
+it('rejects appearance images larger than the allowed size and shows the error', function (string $field, string $code, int $maxSize, string $label) {
+    Storage::fake(config('filesystems.default'));
+
+    $this->loginAsAdmin();
+
+    $existing = CoreConfig::query()->where('code', $code)->value('value');
+
+    $this->put(route('admin.settings.appearance.update'), [
+        $field => [UploadedFile::fake()->image('large.png', 16, 16)->size($maxSize + 1)],
+    ])->assertSessionHasErrors($field.'.0');
+
+    expect(CoreConfig::query()->where('code', $code)->value('value'))->toBe($existing);
+
+    $this->followingRedirects()
+        ->from(route('admin.settings.appearance.index'))
+        ->put(route('admin.settings.appearance.update'), [
+            $field => [UploadedFile::fake()->image('large.png', 16, 16)->size($maxSize + 1)],
+        ])
+        ->assertSee('<p class="mt-2 text-red-600 text-xs italic">'.e(trans('validation.max.file', ['attribute' => $label, 'max' => $maxSize])), false);
+})->with([
+    'logo'    => ['logo_image', 'general.design.admin_logo.logo_image', AppearanceForm::LOGO_MAX_SIZE, 'Logo'],
+    'favicon' => ['favicon', 'general.design.admin_logo.favicon', AppearanceForm::FAVICON_MAX_SIZE, 'Favicon'],
+]);

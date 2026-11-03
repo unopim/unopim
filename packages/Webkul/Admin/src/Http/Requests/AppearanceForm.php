@@ -23,6 +23,16 @@ class AppearanceForm extends FormRequest
     const FAVICON_EXTENSIONS = ['ico', 'jpeg', 'jpg', 'png', 'webp'];
 
     /**
+     * Maximum admin logo size in kilobytes.
+     */
+    const LOGO_MAX_SIZE = 2048;
+
+    /**
+     * Maximum favicon size in kilobytes.
+     */
+    const FAVICON_MAX_SIZE = 1024;
+
+    /**
      * Determine whether the user is authorized.
      */
     public function authorize(): bool
@@ -35,14 +45,25 @@ class AppearanceForm extends FormRequest
      */
     public function rules(): array
     {
-        $logoImageRules = $this->imageRules(self::LOGO_EXTENSIONS, 2048);
-        $faviconRules = $this->imageRules(self::FAVICON_EXTENSIONS, 1024, false);
+        $logoImageRules = $this->imageRules(self::LOGO_EXTENSIONS, self::LOGO_MAX_SIZE);
+        $faviconRules = $this->imageRules(self::FAVICON_EXTENSIONS, self::FAVICON_MAX_SIZE, false);
 
         return [
             'logo_image'   => $this->file('logo_image') instanceof UploadedFile ? $logoImageRules : ['nullable'],
             'logo_image.*' => $logoImageRules,
             'favicon'      => $this->file('favicon') instanceof UploadedFile ? $faviconRules : ['nullable'],
             'favicon.*'    => $faviconRules,
+        ];
+    }
+
+    /**
+     * Get the display names for the uploaded files.
+     */
+    public function attributes(): array
+    {
+        return [
+            'logo_image.*' => trans('admin::app.settings.appearance.logo'),
+            'favicon.*'    => trans('admin::app.settings.appearance.favicon'),
         ];
     }
 
