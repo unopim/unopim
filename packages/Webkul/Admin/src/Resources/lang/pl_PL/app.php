@@ -2328,6 +2328,7 @@ return [
                 'title'               => 'Podpowiedź',
                 'create-btn'          => 'Utwórz podpowiedź',
                 'edit-title'          => 'Edytuj podpowiedź',
+                'insert-attribute'    => 'Wstaw atrybut',
                 'create-title'        => 'Utwórz nową podpowiedź',
                 'label-title'         => 'Tytuł',
                 'purpose'             => 'Przeznaczenie',

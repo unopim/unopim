@@ -2328,6 +2328,7 @@ return [
                 'title'               => 'Prompt',
                 'create-btn'          => 'Creează Prompt',
                 'edit-title'          => 'Editează Prompt',
+                'insert-attribute'    => 'Inserează atribut',
                 'create-title'        => 'Creează un Nou Prompt',
                 'label-title'         => 'Titlu',
                 'purpose'             => 'Scop',
