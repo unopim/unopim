@@ -64,15 +64,20 @@ function calcFormFixture(?string $formula = null): array
 }
 
 /**
- * The rendered input carrying the computed value.
+ * The rendered control for a calculated attribute.
+ *
+ * Matched by the id the admin form component derives from the field name, so
+ * the assertion does not depend on how the component orders its attributes.
  */
-function calcReadOnlyInput(string $html, string $expectedValue): string
+function calcReadOnlyInput(string $html, string $calculatedCode): string
 {
-    $pattern = '/<input[^>]*value="'.preg_quote($expectedValue, '/').'"[^>]*>/';
+    $id = form_control_id('values[common]['.$calculatedCode.']');
+
+    $pattern = '/<input[^>]*id="'.preg_quote($id, '/').'"[^>]*>/';
 
     $matched = preg_match($pattern, $html, $matches);
 
-    expect($matched)->toBe(1, 'expected a rendered input carrying the computed value');
+    expect($matched)->toBe(1, 'expected a rendered control for the calculated attribute');
 
     return $matches[0];
 }
@@ -98,10 +103,10 @@ it('renders the calculated field as read-only', function (): void {
         ->assertOk()
         ->getContent();
 
-    expect(calcReadOnlyInput($content, $fixture['expected']))->toContain('readonly');
+    expect(calcReadOnlyInput($content, $fixture['calculatedCode']))->toContain('readonly');
 });
 
-it('gives the calculated field no name, so nothing is submitted for it', function (): void {
+it('keeps the calculated field out of the values the form submits', function (): void {
     $this->loginAsAdmin();
 
     $fixture = calcFormFixture();
@@ -111,16 +116,12 @@ it('gives the calculated field no name, so nothing is submitted for it', functio
         ->getContent();
 
     /*
-     * The absence of a name attribute is the actual guarantee that a derived
-     * value can never be posted back and persisted — the readonly flag alone
-     * is a UI affordance and is trivially removed client-side.
-     */
-    expect(calcReadOnlyInput($content, $fixture['expected']))->not->toContain('name=');
-
-    /*
-     * Asserted against form controls specifically, not the whole page: the core
-     * template also prints the field name into the label's `for` attribute and
-     * into the validation-error binding, and neither of those submits a value.
+     * A read-only input is still submitted by the browser, so the guarantee
+     * that a derived value is never persisted is that no control carries a name
+     * inside the form's `values` wrapper. Asserted against form controls
+     * specifically, not the whole page: the core template also prints the field
+     * name into the label's `for` attribute and into the validation-error
+     * binding, and neither of those submits a value.
      */
     $submittable = preg_match(
         '/<(?:input|textarea|select)[^>]*name="'.preg_quote('values[common]['.$fixture['calculatedCode'].']', '/').'"/',

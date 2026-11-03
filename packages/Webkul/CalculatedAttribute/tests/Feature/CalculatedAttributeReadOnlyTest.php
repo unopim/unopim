@@ -37,11 +37,11 @@ it('keeps calculated attributes out of the completeness attribute picker', funct
         ->values();
 
     expect($wheres)->toHaveCount(1);
-    expect($wheres[0]['operator'])->toBe('!=');
-    expect($wheres[0]['value'])->toBe('calculated');
+    expect($wheres[0]['type'])->toBe('NotIn');
+    expect($wheres[0]['values'])->toContain(Attribute::CALCULATED_FIELD_TYPE);
 
     $visible = DB::table('attributes')
-        ->where('attributes.type', '!=', 'calculated')
+        ->whereNotIn('attributes.type', $wheres[0]['values'])
         ->whereIn('code', [$calculated->code, $plain->code])
         ->pluck('code')
         ->all();

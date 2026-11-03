@@ -2,26 +2,23 @@
     /**
      * Shared by the create and the edit form. `$attribute` only exists on edit,
      * so every read of it is guarded.
+     *
+     * The panel uses v-show rather than v-if so the control stays in the DOM:
+     * switching the type back and forth must not discard what was typed. A
+     * formula submitted for a non-calculated type is discarded when it is
+     * saved.
+     *
+     * The function list and the variable list are supplied by a view composer,
+     * so nothing here has to reach into the container.
      */
     $calculatedAttribute = $attribute ?? null;
 
     $formulaValue = old('formula', $calculatedAttribute->formula ?? '');
-
-    $functionNames = app(\Webkul\CalculatedAttribute\Expression\FormulaFunctions::class)->names();
-
-    sort($functionNames);
-
-    $systemVariables = \Webkul\CalculatedAttribute\Services\FormulaValidator::SYSTEM_VARIABLES;
 @endphp
 
-{{--
-    v-show rather than v-if: the textarea stays in the DOM so switching the type
-    back and forth does not discard what was typed. A formula submitted for a
-    non-calculated type is dropped server-side by AttributeController.
---}}
 <div
     class="mt-2 w-full bg-white dark:bg-cherry-900 box-shadow rounded"
-    v-show="selectedAttributeType == 'calculated'"
+    v-show="selectedAttributeType == '{{ $calculatedType }}'"
 >
     <div class="flex justify-between items-center p-1.5">
         <p class="p-2.5 text-gray-800 dark:text-white text-base font-semibold">
@@ -31,20 +28,23 @@
 
     <div class="px-4 pb-4">
         <x-admin::form.control-group>
-            <x-admin::form.control-group.label for="formula" class="required">
+            <x-admin::form.control-group.label class="required">
                 @lang('calculated_attribute::app.formula.label')
             </x-admin::form.control-group.label>
 
-            <textarea
+            <x-admin::form.control-group.control
+                type="textarea"
                 id="formula"
                 name="formula"
                 rows="3"
                 spellcheck="false"
                 autocapitalize="off"
                 autocomplete="off"
-                class="flex w-full py-2 px-3 border rounded-md text-sm font-mono text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 dark:focus:border-gray-400 focus:border-gray-400 dark:bg-cherry-800 dark:border-gray-800"
-                placeholder="{{ trans('calculated_attribute::app.formula.placeholder') }}"
-            >{{ $formulaValue }}</textarea>
+                class="font-mono"
+                value="{{ $formulaValue }}"
+                :label="trans('calculated_attribute::app.formula.label')"
+                :placeholder="trans('calculated_attribute::app.formula.placeholder')"
+            />
 
             <x-admin::form.control-group.error control-name="formula" />
 
@@ -63,7 +63,7 @@
             </summary>
 
             <div class="mt-2 flex flex-wrap gap-1">
-                @foreach ($functionNames as $functionName)
+                @foreach ($formulaFunctions as $functionName)
                     <code class="px-1.5 py-0.5 rounded bg-gray-100 dark:bg-cherry-800 text-xs text-gray-700 dark:text-gray-300">{{ $functionName }}</code>
                 @endforeach
             </div>
@@ -73,7 +73,7 @@
             </p>
 
             <ul class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                @foreach ($systemVariables as $variable)
+                @foreach ($formulaVariables as $variable)
                     <li>
                         <code>{{ $variable }}</code>
                         — @lang('calculated_attribute::app.formula.variables.' . $variable)
