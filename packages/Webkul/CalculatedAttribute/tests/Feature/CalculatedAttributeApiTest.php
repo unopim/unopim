@@ -128,6 +128,36 @@ it('leaves calculated values out unless the request asks for them', function ():
         ->toBe(strtoupper($product->sku));
 });
 
+it('honours the with_calculated query parameter on the product endpoints', function (): void {
+    $headers = $this->getAuthenticationHeaders();
+
+    $calculatedCode = 'calcq_'.Str::random(6);
+
+    Attribute::factory()->create([
+        'code'              => $calculatedCode,
+        'type'              => 'calculated',
+        'formula'           => 'upper(sku)',
+        'value_per_locale'  => 0,
+        'value_per_channel' => 0,
+    ]);
+
+    app(AttributeRegistry::class)->flush();
+
+    $product = calcApiProduct(['common' => []]);
+
+    $without = $this->withHeaders($headers)
+        ->json('GET', route('admin.api.products.get', $product->sku))
+        ->assertOk();
+
+    expect($without->json('values.common.'.$calculatedCode))->toBeNull();
+
+    $with = $this->withHeaders($headers)
+        ->json('GET', route('admin.api.products.get', ['code' => $product->sku, 'with_calculated' => 1]))
+        ->assertOk();
+
+    expect($with->json('values.common.'.$calculatedCode))->toBe(strtoupper($product->sku));
+});
+
 it('passes a null values block through untouched', function (): void {
     app(AttributeRegistry::class)->flush();
 
