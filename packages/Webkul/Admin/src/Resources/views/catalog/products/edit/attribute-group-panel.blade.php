@@ -16,12 +16,11 @@
     $groupLabel = empty($groupLabel) ? "[{$group->code}]" : $groupLabel;
 
     /**
-     * Calculated attributes hold no stored value, so they are computed here and
-     * merged on top of the product's own values. The resolver returns the array
-     * untouched when no calculated attribute exists, which is the normal case.
+     * A view composer may supply these instead — that is how a package whose
+     * attribute values are derived rather than stored gets them in front of the
+     * fields without this template knowing the package exists.
      */
-    $fieldValues = app(\Webkul\CalculatedAttribute\Services\CalculatedValueResolver::class)
-        ->mergeForProduct($product, $currentChannel->code, $currentLocale->code);
+    $fieldValues = $fieldValues ?? $product->values;
 @endphp
 
 {!! view_render_event('unopim.admin.catalog.product.edit.form.column_before', ['product' => $product]) !!}

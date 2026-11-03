@@ -20,6 +20,7 @@ use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeOptionRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
+use Webkul\Attribute\Support\AttributeTypeRegistry;
 use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Completeness\Observers\Product as CompletenessProductObserver;
 use Webkul\Core\Facades\ElasticSearch;
@@ -2752,6 +2753,11 @@ class Importer extends AbstractImporter
 
     /**
      * Save every non-measurement attribute value from the current row.
+     *
+     * Columns of a non-fillable attribute type are read and discarded rather
+     * than rejected: such a value is derived from other data, so storing it
+     * would be meaningless, but an exported file legitimately contains the
+     * column and refusing it would break the export/import round trip.
      */
     protected function prepareNonMeasurementAttributeValues(array $rowData, array &$attributeValues): void
     {
@@ -2759,6 +2765,7 @@ class Importer extends AbstractImporter
         $familyCode = $rowData[self::ATTRIBUTE_FAMILY_CODE];
         $channel = $rowData['channel'] ?? null;
         $locale = $rowData['locale'] ?? null;
+        $nonFillableTypes = AttributeTypeRegistry::nonFillableTypes();
 
         $familyAttributes = $this->getProductTypeFamilyAttributes($type, $familyCode);
         $attributesByCode = $this->getTypeFamilyAttributesByCode($type, $familyCode, $familyAttributes);
@@ -2797,13 +2804,7 @@ class Importer extends AbstractImporter
                 continue;
             }
 
-            /*
-             * Calculated attributes are derived, never stored. The column stays
-             * a *valid* one on purpose — an exported file contains it, and
-             * rejecting it would make the export/import round trip fail — but
-             * whatever it holds is discarded rather than written.
-             */
-            if ($attribute->type === 'calculated') {
+            if (in_array($attribute->type, $nonFillableTypes, true)) {
                 continue;
             }
 

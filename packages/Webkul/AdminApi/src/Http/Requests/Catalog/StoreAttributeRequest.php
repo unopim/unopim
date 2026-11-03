@@ -7,6 +7,7 @@ use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Attribute\Rules\NotSupportedAttributes;
 use Webkul\Attribute\Rules\SwatchTypes;
 use Webkul\Attribute\Rules\ValidationTypes;
+use Webkul\Attribute\Support\AttributeValidationRules;
 use Webkul\Core\Rules\Code;
 
 class StoreAttributeRequest extends ApiFormRequest
@@ -14,7 +15,11 @@ class StoreAttributeRequest extends ApiFormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, array<int, mixed>>
+     * Rules a package contributes for its own attribute type arrive through
+     * {@see AttributeValidationRules}, which is the same set the admin form
+     * runs — a payload accepted here would be accepted there and vice versa.
+     *
+     * @return array<string, mixed>
      */
     public function rules(): array
     {
@@ -39,6 +44,6 @@ class StoreAttributeRequest extends ApiFormRequest
             $rules['validation'] = [new ValidationTypes];
         }
 
-        return $rules;
+        return AttributeValidationRules::extend($rules, $this->all());
     }
 }
