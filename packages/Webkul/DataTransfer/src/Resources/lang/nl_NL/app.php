@@ -312,5 +312,6 @@ return [
         'completed' => 'Taak succesvol voltooid.',
         'stalled'   => 'De taak reageerde langer dan :minutes minuten niet en is als mislukt gemarkeerd. De uitvoerende worker is waarschijnlijk beëindigd.',
         'reaped'    => ':count vastgelopen taken zijn als mislukt gemarkeerd.',
+        'stopped'   => 'Import gestopt na validatie met :count fouten. Er zijn geen rijen geïmporteerd.',
     ],
 ];

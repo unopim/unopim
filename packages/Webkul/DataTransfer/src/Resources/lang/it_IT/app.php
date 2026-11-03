@@ -312,5 +312,6 @@ return [
         'completed' => 'Esecuzione del lavoro completata',
         'stalled'   => 'Il processo non ha risposto per più di :minutes minuti ed è stato contrassegnato come fallito. Il worker che lo eseguiva è stato probabilmente terminato.',
         'reaped'    => 'Contrassegnati :count processi bloccati come falliti.',
+        'stopped'   => 'Importazione interrotta dopo la convalida con :count errori. Nessuna riga è stata importata.',
     ],
 ];
