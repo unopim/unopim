@@ -6,15 +6,7 @@ use Webkul\Completeness\Models\ProductCompletenessScore;
 use Webkul\Core\Models\Channel;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\ProductProxy;
-
-/*
- * The dashboard's "channel readiness" widget drill-down links to the product
- * list scoped to one channel (?channel=<code>) and filtered to the products
- * still below the readiness threshold. For that to show the right work
- * queue, the grid's "completeness" column has to reflect that channel's own
- * score (product_completeness) instead of the product's cross-channel
- * average once a channel is explicitly requested.
- */
+use Webkul\Product\Services\ChannelCompletenessColumn;
 
 function drilldownProduct(Channel $channel, int $locale_id, int $channelScore, int $avgScore): Product
 {
@@ -24,9 +16,6 @@ function drilldownProduct(Channel $channel, int $locale_id, int $channelScore, i
         'attribute_family_id' => $familyId,
     ]);
 
-    // Not mass-assignable (by design — the score is computed by a job), so
-    // write it directly to simulate "already scored by the completeness
-    // job"; forceFill()->save() doesn't persist it here for the same reason.
     DB::table('products')->where('id', $product->id)->update([
         'avg_completeness_score' => $avgScore,
     ]);
@@ -45,11 +34,6 @@ function drilldownProduct(Channel $channel, int $locale_id, int $channelScore, i
 beforeEach(function () {
     $this->loginAsAdmin();
 
-    // This feature is database-filter only: Elasticsearch's CompletenessFilter
-    // still filters on the global average document field regardless of
-    // channel, since per-channel scores aren't indexed into ES documents.
-    // Extending that is a larger, separate change (indexing product_completeness
-    // per channel/locale into the ES mapping) — out of scope here.
     config(['elasticsearch.enabled' => false]);
 });
 
@@ -57,13 +41,7 @@ it('filters by the requested channel\'s own completeness score, not the cross-ch
     $channel = Channel::factory()->create(['code' => 'erp']);
     $locale = $channel->locales()->first();
 
-    // Incomplete for this channel (50 < 80) even though its overall average
-    // across every channel happens to be high.
     $incompleteForChannel = drilldownProduct($channel, $locale->id, channelScore: 50, avgScore: 100);
-
-    // Ready for this channel (90 >= 80) even though its overall average
-    // happens to be low — proves the column isn't silently reading the
-    // average when a channel is explicitly requested.
     $readyForChannel = drilldownProduct($channel, $locale->id, channelScore: 90, avgScore: 10);
 
     $response = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest'])
@@ -88,9 +66,6 @@ it('keeps using the cross-channel average when no channel is requested', functio
     $channel = Channel::factory()->create(['code' => 'print']);
     $locale = $channel->locales()->first();
 
-    // Incomplete on average, but complete for this one channel — without an
-    // explicit ?channel=, the grid's existing (pre-drill-down) behaviour of
-    // filtering by the average must be unchanged.
     $product = drilldownProduct($channel, $locale->id, channelScore: 95, avgScore: 40);
 
     $response = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest'])
@@ -105,4 +80,20 @@ it('keeps using the cross-channel average when no channel is requested', functio
 
     expect(collect($response->json('records'))->pluck('sku')->all())
         ->toContain($product->sku);
+});
+
+it('drops the per-channel scoping while Elasticsearch is enabled, so the displayed column and the filtered rows stay on the average it indexes', function () {
+    $channel = Channel::factory()->create(['code' => 'marketplace']);
+    $locale = $channel->locales()->first();
+
+    request()->merge(['channel' => $channel->code, 'locale' => $locale->code]);
+
+    expect(app(ChannelCompletenessColumn::class)->resolve())
+        ->toHaveKeys(['channel', 'locale']);
+
+    config(['elasticsearch.enabled' => true]);
+
+    app()->forgetScopedInstances();
+
+    expect(app(ChannelCompletenessColumn::class)->resolve())->toBeNull();
 });
