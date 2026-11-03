@@ -16,14 +16,14 @@ use Webkul\Product\Models\Product;
  * @param  array<string, mixed>  $product
  * @return array<string, mixed>
  */
-function calcApiNormalize(array $product): array
+function calcApiNormalize(array $product, bool $withCalculated = true): array
 {
     $dataSource = app(ProductDataSource::class);
 
     $method = (new ReflectionClass($dataSource))->getMethod('normalizeProduct');
     $method->setAccessible(true);
 
-    return $method->invoke($dataSource, $product);
+    return $method->invoke($dataSource, $product, false, null, false, null, $withCalculated);
 }
 
 /**
@@ -104,6 +104,28 @@ it('computes a locale-scoped calculated value for every locale in the response',
         expect($payload['values']['locale_specific'][$locale][$calculatedCode] ?? null)
             ->toBe("{$product->sku}@{$locale}");
     }
+});
+
+it('leaves calculated values out unless the request asks for them', function (): void {
+    $calculatedCode = 'calcoff_'.Str::random(6);
+
+    Attribute::factory()->create([
+        'code'              => $calculatedCode,
+        'type'              => 'calculated',
+        'formula'           => 'upper(sku)',
+        'value_per_locale'  => 0,
+        'value_per_channel' => 0,
+    ]);
+
+    app(AttributeRegistry::class)->flush();
+
+    $product = calcApiProduct(['common' => []]);
+
+    $row = $product->fresh()->load('attribute_family')->toArray();
+
+    expect(calcApiNormalize($row, withCalculated: false)['values']['common'][$calculatedCode] ?? null)->toBeNull();
+    expect(calcApiNormalize($row, withCalculated: true)['values']['common'][$calculatedCode] ?? null)
+        ->toBe(strtoupper($product->sku));
 });
 
 it('passes a null values block through untouched', function (): void {

@@ -36,10 +36,12 @@ return [
             'syntax'              => 'The formula could not be parsed: :detail',
             'unknown-variable'    => 'Unknown attribute or variable ":name" in the formula.',
             'disallowed-function' => 'Function ":name" is not allowed in a formula.',
+            'disallowed-operator' => 'The ":name" operator is not allowed in a formula.',
             'reserved-variable'   => 'The name ":name" is reserved and cannot be used in a formula.',
             'too-long'            => 'The formula may not be longer than :max characters.',
             'empty'               => 'A calculated attribute needs a formula.',
             'circular'            => 'The formula creates a circular dependency: :cycle',
+            'referenced-by'       => 'This attribute cannot be deleted because it is used by the formula of: :attributes',
         ],
     ],
 

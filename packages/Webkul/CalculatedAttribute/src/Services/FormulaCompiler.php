@@ -29,30 +29,39 @@ class FormulaCompiler
     public const MAX_LENGTH = 2000;
 
     /**
-     * Rejected outright: `matches` takes a user-supplied regex, which is a
-     * denial-of-service foot-gun (catastrophic backtracking inside an export
-     * worker) for a capability this feature never advertised.
+     * Operators rejected outright.
+     *
+     * `matches` takes a user-supplied regex, which is a denial-of-service
+     * foot-gun (catastrophic backtracking inside an export worker) for a
+     * capability this feature never advertised. `..` materialises its whole
+     * range as an array when evaluated, so `1..100000000` is the same risk by a
+     * different route.
      */
-    protected const FORBIDDEN_OPERATORS = ['matches'];
+    protected const FORBIDDEN_OPERATORS = ['matches', '..'];
 
     /**
-     * Memoised per source + allowed-name-set, so repeated compiles of the same
-     * formula within a request or an export worker cost one array lookup.
+     * Parsed formulas, keyed by source alone.
+     *
+     * Which names are allowed is a property of the attribute table, not of any
+     * one formula, so it is not part of the key; `$snapshot` records the
+     * version of that table the entries were parsed against, and the cache is
+     * dropped when it moves.
      *
      * @var array<string, CompiledFormula>
      */
     protected array $cache = [];
 
+    protected ?int $snapshot = null;
+
     public function __construct(
         protected SafeExpressionLanguage $expressionLanguage,
+        protected AttributeRegistry $registry,
     ) {}
 
     /**
-     * @param  array<int, string>  $allowedNames  every variable the formula may read
-     *
      * @throws InvalidFormulaException
      */
-    public function compile(?string $formula, array $allowedNames): CompiledFormula
+    public function compile(?string $formula): CompiledFormula
     {
         $formula = trim((string) $formula);
 
@@ -64,16 +73,14 @@ class FormulaCompiler
             throw InvalidFormulaException::tooLong(self::MAX_LENGTH);
         }
 
-        $allowedNames = array_values(array_unique($allowedNames));
+        $this->syncWithRegistry();
 
-        $cacheKey = $formula.'|'.implode(',', $allowedNames);
-
-        if (isset($this->cache[$cacheKey])) {
-            return $this->cache[$cacheKey];
+        if (isset($this->cache[$formula])) {
+            return $this->cache[$formula];
         }
 
         try {
-            $parsed = $this->expressionLanguage->parse($formula, $allowedNames);
+            $parsed = $this->expressionLanguage->parse($formula, $this->registry->allowedNames());
         } catch (SyntaxError $error) {
             throw $this->translateSyntaxError($error);
         }
@@ -90,7 +97,22 @@ class FormulaCompiler
             }
         }
 
-        return $this->cache[$cacheKey] = new CompiledFormula($formula, $parsed, $dependencies);
+        return $this->cache[$formula] = new CompiledFormula($formula, $parsed, $dependencies);
+    }
+
+    /**
+     * Drop everything parsed against an attribute table that has since changed.
+     */
+    protected function syncWithRegistry(): void
+    {
+        $version = $this->registry->version();
+
+        if ($this->snapshot === $version) {
+            return;
+        }
+
+        $this->cache = [];
+        $this->snapshot = $version;
     }
 
     /**
@@ -122,7 +144,7 @@ class FormulaCompiler
             $node instanceof BinaryNode
             && in_array($node->attributes['operator'] ?? null, self::FORBIDDEN_OPERATORS, true)
         ) {
-            throw InvalidFormulaException::disallowedFunction((string) $node->attributes['operator']);
+            throw InvalidFormulaException::disallowedOperator((string) $node->attributes['operator']);
         }
 
         foreach ($node->nodes as $child) {

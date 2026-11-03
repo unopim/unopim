@@ -2,19 +2,21 @@
 
 namespace Webkul\CalculatedAttribute\Services;
 
+use Webkul\Attribute\Contracts\DerivedValueResolver;
+use Webkul\Attribute\Support\ProductContext;
 use Webkul\CalculatedAttribute\Exceptions\InvalidFormulaException;
 use Webkul\CalculatedAttribute\Expression\FormulaFunctions;
 use Webkul\CalculatedAttribute\Expression\SafeExpressionLanguage;
-use Webkul\CalculatedAttribute\Support\ProductContext;
 
 /**
  * Evaluates calculated attributes for a product in a given channel/locale.
  *
- * Every consumer — product form, export, API — goes through this one class, so
- * the compute-on-read decision recorded in the design document can be revisited
- * by adding a cache here without touching any caller.
+ * Every consumer — product form, export, API — reaches this through the core
+ * {@see DerivedValueResolver} contract, so the compute-on-read decision
+ * recorded in the design document can be revisited by adding a cache here
+ * without touching any caller.
  */
-class CalculatedValueResolver
+class CalculatedValueResolver implements DerivedValueResolver
 {
     /**
      * Depth limit for calculated attributes referencing other calculated
@@ -24,17 +26,25 @@ class CalculatedValueResolver
      */
     protected const MAX_DEPTH = 16;
 
+    /**
+     * Formulas already reported as broken in this process.
+     *
+     * A failing formula fails for every product in an export, so reporting
+     * every occurrence would bury the one useful line under a hundred thousand
+     * copies. One report per formula is enough to act on.
+     *
+     * @var array<string, true>
+     */
+    protected array $reported = [];
+
     public function __construct(
         protected SafeExpressionLanguage $expressionLanguage,
         protected FormulaCompiler $compiler,
-        protected FormulaValidator $validator,
         protected AttributeRegistry $registry,
     ) {}
 
     /**
-     * Compute every calculated attribute for one product in one scope.
-     *
-     * @return array<string, mixed> code => computed value
+     * {@inheritdoc}
      */
     public function resolve(ProductContext $product, ?string $channel, ?string $locale): array
     {
@@ -69,11 +79,7 @@ class CalculatedValueResolver
     }
 
     /**
-     * Merge computed values into a `values` array under each attribute's own
-     * scope, leaving stored values untouched.
-     *
-     * @param  array<string, mixed>  $values
-     * @return array<string, mixed>
+     * {@inheritdoc}
      */
     public function mergeInto(array $values, ProductContext $product, ?string $channel, ?string $locale): array
     {
@@ -85,28 +91,24 @@ class CalculatedValueResolver
     }
 
     /**
-     * Whether anything needs computing at all. Callers on hot paths check this
-     * before assembling a ProductContext.
+     * {@inheritdoc}
      */
-    public function hasCalculatedAttributes(): bool
+    public function hasDerivedValues(): bool
     {
         return $this->registry->calculatedCodes() !== [];
     }
 
     /**
-     * The product's stored values with calculated attributes merged in, for the
-     * product form.
+     * {@inheritdoc}
      *
      * The stored values are the base, so nothing a user actually entered is
      * disturbed; only the calculated codes are added.
-     *
-     * @return array<string, mixed>
      */
     public function mergeForProduct(object $product, ?string $channel, ?string $locale): array
     {
         $values = (array) ($product->values ?? []);
 
-        if (! $this->hasCalculatedAttributes()) {
+        if (! $this->hasDerivedValues()) {
             return $values;
         }
 
@@ -114,18 +116,11 @@ class CalculatedValueResolver
     }
 
     /**
-     * Merge computed values for every channel/locale combination at once.
-     *
-     * The admin API returns the whole `values` structure rather than one scope,
-     * so a single (channel, locale) pass would leave most of it unpopulated.
-     *
-     * @param  array<string, mixed>  $values
-     * @param  array<string, array<int, string>>  $channelsAndLocales  channel code => locale codes
-     * @return array<string, mixed>
+     * {@inheritdoc}
      */
     public function mergeAllScopes(array $values, ProductContext $product, array $channelsAndLocales): array
     {
-        if (! $this->hasCalculatedAttributes()) {
+        if (! $this->hasDerivedValues()) {
             return $values;
         }
 
@@ -139,6 +134,14 @@ class CalculatedValueResolver
     }
 
     /**
+     * Compute one attribute, recursing into the calculated attributes it reads.
+     *
+     * A stored formula that no longer compiles (a referenced attribute was
+     * deleted) must not break the product page or abort an export mid-run, so
+     * it renders as empty — but silently shipping blank export columns is how
+     * such a formula stays broken for weeks, which is why the failure is
+     * reported before the empty value is returned.
+     *
      * @param  array<string, mixed>  $resolved  memo of values already computed
      *                                          for this product and scope
      */
@@ -165,14 +168,10 @@ class CalculatedValueResolver
         }
 
         try {
-            $compiled = $this->compiler->compile($formula, $this->validator->allowedNames($code));
-        } catch (InvalidFormulaException) {
-            /*
-             * A stored formula that no longer compiles (a referenced attribute
-             * was deleted) must not break the product page or abort an export
-             * mid-run; it renders as empty, and the attribute form surfaces the
-             * real error the next time it is saved.
-             */
+            $compiled = $this->compiler->compile($formula);
+        } catch (InvalidFormulaException $exception) {
+            $this->report($code, $formula, $exception);
+
             return $resolved[$code] = null;
         }
 
@@ -180,11 +179,34 @@ class CalculatedValueResolver
 
         try {
             $value = $this->expressionLanguage->evaluate($compiled->parsed, $context);
-        } catch (\Throwable) {
+        } catch (\Throwable $throwable) {
+            $this->report($code, $formula, $throwable);
+
             return $resolved[$code] = null;
         }
 
         return $resolved[$code] = $this->normalise($value);
+    }
+
+    /**
+     * Hand a broken formula to the application's error handler, once per
+     * formula per process.
+     */
+    protected function report(string $code, string $formula, \Throwable $throwable): void
+    {
+        $key = $code."\0".$formula;
+
+        if (isset($this->reported[$key])) {
+            return;
+        }
+
+        $this->reported[$key] = true;
+
+        report(new \RuntimeException(
+            sprintf('Calculated attribute "%s" could not be evaluated: %s', $code, $throwable->getMessage()),
+            0,
+            $throwable
+        ));
     }
 
     /**

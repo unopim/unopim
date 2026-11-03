@@ -1,11 +1,11 @@
 <?php
 
+use Illuminate\Support\Facades\Exceptions;
+use Webkul\Attribute\Support\ProductContext;
 use Webkul\CalculatedAttribute\Expression\FormulaFunctions;
 use Webkul\CalculatedAttribute\Expression\SafeExpressionLanguage;
 use Webkul\CalculatedAttribute\Services\CalculatedValueResolver;
 use Webkul\CalculatedAttribute\Services\FormulaCompiler;
-use Webkul\CalculatedAttribute\Services\FormulaValidator;
-use Webkul\CalculatedAttribute\Support\ProductContext;
 use Webkul\CalculatedAttribute\Tests\Support\FakeCategoryPaths;
 use Webkul\CalculatedAttribute\Tests\Support\InMemoryAttributeRegistry;
 
@@ -22,11 +22,9 @@ function calcResolver(array $attributes, array $categories = []): array
 
     $language = new SafeExpressionLanguage(new FormulaFunctions(new FakeCategoryPaths($categories)));
 
-    $compiler = new FormulaCompiler($language);
+    $compiler = new FormulaCompiler($language, $registry);
 
-    $validator = new FormulaValidator($compiler, $registry);
-
-    return [new CalculatedValueResolver($language, $compiler, $validator, $registry), $registry];
+    return [new CalculatedValueResolver($language, $compiler, $registry), $registry];
 }
 
 /**
@@ -255,6 +253,35 @@ it('degrades to an empty value when a stored formula no longer compiles', functi
     ]);
 
     expect($resolver->resolveOne('broken', new ProductContext, 'default', 'de_DE'))->toBeNull();
+});
+
+it('reports a formula that no longer compiles instead of swallowing it', function (): void {
+    Exceptions::fake();
+
+    [$resolver] = calcResolver([
+        'broken' => ['type' => 'calculated', 'formula' => 'deleted_attribute_code'],
+    ]);
+
+    $resolver->resolveOne('broken', new ProductContext, 'default', 'de_DE');
+
+    Exceptions::assertReported(fn (RuntimeException $throwable): bool => str_contains(
+        $throwable->getMessage(),
+        'Calculated attribute "broken" could not be evaluated'
+    ));
+});
+
+it('reports a broken formula once per process, not once per product', function (): void {
+    Exceptions::fake();
+
+    [$resolver] = calcResolver([
+        'broken' => ['type' => 'calculated', 'formula' => 'deleted_attribute_code'],
+    ]);
+
+    foreach (range(1, 25) as $index) {
+        $resolver->resolveOne('broken', new ProductContext(sku: 'SKU-'.$index), 'default', 'de_DE');
+    }
+
+    Exceptions::assertReportedCount(1);
 });
 
 it('merges computed values into the scope each attribute declares', function (): void {

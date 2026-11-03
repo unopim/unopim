@@ -36,6 +36,11 @@ class InvalidFormulaException extends RuntimeException
         return new self(trans('calculated_attribute::app.formula.errors.disallowed-function', ['name' => $name]));
     }
 
+    public static function disallowedOperator(string $name): self
+    {
+        return new self(trans('calculated_attribute::app.formula.errors.disallowed-operator', ['name' => $name]));
+    }
+
     public static function reservedVariable(string $name): self
     {
         return new self(trans('calculated_attribute::app.formula.errors.reserved-variable', ['name' => $name]));

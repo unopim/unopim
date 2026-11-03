@@ -36,39 +36,26 @@ class FormulaValidator
     /**
      * Validate the formula a given attribute code is about to be saved with.
      *
+     * The attribute's own code is a legal identifier as far as the parser is
+     * concerned — the allowed-name set covers the whole attribute table so the
+     * compile cache can be keyed on the formula alone — so the trivial
+     * `a = a` self-reference is rejected here instead.
+     *
      * @param  string  $code  the attribute being saved; may not yet exist
      *
      * @throws InvalidFormulaException
      */
     public function validate(string $code, ?string $formula): CompiledFormula
     {
-        $compiled = $this->compiler->compile($formula, $this->allowedNames($code));
+        $compiled = $this->compiler->compile($formula);
+
+        if (in_array($code, $compiled->dependencies, true)) {
+            throw InvalidFormulaException::circular([$code, $code]);
+        }
 
         $this->assertAcyclic($code, $compiled->dependencies);
 
         return $compiled;
-    }
-
-    /**
-     * Every identifier a formula for `$code` may reference: all other attribute
-     * codes plus the system variables.
-     *
-     * The attribute's own code is excluded, which turns the trivial `a = a`
-     * self-reference into an "unknown variable" error at parse time rather than
-     * a cycle report. Codes that are not valid expression identifiers (an
-     * attribute code may legally start with a digit) are dropped, because the
-     * grammar could never name them anyway.
-     *
-     * @return array<int, string>
-     */
-    public function allowedNames(string $code): array
-    {
-        $names = array_filter(
-            $this->registry->codes(),
-            fn (string $candidate): bool => $candidate !== $code && $this->isIdentifier($candidate)
-        );
-
-        return array_values(array_unique(array_merge(array_values($names), self::SYSTEM_VARIABLES)));
     }
 
     /**
@@ -99,6 +86,10 @@ class FormulaValidator
     /**
      * Depth-first search from `$from` to `$target` across calculated attributes.
      *
+     * An already-stored formula that no longer compiles (its source attribute
+     * was renamed or deleted) contributes no edges: failing here would block
+     * editing an unrelated attribute.
+     *
      * @param  array<int, string>  $visited  the path walked so far, used both as
      *                                       the cycle report and as the guard
      *                                       against looping on a graph that is
@@ -118,13 +109,8 @@ class FormulaValidator
         }
 
         try {
-            $compiled = $this->compiler->compile($formula, $this->allowedNames($from));
+            $compiled = $this->compiler->compile($formula);
         } catch (InvalidFormulaException) {
-            /*
-             * An already-stored formula that no longer compiles (its source
-             * attribute was renamed or deleted) contributes no edges. Failing
-             * here would block editing an unrelated attribute.
-             */
             return null;
         }
 
@@ -147,8 +133,36 @@ class FormulaValidator
         return null;
     }
 
-    protected function isIdentifier(string $candidate): bool
+    /**
+     * The calculated attributes whose formula actually reads `$code`.
+     *
+     * Backs the refusal to delete an attribute something else is derived from.
+     * Candidates come from a cheap text match and are then confirmed against
+     * the parsed dependency list, so a code that only appears inside a string
+     * literal does not count.
+     *
+     * @return array<int, string>
+     */
+    public function dependents(string $code): array
     {
-        return preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $candidate) === 1;
+        $dependents = [];
+
+        foreach ($this->registry->formulasMentioning($code) as $candidate) {
+            if ($candidate === $code) {
+                continue;
+            }
+
+            try {
+                $compiled = $this->compiler->compile($this->registry->formula($candidate));
+            } catch (InvalidFormulaException) {
+                continue;
+            }
+
+            if (in_array($code, $compiled->dependencies, true)) {
+                $dependents[] = $candidate;
+            }
+        }
+
+        return $dependents;
     }
 }

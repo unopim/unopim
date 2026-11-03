@@ -17,7 +17,7 @@ function calcValidator(array $attributes): FormulaValidator
 
     $language = new SafeExpressionLanguage(new FormulaFunctions(new FakeCategoryPaths));
 
-    return new FormulaValidator(new FormulaCompiler($language), $registry);
+    return new FormulaValidator(new FormulaCompiler($language, $registry), $registry);
 }
 
 it('accepts a formula that references existing attributes', function (): void {
@@ -67,11 +67,11 @@ it('reports the cycle path on the exception', function (): void {
     }
 });
 
-it('rejects a self reference as an unknown variable', function (): void {
+it('rejects a self reference', function (): void {
     $validator = calcValidator(['a' => ['type' => 'calculated', 'formula' => 'sku']]);
 
     expect(fn () => $validator->validate('a', "concat('-', a)"))
-        ->toThrow(InvalidFormulaException::class, 'Unknown attribute or variable "a"');
+        ->toThrow(InvalidFormulaException::class, 'a -> a');
 });
 
 it('allows a diamond, which is not a cycle', function (): void {
@@ -111,7 +111,33 @@ it('rejects the regex matches operator', function (): void {
     $validator = calcValidator([]);
 
     expect(fn () => $validator->validate('out', "sku matches '/^a/'"))
-        ->toThrow(InvalidFormulaException::class, 'Function "matches" is not allowed');
+        ->toThrow(InvalidFormulaException::class, 'The "matches" operator is not allowed');
+});
+
+it('rejects the range operator, which would build an unbounded array', function (): void {
+    $validator = calcValidator([]);
+
+    expect(fn () => $validator->validate('out', 'join(\',\', 1..100000000)'))
+        ->toThrow(InvalidFormulaException::class, 'The ".." operator is not allowed');
+});
+
+it('names the calculated attributes a formula reads', function (): void {
+    $validator = calcValidator([
+        'manufacturer' => ['type' => 'text'],
+        'uses_it'      => ['type' => 'calculated', 'formula' => "concat('-', manufacturer, sku)"],
+        'mentions_it'  => ['type' => 'calculated', 'formula' => "'manufacturer'"],
+    ]);
+
+    expect($validator->dependents('manufacturer'))->toBe(['uses_it']);
+});
+
+it('reports no dependents for an attribute no formula reads', function (): void {
+    $validator = calcValidator([
+        'lonely'  => ['type' => 'text'],
+        'uses_it' => ['type' => 'calculated', 'formula' => 'sku'],
+    ]);
+
+    expect($validator->dependents('lonely'))->toBe([]);
 });
 
 it('rejects a reserved internal variable name', function (): void {

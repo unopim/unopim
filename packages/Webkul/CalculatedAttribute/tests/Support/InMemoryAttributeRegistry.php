@@ -39,14 +39,21 @@ class InMemoryAttributeRegistry extends AttributeRegistry
             'per_channel' => $definition['per_channel'] ?? false,
         ];
 
+        $this->allowedNames = null;
+
+        $this->version++;
+
         return $this;
     }
 
     /**
-     * The parent would re-read the database; here the array is the source.
+     * The array is the source, so there is nothing to reload — but the version
+     * still moves, so anything caching against the snapshot lets go.
      */
     public function flush(): void
     {
-        // Intentionally a no-op: there is nothing to reload.
+        $this->allowedNames = null;
+
+        $this->version++;
     }
 }
