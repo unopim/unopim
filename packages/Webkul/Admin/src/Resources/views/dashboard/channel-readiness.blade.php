@@ -19,7 +19,7 @@
                         <a
                             v-for="ch in channels"
                             :key="ch.channel"
-                            :href="productsUrl(ch.channel)"
+                            :href="productsUrl(ch)"
                             :title="incompleteLinkTitle(ch)"
                             class="block rounded-md -m-1 p-1 transition-colors hover:bg-gray-50 dark:hover:bg-cherry-800"
                         >
@@ -115,16 +115,12 @@
                 },
 
                 /**
-                 * Deep-links to the product list, scoped to this channel (so
-                 * edits land in the right channel/locale context) and
-                 * pre-filtered to the products still below the readiness
-                 * threshold used above (score >= 80 counts as "ready" in
-                 * Dashboard::getChannelReadiness()) — i.e. the remaining work
-                 * queue for this channel.
+                 * Deep-links to the products this channel and locale still counts as not ready.
                  */
-                productsUrl(channelCode) {
+                productsUrl(ch) {
                     const params = new URLSearchParams({
-                        channel: channelCode,
+                        channel: ch.channel,
+                        locale: ch.locale,
                         'filters[completeness][operator]': 'lt',
                         'filters[completeness][value]': '80',
                     });
@@ -133,7 +129,7 @@
                 },
 
                 incompleteLinkTitle(ch) {
-                    return "{{ trans('admin::app.dashboard.index.readiness-drilldown') }}"
+                    return @json(trans('admin::app.dashboard.index.readiness-drilldown'))
                         .replace(':channel', ch.channel);
                 }
             }
