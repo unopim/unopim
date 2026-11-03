@@ -32,16 +32,13 @@ test.describe('Broken access control - guest is denied every admin surface', () 
     test(`guest GET ${path} redirects to login`, async ({ browser }) => {
       const context = await browser.newContext({ storageState: undefined, baseURL: BASE_URL });
 
-      const res = await context.request.get(path, {
-        maxRedirects: 0,
-        headers: { 'X-Requested-With': 'XMLHttpRequest', Accept: 'application/json' },
-      });
+      // A plain HTML navigation (no AJAX header) exercises the guest's real
+      // browser path, not the datagrid JSON branch the dedicated test below
+      // covers.
+      const res = await context.request.get(path, { maxRedirects: 0 });
 
-      expect([302, 401, 403], `${path} must deny the guest`).toContain(res.status());
-
-      if (res.status() === 302) {
-        expect(res.headers()['location'] || '').toContain('/admin/login');
-      }
+      expect(res.status(), `${path} must redirect the guest`).toBe(302);
+      expect(res.headers()['location'] || '').toContain('/admin/login');
 
       await context.close();
     });

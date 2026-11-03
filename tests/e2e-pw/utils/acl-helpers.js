@@ -137,8 +137,14 @@ async function loginAs(userPage, email, password) {
 
 /**
  * Attempt a privileged, state-changing write (role creation) as the current
- * user and return the HTTP status. Used to prove a restricted user gained no
- * power. `redirect: 'manual'` keeps a login/deny redirect visible as 0/3xx.
+ * user and return the HTTP status.
+ *
+ * The payload is a self-permitted custom role carrying only the user's own
+ * `dashboard` permission, so RoleForm::authorize() passes (it rejects
+ * `permission_type: all` and any unheld permission independently of the
+ * route). The only thing left to deny the request is the settings.roles.create
+ * route ACL, so a 403 here specifically proves that ACL is enforced. Accept:
+ * JSON forces a 403 status instead of a login redirect masquerading as 0.
  *
  * @param {import('@playwright/test').Page} userPage
  * @returns {Promise<number>}
@@ -152,11 +158,17 @@ async function privilegedWriteStatus(userPage) {
       _token: token,
       name: 'Escalated Role',
       description: 'should never be created',
-      permission_type: 'all',
+      permission_type: 'custom',
     });
+    body.append('permissions[]', 'dashboard');
+
     const res = await fetch(`${baseURL}/admin/settings/roles/create`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Accept: 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+      },
       body: body.toString(),
       redirect: 'manual',
     });

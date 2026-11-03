@@ -52,10 +52,13 @@ test.describe('Mass assignment - self account update cannot escalate role', () =
     await loginAs(userPage, userEmail, userPassword);
 
     const before = await privilegedWriteStatus(userPage);
-    expect(before, 'baseline: restricted user must be denied the privileged write').not.toBe(200);
+    expect(before, 'baseline: restricted user must be denied the privileged write').toBe(403);
 
     await userPage.goto(`${BASE_URL}/admin/account`, { waitUntil: 'domcontentloaded' });
 
+    // Inject fields the AccountForm does not validate. status is flipped to 0
+    // (distinct from the seeded 1) so a successful mass-assignment would be
+    // observable: the account would go inactive and block the next login.
     const updateStatus = await userPage.evaluate(async ({ baseURL, name }) => {
       const token = document.querySelector('meta[name="csrf-token"]')?.content
         ?? document.querySelector('input[name="_token"]')?.value
@@ -64,26 +67,46 @@ test.describe('Mass assignment - self account update cannot escalate role', () =
         _token: token,
         _method: 'PUT',
         name,
-        // Injected fields the AccountForm does not validate — must be dropped.
         role_id: '1',
-        status: '1',
+        status: '0',
         type: 'admin',
       });
       const res = await fetch(`${baseURL}/admin/account`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Accept: 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+        },
         body: body.toString(),
         redirect: 'manual',
       });
       return res.status;
     }, { baseURL: BASE_URL, name: `Mass Assign Operator ${uid}` });
 
-    expect(updateStatus, 'the profile update itself should not server-error').toBeLessThan(500);
-
-    const after = await privilegedWriteStatus(userPage);
-    expect(after, 'after injecting role_id, the user must still be denied the privileged write').not.toBe(200);
+    expect(updateStatus, 'the self-update must actually succeed so the field filtering is exercised').toBe(200);
 
     await userContext.close();
+
+    // Read back the protected fields behaviourally in a fresh session: a login
+    // that still succeeds proves status was not flipped to inactive, and a
+    // still-denied privileged write proves role_id was not escalated.
+    const verifyContext = await browser.newContext({ storageState: { cookies: [], origins: [] } });
+    await verifyContext.addInitScript(HIDE_OVERLAYS);
+    const verifyPage = await verifyContext.newPage();
+
+    let loggedIn = true;
+    try {
+      await loginAs(verifyPage, userEmail, userPassword);
+    } catch {
+      loggedIn = false;
+    }
+    expect(loggedIn, 'injected status=0 must be dropped — the account must still log in').toBe(true);
+
+    const after = await privilegedWriteStatus(verifyPage);
+    expect(after, 'injected role_id must be dropped — the user must still be denied the privileged write').toBe(403);
+
+    await verifyContext.close();
 
     await removeRecord(adminPage, 'users', userEmail);
     await removeRecord(adminPage, 'roles', roleName);

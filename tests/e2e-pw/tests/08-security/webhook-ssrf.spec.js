@@ -46,6 +46,12 @@ test.describe('SSRF - webhook test endpoint rejects internal targets', () => {
     }, { url });
   }
 
+  // The exact message SafeWebhookUrl::validate() failure returns. Asserting it
+  // distinguishes a URL rejected *before* any request from the connection-failed
+  // / unreachable messages test() returns after it actually contacts a host — so
+  // removing the guard (and letting the fetch time out) would fail this test.
+  const UNSAFE_URL_MESSAGE = 'The URL points at a private, loopback or internal address and is not allowed.';
+
   for (const { label, url } of BLOCKED) {
     test(`blocks ${label}`, async ({ adminPage }) => {
       await adminPage.goto('/admin/configuration/webhook', { waitUntil: 'domcontentloaded' });
@@ -53,7 +59,8 @@ test.describe('SSRF - webhook test endpoint rejects internal targets', () => {
       const { status, json } = await probe(adminPage, url);
 
       expect(status, `${url} must be rejected (422), not fetched`).toBe(422);
-      expect(json?.success, `${url} must report failure`).not.toBe(true);
+      expect(json?.success, `${url} must report failure`).toBe(false);
+      expect(json?.message, `${url} must be rejected by the URL guard, not a failed fetch`).toBe(UNSAFE_URL_MESSAGE);
     });
   }
 });

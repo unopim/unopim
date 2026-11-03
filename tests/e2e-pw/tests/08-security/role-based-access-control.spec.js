@@ -59,12 +59,11 @@ test.describe('Role-based access control - restricted user cannot escalate', () 
       return res.status;
     }, BASE_URL);
 
-    expect([0, 302, 401, 403], 'GET on a module the user lacks must be denied').toContain(pageStatus);
+    expect([401, 403], 'GET on a module the user lacks must be denied').toContain(pageStatus);
 
     const writeStatus = await privilegedWriteStatus(userPage);
 
-    expect(writeStatus, 'a privileged write by a dashboard-only user must be denied').not.toBe(200);
-    expect([0, 302, 401, 403, 419]).toContain(writeStatus);
+    expect(writeStatus, 'the settings.roles.create route ACL must reject a dashboard-only user with 403').toBe(403);
 
     await userContext.close();
 

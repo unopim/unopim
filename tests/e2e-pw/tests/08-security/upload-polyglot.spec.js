@@ -38,7 +38,13 @@ test.describe('Malicious upload - account image rejects disguised code', () => {
         body: fd,
         redirect: 'manual',
       });
-      return res.status;
+      let json = null;
+      try {
+        json = await res.json();
+      } catch {
+        json = null;
+      }
+      return { status: res.status, json };
     }, { name, type, content });
   }
 
@@ -46,10 +52,14 @@ test.describe('Malicious upload - account image rejects disguised code', () => {
     test(`rejects ${c.label}`, async ({ adminPage }) => {
       await adminPage.goto('/admin/account', { waitUntil: 'domcontentloaded' });
 
-      const status = await upload(adminPage, c);
+      const { status, json } = await upload(adminPage, c);
 
-      expect(status, `${c.name} must be rejected, not accepted`).not.toBe(200);
-      expect([422, 302, 403, 419], `${c.name} should fail validation (422)`).toContain(status);
+      // A 422 with an image-field error proves AccountForm's upload rules ran
+      // and rejected the file — not that an auth/CSRF failure blocked it.
+      expect(status, `${c.name} must fail validation with 422`).toBe(422);
+
+      const imageError = Object.keys(json?.errors ?? {}).some((key) => key.startsWith('image'));
+      expect(imageError, `${c.name} must be rejected by an image-field rule`).toBe(true);
     });
   }
 });
