@@ -17,7 +17,7 @@ const path = require('path');
  * independent of whether MagicAI is enabled (which turns the click into a modal),
  * and it doubles as coverage for the drag-and-drop feature.
  */
-test.describe('Appearance — admin logo', () => {
+test.describe('Appearance — admin logo', { tag: '@global-state' }, () => {
   const SETTINGS_URL = '/admin/configuration/system/system.appearance';
   const FIXTURE_B64 = fs.readFileSync(path.resolve(__dirname, '../../assets/dotted.png')).toString('base64');
 

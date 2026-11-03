@@ -1,6 +1,16 @@
 const path = require('path');
 const { test, expect } = require('../../utils/fixtures');
 const { clickSave, navigateTo, generateUid, searchInDataGrid, clickEditOnRow, closeDropdown } = require('../../utils/helpers');
+const { deleteProductBySku } = require('../../utils/product-helpers');
+const { xsrfToken } = require('../../utils/category-field-helpers');
+const {
+  createGalleryFamily: copyDefaultFamily,
+  deleteFamilyByCode,
+  assignAttributeToMediaGroup,
+  deleteAttributeByCode,
+  ensureMediaGroupOpen,
+  fieldGroup,
+} = require('../../utils/gallery-helpers');
 
 // Regression: Discard must revert rich fields (WYSIWYG/Select/Multiselect/Image/Gallery/File)
 // whose value lives in Vue state; each now restores itself on the bar's `unsaved-changes:reset`.
@@ -20,25 +30,44 @@ async function confirmDiscard(page) {
   await page.locator('button.danger-button').first().click().catch(() => {});
 }
 
-async function createSimpleProduct(adminPage, sku, familyIndex = 0) {
+async function createSimpleProduct(adminPage, sku, familyName) {
   await navigateTo(adminPage, 'products');
   await adminPage.getByRole('button', { name: 'Create Product', exact: true }).click();
   await adminPage.waitForLoadState('networkidle');
   await selectFirstOption(adminPage, 'type', 'Simple');
-
-  const familyWrapper = adminPage.locator('input[name="attribute_family_id"]').locator('..');
-  await familyWrapper.locator('.multiselect__tags').click();
-  await familyWrapper.locator('.multiselect__content-wrapper').first().waitFor({ state: 'visible', timeout: 5000 });
-  await familyWrapper
-    .locator('.multiselect__element:not(.multiselect__element--disabled) .multiselect__option:not(.multiselect__option--disabled)')
-    .nth(familyIndex)
-    .click();
-  await closeDropdown(adminPage);
+  await selectFirstOption(adminPage, 'attribute_family_id', familyName);
 
   await adminPage.locator('input[name="sku"]').fill(sku);
   await clickSave(adminPage, 'Save Product');
   await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { waitUntil: 'domcontentloaded', timeout: 30000 });
   await adminPage.waitForLoadState('networkidle').catch(() => {});
+}
+
+/**
+ * Create a multiselect attribute carrying one option, through the same
+ * endpoints the attribute pages post to.
+ */
+async function createMultiselectAttribute(page, code, label) {
+  const headers = async () => ({ 'X-XSRF-TOKEN': await xsrfToken(page.context()) });
+
+  if (! (await xsrfToken(page.context()))) {
+    await navigateTo(page, 'attributes');
+  }
+
+  const created = await page.request.post('/admin/catalog/attributes/create', {
+    headers: await headers(),
+    form: { code, type: 'multiselect', swatch_type: 'text', 'en_US[name]': label },
+  });
+  const id = created.url().match(/attributes\/edit\/(\d+)/)?.[1];
+
+  expect(id, `creating attribute ${code}: HTTP ${created.status()} at ${created.url()}`).toBeTruthy();
+
+  const option = await page.request.post(`/admin/catalog/attributes/${id}/options/create`, {
+    headers: { ...(await headers()), Accept: 'application/json' },
+    data: { code: `${code}_opt`, locales: { en_US: { label: `${label} option` } } },
+  });
+
+  expect(option.ok(), `creating an option for ${code}: HTTP ${option.status()}`).toBe(true);
 }
 
 async function selectFirstOption(page, fieldName, optionLabel) {
@@ -56,109 +85,54 @@ async function selectFirstOption(page, fieldName, optionLabel) {
   await closeDropdown(page);
 }
 
-async function deleteProductBySku(adminPage, sku) {
-  await navigateTo(adminPage, 'products');
-  await searchInDataGrid(adminPage, sku);
-  const deleteIcon = adminPage.locator('span[title="Delete"]').first();
-  if (!(await deleteIcon.isVisible({ timeout: 3000 }).catch(() => false))) {
-    return;
-  }
-  await deleteIcon.click();
-  await adminPage.getByRole('button', { name: 'Delete' }).click();
-  await adminPage.waitForLoadState('networkidle').catch(() => {});
-}
-
-/**
- * Not every family's first non-type/family multiselect necessarily has any
- * selectable option (e.g. a fresh install with no tax categories seeded
- * leaves `tax_category_id` empty), so this opens each candidate in DOM order
- * until it finds one that actually offers something to pick, rather than
- * assuming the very first one does.
- */
-async function findMultiselectWithOptions(page) {
-  const candidates = page
-    .locator('.unsaved-root .multiselect')
-    .filter({ hasNot: page.locator('input[name="type"], input[name="attribute_family_id"]') });
-
-  const count = await candidates.count();
-
-  for (let i = 0; i < count; i++) {
-    const candidate = candidates.nth(i);
-
-    if (!(await candidate.isVisible({ timeout: 3000 }).catch(() => false))) {
-      continue;
-    }
-
-    await candidate.locator('.multiselect__tags').click();
-    await candidate.locator('.multiselect__content-wrapper').first().waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
-
-    // `isVisible()` is an instant, non-retrying snapshot (unlike `waitFor`/`expect`),
-    // so it can race the dropdown's options rendering a tick after the click —
-    // `waitFor` actually polls until the option appears or the timeout elapses.
-    const hasOption = await candidate
-      .locator('.multiselect__element:not(.multiselect__element--disabled) .multiselect__option:not(.multiselect__option--disabled)')
-      .first()
-      .waitFor({ state: 'visible', timeout: 2000 })
-      .then(() => true)
-      .catch(() => false);
-
-    if (hasOption) {
-      return candidate;
-    }
-
-    await closeDropdown(page);
-  }
-
-  return null;
-}
-
 test.describe('Product edit — Discard reverts rich fields', () => {
   test('multiselect edit is reverted by Discard', async ({ adminPage }) => {
-    // The very first family option (typically `default`) can be a bare fixture
-    // family with no populated multiselect attribute of its own (e.g. a fresh
-    // install with no tax categories leaves `tax_category_id` optionless) — try
-    // a handful of families in listed order until one actually offers a
-    // selectable option, rather than assuming the first one does.
-    const MAX_FAMILY_ATTEMPTS = 6;
+    // Demo families carry no multiselect with options, so the test brings one:
+    // its own attribute, on a copy of the default family.
+    const uid = generateUid();
+    const attributeCode = `discard_ms_${uid}`;
+    const label = `Discard MS ${uid}`;
+    const familyCode = `discard_ms_fam_${uid}`;
+    const sku = `discard-ms-${uid}`;
 
-    let msWrapper = null;
-    let sku = null;
+    let family = null;
 
-    for (let familyIndex = 0; familyIndex < MAX_FAMILY_ATTEMPTS; familyIndex++) {
-      sku = `discard-ms-${generateUid()}`;
-      await createSimpleProduct(adminPage, sku, familyIndex);
+    try {
+      await createMultiselectAttribute(adminPage, attributeCode, label);
+      family = await copyDefaultFamily(adminPage, familyCode);
+      await assignAttributeToMediaGroup(adminPage, attributeCode, family.id);
 
-      msWrapper = await findMultiselectWithOptions(adminPage);
+      await createSimpleProduct(adminPage, sku, familyCode);
+      await ensureMediaGroupOpen(adminPage);
 
-      if (msWrapper) {
-        break;
+      const msWrapper = fieldGroup(adminPage, label).locator('.multiselect').first();
+      await expect(msWrapper).toBeVisible();
+
+      const hidden = msWrapper.locator('xpath=following-sibling::input[@type="hidden"]').first();
+      const original = await hidden.inputValue().catch(() => '');
+
+      await msWrapper.locator('.multiselect__tags').click();
+      await msWrapper
+        .locator('.multiselect__element:not(.multiselect__element--disabled) .multiselect__option:not(.multiselect__option--disabled)')
+        .first()
+        .click();
+      await closeDropdown(adminPage);
+
+      await expect(bar(adminPage)).toBeVisible({ timeout: 10000 });
+
+      await confirmDiscard(adminPage);
+
+      await expect(bar(adminPage)).toBeHidden({ timeout: 10000 });
+      await expect(hidden).toHaveValue(original);
+    } finally {
+      await deleteProductBySku(adminPage, sku);
+
+      if (family) {
+        await deleteFamilyByCode(adminPage, familyCode);
       }
 
-      await deleteProductBySku(adminPage, sku);
+      await deleteAttributeByCode(adminPage, attributeCode);
     }
-
-    if (!msWrapper) {
-      test.skip(true, `No editable multiselect attribute with a selectable option in the first ${MAX_FAMILY_ATTEMPTS} families`);
-    }
-
-    const hidden = msWrapper.locator('xpath=following-sibling::input[@type="hidden"]').first();
-    const original = await hidden.inputValue().catch(() => '');
-
-    // The dropdown opened by `findMultiselectWithOptions` while probing is still open.
-    await msWrapper
-      .locator('.multiselect__element:not(.multiselect__element--disabled) .multiselect__option:not(.multiselect__option--disabled)')
-      .first()
-      .click();
-    await closeDropdown(adminPage);
-
-    await expect(bar(adminPage)).toBeVisible({ timeout: 10000 });
-
-    await confirmDiscard(adminPage);
-
-    await expect(bar(adminPage)).toBeHidden({ timeout: 10000 });
-    await expect(hidden).toHaveValue(original);
-
-    await deleteProductBySku(adminPage, sku);
   });
 });
 

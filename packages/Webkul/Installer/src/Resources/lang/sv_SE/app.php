@@ -219,6 +219,14 @@ return [
     ],
 
     'installer' => [
+        'console' => [
+            'confirm-drop'        => 'Ta bort dessa tabeller och installera om?',
+            'drop-aborted'        => 'Installationen avbröts. Inga tabeller togs bort.',
+            'force-required'      => 'Inget tabellprefix är angivet, så alla tabeller som ingen annan installation gör anspråk på skulle tas bort. Kör igen med --force för att ta bort dem, eller ange DB_PREFIX.',
+            'outside-references'  => 'Tabeller utanför tabellprefixet refererar till tabellerna som ska tas bort: :references. Ta först bort dessa främmande nycklar.',
+            'tables-to-drop'      => 'Dessa :count tabeller kommer att tas bort: :tables',
+        ],
+
         'index' => [
             'create-administrator' => [
                 'admin'                   => 'Administratör',

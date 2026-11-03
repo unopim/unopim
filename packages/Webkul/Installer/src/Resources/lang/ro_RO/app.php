@@ -219,6 +219,14 @@ return [
     ],
 
     'installer' => [
+        'console' => [
+            'confirm-drop'        => 'Ștergeți aceste tabele și reinstalați?',
+            'drop-aborted'        => 'Instalare anulată. Nu a fost ștearsă nicio tabelă.',
+            'force-required'      => 'Nu este setat niciun prefix de tabel, deci ar fi șterse toate tabelele pe care nicio altă instalare nu le revendică. Rulați din nou cu --force pentru a le șterge sau setați DB_PREFIX.',
+            'outside-references'  => 'Tabelele din afara prefixului de tabel fac referire la tabelele de șters: :references. Eliminați mai întâi aceste chei străine.',
+            'tables-to-drop'      => 'Aceste :count tabele vor fi șterse: :tables',
+        ],
+
         'index' => [
             'create-administrator' => [
                 'admin'                   => 'Administrator',
