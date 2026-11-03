@@ -1,12 +1,16 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 use Laravel\Ai\Embeddings;
+use Webkul\Admin\Tests\Support\InMemoryEmbeddingElasticSearch;
 use Webkul\AiAgent\Jobs\IndexProductEmbeddingsJob;
 use Webkul\AiAgent\Services\EmbeddingSimilarityService;
 use Webkul\AiAgent\Services\VectorStore\ProductEmbeddingDocumentBuilder;
 use Webkul\AiAgent\Services\VectorStore\ProductEmbeddingIndex;
+use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Core\Facades\ElasticSearch;
+use Webkul\Product\Models\Product;
 
 it('reports disabled unless both the vector store and elasticsearch are enabled', function () {
     $index = new ProductEmbeddingIndex;
@@ -230,6 +234,188 @@ it('rejects an unparseable since option', function () {
     Queue::assertNothingPushed();
 });
 
+it('stores the product attribute family on indexed embedding documents', function () {
+    $product = Product::factory()->simple()->withInitialValues()->create();
+
+    config(['ai-agent.vector_store.enabled' => true, 'elasticsearch.enabled' => true]);
+
+    $es = (new InMemoryEmbeddingElasticSearch)->install();
+
+    Embeddings::fake([[array_fill(0, 8, 0.5)]]);
+
+    (new IndexProductEmbeddingsJob([$product->id]))->handle(new ProductEmbeddingIndex, new ProductEmbeddingDocumentBuilder);
+
+    expect($es->bulkBodies)->toHaveCount(1)
+        ->and($es->bulkBodies[0][0])->toHaveKey('index')
+        ->and($es->bulkBodies[0][1]['attribute_family_id'])->toBe((int) $product->attribute_family_id)
+        ->and($es->documents[$product->id]['attribute_family_id'])->toBe((int) $product->attribute_family_id);
+});
+
+it('matches a family-scoped knn search against documents indexed for that family', function () {
+    $product = Product::factory()->simple()->withInitialValues()->create();
+    $familyId = (int) $product->attribute_family_id;
+
+    config(['ai-agent.vector_store.enabled' => true, 'elasticsearch.enabled' => true]);
+
+    $es = (new InMemoryEmbeddingElasticSearch)->install();
+
+    Embeddings::fake([[array_fill(0, 8, 0.5)], [array_fill(0, 8, 0.5)]]);
+
+    (new IndexProductEmbeddingsJob([$product->id]))->handle(new ProductEmbeddingIndex, new ProductEmbeddingDocumentBuilder);
+
+    $results = (new EmbeddingSimilarityService(new ProductEmbeddingIndex))->rankProducts('red shoes', 5, $familyId);
+
+    expect(end($es->searchBodies)['knn']['filter']['bool']['filter'])->toContain(['term' => ['attribute_family_id' => $familyId]])
+        ->and(array_column($results, 'product_id'))->toBe([$product->id]);
+});
+
+it('repairs a stale document missing its attribute family without re-embedding', function () {
+    $product = Product::factory()->simple()->withInitialValues()->create();
+
+    config(['ai-agent.vector_store.enabled' => true, 'elasticsearch.enabled' => true]);
+
+    $documents = [$product->id => [
+        'product_id'          => $product->id,
+        'sku'                 => $product->sku,
+        'attribute_family_id' => null,
+        'content_hash'        => currentModelContentHash($product),
+        'embedding'           => array_fill(0, 8, 0.5),
+    ]];
+    $es = (new InMemoryEmbeddingElasticSearch($documents))->install();
+
+    Embeddings::fake();
+
+    (new IndexProductEmbeddingsJob([$product->id]))->handle(new ProductEmbeddingIndex, new ProductEmbeddingDocumentBuilder);
+
+    Embeddings::assertNothingGenerated();
+
+    expect($es->bulkBodies)->toHaveCount(1)
+        ->and($es->bulkBodies[0][0])->toHaveKey('update')
+        ->and($es->bulkBodies[0][1]['doc'])->not->toHaveKey('embedding')
+        ->and($es->documents[$product->id]['attribute_family_id'])->toBe((int) $product->attribute_family_id)
+        ->and($es->documents[$product->id]['embedding'])->toBe(array_fill(0, 8, 0.5));
+});
+
+it('skips a product whose content hash and attribute family are both current', function () {
+    $product = Product::factory()->simple()->withInitialValues()->create();
+
+    config(['ai-agent.vector_store.enabled' => true, 'elasticsearch.enabled' => true]);
+
+    $documents = [$product->id => [
+        'product_id'          => $product->id,
+        'attribute_family_id' => (int) $product->attribute_family_id,
+        'content_hash'        => currentModelContentHash($product),
+    ]];
+    $es = (new InMemoryEmbeddingElasticSearch($documents))->install();
+
+    Embeddings::fake();
+
+    (new IndexProductEmbeddingsJob([$product->id]))->handle(new ProductEmbeddingIndex, new ProductEmbeddingDocumentBuilder);
+
+    Embeddings::assertNothingGenerated();
+
+    expect($es->bulkBodies)->toBe([]);
+});
+
+it('queues re-indexing when a product changes attribute family', function () {
+    $product = Product::factory()->simple()->create();
+    $family = AttributeFamily::factory()->create();
+
+    config(['ai-agent.vector_store.enabled' => true, 'elasticsearch.enabled' => true]);
+
+    Queue::fake();
+    ElasticSearch::spy();
+
+    $product->update(['attribute_family_id' => $family->id]);
+
+    Queue::assertPushed(IndexProductEmbeddingsJob::class);
+});
+
+it('keeps rejectUnchanged returning only the documents whose content hash changed', function () {
+    config(['ai-agent.vector_store.enabled' => true, 'elasticsearch.enabled' => true]);
+
+    $documents = [
+        ['product_id' => 1, 'sku' => 'A', 'text' => 'a', 'content_hash' => 'same', 'attribute_family_id' => 2],
+        ['product_id' => 2, 'sku' => 'B', 'text' => 'b', 'content_hash' => 'new', 'attribute_family_id' => 1],
+        ['product_id' => 3, 'sku' => 'C', 'text' => 'c', 'content_hash' => 'fresh', 'attribute_family_id' => 1],
+    ];
+
+    (new InMemoryEmbeddingElasticSearch([
+        1 => ['content_hash' => 'same', 'attribute_family_id' => null],
+        2 => ['content_hash' => 'old', 'attribute_family_id' => 1],
+    ]))->install();
+
+    $job = new class([1, 2, 3]) extends IndexProductEmbeddingsJob
+    {
+        public function callRejectUnchanged(ProductEmbeddingIndex $index, array $documents): array
+        {
+            return $this->rejectUnchanged($index, $documents);
+        }
+    };
+
+    expect($job->callRejectUnchanged(new ProductEmbeddingIndex, $documents))->toBe([$documents[1], $documents[2]]);
+});
+
+it('throws so the queue retries when elasticsearch rejects an embedding upsert', function () {
+    $product = Product::factory()->simple()->withInitialValues()->create();
+
+    config(['ai-agent.vector_store.enabled' => true, 'elasticsearch.enabled' => true]);
+
+    $es = (new InMemoryEmbeddingElasticSearch)->install();
+    $es->rejectedIds = [$product->id];
+
+    Embeddings::fake([[array_fill(0, 8, 0.5)]]);
+
+    expect(fn () => (new IndexProductEmbeddingsJob([$product->id]))->handle(new ProductEmbeddingIndex, new ProductEmbeddingDocumentBuilder))
+        ->toThrow(RuntimeException::class, (string) $product->id);
+
+    expect($es->documents)->not->toHaveKey($product->id);
+});
+
+it('throws so the queue retries when elasticsearch rejects an attribute family repair', function () {
+    $product = Product::factory()->simple()->withInitialValues()->create();
+
+    config(['ai-agent.vector_store.enabled' => true, 'elasticsearch.enabled' => true]);
+
+    $es = (new InMemoryEmbeddingElasticSearch([$product->id => [
+        'product_id'          => $product->id,
+        'attribute_family_id' => null,
+        'content_hash'        => currentModelContentHash($product),
+    ]]))->install();
+    $es->rejectedIds = [$product->id];
+
+    Embeddings::fake();
+
+    expect(fn () => (new IndexProductEmbeddingsJob([$product->id]))->handle(new ProductEmbeddingIndex, new ProductEmbeddingDocumentBuilder))
+        ->toThrow(RuntimeException::class, (string) $product->id);
+
+    Embeddings::assertNothingGenerated();
+});
+
+it('keeps rejectUnchanged accepting documents without an attribute family key', function () {
+    config(['ai-agent.vector_store.enabled' => true, 'elasticsearch.enabled' => true]);
+
+    $documents = [
+        ['product_id' => 1, 'sku' => 'A', 'text' => 'a', 'content_hash' => 'same'],
+        ['product_id' => 2, 'sku' => 'B', 'text' => 'b', 'content_hash' => 'new'],
+    ];
+
+    (new InMemoryEmbeddingElasticSearch([
+        1 => ['content_hash' => 'same', 'attribute_family_id' => 3],
+        2 => ['content_hash' => 'old', 'attribute_family_id' => 3],
+    ]))->install();
+
+    $job = new class([1, 2]) extends IndexProductEmbeddingsJob
+    {
+        public function callRejectUnchanged(ProductEmbeddingIndex $index, array $documents): array
+        {
+            return $this->rejectUnchanged($index, $documents);
+        }
+    };
+
+    expect($job->callRejectUnchanged(new ProductEmbeddingIndex, $documents))->toBe([$documents[1]]);
+});
+
 it('restricts knn hits to vectors from the same embedding model', function () {
     config(['elasticsearch.prefix' => 'testing']);
 
@@ -243,3 +429,13 @@ it('restricts knn hits to vectors from the same embedding model', function () {
 
     expect((new ProductEmbeddingIndex)->searchSimilar([0.1, 0.2], 5, 4, 'gemini/gemini-embedding-2/768'))->toBe([]);
 });
+
+function currentModelContentHash(Product $product): string
+{
+    $index = new ProductEmbeddingIndex;
+    $service = new EmbeddingSimilarityService($index);
+    $fingerprint = $service->embeddingFingerprint($service->resolvePlatform(dimensions: $index->dimensions()), $index->dimensions());
+    $document = (new ProductEmbeddingDocumentBuilder)->build($product->id, $product->sku, DB::table('products')->where('id', $product->id)->value('values'));
+
+    return hash('sha256', $document['content_hash'].'|'.$fingerprint);
+}

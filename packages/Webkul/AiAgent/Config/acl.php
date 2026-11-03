@@ -141,12 +141,6 @@ return [
         'route' => 'ai-agent.dashboard.analytics',
         'sort'  => 9,
     ],
-    [
-        'key'   => 'ai-agent.approvals',
-        'name'  => 'ai-agent::app.acl.approvals',
-        'route' => 'ai-agent.approvals.index',
-        'sort'  => 10,
-    ],
 
     /**
      * MagicAI content/translation/model helper endpoints. Their controllers

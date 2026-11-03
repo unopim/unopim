@@ -88,7 +88,7 @@ const openCategoryFilterPanel = async (page) => {
   await expect(page.locator(PANEL)).toBeVisible();
 };
 
-test.describe('datagrid filter category panel stacking', () => {
+test.describe('datagrid filter category panel stacking', { tag: '@global-state' }, () => {
   test.beforeEach(async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
   });

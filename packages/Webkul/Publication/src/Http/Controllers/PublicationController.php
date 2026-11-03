@@ -92,6 +92,9 @@ class PublicationController extends Controller
      *
      * The locale switcher is built from the published versions, not the channel's
      * locales: a channel locale with no current version has no URL to switch to.
+     *
+     * A Redacted tombstone answers 410 Gone because redaction is irreversible; a Withdrawn one can be
+     * reinstated, so it stays 200. Neither may sit in a shared cache, as there is no purge hook to evict it.
      */
     public function show(Request $request, string $uuid, string $locale): Response
     {
@@ -169,11 +172,15 @@ class PublicationController extends Controller
                 ->values(),
         ]);
 
+        $tombstone = $publication->status !== PublicationStatus::Published;
+
+        $status = $publication->status === PublicationStatus::Redacted ? 410 : 200;
+
         return $this->tierCache(
-            response($view->render())
+            response($view->render(), $status)
                 ->header('ETag', $etag)
-                ->header('Cache-Control', $this->cacheControl($publication->channel?->code))
-                ->header('X-Robots-Tag', ((bool) (core()->getConfigData('general.publication.settings.indexable', $publication->channel->code) ?? false)) ? 'index, nofollow' : 'noindex, nofollow'),
+                ->header('Cache-Control', $tombstone ? 'private, no-store' : $this->cacheControl($publication->channel?->code))
+                ->header('X-Robots-Tag', (! $tombstone && (bool) (core()->getConfigData('general.publication.settings.indexable', $publication->channel->code) ?? false)) ? 'index, nofollow' : 'noindex, nofollow'),
             $grantedIndex,
         );
     }

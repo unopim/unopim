@@ -219,6 +219,14 @@ return [
     ],
 
     'installer' => [
+        'console' => [
+            'confirm-drop'        => '要刪除這些資料表並重新安裝嗎?',
+            'drop-aborted'        => '安裝已中止。未刪除任何資料表。',
+            'force-required'      => '未設定資料表前綴,因此所有未被其他安裝佔用的資料表都將被刪除。請使用 --force 重新執行以刪除它們,或設定 DB_PREFIX。',
+            'outside-references'  => '資料表前綴之外的資料表參照了要刪除的資料表：:references。請先移除這些外鍵。',
+            'tables-to-drop'      => '將刪除以下 :count 個資料表：:tables',
+        ],
+
         'index' => [
             'create-administrator' => [
                 'admin'                   => '管理員',

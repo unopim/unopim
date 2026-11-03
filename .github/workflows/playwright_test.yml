@@ -1,11 +1,17 @@
 name: Playwright Tests
 
+# A pull request gets the fast signal (code style, static analysis, translations
+# and Pest on MySQL); the full database matrix and the end-to-end suite run in
+# the merge queue and on the release lines, so they gate every merge without
+# holding up review.
+#
 # A branch push and its own pull request are the same commit, so pushes are
 # limited to the release lines and everything else arrives through the PR event.
 on:
   push:
     branches: [master, '3.x']
   pull_request:
+  merge_group:
 
 # head_ref is the branch on a pull request and empty elsewhere, which keeps a
 # branch's runs in one group no matter which event opened them.
@@ -21,6 +27,7 @@ env:
 
 jobs:
   playwright_tests:
+    if: github.repository == 'unopim/unopim' && github.event_name != 'pull_request'
     name: Playwright E2E | Shard ${{ matrix.shard-index }}/${{ matrix.shard-total }}
     runs-on: ubuntu-24.04
 
@@ -63,15 +70,15 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
 
       - name: Set up Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '22'
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@2.40.0
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
         with:
           php-version: '8.4'
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
@@ -80,19 +87,19 @@ jobs:
           coverage: none
 
       - name: Install Composer dependencies
-        uses: ramsey/composer-install@v4
+        uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
         with:
           composer-options: "--optimize-autoloader"
 
       - name: Cache npm dependencies
-        uses: actions/cache@v5
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
         with:
           path: tests/e2e-pw/node_modules
           key: ${{ runner.os }}-npm-${{ hashFiles('tests/e2e-pw/package-lock.json') }}
           restore-keys: ${{ runner.os }}-npm-
 
       - name: Cache Playwright browsers
-        uses: actions/cache@v5
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('tests/e2e-pw/package-lock.json') }}
@@ -100,7 +107,7 @@ jobs:
       - name: Install npm & Playwright browsers
         run: |
           cd tests/e2e-pw
-          npm install --no-progress --prefer-offline
+          npm ci --no-progress --prefer-offline
           npx playwright install --with-deps chromium
 
       - name: Setting Environment
@@ -145,7 +152,9 @@ jobs:
           php artisan unopim:passport:install-preset
           php artisan db:seed --class=DiscardQaFixtureSeeder
           php artisan tinker tests/e2e-pw/scripts/seed-dpp-e2e.php
-          php artisan serve --host=0.0.0.0 --port=8000 > /tmp/server.log 2>&1 &
+          php artisan tinker tests/e2e-pw/scripts/seed-legacy-export-job.php
+          # Several PHP workers so parallel Playwright workers are not queued behind one request.
+          PHP_CLI_SERVER_WORKERS=6 php artisan serve --no-reload --host=0.0.0.0 --port=8000 > /tmp/server.log 2>&1 &
           php artisan queue:work --queue=webhooks,default,system,completeness,publication > /tmp/queue.log 2>&1 &
           echo "Waiting for server..."
           timeout 30 bash -c 'until curl -s http://127.0.0.1:8000 > /dev/null; do sleep 1; done' || (cat /tmp/server.log && exit 1)
@@ -153,17 +162,45 @@ jobs:
       - name: Run Playwright tests
         env:
           PASSPORT_E2E_LOCAL: '1'
+          PW_WORKERS: '3'
+          # Duration-balanced file sets instead of --shard's equal test counts (see shard-balance.js).
+          PW_SHARD: ${{ matrix.shard-index }}/${{ matrix.shard-total }}
+        # @global-state specs change store-wide settings, so they run after the
+        # rest on one worker. Both passes always run and either one fails the step.
         run: |
           cd tests/e2e-pw
-          npx playwright test --reporter=list,html --shard=${{ matrix.shard-index }}/${{ matrix.shard-total }}
+          status=0
+          PW_PASS=parallel npx playwright test --pass-with-no-tests || status=$?
+          PW_PASS=serial npx playwright test --pass-with-no-tests || status=$?
+          exit $status
 
       - name: Upload test results
         if: failure()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: playwright-report-shard-${{ matrix.shard-index }}-${{ github.run_id }}
           path: |
             tests/e2e-pw/playwright-report
+            tests/e2e-pw/playwright-report-serial
             tests/e2e-pw/test-results
+            tests/e2e-pw/test-results-serial
+            storage/logs/*.log
+            /tmp/server.log
+            /tmp/queue.log
             storage/logs/laravel.log
           retention-days: 1
+
+  # A skipped matrix job reports its check under the unexpanded name, which can
+  # never satisfy a required check. This stand-in reports the expanded names on
+  # a pull request so it can enter the merge queue, where the real job runs.
+  playwright_tests_pull_request:
+    if: github.repository == 'unopim/unopim' && github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    name: Playwright E2E | Shard ${{ matrix.shard-index }}/${{ matrix.shard-total }}
+    strategy:
+      matrix:
+        shard-index: [1,2,3,4,5,6,7,8]
+        shard-total: [8]
+    steps:
+      - name: Defer to the merge queue
+        run: echo "::notice::Playwright E2E runs in the merge queue and on the release lines."

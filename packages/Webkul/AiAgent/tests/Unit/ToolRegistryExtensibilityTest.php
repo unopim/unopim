@@ -235,6 +235,18 @@ it('lists registered write tools, including plugin ones, in suggest mode', funct
     expect($prompt)->toMatch('/Only use read-only tools: [^\n]*search_products/');
 });
 
+it('points suggest mode at the approval modes the settings actually offer', function () {
+    extensibilityMockCoreConfig([
+        'general.magic_ai.agentic_pim.approval_mode' => 'suggest',
+    ]);
+
+    $prompt = extensibilityBuildSystemPrompt(extensibilityChatContext(extensibilityFullAccessAdmin()));
+
+    expect($prompt)->toContain("'Confirm & apply' or 'Strict confirm'");
+    expect($prompt)->not->toContain('Auto-apply');
+    expect($prompt)->not->toContain('Review queue');
+});
+
 it('lists registered write tools in review mode wording', function () {
     extensibilityMockCoreConfig([
         'general.magic_ai.agentic_pim.approval_mode' => 'review',

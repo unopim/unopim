@@ -160,3 +160,44 @@ test('mass delete with every matching product selected sends the grid filters af
   expect(payload.indices).toBeUndefined();
   expect(payload.sort).toBeUndefined();
 });
+
+test('unticking one product after select all matching keeps the rest selected across pages', async ({ page }) => {
+  test.setTimeout(120000);
+
+  const total = await selectAllMatching(page);
+
+  const firstRow = page.locator('label[for^="mass_action_select_record_"]').first();
+  const excludedId = Number((await firstRow.getAttribute('for')).replace('mass_action_select_record_', ''));
+
+  await firstRow.click();
+
+  await expect(page.getByText(`${total - 1} of`, { exact: false }).first()).toBeVisible();
+
+  const nextPage = page.waitForResponse((response) => response.url().includes('/admin/catalog/products?')
+    && response.request().method() === 'GET'
+    && response.ok(), { timeout: 90000 });
+
+  await page.getByRole('button', { name: 'Next Page' }).first().click();
+  await nextPage;
+
+  await expect(page.getByText(`${total - 1} of`, { exact: false }).first()).toBeVisible();
+  await expect(page.locator('input[id^="mass_action_select_record_"]').first()).toBeChecked();
+
+  let payload = null;
+
+  await page.route('**/admin/catalog/products/mass-update', async (route) => {
+    payload = route.request().postDataJSON();
+
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'ok' }) });
+  });
+
+  await page.getByRole('button', { name: 'Select Action' }).click();
+  await page.getByText('Update Status', { exact: true }).hover();
+  await page.getByText('Enable', { exact: true }).click();
+  await page.getByRole('button', { name: 'Agree', exact: true }).click();
+
+  await expect.poll(() => payload).not.toBeNull();
+
+  expect(payload.select_all).toBe(1);
+  expect(payload.excluded_indices).toEqual([excludedId]);
+});

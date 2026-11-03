@@ -477,6 +477,22 @@ abstract class DataGrid
     }
 
     /**
+     * @return LazyCollection<int, mixed>
+     */
+    public function getSelectedIds(): LazyCollection
+    {
+        $matchingIds = $this->getMatchingIds();
+
+        $excludedIds = array_flip(array_map(strval(...), array_filter((array) request()->input('excluded_indices', []), is_scalar(...))));
+
+        if ($excludedIds === []) {
+            return $matchingIds;
+        }
+
+        return $matchingIds->reject(fn ($id): bool => isset($excludedIds[(string) $id]));
+    }
+
+    /**
      * Build the export rows for the given records, one slice of a queued "select all matching" export.
      *
      * @param  array<int, int|string>  $ids

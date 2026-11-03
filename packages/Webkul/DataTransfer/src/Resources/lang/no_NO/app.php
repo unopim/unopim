@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'Attributtalternativkoden :code er allerede i bruk.',
                     'code_not_found_to_delete' => 'Attributtalternativkoden ble ikke funnet for sletting.',
+                    'ambiguous-code-to-delete' => 'Alternativkoden :code finnes på mer enn ett attributt; legg til attribute_code.',
                     'locale-not-exist'         => 'Språket ":code" eksisterer ikke.',
                     'invalid-attribute'        => 'Attributtet ":code" eksisterer ikke.',
                 ],
@@ -299,6 +300,7 @@ return [
             'column-not-found'       => 'Mangler nødvendige kolonner: %s.',
             'column-numbers'         => 'Antall kolonner stemmer ikke med antall rader i overskriften.',
             'invalid-attribute'      => 'Overskrift inneholder ugyldige attributter: "%s".',
+            'invalid-boolean'        => 'Kolonnen ":column" har verdien ":value", som ikke er en boolsk verdi. Bruk true, false, yes, no, on, off, 1 eller 0.',
             'system'                 => 'En uventet systemfeil oppstod.',
             'wrong-quotes'           => 'Skråstilt anførselstegn brukt i stedet for rette anførselstegn.',
             'file-empty'             => 'Filen er tom eller inneholder ingen overskriftsrad. Vennligst last opp en gyldig fil med data.',
@@ -310,5 +312,6 @@ return [
         'completed' => 'Jobbutførelse fullført',
         'stalled'   => 'Jobben sluttet å svare i mer enn :minutes minutter og ble markert som mislykket. Prosessen som kjørte den ble sannsynligvis avbrutt.',
         'reaped'    => ':count fastlåste jobber ble markert som mislykkede.',
+        'stopped'   => 'Importen ble stoppet etter validering med :count feil. Ingen rader ble importert.',
     ],
 ];

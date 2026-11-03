@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'Attributindstillingskoden :code er allerede i brug.',
                     'code_not_found_to_delete' => 'Attributindstillingskode blev ikke fundet til sletning.',
+                    'ambiguous-code-to-delete' => 'Indstillingskoden :code findes på mere end én attribut; tilføj attribute_code.',
                     'locale-not-exist'         => 'Sprog ":code" findes ikke.',
                     'invalid-attribute'        => 'Attributten ":code" findes ikke.',
                 ],
@@ -299,6 +300,7 @@ return [
             'column-not-found'       => 'Krævede kolonner findes ikke: %s.',
             'column-numbers'         => 'Antallet af kolonner svarer ikke til antallet af rækker i overskriften.',
             'invalid-attribute'      => 'Overskriften indeholder ugyldige attributter: "%s".',
+            'invalid-boolean'        => 'Kolonnen ":column" har værdien ":value", som ikke er en boolsk værdi. Brug true, false, yes, no, on, off, 1 eller 0.',
             'system'                 => 'En uventet systemfejl opstod.',
             'wrong-quotes'           => 'Korte citationstegn blev brugt i stedet for lige citationstegn.',
             'file-empty'             => 'Filen er tom eller indeholder ingen headerrække. Upload venligst en gyldig fil med data.',
@@ -310,5 +312,6 @@ return [
         'completed' => 'Job udførelsen afsluttet',
         'stalled'   => 'Jobbet holdt op med at svare i mere end :minutes minutter og blev markeret som mislykket. Arbejdsprocessen blev sandsynligvis afbrudt.',
         'reaped'    => ':count fastlåste job blev markeret som mislykkede.',
+        'stopped'   => 'Importen blev stoppet efter validering med :count fejl. Ingen rækker blev importeret.',
     ],
 ];

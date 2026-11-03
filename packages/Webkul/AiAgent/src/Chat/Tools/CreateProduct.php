@@ -11,7 +11,6 @@ use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
-use Webkul\AiAgent\Chat\Concerns\QueuesForApproval;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 use Webkul\AiAgent\Jobs\TranslateProductValuesJob;
 use Webkul\AiAgent\Services\ProductWriterService;
@@ -32,7 +31,6 @@ class CreateProduct implements PimTool
         return new class($context, $writerService) extends ContextualTool
         {
             use ChecksPermission;
-            use QueuesForApproval;
 
             public function __construct(ChatContext $context, protected ProductWriterService $writerService)
             {
@@ -128,14 +126,6 @@ class CreateProduct implements PimTool
                 }
 
                 $familyId = $familyResolution['id'];
-
-                if ($this->shouldQueueForApproval()) {
-                    return $this->queueChange($this->context, "Create {$type} product: {$name}", [
-                        'type'           => 'create_product',
-                        'data'           => ['sku' => $sku, 'name' => $name, 'product_type' => $type, 'family' => $family, 'attributes' => $allAttrs],
-                        'affected_count' => 1,
-                    ]);
-                }
 
                 $repo = resolve(ProductRepository::class);
 

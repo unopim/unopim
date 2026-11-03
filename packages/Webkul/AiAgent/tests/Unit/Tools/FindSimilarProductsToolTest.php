@@ -223,8 +223,9 @@ it('indexes product embeddings through the resolved platform at the index dimens
 
     $index = Mockery::mock(ProductEmbeddingIndex::class);
     $index->shouldReceive('isEnabled')->andReturn(true);
-    $index->shouldReceive('existingContentHashes')->andReturn([]);
+    $index->shouldReceive('existingDocuments')->andReturn([]);
     $index->shouldReceive('ensureIndex')->once();
+    $index->shouldReceive('bulkUpdateAttributeFamilies')->with([])->andReturn([]);
     $index->shouldReceive('dimensions')->andReturn(768);
     $index->shouldReceive('bulkUpsert')
         ->once()
@@ -246,8 +247,9 @@ it('indexes through the default embeddings provider at the index dimensions when
 
     $index = Mockery::mock(ProductEmbeddingIndex::class);
     $index->shouldReceive('isEnabled')->andReturn(true);
-    $index->shouldReceive('existingContentHashes')->andReturn([]);
+    $index->shouldReceive('existingDocuments')->andReturn([]);
     $index->shouldReceive('ensureIndex')->once();
+    $index->shouldReceive('bulkUpdateAttributeFamilies')->with([])->andReturn([]);
     $index->shouldReceive('dimensions')->andReturn(768);
     $index->shouldReceive('bulkUpsert')->once()->andReturn([]);
 
@@ -273,8 +275,11 @@ it('skips products already embedded by the same embedding model', function () {
     $index = Mockery::mock(ProductEmbeddingIndex::class);
     $index->shouldReceive('isEnabled')->andReturn(true);
     $index->shouldReceive('dimensions')->andReturn(768);
-    $index->shouldReceive('existingContentHashes')->andReturn([
-        $product->id => stampedContentHash($product->fresh(), 'gemini/gemini-embedding-2/768'),
+    $index->shouldReceive('existingDocuments')->andReturn([
+        $product->id => [
+            'content_hash'        => stampedContentHash($product->fresh(), 'gemini/gemini-embedding-2/768'),
+            'attribute_family_id' => (int) $product->attribute_family_id,
+        ],
     ]);
     $index->shouldNotReceive('bulkUpsert');
 
@@ -294,9 +299,13 @@ it('re-embeds unchanged products when the embedding model changes', function () 
     $index->shouldReceive('isEnabled')->andReturn(true);
     $index->shouldReceive('dimensions')->andReturn(768);
     $index->shouldReceive('ensureIndex')->once();
-    $index->shouldReceive('existingContentHashes')->andReturn([
-        $product->id => stampedContentHash($product->fresh(), 'openai/text-embedding-3-small/768'),
+    $index->shouldReceive('existingDocuments')->andReturn([
+        $product->id => [
+            'content_hash'        => stampedContentHash($product->fresh(), 'openai/text-embedding-3-small/768'),
+            'attribute_family_id' => (int) $product->attribute_family_id,
+        ],
     ]);
+    $index->shouldReceive('bulkUpdateAttributeFamilies')->with([])->andReturn([]);
     $index->shouldReceive('bulkUpsert')->once()->andReturn([]);
 
     (new IndexProductEmbeddingsJob([$product->id]))->handle($index, new ProductEmbeddingDocumentBuilder);

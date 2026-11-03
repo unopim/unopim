@@ -1,4 +1,6 @@
 const { test, expect } = require('../../utils/fixtures');
+const { generateUid } = require('../../utils/helpers');
+const { createConfigurableProduct, deleteProductBySku } = require('../../utils/product-helpers');
 
 const DASHBOARD_URL = '/admin/dashboard';
 const PRODUCTS_URL = '/admin/catalog/products';
@@ -13,7 +15,8 @@ async function dashboardHasProducts(adminPage) {
   // Register the response listener BEFORE navigation so we never miss the
   // /admin/dashboard/stats call when it resolves during networkidle.
   const statsResponsePromise = adminPage.waitForResponse(
-    (resp) => resp.url().includes('/admin/dashboard/stats') && resp.status() === 200,
+    // The dashboard fires one stats request per widget; only product-stats carries the totals.
+    (resp) => resp.url().includes('/admin/dashboard/stats?type=product-stats') && resp.status() === 200,
     { timeout: 15000 }
   ).catch(() => null);
 
@@ -62,19 +65,23 @@ test.describe('Dashboard product-stats widget filter links', () => {
   });
 
   test('Configurable legend chip links with type=configurable filter', async ({ adminPage }) => {
-    test.skip(!(await dashboardHasProducts(adminPage)), 'Dashboard is in empty state — no products in the fixture DB');
+    // The type legend only renders types present in the catalogue, and the demo
+    // data carries no configurable, so the test brings its own.
+    const sku = `dash-cfg-${generateUid()}`;
 
-    // The type legend only renders entries that exist in the user's catalogue.
-    // If no configurables exist, skip rather than fail.
-    const configurableChip = adminPage.locator('a:has(span.capitalize:text("configurable"))').first();
+    await createConfigurableProduct(adminPage, sku);
 
-    if (await configurableChip.count() === 0) {
-      test.skip('No configurable products in the fixture — chip not rendered');
-      return;
+    try {
+      expect(await dashboardHasProducts(adminPage)).toBe(true);
+
+      const configurableChip = adminPage.locator('a:has(span.capitalize:text("configurable"))').first();
+      await expect(configurableChip).toBeVisible();
+
+      const href = await configurableChip.getAttribute('href');
+      expect(href).toContain('filters[type][]=configurable');
+    } finally {
+      await deleteProductBySku(adminPage, sku);
     }
-
-    const href = await configurableChip.getAttribute('href');
-    expect(href).toContain('filters[type][]=configurable');
   });
 
   test('Simple legend chip links with type=simple filter', async ({ adminPage }) => {

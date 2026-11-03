@@ -81,7 +81,7 @@ class ExportDataGridSelection implements ShouldQueue
 
         try {
             $this->withGridRequest(function (DataGrid $dataGrid) use ($spool, &$columns, &$rows, &$records, $limit): void {
-                $dataGrid->getMatchingIds()
+                $dataGrid->getSelectedIds()
                     ->chunk(static::CHUNK_SIZE)
                     ->each(function (LazyCollection $ids) use ($spool, &$columns, &$rows, &$records, $limit): bool {
                         $slice = app($this->dataGrid)->getExportableRows($ids->values()->all());

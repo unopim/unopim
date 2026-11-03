@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'Kod opcji atrybutu :code jest już w użyciu.',
                     'code_not_found_to_delete' => 'Nie znaleziono kodu opcji atrybutu do usunięcia.',
+                    'ambiguous-code-to-delete' => 'Kod opcji :code istnieje w więcej niż jednym atrybucie; dodaj attribute_code.',
                     'locale-not-exist'         => 'Ustawienia regionalne ":code" nie istnieją.',
                     'invalid-attribute'        => 'Atrybut ":code" nie istnieje.',
                 ],
@@ -299,6 +300,7 @@ return [
             'column-not-found'       => 'Brak wymaganych kolumn: %s.',
             'column-numbers'         => 'Liczba kolumn nie odpowiada liczbie wierszy w nagłówku.',
             'invalid-attribute'      => 'Nagłówek zawiera nieprawidłowe atrybuty: "%s".',
+            'invalid-boolean'        => 'Kolumna ":column" ma wartość ":value", która nie jest wartością logiczną. Użyj true, false, yes, no, on, off, 1 lub 0.',
             'system'                 => 'Wystąpił nieoczekiwany błąd systemowy.',
             'wrong-quotes'           => 'Zastosowano krzywe cudzysłowy zamiast prostych cudzysłowów.',
             'file-empty'             => 'Plik jest pusty lub nie zawiera wiersza nagłówkowego. Proszę przesłać prawidłowy plik z danymi.',
@@ -310,5 +312,6 @@ return [
         'completed' => 'Zakończenie pracy',
         'stalled'   => 'Zadanie przestało odpowiadać przez ponad :minutes minut i zostało oznaczone jako nieudane. Proces, który je wykonywał, prawdopodobnie został zakończony.',
         'reaped'    => 'Oznaczono :count zatrzymanych zadań jako nieudane.',
+        'stopped'   => 'Import zatrzymano po walidacji z liczbą błędów: :count. Nie zaimportowano żadnych wierszy.',
     ],
 ];

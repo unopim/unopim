@@ -70,6 +70,55 @@ it('deletes every product matching the filters when all matching are selected', 
         ->and(Product::whereIn('id', $other)->count())->toBe(2);
 });
 
+it('leaves the products unticked after selecting all matching out of the status update', function () {
+    $matching = createSkuPrefixedProducts('SELEXC-MATCH-', 5);
+    $excluded = array_slice($matching, 0, 2);
+
+    $this->postJson(route('admin.catalog.products.mass_update'), [
+        'select_all'       => true,
+        'filters'          => ['sku' => ['SELEXC-MATCH-']],
+        'excluded_indices' => $excluded,
+        'value'            => true,
+    ])->assertOk();
+
+    expect(Product::whereIn('id', array_diff($matching, $excluded))->pluck('status')->map(fn ($status) => (int) $status)->unique()->all())->toBe([1])
+        ->and(Product::whereIn('id', $excluded)->pluck('status')->map(fn ($status) => (int) $status)->unique()->all())->toBe([0]);
+});
+
+it('leaves the products unticked after selecting all matching out of the mass delete', function () {
+    $matching = createSkuPrefixedProducts('SELEXCDEL-MATCH-', 5);
+    $excluded = [$matching[4]];
+
+    $this->postJson(route('admin.catalog.products.mass_delete'), [
+        'select_all'       => true,
+        'filters'          => ['sku' => ['SELEXCDEL-MATCH-']],
+        'excluded_indices' => $excluded,
+    ])->assertOk();
+
+    expect(Product::whereIn('id', $matching)->pluck('id')->all())->toBe($excluded);
+});
+
+it('leaves the products unticked after selecting all matching out of bulk edit', function () {
+    $matching = createSkuPrefixedProducts('SELEXCBULK-MATCH-', 4);
+    $excluded = [$matching[1]];
+
+    $this->postJson(route('admin.catalog.products.bulkedit.filters'), [
+        'select_all'       => true,
+        'filters'          => ['sku' => ['SELEXCBULK-MATCH-']],
+        'excluded_indices' => $excluded,
+    ])->assertOk();
+
+    expect(session('bulk_edit_product_ids'))->toEqualCanonicalizing(array_values(array_diff($matching, $excluded)));
+});
+
+it('rejects excluded ids that are not integers', function () {
+    $this->postJson(route('admin.catalog.products.mass_delete'), [
+        'select_all'       => true,
+        'excluded_indices' => ['not-an-id'],
+    ])->assertUnprocessable()
+        ->assertJsonValidationErrors('excluded_indices.0');
+});
+
 it('still requires an id list when all matching are not selected', function () {
     $this->postJson(route('admin.catalog.products.mass_delete'), [])
         ->assertUnprocessable()

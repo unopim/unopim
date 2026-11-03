@@ -11,6 +11,9 @@ use Webkul\AiAgent\Chat\ChatContext;
  *
  * Tools using this trait should call shouldQueueForApproval()
  * before executing writes. If true, call queueChange() instead.
+ *
+ * @deprecated Nothing applies the queued changesets, so queued writes never happen.
+ *             Kept for extensions that use it; it will be removed in 4.0.
  */
 trait QueuesForApproval
 {

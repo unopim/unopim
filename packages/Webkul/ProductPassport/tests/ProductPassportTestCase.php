@@ -28,6 +28,18 @@ class ProductPassportTestCase extends TestCase
     use UserAssertions;
 
     /**
+     * Fakes the source and asset disks: fixtures write documents at fixed paths, and on the
+     * real disk a parallel worker overwriting one would change another worker's checksum.
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Storage::fake(config('filesystems.default'));
+        Storage::fake(config('publication.asset_disk'));
+    }
+
+    /**
      * A source attribute with a unique code. The template references attributes by
      * id, so the code only has to be free — fixing it would collide with whatever
      * the catalog already holds.

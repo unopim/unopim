@@ -103,6 +103,7 @@ return [
                 'errors' => [
                     'duplicate-code'           => 'O código de opção de atributo :code já está em uso.',
                     'code_not_found_to_delete' => 'Código de opção de atributo não encontrado para exclusão.',
+                    'ambiguous-code-to-delete' => 'O código de opção :code existe em mais de um atributo; adicione attribute_code.',
                     'locale-not-exist'         => 'A localidade ":code" não existe.',
                     'invalid-attribute'        => 'O atributo ":code" não existe.',
                 ],
@@ -299,6 +300,7 @@ return [
             'column-not-found'       => 'Colunas necessárias não encontradas: %s.',
             'column-numbers'         => 'O número de colunas não corresponde ao número de linhas no cabeçalho.',
             'invalid-attribute'      => 'O cabeçalho contém atributos inválidos: "%s".',
+            'invalid-boolean'        => 'A coluna ":column" tem o valor ":value", que não é um booleano. Use true, false, yes, no, on, off, 1 ou 0.',
             'system'                 => 'Ocorreu um erro do sistema inesperado.',
             'wrong-quotes'           => 'Aspas inclinadas usadas em vez de aspas diretas.',
             'file-empty'             => 'O arquivo está vazio ou não contém uma linha de cabeçalho. Por favor, envie um arquivo válido com dados.',
@@ -310,5 +312,6 @@ return [
         'completed' => 'Conclusão da execução do trabalho',
         'stalled'   => 'A tarefa parou de responder por mais de :minutes minutos e foi marcada como falha. O processo que a executava provavelmente foi encerrado.',
         'reaped'    => ':count tarefas travadas foram marcadas como falha.',
+        'stopped'   => 'A importação foi interrompida após a validação com :count erros. Nenhuma linha foi importada.',
     ],
 ];
