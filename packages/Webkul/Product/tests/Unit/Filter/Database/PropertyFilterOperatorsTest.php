@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\DB;
+use Webkul\Core\Models\Channel;
 use Webkul\ElasticSearch\Enums\FilterOperators;
 use Webkul\Product\Filter\Database\Property\CategoryFilter;
 use Webkul\Product\Filter\Database\Property\CompletenessFilter;
@@ -23,28 +24,48 @@ function applyPropertyFilter($filter, string $property, FilterOperators $operato
 
 describe('CompletenessFilter', function () {
     it('compares the average completeness score', function () {
-        $queryBuilder = applyPropertyFilter(new CompletenessFilter, 'completeness', FilterOperators::GREATER_THAN_OR_EQUAL, ['50']);
+        $queryBuilder = applyPropertyFilter(app(CompletenessFilter::class), 'completeness', FilterOperators::GREATER_THAN_OR_EQUAL, ['50']);
 
         expect($queryBuilder->toSql())->toContain(DB::getQueryGrammar()->wrap('products.avg_completeness_score').' >= ?')
             ->and($queryBuilder->getBindings())->toContain(50.0);
     });
 
     it('builds a BETWEEN for a range', function () {
-        $queryBuilder = applyPropertyFilter(new CompletenessFilter, 'completeness', FilterOperators::RANGE, ['20', '80']);
+        $queryBuilder = applyPropertyFilter(app(CompletenessFilter::class), 'completeness', FilterOperators::RANGE, ['20', '80']);
 
         expect($queryBuilder->toSql())->toContain('BETWEEN ? AND ?')
             ->and($queryBuilder->getBindings())->toBe([20.0, 80.0]);
     });
 
     it('matches products without a score', function () {
-        $queryBuilder = applyPropertyFilter(new CompletenessFilter, 'completeness', FilterOperators::IS_EMPTY, ['']);
+        $queryBuilder = applyPropertyFilter(app(CompletenessFilter::class), 'completeness', FilterOperators::IS_EMPTY, ['']);
 
         expect($queryBuilder->toSql())->toContain(DB::getQueryGrammar()->wrap('products.avg_completeness_score').' IS NULL');
     });
 
     it('rejects an unsupported property', function () {
-        applyPropertyFilter(new CompletenessFilter, 'sku', FilterOperators::EQUAL, ['10']);
+        applyPropertyFilter(app(CompletenessFilter::class), 'sku', FilterOperators::EQUAL, ['10']);
     })->throws(InvalidArgumentException::class);
+
+    it('falls back to the average when the requested channel code does not resolve', function () {
+        request()->merge(['channel' => 'does-not-exist']);
+
+        $queryBuilder = applyPropertyFilter(app(CompletenessFilter::class), 'completeness', FilterOperators::LESS_THAN, ['80']);
+
+        expect($queryBuilder->toSql())->toContain(DB::getQueryGrammar()->wrap('products.avg_completeness_score').' < ?');
+    });
+
+    it('compares the requested channel\'s own score once a real channel is in context', function () {
+        $channel = Channel::factory()->create(['code' => 'drilldown-scope']);
+
+        request()->merge(['channel' => $channel->code, 'locale' => $channel->locales->first()->code]);
+
+        $queryBuilder = applyPropertyFilter(app(CompletenessFilter::class), 'completeness', FilterOperators::LESS_THAN, ['80']);
+
+        expect($queryBuilder->toSql())
+            ->toContain(DB::getQueryGrammar()->wrap('product_completeness.score').' < ?')
+            ->and($queryBuilder->getBindings())->toContain(80.0);
+    });
 });
 
 describe('CategoryFilter', function () {

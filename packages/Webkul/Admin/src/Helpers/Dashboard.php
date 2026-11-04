@@ -258,7 +258,7 @@ class Dashboard
     }
 
     /**
-     * Get channel readiness data.
+     * Get channel readiness data, counted in the same locale the drill-down link filters by.
      */
     public function getChannelReadiness()
     {
@@ -270,23 +270,21 @@ class Dashboard
             $productIdColumn = DB::getQueryGrammar()->wrap('product_completeness.product_id');
             $scoreColumn = DB::getQueryGrammar()->wrap('product_completeness.score');
 
-            $readiness = DB::table('product_completeness')
+            return DB::table('product_completeness')
                 ->join('channels', 'channels.id', '=', 'product_completeness.channel_id')
+                ->join('locales', 'locales.id', '=', 'product_completeness.locale_id')
                 ->select(
                     'channels.code as channel',
+                    'locales.code as locale',
                     DB::raw("COUNT(DISTINCT {$productIdColumn}) as total"),
                     DB::raw("COUNT(DISTINCT CASE WHEN {$scoreColumn} >= 80 THEN {$productIdColumn} END) as ready")
                 )
-                ->groupBy('channels.code')
-                ->get();
-
-            return $readiness->map(fn ($row) => [
-                'channel'    => $row->channel,
-                'total'      => (int) $row->total,
-                'ready'      => (int) $row->ready,
-                'percentage' => $row->total > 0 ? round(($row->ready / $row->total) * 100) : 0,
-            ])->toArray();
+                ->groupBy('channels.code', 'locales.code')
+                ->get()
+                ->all();
         });
+
+        $readiness = $this->channelReadinessInDrilldownLocale($readiness);
 
         $labelsByCode = $this->channel->getLabelsByCode();
 
@@ -294,6 +292,40 @@ class Dashboard
             ...$row,
             'label' => $labelsByCode[$row['channel']] ?? "[{$row['channel']}]",
         ], $readiness);
+    }
+
+    /**
+     * Reduce the per channel and locale counts to the one locale each channel's drill-down lands in.
+     */
+    protected function channelReadinessInDrilldownLocale(array $readiness): array
+    {
+        $requestedLocaleCode = core()->getRequestedLocaleCode();
+
+        $rowsByChannel = collect($readiness)->groupBy('channel');
+
+        return core()->getAllChannels()
+            ->map(function ($channel) use ($rowsByChannel, $requestedLocaleCode) {
+                $localeCode = $channel->locales->contains('code', $requestedLocaleCode)
+                    ? $requestedLocaleCode
+                    : core()->getLocaleCodeInChannel($channel);
+
+                $row = $rowsByChannel->get($channel->code, collect())->firstWhere('locale', $localeCode);
+
+                if (! $row) {
+                    return null;
+                }
+
+                return [
+                    'channel'    => $channel->code,
+                    'locale'     => $localeCode,
+                    'total'      => (int) $row->total,
+                    'ready'      => (int) $row->ready,
+                    'percentage' => $row->total > 0 ? round(($row->ready / $row->total) * 100) : 0,
+                ];
+            })
+            ->filter()
+            ->values()
+            ->all();
     }
 
     /**

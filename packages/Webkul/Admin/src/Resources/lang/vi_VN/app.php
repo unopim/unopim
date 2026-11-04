@@ -162,6 +162,7 @@ return [
             'of'                   => '/',
             'products-ready'       => 'sản phẩm sẵn sàng',
             'no-readiness-data'    => 'Chưa có dữ liệu hoàn thiện.',
+            'readiness-drilldown'  => 'Xem các sản phẩm chưa hoàn thiện còn lại của kênh :channel',
             'no-products'          => 'Chưa có sản phẩm.',
             'last-7-days'          => '7 ngày qua',
             'days'                 => [
