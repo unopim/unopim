@@ -134,17 +134,23 @@ class VariantStructureWriter
     /**
      * Remove the structure together with its axis and placement rows.
      *
+     * The structure row is locked before the reference check, so a product written
+     * concurrently against it waits on its foreign key check instead of being orphaned.
+     *
      * @throws ValidationException When a product still references the structure.
      */
     public function delete(VariantStructure $structure): void
     {
-        if ($this->isReferenced($structure)) {
-            throw ValidationException::withMessages([
-                'code' => [trans('admin::app.catalog.families.edit.variant-structure-in-use')],
-            ]);
-        }
-
         DB::transaction(function () use ($structure): void {
+            VariantStructureProxy::modelClass()::query()
+                ->whereKey($structure->id)
+                ->lockForUpdate()
+                ->first();
+
+            if ($this->isReferenced($structure)) {
+                throw $this->inUseException();
+            }
+
             VariantStructureAxis::query()->where('variant_structure_id', $structure->id)->delete();
             VariantStructureAttribute::query()->where('variant_structure_id', $structure->id)->delete();
 
@@ -372,6 +378,16 @@ class VariantStructureWriter
     {
         return ValidationException::withMessages([
             'code' => [trans('validation.unique', ['attribute' => 'code'])],
+        ]);
+    }
+
+    /**
+     * The rejection for deleting a structure that products still point at.
+     */
+    protected function inUseException(): ValidationException
+    {
+        return ValidationException::withMessages([
+            'code' => [trans('admin::app.catalog.families.edit.variant-structure-in-use')],
         ]);
     }
 }
