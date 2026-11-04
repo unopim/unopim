@@ -360,6 +360,29 @@
                                         </button>
                                     </div>
 
+                                    <div v-if="msg.token_estimate && needsConfirmation(msg, idx)" class="rounded-xl border border-primary-200 dark:border-cherry-700 overflow-hidden mt-1" role="note">
+                                        <div class="px-4 py-2 border-b border-primary-100 dark:border-cherry-700 bg-primary-50 dark:bg-cherry-900">
+                                            <p class="text-[10px] font-bold text-primary-500 dark:text-primary-400 uppercase tracking-wider" v-text="trans.tokenEstimateTitle"></p>
+                                        </div>
+                                        <div class="px-4 py-3 space-y-2 bg-white dark:bg-cherry-800 text-xs">
+                                            <div class="flex justify-between gap-4">
+                                                <span class="text-gray-600 dark:text-gray-300" v-text="trans.tokenEstimateProducts"></span>
+                                                <span class="font-bold text-gray-800 dark:text-gray-200" v-text="formatTokenCount(msg.token_estimate.products)"></span>
+                                            </div>
+                                            <div class="flex justify-between gap-4">
+                                                <span class="text-gray-600 dark:text-gray-300" v-text="trans.tokenEstimateInput"></span>
+                                                <span class="font-bold text-gray-800 dark:text-gray-200" v-text="'~' + formatTokenCount(msg.token_estimate.estimated_input_tokens)"></span>
+                                            </div>
+                                            <div v-if="msg.token_estimate.max_output_tokens" class="flex justify-between gap-4">
+                                                <span class="text-gray-600 dark:text-gray-300" v-text="trans.tokenEstimateOutput"></span>
+                                                <span class="font-bold text-gray-800 dark:text-gray-200" v-text="formatTokenCount(msg.token_estimate.max_output_tokens)"></span>
+                                            </div>
+                                            <p class="pt-1 text-[11px] text-gray-500 dark:text-gray-400" v-text="trans.tokenEstimateApproximate"></p>
+                                            <p v-if="msg.token_estimate.sampled_estimate" class="text-[11px] text-gray-500 dark:text-gray-400" v-text="trans.tokenEstimateSampled.replace(':count', formatTokenCount(msg.token_estimate.sampled))"></p>
+                                            <p class="text-[11px] text-gray-500 dark:text-gray-400" v-text="trans.tokenEstimateNoCost"></p>
+                                        </div>
+                                    </div>
+
                                     {{-- Confirmation buttons — at the very bottom --}}
                                     <div v-if="needsConfirmation(msg, idx)" class="flex gap-2 mt-1">
                                         <button @click="confirmAction('yes', idx)" :disabled="isLoading" class="inline-flex items-center gap-1.5 text-xs font-semibold text-white px-4 py-2 rounded-lg transition-all hover:shadow-md" style="background:linear-gradient(135deg,rgb(var(--c-primary-600)),rgb(var(--c-primary-500)));">
@@ -1002,6 +1025,13 @@ app.component('v-agenting-pim', {
             none: `@lang('ai-agent::app.widget.none')`,
             yesProceed: `@lang('ai-agent::app.widget.yes-proceed')`,
             noCancel: `@lang('ai-agent::app.widget.no-cancel')`,
+            tokenEstimateTitle: `@lang('ai-agent::app.widget.token-estimate.title')`,
+            tokenEstimateProducts: `@lang('ai-agent::app.widget.token-estimate.products')`,
+            tokenEstimateInput: `@lang('ai-agent::app.widget.token-estimate.input-tokens')`,
+            tokenEstimateOutput: `@lang('ai-agent::app.widget.token-estimate.output-budget')`,
+            tokenEstimateApproximate: `@lang('ai-agent::app.widget.token-estimate.approximate')`,
+            tokenEstimateSampled: `@lang('ai-agent::app.widget.token-estimate.sampled')`,
+            tokenEstimateNoCost: `@lang('ai-agent::app.widget.token-estimate.no-cost')`,
             analyzingFiles: `@lang('ai-agent::app.widget.analyzing-files')`,
             thinking: `@lang('ai-agent::app.widget.thinking')`,
             refreshingPage: `@lang('ai-agent::app.widget.refreshing-page')`,
@@ -1426,6 +1456,7 @@ app.component('v-agenting-pim', {
                 content: m.content || '',
                 action: m.action || null,
                 result: m.result || null,
+                token_estimate: m.token_estimate || null,
                 product_url: m.product_url || null,
                 download_url: m.download_url || null,
                 _confirmed: m._confirmed || false,
@@ -1456,7 +1487,7 @@ app.component('v-agenting-pim', {
             if (this.historyEnabled && persistToDb && !this.messages.some(m => m.isStreaming)) {
                 const payload = {conversation_id: String(sessionData.id), title: name,
                     deleted_message_ids: [...(this.deletedMessageIds[sessionData.id] || [])],
-                    messages: sessionMessages.map(m => ({role:m.role, content:m.content, message_id:m.message_id, request_id:m.request_id, presentation:m.presentation, tool_calls:m.tool_calls, tokens_used:m.tokens_used, result:m.result, product_url:m.product_url, download_url:m.download_url, _confirmed:m._confirmed, action:m.action}))};
+                    messages: sessionMessages.map(m => ({role:m.role, content:m.content, message_id:m.message_id, request_id:m.request_id, presentation:m.presentation, tool_calls:m.tool_calls, tokens_used:m.tokens_used, result:m.result, token_estimate:m.token_estimate, product_url:m.product_url, download_url:m.download_url, _confirmed:m._confirmed, action:m.action}))};
                 const serialized = JSON.stringify(payload);
                 this._historyFingerprints ||= {};
                 if (this._historyFingerprints[sessionData.id] === serialized) return;
@@ -1504,7 +1535,7 @@ app.component('v-agenting-pim', {
                     || local.find(m => !m.message_id && remaining.has(m) && m.role === remote.role && m.content === remote.content) || {};
                 remaining.delete(cached);
                 const message = {...cached, ...remote};
-                for (const field of ['result', 'product_url', 'download_url', 'action']) {
+                for (const field of ['result', 'token_estimate', 'product_url', 'download_url', 'action']) {
                     if (remote[field] == null && cached[field] != null) message[field] = cached[field];
                 }
                 message._confirmed = Boolean(remote._confirmed || cached._confirmed);
@@ -1796,7 +1827,7 @@ app.component('v-agenting-pim', {
             // Handle JSON response (from either stream JSON or blocking fallback)
             this.consumeExtensionContext(data);
             this.pendingFiles = [];
-            this.messages.push({ message_id: chatRequestId(), presentation: data.presentation || null, role: 'assistant', content: data.reply || this.trans.noResponse, action: data.action || null, result: data.result || null, product_url: data.product_url || null, download_url: data.download_url || null });
+            this.messages.push({ message_id: chatRequestId(), presentation: data.presentation || null, role: 'assistant', content: data.reply || this.trans.noResponse, action: data.action || null, result: data.result || null, token_estimate: data.token_estimate || null, product_url: data.product_url || null, download_url: data.download_url || null });
 
             // Auto-navigate to the created product page
             if (data.product_url && this.activeCapability?.key === 'create_from_image') {
@@ -1987,6 +2018,7 @@ app.component('v-agenting-pim', {
                 content: data.content || this.trans.noResponse,
                 action: actions.action || 'agent_response',
                 result: actions.result || null,
+                token_estimate: actions.token_estimate || null,
                 presentation: actions.presentation || null,
                 product_url: actions.product_url || null,
                 download_url: actions.download_url || null,
@@ -2070,6 +2102,7 @@ app.component('v-agenting-pim', {
                                         resultData = {...resultData, ...eventData};
                                         this.messages[msgIndex].presentation = resultData.presentation || null;
                                         this.messages[msgIndex].result = resultData.result || null;
+                                        this.messages[msgIndex].token_estimate = resultData.token_estimate || null;
                                         break;
                                     case 'error':
                                         streamFailed = true;
@@ -2097,6 +2130,7 @@ app.component('v-agenting-pim', {
                 content: (!streamFailed && resultData.reply) || streamedText || this.trans.noResponse,
                 action: resultData.action || 'agent_response',
                 result: resultData.result || null,
+                token_estimate: resultData.token_estimate || null,
                 message_id: chatRequestId(),
                 presentation: resultData.presentation || null,
                 product_url: resultData.product_url || null,
@@ -2185,8 +2219,13 @@ app.component('v-agenting-pim', {
             // Only show buttons for the LAST assistant message, not already confirmed, and not loading
             if (msg.role !== 'assistant' || msg._confirmed || this.isLoading || msg.isStreaming || msg.isRedirect) return false;
             if (idx !== this.messages.length - 1) return false;
+            if (msg.token_estimate) return true;
             const text = (msg.content || '').toLowerCase();
             return /shall i proceed|do you want me to|should i (go ahead|proceed|create|update|delete|continue)|confirm.*(yes|no)|proceed\?|want me to (create|update|apply|execute)/i.test(text);
+        },
+
+        formatTokenCount(value) {
+            return Number(value || 0).toLocaleString();
         },
 
         confirmAction(answer, idx) {
@@ -2499,7 +2538,7 @@ app.component('v-agenting-pim', {
                     selectedModel: this.selectedModel,
                     activeSessionId: this.activeSessionId,
                     deletedMessageIds: this.deletedMessageIds,
-                    messages: this.messages.filter(m => !m.isRedirect && !(m.isStreaming && !m.replyId && !m.content)).map(m => ({ message_id: m.message_id || null, request_id: m.request_id || null, presentation: m.presentation || null, extensions: m.extensions || null, role: m.role, content: m.content, action: m.action || null, result: m.result || null, product_url: m.product_url || null, download_url: m.download_url || null, _confirmed: m._confirmed || false, isStreaming: !!(m.isStreaming && m.replyId), replyId: m.replyId || null })),
+                    messages: this.messages.filter(m => !m.isRedirect && !(m.isStreaming && !m.replyId && !m.content)).map(m => ({ message_id: m.message_id || null, request_id: m.request_id || null, presentation: m.presentation || null, extensions: m.extensions || null, role: m.role, content: m.content, action: m.action || null, result: m.result || null, token_estimate: m.token_estimate || null, product_url: m.product_url || null, download_url: m.download_url || null, _confirmed: m._confirmed || false, isStreaming: !!(m.isStreaming && m.replyId), replyId: m.replyId || null })),
                 }));
 
                 // Auto-save current session to localStorage

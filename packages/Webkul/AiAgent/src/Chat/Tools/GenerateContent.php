@@ -10,7 +10,6 @@ use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 use Webkul\AiAgent\DTOs\CredentialConfig;
-use Webkul\AiAgent\DTOs\ImageProductContext;
 use Webkul\AiAgent\Http\Client\AiApiClient;
 use Webkul\AiAgent\Services\EnrichmentService;
 use Webkul\MagicAI\Enums\AiProvider;
@@ -68,17 +67,11 @@ class GenerateContent implements PimTool
                     return json_encode(['error' => "Product not found: {$sku}"]);
                 }
 
-                $values = json_decode((string) $product->values, true) ?? [];
-                $common = $values['common'] ?? [];
-                $channelLocale = $values['channel_locale_specific'][$this->context->channel][$this->context->locale] ?? [];
-
-                // Use only the locale-specific bucket for the completeness check so that
-                // content present in another locale (e.g. en_US) does not falsely mark
-                // this locale as already filled.
-                $ctx = new ImageProductContext(
-                    detectedProduct: $common['product_type'] ?? null,
-                    attributes: $channelLocale,
-                    category: ($values['categories'][0] ?? null),
+                [$ctx, $options] = $this->enrichmentService->productContext(
+                    json_decode((string) $product->values, true) ?? [],
+                    $this->context->channel,
+                    $this->context->locale,
+                    $instruction ?? '',
                 );
 
                 try {
@@ -97,11 +90,7 @@ class GenerateContent implements PimTool
                         ctx: $ctx,
                         credentialId: 0,
                         apiClient: $apiClient,
-                        options: [
-                            'locale'      => $this->context->locale,
-                            'instruction' => $instruction ?? '',
-                            'common'      => $common,
-                        ],
+                        options: $options,
                     );
 
                     $generated = $enriched->enrichment;
