@@ -231,7 +231,7 @@ test('2.6 - Verify platform dropdown shows OpenAI platform on config page', asyn
 });
 
 test('2.7 - Configure Magic AI with OpenAI platform for Text Generation', { tag: '@global-state' }, async ({ adminPage }) => {
-  test.setTimeout(60000);
+  test.setTimeout(30000);
   await ensureMagicAITranslationDisabled(adminPage);
   await gotoPage(adminPage, MAGIC_AI_CONFIG_URL);
 
@@ -252,7 +252,7 @@ test('2.7 - Configure Magic AI with OpenAI platform for Text Generation', { tag:
 });
 
 test('2.8 - Configure Image Generation with OpenAI platform', { tag: '@global-state' }, async ({ adminPage }) => {
-  test.setTimeout(60000);
+  test.setTimeout(30000);
   await ensureMagicAITranslationDisabled(adminPage);
   await gotoPage(adminPage, MAGIC_AI_CONFIG_URL);
   await adminPage.locator('input[type="checkbox"]').first().click({ force: true });
