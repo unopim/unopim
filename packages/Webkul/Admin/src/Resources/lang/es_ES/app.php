@@ -381,6 +381,16 @@ return [
                             'title'           => 'Producto',
                             'weight'          => 'Peso',
                         ],
+                        'filters' => [
+                            'any-option'         => 'Todos',
+                            'clear'              => 'Borrar filtros',
+                            'load-error'         => 'No se han podido cargar las variantes. Inténtalo de nuevo.',
+                            'no-results'         => 'Ninguna variante coincide con los filtros seleccionados.',
+                            'range'              => ':from–:to de :total',
+                            'search'             => 'Buscar variantes',
+                            'search-placeholder' => 'Buscar por SKU',
+                        ],
+
                         'mass-edit' => [
                             'add-images'          => 'Añadir imágenes',
                             'apply-to-all-btn'    => 'Aplicar a todo',

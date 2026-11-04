@@ -382,6 +382,16 @@ return [
                             'title'           => 'Үр дун',
                             'weight'          => 'Жин',
                         ],
+                        'filters' => [
+                            'any-option'         => 'Бүгд',
+                            'clear'              => 'Шүүлтүүрийг цэвэрлэх',
+                            'load-error'         => 'Хувилбаруудыг ачаалж чадсангүй. Дахин оролдоно уу.',
+                            'no-results'         => 'Сонгосон шүүлтүүрт тохирох хувилбар алга.',
+                            'range'              => ':total-с :from–:to',
+                            'search'             => 'Хувилбар хайх',
+                            'search-placeholder' => 'SKU-аар хайх',
+                        ],
+
                         'mass-edit' => [
                             'add-images'          => 'Зургийг нэмэх',
                             'apply-to-all-btn'    => 'Бүгдэд нь хандана уу',

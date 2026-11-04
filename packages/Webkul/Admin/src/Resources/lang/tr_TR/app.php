@@ -381,6 +381,16 @@ return [
                             'title'           => 'Ürün',
                             'weight'          => 'Ağırlık',
                         ],
+                        'filters' => [
+                            'any-option'         => 'Tümü',
+                            'clear'              => 'Filtreleri temizle',
+                            'load-error'         => 'Varyantlar yüklenemedi. Lütfen tekrar deneyin.',
+                            'no-results'         => 'Seçilen filtrelerle eşleşen varyant yok.',
+                            'range'              => ':total içinden :from–:to',
+                            'search'             => 'Varyantlarda ara',
+                            'search-placeholder' => 'SKU ile ara',
+                        ],
+
                         'mass-edit' => [
                             'add-images'          => 'Resim ekle',
                             'apply-to-all-btn'    => 'Hepsine uygula',

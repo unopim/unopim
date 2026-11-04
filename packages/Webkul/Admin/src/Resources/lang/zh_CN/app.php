@@ -381,6 +381,16 @@ return [
                             'title'           => '产品',
                             'weight'          => '重量',
                         ],
+                        'filters' => [
+                            'any-option'         => '全部',
+                            'clear'              => '清除筛选',
+                            'load-error'         => '无法加载变体，请重试。',
+                            'no-results'         => '没有与所选筛选条件匹配的变体。',
+                            'range'              => '第 :from–:to 条，共 :total 条',
+                            'search'             => '搜索变体',
+                            'search-placeholder' => '按 SKU 搜索',
+                        ],
+
                         'mass-edit' => [
                             'add-images'          => '添加图像',
                             'apply-to-all-btn'    => '全部应用',

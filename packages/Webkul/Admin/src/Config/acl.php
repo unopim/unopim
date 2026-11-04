@@ -1119,6 +1119,11 @@ return [
     ], [
         'key'   => 'catalog.products',
         'name'  => 'admin::app.acl.products',
+        'route' => 'admin.catalog.products.configurable_variants',
+        'sort'  => 1,
+    ], [
+        'key'   => 'catalog.products',
+        'name'  => 'admin::app.acl.products',
         'route' => 'admin.catalog.products.grid_views.index',
         'sort'  => 1,
     ], [

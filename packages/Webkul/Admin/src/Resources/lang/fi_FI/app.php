@@ -381,6 +381,16 @@ return [
                             'title'           => 'Tuote',
                             'weight'          => 'Paino',
                         ],
+                        'filters' => [
+                            'any-option'         => 'Kaikki',
+                            'clear'              => 'Tyhjennä suodattimet',
+                            'load-error'         => 'Variantteja ei voitu ladata. Yritä uudelleen.',
+                            'no-results'         => 'Valittuja suodattimia vastaavia variantteja ei löytynyt.',
+                            'range'              => ':from–:to / :total',
+                            'search'             => 'Hae variantteja',
+                            'search-placeholder' => 'Hae SKU:lla',
+                        ],
+
                         'mass-edit' => [
                             'add-images'          => 'Lisää kuvia',
                             'apply-to-all-btn'    => 'Hae kaikille',

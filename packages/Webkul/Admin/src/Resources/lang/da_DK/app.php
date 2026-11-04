@@ -381,6 +381,16 @@ return [
                             'title'           => 'Produkt',
                             'weight'          => 'Vægt',
                         ],
+                        'filters' => [
+                            'any-option'         => 'Alle',
+                            'clear'              => 'Ryd filtre',
+                            'load-error'         => 'Varianterne kunne ikke indlæses. Prøv igen.',
+                            'no-results'         => 'Ingen varianter matcher de valgte filtre.',
+                            'range'              => ':from–:to af :total',
+                            'search'             => 'Søg i varianter',
+                            'search-placeholder' => 'Søg efter SKU',
+                        ],
+
                         'mass-edit' => [
                             'add-images'          => 'Tilføj Billeder',
                             'apply-to-all-btn'    => 'Anvend på Alle',

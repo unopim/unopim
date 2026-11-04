@@ -17,6 +17,7 @@ use Webkul\Admin\DataGrids\Catalog\ProductDataGrid;
 use Webkul\Admin\Filters\ProductPropertyFilters;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\CheckVariantUniquenessForm;
+use Webkul\Admin\Http\Requests\ConfigurableVariantsForm;
 use Webkul\Admin\Http\Requests\ProductAttributeForm;
 use Webkul\Admin\Http\Requests\ProductAttributeGroupsForm;
 use Webkul\Admin\Http\Requests\ProductForm;
@@ -26,6 +27,7 @@ use Webkul\Admin\Http\Requests\SelectableMassUpdateRequest;
 use Webkul\Admin\Http\Requests\VariantChildrenForm;
 use Webkul\Admin\Http\Requests\VariantNodeForm;
 use Webkul\Admin\Http\Resources\Catalog\AssociationTypeLinkResource;
+use Webkul\Admin\Http\Resources\Catalog\ConfigurableVariantResource;
 use Webkul\Admin\Jobs\ExportDataGridSelection;
 use Webkul\Admin\Jobs\ProcessMassActionSelection;
 use Webkul\Admin\Traits\AttributeColumnTrait;
@@ -62,6 +64,11 @@ class ProductController extends Controller
     * Using const variable for status
     */
     const ACTIVE_STATUS = 1;
+
+    /**
+     * Default page size for the paginated {@see configurableVariants()} listing.
+     */
+    const CONFIGURABLE_VARIANTS_PER_PAGE = 10;
 
     /**
      * Default page size for the paginated {@see variantChildren()} listing.
@@ -511,6 +518,30 @@ class ProductController extends Controller
             'lastPage' => $paginator->lastPage(),
             'total'    => $paginator->total(),
         ]);
+    }
+
+    /**
+     * One page of a configurable's direct variants for the edit page's variants
+     * panel, filtered by super attribute option and SKU.
+     */
+    public function configurableVariants(ConfigurableVariantsForm $request, int $id): JsonResponse
+    {
+        $configurable = $request->configurable();
+
+        $superAttributeCodes = $configurable->super_attributes->pluck('code')->all();
+
+        $paginator = $this->productRepository->paginateVariants(
+            parentId: $configurable->id,
+            optionFilters: (array) $request->input('filters', []),
+            search: trim((string) $request->input('query', '')),
+            perPage: (int) ($request->input('perPage') ?: self::CONFIGURABLE_VARIANTS_PER_PAGE),
+            page: (int) $request->input('page', 1),
+            excludeIds: array_map(intval(...), (array) $request->input('exclude', [])),
+        );
+
+        $paginator->through(fn (Product $variant) => new ConfigurableVariantResource($variant, $superAttributeCodes));
+
+        return ConfigurableVariantResource::collection($paginator)->response();
     }
 
     /**

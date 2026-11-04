@@ -3,6 +3,7 @@
 namespace Webkul\Product\Repositories;
 
 use Illuminate\Container\Container;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -368,6 +369,47 @@ class ProductRepository extends Repository
             ->orderBy('id')
             ->limit($limit)
             ->pluck('sku');
+    }
+
+    /**
+     * One page of a product's direct variants in id order, narrowed to the
+     * given `values->common` option codes and a case-insensitive SKU fragment,
+     * leaving out the excluded ids.
+     *
+     * Each filter key becomes a JSON path segment that the Postgres grammar
+     * wraps unescaped, so a key without the plain attribute-code shape is
+     * rejected before the query is built.
+     *
+     * @param  array<string, string|null>  $optionFilters
+     * @param  array<int, int>  $excludeIds
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function paginateVariants(int $parentId, array $optionFilters = [], string $search = '', int $perPage = 10, int $page = 1, array $excludeIds = []): LengthAwarePaginator
+    {
+        foreach (array_keys($optionFilters) as $attributeCode) {
+            throw_unless(preg_match('/^[A-Za-z0-9_]+$/', (string) $attributeCode), \InvalidArgumentException::class, 'Malformed attribute code supplied to the variant filter.');
+        }
+
+        $query = $this->getModel()->newQuery()
+            ->where('parent_id', $parentId)
+            ->with(['attribute_family', 'variants']);
+
+        if ($excludeIds !== []) {
+            $query->whereNotIn('id', $excludeIds);
+        }
+
+        if ($search !== '') {
+            $query->whereLike('sku', '%'.addcslashes($search, '%_\\').'%');
+        }
+
+        foreach ($optionFilters as $attributeCode => $optionCode) {
+            if ($optionCode !== null && $optionCode !== '') {
+                $query->where('values->common->'.$attributeCode, $optionCode);
+            }
+        }
+
+        return $query->orderBy('id')->paginate($perPage, ['*'], 'page', $page);
     }
 
     /**

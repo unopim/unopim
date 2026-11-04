@@ -381,6 +381,16 @@ return [
                             'title'           => 'Proizvod',
                             'weight'          => 'Težina',
                         ],
+                        'filters' => [
+                            'any-option'         => 'Sve',
+                            'clear'              => 'Očisti filtre',
+                            'load-error'         => 'Varijante nije bilo moguće učitati. Pokušajte ponovno.',
+                            'no-results'         => 'Nijedna varijanta ne odgovara odabranim filtrima.',
+                            'range'              => ':from–:to od :total',
+                            'search'             => 'Pretraži varijante',
+                            'search-placeholder' => 'Pretraži po SKU-u',
+                        ],
+
                         'mass-edit' => [
                             'add-images'          => 'Dodaj slike',
                             'apply-to-all-btn'    => 'Primijeni na sve',

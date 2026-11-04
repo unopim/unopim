@@ -381,6 +381,16 @@ return [
                             'title'           => '商品',
                             'weight'          => '重量',
                         ],
+                        'filters' => [
+                            'any-option'         => 'すべて',
+                            'clear'              => 'フィルターをクリア',
+                            'load-error'         => 'バリエーションを読み込めませんでした。もう一度お試しください。',
+                            'no-results'         => '選択したフィルターに一致するバリエーションはありません。',
+                            'range'              => ':total 件中 :from–:to 件',
+                            'search'             => 'バリエーションを検索',
+                            'search-placeholder' => 'SKU で検索',
+                        ],
+
                         'mass-edit' => [
                             'add-images'          => '画像を追加',
                             'apply-to-all-btn'    => 'すべてに適用',

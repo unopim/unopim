@@ -381,6 +381,16 @@ return [
                             'title'           => 'Produk',
                             'weight'          => 'Berat',
                         ],
+                        'filters' => [
+                            'any-option'         => 'Semua',
+                            'clear'              => 'Hapus filter',
+                            'load-error'         => 'Varian tidak dapat dimuat. Silakan coba lagi.',
+                            'no-results'         => 'Tidak ada varian yang cocok dengan filter yang dipilih.',
+                            'range'              => ':from–:to dari :total',
+                            'search'             => 'Cari varian',
+                            'search-placeholder' => 'Cari berdasarkan SKU',
+                        ],
+
                         'mass-edit' => [
                             'add-images'          => 'Tambahkan gambar',
                             'apply-to-all-btn'    => 'Terapkan ke semua',

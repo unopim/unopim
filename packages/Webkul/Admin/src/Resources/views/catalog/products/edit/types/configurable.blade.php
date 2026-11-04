@@ -38,23 +38,141 @@
                 </div>
             </div>
 
-            <template v-if="variants.length">
-                <div class="grid">
+            <input
+                type="hidden"
+                name="variants_partial"
+                value="1"
+            />
+
+            <template
+                v-for="variant in dirtyVariants"
+                :key="'dirty_' + variant.id"
+            >
+                <input
+                    type="hidden"
+                    :name="'variants[' + variant.id + '][sku]'"
+                    :value="variant.sku"
+                />
+
+                <input
+                    type="hidden"
+                    :name="'variants[' + variant.id + '][values][common][sku]'"
+                    :value="variant.sku"
+                />
+
+                <input
+                    type="hidden"
+                    v-for="attribute in superAttributes"
+                    :key="attribute.code"
+                    :name="'variants[' + variant.id + '][values][common][' + attribute.code + ']'"
+                    :value="variant?.values?.common?.[attribute.code]"
+                />
+            </template>
+
+            <input
+                type="hidden"
+                name="removed_variants[]"
+                v-for="removedId in removedIds"
+                :key="'removed_' + removedId"
+                :value="removedId"
+            />
+
+            <form
+                class="grid gap-2.5 px-4 pb-4 sm:grid-cols-2 lg:grid-cols-4 items-end"
+                data-unsaved-ignore
+                v-if="total || isFiltering"
+                @submit.prevent="applySearch"
+            >
+                <x-admin::form.control-group class="!mb-0">
+                    <x-admin::form.control-group.label>
+                        @lang('admin::app.catalog.products.edit.types.configurable.filters.search')
+                    </x-admin::form.control-group.label>
+
+                    <x-admin::search
+                        name="variant_sku_search"
+                        v-model="search"
+                        :placeholder="trans('admin::app.catalog.products.edit.types.configurable.filters.search-placeholder')"
+                        @input="onSearchInput"
+                    />
+                </x-admin::form.control-group>
+
+                <x-admin::form.control-group
+                    class="!mb-0"
+                    v-for="attribute in superAttributes"
+                    ::key="attribute.code + '_' + filterResetKey"
+                >
+                    <x-admin::form.control-group.label>
+                        @{{ attribute.name || '[' + attribute.code + ']' }}
+                    </x-admin::form.control-group.label>
+
+                    <v-async-select-handler
+                        entity-name="attribute"
+                        :attribute-id="String(attribute.id)"
+                        track-by="code"
+                        label-by="label"
+                        placeholder="@lang('admin::app.catalog.products.edit.types.configurable.filters.any-option')"
+                        @select-option="onFilterPick($event, attribute.code)"
+                        @remove-option="onFilterPick(null, attribute.code)"
+                    ></v-async-select-handler>
+                </x-admin::form.control-group>
+
+                <div v-if="isFiltering">
+                    <button
+                        type="button"
+                        class="transparent-button"
+                        @click="clearFilters"
+                    >
+                        @lang('admin::app.catalog.products.edit.types.configurable.filters.clear')
+                    </button>
+                </div>
+            </form>
+
+            <template v-if="rows.length">
+                <div
+                    class="grid transition-opacity"
+                    :class="{ 'opacity-50 pointer-events-none': isLoading }"
+                >
                     <v-product-variation-item
-                        v-for='(variant, index) in variants'
-                        :key="index"
-                        :index="index"
+                        v-for="variant in rows"
+                        :key="variant.id"
                         :variant="variant"
                         :attributes="superAttributes"
                         :default-id="defaultId"
                         @onRemoved="removeVariant"
+                        @onUpdated="markEdited"
                         :errors="errors"
                     >
                     </v-product-variation-item>
                 </div>
+
+                <div
+                    class="flex flex-wrap gap-2.5 items-center justify-between px-4 py-3"
+                    v-if="total"
+                >
+                    <p
+                        class="text-xs text-gray-600 dark:text-gray-300"
+                        v-text="rangeLabel"
+                    ></p>
+
+                    <x-admin::pagination.compact
+                        current-page="page"
+                        total-pages="lastPage"
+                        change="changePage"
+                        class="!border-t-0 !pt-0"
+                    />
+                </div>
             </template>
 
-            <template v-else>
+            <template v-else-if="isFiltering">
+                <p
+                    class="px-4 pb-6 text-sm text-gray-500 dark:text-gray-300"
+                    v-if="! isLoading"
+                >
+                    @lang('admin::app.catalog.products.edit.types.configurable.filters.no-results')
+                </p>
+            </template>
+
+            <template v-else-if="! isLoading">
                 <div class="grid gap-3.5 justify-center justify-items-center py-10 px-2.5">
                     <img
                         src="{{ unopim_asset('images/icon-add-product.svg') }}"
@@ -541,29 +659,6 @@
         <div class="flex gap-2.5 justify-between px-4 py-6 border-b border-slate-300 dark:border-gray-800">
 
             <div class="flex gap-2.5">
-                <input
-                    type="hidden"
-                    :name="'variants[' + variant.id + '][sku]'"
-                    :value="variant.sku"
-                />
-
-                <input
-                    type="hidden"
-                    :name="'variants[' + variant.id + '][values][common][sku]'"
-                    :value="variant.sku"
-                />
-
-                <template
-                    v-for="attribute in attributes"
-                    :key="attribute.code"
-                >
-                    <input
-                        type="hidden"
-                        :name="'variants[' + variant.id + '][values][common][' + attribute.code + ']'"
-                        :value="variant?.values?.common[attribute.code]"
-                    />
-                </template>
-
                 <template
                     v-for="(image, index) in variant.images"
                     :key="image.id ?? 'new_' + index"
@@ -778,9 +873,41 @@
                 return {
                     defaultId: parseInt('{{ $product->additional['default_variant_id'] ?? null }}'),
 
-                    variants: @json($product->variants()->with(['attribute_family'])->get()->map(fn ($item) => $item->normalizeWithImage())),
-
                     superAttributes: @json($product->super_attributes()->with(['options', 'options.attribute', 'options.translations'])->get()),
+
+                    variants: [],
+
+                    addedVariants: [],
+
+                    editedVariants: {},
+
+                    removedIds: [],
+
+                    addedSequence: 0,
+
+                    page: 1,
+
+                    lastPage: 1,
+
+                    total: 0,
+
+                    from: 0,
+
+                    to: 0,
+
+                    perPage: 10,
+
+                    search: '',
+
+                    filters: {},
+
+                    filterResetKey: 0,
+
+                    isLoading: false,
+
+                    requestId: 0,
+
+                    searchTimer: null,
 
                     selectedVariant: {
                         id: null,
@@ -790,7 +917,151 @@
                 }
             },
 
+            computed: {
+                rows() {
+                    return [...this.addedVariants, ...this.variants];
+                },
+
+                dirtyVariants() {
+                    return [...this.addedVariants, ...Object.values(this.editedVariants)];
+                },
+
+                isFiltering() {
+                    return this.search.trim() !== '' || Object.values(this.filters).some((value) => value);
+                },
+
+                rangeLabel() {
+                    return "@lang('admin::app.catalog.products.edit.types.configurable.filters.range')"
+                        .replace(':from', this.from ?? 0)
+                        .replace(':to', this.to ?? 0)
+                        .replace(':total', this.total);
+                },
+            },
+
+            mounted() {
+                this.loadVariants();
+
+                this.$emitter.on('form-saved', this.resetStagedChanges);
+
+                this.$emitter.on('unsaved-changes:reset', this.resetStagedChanges);
+            },
+
+            beforeUnmount() {
+                clearTimeout(this.searchTimer);
+
+                this.$emitter.off('form-saved', this.resetStagedChanges);
+
+                this.$emitter.off('unsaved-changes:reset', this.resetStagedChanges);
+            },
+
             methods: {
+                loadVariants(page = this.page) {
+                    const requestId = ++this.requestId;
+
+                    const filters = Object.fromEntries(Object.entries(this.filters).filter(([, value]) => value));
+
+                    this.isLoading = true;
+
+                    return this.$axios.get("{{ route('admin.catalog.products.configurable_variants', $product->id) }}", {
+                            params: {
+                                page,
+                                perPage: this.perPage,
+                                query: this.search.trim() || undefined,
+                                filters,
+                                exclude: this.removedIds,
+                            },
+                        })
+                        .then(({ data }) => {
+                            if (requestId !== this.requestId) {
+                                return;
+                            }
+
+                            this.variants = data.data.map((variant) => this.editedVariants[variant.id] ?? variant);
+                            this.page = data.meta.current_page;
+                            this.lastPage = data.meta.last_page;
+                            this.total = data.meta.total;
+                            this.from = data.meta.from;
+                            this.to = data.meta.to;
+
+                            if (! this.variants.length && this.page > this.lastPage) {
+                                return this.loadVariants(this.lastPage);
+                            }
+                        })
+                        .catch((error) => {
+                            if (requestId === this.requestId) {
+                                this.$emitter.emit('add-flash', { type: 'error', message: error?.response?.data?.message ?? "@lang('admin::app.catalog.products.edit.types.configurable.filters.load-error')" });
+                            }
+                        })
+                        .finally(() => {
+                            if (requestId === this.requestId) {
+                                this.isLoading = false;
+                            }
+                        });
+                },
+
+                changePage(page) {
+                    if (! Number.isInteger(page) || page < 1 || page > this.lastPage || page === this.page) {
+                        return;
+                    }
+
+                    this.loadVariants(page);
+                },
+
+                onSearchInput() {
+                    clearTimeout(this.searchTimer);
+
+                    this.searchTimer = setTimeout(() => this.loadVariants(1), 400);
+                },
+
+                applySearch() {
+                    clearTimeout(this.searchTimer);
+
+                    this.loadVariants(1);
+                },
+
+                onFilterPick(event, attributeCode) {
+                    const option = event && event.target ? event.target.value : event;
+
+                    this.filters = Object.assign({}, this.filters, { [attributeCode]: option?.code ?? null });
+
+                    this.loadVariants(1);
+                },
+
+                clearFilters() {
+                    clearTimeout(this.searchTimer);
+
+                    this.search = '';
+                    this.filters = {};
+                    this.filterResetKey++;
+
+                    this.loadVariants(1);
+                },
+
+                markEdited(variant) {
+                    if (typeof variant.id === 'number') {
+                        this.editedVariants = Object.assign({}, this.editedVariants, { [variant.id]: variant });
+                    }
+
+                    this.touchUnsaved('variants');
+                },
+
+                resetStagedChanges() {
+                    this.addedVariants = [];
+                    this.editedVariants = {};
+                    this.removedIds = [];
+
+                    this.loadVariants();
+                },
+
+                touchUnsaved(name) {
+                    this.$nextTick(() => {
+                        this.$el?.dispatchEvent?.(new CustomEvent('unsaved-changes:touch', {
+                            detail: { name },
+                            bubbles: true,
+                        }));
+                    });
+                },
+
                 openVariantCreate() {
                     const open = () => this.$refs.variantCreateModal.open();
 
@@ -812,7 +1083,7 @@
                         params[key] = formValue.pop();
                     }
 
-                    let filteredVariants = this.variants.filter((variant) => {
+                    let filteredVariants = [...this.rows, ...Object.values(this.editedVariants)].filter((variant) => {
                         let matchCount = 0;
 
                         for (let key in params) {
@@ -858,13 +1129,15 @@
 
                     const optionIds = Object.values(params);
 
-                    this.variants.push(Object.assign({
-                        id: 'variant_' + this.variants.length,
+                    this.addedVariants.push(Object.assign({
+                        id: 'variant_' + this.addedSequence++,
                         status: 1,
                         values: {
                             common: params
                         }
                     }, params));
+
+                    this.touchUnsaved('variants');
 
                     resetForm();
 
@@ -874,7 +1147,22 @@
                 removeVariant(variant) {
                     this.$emitter.emit('open-delete-modal', {
                         agree: () => {
-                            this.variants.splice(this.variants.indexOf(variant), 1);
+                            if (typeof variant.id === 'number') {
+                                const editedVariants = Object.assign({}, this.editedVariants);
+
+                                delete editedVariants[variant.id];
+
+                                this.editedVariants = editedVariants;
+                                this.removedIds.push(variant.id);
+
+                                this.touchUnsaved('removed_variants');
+                            } else {
+                                this.addedVariants.splice(this.addedVariants.indexOf(variant), 1);
+
+                                this.touchUnsaved('variants');
+                            }
+
+                            this.loadVariants();
                         },
                     });
                 },
@@ -961,6 +1249,8 @@
                             common: params
                         }
                     });
+
+                    this.$emit('onUpdated', this.variant);
 
                     this.$refs.editVariantDrawer.close();
                 },

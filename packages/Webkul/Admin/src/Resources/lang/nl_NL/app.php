@@ -382,6 +382,16 @@ return [
                             'title'           => 'Product',
                             'weight'          => 'Gewicht',
                         ],
+                        'filters' => [
+                            'any-option'         => 'Alle',
+                            'clear'              => 'Filters wissen',
+                            'load-error'         => 'De varianten konden niet worden geladen. Probeer het opnieuw.',
+                            'no-results'         => 'Geen varianten komen overeen met de geselecteerde filters.',
+                            'range'              => ':from–:to van :total',
+                            'search'             => 'Varianten zoeken',
+                            'search-placeholder' => 'Zoeken op SKU',
+                        ],
+
                         'mass-edit' => [
                             'add-images'          => 'Afbeeldingen toevoegen',
                             'apply-to-all-btn'    => 'Toepassen op alle varianten',

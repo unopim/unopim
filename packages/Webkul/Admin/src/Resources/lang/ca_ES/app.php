@@ -381,6 +381,16 @@ return [
                             'title'           => 'Producte',
                             'weight'          => 'Pes',
                         ],
+                        'filters' => [
+                            'any-option'         => 'Tots',
+                            'clear'              => 'Esborra els filtres',
+                            'load-error'         => 'No s\'han pogut carregar les variants. Torneu-ho a provar.',
+                            'no-results'         => 'Cap variant coincideix amb els filtres seleccionats.',
+                            'range'              => ':from–:to de :total',
+                            'search'             => 'Cerca variants',
+                            'search-placeholder' => 'Cerca per SKU',
+                        ],
+
                         'mass-edit' => [
                             'add-images'          => 'Afegir Imatges',
                             'apply-to-all-btn'    => 'Aplicar a Tots',

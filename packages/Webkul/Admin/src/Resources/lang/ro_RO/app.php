@@ -382,6 +382,16 @@ return [
                             'title'           => 'Produs',
                             'weight'          => 'Greutate',
                         ],
+                        'filters' => [
+                            'any-option'         => 'Toate',
+                            'clear'              => 'Șterge filtrele',
+                            'load-error'         => 'Variantele nu au putut fi încărcate. Încercați din nou.',
+                            'no-results'         => 'Nicio variantă nu corespunde filtrelor selectate.',
+                            'range'              => ':from–:to din :total',
+                            'search'             => 'Caută variante',
+                            'search-placeholder' => 'Caută după SKU',
+                        ],
+
                         'mass-edit' => [
                             'add-images'          => 'Adăugați imagini',
                             'apply-to-all-btn'    => 'Aplică pentru toți',

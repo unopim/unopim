@@ -203,6 +203,8 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
             Route::get('{configurableId}/variant-children', 'variantChildren')->name('admin.catalog.products.variant_children');
 
+            Route::get('{id}/variants', 'configurableVariants')->name('admin.catalog.products.configurable_variants');
+
             Route::get('edit/{id}/completeness', 'completeness')->name('admin.catalog.products.completeness');
 
             Route::get('edit/{id}/attribute-groups', 'attributeGroups')->name('admin.catalog.products.attribute_groups');
