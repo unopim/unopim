@@ -2,8 +2,10 @@
 
 namespace Webkul\Admin\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Validation\ValidationException;
 use Webkul\Core\Rules\FileMimeExtensionMatch;
 
 class AppearanceForm extends FormRequest
@@ -58,6 +60,8 @@ class AppearanceForm extends FormRequest
 
     /**
      * Get the display names for the uploaded files.
+     *
+     * @return array<string, string>
      */
     public function attributes(): array
     {
@@ -65,6 +69,28 @@ class AppearanceForm extends FormRequest
             'logo_image.*' => trans('admin::app.settings.appearance.logo'),
             'favicon.*'    => trans('admin::app.settings.appearance.favicon'),
         ];
+    }
+
+    /**
+     * Handle a failed validation attempt.
+     *
+     * The media component posts files as `field[]`, so errors are moved from `field.0` to `field` where the form renders them.
+     *
+     * @throws ValidationException
+     */
+    protected function failedValidation(Validator $validator): void
+    {
+        $errors = [];
+
+        foreach ($validator->errors()->toArray() as $key => $messages) {
+            $field = preg_replace('/\.\d+$/', '', $key);
+
+            $errors[$field] = array_merge($errors[$field] ?? [], $messages);
+        }
+
+        throw ValidationException::withMessages($errors)
+            ->errorBag($this->errorBag)
+            ->redirectTo($this->getRedirectUrl());
     }
 
     /**

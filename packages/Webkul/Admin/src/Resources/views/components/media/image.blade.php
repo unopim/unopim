@@ -79,7 +79,7 @@
                         :hint="showUploadHint ? @js(trans('admin::app.components.media.images.drag-drop-hint')) : ''"
                         :allowed-types="allowedTypesLabel"
                         :read-only="readOnly"
-                        :class="{ 'rounded-md ring-2 ring-red-500': sizeError }"
+                        :class="{ 'rounded-md ring-2 ring-red-600': sizeError }"
                         @trigger="resetAIModal(); $refs.choiceImageModal.open()"
                         @drop="onDrop"
                     ></v-media-add-tile>
@@ -94,7 +94,7 @@
                         :accept="acceptAttribute"
                         :input-id="$.uid + '_imageInput'"
                         :read-only="readOnly"
-                        :class="{ 'rounded-md ring-2 ring-red-500': sizeError }"
+                        :class="{ 'rounded-md ring-2 ring-red-600': sizeError }"
                         @change="add"
                         @drop="onDrop"
                     ></v-media-add-tile>

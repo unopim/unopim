@@ -108,4 +108,37 @@ test.describe('Appearance — favicon', () => {
 
     await expect(adminPage.locator('#app').getByText(/are allowed/i).first()).toBeVisible({ timeout: 10000 });
   });
+
+  test('an oversized favicon is refused in the browser before anything is uploaded', async ({ adminPage }) => {
+    await gotoSettings(adminPage);
+    await deleteFaviconIfPresent(adminPage);
+
+    const scanRequests = [];
+    adminPage.on('request', (request) => {
+      if (request.url().includes('/admin/media/scan')) {
+        scanRequests.push(request.url());
+      }
+    });
+
+    await faviconControl(adminPage).locator('label').first().waitFor({ state: 'visible', timeout: 15000 });
+
+    await adminPage.evaluate(() => {
+      const file = new File([new Uint8Array(1024 * 1024 + 1)], 'large-favicon.png', { type: 'image/png' });
+      const dt = new DataTransfer();
+      dt.items.add(file);
+
+      const control = document.querySelectorAll('[data-media-control]')[1];
+      const target = control.querySelector('label') || control;
+      target.dispatchEvent(new DragEvent('dragover', { bubbles: true, cancelable: true, dataTransfer: dt }));
+      target.dispatchEvent(new DragEvent('drop', { bubbles: true, cancelable: true, dataTransfer: dt }));
+    });
+
+    await expect(
+      faviconControl(adminPage).getByText('The uploaded file exceeds the maximum allowed size of 1 MB.'),
+    ).toBeVisible({ timeout: 10000 });
+
+    await expect(faviconControl(adminPage).locator('img[src^="data:"]')).toHaveCount(0);
+    await expect(unsavedBar(adminPage)).toHaveCount(0);
+    expect(scanRequests).toHaveLength(0);
+  });
 });

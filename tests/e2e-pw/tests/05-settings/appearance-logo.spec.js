@@ -144,6 +144,37 @@ test.describe('Appearance — admin logo', { tag: '@global-state' }, () => {
     await adminPage.waitForURL(/configuration\/system/, { timeout: 20000 });
   });
 
+  test('rejects an oversized logo in the browser before anything is uploaded', async ({ adminPage }) => {
+    await gotoSettings(adminPage);
+    await deleteLogoIfPresent(adminPage);
+
+    const scanRequests = [];
+    adminPage.on('request', (request) => {
+      if (request.url().includes('/admin/media/scan')) {
+        scanRequests.push(request.url());
+      }
+    });
+
+    await expect(adminPage.getByText('Add Image').first()).toBeVisible({ timeout: 15000 });
+
+    await adminPage.evaluate(() => {
+      const file = new File([new Uint8Array(2048 * 1024 + 1)], 'large-logo.png', { type: 'image/png' });
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      const tile = [...document.querySelectorAll('label')].find((l) => /Add Image/.test(l.textContent));
+      tile.dispatchEvent(new DragEvent('dragover', { bubbles: true, cancelable: true, dataTransfer: dt }));
+      tile.dispatchEvent(new DragEvent('drop', { bubbles: true, cancelable: true, dataTransfer: dt }));
+    });
+
+    await expect(adminPage.getByText('The uploaded file exceeds the maximum allowed size of 2 MB.')).toBeVisible({
+      timeout: 15000,
+    });
+
+    await expect(adminPage.locator('img[src^="data:"]')).toHaveCount(0);
+    await expect(unsavedBar(adminPage)).toHaveCount(0);
+    expect(scanRequests).toHaveLength(0);
+  });
+
   test('deleting the logo falls back to the default and restores the upload tile', async ({ adminPage }) => {
     await gotoSettings(adminPage);
     await deleteLogoIfPresent(adminPage);

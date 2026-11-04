@@ -67,7 +67,7 @@ it('rejects a favicon whose type is outside the supported list', function () {
 
     $this->put(route('admin.settings.appearance.update'), [
         'favicon' => [UploadedFile::fake()->create('favicon.svg', 4, 'image/svg+xml')],
-    ])->assertSessionHasErrors('favicon.0');
+    ])->assertSessionHasErrors('favicon');
 
     expect(CoreConfig::query()->where('code', 'general.design.admin_logo.favicon')->value('value'))
         ->toBe($existing);
@@ -92,7 +92,7 @@ it('rejects appearance images larger than the allowed size and shows the error',
 
     $this->put(route('admin.settings.appearance.update'), [
         $field => [UploadedFile::fake()->image('large.png', 16, 16)->size($maxSize + 1)],
-    ])->assertSessionHasErrors($field.'.0');
+    ])->assertSessionHasErrors([$field => trans('validation.max.file', ['attribute' => $label, 'max' => $maxSize])]);
 
     expect(CoreConfig::query()->where('code', $code)->value('value'))->toBe($existing);
 
@@ -101,7 +101,7 @@ it('rejects appearance images larger than the allowed size and shows the error',
         ->put(route('admin.settings.appearance.update'), [
             $field => [UploadedFile::fake()->image('large.png', 16, 16)->size($maxSize + 1)],
         ])
-        ->assertSee('<p class="mt-2 text-red-600 text-xs italic">'.e(trans('validation.max.file', ['attribute' => $label, 'max' => $maxSize])), false);
+        ->assertSee(e(json_encode([$field => [trans('validation.max.file', ['attribute' => $label, 'max' => $maxSize])]])), false);
 })->with([
     'logo'    => ['logo_image', 'general.design.admin_logo.logo_image', AppearanceForm::LOGO_MAX_SIZE, 'Logo'],
     'favicon' => ['favicon', 'general.design.admin_logo.favicon', AppearanceForm::FAVICON_MAX_SIZE, 'Favicon'],
