@@ -51,5 +51,11 @@ return [
             'heading' => 'Tämä passi ei ole enää saatavilla.',
             'notice'  => 'Tämä tietue säilytetään avoimuuden vuoksi, mutta sitä ei enää ylläpidetä aktiivisesti.',
         ],
+        'release' => [
+            'banner'       => 'Tämän tuotepassin julkaisu :sequence',
+            'superseded'   => 'Tämä on tuotepassin aiempi tila, säilytetty täsmälleen sellaisena kuin se julkaistiin. Uudempi tila on olemassa.',
+            'current'      => 'Tämä on tuotepassin nykyinen tila.',
+            'view-current' => 'Näytä nykyinen tuotepassi',
+        ],
     ],
 ];

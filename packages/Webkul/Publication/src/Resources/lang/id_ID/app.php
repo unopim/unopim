@@ -51,5 +51,11 @@ return [
             'heading' => 'Paspor ini sudah tidak tersedia lagi.',
             'notice'  => 'Catatan ini disimpan untuk transparansi, tetapi tidak lagi dikelola secara aktif.',
         ],
+        'release' => [
+            'banner'       => 'Rilis :sequence dari paspor ini',
+            'superseded'   => 'Ini adalah keadaan paspor sebelumnya, disimpan persis seperti saat diterbitkan. Sudah ada keadaan yang lebih baru.',
+            'current'      => 'Ini adalah keadaan paspor saat ini.',
+            'view-current' => 'Lihat paspor saat ini',
+        ],
     ],
 ];

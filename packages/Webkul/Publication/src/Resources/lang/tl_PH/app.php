@@ -51,5 +51,11 @@ return [
             'heading' => 'Hindi na available ang pasaporteng ito.',
             'notice'  => 'Itinatago ang talaang ito para sa transparency ngunit hindi na ito aktibong pinananatili.',
         ],
+        'release' => [
+            'banner'       => 'Paglalathala :sequence ng pasaporteng ito',
+            'superseded'   => 'Ito ay isang naunang estado ng pasaporte, iningatan nang eksakto kung paano ito inilathala. May mas bagong estado.',
+            'current'      => 'Ito ang kasalukuyang estado ng pasaporte.',
+            'view-current' => 'Tingnan ang kasalukuyang pasaporte',
+        ],
     ],
 ];

@@ -2,12 +2,15 @@
 
 namespace Webkul\Publication\Http\Controllers;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Webkul\Publication\DataTransferObjects\PublicationType;
 use Webkul\Publication\Enums\PublicationStatus;
 use Webkul\Publication\Jobs\RecordPublicationView;
 use Webkul\Publication\Models\Publication;
+use Webkul\Publication\Models\PublicationRelease;
 use Webkul\Publication\Models\PublicationVersion;
 use Webkul\Publication\Registry\PublicationTypeRegistry;
 use Webkul\Publication\Services\PublicationResolver;
@@ -18,7 +21,7 @@ class PublicationController extends Controller
      * Bump when the rendered template's HTML shape changes in a way that must
      * invalidate every previously cached ETag, independent of payload content.
      */
-    private const TEMPLATE_VERSION = '1';
+    private const TEMPLATE_VERSION = '2';
 
     public function __construct(
         private readonly PublicationResolver $resolver,
@@ -88,7 +91,7 @@ class PublicationController extends Controller
     }
 
     /**
-     * Renders the publication, honouring If-None-Match against a checksum-derived ETag.
+     * Renders the live state: the current version for the requested locale, honouring If-None-Match.
      *
      * The locale switcher is built from the published versions, not the channel's
      * locales: a channel locale with no current version has no URL to switch to.
@@ -104,8 +107,6 @@ class PublicationController extends Controller
             return $this->notFound();
         }
 
-        $definition = $this->registry->get($type);
-
         $publication = $this->resolveEnabledPublication($uuid, $type);
 
         if ($publication === null) {
@@ -118,13 +119,89 @@ class PublicationController extends Controller
             return $this->notFound();
         }
 
+        return $this->render($request, $this->registry->get($type), $publication, $version, null, $publication->versions);
+    }
+
+    /**
+     * Renders the state as of one release: for the requested locale, the most recent version minted at
+     * or before that release. Strict locale, no Accept-Language negotiation: an explicit historical URL
+     * is a reference, and a reference must not resolve to a different document per reader.
+     *
+     * `versionsAsOf()` returns at most one version per locale, so the cost of a scan stays flat however often
+     * the passport is republished; the same rows feed the locale switcher, and only the rendered version's
+     * payload is loaded.
+     */
+    public function showRelease(Request $request, string $uuid, string $sequence, string $locale): Response
+    {
+        $type = $this->routeType($request);
+
+        if (! $this->registry->has($type)) {
+            return $this->notFound();
+        }
+
+        $publication = $this->resolveEnabledPublication($uuid, $type);
+
+        if ($publication === null) {
+            return $this->notFound();
+        }
+
+        $release = $this->resolver->findRelease($publication, (int) $sequence);
+
+        if ($release === null) {
+            return $this->notFound();
+        }
+
+        $versions = $release->versionsAsOf();
+
+        $version = $versions->first(fn (PublicationVersion $candidate): bool => $candidate->locale->code === $locale);
+
+        if ($version === null) {
+            return $this->notFound();
+        }
+
+        return $this->render($request, $this->registry->get($type), $publication, $version, $release, $versions);
+    }
+
+    /**
+     * Shared by the live and the release routes. A release page differs in three ways: its locale switcher
+     * stays inside the release, it is never indexed and always carries a canonical link to the live page,
+     * and it never negotiates JSON-LD (a historical payload's stamped identity is the publication URL,
+     * which would misdescribe it).
+     *
+     * Only the live Published state exposes its payload as JSON-LD. A version redacted on its own is a
+     * tombstone even under a Published publication, because its payload is gone; a withdrawn or redacted
+     * publication is a tombstone too.
+     *
+     * The ETag covers the release, whether the version is still current and whether it is redacted: the
+     * release banner and the tombstone change the HTML without changing the checksum.
+     *
+     * A view is counted only for a live, Published, full HTML render, never for a 304, a JSON-LD
+     * negotiation, a tombstone or a release page. It is queued so the render is not slowed, and stores a
+     * daily count only: no IP, no visitor identity.
+     *
+     * Redacted is irreversible, so it answers 410 Gone; Withdrawn can be reinstated, so it stays 200. No
+     * tombstone may sit in a shared cache, since there is no purge hook to displace it on reinstatement.
+     *
+     * @param  Collection<int, PublicationVersion>  $switchable  the versions the locale switcher may link to
+     */
+    private function render(
+        Request $request,
+        PublicationType $definition,
+        Publication $publication,
+        PublicationVersion $version,
+        ?PublicationRelease $release,
+        Collection $switchable,
+    ): Response {
         [$granted, $grantedIndex] = $this->grantedTier($request);
         $payload = $this->applyTierGate($version->payload, $grantedIndex);
 
-        // Only Published exposes payload: withdrawn/redacted must fall through to the tombstone, not leak JSON-LD.
+        $gone = $publication->status === PublicationStatus::Redacted || $version->redacted_at !== null;
+        $tombstone = $gone || $publication->status !== PublicationStatus::Published;
+
         if (
-            $definition->jsonld !== null
-            && $publication->status === PublicationStatus::Published
+            $release === null
+            && ! $tombstone
+            && $definition->jsonld !== null
             && str_contains((string) $request->header('Accept'), 'application/ld+json')
         ) {
             app()->setLocale($version->locale->code);
@@ -148,41 +225,57 @@ class PublicationController extends Controller
             $version->locale->code,
             $granted,
             self::TEMPLATE_VERSION,
+            $release?->sequence ?? 'live',
+            $version->is_current ? 'current' : 'superseded',
+            $version->redacted_at === null ? 'intact' : 'redacted',
         ]), config('app.key')).'"';
 
         if (trim((string) $request->header('If-None-Match')) === $etag) {
             return response('', 304)->header('ETag', $etag);
         }
 
-        // Count only a live (Published) full HTML render — never a 304, a JSON-LD
-        // negotiation, or a withdrawn/redacted tombstone. Queued so the render is
-        // not slowed, and it stores a daily count only: no IP, no visitor identity.
-        if ($publication->status === PublicationStatus::Published) {
+        if ($release === null && ! $tombstone) {
             RecordPublicationView::dispatch($publication->id, (int) $version->locale->id);
         }
 
+        $liveUrl = route('publication.public.'.$definition->code.'.show.locale', [
+            'uuid'   => $publication->uuid,
+            'locale' => $version->locale->code,
+        ]);
+
         $view = view($definition->template, [
             'payload'   => $payload,
-            'withdrawn' => $publication->status !== PublicationStatus::Published,
+            'withdrawn' => $tombstone,
             'uuid'      => $publication->uuid,
             'locale'    => $version->locale->code,
-            'locales'   => $publication->versions
+            'locales'   => $switchable
                 ->map(fn (PublicationVersion $published) => $published->locale)
                 ->sortBy('code')
                 ->values(),
+            'release'   => $release === null ? null : [
+                'sequence'     => (int) $release->sequence,
+                'is_current'   => (bool) $version->is_current,
+                'published_at' => $release->published_at,
+                'current_url'  => $liveUrl,
+            ],
         ]);
 
-        $tombstone = $publication->status !== PublicationStatus::Published;
+        $robots = match (true) {
+            $release !== null => 'noindex, noarchive, nofollow',
+            $tombstone        => 'noindex, nofollow',
+            default           => ((bool) (core()->getConfigData('general.publication.settings.indexable', $publication->channel->code) ?? false)) ? 'index, nofollow' : 'noindex, nofollow',
+        };
 
-        $status = $publication->status === PublicationStatus::Redacted ? 410 : 200;
+        $response = response($view->render(), $gone ? 410 : 200)
+            ->header('ETag', $etag)
+            ->header('Cache-Control', $tombstone ? 'private, no-store' : $this->cacheControl($publication->channel?->code))
+            ->header('X-Robots-Tag', $robots);
 
-        return $this->tierCache(
-            response($view->render(), $status)
-                ->header('ETag', $etag)
-                ->header('Cache-Control', $tombstone ? 'private, no-store' : $this->cacheControl($publication->channel?->code))
-                ->header('X-Robots-Tag', (! $tombstone && (bool) (core()->getConfigData('general.publication.settings.indexable', $publication->channel->code) ?? false)) ? 'index, nofollow' : 'noindex, nofollow'),
-            $grantedIndex,
-        );
+        if ($release !== null) {
+            $response->header('Link', '<'.$liveUrl.'>; rel="canonical"');
+        }
+
+        return $this->tierCache($response, $grantedIndex);
     }
 
     /**

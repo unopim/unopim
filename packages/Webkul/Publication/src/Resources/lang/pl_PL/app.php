@@ -51,5 +51,11 @@ return [
             'heading' => 'Ten paszport nie jest już dostępny.',
             'notice'  => 'Ten rekord jest przechowywany dla przejrzystości, ale nie jest już aktywnie utrzymywany.',
         ],
+        'release' => [
+            'banner'       => 'Publikacja :sequence tego paszportu',
+            'superseded'   => 'To jest wcześniejszy stan paszportu, zachowany dokładnie w takiej postaci, w jakiej został opublikowany. Istnieje nowszy stan.',
+            'current'      => 'To jest aktualny stan paszportu.',
+            'view-current' => 'Zobacz aktualny paszport',
+        ],
     ],
 ];

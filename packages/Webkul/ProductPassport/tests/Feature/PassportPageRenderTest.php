@@ -77,3 +77,20 @@ it('sets a restrictive csp and referrer policy on the public route group', funct
         ->toContain("default-src 'none'")
         ->toContain("frame-ancestors 'none'");
 });
+
+it('renders a release url with the release banner, a canonical link to the live page and no indexing', function (): void {
+    $version = $this->publishedPassportFixture();
+
+    $uuid = $version->publication->uuid;
+    $locale = $version->locale->code;
+    $live = route('publication.public.dpp.show.locale', ['uuid' => $uuid, 'locale' => $locale]);
+
+    $this->get('/p/'.$uuid.'/r/1/'.$locale)
+        ->assertOk()
+        ->assertHeader('X-Robots-Tag', 'noindex, noarchive, nofollow')
+        ->assertSee('<link rel="canonical" href="'.$live.'">', false)
+        ->assertSee(trans('publication::app.public.release.banner', ['sequence' => 1]))
+        ->assertSee(trans('publication::app.public.release.current'))
+        ->assertSee(route('publication.public.dpp.show.release', ['uuid' => $uuid, 'sequence' => 1, 'locale' => $locale]), false)
+        ->assertDontSee('application/ld+json');
+});
