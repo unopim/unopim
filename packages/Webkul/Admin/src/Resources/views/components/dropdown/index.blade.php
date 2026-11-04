@@ -151,35 +151,35 @@
                             return [
                                 `min-width: ${this.toggleBlockWidth}px`,
                                 `top: ${this.toggleBlockHeight}px`,
-                                'left: 0',
+                                'inset-inline-start: 0',
                             ];
 
                         case 'bottom-right':
                             return [
                                 `min-width: ${this.toggleBlockWidth}px`,
                                 `top: ${this.toggleBlockHeight}px`,
-                                'right: 0',
+                                'inset-inline-end: 0',
                             ];
 
                         case 'top-left':
                             return [
                                 `min-width: ${this.toggleBlockWidth}px`,
                                 `bottom: ${this.toggleBlockHeight*2}px`,
-                                'left: 0',
+                                'inset-inline-start: 0',
                             ];
 
                         case 'top-right':
                             return [
                                 `min-width: ${this.toggleBlockWidth}px`,
                                 `bottom: ${this.toggleBlockHeight*2}px`,
-                                'right: 0',
+                                'inset-inline-end: 0',
                             ];
 
                         default:
                             return [
                                 `min-width: ${this.toggleBlockWidth}px`,
                                 `top: ${this.toggleBlockHeight}px`,
-                                'left: 0',
+                                'inset-inline-start: 0',
                             ];
                     }
                 },
@@ -216,7 +216,8 @@
                     const anchor  = toggle.getBoundingClientRect();
                     const width   = panel.offsetWidth;
                     const height  = panel.offsetHeight;
-                    const alignsRight = this.position?.endsWith('right');
+                    const isRtl       = document.dir === 'rtl';
+                    const alignsRight = this.position?.endsWith('right') !== isRtl;
                     const opensUp     = this.position?.startsWith('top');
 
                     const left = alignsRight ? anchor.right - width : anchor.left;
