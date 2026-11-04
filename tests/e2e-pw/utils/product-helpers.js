@@ -97,4 +97,64 @@ async function createConfigurableProduct(page, sku) {
   return Number(id);
 }
 
-module.exports = { deleteProductBySku, createConfigurableProduct };
+/**
+ * Create a simple product on the default family through the create endpoint
+ * and return its id. Its attributes stay empty.
+ * @param {import('@playwright/test').Page} page
+ * @param {string} sku
+ * @returns {Promise<number>}
+ */
+async function createSimpleProductRecord(page, sku) {
+  if (! (await xsrfToken(page.context()))) {
+    await page.goto('/admin/catalog/products', { waitUntil: 'load' });
+  }
+
+  const created = await page.request.post('/admin/catalog/products/create', {
+    headers: {
+      Accept: 'application/json',
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-XSRF-TOKEN': await xsrfToken(page.context()),
+    },
+    data: { type: 'simple', attribute_family_id: 1, sku },
+  });
+
+  const body = await created.json();
+  const id = String(body.data?.redirect_url ?? body.redirect_url ?? '').match(/products\/edit\/(\d+)/)?.[1];
+
+  if (! created.ok() || ! id) {
+    throw new Error(`Creating simple product "${sku}" failed: HTTP ${created.status()} ${JSON.stringify(body)}`);
+  }
+
+  return Number(id);
+}
+
+/**
+ * Create a simple product on the default family and fill its required fields,
+ * so specs can open and save it like any catalog product. Returns its id.
+ * @param {import('@playwright/test').Page} page
+ * @param {string} sku
+ * @param {string} name
+ * @returns {Promise<number>}
+ */
+async function createEditableSimpleProduct(page, sku, name) {
+  const { expect } = require('@playwright/test');
+  const { clickSave, gotoPage } = require('./helpers');
+  const { fillRequiredProductFields } = require('./gallery-helpers');
+
+  const id = await createSimpleProductRecord(page, sku);
+
+  await gotoPage(page, `/admin/catalog/products/edit/${id}`);
+  await fillRequiredProductFields(page, name);
+  await page.locator('#url_key').fill(sku);
+  await clickSave(page, 'Save Product');
+  await expect(page.locator('#app').getByText(/Product updated successfully/i)).toBeVisible({ timeout: 20000 });
+
+  return id;
+}
+
+module.exports = {
+  deleteProductBySku,
+  createConfigurableProduct,
+  createSimpleProductRecord,
+  createEditableSimpleProduct,
+};

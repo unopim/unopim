@@ -44,20 +44,21 @@ async function ensureAiPlatform(page, apiKey) {
 }
 
 /**
- * Switch one Magic AI section's `enabled` flag on through a direct form POST,
+ * Switch one Magic AI section's `enabled` flag through a direct form POST,
  * which avoids racing the Vue toggle's render. Store-wide: a spec calling this
  * carries @global-state.
  * @param {import('@playwright/test').Page} page
  * @param {'settings'|'translation'} section
+ * @param {boolean} enabled
  */
-async function enableMagicAISection(page, section) {
+async function setMagicAISection(page, section, enabled) {
   const field = `general[magic_ai][${section}][enabled]`;
   const checkbox = `input[type="checkbox"][name="${field}"]`;
 
   await gotoPage(page, MAGIC_AI_CONFIG_URL);
   await page.locator(checkbox).first().waitFor({ state: 'attached', timeout: 10000 });
 
-  const result = await page.evaluate(async (name) => {
+  const result = await page.evaluate(async ({ name, on }) => {
     const cb = document.querySelector(`input[type="checkbox"][name="${name}"]`);
     const form = cb?.closest('form');
 
@@ -65,31 +66,48 @@ async function enableMagicAISection(page, section) {
       return { ok: false, reason: 'no-form' };
     }
 
-    cb.checked = true;
+    cb.checked = on;
     cb.dispatchEvent(new Event('change', { bubbles: true }));
+
+    const body = new FormData(form);
+    body.set(name, on ? '1' : '0');
 
     const xsrf = (document.cookie.split('; ').find((c) => c.startsWith('XSRF-TOKEN=')) || '').split('=')[1] || '';
     const res = await fetch(form.getAttribute('action') || window.location.pathname, {
       method: 'POST',
       credentials: 'same-origin',
       headers: { 'X-XSRF-TOKEN': decodeURIComponent(xsrf), Accept: 'text/html,*/*' },
-      body: new FormData(form),
+      body,
       redirect: 'follow',
     });
 
     return { ok: res.ok, status: res.status };
-  }, field);
+  }, { name: field, on: enabled });
 
-  expect(result, `Enabling Magic AI ${section} failed: ${JSON.stringify(result)}`).toMatchObject({ ok: true });
+  expect(result, `Setting Magic AI ${section} to ${enabled} failed: ${JSON.stringify(result)}`).toMatchObject({ ok: true });
 
   await gotoPage(page, MAGIC_AI_CONFIG_URL);
-  await expect(page.locator(checkbox).first()).toBeChecked({ timeout: 10000 });
+
+  const state = expect(page.locator(checkbox).first());
+  await (enabled ? state.toBeChecked({ timeout: 10000 }) : state.not.toBeChecked({ timeout: 10000 }));
 }
 
 /** Turn on Magic AI text generation, which gates the Magic AI buttons. */
-const ensureMagicAITextEnabled = (page) => enableMagicAISection(page, 'settings');
+const ensureMagicAITextEnabled = (page) => setMagicAISection(page, 'settings', true);
 
 /** Turn on Magic AI translation, which gates the product "More" actions. */
-const ensureMagicAITranslationEnabled = (page) => enableMagicAISection(page, 'translation');
+const ensureMagicAITranslationEnabled = (page) => setMagicAISection(page, 'translation', true);
 
-module.exports = { ensureAiPlatform, ensureMagicAITextEnabled, ensureMagicAITranslationEnabled };
+/**
+ * Turn off Magic AI translation. Enabled translation makes its channel and
+ * locale pickers required, so a spec saving the settings form through the UI
+ * needs it off when an earlier spec left it on without those values.
+ */
+const ensureMagicAITranslationDisabled = (page) => setMagicAISection(page, 'translation', false);
+
+module.exports = {
+  ensureAiPlatform,
+  ensureMagicAITextEnabled,
+  ensureMagicAITranslationEnabled,
+  ensureMagicAITranslationDisabled,
+};
