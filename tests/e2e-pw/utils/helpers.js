@@ -310,7 +310,9 @@ async function fillLocalizedField(page, value, field = 'name') {
  * Resolve a real, editable simple product id from the live catalog instead of
  * hardcoding one: demo-data rebuilds renumber/replace products, so a fixed id
  * can end up pointing at a deleted row or an edge-case fixture (no name,
- * configurable parent, etc.) left behind by another test.
+ * configurable parent, etc.) left behind by another test. A fresh install has
+ * no products until some other spec creates one, so it falls back to a
+ * dedicated simple product of its own.
  * @param {import('@playwright/test').Page} page — an already-authenticated admin page
  * @returns {Promise<number>} a product id safe to open on the edit page
  */
@@ -328,11 +330,13 @@ async function resolveEditableProductId(page) {
 
   const record = (grid.records || []).find((row) => row.type === 'Simple' && row.name);
 
-  if (!record) {
-    throw new Error('resolveEditableProductId: no Simple product with a name found in the catalog');
+  if (record) {
+    return record.product_id;
   }
 
-  return record.product_id;
+  const { createEditableSimpleProduct } = require('./product-helpers');
+
+  return createEditableSimpleProduct(page, `e2e-editable-${generateUid()}`, 'E2E Editable Simple');
 }
 
 /**
