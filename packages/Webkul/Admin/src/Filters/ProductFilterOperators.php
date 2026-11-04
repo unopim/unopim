@@ -2,6 +2,7 @@
 
 namespace Webkul\Admin\Filters;
 
+use Webkul\Attribute\Models\Attribute;
 use Webkul\ElasticSearch\Enums\FilterOperators;
 
 class ProductFilterOperators
@@ -36,6 +37,37 @@ class ProductFilterOperators
         }, $operators);
 
         return array_values(array_filter($mapped));
+    }
+
+    /**
+     * Shape a filter condition into the value the product filter engine expects
+     * for the attribute type and operator.
+     *
+     * @return array<int, mixed>
+     */
+    public static function engineValue(?string $type, FilterOperators $operator, mixed $value, mixed $value2 = '', mixed $currency = ''): array
+    {
+        if (in_array($operator, [FilterOperators::IS_EMPTY, FilterOperators::IS_NOT_EMPTY], true)) {
+            return $type === Attribute::PRICE_FIELD_TYPE ? [$currency, ''] : [''];
+        }
+
+        if ($type === Attribute::PRICE_FIELD_TYPE) {
+            return [$currency, $value, $value2];
+        }
+
+        if ($operator === FilterOperators::RANGE) {
+            return [$value, $value2];
+        }
+
+        if (in_array($operator, [FilterOperators::IN, FilterOperators::NOT_IN], true)) {
+            if (is_array($value)) {
+                return array_values($value);
+            }
+
+            return array_filter(explode(',', is_scalar($value) ? (string) $value : ''));
+        }
+
+        return is_array($value) ? array_values($value) : [$value];
     }
 
     public static function valueControl(?string $type, FilterOperators $operator): string
