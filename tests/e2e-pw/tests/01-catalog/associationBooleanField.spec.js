@@ -1,14 +1,27 @@
 const { test, expect } = require('../../utils/fixtures');
 const { navigateTo, generateUid, resolveEditableProductId } = require('../../utils/helpers');
+const { createSimpleProductRecord, deleteProductBySku } = require('../../utils/product-helpers');
 
 test.describe('Product Edit Associations - Boolean Field (#1249)', () => {
   test.setTimeout(120000);
+
+  let targetSku;
+
+  test.afterEach(async ({ adminPage }) => {
+    if (targetSku) {
+      await deleteProductBySku(adminPage, targetSku);
+    }
+  });
 
   test('should toggle and hold the value of a boolean association field', async ({ adminPage }) => {
     const uid = generateUid();
     const typeCode = `boolfld_${uid}`;
     const fieldCode = `flag_${uid}`;
     const productId = await resolveEditableProductId(adminPage);
+
+    // The picker never lists the product being edited, so a fresh catalog needs a second one to link.
+    targetSku = `assoc-target-${uid}`;
+    await createSimpleProductRecord(adminPage, targetSku);
 
     await navigateTo(adminPage, 'associationTypes');
 
