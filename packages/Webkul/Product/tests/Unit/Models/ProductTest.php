@@ -16,7 +16,7 @@ describe('Product creation via factory', function () {
 
         expect($product)->toBeInstanceOf(Product::class)
             ->and($product->type)->toBe(ProductType::Simple->value)
-            ->and($product->status)->toBe(1)
+            ->and($product->status)->toBeTrue()
             ->and($product->sku)->not->toBeEmpty()
             ->and($product->id)->toBeGreaterThan(0);
 
