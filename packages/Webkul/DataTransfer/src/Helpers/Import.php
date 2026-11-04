@@ -265,11 +265,8 @@ class Import
 
         if ($this->getProcessedRowsCount() === 0 && $this->getFormattedErrors() === []) {
             $updatedData['state'] = self::STATE_COMPLETED;
-            $updatedData['summary'] = [
-                'created' => 0,
-                'updated' => 0,
-                'deleted' => 0,
-            ];
+            $updatedData['summary'] = self::EMPTY_SUMMARY;
+            $updatedData['completed_at'] = now();
         }
 
         $import = $this->jobTrackRepository->update($updatedData, $this->import->id);
@@ -296,12 +293,12 @@ class Import
     }
 
     /**
-     * Whether a stop-on-errors import found any validation error, so nothing may be imported.
+     * Check if error limit has been exceeded
      */
     public function isErrorLimitExceeded(): bool
     {
         return $this->import->validation_strategy == self::VALIDATION_STRATEGY_STOP_ON_ERROR
-        && $this->import->errors_count > 0;
+        && $this->import->errors_count > $this->import->allowed_errors;
     }
 
     /**
@@ -502,6 +499,8 @@ class Import
 
     /**
      * Mark the import completed with the given summary and announce it.
+     *
+     * @param  array{created: int|numeric-string, updated: int|numeric-string, deleted: int|numeric-string}  $summary
      */
     protected function markCompleted(array $summary): void
     {
@@ -519,9 +518,12 @@ class Import
     }
 
     /**
-     * Created, updated and deleted totals summed across the import's batches, null when it has none.
+     * Created, updated and deleted totals summed across the import's batches, optionally
+     * only those in the given state, null when no batch matches.
+     *
+     * @return array{created: numeric-string, updated: numeric-string, deleted: numeric-string}|null
      */
-    protected function batchSummary(): ?array
+    protected function batchSummary(?string $state = null): ?array
     {
         $grammar = DB::rawQueryGrammar();
 
@@ -532,6 +534,7 @@ class Import
                 DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'deleted')} as DECIMAL)) AS deleted"),
             )
             ->where('job_track_id', $this->import->id)
+            ->when($state !== null, fn ($query) => $query->where('state', $state))
             ->groupBy('job_track_id')
             ->first()
             ?->toArray();
@@ -549,20 +552,6 @@ class Import
             ? round($completed / $total * 100)
             : 0;
 
-        $grammar = DB::rawQueryGrammar();
-
-        $summary = $this->jobTrackBatchRepository
-            ->select(
-                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'created')} as DECIMAL)) AS created"),
-                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'updated')} as DECIMAL)) AS updated"),
-                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'deleted')} as DECIMAL)) AS deleted"),
-            )
-            ->where('job_track_id', $this->import->id)
-            ->where('state', $state)
-            ->groupBy('job_track_id')
-            ->first()
-            ?->toArray();
-
         return [
             'batches' => [
                 'total'     => $total,
@@ -570,11 +559,7 @@ class Import
                 'remaining' => $total - $completed,
             ],
             'progress' => $progress,
-            'summary'  => $summary ?? [
-                'created' => 0,
-                'updated' => 0,
-                'deleted' => 0,
-            ],
+            'summary'  => $this->batchSummary($state) ?? self::EMPTY_SUMMARY,
         ];
     }
 

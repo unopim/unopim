@@ -1202,7 +1202,9 @@ class Importer extends AbstractImporter
             $familyId = $this->attributeFamiliesByCode[$rowData[self::ATTRIBUTE_FAMILY_CODE]]->id;
 
             if (! $this->getVariantStructure($rowData[self::VARIANT_STRUCTURE_CODE], $familyId) instanceof VariantStructure) {
-                $this->skipRow($rowNumber, self::ERROR_VARIANT_STRUCTURE_NOT_FOUND, self::VARIANT_STRUCTURE_CODE);
+                $message = trans($this->messages[self::ERROR_VARIANT_STRUCTURE_NOT_FOUND], ['code' => $rowData[self::VARIANT_STRUCTURE_CODE]]);
+
+                $this->skipRow($rowNumber, self::ERROR_VARIANT_STRUCTURE_NOT_FOUND, self::VARIANT_STRUCTURE_CODE, str_replace('%', '%%', $message));
 
                 return false;
             }
@@ -1553,7 +1555,7 @@ class Importer extends AbstractImporter
 
         $structure = $this->getRowVariantStructure($rowData);
 
-        return $structure instanceof VariantStructure && (int) $structure->levels !== 2 ? $structure : null;
+        return $structure instanceof VariantStructure && (int) $structure->levels === 1 ? $structure : null;
     }
 
     /**

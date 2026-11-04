@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Webkul\Attribute\Database\Factories\AttributeFamilyFactory;
@@ -55,6 +56,8 @@ function levelsImportFixture(int $levels): array
 
 /**
  * CSV header for the levels import fixtures.
+ *
+ * @param  array{family: string, structure: VariantStructure, color: string, size: string, colors: array<int, string>, sizes: array<int, string>}  $fixture
  */
 function levelsImportHeader(array $fixture, string $structureColumn = 'variant_structure'): string
 {
@@ -63,6 +66,8 @@ function levelsImportHeader(array $fixture, string $structureColumn = 'variant_s
 
 /**
  * CSV row for the levels import fixtures.
+ *
+ * @param  array{family: string, structure: VariantStructure, color: string, size: string, colors: array<int, string>, sizes: array<int, string>}  $fixture
  */
 function levelsImportRow(array $fixture, string $sku, string $type, string $parent = '', string $structure = '', string $color = '', string $size = ''): string
 {
@@ -118,11 +123,11 @@ function runLevelsImport(string $header, array $rows, string $strategy = Import:
     return $jobTrack->refresh();
 }
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->loginAsAdmin();
 });
 
-it('rejects variant_group rows under a single-level variant structure', function () {
+it('rejects variant_group rows under a single-level variant structure', function (): void {
     $fixture = levelsImportFixture(1);
     [$black] = $fixture['colors'];
     [$medium] = $fixture['sizes'];
@@ -134,12 +139,13 @@ it('rejects variant_group rows under a single-level variant structure', function
         levelsImportRow($fixture, $sku.'-black-m', 'simple', $sku.'-black', color: $black, size: $medium),
     ]);
 
-    expect($jobTrack->state)->not->toBe('completed')
+    expect($jobTrack->state)->toBe(Import::STATE_FAILED)
+        ->and($jobTrack->completed_at)->not->toBeNull()
         ->and($jobTrack->errors)->toContain('Row(s) 2: '.levelsMismatchMessage($fixture['structure']))
         ->and(Product::whereIn('sku', [$sku, $sku.'-black', $sku.'-black-m'])->exists())->toBeFalse();
 });
 
-it('rejects a variant_group row under an existing configurable with a single-level structure', function () {
+it('rejects a variant_group row under an existing configurable with a single-level structure', function (): void {
     $fixture = levelsImportFixture(1);
     [$black] = $fixture['colors'];
     $sku = 'levels-'.Str::lower(Str::random(8));
@@ -160,7 +166,7 @@ it('rejects a variant_group row under an existing configurable with a single-lev
         ->and(Product::where('sku', $sku.'-black')->exists())->toBeFalse();
 });
 
-it('keeps the configurable and skips the variant_group branch when errors are skipped', function () {
+it('keeps the configurable and skips the variant_group branch when errors are skipped', function (): void {
     $fixture = levelsImportFixture(1);
     [$black, $white] = $fixture['colors'];
     [$medium] = $fixture['sizes'];
@@ -180,7 +186,7 @@ it('keeps the configurable and skips the variant_group branch when errors are sk
         ->and(Product::whereIn('sku', [$sku.'-black', $sku.'-black-m'])->exists())->toBeFalse();
 });
 
-it('imports a two-level hierarchy under a two-level variant structure with its axis values', function () {
+it('imports a two-level hierarchy under a two-level variant structure with its axis values', function (): void {
     $fixture = levelsImportFixture(2);
     [$black] = $fixture['colors'];
     [$medium] = $fixture['sizes'];
@@ -203,7 +209,7 @@ it('imports a two-level hierarchy under a two-level variant structure with its a
         ->and($simple?->values['common'][$fixture['size']] ?? null)->toBe($medium);
 });
 
-it('imports a simple variant under an existing variant_group of a two-level structure', function () {
+it('imports a simple variant under an existing variant_group of a two-level structure', function (): void {
     $fixture = levelsImportFixture(2);
     [$black] = $fixture['colors'];
     [, $large] = $fixture['sizes'];
@@ -226,7 +232,7 @@ it('imports a simple variant under an existing variant_group of a two-level stru
         ->and($simple?->values['common'][$fixture['size']] ?? null)->toBe($large);
 });
 
-it('imports simple variants directly under a single-level variant structure', function () {
+it('imports simple variants directly under a single-level variant structure', function (): void {
     $fixture = levelsImportFixture(1);
     [$black] = $fixture['colors'];
     $sku = 'levels-'.Str::lower(Str::random(8));
@@ -244,7 +250,7 @@ it('imports simple variants directly under a single-level variant structure', fu
         ->and($simple?->values['common'][$fixture['color']] ?? null)->toBe($black);
 });
 
-it('still imports a legacy configurable without a variant structure', function () {
+it('still imports a legacy configurable without a variant structure', function (): void {
     $fixture = levelsImportFixture(1);
     [$red] = $fixture['colors'];
     $sku = 'levels-'.Str::lower(Str::random(8));
@@ -257,4 +263,37 @@ it('still imports a legacy configurable without a variant structure', function (
     expect($jobTrack->state)->toBe('completed')
         ->and($jobTrack->errors_count)->toBe(0)
         ->and(Product::where('sku', $sku.'-red')->first()?->parent?->sku)->toBe($sku);
+});
+
+it('names the unknown variant structure code in the import error', function (): void {
+    $fixture = levelsImportFixture(1);
+    $sku = 'levels-'.Str::lower(Str::random(8));
+    $unknownCode = 'missing_structure_'.Str::lower(Str::random(8));
+
+    $jobTrack = runLevelsImport(levelsImportHeader($fixture), [
+        levelsImportRow($fixture, $sku, 'configurable', structure: $unknownCode),
+    ]);
+
+    $message = trans('data_transfer::app.importers.products.validation.errors.variant-structure-not-found', ['code' => $unknownCode]);
+
+    expect($jobTrack->state)->toBe(Import::STATE_FAILED)
+        ->and($jobTrack->errors)->toContain('Row(s) 1: '.$message)
+        ->and($message)->not->toContain(':code')
+        ->and(Product::where('sku', $sku)->exists())->toBeFalse();
+});
+
+it('completes a header-only file once with a completion time and no completed event', function (): void {
+    $fixture = levelsImportFixture(1);
+
+    Event::fake(['data_transfer.imports.completed']);
+
+    $jobTrack = runLevelsImport(levelsImportHeader($fixture), []);
+
+    expect($jobTrack->state)->toBe(Import::STATE_COMPLETED)
+        ->and($jobTrack->completed_at)->not->toBeNull()
+        ->and($jobTrack->errors_count)->toBe(0)
+        ->and($jobTrack->batches)->toHaveCount(0)
+        ->and($jobTrack->summary)->toEqual(['created' => 0, 'updated' => 0, 'deleted' => 0]);
+
+    Event::assertNotDispatched('data_transfer.imports.completed');
 });

@@ -36,7 +36,6 @@ beforeEach(function (): void {
 
 dataset('stopping validations', [
     'stop on first error'                        => [Import::VALIDATION_STRATEGY_STOP_ON_ERROR, 0, false],
-    'stop on errors ignores allowed errors'      => [Import::VALIDATION_STRATEGY_STOP_ON_ERROR, 10, false],
     'validation exception even with skip errors' => [Import::VALIDATION_STRATEGY_SKIP_ERRORS, 10, true],
 ]);
 
@@ -173,6 +172,7 @@ it('executes permitted pending batches and completes the import', function (stri
     Event::assertDispatchedTimes('data_transfer.imports.completed', 1);
 })->with([
     'valid stop-on-errors import'              => [Import::VALIDATION_STRATEGY_STOP_ON_ERROR, 0, false],
+    'stop-on-errors at allowed limit'          => [Import::VALIDATION_STRATEGY_STOP_ON_ERROR, 1, true],
     'skip-errors below allowance'              => [Import::VALIDATION_STRATEGY_SKIP_ERRORS, 2, true],
     'skip-errors ignores stop-on-errors limit' => [Import::VALIDATION_STRATEGY_SKIP_ERRORS, 0, true],
 ]);
