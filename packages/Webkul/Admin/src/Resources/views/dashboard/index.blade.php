@@ -69,6 +69,8 @@
         </div>
     </div>
 
+    {!! view_render_event('unopim.admin.dashboard.index.cards') !!}
+
     <!-- Needs Attention -->
     @include('admin::dashboard.needs-attention')
 
@@ -98,6 +100,8 @@
             @include('admin::dashboard.product-trend')
         </div>
     </div>
+
+    {!! view_render_event('unopim.admin.dashboard.index.stats') !!}
 
     <!-- Completeness -->
     <div class="flex gap-2.5 mt-5 max-xl:flex-wrap">
