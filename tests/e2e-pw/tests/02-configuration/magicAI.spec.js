@@ -14,7 +14,11 @@ const {
   clickEditOnRow,
   closeDropdown,
 } = require('../../utils/helpers');
-const { ensureMagicAITextEnabled, ensureMagicAITranslationEnabled } = require('../../utils/magic-ai-helpers');
+const {
+  ensureMagicAITextEnabled,
+  ensureMagicAITranslationEnabled,
+  ensureMagicAITranslationDisabled,
+} = require('../../utils/magic-ai-helpers');
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 
@@ -227,7 +231,8 @@ test('2.6 - Verify platform dropdown shows OpenAI platform on config page', asyn
 });
 
 test('2.7 - Configure Magic AI with OpenAI platform for Text Generation', { tag: '@global-state' }, async ({ adminPage }) => {
-  test.setTimeout(30000);
+  test.setTimeout(60000);
+  await ensureMagicAITranslationDisabled(adminPage);
   await gotoPage(adminPage, MAGIC_AI_CONFIG_URL);
 
   // Enable Text Generation toggle; the Magic AI WYSIWYG button is gated by this flag.
@@ -247,7 +252,8 @@ test('2.7 - Configure Magic AI with OpenAI platform for Text Generation', { tag:
 });
 
 test('2.8 - Configure Image Generation with OpenAI platform', { tag: '@global-state' }, async ({ adminPage }) => {
-  test.setTimeout(30000);
+  test.setTimeout(60000);
+  await ensureMagicAITranslationDisabled(adminPage);
   await gotoPage(adminPage, MAGIC_AI_CONFIG_URL);
   await adminPage.locator('input[type="checkbox"]').first().click({ force: true });
 
@@ -272,6 +278,7 @@ test('2.8 - Configure Image Generation with OpenAI platform', { tag: '@global-st
 });
 
 test('2.9 - Save Configuration without any changes', { tag: '@global-state' }, async ({ adminPage }) => {
+  await ensureMagicAITranslationDisabled(adminPage);
   await gotoPage(adminPage, MAGIC_AI_CONFIG_URL);
   await adminPage.locator('input[type="checkbox"]').first().click({ force: true });
 
@@ -754,32 +761,7 @@ test('7.5 - Verify More Actions menu on product edit page', { tag: '@global-stat
 });
 
 test('7.5b - More Actions button is hidden when AI translation is disabled', { tag: '@global-state' }, async ({ adminPage }) => {
-  await gotoPage(adminPage, MAGIC_AI_CONFIG_URL);
-  const cbSelector = 'input[type="checkbox"][name="general[magic_ai][translation][enabled]"]';
-  await adminPage.locator(cbSelector).first().waitFor({ state: 'attached', timeout: 10000 });
-
-  await adminPage.evaluate(async () => {
-    const cb = document.querySelector('input[type="checkbox"][name="general[magic_ai][translation][enabled]"]');
-    if (!cb) return;
-    const form = cb.closest('form');
-    if (!form) return;
-    cb.checked = false;
-    cb.dispatchEvent(new Event('change', { bubbles: true }));
-    const fd = new FormData(form);
-    fd.set('general[magic_ai][translation][enabled]', '0');
-    const xsrf = (document.cookie.split('; ').find((c) => c.startsWith('XSRF-TOKEN=')) || '').split('=')[1] || '';
-    const action = form.getAttribute('action') || window.location.pathname;
-    await fetch(action || window.location.pathname, {
-      method:      'POST',
-      credentials: 'same-origin',
-      headers: {
-        'X-XSRF-TOKEN': decodeURIComponent(xsrf),
-        Accept:         'text/html,*/*',
-      },
-      body:     fd,
-      redirect: 'follow',
-    });
-  });
+  await ensureMagicAITranslationDisabled(adminPage);
 
   const uid = generateUid();
   const sku = `magicai-nomore-${uid}`;
