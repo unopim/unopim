@@ -13,12 +13,17 @@ use Webkul\Product\Repositories\ProductRepository;
 
 uses(DatabaseTransactions::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->withoutMiddleware(PreventRequestForgery::class);
 
     $this->loginAsAdmin();
 });
 
+/**
+ * Family with one select axis and a one-level structure built on it.
+ *
+ * @return array{0: AttributeFamily, 1: VariantStructure, 2: Attribute}
+ */
 function vsGuardFamilyWithStructure(): array
 {
     $axis = Attribute::factory()->create(['code' => 'vsg_color_'.Str::random(8), 'type' => 'select']);
@@ -50,6 +55,9 @@ function vsGuardFamilyWithStructure(): array
     return [$family, $structure, $axis];
 }
 
+/**
+ * Configurable product that points at the structure.
+ */
 function vsGuardProductUsing(AttributeFamily $family, VariantStructure $structure): Product
 {
     return app(ProductRepository::class)->create([
@@ -60,6 +68,11 @@ function vsGuardProductUsing(AttributeFamily $family, VariantStructure $structur
     ]);
 }
 
+/**
+ * Bulk-save entry for a one-level structure on the given axis.
+ *
+ * @return array{code: string, name: string, levels: int, axes: array{level_1: array<int, string>, level_2: array<int, string>}, placements: array{common: array<int, string>, sub_parent: array<int, string>, variant: array<int, string>}}
+ */
 function vsGuardBulkPayload(VariantStructure $structure, string $axisCode, string $name): array
 {
     return [
@@ -71,7 +84,7 @@ function vsGuardBulkPayload(VariantStructure $structure, string $axisCode, strin
     ];
 }
 
-it('refuses to delete a variant structure that a product still uses', function () {
+it('refuses to delete a variant structure that a product still uses', function (): void {
     [$family, $structure] = vsGuardFamilyWithStructure();
 
     $product = vsGuardProductUsing($family, $structure);
@@ -85,7 +98,7 @@ it('refuses to delete a variant structure that a product still uses', function (
         ->and($product->refresh()->variant_structure_id)->toBe($structure->id);
 });
 
-it('deletes a variant structure that no product uses together with its axes', function () {
+it('deletes a variant structure that no product uses together with its axes', function (): void {
     [$family, $structure] = vsGuardFamilyWithStructure();
 
     $this->deleteJson(route('admin.catalog.families.variant-structures.delete', [$family->id, $structure->id]))
@@ -95,7 +108,7 @@ it('deletes a variant structure that no product uses together with its axes', fu
         ->and(VariantStructureAxis::where('variant_structure_id', $structure->id)->count())->toBe(0);
 });
 
-it('keeps the same structure row when the bulk save resubmits an in-use structure', function () {
+it('keeps the same structure row when the bulk save resubmits an in-use structure', function (): void {
     [$family, $structure, $axis] = vsGuardFamilyWithStructure();
 
     $product = vsGuardProductUsing($family, $structure);
@@ -109,7 +122,7 @@ it('keeps the same structure row when the bulk save resubmits an in-use structur
         ->and(VariantStructure::where('attribute_family_id', $family->id)->count())->toBe(1);
 });
 
-it('refuses a bulk save that drops an in-use structure and leaves the family untouched', function () {
+it('refuses a bulk save that drops an in-use structure and leaves the family untouched', function (): void {
     [$family, $structure] = vsGuardFamilyWithStructure();
 
     $product = vsGuardProductUsing($family, $structure);
@@ -123,7 +136,7 @@ it('refuses a bulk save that drops an in-use structure and leaves the family unt
         ->and($product->refresh()->variant_structure_id)->toBe($structure->id);
 });
 
-it('drops an unused structure that the bulk save no longer lists', function () {
+it('drops an unused structure that the bulk save no longer lists', function (): void {
     [$family, $structure] = vsGuardFamilyWithStructure();
 
     $this->putJson(route('admin.catalog.families.variant-structures.save', $family->id), [
@@ -133,7 +146,7 @@ it('drops an unused structure that the bulk save no longer lists', function () {
     expect(VariantStructure::find($structure->id))->toBeNull();
 });
 
-it('keeps the listed in-use structure and drops the unlisted unused one in the same bulk save', function () {
+it('keeps the listed in-use structure and drops the unlisted unused one in the same bulk save', function (): void {
     [$family, $kept, $axis] = vsGuardFamilyWithStructure();
 
     $product = vsGuardProductUsing($family, $kept);
@@ -153,6 +166,9 @@ it('keeps the listed in-use structure and drops the unlisted unused one in the s
         ->and($product->refresh()->variant_structure_id)->toBe($kept->id);
 });
 
+/**
+ * Extra select attribute linked to the family, usable as another axis.
+ */
 function vsGuardSecondAxis(AttributeFamily $family): Attribute
 {
     $axis = Attribute::factory()->create(['code' => 'vsg_size_'.Str::random(8), 'type' => 'select']);
@@ -162,6 +178,9 @@ function vsGuardSecondAxis(AttributeFamily $family): Attribute
     return $axis;
 }
 
+/**
+ * Configurable product on the structure with one child variant.
+ */
 function vsGuardProductWithVariant(AttributeFamily $family, VariantStructure $structure): Product
 {
     $configurable = vsGuardProductUsing($family, $structure);
@@ -174,6 +193,11 @@ function vsGuardProductWithVariant(AttributeFamily $family, VariantStructure $st
     return $configurable;
 }
 
+/**
+ * Attribute ids of the structure's axes in level and position order.
+ *
+ * @return array<int, int>
+ */
 function vsGuardAxisIds(VariantStructure $structure): array
 {
     return VariantStructureAxis::where('variant_structure_id', $structure->id)
@@ -183,7 +207,7 @@ function vsGuardAxisIds(VariantStructure $structure): array
         ->all();
 }
 
-it('refuses to change the axes of a structure whose product has variants through the single save', function () {
+it('refuses to change the axes of a structure whose product has variants through the single save', function (): void {
     [$family, $structure] = vsGuardFamilyWithStructure();
 
     $otherAxis = vsGuardSecondAxis($family);
@@ -201,7 +225,7 @@ it('refuses to change the axes of a structure whose product has variants through
         ->and($structure->refresh()->name)->toBe('In use');
 });
 
-it('refuses to change the levels of a structure whose product has variants through the bulk save', function () {
+it('refuses to change the levels of a structure whose product has variants through the bulk save', function (): void {
     [$family, $structure, $axis] = vsGuardFamilyWithStructure();
 
     $otherAxis = vsGuardSecondAxis($family);
@@ -225,7 +249,7 @@ it('refuses to change the levels of a structure whose product has variants throu
         ->and(vsGuardAxisIds($structure))->toBe($axesBefore);
 });
 
-it('still lets the bulk save rename a structure whose product has variants', function () {
+it('still lets the bulk save rename a structure whose product has variants', function (): void {
     [$family, $structure, $axis] = vsGuardFamilyWithStructure();
 
     $product = vsGuardProductWithVariant($family, $structure);
