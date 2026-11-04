@@ -1,0 +1,111 @@
+name: Coverage Report
+
+on:
+  push:
+    branches: ['3.x']
+  schedule:
+    - cron: '0 5 * * 1'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  coverage:
+    if: github.repository == 'unopim/unopim'
+    runs-on: ubuntu-24.04
+    name: Pest Coverage (MySQL)
+    timeout-minutes: 120
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: unopim
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=3
+          --tmpfs /var/lib/mysql:rw,noexec,nosuid,size=600m
+          --tmpfs /tmp:rw,noexec,nosuid,size=100m
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: '8.4'
+          extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
+          ini-values: error_reporting=E_ALL, memory_limit=-1, pcov.directory=${{ github.workspace }}, pcov.exclude="~(vendor|node_modules|storage)~"
+          tools: composer:v2
+          coverage: pcov
+
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
+        with:
+          composer-options: "--optimize-autoloader"
+
+      - name: Setup Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+
+      - name: Install Node dependencies
+        run: npm install --omit=dev --no-audit --no-fund --no-progress --prefer-offline
+
+      - name: Setting Environment
+        run: |
+          cp .env.example .env
+          sed -i "s|^\(APP_ENV=\s*\).*$|\1testing|" .env
+          sed -i "s|^\(DB_HOST=\s*\).*$|\1127.0.0.1|" .env
+          sed -i "s|^\(DB_PORT=\s*\).*$|\13306|" .env
+          sed -i "s|^\(DB_DATABASE=\s*\).*$|\1unopim|" .env
+          sed -i "s|^\(DB_USERNAME=\s*\).*$|\1root|" .env
+          sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
+          sed -i "s|^\(DB_PREFIX=\s*\).*$|\1wk_|" .env
+
+      - name: Running UnoPim Installer
+        run: php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
+
+      - name: Add swap headroom for coverage recording
+        run: |
+          sudo rm -f /mnt/swapfile
+          sudo fallocate -l 16G /mnt/swapfile
+          sudo chmod 600 /mnt/swapfile
+          sudo mkswap /mnt/swapfile
+          sudo swapon /mnt/swapfile
+
+      - name: Running Pest with coverage
+        shell: bash
+        run: vendor/bin/pest --colors=never --coverage --coverage-clover=coverage.xml --coverage-text | tee coverage.txt
+
+      - name: Summarize coverage
+        if: always()
+        run: |
+          if [ -f coverage.xml ]; then
+            php -r '$m = simplexml_load_file("coverage.xml")->project->metrics; $c = (int) $m["coveredstatements"] + (int) $m["coveredconditionals"] + (int) $m["coveredmethods"]; $t = (int) $m["statements"] + (int) $m["conditionals"] + (int) $m["methods"]; printf("Total coverage: %.2f%%\n", $t ? $c / $t * 100 : 0);' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No coverage report was produced." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: coverage-clover
+          path: |
+            coverage.xml
+            coverage.txt
+          if-no-files-found: ignore

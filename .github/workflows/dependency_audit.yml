@@ -1,0 +1,75 @@
+name: Dependency Audit
+
+on:
+  push:
+    branches: [master, '3.x']
+  pull_request:
+  schedule:
+    - cron: '0 4 * * 1'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  composer:
+    if: github.repository == 'unopim/unopim'
+    runs-on: ubuntu-24.04
+    name: Composer Audit
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: '8.4'
+          tools: composer:v2
+          coverage: none
+
+      - name: Audit locked Composer dependencies
+        run: composer audit --locked --abandoned=report
+
+  npm:
+    if: github.repository == 'unopim/unopim'
+    runs-on: ubuntu-24.04
+    name: npm Audit (${{ matrix.path }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - path: .
+            allowed: ''
+          - path: packages/Webkul/Admin
+            allowed: tinymce
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+
+      - name: Resolve dependency tree
+        working-directory: ${{ matrix.path }}
+        run: npm install --package-lock-only --no-audit --no-fund --no-progress
+
+      # tinymce 6.8.x advisories are an accepted, mitigated risk: 7.x is GPL-licensed.
+      - name: Audit production dependencies
+        working-directory: ${{ matrix.path }}
+        env:
+          AUDIT_SCRIPT: ${{ github.workspace }}/.github/scripts/npm-audit.mjs
+          ALLOWED: ${{ matrix.allowed }}
+        run: node "$AUDIT_SCRIPT" $ALLOWED

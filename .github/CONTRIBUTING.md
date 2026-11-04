@@ -52,6 +52,7 @@ vendor/bin/pest                          # PHP tests must pass
 vendor/bin/pint --test                   # code style must pass (run `vendor/bin/pint` to auto-fix)
 vendor/bin/phpstan analyse               # static analysis must report no errors
 php artisan unopim:translations:check    # every locale must have every key
+composer audit --locked                  # no known vulnerable PHP dependencies
 ```
 
 CI also runs the Pest suite on MySQL, MariaDB and PostgreSQL, the Playwright end-to-end tests, Rector, and security scanning.
