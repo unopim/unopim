@@ -17,7 +17,7 @@ class MagicAISystemPromptFactory extends Factory
         return [
             'title'        => fake()->sentence,
             'tone'         => fake()->word,
-            'max_tokens'   => fake()->numberBetween(50, 1000),
+            'max_tokens'   => fake()->numberBetween(MagicAISystemPrompt::MAX_TOKENS_LOWER_BOUND, 1000),
             'temperature'  => fake()->randomFloat(1, 0, 2),
             'is_enabled'   => fake()->boolean ? 1 : 0,
         ];
