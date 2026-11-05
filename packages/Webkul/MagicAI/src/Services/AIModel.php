@@ -58,7 +58,7 @@ class AIModel
         $platform = $platformId ? $repo->find($platformId) : $repo->getActiveDefault();
 
         if (! $platform) {
-            return $models;
+            return [];
         }
 
         $provider = AiProvider::tryFrom($platform->provider);

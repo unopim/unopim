@@ -90,6 +90,16 @@ it('offers no image models when an image capable provider exposes only chat mode
     'xai chat model'     => [AiProvider::XAI, ['grok-4']],
 ]);
 
+it('offers no image models for an unknown platform id', function () {
+    expect(AIModel::filterImageModels(['gpt-4o'], 999999))->toBe([]);
+});
+
+it('offers no image models when no platform id is given and no platform is active', function () {
+    MagicAIPlatform::query()->delete();
+
+    expect(AIModel::filterImageModels(['gpt-4o', 'dall-e-3']))->toBe([]);
+});
+
 it('keeps prefixed and chatgpt image models for an openai platform', function () {
     $platform = MagicAIPlatform::factory()->provider(AiProvider::OpenAI)->create();
 
