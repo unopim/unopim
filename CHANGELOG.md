@@ -6,7 +6,7 @@
 
 ## Bug fixes
 
-- Fixed Magic AI offering chat models such as `gpt-4o` as image models, and image edits with `chatgpt-image-latest` or `openai/gpt-image-1` failing with "Unknown parameter: 'response_format'". The image model list now offers only models whose names match a known image model (`dall-e`, `gpt-image` or `image` for OpenAI, `imagen` or `image` for Gemini, `image` or `grok…vision` for xAI), and is empty when none match or the platform cannot be found. A platform behind a proxy or custom API URL whose image model has a different name no longer appears in the image model picker; register the model under a name that contains `image` to keep it selectable.
+- Fixed Magic AI offering chat models such as `gpt-4o` as image models, and image edits with `chatgpt-image-latest` or `openai/gpt-image-1` failing with "Unknown parameter: 'response_format'". The image model list now offers only models whose names match a known image model (`dall-e`, `gpt-image` or `image` for OpenAI, `imagen` or `image` for Gemini, `image` or `grok…vision` for xAI), and is empty when none match or the platform cannot be found. A platform on a custom API URL, such as a proxy or gateway, still offers its full model list when no name matches.
 - Fixed a product quick search none of whose fields resolves to an attribute returning the entire catalogue instead of no products. The database path dropped the empty condition group; the Elasticsearch path emitted an empty `should`, which Elasticsearch answers with a match_all because it applies `minimum_should_match` only once there are `should` clauses to count. Both now refuse the term, with `1 = 0` and with `match_none`.
 
 ## New features

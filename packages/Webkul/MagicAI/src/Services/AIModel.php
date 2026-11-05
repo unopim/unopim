@@ -51,6 +51,7 @@ class AIModel
     /**
      * Filter models to only image-capable ones based on provider.
      * Matches model names against the provider's known image-model naming patterns.
+     * A platform on a custom API URL keeps its full list when nothing matches, since a proxy may name image models freely.
      */
     public static function filterImageModels(array $models, ?int $platformId = null): array
     {
@@ -67,7 +68,6 @@ class AIModel
             return [];
         }
 
-        // Image model patterns per provider - matches known image model naming conventions
         $imagePatterns = match ($provider) {
             AiProvider::OpenAI  => ['/dall-e/i', '/gpt-image/i', '/image/i'],
             AiProvider::Gemini  => ['/imagen/i', '/image/i'],
@@ -84,6 +84,10 @@ class AIModel
 
             return array_any($imagePatterns, fn (string $pattern): int|false => preg_match($pattern, $id));
         });
+
+        if ($filtered === [] && $platform->usesCustomApiUrl()) {
+            return $models;
+        }
 
         return array_values($filtered);
     }

@@ -106,3 +106,26 @@ it('keeps prefixed and chatgpt image models for an openai platform', function ()
     expect(AIModel::filterImageModels(['gpt-4o', 'chatgpt-image-latest', 'openai/gpt-image-1'], $platform->id))
         ->toBe(['chatgpt-image-latest', 'openai/gpt-image-1']);
 });
+
+it('keeps the full model list for an image capable platform on a custom api url when no name matches', function (): void {
+    $platform = MagicAIPlatform::factory()->provider(AiProvider::OpenAI)->create(['api_url' => 'https://gateway.example.test/v1']);
+
+    expect(AIModel::filterImageModels(['gpt-4o', 'house-renderer'], $platform->id))
+        ->toBe(['gpt-4o', 'house-renderer']);
+});
+
+it('filters strictly for an image capable platform on its stock api url', function (?string $apiUrl): void {
+    $platform = MagicAIPlatform::factory()->provider(AiProvider::OpenAI)->create(['api_url' => $apiUrl]);
+
+    expect(AIModel::filterImageModels(['gpt-4o', 'house-renderer'], $platform->id))->toBe([]);
+})->with([
+    'no api url'          => [null],
+    'stock api url'       => ['https://api.openai.com/v1'],
+    'stock with trailing' => ['https://api.openai.com/v1/'],
+]);
+
+it('still filters by name for a platform on a custom api url when image models match', function (): void {
+    $platform = MagicAIPlatform::factory()->provider(AiProvider::OpenAI)->create(['api_url' => 'https://gateway.example.test/v1']);
+
+    expect(AIModel::filterImageModels(['gpt-4o', 'dall-e-3'], $platform->id))->toBe(['dall-e-3']);
+});
