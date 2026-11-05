@@ -2,6 +2,7 @@
 
 namespace Webkul\MagicAI\Gateways;
 
+use Illuminate\Http\Client\Response;
 use Illuminate\Http\UploadedFile;
 use InvalidArgumentException;
 use Laravel\Ai\Contracts\Files\StorableFile;
@@ -19,6 +20,8 @@ class OpenAiImageGateway extends OpenAiGateway
     }
 
     /**
+     * Send an image generation request.
+     *
      * @param  array<string, mixed>  $providerOptions
      */
     protected function sendImageGenerationRequest(
@@ -29,7 +32,7 @@ class OpenAiImageGateway extends OpenAiGateway
         ?string $quality,
         ?int $timeout,
         array $providerOptions = [],
-    ) {
+    ): Response {
         return $this->client($provider, $timeout ?? 120)->post('images/generations', [
             ...$providerOptions,
             'model'  => $model,
@@ -40,6 +43,8 @@ class OpenAiImageGateway extends OpenAiGateway
     }
 
     /**
+     * Send an image edit request with attachments.
+     *
      * @param  array<int, mixed>  $attachments
      * @param  array<string, mixed>  $providerOptions
      */
@@ -52,7 +57,7 @@ class OpenAiImageGateway extends OpenAiGateway
         ?string $quality,
         ?int $timeout,
         array $providerOptions = [],
-    ) {
+    ): Response {
         $request = $this->client($provider, $timeout ?? 120);
 
         $field = self::returnsBase64ByDefault($model) ? 'image[]' : 'image';
@@ -81,12 +86,25 @@ class OpenAiImageGateway extends OpenAiGateway
             : ['response_format' => 'b64_json'];
     }
 
+    /**
+     * Read the raw bytes of an image attachment.
+     */
     private function attachmentContent(mixed $attachment): string
     {
-        return match (true) {
-            $attachment instanceof Image && $attachment instanceof StorableFile  => $attachment->content(),
-            $attachment instanceof UploadedFile                                  => (string) $attachment->get(),
-            default                                                              => throw new InvalidArgumentException('Unsupported image attachment type ['.get_debug_type($attachment).']'),
-        };
+        if ($attachment instanceof Image && $attachment instanceof StorableFile) {
+            return $attachment->content();
+        }
+
+        if (! $attachment instanceof UploadedFile) {
+            throw new InvalidArgumentException('Unsupported image attachment type ['.get_debug_type($attachment).']');
+        }
+
+        $content = $attachment->get();
+
+        if ($content === false) {
+            throw new InvalidArgumentException('Unable to read image attachment ['.$attachment->getClientOriginalName().']');
+        }
+
+        return $content;
     }
 }

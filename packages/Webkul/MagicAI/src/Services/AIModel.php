@@ -50,7 +50,7 @@ class AIModel
 
     /**
      * Filter models to only image-capable ones based on provider.
-     * Uses the provider's API to determine which models support image generation.
+     * Matches model names against the provider's known image-model naming patterns.
      */
     public static function filterImageModels(array $models, ?int $platformId = null): array
     {
@@ -79,7 +79,7 @@ class AIModel
             return $models;
         }
 
-        $filtered = array_filter($models, function ($model) use ($imagePatterns): bool {
+        $filtered = array_filter($models, function (string|array $model) use ($imagePatterns): bool {
             $id = is_array($model) ? ($model['id'] ?? '') : $model;
 
             return array_any($imagePatterns, fn (string $pattern): int|false => preg_match($pattern, $id));

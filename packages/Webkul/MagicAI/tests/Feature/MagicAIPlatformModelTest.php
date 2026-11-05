@@ -81,7 +81,7 @@ it('offers no image models at all for a provider without an image endpoint', fun
     expect(AIModel::filterImageModels(['claude-sonnet-4-5'], $platform->id))->toBe([]);
 });
 
-it('offers no image models when an image capable provider exposes only chat models', function (AiProvider $provider, array $models) {
+it('offers no image models when an image capable provider exposes only chat models', function (AiProvider $provider, array $models): void {
     $platform = MagicAIPlatform::factory()->provider($provider)->create();
 
     expect(AIModel::filterImageModels($models, $platform->id))->toBe([]);
@@ -90,17 +90,17 @@ it('offers no image models when an image capable provider exposes only chat mode
     'xai chat model'     => [AiProvider::XAI, ['grok-4']],
 ]);
 
-it('offers no image models for an unknown platform id', function () {
+it('offers no image models for an unknown platform id', function (): void {
     expect(AIModel::filterImageModels(['gpt-4o'], 999999))->toBe([]);
 });
 
-it('offers no image models when no platform id is given and no platform is active', function () {
+it('offers no image models when no platform id is given and no platform is active', function (): void {
     MagicAIPlatform::query()->delete();
 
     expect(AIModel::filterImageModels(['gpt-4o', 'dall-e-3']))->toBe([]);
 });
 
-it('keeps prefixed and chatgpt image models for an openai platform', function () {
+it('keeps prefixed and chatgpt image models for an openai platform', function (): void {
     $platform = MagicAIPlatform::factory()->provider(AiProvider::OpenAI)->create();
 
     expect(AIModel::filterImageModels(['gpt-4o', 'chatgpt-image-latest', 'openai/gpt-image-1'], $platform->id))

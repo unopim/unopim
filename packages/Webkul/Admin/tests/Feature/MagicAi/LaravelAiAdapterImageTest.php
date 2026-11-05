@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Client\Factory;
 use Illuminate\Http\Client\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 use Laravel\Ai\Files\Image as ImageFile;
 use Laravel\Ai\Image;
@@ -252,14 +253,14 @@ it('forwards provider options to the image request without letting them override
     });
 });
 
-it('sends moderation instead of response_format to a provider-prefixed gpt-image model', function () {
+it('sends moderation instead of response_format to a provider-prefixed gpt-image model', function (): void {
     (new LaravelAiAdapter(
         platform: $this->platform,
         model: 'openai/gpt-image-1',
         prompt: 'a red apple',
     ))->images(['size' => '1024x1024']);
 
-    Http::assertSent(function (Request $request) {
+    Http::assertSent(function (Request $request): bool {
         $body = json_decode($request->body(), true);
 
         return $request->url() === 'https://api.openai.com/v1/images/generations'
@@ -269,14 +270,14 @@ it('sends moderation instead of response_format to a provider-prefixed gpt-image
     });
 });
 
-it('shapes an image edit request by the same base64 check as generation', function (string $model, bool $returnsBase64) {
+it('shapes an image edit request by the same base64 check as generation', function (string $model, bool $returnsBase64): void {
     config(['ai.providers.openai.key' => 'sk-test']);
 
     Image::of('make the apple green')
         ->attachments([ImageFile::fromBase64(base64_encode('fake-image'), 'image/png')])
         ->generate('openai', $model);
 
-    Http::assertSent(function (Request $request) use ($model, $returnsBase64) {
+    Http::assertSent(function (Request $request) use ($model, $returnsBase64): bool {
         $parts = collect($request->data())->keyBy('name');
 
         return $request->url() === 'https://api.openai.com/v1/images/edits'
@@ -293,3 +294,18 @@ it('shapes an image edit request by the same base64 check as generation', functi
     'gpt-image-1'          => ['gpt-image-1', true],
     'dall-e-2'             => ['dall-e-2', false],
 ]);
+
+it('refuses an image edit whose uploaded attachment cannot be read', function (): void {
+    config(['ai.providers.openai.key' => 'sk-test']);
+
+    $unreadable = Mockery::mock(UploadedFile::class);
+    $unreadable->shouldReceive('get')->andReturn(false);
+    $unreadable->shouldReceive('getClientOriginalName')->andReturn('apple.png');
+
+    expect(fn (): mixed => Image::of('make the apple green')
+        ->attachments([$unreadable])
+        ->generate('openai', 'gpt-image-1'))
+        ->toThrow(InvalidArgumentException::class, 'Unable to read image attachment [apple.png]');
+
+    Http::assertNothingSent();
+});
