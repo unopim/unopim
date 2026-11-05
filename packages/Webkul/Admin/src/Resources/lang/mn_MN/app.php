@@ -2328,6 +2328,7 @@ return [
                 'title'               => 'Тушаал',
                 'create-btn'          => 'Тушаал үүсгэх',
                 'edit-title'          => 'Тушаал засах',
+                'insert-attribute'    => 'Шинж чанар оруулах',
                 'create-title'        => 'Шинэ тушаал үүсгэх',
                 'label-title'         => 'Гарчиг',
                 'purpose'             => 'Зорилго',
