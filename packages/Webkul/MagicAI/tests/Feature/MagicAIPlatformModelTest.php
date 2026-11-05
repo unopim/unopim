@@ -81,8 +81,18 @@ it('offers no image models at all for a provider without an image endpoint', fun
     expect(AIModel::filterImageModels(['claude-sonnet-4-5'], $platform->id))->toBe([]);
 });
 
-it('keeps the full list when an image capable provider exposes no image-named model', function () {
-    $platform = MagicAIPlatform::factory()->provider(AiProvider::XAI)->create();
+it('offers no image models when an image capable provider exposes only chat models', function (AiProvider $provider, array $models) {
+    $platform = MagicAIPlatform::factory()->provider($provider)->create();
 
-    expect(AIModel::filterImageModels(['grok-4'], $platform->id))->toBe(['grok-4']);
+    expect(AIModel::filterImageModels($models, $platform->id))->toBe([]);
+})->with([
+    'openai chat models' => [AiProvider::OpenAI, ['gpt-4o', 'gpt-5-mini']],
+    'xai chat model'     => [AiProvider::XAI, ['grok-4']],
+]);
+
+it('keeps prefixed and chatgpt image models for an openai platform', function () {
+    $platform = MagicAIPlatform::factory()->provider(AiProvider::OpenAI)->create();
+
+    expect(AIModel::filterImageModels(['gpt-4o', 'chatgpt-image-latest', 'openai/gpt-image-1'], $platform->id))
+        ->toBe(['chatgpt-image-latest', 'openai/gpt-image-1']);
 });

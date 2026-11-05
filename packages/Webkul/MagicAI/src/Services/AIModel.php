@@ -82,11 +82,9 @@ class AIModel
         $filtered = array_filter($models, function ($model) use ($imagePatterns): bool {
             $id = is_array($model) ? ($model['id'] ?? '') : $model;
 
-            return array_any($imagePatterns, fn ($pattern): int|false => preg_match($pattern, $id));
+            return array_any($imagePatterns, fn (string $pattern): int|false => preg_match($pattern, $id));
         });
 
-        // If no image-specific models found, return all models
-        // (the provider supports images, user can pick any model that works)
-        return $filtered === [] ? $models : array_values($filtered);
+        return array_values($filtered);
     }
 }
