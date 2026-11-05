@@ -1,17 +1,26 @@
 <?php
 
+use OwenIt\Auditing\Models\Audit;
 use Webkul\Product\Models\Product;
 
+/**
+ * Get the product's updated audits that touched status.
+ *
+ * @return list<Audit>
+ */
 function statusAuditsFor(Product $product): array
 {
     return $product->audits()
         ->where('event', 'updated')
         ->get()
-        ->filter(fn ($audit): bool => array_key_exists('status', $audit->new_values ?? []))
+        ->filter(fn (Audit $audit): bool => array_key_exists('status', $audit->new_values ?? []))
         ->values()
         ->all();
 }
 
+/**
+ * Create an enabled product with its required values seeded.
+ */
 function enabledProductForStatusHistory(): Product
 {
     $product = seedRequiredProductValues(Product::factory()->simple()->create(['status' => 1]));
