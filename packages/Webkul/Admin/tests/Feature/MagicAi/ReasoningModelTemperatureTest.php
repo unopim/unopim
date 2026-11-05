@@ -132,6 +132,8 @@ it('sends temperature for chat and pre-reasoning OpenAI models', function (strin
     'gpt-3.5-turbo',
     'gpt-35-turbo',
     'gpt-5-chat-latest',
+    'gpt-5.1-chat-latest',
+    'gpt-6-chat',
 ]);
 
 it('raises max_output_tokens to at least 16000 for reasoning models', function () {

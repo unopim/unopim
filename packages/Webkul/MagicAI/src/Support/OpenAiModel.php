@@ -7,13 +7,15 @@ class OpenAiModel
     /**
      * Determine if the model is an OpenAI reasoning model (o-series, gpt-5 and later).
      *
+     * Chat variants such as "gpt-5.1-chat-latest" still accept temperature.
+     *
      * Azure names GPT-3.5 deployments "gpt-35-turbo", so major version 35 is excluded.
      */
     public static function isReasoning(string $model): bool
     {
         $model = strtolower($model);
 
-        if (str_starts_with($model, 'gpt-5-chat')) {
+        if (preg_match('/^gpt-\d+(\.\d+)?-chat/', $model)) {
             return false;
         }
 

@@ -59,5 +59,7 @@ describe('AiApiClient temperature for OpenAI models', function () {
         'gpt-35-turbo',
         'gpt-35-turbo-16k',
         'gpt-5-chat-latest',
+        'gpt-5.1-chat-latest',
+        'gpt-6-chat',
     ]);
 });
