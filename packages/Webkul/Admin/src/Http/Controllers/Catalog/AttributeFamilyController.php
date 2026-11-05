@@ -21,7 +21,6 @@ use Webkul\Core\Rules\Code;
 use Webkul\Product\Enums\VariantLevel;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\VariantStructure;
-use Webkul\Product\Models\VariantStructureAttribute;
 use Webkul\Product\Models\VariantStructureAxis;
 use Webkul\Product\Services\VariantStructureWriter;
 
@@ -435,7 +434,7 @@ class AttributeFamilyController extends Controller
             ])
             ->all();
 
-        DB::transaction(function () use ($attributeFamily, $structures, $familyAttributes, $previousByCode) {
+        DB::transaction(function () use ($attributeFamily, $structures, $familyAttributes, $previousByCode): void {
             $submittedCodes = array_column($structures, 'code');
 
             $removedStructures = $previousByCode->reject(
@@ -648,10 +647,12 @@ class AttributeFamilyController extends Controller
 
     /**
      * Reject a change of levels or axes on a structure whose products already have variants.
+     *
+     * @param  array{level_1: array<int, string>, level_2: array<int, string>}  $axes
      */
     protected function assertVariantStructureShapeEditable(VariantStructure $existing, int $levels, array $axes): void
     {
-        $currentAxes = $existing->axes->map(fn ($axis) => $axis->attribute?->code)->filter()->sort()->values()->all();
+        $currentAxes = $existing->axes->map(fn (VariantStructureAxis $axis): ?string => $axis->attribute?->code)->filter()->sort()->values()->all();
 
         $newAxes = collect($levels === 2 ? [...$axes['level_1'], ...$axes['level_2']] : $axes['level_1'])
             ->sort()
@@ -669,44 +670,18 @@ class AttributeFamilyController extends Controller
 
     /**
      * Replace the axis and placement rows of a saved structure.
+     *
+     * @param  array{axes?: array{level_1?: array<int, string>, level_2?: array<int, string>}|array<int, string>, placements?: array<string, array<int, string>>}  $structureData
      */
     protected function writeVariantStructureRows(VariantStructure $structure, array $structureData, Collection $familyAttributes, int $levels): void
     {
-        VariantStructureAxis::query()->where('variant_structure_id', $structure->id)->delete();
-        VariantStructureAttribute::query()->where('variant_structure_id', $structure->id)->delete();
-
-        foreach ($this->normalizeVariantAxes($structureData['axes'] ?? []) as $level => $attributeCodes) {
-            if ($levels === 1 && $level === 'level_2') {
-                continue;
-            }
-
-            foreach ($attributeCodes as $position => $attributeCode) {
-                VariantStructureAxis::create([
-                    'variant_structure_id' => $structure->id,
-                    'attribute_id'         => $familyAttributes[$attributeCode]->id,
-                    'level'                => $level,
-                    'position'             => $position,
-                ]);
-            }
-        }
-
-        $storedAttributes = [];
-
-        foreach (($structureData['placements'] ?? []) as $level => $codes) {
-            foreach ($codes as $attributeCode) {
-                if (isset($storedAttributes[$attributeCode])) {
-                    continue;
-                }
-
-                $storedAttributes[$attributeCode] = true;
-
-                VariantStructureAttribute::create([
-                    'variant_structure_id' => $structure->id,
-                    'attribute_id'         => $familyAttributes[$attributeCode]->id,
-                    'level'                => $level,
-                ]);
-            }
-        }
+        $this->variantStructureWriter->writeRows(
+            $structure,
+            $levels,
+            $this->normalizeVariantAxes($structureData['axes'] ?? []),
+            $structureData['placements'] ?? [],
+            $familyAttributes
+        );
     }
 
     /**

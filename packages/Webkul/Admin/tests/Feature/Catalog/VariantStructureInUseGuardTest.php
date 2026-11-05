@@ -84,6 +84,47 @@ function vsGuardBulkPayload(VariantStructure $structure, string $axisCode, strin
     ];
 }
 
+/**
+ * Extra select attribute linked to the family, usable as another axis.
+ */
+function vsGuardSecondAxis(AttributeFamily $family): Attribute
+{
+    $axis = Attribute::factory()->create(['code' => 'vsg_size_'.Str::random(8), 'type' => 'select']);
+
+    AttributeFamily::factory()->linkAttributesToFamily($family, $axis);
+
+    return $axis;
+}
+
+/**
+ * Configurable product on the structure with one child variant.
+ */
+function vsGuardProductWithVariant(AttributeFamily $family, VariantStructure $structure): Product
+{
+    $configurable = vsGuardProductUsing($family, $structure);
+
+    Product::factory()->create([
+        'parent_id'           => $configurable->id,
+        'attribute_family_id' => $family->id,
+    ]);
+
+    return $configurable;
+}
+
+/**
+ * Attribute ids of the structure's axes in level and position order.
+ *
+ * @return array<int, int>
+ */
+function vsGuardAxisIds(VariantStructure $structure): array
+{
+    return VariantStructureAxis::where('variant_structure_id', $structure->id)
+        ->orderBy('level')
+        ->orderBy('position')
+        ->pluck('attribute_id')
+        ->all();
+}
+
 it('refuses to delete a variant structure that a product still uses', function (): void {
     [$family, $structure] = vsGuardFamilyWithStructure();
 
@@ -165,47 +206,6 @@ it('keeps the listed in-use structure and drops the unlisted unused one in the s
         ->and(VariantStructure::find($kept->id)?->name)->toBe('Kept')
         ->and($product->refresh()->variant_structure_id)->toBe($kept->id);
 });
-
-/**
- * Extra select attribute linked to the family, usable as another axis.
- */
-function vsGuardSecondAxis(AttributeFamily $family): Attribute
-{
-    $axis = Attribute::factory()->create(['code' => 'vsg_size_'.Str::random(8), 'type' => 'select']);
-
-    AttributeFamily::factory()->linkAttributesToFamily($family, $axis);
-
-    return $axis;
-}
-
-/**
- * Configurable product on the structure with one child variant.
- */
-function vsGuardProductWithVariant(AttributeFamily $family, VariantStructure $structure): Product
-{
-    $configurable = vsGuardProductUsing($family, $structure);
-
-    Product::factory()->create([
-        'parent_id'           => $configurable->id,
-        'attribute_family_id' => $family->id,
-    ]);
-
-    return $configurable;
-}
-
-/**
- * Attribute ids of the structure's axes in level and position order.
- *
- * @return array<int, int>
- */
-function vsGuardAxisIds(VariantStructure $structure): array
-{
-    return VariantStructureAxis::where('variant_structure_id', $structure->id)
-        ->orderBy('level')
-        ->orderBy('position')
-        ->pluck('attribute_id')
-        ->all();
-}
 
 it('refuses to change the axes of a structure whose product has variants through the single save', function (): void {
     [$family, $structure] = vsGuardFamilyWithStructure();

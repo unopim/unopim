@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Webkul\Product\Services;
 
 use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Product\Enums\VariantLevel;
 use Webkul\Product\Models\ProductProxy;
@@ -103,32 +105,55 @@ class VariantStructureWriter
 
             $structure->save();
 
-            VariantStructureAxis::query()->where('variant_structure_id', $structure->id)->delete();
-            VariantStructureAttribute::query()->where('variant_structure_id', $structure->id)->delete();
-
-            foreach ($this->activeAxisLevels($levels) as $level) {
-                foreach ($axes[$level] as $position => $attributeCode) {
-                    VariantStructureAxis::create([
-                        'variant_structure_id' => $structure->id,
-                        'attribute_id'         => $familyAttributes[$attributeCode]->id,
-                        'level'                => $level,
-                        'position'             => $position,
-                    ]);
-                }
-            }
-
-            foreach (VariantLevel::VALUES as $level) {
-                foreach ($placements[$level] as $attributeCode) {
-                    VariantStructureAttribute::create([
-                        'variant_structure_id' => $structure->id,
-                        'attribute_id'         => $familyAttributes[$attributeCode]->id,
-                        'level'                => $level,
-                    ]);
-                }
-            }
+            $this->writeRows($structure, $levels, $axes, $placements, $familyAttributes);
 
             return $structure->refresh()->load(['axes.attribute', 'placements.attribute']);
         });
+    }
+
+    /**
+     * Replace the axis and placement rows of a saved structure.
+     *
+     * Rows are written as given; validating the shape is the caller's job. An attribute
+     * placed on more than one level keeps only its first placement.
+     *
+     * @param  array{level_1?: array<int, string>, level_2?: array<int, string>}  $axes
+     * @param  array<string, array<int, string>>  $placements
+     * @param  Collection<string, Attribute>  $familyAttributes  The family's attributes keyed by code.
+     */
+    public function writeRows(VariantStructure $structure, int $levels, array $axes, array $placements, Collection $familyAttributes): void
+    {
+        VariantStructureAxis::query()->where('variant_structure_id', $structure->id)->delete();
+        VariantStructureAttribute::query()->where('variant_structure_id', $structure->id)->delete();
+
+        foreach ($this->activeAxisLevels($levels) as $level) {
+            foreach ($axes[$level] ?? [] as $position => $attributeCode) {
+                VariantStructureAxis::create([
+                    'variant_structure_id' => $structure->id,
+                    'attribute_id'         => $familyAttributes[$attributeCode]->id,
+                    'level'                => $level,
+                    'position'             => $position,
+                ]);
+            }
+        }
+
+        $storedAttributes = [];
+
+        foreach ($placements as $level => $attributeCodes) {
+            foreach ($attributeCodes as $attributeCode) {
+                if (isset($storedAttributes[$attributeCode])) {
+                    continue;
+                }
+
+                $storedAttributes[$attributeCode] = true;
+
+                VariantStructureAttribute::create([
+                    'variant_structure_id' => $structure->id,
+                    'attribute_id'         => $familyAttributes[$attributeCode]->id,
+                    'level'                => $level,
+                ]);
+            }
+        }
     }
 
     /**
