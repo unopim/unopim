@@ -12,7 +12,7 @@ class SystemPromptRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return bouncer()->hasPermission('ai-agent.system-prompt');
+        return bouncer()->hasPermission('ai-agent.system-prompt.edit');
     }
 
     /**

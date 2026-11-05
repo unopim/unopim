@@ -72,12 +72,19 @@
                     <x-admin::form.control-group>
                         <x-admin::form.control-group.label class="required">
                             @lang('admin::app.configuration.system-prompt.create.max-tokens')
+
+                            <span
+                                class="icon tooltip-icon cursor-pointer ltr:ml-1.5 rtl:mr-1.5"
+                                title="{{ trans('admin::app.configuration.system-prompt.create.max-tokens-tooltip') }}"
+                            >
+                                &#9432;
+                            </span>
                         </x-admin::form.control-group.label>
 
                         <x-admin::form.control-group.control
                             type="number"
                             name="max_tokens"
-                            :rules="'required|numeric|'.\Webkul\MagicAI\Models\MagicAISystemPrompt::maxTokensRangeRule()"
+                            :rules="'required|integer|'.\Webkul\MagicAI\Models\MagicAISystemPrompt::maxTokensRangeRule()"
                             :min="\Webkul\MagicAI\Models\MagicAISystemPrompt::MAX_TOKENS_LOWER_BOUND"
                             :max="\Webkul\MagicAI\Models\MagicAISystemPrompt::MAX_TOKENS_UPPER_BOUND"
                             step="1"
