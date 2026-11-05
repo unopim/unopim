@@ -126,6 +126,8 @@ class Importer extends AbstractImporter
 
     const ERROR_VARIANT_STRUCTURE_LEVELS_MISMATCH = 'variant_structure_levels_mismatch';
 
+    const ERROR_VARIANT_STRUCTURE_TWO_LEVELS_MISMATCH = 'variant_structure_two_levels_mismatch';
+
     const ATTRIBUTE_FAMILY_CODE = 'attribute_family';
 
     const VARIANT_STRUCTURE_CODE = 'variant_structure';
@@ -150,6 +152,7 @@ class Importer extends AbstractImporter
         self::ERROR_WRONG_FAMILY_FOR_VARIANT                 => 'data_transfer::app.importers.products.validation.errors.incorrect-family-for-variant',
         self::ERROR_VARIANT_STRUCTURE_NOT_FOUND              => 'data_transfer::app.importers.products.validation.errors.variant-structure-not-found',
         self::ERROR_VARIANT_STRUCTURE_LEVELS_MISMATCH        => 'data_transfer::app.importers.products.validation.errors.variant-structure-levels-mismatch',
+        self::ERROR_VARIANT_STRUCTURE_TWO_LEVELS_MISMATCH    => 'data_transfer::app.importers.products.validation.errors.variant-structure-two-levels-mismatch',
     ];
 
     /**
@@ -304,6 +307,13 @@ class Importer extends AbstractImporter
      * @var array<string, VariantStructure|null>
      */
     protected array $variantStructures = [];
+
+    /**
+     * Resolved variant structures of existing products, keyed by id.
+     *
+     * @var array<int, VariantStructure|null>
+     */
+    protected array $variantStructuresById = [];
 
     /**
      * Attribute codes ancestors supply, keyed by parent sku.
@@ -1011,8 +1021,6 @@ class Importer extends AbstractImporter
                     'attribute_family:id,code',
                     'super_attributes:id,code',
                     'parent:id,sku',
-                    'variantStructure.axes.attribute:id,code',
-                    'variantStructure.placements.attribute:id,code',
                 ])
                 ->whereIn('sku', $chunk)
                 ->get();
@@ -1225,12 +1233,13 @@ class Importer extends AbstractImporter
                 return false;
             }
 
-            $structure = $this->singleLevelStructureOfVariantGroup($rowData, $parentType);
+            $structure = $parentType === ProductType::Configurable->value ? $this->getRowVariantStructure($rowData) : null;
+            $levelsError = $this->variantStructureLevelsError($rowData['type'], $structure);
 
-            if ($structure instanceof VariantStructure) {
-                $message = trans($this->messages[self::ERROR_VARIANT_STRUCTURE_LEVELS_MISMATCH], ['code' => $structure->code]);
+            if ($structure instanceof VariantStructure && $levelsError !== null) {
+                $message = trans($this->messages[$levelsError], ['code' => $structure->code]);
 
-                $this->skipRow($rowNumber, self::ERROR_VARIANT_STRUCTURE_LEVELS_MISMATCH, 'type', str_replace('%', '%%', $message));
+                $this->skipRow($rowNumber, $levelsError, 'type', str_replace('%', '%%', $message));
 
                 return false;
             }
@@ -1502,7 +1511,7 @@ class Importer extends AbstractImporter
             $parentProduct = $this->getExistingProduct($parentSku);
 
             if ($parentProduct?->variant_structure_id) {
-                return $parentProduct->variantStructure;
+                return $this->getVariantStructureById((int) $parentProduct->variant_structure_id);
             }
 
             $parentSku = $this->fileParentRows[$parentSku]['parent'] ?? $parentProduct?->parent?->sku;
@@ -1526,6 +1535,20 @@ class Importer extends AbstractImporter
     }
 
     /**
+     * Variant structure of an existing product, resolved by id and cached for the run.
+     */
+    protected function getVariantStructureById(int $id): ?VariantStructure
+    {
+        if (! array_key_exists($id, $this->variantStructuresById)) {
+            $this->variantStructuresById[$id] = VariantStructure::query()
+                ->with(['axes.attribute:id,code', 'placements.attribute:id,code'])
+                ->find($id);
+        }
+
+        return $this->variantStructuresById[$id];
+    }
+
+    /**
      * Type and family code of a parent sku, from the database or from the file being imported.
      *
      * @return array{0: string|null, 1: string|null}
@@ -1544,18 +1567,20 @@ class Importer extends AbstractImporter
     }
 
     /**
-     * Variant structure of a variant_group row placed under a configurable whose
-     * structure has a single level, so it has no sub-parent level to hold the group.
+     * Error for a row whose type does not match the level its structure expects directly
+     * under the configurable: a variant_group needs two levels, a simple needs one.
      */
-    protected function singleLevelStructureOfVariantGroup(array $rowData, ?string $parentType): ?VariantStructure
+    protected function variantStructureLevelsError(string $type, ?VariantStructure $structure): ?string
     {
-        if ($rowData['type'] !== ProductType::VariantGroup->value || $parentType !== ProductType::Configurable->value) {
+        if (! $structure instanceof VariantStructure) {
             return null;
         }
 
-        $structure = $this->getRowVariantStructure($rowData);
-
-        return $structure instanceof VariantStructure && (int) $structure->levels === 1 ? $structure : null;
+        return match (true) {
+            $type === ProductType::VariantGroup->value && (int) $structure->levels === 1 => self::ERROR_VARIANT_STRUCTURE_LEVELS_MISMATCH,
+            $type === ProductType::Simple->value && (int) $structure->levels === 2       => self::ERROR_VARIANT_STRUCTURE_TWO_LEVELS_MISMATCH,
+            default                                                                      => null,
+        };
     }
 
     /**

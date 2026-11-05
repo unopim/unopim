@@ -33,6 +33,7 @@ return [
                     'parent-not-exist'                         => 'Orang tua tidak ada.',
                     'variant-structure-not-found'              => 'Struktur varian :code tidak ada untuk keluarga atribut ini.',
                     'variant-structure-levels-mismatch'        => 'Struktur varian :code hanya memiliki satu level, sehingga tidak dapat memuat baris variant_group. Atur levelnya menjadi 2 atau impor varian sebagai produk sederhana di bawah produk konfigurasi.',
+                    'variant-structure-two-levels-mismatch'    => 'Struktur varian :code memiliki dua level, sehingga baris produk sederhana harus berada di bawah baris variant_group, bukan langsung di bawah produk konfigurasi.',
                 ],
             ],
         ],

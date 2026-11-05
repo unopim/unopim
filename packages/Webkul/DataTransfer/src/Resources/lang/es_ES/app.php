@@ -33,6 +33,7 @@ return [
                     'parent-not-exist'                         => 'El padre no existe.',
                     'variant-structure-not-found'              => 'La estructura de variantes :code no existe para esta familia de atributos.',
                     'variant-structure-levels-mismatch'        => 'La estructura de variantes :code solo tiene un nivel, por lo que no puede contener filas variant_group. Establezca sus niveles en 2 o importe las variantes como productos simples bajo el producto configurable.',
+                    'variant-structure-two-levels-mismatch'    => 'La estructura de variantes :code tiene dos niveles, por lo que las filas de productos simples deben ir bajo una fila variant_group, no directamente bajo el producto configurable.',
                 ],
             ],
         ],

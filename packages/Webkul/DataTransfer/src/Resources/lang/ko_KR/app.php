@@ -33,6 +33,7 @@ return [
                     'parent-not-exist'                         => '부모가 존재하지 않음.',
                     'variant-structure-not-found'              => '이 속성 패밀리에는 변형 구조 :code 가 존재하지 않습니다.',
                     'variant-structure-levels-mismatch'        => '변형 구조 :code 는 레벨이 하나뿐이므로 variant_group 행을 담을 수 없습니다. 레벨을 2로 설정하거나 변형을 구성 가능한 상품 아래의 단순 상품으로 가져오세요.',
+                    'variant-structure-two-levels-mismatch'    => '변형 구조 :code 는 레벨이 두 개이므로 단순 상품 행은 구성 가능한 상품 바로 아래가 아니라 variant_group 행 아래에 있어야 합니다.',
                 ],
             ],
         ],

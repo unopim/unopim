@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Psr\Log\LoggerInterface;
 use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Jobs\Import\Completed;
 use Webkul\DataTransfer\Jobs\Import\ImportBatch;
@@ -192,4 +193,12 @@ it('completes a skip-errors import whose rows are all invalid with a completion 
         ->and($track->summary)->toEqual(['created' => 0, 'updated' => 0, 'deleted' => 0]);
     Event::assertNotDispatched('data_transfer.imports.started');
     Event::assertDispatchedTimes('data_transfer.imports.completed', 1);
+});
+
+it('hands the type importer a job logger when none was set on the import helper', function (): void {
+    $track = makeStopOnErrorsTrack(Import::VALIDATION_STRATEGY_SKIP_ERRORS, 10);
+
+    $importer = app(Import::class)->setImport($track)->getTypeImporter();
+
+    expect($importer->getLogger())->toBeInstanceOf(LoggerInterface::class);
 });

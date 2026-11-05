@@ -33,6 +33,7 @@ return [
                     'parent-not-exist'                         => 'Roditelj ne postoji.',
                     'variant-structure-not-found'              => 'Struktura varijanti :code ne postoji za ovu obitelj atributa.',
                     'variant-structure-levels-mismatch'        => 'Struktura varijanti :code ima samo jednu razinu pa ne može sadržavati retke variant_group. Postavite njezine razine na 2 ili uvezite varijante kao jednostavne proizvode unutar konfigurabilnog proizvoda.',
+                    'variant-structure-two-levels-mismatch'    => 'Struktura varijanti :code ima dvije razine pa jednostavni retci moraju biti unutar retka variant_group, a ne izravno unutar konfigurabilnog proizvoda.',
                 ],
             ],
         ],

@@ -83,6 +83,14 @@ function levelsMismatchMessage(VariantStructure $structure): string
 }
 
 /**
+ * Import error expected for a simple row directly under the given two-level structure.
+ */
+function levelsTwoLevelMismatchMessage(VariantStructure $structure): string
+{
+    return trans('data_transfer::app.importers.products.validation.errors.variant-structure-two-levels-mismatch', ['code' => $structure->code]);
+}
+
+/**
  * Run an append import of the given CSV lines through the queued job.
  */
 function runLevelsImport(string $header, array $rows, string $strategy = Import::VALIDATION_STRATEGY_STOP_ON_ERROR): JobTrack
@@ -230,6 +238,44 @@ it('imports a simple variant under an existing variant_group of a two-level stru
         ->and($jobTrack->errors_count)->toBe(0)
         ->and($simple?->parent?->sku)->toBe($sku.'-black')
         ->and($simple?->values['common'][$fixture['size']] ?? null)->toBe($large);
+});
+
+it('rejects a simple row directly under a configurable with a two-level structure', function (): void {
+    $fixture = levelsImportFixture(2);
+    [$black] = $fixture['colors'];
+    [$medium] = $fixture['sizes'];
+    $sku = 'levels-'.Str::lower(Str::random(8));
+
+    $jobTrack = runLevelsImport(levelsImportHeader($fixture), [
+        levelsImportRow($fixture, $sku, 'configurable', structure: $fixture['structure']->code),
+        levelsImportRow($fixture, $sku.'-black-m', 'simple', $sku, color: $black, size: $medium),
+    ]);
+
+    expect($jobTrack->state)->toBe(Import::STATE_FAILED)
+        ->and($jobTrack->errors)->toContain('Row(s) 2: '.levelsTwoLevelMismatchMessage($fixture['structure']))
+        ->and(Product::whereIn('sku', [$sku, $sku.'-black-m'])->exists())->toBeFalse();
+});
+
+it('rejects a simple row under an existing configurable with a two-level structure', function (): void {
+    $fixture = levelsImportFixture(2);
+    [$black] = $fixture['colors'];
+    [$medium] = $fixture['sizes'];
+    $sku = 'levels-'.Str::lower(Str::random(8));
+
+    app(ProductRepository::class)->create([
+        'type'                 => ProductType::Configurable->value,
+        'attribute_family_id'  => $fixture['structure']->attribute_family_id,
+        'sku'                  => $sku,
+        'variant_structure_id' => $fixture['structure']->id,
+        'super_attributes'     => [$fixture['color'], $fixture['size']],
+    ]);
+
+    $jobTrack = runLevelsImport(levelsImportHeader($fixture), [
+        levelsImportRow($fixture, $sku.'-black-m', 'simple', $sku, color: $black, size: $medium),
+    ]);
+
+    expect($jobTrack->errors)->toContain('Row(s) 1: '.levelsTwoLevelMismatchMessage($fixture['structure']))
+        ->and(Product::where('sku', $sku.'-black-m')->exists())->toBeFalse();
 });
 
 it('imports simple variants directly under a single-level variant structure', function (): void {

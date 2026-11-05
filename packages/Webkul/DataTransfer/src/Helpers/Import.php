@@ -2,6 +2,7 @@
 
 namespace Webkul\DataTransfer\Helpers;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -534,7 +535,7 @@ class Import
                 DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'deleted')} as DECIMAL)) AS deleted"),
             )
             ->where('job_track_id', $this->import->id)
-            ->when($state !== null, fn ($query) => $query->where('state', $state))
+            ->when($state !== null, fn (Builder $query): Builder => $query->where('state', $state))
             ->groupBy('job_track_id')
             ->first()
             ?->toArray();
@@ -693,7 +694,7 @@ class Import
 
             $this->typeImporter = app()->make($importerConfig['importer'])
                 ->setImport($this->import)
-                ->setLogger($this->jobLogger)
+                ->setLogger($this->getLogger())
                 ->setErrorHelper($this->errorHelper);
         }
 

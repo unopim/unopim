@@ -33,6 +33,7 @@ return [
                     'parent-not-exist'                         => 'Părintele nu există.',
                     'variant-structure-not-found'              => 'Structura de variante :code nu există pentru această familie de atribute.',
                     'variant-structure-levels-mismatch'        => 'Structura de variante :code are un singur nivel, deci nu poate conține rânduri variant_group. Setați nivelurile la 2 sau importați variantele ca produse simple sub produsul configurabil.',
+                    'variant-structure-two-levels-mismatch'    => 'Structura de variante :code are două niveluri, deci rândurile de produse simple trebuie plasate sub un rând variant_group, nu direct sub produsul configurabil.',
                 ],
             ],
         ],

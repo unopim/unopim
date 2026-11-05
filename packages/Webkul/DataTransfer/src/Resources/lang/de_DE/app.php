@@ -33,6 +33,7 @@ return [
                     'parent-not-exist'                         => 'Das übergeordnete Element existiert nicht.',
                     'variant-structure-not-found'              => 'Die Variantenstruktur :code existiert für diese Attributfamilie nicht.',
                     'variant-structure-levels-mismatch'        => 'Die Variantenstruktur :code hat nur eine Ebene und kann daher keine variant_group-Zeilen enthalten. Setzen Sie die Ebenen auf 2 oder importieren Sie die Varianten als einfache Produkte unter dem konfigurierbaren Produkt.',
+                    'variant-structure-two-levels-mismatch'    => 'Die Variantenstruktur :code hat zwei Ebenen, daher müssen einfache Zeilen unter einer variant_group-Zeile stehen und nicht direkt unter dem konfigurierbaren Produkt.',
                 ],
             ],
         ],

@@ -33,6 +33,7 @@ return [
                     'parent-not-exist'                         => 'Forælderen findes ikke.',
                     'variant-structure-not-found'              => 'Variantstrukturen :code findes ikke for denne attributfamilie.',
                     'variant-structure-levels-mismatch'        => 'Variantstrukturen :code har kun ét niveau, så den kan ikke indeholde variant_group-rækker. Sæt dens niveauer til 2, eller importer varianterne som simple produkter under det konfigurerbare produkt.',
+                    'variant-structure-two-levels-mismatch'    => 'Variantstrukturen :code har to niveauer, så simple rækker skal ligge under en variant_group-række og ikke direkte under det konfigurerbare produkt.',
                 ],
             ],
         ],

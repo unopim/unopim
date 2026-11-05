@@ -33,6 +33,7 @@ return [
                     'parent-not-exist'                         => 'Föräldern finns inte.',
                     'variant-structure-not-found'              => 'Variantstrukturen :code finns inte för denna attributfamilj.',
                     'variant-structure-levels-mismatch'        => 'Variantstrukturen :code har bara en nivå och kan därför inte innehålla variant_group-rader. Ställ in dess nivåer på 2 eller importera varianterna som enkla produkter under den konfigurerbara produkten.',
+                    'variant-structure-two-levels-mismatch'    => 'Variantstrukturen :code har två nivåer, så enkla rader måste ligga under en variant_group-rad och inte direkt under den konfigurerbara produkten.',
                 ],
             ],
         ],

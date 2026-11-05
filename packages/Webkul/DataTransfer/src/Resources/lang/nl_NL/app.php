@@ -33,6 +33,7 @@ return [
                     'parent-not-exist'                         => 'Het hoofdproduct bestaat niet.',
                     'variant-structure-not-found'              => 'De variantstructuur :code bestaat niet voor deze attributenfamilie.',
                     'variant-structure-levels-mismatch'        => 'De variantstructuur :code heeft maar één niveau en kan daarom geen variant_group-rijen bevatten. Stel de niveaus in op 2 of importeer de varianten als eenvoudige producten onder het configureerbare product.',
+                    'variant-structure-two-levels-mismatch'    => 'De variantstructuur :code heeft twee niveaus, dus eenvoudige rijen moeten onder een variant_group-rij staan en niet direct onder het configureerbare product.',
                 ],
             ],
         ],

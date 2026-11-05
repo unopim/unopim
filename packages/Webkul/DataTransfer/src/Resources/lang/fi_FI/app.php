@@ -33,6 +33,7 @@ return [
                     'parent-not-exist'                         => 'Vanhempaa ei ole olemassa.',
                     'variant-structure-not-found'              => 'Varianttirakennetta :code ei ole tälle attribuuttiperheelle.',
                     'variant-structure-levels-mismatch'        => 'Varianttirakenteessa :code on vain yksi taso, joten se ei voi sisältää variant_group-rivejä. Aseta sen tasoiksi 2 tai tuo variantit yksinkertaisina tuotteina konfiguroitavan tuotteen alle.',
+                    'variant-structure-two-levels-mismatch'    => 'Varianttirakenteessa :code on kaksi tasoa, joten yksinkertaisten rivien on oltava variant_group-rivin alla eikä suoraan konfiguroitavan tuotteen alla.',
                 ],
             ],
         ],

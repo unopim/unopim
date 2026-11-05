@@ -33,6 +33,7 @@ return [
                     'parent-not-exist'                         => 'Il genitore non esiste.',
                     'variant-structure-not-found'              => 'La struttura delle varianti :code non esiste per questa famiglia di attributi.',
                     'variant-structure-levels-mismatch'        => 'La struttura delle varianti :code ha un solo livello, quindi non può contenere righe variant_group. Imposta i suoi livelli su 2 oppure importa le varianti come prodotti semplici sotto il prodotto configurabile.',
+                    'variant-structure-two-levels-mismatch'    => 'La struttura delle varianti :code ha due livelli, quindi le righe dei prodotti semplici devono stare sotto una riga variant_group e non direttamente sotto il prodotto configurabile.',
                 ],
             ],
         ],

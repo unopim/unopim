@@ -33,6 +33,7 @@ return [
                     'parent-not-exist'                         => 'El parent no existeix.',
                     'variant-structure-not-found'              => 'L\'estructura de variants :code no existeix per a aquesta família d\'atributs.',
                     'variant-structure-levels-mismatch'        => 'L\'estructura de variants :code només té un nivell, per tant no pot contenir files variant_group. Establiu-ne els nivells a 2 o importeu les variants com a productes simples sota el producte configurable.',
+                    'variant-structure-two-levels-mismatch'    => 'L\'estructura de variants :code té dos nivells, per tant les files de productes simples han d\'anar sota una fila variant_group, no directament sota el producte configurable.',
                 ],
             ],
         ],

@@ -33,6 +33,7 @@ return [
                     'parent-not-exist'                         => 'The parent does not exist.',
                     'variant-structure-not-found'              => 'The variant structure :code does not exist for this attribute family.',
                     'variant-structure-levels-mismatch'        => 'The variant structure :code has only one level, so it cannot hold variant_group rows. Set its levels to 2 or import the variants as simple products under the configurable product.',
+                    'variant-structure-two-levels-mismatch'    => 'The variant structure :code has two levels, so simple rows must sit under a variant_group row, not directly under the configurable product.',
                 ],
             ],
         ],
