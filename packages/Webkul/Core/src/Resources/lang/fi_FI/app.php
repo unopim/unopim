@@ -5,4 +5,8 @@ return [
         'template' => 'Mallipohja',
         'parents'  => 'Vanhemmat',
     ],
+
+    'platform-modules' => [
+        'pim' => 'Tuotetieto (PIM)',
+    ],
 ];

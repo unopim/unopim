@@ -39,6 +39,14 @@ describe('Tree::getActive — path-boundary matching', function () {
 
         expect($tree->getActive(menuItem('configuration.system_settings', 'http://localhost/admin/configuration/system')))->toBeTrue();
     });
+
+    it('matches on the path when a proxy serves the request on another host and scheme than APP_URL', function () {
+        $tree = new Tree;
+        $tree->current = 'http://127.0.0.1:8000/admin/catalog/products/edit/42';
+
+        expect($tree->getActive(menuItem('catalog.products', 'https://pim.example.com/admin/catalog/products')))->toBeTrue();
+        expect($tree->getActive(menuItem('catalog.categories', 'https://pim.example.com/admin/catalog/categories')))->toBeNull();
+    });
 });
 
 describe('Tree::getActive — key-hierarchy matching', function () {

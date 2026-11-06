@@ -24,10 +24,16 @@ return [
     'file-outside-attribute-path'      => 'Tệp :value không thuộc về bản ghi này. Hãy tải lên lại cho trường :attribute.',
     'password-surrounding-whitespace'  => ':attribute không được bắt đầu hoặc kết thúc bằng khoảng trắng.',
     'password-whitespace-only'         => ':attribute không được chỉ gồm khoảng trắng.',
+    'hideable-sections'                => ':attribute chứa một mục không thể ẩn.',
     'active-content-detected'          => 'Không thể tải lên :attribute vì nó chứa nội dung hoạt động (:reason).',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'JavaScript được nhúng hoặc một hành động PDF tự động chạy',
         'embedded_vba_macro'            => 'macro VBA được nhúng',
         'auto_executing_ole_object'     => 'đối tượng nhúng tự động chạy',
+    ],
+    'platform-modules'                => [
+        'empty'    => 'Chọn ít nhất một mô-đun nền tảng.',
+        'unknown'  => 'Mô-đun nền tảng ":module" chưa được cài đặt.',
+        'requires' => ':module chỉ có thể bật cùng với :requires.',
     ],
 ];

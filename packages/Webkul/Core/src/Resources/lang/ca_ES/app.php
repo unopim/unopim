@@ -5,4 +5,8 @@ return [
         'template' => 'Plantilla',
         'parents'  => 'Pares',
     ],
+
+    'platform-modules' => [
+        'pim' => 'Informació de producte (PIM)',
+    ],
 ];
