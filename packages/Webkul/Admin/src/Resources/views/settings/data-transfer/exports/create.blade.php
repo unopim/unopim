@@ -293,7 +293,9 @@
                     hasOtherFilters() {
                         const known = @json(\Webkul\DataTransfer\Helpers\ExportFilterFields::KNOWN);
 
-                        return this.filterFields.some(field => ! known.includes(field.name));
+                        const genericTypes = @json(\Webkul\DataTransfer\Helpers\ExportFilterFields::genericCardTypes($exporterConfig));
+
+                        return genericTypes.includes(this.entityType) && this.filterFields.some(field => ! known.includes(field.name));
                     },
 
                     supportsConditions() {

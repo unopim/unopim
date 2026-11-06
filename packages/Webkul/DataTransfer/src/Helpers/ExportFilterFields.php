@@ -32,6 +32,27 @@ final class ExportFilterFields
     ];
 
     /**
+     * Whether an exporter opts in, with `filters.generic_card`, to show its other filter fields in the generic card.
+     *
+     * Connectors that place their own fields through view render events leave it unset, so no field renders twice.
+     */
+    public static function usesGenericCard(mixed $exporter): bool
+    {
+        return is_array($exporter) && ! empty($exporter['filters']['generic_card']);
+    }
+
+    /**
+     * The entity types of the exporters that opt in to the generic card.
+     *
+     * @param  array<array-key, mixed>  $exporters
+     * @return list<array-key>
+     */
+    public static function genericCardTypes(array $exporters): array
+    {
+        return array_keys(array_filter($exporters, self::usesGenericCard(...)));
+    }
+
+    /**
      * The known field names as the comma separated list the filter-fields component takes.
      */
     public static function knownList(): string

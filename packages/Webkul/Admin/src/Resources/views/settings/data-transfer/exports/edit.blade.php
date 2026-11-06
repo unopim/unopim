@@ -50,7 +50,9 @@
                     $productFilterFields = $fieldNames->intersect(['attribute_families', 'categories', 'completeness', 'time_condition', 'status', 'sku']);
                     $outputFields = $fieldNames->intersect(['file_format', 'with_media', 'with_associations', 'header_row', 'use_labels', 'date_format', 'file_path']);
                     $supportsConditions = $fieldNames->contains('custom_attributes');
-                    $otherFilterFields = $fieldNames->diff(\Webkul\DataTransfer\Helpers\ExportFilterFields::KNOWN);
+                    $otherFilterFields = \Webkul\DataTransfer\Helpers\ExportFilterFields::usesGenericCard($exporterConfig[$export->entity_type] ?? null)
+                        ? $fieldNames->diff(\Webkul\DataTransfer\Helpers\ExportFilterFields::KNOWN)
+                        : collect();
                     $supportsCategories = $fieldNames->contains('categories');
                 @endphp
 
