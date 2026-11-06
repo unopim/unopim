@@ -1240,7 +1240,7 @@ class Importer extends AbstractImporter
         }
 
         $validator = $this->cachedValidators[$cacheKey];
-        $validator->setData($rowData);
+        $validator->setData(EscapeFormulaOperators::unescapeRow($rowData));
 
         if ($validator->fails()) {
             $failedAttributes = $validator->failed();

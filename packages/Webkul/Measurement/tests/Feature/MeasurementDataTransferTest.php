@@ -2,6 +2,7 @@
 
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
+use Webkul\DataTransfer\Helpers\Error;
 use Webkul\DataTransfer\Helpers\Exporters\Product\Exporter as CoreExporter;
 use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
 use Webkul\DataTransfer\Helpers\Importers\FieldProcessor;
@@ -222,4 +223,28 @@ it('unescapes a formula-escaped amount before casting it (R8)', function () {
 
     expect($stored)->toBeArray()
         ->and((float) ($stored['amount'] ?? 0))->toBe(-5.0);
+});
+
+it('validates a formula-escaped negative value as the number it will be stored as', function () {
+    [$family, $measurement, $plain] = measurementAttributeInFamily();
+
+    $measurement->update(['validation' => 'number']);
+    $plain->update(['validation' => 'number']);
+
+    $importer = app(CoreImporter::class)->setImport(JobTrack::factory()->create());
+    $importer->setErrorHelper(app(Error::class));
+
+    $isValid = $importer->validateRow([
+        'sku'                       => 'measurement-import-'.uniqid(),
+        'type'                      => ProductType::Simple->value,
+        'attribute_family'          => $family->code,
+        'channel'                   => 'default',
+        'locale'                    => 'en_US',
+        'status'                    => 'true',
+        $measurement->code          => EscapeFormulaOperators::escapeValue('-20.0000'),
+        $measurement->code.'(unit)' => 'Meter',
+        $plain->code                => EscapeFormulaOperators::escapeValue('-5'),
+    ], 1);
+
+    expect($isValid)->toBeTrue();
 });

@@ -226,7 +226,9 @@ class Importer extends AbstractImporter
          * with all existing codes via init()) and the current batch's new codes, avoiding
          * a DB query per row (which costs O(N) queries for large imports).
          */
-        $validator = Validator::make($rowData, [
+        $validatableRow = EscapeFormulaOperators::unescapeRow($rowData);
+
+        $validator = Validator::make($validatableRow, [
             'code'   => ['string', 'required', new Code],
             'parent' => [
                 'nullable',
@@ -253,7 +255,7 @@ class Importer extends AbstractImporter
             }
         }
 
-        $this->validateUniqueValues($rowData, $rowNumber);
+        $this->validateUniqueValues($validatableRow, $rowNumber);
 
         $isValidRow = ! $this->errorHelper->isRowInvalid($rowNumber);
 
