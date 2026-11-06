@@ -2,11 +2,12 @@
 
 return [
     [
-        'key'    => 'ai-agent',
-        'name'   => 'ai-agent::app.menu.ai-agent',
-        'route'  => 'admin.magic_ai.platform.index',
-        'sort'   => 7,
-        'icon'   => 'icon-magic-ai',
+        'key'      => 'ai-agent',
+        'name'     => 'ai-agent::app.menu.ai-agent',
+        'route'    => 'admin.magic_ai.platform.index',
+        'sort'     => 7,
+        'icon'     => 'icon-magic-ai',
+        'hideable' => true,
     ],
     [
         'key'    => 'ai-agent.platform',

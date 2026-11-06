@@ -19,6 +19,7 @@ return [
 
     [
         'key'          => 'digital_product_passport.product_passport',
+        'module'       => 'pim',
         'name'         => 'passport::app.configuration.product_passport.title',
         'info'         => 'passport::app.configuration.product_passport.info',
         'icon'         => 'icon-setting',

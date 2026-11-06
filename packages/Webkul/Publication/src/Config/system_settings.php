@@ -20,6 +20,7 @@
 return [
     [
         'key'          => 'digital_product_passport.publication',
+        'module'       => 'pim',
         'name'         => 'publication::app.configuration.publication.title',
         'info'         => 'publication::app.configuration.publication.info',
         'icon'         => 'icon-setting',
