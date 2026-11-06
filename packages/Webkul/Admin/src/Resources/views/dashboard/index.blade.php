@@ -10,6 +10,8 @@
         class="mb-5"
     >
         <x-slot:actions>
+            {!! view_render_event('unopim.admin.dashboard.index.quick-actions.before') !!}
+
             <!-- Quick Actions -->
             <div class="flex gap-2 max-sm:flex-wrap">
                 @if (bouncer()->hasPermission('catalog.products.create'))
@@ -42,6 +44,8 @@
                     </a>
                 @endif
             </div>
+
+            {!! view_render_event('unopim.admin.dashboard.index.quick-actions.after') !!}
         </x-slot>
     </x-admin::page-header>
 
@@ -75,6 +79,8 @@
 
     <!-- Needs Attention -->
     @include('admin::dashboard.needs-attention')
+
+    {!! view_render_event('unopim.admin.dashboard.index.analytics.before') !!}
 
     <!-- ═══ ANALYTICS ═══ -->
     <div class="flex items-center gap-3 mt-8 mb-4">
@@ -130,6 +136,8 @@
         </div>
     </div>
 
+    {!! view_render_event('unopim.admin.dashboard.index.analytics.after') !!}
+
     <!-- ═══ OPERATIONS ═══ -->
     <div class="flex items-center gap-3 mt-8 mb-4">
         <p class="text-xs font-semibold text-zinc-400 dark:text-slate-500 uppercase tracking-widest">
@@ -137,6 +145,8 @@
         </p>
         <div class="flex-1 border-t border-zinc-200 dark:border-cherry-800"></div>
     </div>
+
+    {!! view_render_event('unopim.admin.dashboard.index.operations.before') !!}
 
     <!-- Recent Activity & Data Transfer -->
     <div class="flex items-stretch gap-4 max-xl:flex-wrap">
@@ -156,4 +166,6 @@
             @include('admin::dashboard.data-transfer')
         </div>
     </div>
+
+    {!! view_render_event('unopim.admin.dashboard.index.operations.after') !!}
 </x-admin::layouts>
