@@ -8,11 +8,11 @@ use Webkul\Core\Platform\ModuleGate;
 trait InteractsWithPlatformModules
 {
     /**
-     * Store the platform module selection and drop the scoped gate so the next resolve reads it.
+     * Store the platform module selection and return a fresh scoped gate that reads it.
      *
      * @param  string|list<string>  $modules
      */
-    public function setPlatformModules(string|array $modules): void
+    public function setPlatformModules(string|array $modules): ModuleGate
     {
         CoreConfig::query()->updateOrCreate(
             ['code' => ModuleGate::CONFIG_KEY, 'channel_code' => null, 'locale_code' => null],
@@ -20,5 +20,7 @@ trait InteractsWithPlatformModules
         );
 
         app()->forgetScopedInstances();
+
+        return app(ModuleGate::class);
     }
 }
