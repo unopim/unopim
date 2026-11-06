@@ -25,10 +25,22 @@ class MagicAISystemPrompt extends Model implements HistoryAuditable, MagicAISyst
     use HasFactory;
     use HistoryTrait;
 
+    public const MAX_TOKENS_LOWER_BOUND = 100;
+
+    public const MAX_TOKENS_UPPER_BOUND = 5000;
+
     /**
      * @var array<int, string>
      */
     protected array $historyTags = ['magicSystemPrompt'];
+
+    /**
+     * Get the validation rule bounding max_tokens, shared by the server and the admin forms.
+     */
+    public static function maxTokensRangeRule(): string
+    {
+        return 'between:'.self::MAX_TOKENS_LOWER_BOUND.','.self::MAX_TOKENS_UPPER_BOUND;
+    }
 
     protected static function newFactory(): Factory
     {

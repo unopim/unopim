@@ -154,7 +154,7 @@
 
                                  <!-- Max Token -->
                                  <x-admin::form.control-group>
-                                    <x-admin::form.control-group.label>
+                                    <x-admin::form.control-group.label class="required">
                                         @lang('admin::app.configuration.system-prompt.create.max-tokens')
                                           <span
                                             class="icon tooltip-icon cursor-pointer ltr:ml-1.5 rtl:mr-1.5"
@@ -168,9 +168,11 @@
                                         type="number"
                                         name="max_tokens"
                                         v-model="max_tokens"
-                                        min="1"
-                                        max="5000"
+                                        :rules="'required|integer|'.\Webkul\MagicAI\Models\MagicAISystemPrompt::maxTokensRangeRule()"
+                                        :min="\Webkul\MagicAI\Models\MagicAISystemPrompt::MAX_TOKENS_LOWER_BOUND"
+                                        :max="\Webkul\MagicAI\Models\MagicAISystemPrompt::MAX_TOKENS_UPPER_BOUND"
                                         step="1"
+                                        :label="trans('admin::app.configuration.system-prompt.create.max-tokens')"
                                     />
                                     <x-admin::form.control-group.error control-name="max_tokens" />
                                 </x-admin::form.control-group>
