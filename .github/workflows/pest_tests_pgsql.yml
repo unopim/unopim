@@ -96,7 +96,7 @@ jobs:
         # Each worker owns a database clone. One pool of four workers (one per
         # runner vCPU) boots the framework once and keeps every core busy until
         # the last test, instead of idling at the tail of two separate halves.
-        run: vendor/bin/pest --parallel --processes=4 --colors=always --testsuite "Api Feature Test,Core Unit Test,DataTransfer Unit Test,User Feature Test,Admin Feature Test,Installer Feature Test,ElasticSearch Feature Test,Completeness Feature Test,Product Unit Test,Product Feature Test,Attribute Unit Test,Category Unit Test,Measurement Feature Test,AiAgent Unit Test,AppUrlGuard Unit Test,Webhook Unit Test,Webhook Feature Test,AppUrlGuard Feature Test,Resource Unit Test,Resource Feature Test,Publication Feature Test,ProductPassport Feature Test"
+        run: vendor/bin/pest --parallel --processes=4 --colors=always --testsuite "Api Feature Test,Core Unit Test,DataTransfer Unit Test,User Feature Test,Admin Feature Test,Installer Feature Test,ElasticSearch Feature Test,Completeness Feature Test,Product Unit Test,Product Feature Test,Attribute Unit Test,Category Unit Test,Measurement Feature Test,AiAgent Unit Test,AppUrlGuard Unit Test,Webhook Unit Test,Webhook Feature Test,AppUrlGuard Feature Test,Resource Unit Test,Resource Feature Test,Publication Feature Test,ProductPassport Feature Test,Calculated Attribute Unit Test,Calculated Attribute Feature Test"
 
   pest-pgsql-elasticsearch:
     if: github.repository == 'unopim/unopim' && github.event_name != 'pull_request'
@@ -191,4 +191,4 @@ jobs:
         # Each worker owns a database clone. One pool of four workers (one per
         # runner vCPU) boots the framework once and keeps every core busy until
         # the last test, instead of idling at the tail of two separate halves.
-        run: vendor/bin/pest --parallel --processes=4 --colors=always --testsuite "Api Feature Test,Core Unit Test,DataTransfer Unit Test,User Feature Test,Admin Feature Test,Installer Feature Test,ElasticSearch Feature Test,Completeness Feature Test,Product Unit Test,Product Feature Test,Attribute Unit Test,Category Unit Test,Measurement Feature Test,AiAgent Unit Test,AppUrlGuard Unit Test,Webhook Unit Test,Webhook Feature Test,AppUrlGuard Feature Test,Resource Unit Test,Resource Feature Test,Publication Feature Test,ProductPassport Feature Test"
+        run: vendor/bin/pest --parallel --processes=4 --colors=always --testsuite "Api Feature Test,Core Unit Test,DataTransfer Unit Test,User Feature Test,Admin Feature Test,Installer Feature Test,ElasticSearch Feature Test,Completeness Feature Test,Product Unit Test,Product Feature Test,Attribute Unit Test,Category Unit Test,Measurement Feature Test,AiAgent Unit Test,AppUrlGuard Unit Test,Webhook Unit Test,Webhook Feature Test,AppUrlGuard Feature Test,Resource Unit Test,Resource Feature Test,Publication Feature Test,ProductPassport Feature Test,Calculated Attribute Unit Test,Calculated Attribute Feature Test"
