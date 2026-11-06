@@ -60,7 +60,7 @@
 
 @font-face {
     font-family: "unopim-admin";
-    src: url("../fonts/unopim-admin.woff?jwnnow") format("woff");
+    src: url("../fonts/unopim-admin.woff?dh93b") format("woff");
     font-weight: normal;
     font-style: normal;
     font-display: block;
@@ -472,6 +472,10 @@
 
     .icon-manage-column:before {
         content: "\e93a";
+    }
+
+    .icon-data-hub:before {
+        content: "\e93b";
     }
     /** Icons END */
 
