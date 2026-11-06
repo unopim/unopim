@@ -85,9 +85,6 @@ class ProductRepository extends Repository
 
     /**
      * Updates the status of product.
-     *
-     * Dirty state is compared as booleans because PostgreSQL hydrates the
-     * status column as true/false while MySQL hydrates 1/0.
      */
     public function updateStatus(bool $status, int $id): Product
     {

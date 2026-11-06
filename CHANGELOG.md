@@ -6,6 +6,7 @@
 
 ## Bug fixes
 
+- Fixed saving a product with an unchanged status recording a status change in its history on PostgreSQL. `status` is now cast to a boolean on every database, so code comparing it with `=== 1` or `=== 0` should use a truthy check instead.
 - Fixed a product quick search none of whose fields resolves to an attribute returning the entire catalogue instead of no products. The database path dropped the empty condition group; the Elasticsearch path emitted an empty `should`, which Elasticsearch answers with a match_all because it applies `minimum_should_match` only once there are `should` clauses to count. Both now refuse the term, with `1 = 0` and with `match_none`.
 
 ## New features
