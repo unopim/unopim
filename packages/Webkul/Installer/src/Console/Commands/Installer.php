@@ -254,10 +254,15 @@ class Installer extends Command
 
     /**
      * Drop the tables of the current table prefix, failing the command when the drop is not confirmed.
+     *
+     * The database is created first: listing the tables queries it, and that runs before `migrate`
+     * would get the chance to create a missing database itself.
      */
     protected function dropExistingTables(): void
     {
         $databaseManager = resolve(DatabaseManager::class);
+
+        $databaseManager->createDatabaseIfNotExists();
 
         if (! $this->confirmDroppingTables($databaseManager->currentPrefixTables(), DB::getTablePrefix())) {
             $this->fail(trans('installer::app.installer.console.drop-aborted'));
