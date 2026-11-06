@@ -75,7 +75,9 @@ class ApiKeysController extends Controller
             'permission_type',
         ]);
 
-        $data['permissions'] = app(ModuleGate::class)->keepHiddenKeys((array) $request->input('permissions', []), []);
+        if ($request->has('permissions')) {
+            $data['permissions'] = app(ModuleGate::class)->keepHiddenKeys((array) $request->input('permissions'), []);
+        }
 
         $apiKey = $this->apiKeyRepository->create($data);
 

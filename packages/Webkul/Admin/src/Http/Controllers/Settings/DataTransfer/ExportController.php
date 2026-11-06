@@ -264,7 +264,6 @@ class ExportController extends Controller
         $this->abortIfHiddenJobType($jobInstance->entity_type);
 
         try {
-
             // Get the authenticated user's ID
             $userId = auth()->guard('admin')->user()->id;
 

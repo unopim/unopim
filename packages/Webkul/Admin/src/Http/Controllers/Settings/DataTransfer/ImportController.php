@@ -285,7 +285,6 @@ class ImportController extends Controller
         $this->abortIfHiddenJobType($import->entity_type);
 
         try {
-
             $requiresFile = (bool) config(self::IMPORTERS.'.'.$import->entity_type.'.has_file_options', false);
 
             if ($requiresFile && empty($import->file_path)) {
