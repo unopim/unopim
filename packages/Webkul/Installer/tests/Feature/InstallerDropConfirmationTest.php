@@ -80,6 +80,7 @@ function dropExistingTablesWithoutPrefix(DatabaseManager $databaseManager, array
 
 it('fails the install command without dropping anything when the unattended drop is refused', function () {
     $databaseManager = Mockery::mock(DatabaseManager::class);
+    $databaseManager->shouldReceive('createDatabaseIfNotExists')->once();
     $databaseManager->shouldReceive('currentPrefixTables')->once()->andReturn(['admins', 'legacy_app_users']);
     $databaseManager->shouldNotReceive('dropCurrentPrefixTables');
 
@@ -89,8 +90,18 @@ it('fails the install command without dropping anything when the unattended drop
 
 it('drops the tables without a table prefix when --force is passed', function () {
     $databaseManager = Mockery::mock(DatabaseManager::class);
+    $databaseManager->shouldReceive('createDatabaseIfNotExists')->once();
     $databaseManager->shouldReceive('currentPrefixTables')->once()->andReturn(['admins', 'legacy_app_users']);
     $databaseManager->shouldReceive('dropCurrentPrefixTables')->once();
 
     dropExistingTablesWithoutPrefix($databaseManager, ['--force' => true]);
+});
+
+it('creates a missing database before listing the tables to drop', function () {
+    $databaseManager = Mockery::mock(DatabaseManager::class);
+    $databaseManager->shouldReceive('createDatabaseIfNotExists')->once()->ordered();
+    $databaseManager->shouldReceive('currentPrefixTables')->once()->ordered()->andReturn([]);
+    $databaseManager->shouldReceive('dropCurrentPrefixTables')->once()->ordered();
+
+    dropExistingTablesWithoutPrefix($databaseManager);
 });
