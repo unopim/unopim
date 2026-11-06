@@ -2161,7 +2161,7 @@ return [
 
                     'settings' => [
                         'info'  => 'Pokrenite bilo koji modul samostalno ili više njih zajedno; modul kojemu je potreban drugi može se uključiti samo uz njega.',
-                        'title' => 'Moduli',
+                        'title' => 'Odabir modula',
                     ],
 
                     'modules' => [
@@ -2170,7 +2170,7 @@ return [
                     ],
 
                     'hidden-sections' => [
-                        'info'  => 'Primjenjuje se samo dok su informacije o proizvodima (PIM) isključene. Odabrani odjeljci uklanjaju se iz izbornika, a njihove stranice blokiraju; podaci se zadržavaju.',
+                        'info'  => 'Primjenjuje se samo dok su informacije o proizvodima (PIM) isključene. Odabrani odjeljci uklanjaju se iz izbornika, a njihove administratorske stranice blokiraju; podaci se zadržavaju, a njihove Admin API rute ostaju dostupne.',
                         'title' => 'Skriveni odjeljci',
                     ],
                 ],

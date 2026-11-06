@@ -2163,7 +2163,7 @@ return [
 
                     'settings' => [
                         'info'  => 'Herhangi bir modülü tek başına veya birkaçını birlikte çalıştırın; başka bir modüle ihtiyaç duyan bir modül yalnızca onunla birlikte açılabilir.',
-                        'title' => 'Modüller',
+                        'title' => 'Modül seçimi',
                     ],
 
                     'modules' => [
@@ -2172,7 +2172,7 @@ return [
                     ],
 
                     'hidden-sections' => [
-                        'info'  => 'Yalnızca Ürün Bilgisi (PIM) kapalıyken geçerlidir. Seçilen bölümler menüden kaldırılır ve sayfaları engellenir; verileri korunur.',
+                        'info'  => 'Yalnızca Ürün Bilgisi (PIM) kapalıyken geçerlidir. Seçilen bölümler menüden kaldırılır ve yönetim sayfaları engellenir; verileri korunur ve Admin API rotaları kullanılabilir kalır.',
                         'title' => 'Gizli bölümler',
                     ],
                 ],

@@ -2293,7 +2293,7 @@ return [
 
                     'settings' => [
                         'info'  => 'Run any module on its own or several together; a module that needs another can only be switched on with it.',
-                        'title' => 'Modules',
+                        'title' => 'Module selection',
                     ],
 
                     'modules' => [
@@ -2302,7 +2302,7 @@ return [
                     ],
 
                     'hidden-sections' => [
-                        'info'  => 'Applies only while Product Information (PIM) is switched off. Selected sections are removed from the menu and their pages are blocked; their data is kept.',
+                        'info'  => 'Applies only while Product Information (PIM) is switched off. Selected sections are removed from the menu and their admin pages are blocked; their data is kept and their Admin API routes stay available.',
                         'title' => 'Hidden sections',
                     ],
                 ],

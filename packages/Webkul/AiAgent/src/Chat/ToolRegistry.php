@@ -24,10 +24,10 @@ class ToolRegistry
     /** @var array<class-string<PimTool>, PimTool> */
     protected array $tools = [];
 
-    /** @var list<callable(Tool, ChatContext, array{name: string, group: string, write: bool, permission: ?string, guidance: ?string, module: string}): Tool> */
+    /** @var list<callable(Tool, ChatContext, array{name: string, group: string, write: bool, permission: ?string, guidance: ?string, module: ?string}): Tool> */
     protected array $decorators = [];
 
-    /** @var array<class-string<PimTool>, array{name: string, group: string, write: bool, permission: ?string, guidance: ?string, module: string}> */
+    /** @var array<class-string<PimTool>, array{name: string, group: string, write: bool, permission: ?string, guidance: ?string, module: ?string}> */
     protected array $metadata = [];
 
     /**
@@ -37,7 +37,7 @@ class ToolRegistry
      * wrapped tool's handle() carries its in-handle permission checks, so the
      * returned tool must keep the same name or build() throws.
      *
-     * @param  callable(Tool, ChatContext, array{name: string, group: string, write: bool, permission: ?string, guidance: ?string, module: string}): Tool  $decorator
+     * @param  callable(Tool, ChatContext, array{name: string, group: string, write: bool, permission: ?string, guidance: ?string, module: ?string}): Tool  $decorator
      */
     public function decorate(callable $decorator): void
     {
@@ -49,8 +49,8 @@ class ToolRegistry
      * permission, guidance, module). Registering the same class again replaces the
      * previous instance and metadata, so packages can override core tools.
      *
-     * The `module` defaults to `pim`, so a tool is only offered while its platform
-     * module is switched on.
+     * A tool tagged with a platform `module` is only offered while that module is
+     * switched on; an untagged tool is always offered, like untagged menus and ACL.
      */
     public function register(PimTool $tool, array $metadata = []): static
     {
@@ -101,7 +101,7 @@ class ToolRegistry
     /**
      * Metadata for a single tool, or null when not registered.
      *
-     * @return array{name: string, group: string, write: bool, permission: ?string, guidance: ?string, module: string}|null
+     * @return array{name: string, group: string, write: bool, permission: ?string, guidance: ?string, module: ?string}|null
      */
     public function metadata(string $classOrName): ?array
     {
@@ -233,27 +233,27 @@ class ToolRegistry
     }
 
     /**
-     * Metadata of the tools whose platform module is switched on; an unknown module never is.
+     * Metadata of the untagged tools and of the tools whose platform module is switched on.
      *
-     * @return array<class-string<PimTool>, array{name: string, group: string, write: bool, permission: ?string, guidance: ?string, module: string}>
+     * @return array<class-string<PimTool>, array{name: string, group: string, write: bool, permission: ?string, guidance: ?string, module: ?string}>
      */
     protected function activeMetadata(): array
     {
         $gate = app(ModuleGate::class);
 
-        return array_filter($this->metadata, fn (array $meta): bool => $gate->enabled($meta['module']));
+        return array_filter($this->metadata, fn (array $meta): bool => $meta['module'] === null || $gate->enabled($meta['module']));
     }
 
     /**
-     * Normalise a `module` metadata value to its string form, defaulting to `pim`.
+     * Normalise a `module` metadata value to its string form; null when the tool is untagged.
      */
-    protected function moduleValue(mixed $module): string
+    protected function moduleValue(mixed $module): ?string
     {
         if ($module instanceof Module) {
             return $module->value;
         }
 
-        return is_string($module) && $module !== '' ? $module : Module::Pim->value;
+        return is_string($module) && $module !== '' ? $module : null;
     }
 
     /**

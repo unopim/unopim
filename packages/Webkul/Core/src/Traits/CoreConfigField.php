@@ -85,6 +85,20 @@ trait CoreConfigField
     }
 
     /**
+     * The field's default value, resolved from its `default_repository` callback when it has one.
+     */
+    public function getDefaultValue(array $field): mixed
+    {
+        if (isset($field['default_repository'])) {
+            [$class, $method] = Str::parseCallback($field['default_repository']);
+
+            return resolve($class)->$method();
+        }
+
+        return $field['default_value'] ?? null;
+    }
+
+    /**
      * Get dependent field or value based on arguments.
      *
      * @param  string  $fieldOrValue

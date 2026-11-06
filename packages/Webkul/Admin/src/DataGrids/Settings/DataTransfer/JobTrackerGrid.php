@@ -52,7 +52,7 @@ class JobTrackerGrid extends DataGrid
         $hidden = array_unique([...$this->hiddenJobTypes('importers'), ...$this->hiddenJobTypes('exporters')]);
 
         if ($hidden !== []) {
-            $queryBuilder->where(fn (Builder $query) => $query->whereNull('job.entity_type')->orWhereNotIn('job.entity_type', $hidden));
+            $queryBuilder->where(fn (Builder $query): Builder => $query->whereNull('job.entity_type')->orWhereNotIn('job.entity_type', $hidden));
         }
 
         $this->addFilter('id', 'job_track.id');

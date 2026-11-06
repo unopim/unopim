@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Schema;
  * only runs alongside those modules, the rest run alone or in any combination.
  * Bound scoped: the selection and the key map are read once per request, so a
  * settings change is seen by the next request without a worker restart.
+ * A module's `route_prefixes` and ACL routes only gate named routes; an unnamed
+ * route is always reachable, so a package names every route it wants gated.
  */
 final class ModuleGate
 {
@@ -202,8 +204,8 @@ final class ModuleGate
      * Section keys the admin hid; applies only while PIM is off, where PIM screens have no use.
      *
      * Stored keys not flagged `hideable` are dropped, so a crafted value can never hide
-     * System Settings, Users or Roles and lock the admin out. The field's `default_value`
-     * is read directly because `getConfigData()` only falls back to a `default` key.
+     * System Settings, Users or Roles and lock the admin out. With nothing stored, the
+     * sections flagged `hidden_by_default` are hidden.
      *
      * @return list<string>
      */
@@ -220,9 +222,7 @@ final class ModuleGate
         return $this->hidden = array_values(array_intersect(
             $this->hideableSections(),
             self::parseSections(
-                core()->getConfigData(self::HIDDEN_SECTIONS_KEY)
-                ?? core()->getConfigField(self::HIDDEN_SECTIONS_KEY)['default_value']
-                ?? null
+                core()->getConfigData(self::HIDDEN_SECTIONS_KEY) ?? $this->defaultHiddenSections()
             ),
         ));
     }
@@ -245,6 +245,19 @@ final class ModuleGate
                     && ! isset($item['module']),
             ),
         )));
+    }
+
+    /**
+     * Comma-separated hideable menu keys whose package flags them `hidden_by_default`.
+     */
+    public function defaultHiddenSections(): string
+    {
+        $hideable = $this->hideableSections();
+
+        return implode(',', array_values(array_unique(array_filter(array_map(
+            fn (mixed $item): ?string => is_array($item) && ! empty($item['hidden_by_default']) && in_array($item['key'] ?? null, $hideable, true) ? $item['key'] : null,
+            (array) config('menu.admin', []),
+        )))));
     }
 
     /**

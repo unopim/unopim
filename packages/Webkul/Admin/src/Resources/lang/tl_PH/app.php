@@ -2163,7 +2163,7 @@ return [
 
                     'settings' => [
                         'info'  => 'Patakbuhin ang anumang module nang mag-isa o ang ilan nang sabay; ang module na nangangailangan ng iba ay maaari lamang i-on kasama nito.',
-                        'title' => 'Mga module',
+                        'title' => 'Pagpili ng module',
                     ],
 
                     'modules' => [
@@ -2172,7 +2172,7 @@ return [
                     ],
 
                     'hidden-sections' => [
-                        'info'  => 'Nalalapat lamang habang naka-off ang Impormasyon ng Produkto (PIM). Inaalis sa menu ang mga napiling seksyon at hinaharangan ang mga pahina nito; nananatili ang data nito.',
+                        'info'  => 'Nalalapat lamang habang naka-off ang Impormasyon ng Produkto (PIM). Inaalis sa menu ang mga napiling seksyon at hinaharangan ang mga admin page nito; nananatili ang data nito at nananatiling available ang mga Admin API route nito.',
                         'title' => 'Mga nakatagong seksyon',
                     ],
                 ],

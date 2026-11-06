@@ -2161,7 +2161,7 @@ return [
 
                     'settings' => [
                         'info'  => 'Jalankan modul mana pun secara mandiri atau beberapa sekaligus; modul yang membutuhkan modul lain hanya dapat diaktifkan bersamanya.',
-                        'title' => 'Modul',
+                        'title' => 'Pemilihan modul',
                     ],
 
                     'modules' => [
@@ -2170,7 +2170,7 @@ return [
                     ],
 
                     'hidden-sections' => [
-                        'info'  => 'Hanya berlaku saat Informasi Produk (PIM) dinonaktifkan. Bagian yang dipilih dihapus dari menu dan halamannya diblokir; datanya tetap disimpan.',
+                        'info'  => 'Hanya berlaku saat Informasi Produk (PIM) dinonaktifkan. Bagian yang dipilih dihapus dari menu dan halaman adminnya diblokir; datanya tetap disimpan dan rute Admin API-nya tetap tersedia.',
                         'title' => 'Bagian tersembunyi',
                     ],
                 ],

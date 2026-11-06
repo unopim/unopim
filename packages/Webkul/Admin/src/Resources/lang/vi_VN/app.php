@@ -2163,7 +2163,7 @@ return [
 
                     'settings' => [
                         'info'  => 'Chạy bất kỳ mô-đun nào riêng lẻ hoặc nhiều mô-đun cùng lúc; mô-đun cần mô-đun khác chỉ có thể bật cùng với mô-đun đó.',
-                        'title' => 'Mô-đun',
+                        'title' => 'Chọn mô-đun',
                     ],
 
                     'modules' => [
@@ -2172,7 +2172,7 @@ return [
                     ],
 
                     'hidden-sections' => [
-                        'info'  => 'Chỉ áp dụng khi Thông tin sản phẩm (PIM) đang tắt. Các mục đã chọn bị xóa khỏi menu và trang của chúng bị chặn; dữ liệu vẫn được giữ lại.',
+                        'info'  => 'Chỉ áp dụng khi Thông tin sản phẩm (PIM) đang tắt. Các mục đã chọn bị xóa khỏi menu và trang quản trị của chúng bị chặn; dữ liệu vẫn được giữ lại và các route Admin API của chúng vẫn khả dụng.',
                         'title' => 'Mục bị ẩn',
                     ],
                 ],

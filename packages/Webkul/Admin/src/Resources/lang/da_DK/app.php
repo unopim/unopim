@@ -2161,7 +2161,7 @@ return [
 
                     'settings' => [
                         'info'  => 'Kør ethvert modul alene eller flere sammen; et modul, der kræver et andet, kan kun slås til sammen med det.',
-                        'title' => 'Moduler',
+                        'title' => 'Valg af moduler',
                     ],
 
                     'modules' => [
@@ -2170,7 +2170,7 @@ return [
                     ],
 
                     'hidden-sections' => [
-                        'info'  => 'Gælder kun, mens Produktinformation (PIM) er slået fra. Valgte sektioner fjernes fra menuen, og deres sider blokeres; data bevares.',
+                        'info'  => 'Gælder kun, mens Produktinformation (PIM) er slået fra. Valgte sektioner fjernes fra menuen, og deres administrationssider blokeres; data bevares, og deres Admin API-ruter forbliver tilgængelige.',
                         'title' => 'Skjulte sektioner',
                     ],
                 ],

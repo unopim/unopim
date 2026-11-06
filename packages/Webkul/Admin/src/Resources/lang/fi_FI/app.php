@@ -2161,7 +2161,7 @@ return [
 
                     'settings' => [
                         'info'  => 'Käytä mitä tahansa moduulia yksin tai useita yhdessä; toista moduulia tarvitsevan moduulin voi ottaa käyttöön vain sen kanssa.',
-                        'title' => 'Moduulit',
+                        'title' => 'Moduulien valinta',
                     ],
 
                     'modules' => [
@@ -2170,7 +2170,7 @@ return [
                     ],
 
                     'hidden-sections' => [
-                        'info'  => 'Koskee vain tilannetta, jossa tuotetieto (PIM) on poissa käytöstä. Valitut osiot poistetaan valikosta ja niiden sivut estetään; tiedot säilyvät.',
+                        'info'  => 'Koskee vain tilannetta, jossa tuotetieto (PIM) on poissa käytöstä. Valitut osiot poistetaan valikosta ja niiden hallintasivut estetään; tiedot säilyvät ja niiden Admin API -reitit pysyvät käytettävissä.',
                         'title' => 'Piilotetut osiot',
                     ],
                 ],

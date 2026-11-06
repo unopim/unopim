@@ -17,7 +17,7 @@
 
     if (is_array($field['options'])) {
         $field['options'] = array_map(
-            fn ($option) => is_array($option) && is_string($option['title'] ?? null) ? [...$option, 'title' => trans($option['title'])] : $option,
+            fn (mixed $option): mixed => is_array($option) && is_string($option['title'] ?? null) ? [...$option, 'title' => trans($option['title'])] : $option,
             $field['options']
         );
     }
@@ -30,7 +30,7 @@
         $field['info'] = trans($field['info']);
     }
 
-    $value = core()->getConfigData($nameKey) ?? ($field['default_value'] ?? '');
+    $value = core()->getConfigData($nameKey) ?? ($coreConfigRepository->getDefaultValue($field) ?? '');
 
     // For select fields, ensure value is always a string so v-select-handler matching works
     if (($field['type'] ?? '') === 'select' && $value !== '') {

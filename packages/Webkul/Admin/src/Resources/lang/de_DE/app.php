@@ -2161,7 +2161,7 @@ return [
 
                     'settings' => [
                         'info'  => 'Betreiben Sie jedes Modul allein oder mehrere zusammen; ein Modul, das ein anderes benötigt, lässt sich nur gemeinsam damit einschalten.',
-                        'title' => 'Module',
+                        'title' => 'Modulauswahl',
                     ],
 
                     'modules' => [
@@ -2170,7 +2170,7 @@ return [
                     ],
 
                     'hidden-sections' => [
-                        'info'  => 'Gilt nur, solange Produktinformationen (PIM) ausgeschaltet sind. Ausgewählte Bereiche werden aus dem Menü entfernt und ihre Seiten gesperrt; die Daten bleiben erhalten.',
+                        'info'  => 'Gilt nur, solange Produktinformationen (PIM) ausgeschaltet sind. Ausgewählte Bereiche werden aus dem Menü entfernt und ihre Admin-Seiten gesperrt; die Daten bleiben erhalten, und ihre Admin-API-Routen bleiben verfügbar.',
                         'title' => 'Ausgeblendete Bereiche',
                     ],
                 ],

@@ -28,8 +28,8 @@
                 >
             @elseif ($iconUrl)
                 <span
-                    class="w-7 h-7 text-primary-600 dark:text-primary-400 group-hover:text-white"
-                    style="background-color: currentColor; mask-image: url('{{ $iconUrl }}'); -webkit-mask-image: url('{{ $iconUrl }}'); mask-size: contain; -webkit-mask-size: contain; mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat; mask-position: center; -webkit-mask-position: center;"
+                    class="icon-mask w-7 h-7 text-primary-600 dark:text-primary-400 group-hover:text-white"
+                    style="--icon-mask-url: url('{{ $iconUrl }}')"
                     aria-hidden="true"
                 ></span>
             @elseif (str_starts_with(trim($icon), '<svg'))

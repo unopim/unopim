@@ -143,9 +143,7 @@ class ImportController extends Controller
     {
         $importerConfig = $this->visibleJobTypes(self::IMPORTERS);
 
-        $import = $this->jobInstancesRepository->findOrFail($id);
-
-        $this->abortIfHiddenJobType($import->entity_type);
+        $import = $this->findVisibleJobInstance($id);
 
         $acceptedArchiveTypes = $this->allowedArchiveExtensionsLabel();
 
@@ -161,9 +159,7 @@ class ImportController extends Controller
 
         $importers = array_keys($importerConfig);
 
-        $import = $this->jobInstancesRepository->findOrFail($id);
-
-        $this->abortIfHiddenJobType($import->entity_type);
+        $import = $this->findVisibleJobInstance($id);
 
         $this->validate(request(), [
             'code'                => ['required'],
@@ -228,9 +224,7 @@ class ImportController extends Controller
      */
     public function destroy($id): JsonResponse
     {
-        $import = $this->jobInstancesRepository->findOrFail($id);
-
-        $this->abortIfHiddenJobType($import->entity_type);
+        $import = $this->findVisibleJobInstance($id);
 
         try {
             if (! empty($import->file_path)) {
@@ -264,9 +258,7 @@ class ImportController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $import = $jobInstance = $this->jobInstancesRepository->findOrFail($id);
-
-        $this->abortIfHiddenJobType($import->entity_type);
+        $import = $jobInstance = $this->findVisibleJobInstance($id);
 
         $import->unsetRelations();
 
@@ -280,9 +272,7 @@ class ImportController extends Controller
     {
         $jobTrackInstance = null;
 
-        $import = $this->jobInstancesRepository->findOrFail($id);
-
-        $this->abortIfHiddenJobType($import->entity_type);
+        $import = $this->findVisibleJobInstance($id);
 
         try {
             $requiresFile = (bool) config(self::IMPORTERS.'.'.$import->entity_type.'.has_file_options', false);
@@ -335,9 +325,7 @@ class ImportController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $import = $this->jobTrackRepository->findOrFail($id);
-
-        $this->abortIfHiddenJobType($import->jobInstance?->entity_type);
+        $import = $this->findVisibleJobTrack($id);
 
         $isValid = $this->importHelper
             ->setImport($import)
@@ -358,9 +346,7 @@ class ImportController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $import = $this->jobTrackRepository->findOrFail($id);
-
-        $this->abortIfHiddenJobType($import->jobInstance?->entity_type);
+        $import = $this->findVisibleJobTrack($id);
 
         if (! $import->processed_rows_count) {
             return new JsonResponse([
@@ -424,9 +410,7 @@ class ImportController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $import = $this->jobTrackRepository->findOrFail($id);
-
-        $this->abortIfHiddenJobType($import->jobInstance?->entity_type);
+        $import = $this->findVisibleJobTrack($id);
 
         if (! $import->processed_rows_count) {
             return new JsonResponse([
@@ -491,9 +475,7 @@ class ImportController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $import = $this->jobTrackRepository->findOrFail($id);
-
-        $this->abortIfHiddenJobType($import->jobInstance?->entity_type);
+        $import = $this->findVisibleJobTrack($id);
 
         if (! $import->processed_rows_count) {
             return new JsonResponse([
@@ -568,9 +550,7 @@ class ImportController extends Controller
      */
     public function pause(int $id): JsonResponse
     {
-        $jobTrack = $this->jobTrackRepository->findOrFail($id);
-
-        $this->abortIfHiddenJobType($jobTrack->jobInstance?->entity_type);
+        $jobTrack = $this->findVisibleJobTrack($id);
 
         $jobType = $this->authorizeJobControl($jobTrack);
 
@@ -590,9 +570,7 @@ class ImportController extends Controller
      */
     public function resume(int $id): JsonResponse
     {
-        $jobTrack = $this->jobTrackRepository->findOrFail($id);
-
-        $this->abortIfHiddenJobType($jobTrack->jobInstance?->entity_type);
+        $jobTrack = $this->findVisibleJobTrack($id);
 
         $jobType = $this->authorizeJobControl($jobTrack);
 
@@ -612,7 +590,7 @@ class ImportController extends Controller
      */
     public function cancel(int $id): JsonResponse
     {
-        $jobTrack = $this->jobTrackRepository->findOrFail($id);
+        $jobTrack = $this->findVisibleJobTrack($id);
 
         $jobType = $this->authorizeJobControl($jobTrack);
 
@@ -636,9 +614,7 @@ class ImportController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $import = $this->jobTrackRepository->findOrFail($id);
-
-        $this->abortIfHiddenJobType($import->jobInstance?->entity_type);
+        $import = $this->findVisibleJobTrack($id);
 
         // The scheduled reaper is the safety net; failing it here too stops the
         // tracker polling a dead job for up to a scheduler tick.
@@ -712,9 +688,7 @@ class ImportController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $import = $this->jobInstancesRepository->findOrFail($id);
-
-        $this->abortIfHiddenJobType($import->entity_type);
+        $import = $this->findVisibleJobInstance($id);
 
         return Storage::disk('private')->download($import->file_path);
     }
@@ -728,9 +702,7 @@ class ImportController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $import = $this->jobTrackRepository->findOrFail($id);
-
-        $this->abortIfHiddenJobType($import->jobInstance?->entity_type);
+        $import = $this->findVisibleJobTrack($id);
 
         return Storage::disk('private')->download($import->error_file_path);
     }

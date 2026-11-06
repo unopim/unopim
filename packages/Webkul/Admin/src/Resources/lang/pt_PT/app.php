@@ -2163,7 +2163,7 @@ return [
 
                     'settings' => [
                         'info'  => 'Execute qualquer módulo isoladamente ou vários em conjunto; um módulo que precisa de outro só pode ser ativado com esse.',
-                        'title' => 'Módulos',
+                        'title' => 'Seleção de módulos',
                     ],
 
                     'modules' => [
@@ -2172,7 +2172,7 @@ return [
                     ],
 
                     'hidden-sections' => [
-                        'info'  => 'Aplica-se apenas enquanto Informação de produto (PIM) estiver desativado. As secções selecionadas são removidas do menu e as respetivas páginas bloqueadas; os dados são mantidos.',
+                        'info'  => 'Aplica-se apenas enquanto Informação de produto (PIM) estiver desativado. As secções selecionadas são removidas do menu e as respetivas páginas de administração bloqueadas; os dados são mantidos e as rotas da Admin API continuam disponíveis.',
                         'title' => 'Secções ocultas',
                     ],
                 ],

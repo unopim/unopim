@@ -2163,7 +2163,7 @@ return [
 
                     'settings' => [
                         'info'  => 'Kör valfri modul ensam eller flera tillsammans; en modul som behöver en annan kan bara slås på tillsammans med den.',
-                        'title' => 'Moduler',
+                        'title' => 'Val av moduler',
                     ],
 
                     'modules' => [
@@ -2172,7 +2172,7 @@ return [
                     ],
 
                     'hidden-sections' => [
-                        'info'  => 'Gäller bara medan Produktinformation (PIM) är avstängd. Valda avsnitt tas bort från menyn och deras sidor blockeras; data behålls.',
+                        'info'  => 'Gäller bara medan Produktinformation (PIM) är avstängd. Valda avsnitt tas bort från menyn och deras administrationssidor blockeras; data behålls och deras Admin API-rutter förblir tillgängliga.',
                         'title' => 'Dolda avsnitt',
                     ],
                 ],

@@ -2161,7 +2161,7 @@ return [
 
                     'settings' => [
                         'info'  => 'Executeu qualsevol mòdul sol o diversos alhora; un mòdul que en necessita un altre només es pot activar amb aquest.',
-                        'title' => 'Mòduls',
+                        'title' => 'Selecció de mòduls',
                     ],
 
                     'modules' => [
@@ -2170,7 +2170,7 @@ return [
                     ],
 
                     'hidden-sections' => [
-                        'info'  => 'Només s’aplica mentre la Informació de producte (PIM) està desactivada. Les seccions seleccionades s’eliminen del menú i se’n bloquegen les pàgines; les dades es conserven.',
+                        'info'  => 'Només s’aplica mentre la Informació de producte (PIM) està desactivada. Les seccions seleccionades s’eliminen del menú i se’n bloquegen les pàgines d’administració; les dades es conserven i les rutes de l’API d’administració (Admin API) continuen disponibles.',
                         'title' => 'Seccions ocultes',
                     ],
                 ],

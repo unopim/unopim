@@ -2,6 +2,10 @@
 
 namespace Webkul\Admin\Traits;
 
+use Webkul\DataTransfer\Contracts\JobInstances;
+use Webkul\DataTransfer\Contracts\JobTrack;
+use Webkul\DataTransfer\Repositories\JobInstancesRepository;
+use Webkul\DataTransfer\Repositories\JobTrackRepository;
 use Webkul\DataTransfer\Services\JobTypeGate;
 
 trait GatesJobTypes
@@ -32,5 +36,29 @@ trait GatesJobTypes
     protected function abortIfHiddenJobType(mixed $entityType): void
     {
         abort_if(app(JobTypeGate::class)->hides($entityType), 404);
+    }
+
+    /**
+     * Find a job instance, responding 404 when it is missing or its module is switched off.
+     */
+    protected function findVisibleJobInstance(int|string $id): JobInstances
+    {
+        $jobInstance = app(JobInstancesRepository::class)->findOrFail($id);
+
+        $this->abortIfHiddenJobType($jobInstance->entity_type);
+
+        return $jobInstance;
+    }
+
+    /**
+     * Find a job track, responding 404 when it is missing or its job instance belongs to a switched-off module.
+     */
+    protected function findVisibleJobTrack(int|string $id): JobTrack
+    {
+        $jobTrack = app(JobTrackRepository::class)->findOrFail($id);
+
+        $this->abortIfHiddenJobType($jobTrack->jobInstance?->entity_type);
+
+        return $jobTrack;
     }
 }

@@ -2163,7 +2163,7 @@ return [
 
                     'settings' => [
                         'info'  => 'Gebruik elke module afzonderlijk of meerdere samen; een module die een andere nodig heeft, kan alleen samen daarmee worden ingeschakeld.',
-                        'title' => 'Modules',
+                        'title' => 'Modulekeuze',
                     ],
 
                     'modules' => [
@@ -2172,7 +2172,7 @@ return [
                     ],
 
                     'hidden-sections' => [
-                        'info'  => 'Geldt alleen zolang Productinformatie (PIM) is uitgeschakeld. Geselecteerde secties worden uit het menu verwijderd en hun pagina’s geblokkeerd; de gegevens blijven bewaard.',
+                        'info'  => 'Geldt alleen zolang Productinformatie (PIM) is uitgeschakeld. Geselecteerde secties worden uit het menu verwijderd en hun beheerpagina’s geblokkeerd; de gegevens blijven bewaard en hun Admin API-routes blijven beschikbaar.',
                         'title' => 'Verborgen secties',
                     ],
                 ],

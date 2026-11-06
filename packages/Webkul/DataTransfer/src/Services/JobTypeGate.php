@@ -16,7 +16,7 @@ class JobTypeGate
     /**
      * Registries whose entries carry an optional `module` tag.
      */
-    public const array REGISTRIES = ['importers', 'exporters'];
+    public const array REGISTRIES = ['importers', 'exporters', 'quick_exporters'];
 
     /**
      * The job types of a registry (`importers`, `exporters`, `quick_exporters`) whose module is switched on.

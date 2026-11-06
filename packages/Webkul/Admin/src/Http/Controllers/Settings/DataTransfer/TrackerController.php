@@ -59,9 +59,7 @@ class TrackerController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $import = $this->jobTrackRepository->findOrFail($batchId);
-
-        $this->abortIfHiddenJobType($import->jobInstance?->entity_type);
+        $import = $this->findVisibleJobTrack($batchId);
 
         if ($this->jobHealth->isStalled($import)) {
             $this->jobHealth->fail($import);
@@ -142,9 +140,7 @@ class TrackerController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $jobTrack = $this->jobTrackRepository->findOrFail($id);
-
-        $this->abortIfHiddenJobType($jobTrack->jobInstance?->entity_type);
+        $jobTrack = $this->findVisibleJobTrack($id);
 
         $disk = Storage::disk('private');
 
@@ -167,9 +163,7 @@ class TrackerController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $jobTrack = $this->jobTrackRepository->findOrFail($id);
-
-        $this->abortIfHiddenJobType($jobTrack->jobInstance?->entity_type);
+        $jobTrack = $this->findVisibleJobTrack($id);
 
         return $this->archiveJobFiles($jobTrack);
     }

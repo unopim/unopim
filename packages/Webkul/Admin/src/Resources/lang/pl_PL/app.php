@@ -2163,7 +2163,7 @@ return [
 
                     'settings' => [
                         'info'  => 'Uruchamiaj dowolny moduł samodzielnie lub kilka razem; moduł wymagający innego można włączyć tylko razem z nim.',
-                        'title' => 'Moduły',
+                        'title' => 'Wybór modułów',
                     ],
 
                     'modules' => [
@@ -2172,7 +2172,7 @@ return [
                     ],
 
                     'hidden-sections' => [
-                        'info'  => 'Dotyczy tylko sytuacji, gdy Informacje o produktach (PIM) są wyłączone. Wybrane sekcje są usuwane z menu, a ich strony blokowane; dane są zachowywane.',
+                        'info'  => 'Dotyczy tylko sytuacji, gdy Informacje o produktach (PIM) są wyłączone. Wybrane sekcje są usuwane z menu, a ich strony administracyjne blokowane; dane są zachowywane, a trasy Admin API pozostają dostępne.',
                         'title' => 'Ukryte sekcje',
                     ],
                 ],
