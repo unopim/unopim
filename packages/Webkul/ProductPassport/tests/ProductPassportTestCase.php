@@ -105,6 +105,23 @@ class ProductPassportTestCase extends TestCase
     }
 
     /**
+     * The publication context a payload builder receives for $product. Without an
+     * explicit channel/locale it creates a channel and uses (or attaches) a locale.
+     */
+    protected function publicationContextFor(Product $product, ?Channel $channel = null, ?Locale $locale = null): PublicationContext
+    {
+        $channel ??= ChannelProxy::factory()->create();
+        $locale ??= $channel->locales()->first() ?: tap(Locale::factory()->create(), fn ($l) => $channel->locales()->attach($l));
+
+        return new PublicationContext(
+            uuid: (string) Str::uuid(),
+            channel: $channel,
+            locale: $locale,
+            url: 'https://example.test/p/'.$product->id.'/'.$locale->code,
+        );
+    }
+
+    /**
      * A product carrying a passport value plus an unrelated "secret" attribute the
      * template never lists, proving only template fields reach a payload. The demo
      * document is a consumer-tier repair guide, not compliance evidence, so generic
@@ -149,12 +166,7 @@ class ProductPassportTestCase extends TestCase
             'values'              => $values,
         ]);
 
-        $context = new PublicationContext(
-            uuid: (string) Str::uuid(),
-            channel: $channel,
-            locale: $locale,
-            url: 'https://example.test/p/'.$product->id.'/'.$locale->code,
-        );
+        $context = $this->publicationContextFor($product, $channel, $locale);
 
         return $withDocument ? [$product, $context, $sourcePath] : [$product, $context];
     }
@@ -177,9 +189,6 @@ class ProductPassportTestCase extends TestCase
             'dpp_country_of_origin' => ['attribute' => $country, 'label' => 'Country of Origin'],
         ]);
 
-        $channel = ChannelProxy::factory()->create();
-        $locale = $channel->locales()->first() ?: tap(Locale::factory()->create(), fn ($l) => $channel->locales()->attach($l));
-
         $mapped = [];
 
         foreach (array_filter($values, fn ($value): bool => $value !== null) as $code => $value) {
@@ -191,12 +200,7 @@ class ProductPassportTestCase extends TestCase
             'values'              => ['common' => $mapped],
         ]);
 
-        $context = new PublicationContext(
-            uuid: (string) Str::uuid(),
-            channel: $channel,
-            locale: $locale,
-            url: 'https://example.test/p/'.$product->id.'/'.$locale->code,
-        );
+        $context = $this->publicationContextFor($product);
 
         return [$product, $context];
     }
@@ -218,9 +222,6 @@ class ProductPassportTestCase extends TestCase
             'dpp_manufacturer_name' => ['attribute' => $manufacturer, 'label' => 'Manufacturer Name'],
         ]);
 
-        $channel = ChannelProxy::factory()->create();
-        $locale = $channel->locales()->first() ?: tap(Locale::factory()->create(), fn ($l) => $channel->locales()->attach($l));
-
         $parent = ProductProxy::factory()->configurable()->create([
             'attribute_family_id' => $family->id,
             'values'              => ['common' => [$manufacturer->code => 'Acme Corp']],
@@ -232,14 +233,50 @@ class ProductPassportTestCase extends TestCase
             'values'              => ['common' => []],
         ]);
 
-        $context = new PublicationContext(
-            uuid: (string) Str::uuid(),
-            channel: $channel,
-            locale: $locale,
-            url: 'https://example.test/p/'.$variant->id.'/'.$locale->code,
-        );
+        $context = $this->publicationContextFor($variant);
 
         return [$variant, $context];
+    }
+
+    /**
+     * A product whose template sources one field from a WYSIWYG `textarea` attribute
+     * — the fixture the rich-text rendering/XSS tests drive. `$html` lets a caller
+     * inject a hostile payload to prove the purifier, not just the formatter, gates it.
+     *
+     * @return array{0: Product, 1: PublicationContext}
+     */
+    protected function productWithRichTextPassportField(string $html = '<p>Hand wash only.</p><ul><li>Do not bleach</li></ul>'): array
+    {
+        $careInstructions = $this->passportSourceAttribute(['type' => 'textarea', 'enable_wysiwyg' => true]);
+
+        $family = AttributeFamilyProxy::factory()->withMinimalAttributesForProductTypes()->create();
+
+        $this->passportTemplateFor($family, [
+            'dpp_care_instructions' => ['attribute' => $careInstructions, 'label' => 'Care Instructions'],
+        ]);
+
+        $product = ProductProxy::factory()->create([
+            'attribute_family_id' => $family->id,
+            'values'              => ['common' => [$careInstructions->code => $html]],
+        ]);
+
+        $context = $this->publicationContextFor($product);
+
+        return [$product, $context];
+    }
+
+    /**
+     * Publishes {@see productWithRichTextPassportField()} through the real `Publisher`,
+     * for the page-render/JSON-LD tests that need a public route to hit.
+     */
+    protected function publishedRichTextPassportFixture(string $html = '<p>Hand wash only.</p><ul><li>Do not bleach</li></ul>'): PublicationVersion
+    {
+        [$product, $context] = $this->productWithRichTextPassportField($html);
+
+        $this->enablePublicTier($context->channel->code);
+        $this->enablePassportPublishing($context->channel->code);
+
+        return resolve(Publisher::class)->publish($product, $context->channel, $context->locale, 'dpp');
     }
 
     /**
