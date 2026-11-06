@@ -2155,6 +2155,26 @@ return [
                     'info'  => '',
                     'title' => '一般的な',
                 ],
+                'platform' => [
+                    'info'  => '有効にするプラットフォームモジュールを選択します。',
+                    'title' => 'プラットフォーム',
+
+                    'settings' => [
+                        'info'  => '各モジュールは単独でも複数を組み合わせても利用できます。別のモジュールを必要とするモジュールは、そのモジュールと一緒にのみ有効にできます。',
+                        'title' => 'モジュール',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'モジュールを無効にすると、そのメニュー、ページ、API ルートが非表示になります。データは保持されます。',
+                        'title' => 'モジュール',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => '製品情報（PIM）が無効な場合にのみ適用されます。選択したセクションはメニューから削除され、ページへのアクセスがブロックされます。データは保持されます。',
+                        'title' => '非表示セクション',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -3099,6 +3119,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'ダッシュボード',
+        'home'      => 'ホーム',
         'go-back'   => '戻る',
         'support'   => '問題が解決しない場合は、<a href=":link" class=":class">:email</a> までお問い合わせください。',
         '404'       => [

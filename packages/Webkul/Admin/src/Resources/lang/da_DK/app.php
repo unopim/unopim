@@ -2155,6 +2155,26 @@ return [
                     'info'  => '',
                     'title' => 'Generel',
                 ],
+                'platform' => [
+                    'info'  => 'Vælg, hvilke platformmoduler der er slået til.',
+                    'title' => 'Platform',
+
+                    'settings' => [
+                        'info'  => 'Kør ethvert modul alene eller flere sammen; et modul, der kræver et andet, kan kun slås til sammen med det.',
+                        'title' => 'Moduler',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Når et modul slås fra, skjules dets menuer, sider og API-ruter; dets data bevares.',
+                        'title' => 'Moduler',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Gælder kun, mens Produktinformation (PIM) er slået fra. Valgte sektioner fjernes fra menuen, og deres sider blokeres; data bevares.',
+                        'title' => 'Skjulte sektioner',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -3099,6 +3119,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Instrumentbræt',
+        'home'      => 'Hjem',
         'go-back'   => 'Gå tilbage',
         'support'   => 'Hvis problemet fortsætter, kontakt os på <a href=":link" class=":class">:email</a> for hjælp.',
         '404'       => [

@@ -2157,6 +2157,26 @@ return [
                     'info'  => '',
                     'title' => 'Chung',
                 ],
+                'platform' => [
+                    'info'  => 'Chọn các mô-đun nền tảng được bật.',
+                    'title' => 'Nền tảng',
+
+                    'settings' => [
+                        'info'  => 'Chạy bất kỳ mô-đun nào riêng lẻ hoặc nhiều mô-đun cùng lúc; mô-đun cần mô-đun khác chỉ có thể bật cùng với mô-đun đó.',
+                        'title' => 'Mô-đun',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Tắt một mô-đun sẽ ẩn menu, trang và tuyến API của mô-đun đó; dữ liệu vẫn được giữ lại.',
+                        'title' => 'Mô-đun',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Chỉ áp dụng khi Thông tin sản phẩm (PIM) đang tắt. Các mục đã chọn bị xóa khỏi menu và trang của chúng bị chặn; dữ liệu vẫn được giữ lại.',
+                        'title' => 'Mục bị ẩn',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -3102,6 +3122,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Bảng điều khiển',
+        'home'      => 'Trang chủ',
         'go-back'   => 'Quay lại',
         'support'   => 'Nếu vấn đề tiếp tục, hãy liên hệ với chúng tôi tại <a href=":link" class=":class">:email</a> để được trợ giúp.',
         '404'       => [

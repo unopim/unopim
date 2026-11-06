@@ -15,6 +15,13 @@
 
     $field['options'] = isset($field['repository']) ? ($repositoryOptions ?? []) : ($field['options'] ?? []);
 
+    if (is_array($field['options'])) {
+        $field['options'] = array_map(
+            fn ($option) => is_array($option) && is_string($option['title'] ?? null) ? [...$option, 'title' => trans($option['title'])] : $option,
+            $field['options']
+        );
+    }
+
     if (! empty($field['placeholder'])) {
         $field['placeholder'] = trans($field['placeholder']);
     }
@@ -28,6 +35,10 @@
     // For select fields, ensure value is always a string so v-select-handler matching works
     if (($field['type'] ?? '') === 'select' && $value !== '') {
         $value = (string) $value;
+    }
+
+    if (($field['type'] ?? '') === 'multiselect') {
+        $value = json_encode(array_values(array_filter(array_map('trim', explode(',', (string) $value)))));
     }
 @endphp
 
@@ -145,6 +156,22 @@
             <template v-if="field.type == 'select'">
                 <x-admin::form.control-group.control
                     type="select"
+                    ::id="name"
+                    ::name="name"
+                    ::rules="validations"
+                    ::options="options"
+                    ::value="value"
+                    ::label="label"
+                    track-by="value"
+                    label-by="title"
+                    @input="emitChangeEvent($event, name)"
+                >
+                </x-admin::form.control-group.control>
+            </template>
+
+            <template v-if="field.type == 'multiselect'">
+                <x-admin::form.control-group.control
+                    type="multiselect"
                     ::id="name"
                     ::name="name"
                     ::rules="validations"

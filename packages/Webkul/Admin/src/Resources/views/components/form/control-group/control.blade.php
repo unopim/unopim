@@ -453,8 +453,58 @@
                 @select="selectOption"
                 @remove="removeOption"
             >
+                <template v-slot:singleLabel="{ option }">
+                    <span class="inline-flex items-center gap-1.5">
+                        <span
+                            v-if="option.iconUrl && option.iconMask"
+                            class="inline-block w-5 h-5 shrink-0"
+                            :style="{ backgroundColor: 'currentColor', mask: 'url(' + option.iconUrl + ') center / contain no-repeat', WebkitMask: 'url(' + option.iconUrl + ') center / contain no-repeat' }"
+                            aria-hidden="true"
+                        ></span>
+
+                        <img
+                            v-else-if="option.iconUrl"
+                            :src="option.iconUrl"
+                            class="w-5 h-5 shrink-0 object-contain"
+                            alt=""
+                            aria-hidden="true"
+                            loading="lazy"
+                        >
+
+                        <span
+                            v-else-if="option.icon"
+                            :class="['text-xl', option.icon]"
+                        ></span>
+
+                        <span v-text="option[labelBy ?? 'label'] ?? option.label"></span>
+                    </span>
+                </template>
+
                 <template v-slot:option="{ option }">
-                    <span v-text="option[labelBy ?? 'label'] ?? option.label"></span>
+                    <span class="inline-flex items-center gap-1.5">
+                        <span
+                            v-if="option.iconUrl && option.iconMask"
+                            class="inline-block w-5 h-5 shrink-0"
+                            :style="{ backgroundColor: 'currentColor', mask: 'url(' + option.iconUrl + ') center / contain no-repeat', WebkitMask: 'url(' + option.iconUrl + ') center / contain no-repeat' }"
+                            aria-hidden="true"
+                        ></span>
+
+                        <img
+                            v-else-if="option.iconUrl"
+                            :src="option.iconUrl"
+                            class="w-5 h-5 shrink-0 object-contain"
+                            alt=""
+                            aria-hidden="true"
+                            loading="lazy"
+                        >
+
+                        <span
+                            v-else-if="option.icon"
+                            :class="['text-xl', option.icon]"
+                        ></span>
+
+                        <span v-text="option[labelBy ?? 'label'] ?? option.label"></span>
+                    </span>
 
                     <span
                         v-if="option.description"

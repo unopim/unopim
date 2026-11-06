@@ -2155,6 +2155,26 @@ return [
                     'info'  => '',
                     'title' => 'Umum',
                 ],
+                'platform' => [
+                    'info'  => 'Pilih modul platform yang diaktifkan.',
+                    'title' => 'Platform',
+
+                    'settings' => [
+                        'info'  => 'Jalankan modul mana pun secara mandiri atau beberapa sekaligus; modul yang membutuhkan modul lain hanya dapat diaktifkan bersamanya.',
+                        'title' => 'Modul',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Menonaktifkan modul akan menyembunyikan menu, halaman, dan rute API-nya; datanya tetap disimpan.',
+                        'title' => 'Modul',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Hanya berlaku saat Informasi Produk (PIM) dinonaktifkan. Bagian yang dipilih dihapus dari menu dan halamannya diblokir; datanya tetap disimpan.',
+                        'title' => 'Bagian tersembunyi',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -3099,6 +3119,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Dasbor',
+        'home'      => 'Beranda',
         'go-back'   => 'Kembali',
         'support'   => 'Jika masalah tetap ada, hubungi kami di <a href=":link" class=":class">:email</a> for assistance.',
         '404'       => [

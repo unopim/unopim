@@ -2155,6 +2155,26 @@ return [
                     'info'  => '',
                     'title' => 'General',
                 ],
+                'platform' => [
+                    'info'  => 'Choose which platform modules are switched on.',
+                    'title' => 'Platform',
+
+                    'settings' => [
+                        'info'  => 'Run any module on its own or several together; a module that needs another can only be switched on with it.',
+                        'title' => 'Modules',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Switching a module off hides its menus, pages and API routes; its data is kept.',
+                        'title' => 'Modules',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Applies only while Product Information (PIM) is switched off. Selected sections are removed from the menu and their pages are blocked; their data is kept.',
+                        'title' => 'Hidden sections',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -3099,6 +3119,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Dashboard',
+        'home'      => 'Home',
         'go-back'   => 'Go Back',
         'support'   => 'If the problem persists, reach out to us at <a href=":link" class=":class">:email</a> for assistance.',
         '404'       => [

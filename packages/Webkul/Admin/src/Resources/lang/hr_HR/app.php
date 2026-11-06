@@ -2155,6 +2155,26 @@ return [
                     'info'  => '',
                     'title' => 'Opće',
                 ],
+                'platform' => [
+                    'info'  => 'Odaberite koji su moduli platforme uključeni.',
+                    'title' => 'Platforma',
+
+                    'settings' => [
+                        'info'  => 'Pokrenite bilo koji modul samostalno ili više njih zajedno; modul kojemu je potreban drugi može se uključiti samo uz njega.',
+                        'title' => 'Moduli',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Isključivanje modula skriva njegove izbornike, stranice i API rute; podaci se zadržavaju.',
+                        'title' => 'Moduli',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Primjenjuje se samo dok su informacije o proizvodima (PIM) isključene. Odabrani odjeljci uklanjaju se iz izbornika, a njihove stranice blokiraju; podaci se zadržavaju.',
+                        'title' => 'Skriveni odjeljci',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -3099,6 +3119,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Nadzorna ploča',
+        'home'      => 'Početna',
         'go-back'   => 'Idi nazad',
         'support'   => 'Ako problem i dalje traje, obratite nam se na <a href=":link" class=":class">:email</a> za pomoć.',
         '404'       => [

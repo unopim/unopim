@@ -108,7 +108,7 @@
                         .map(option => (option && option.id) ? option.id : option)
                         .filter(Boolean);
 
-                    this.$axios.get("{{ route('admin.catalog.product.get_locale') }}", {
+                    this.$axios.get("{{ route('admin.magic_ai.channel_locales') }}", {
                             params: {
                                 channel: channelId
                             }

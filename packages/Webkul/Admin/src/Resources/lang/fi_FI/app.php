@@ -2155,6 +2155,26 @@ return [
                     'info'  => '',
                     'title' => 'Yleinen',
                 ],
+                'platform' => [
+                    'info'  => 'Valitse, mitkä alustan moduulit ovat käytössä.',
+                    'title' => 'Alusta',
+
+                    'settings' => [
+                        'info'  => 'Käytä mitä tahansa moduulia yksin tai useita yhdessä; toista moduulia tarvitsevan moduulin voi ottaa käyttöön vain sen kanssa.',
+                        'title' => 'Moduulit',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Moduulin poistaminen käytöstä piilottaa sen valikot, sivut ja API-reitit; sen tiedot säilyvät.',
+                        'title' => 'Moduulit',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Koskee vain tilannetta, jossa tuotetieto (PIM) on poissa käytöstä. Valitut osiot poistetaan valikosta ja niiden sivut estetään; tiedot säilyvät.',
+                        'title' => 'Piilotetut osiot',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -3099,6 +3119,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Ohjauspaneeli',
+        'home'      => 'Etusivu',
         'go-back'   => 'Palaa takaisin',
         'support'   => 'Jos ongelma jatkuu, ota yhteyttä sähköpostitse <a href=":link" class=":class">:email</a> avuksi.',
         '404'       => [

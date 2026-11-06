@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\JobTrackerGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Traits\GatesJobTypes;
 use Webkul\DataTransfer\Contracts\JobTrack as JobTrackContract;
 use Webkul\DataTransfer\Enums\JobType;
 use Webkul\DataTransfer\Helpers\Export;
@@ -20,6 +21,8 @@ use ZipArchive;
 
 class TrackerController extends Controller
 {
+    use GatesJobTypes;
+
     /**
      * Create a new controller instance.
      *
@@ -57,6 +60,8 @@ class TrackerController extends Controller
         }
 
         $import = $this->jobTrackRepository->findOrFail($batchId);
+
+        $this->abortIfHiddenJobType($import->jobInstance?->entity_type);
 
         if ($this->jobHealth->isStalled($import)) {
             $this->jobHealth->fail($import);
@@ -139,6 +144,8 @@ class TrackerController extends Controller
 
         $jobTrack = $this->jobTrackRepository->findOrFail($id);
 
+        $this->abortIfHiddenJobType($jobTrack->jobInstance?->entity_type);
+
         $disk = Storage::disk('private');
 
         if ($disk->fileExists($jobTrack->file_path)) {
@@ -160,7 +167,11 @@ class TrackerController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        return $this->archiveJobFiles($this->jobTrackRepository->findOrFail($id));
+        $jobTrack = $this->jobTrackRepository->findOrFail($id);
+
+        $this->abortIfHiddenJobType($jobTrack->jobInstance?->entity_type);
+
+        return $this->archiveJobFiles($jobTrack);
     }
 
     /**
@@ -226,6 +237,8 @@ class TrackerController extends Controller
         if (! bouncer()->hasPermission('data_transfer.job_tracker')) {
             abort(403, trans('admin::app.common.unauthorized'));
         }
+
+        $this->abortIfHiddenJobType($this->jobTrackRepository->find($id)?->jobInstance?->entity_type);
 
         $path = JobLogger::getJobLogPath($id);
 

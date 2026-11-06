@@ -5,6 +5,8 @@ namespace Webkul\Admin\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 use Webkul\Admin\Helpers\Dashboard;
+use Webkul\Core\Platform\Module;
+use Webkul\Core\Platform\ModuleGate;
 
 /**
  * Recomputes the dashboard aggregates off the request path. Clearing the keys
@@ -17,7 +19,7 @@ class RefreshDashboardCacheCommand extends Command
 
     protected $description = 'Recompute the dashboard statistics cache so page loads never pay for a catalog-wide scan.';
 
-    public function handle(Dashboard $dashboardHelper): int
+    public function handle(Dashboard $dashboardHelper, ModuleGate $gate): int
     {
         $warmers = [
             'dashboard.total_catalogs'       => fn () => $dashboardHelper->getTotalCatalogs(),
@@ -26,6 +28,10 @@ class RefreshDashboardCacheCommand extends Command
             'dashboard.needs_attention'      => fn () => $dashboardHelper->getNeedsAttention(),
             'dashboard.channel_readiness'    => fn () => $dashboardHelper->getChannelReadiness(),
         ];
+
+        if (! $gate->enabled(Module::Pim)) {
+            $warmers = array_diff_key($warmers, array_flip($dashboardHelper::PIM_WIDGETS));
+        }
 
         $failed = 0;
 

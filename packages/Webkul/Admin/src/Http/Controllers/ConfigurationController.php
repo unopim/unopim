@@ -13,6 +13,7 @@ use Webkul\Admin\Http\Requests\ConfigurationForm;
 use Webkul\Admin\Http\Requests\ConfigurationSearchForm;
 use Webkul\Admin\SystemSettings;
 use Webkul\Core\Contracts\Validator\ConfigValidator;
+use Webkul\Core\Platform\ModuleGate;
 use Webkul\Core\Repositories\CoreConfigRepository;
 use Webkul\Core\Tree;
 
@@ -46,7 +47,7 @@ class ConfigurationController extends Controller
     {
         $tree = Tree::create();
 
-        foreach (config('core') as $item) {
+        foreach (app(ModuleGate::class)->filter((array) config('core', [])) as $item) {
             $tree->add($item);
         }
 
@@ -110,6 +111,8 @@ class ConfigurationController extends Controller
     protected function enforceSectionAccess(array $aclKeys): void
     {
         foreach ($aclKeys as $aclKey) {
+            abort_unless(app(ModuleGate::class)->allowsKey($aclKey), 404);
+
             abort_unless(
                 bouncer()->hasPermission($aclKey),
                 403,

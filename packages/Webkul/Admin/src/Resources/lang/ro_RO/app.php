@@ -2157,6 +2157,26 @@ return [
                     'info'  => '',
                     'title' => 'General',
                 ],
+                'platform' => [
+                    'info'  => 'Alegeți ce module ale platformei sunt activate.',
+                    'title' => 'Platformă',
+
+                    'settings' => [
+                        'info'  => 'Rulați orice modul singur sau mai multe împreună; un modul care necesită altul poate fi activat doar împreună cu acesta.',
+                        'title' => 'Module',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Dezactivarea unui modul ascunde meniurile, paginile și rutele API ale acestuia; datele sunt păstrate.',
+                        'title' => 'Module',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Se aplică doar cât timp Informații despre produse (PIM) este dezactivat. Secțiunile selectate sunt eliminate din meniu, iar paginile lor sunt blocate; datele sunt păstrate.',
+                        'title' => 'Secțiuni ascunse',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -3102,6 +3122,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Tablou de Bord',
+        'home'      => 'Acasă',
         'go-back'   => 'Înapoi',
         'support'   => 'Dacă problema persistă, contactați-ne la <a href=":link" class=":class">:email</a> pentru asistență.',
         '404'       => [

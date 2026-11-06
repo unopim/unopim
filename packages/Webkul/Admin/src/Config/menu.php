@@ -6,6 +6,7 @@ return [
      */
     [
         'key'        => 'dashboard',
+        'hideable'   => true,
         'name'       => 'admin::app.components.layouts.sidebar.dashboard',
         'route'      => 'admin.dashboard.index',
         'sort'       => 1,
@@ -23,42 +24,49 @@ return [
         'icon'       => 'icon-catalog',
     ], [
         'key'        => 'catalog.products',
+        'module'     => 'pim',
         'name'       => 'admin::app.components.layouts.sidebar.products',
         'route'      => 'admin.catalog.products.index',
         'sort'       => 1,
         'icon'       => '',
     ], [
         'key'        => 'catalog.categories',
+        'module'     => 'pim',
         'name'       => 'admin::app.components.layouts.sidebar.categories',
         'route'      => 'admin.catalog.categories.index',
         'sort'       => 2,
         'icon'       => '',
     ], [
         'key'        => 'catalog.category_fields',
+        'module'     => 'pim',
         'name'       => 'admin::app.components.layouts.sidebar.category_fields',
         'route'      => 'admin.catalog.category_fields.index',
         'sort'       => 3,
         'icon'       => '',
     ], [
         'key'        => 'catalog.attributes',
+        'hideable'   => true,
         'name'       => 'admin::app.components.layouts.sidebar.attributes',
         'route'      => 'admin.catalog.attributes.index',
         'sort'       => 4,
         'icon'       => '',
     ], [
         'key'        => 'catalog.attribute_groups',
+        'hideable'   => true,
         'name'       => 'admin::app.components.layouts.sidebar.attribute-groups',
         'route'      => 'admin.catalog.attribute.groups.index',
         'sort'       => 5,
         'icon'       => '',
     ], [
         'key'        => 'catalog.families',
+        'module'     => 'pim',
         'name'       => 'admin::app.components.layouts.sidebar.attribute-families',
         'route'      => 'admin.catalog.families.index',
         'sort'       => 6,
         'icon'       => '',
     ], [
         'key'        => 'catalog.association_types',
+        'module'     => 'pim',
         'name'       => 'admin::app.components.layouts.sidebar.association_types',
         'route'      => 'admin.catalog.association_types.index',
         'sort'       => 7,
@@ -82,6 +90,7 @@ return [
         'icon'       => '',
     ], [
         'key'        => 'data_transfer.imports',
+        'hideable'   => true,
         'name'       => 'admin::app.components.layouts.sidebar.imports',
         'route'      => 'admin.settings.data_transfer.imports.index',
         'sort'       => 2,
@@ -111,12 +120,14 @@ return [
         'icon'       => '',
     ], [
         'key'        => 'settings.currencies',
+        'hideable'   => true,
         'name'       => 'admin::app.components.layouts.sidebar.currencies',
         'route'      => 'admin.settings.currencies.index',
         'sort'       => 3,
         'icon'       => '',
     ], [
         'key'        => 'settings.channels',
+        'hideable'   => true,
         'name'       => 'admin::app.components.layouts.sidebar.channels',
         'route'      => 'admin.settings.channels.index',
         'sort'       => 6,
@@ -161,10 +172,11 @@ return [
      * Help.
      */
     [
-        'key'   => 'help',
-        'name'  => 'admin::app.components.layouts.sidebar.help',
-        'route' => 'admin.help.index',
-        'sort'  => 99999,
-        'icon'  => 'icon-information',
+        'key'      => 'help',
+        'hideable' => true,
+        'name'     => 'admin::app.components.layouts.sidebar.help',
+        'route'    => 'admin.help.index',
+        'sort'     => 99999,
+        'icon'     => 'icon-information',
     ],
 ];

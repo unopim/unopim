@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\Mime\MimeTypes;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\ImportDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Traits\GatesJobTypes;
 use Webkul\DataTransfer\Contracts\JobTrack as JobTrackContract;
 use Webkul\DataTransfer\Contracts\Validator\JobInstances\JobValidator;
 use Webkul\DataTransfer\Enums\JobType;
@@ -25,6 +26,7 @@ use Webkul\DataTransfer\Services\JobHealth;
 class ImportController extends Controller
 {
     use Concerns\DownloadsSampleFile;
+    use GatesJobTypes;
 
     const TYPE = 'import';
 
@@ -62,7 +64,7 @@ class ImportController extends Controller
      */
     public function create(): View
     {
-        $importerConfig = config(self::IMPORTERS);
+        $importerConfig = $this->visibleJobTypes(self::IMPORTERS);
 
         $acceptedArchiveTypes = $this->allowedArchiveExtensionsLabel();
 
@@ -74,7 +76,7 @@ class ImportController extends Controller
      */
     public function store(): RedirectResponse
     {
-        $importerConfig = config(self::IMPORTERS);
+        $importerConfig = $this->visibleJobTypes(self::IMPORTERS);
 
         $importers = array_keys($importerConfig);
 
@@ -139,9 +141,11 @@ class ImportController extends Controller
      */
     public function edit(int $id): View
     {
-        $importerConfig = config(self::IMPORTERS);
+        $importerConfig = $this->visibleJobTypes(self::IMPORTERS);
 
         $import = $this->jobInstancesRepository->findOrFail($id);
+
+        $this->abortIfHiddenJobType($import->entity_type);
 
         $acceptedArchiveTypes = $this->allowedArchiveExtensionsLabel();
 
@@ -153,11 +157,13 @@ class ImportController extends Controller
      */
     public function update(int $id): RedirectResponse
     {
-        $importerConfig = config(self::IMPORTERS);
+        $importerConfig = $this->visibleJobTypes(self::IMPORTERS);
 
         $importers = array_keys($importerConfig);
 
         $import = $this->jobInstancesRepository->findOrFail($id);
+
+        $this->abortIfHiddenJobType($import->entity_type);
 
         $this->validate(request(), [
             'code'                => ['required'],
@@ -224,6 +230,8 @@ class ImportController extends Controller
     {
         $import = $this->jobInstancesRepository->findOrFail($id);
 
+        $this->abortIfHiddenJobType($import->entity_type);
+
         try {
             if (! empty($import->file_path)) {
                 Storage::disk('private')->delete($import->file_path);
@@ -258,6 +266,8 @@ class ImportController extends Controller
 
         $import = $jobInstance = $this->jobInstancesRepository->findOrFail($id);
 
+        $this->abortIfHiddenJobType($import->entity_type);
+
         $import->unsetRelations();
 
         return view('admin::settings.data-transfer.imports.import', compact('import'));
@@ -270,8 +280,11 @@ class ImportController extends Controller
     {
         $jobTrackInstance = null;
 
+        $import = $this->jobInstancesRepository->findOrFail($id);
+
+        $this->abortIfHiddenJobType($import->entity_type);
+
         try {
-            $import = $this->jobInstancesRepository->findOrFail($id);
 
             $requiresFile = (bool) config(self::IMPORTERS.'.'.$import->entity_type.'.has_file_options', false);
 
@@ -325,6 +338,8 @@ class ImportController extends Controller
 
         $import = $this->jobTrackRepository->findOrFail($id);
 
+        $this->abortIfHiddenJobType($import->jobInstance?->entity_type);
+
         $isValid = $this->importHelper
             ->setImport($import)
             ->validate();
@@ -345,6 +360,8 @@ class ImportController extends Controller
         }
 
         $import = $this->jobTrackRepository->findOrFail($id);
+
+        $this->abortIfHiddenJobType($import->jobInstance?->entity_type);
 
         if (! $import->processed_rows_count) {
             return new JsonResponse([
@@ -410,6 +427,8 @@ class ImportController extends Controller
 
         $import = $this->jobTrackRepository->findOrFail($id);
 
+        $this->abortIfHiddenJobType($import->jobInstance?->entity_type);
+
         if (! $import->processed_rows_count) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.imports.nothing-to-import'),
@@ -474,6 +493,8 @@ class ImportController extends Controller
         }
 
         $import = $this->jobTrackRepository->findOrFail($id);
+
+        $this->abortIfHiddenJobType($import->jobInstance?->entity_type);
 
         if (! $import->processed_rows_count) {
             return new JsonResponse([
@@ -550,6 +571,8 @@ class ImportController extends Controller
     {
         $jobTrack = $this->jobTrackRepository->findOrFail($id);
 
+        $this->abortIfHiddenJobType($jobTrack->jobInstance?->entity_type);
+
         $jobType = $this->authorizeJobControl($jobTrack);
 
         if ($jobType->isExport()) {
@@ -569,6 +592,8 @@ class ImportController extends Controller
     public function resume(int $id): JsonResponse
     {
         $jobTrack = $this->jobTrackRepository->findOrFail($id);
+
+        $this->abortIfHiddenJobType($jobTrack->jobInstance?->entity_type);
 
         $jobType = $this->authorizeJobControl($jobTrack);
 
@@ -613,6 +638,8 @@ class ImportController extends Controller
         }
 
         $import = $this->jobTrackRepository->findOrFail($id);
+
+        $this->abortIfHiddenJobType($import->jobInstance?->entity_type);
 
         // The scheduled reaper is the safety net; failing it here too stops the
         // tracker polling a dead job for up to a scheduler tick.
@@ -688,6 +715,8 @@ class ImportController extends Controller
 
         $import = $this->jobInstancesRepository->findOrFail($id);
 
+        $this->abortIfHiddenJobType($import->entity_type);
+
         return Storage::disk('private')->download($import->file_path);
     }
 
@@ -701,6 +730,8 @@ class ImportController extends Controller
         }
 
         $import = $this->jobTrackRepository->findOrFail($id);
+
+        $this->abortIfHiddenJobType($import->jobInstance?->entity_type);
 
         return Storage::disk('private')->download($import->error_file_path);
     }

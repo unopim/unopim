@@ -11,6 +11,7 @@ use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\ExportDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Traits\GatesJobTypes;
 use Webkul\DataTransfer\Contracts\Validator\JobInstances\JobValidator;
 use Webkul\DataTransfer\Helpers\Export;
 use Webkul\DataTransfer\Jobs\Export\ExportTrackBatch;
@@ -22,6 +23,7 @@ use Webkul\DataTransfer\Services\JobHealth;
 class ExportController extends Controller
 {
     use Concerns\DownloadsSampleFile;
+    use GatesJobTypes;
 
     const TYPE = 'export';
 
@@ -58,7 +60,7 @@ class ExportController extends Controller
      */
     public function create(): View
     {
-        $exporterConfig = config('exporters');
+        $exporterConfig = $this->visibleJobTypes('exporters');
 
         return view('admin::settings.data-transfer.exports.create', compact('exporterConfig'));
     }
@@ -68,7 +70,7 @@ class ExportController extends Controller
      */
     public function store(): RedirectResponse
     {
-        $exporterConfig = config('exporters');
+        $exporterConfig = $this->visibleJobTypes('exporters');
 
         $exporters = array_keys($exporterConfig);
 
@@ -121,9 +123,11 @@ class ExportController extends Controller
      */
     public function edit(int $id): View
     {
-        $exporterConfig = config('exporters');
+        $exporterConfig = $this->visibleJobTypes('exporters');
 
         $export = $this->jobInstancesRepository->findOrFail($id);
+
+        $this->abortIfHiddenJobType($export->entity_type);
 
         return view('admin::settings.data-transfer.exports.edit', compact('export', 'exporterConfig'));
     }
@@ -133,11 +137,13 @@ class ExportController extends Controller
      */
     public function update(int $id): RedirectResponse
     {
-        $exporterConfig = config('exporters');
+        $exporterConfig = $this->visibleJobTypes('exporters');
 
         $exporters = array_keys($exporterConfig);
 
         $export = $this->jobInstancesRepository->findOrFail($id);
+
+        $this->abortIfHiddenJobType($export->entity_type);
 
         $this->validate(request(), [
             'code'                => ['required'],
@@ -201,6 +207,8 @@ class ExportController extends Controller
     {
         $export = $this->jobInstancesRepository->findOrFail($id);
 
+        $this->abortIfHiddenJobType($export->entity_type);
+
         try {
             if (! empty($export->file_path)) {
                 Storage::disk('private')->delete($export->file_path);
@@ -239,6 +247,8 @@ class ExportController extends Controller
 
         $export = $jobInstance = $this->jobInstancesRepository->findOrFail($id);
 
+        $this->abortIfHiddenJobType($export->entity_type);
+
         $export->unsetRelations();
 
         return view('admin::settings.data-transfer.exports.export', compact('export'));
@@ -249,9 +259,11 @@ class ExportController extends Controller
      */
     public function exportNow(int $id): RedirectResponse
     {
+        $jobInstance = $this->jobInstancesRepository->findOrFail($id);
+
+        $this->abortIfHiddenJobType($jobInstance->entity_type);
+
         try {
-            // Retrieve the export instance or fail with a 404
-            $jobInstance = $this->jobInstancesRepository->findOrFail($id);
 
             // Get the authenticated user's ID
             $userId = auth()->guard('admin')->user()->id;
@@ -297,6 +309,8 @@ class ExportController extends Controller
     {
         $export = $this->jobInstancesRepository->findOrFail($id);
 
+        $this->abortIfHiddenJobType($export->entity_type);
+
         $isValid = $this->jobHelper
             ->setExport($export)
             ->validate();
@@ -313,6 +327,8 @@ class ExportController extends Controller
     public function start(int $id): JsonResponse
     {
         $export = $this->jobInstancesRepository->findOrFail($id);
+
+        $this->abortIfHiddenJobType($export->entity_type);
 
         if (! $export->processed_rows_count) {
             return new JsonResponse([
@@ -374,6 +390,8 @@ class ExportController extends Controller
     {
         $export = $this->jobInstancesRepository->findOrFail($id);
 
+        $this->abortIfHiddenJobType($export->entity_type);
+
         if (! $export->processed_rows_count) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.exports.nothing-to-export'),
@@ -434,6 +452,8 @@ class ExportController extends Controller
     public function indexData(int $id): JsonResponse
     {
         $export = $this->jobInstancesRepository->findOrFail($id);
+
+        $this->abortIfHiddenJobType($export->entity_type);
 
         if (! $export->processed_rows_count) {
             return new JsonResponse([
@@ -502,6 +522,8 @@ class ExportController extends Controller
 
         $export = $this->jobTrackRepository->findOrFail($id);
 
+        $this->abortIfHiddenJobType($export->jobInstance?->entity_type);
+
         if ($this->jobHealth->isStalled($export)) {
             $this->jobHealth->fail($export);
 
@@ -541,6 +563,8 @@ class ExportController extends Controller
     {
         $export = $this->jobInstancesRepository->findOrFail($id);
 
+        $this->abortIfHiddenJobType($export->entity_type);
+
         return Storage::disk('private')->download($export->file_path);
     }
 
@@ -550,6 +574,8 @@ class ExportController extends Controller
     public function downloadErrorReport(int $id)
     {
         $export = $this->jobInstancesRepository->findOrFail($id);
+
+        $this->abortIfHiddenJobType($export->entity_type);
 
         return Storage::disk('private')->download($export->error_file_path);
     }

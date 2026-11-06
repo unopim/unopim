@@ -25,6 +25,7 @@ use Webkul\Core\Helpers\MediaMimeTypes;
 use Webkul\Core\Models\ChannelProxy;
 use Webkul\Core\Models\CurrencyProxy;
 use Webkul\Core\Models\LocaleProxy;
+use Webkul\Core\Platform\ModuleGate;
 use Webkul\Core\Tree;
 use Webkul\Product\Models\ProductProxy;
 
@@ -192,8 +193,16 @@ class AdminServiceProvider extends ServiceProvider
     {
         $tree = Tree::create();
 
-        foreach (config('menu.admin') as $item) {
-            if (! bouncer()->hasPermission($item['key'])) {
+        $gate = app(ModuleGate::class);
+
+        $items = (array) config('menu.admin');
+
+        $allowed = array_filter($items, fn (array $item): bool => $gate->allowsKey($item['key']) && bouncer()->hasPermission($item['key']));
+
+        $allowedKeys = array_column($allowed, 'key');
+
+        foreach ($allowed as $item) {
+            if ($this->lostAllChildren($item['key'], $items, $allowedKeys)) {
                 continue;
             }
 
@@ -213,6 +222,22 @@ class AdminServiceProvider extends ServiceProvider
             'tree'       => $tree,
             'landingUrl' => $landing['url'] ?? route('admin.session.create'),
         ];
+    }
+
+    /**
+     * Whether a menu parent has children but none of them survived the module gate and permissions;
+     * such a parent would otherwise stay in the sidebar as an empty heading.
+     *
+     * @param  array<int, array<string, mixed>>  $items
+     * @param  list<string>  $allowedKeys
+     */
+    protected function lostAllChildren(string $key, array $items, array $allowedKeys): bool
+    {
+        $prefix = $key.'.';
+
+        $hasChildren = array_any($items, fn (array $item): bool => str_starts_with((string) $item['key'], $prefix));
+
+        return $hasChildren && ! array_any($allowedKeys, fn (string $allowedKey): bool => str_starts_with($allowedKey, $prefix));
     }
 
     /**

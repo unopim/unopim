@@ -16,10 +16,17 @@ trait DownloadsSampleFile
      */
     protected function downloadSampleFile(string $configFile, ?string $type, ?string $key = null, bool $images = false): BinaryFileResponse
     {
+        $this->abortIfHiddenJobType($type);
+
         $path = $type ? app(SampleFiles::class)->path($configFile, $type, $key, $images) : null;
 
         abort_if(! $path, 404);
 
         return response()->download($path);
     }
+
+    /**
+     * Respond 404 for a job type whose module is switched off.
+     */
+    abstract protected function abortIfHiddenJobType(mixed $entityType): void;
 }

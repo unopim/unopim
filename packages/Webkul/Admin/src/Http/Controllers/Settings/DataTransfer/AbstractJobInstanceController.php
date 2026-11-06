@@ -10,12 +10,14 @@ use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\ImportDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Traits\GatesJobTypes;
 use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Repositories\JobInstancesRepository;
 
 abstract class AbstractJobInstanceController extends Controller
 {
     use Concerns\DownloadsSampleFile;
+    use GatesJobTypes;
 
     const TYPE = '';
 
@@ -56,7 +58,7 @@ abstract class AbstractJobInstanceController extends Controller
      */
     public function store(): RedirectResponse
     {
-        $importers = array_keys(config('importers'));
+        $importers = array_keys($this->visibleJobTypes('importers'));
 
         $this->validate(request(), [
             'code'                => 'required|unique:job_instances,code',
@@ -109,6 +111,8 @@ abstract class AbstractJobInstanceController extends Controller
     {
         $import = $this->jobInstancesRepository->findOrFail($id);
 
+        $this->abortIfHiddenJobType($import->entity_type);
+
         return view('admin::settings.data-transfer.imports.edit', compact('import'));
     }
 
@@ -117,9 +121,11 @@ abstract class AbstractJobInstanceController extends Controller
      */
     public function update(int $id): RedirectResponse
     {
-        $importers = array_keys(config('importers'));
+        $importers = array_keys($this->visibleJobTypes('importers'));
 
         $import = $this->jobInstancesRepository->findOrFail($id);
+
+        $this->abortIfHiddenJobType($import->entity_type);
 
         $this->validate(request(), [
             'code'                => 'required',
@@ -188,6 +194,8 @@ abstract class AbstractJobInstanceController extends Controller
     {
         $import = $this->jobInstancesRepository->findOrFail($id);
 
+        $this->abortIfHiddenJobType($import->entity_type);
+
         try {
             Storage::disk('private')->delete($import->file_path);
 
@@ -212,6 +220,8 @@ abstract class AbstractJobInstanceController extends Controller
     public function import(int $id): View
     {
         $import = $this->jobInstancesRepository->findOrFail($id);
+
+        $this->abortIfHiddenJobType($import->entity_type);
 
         // $isValid = $this->importHelper
         //     ->setImport($import)
@@ -248,6 +258,8 @@ abstract class AbstractJobInstanceController extends Controller
     {
         $import = $this->jobInstancesRepository->findOrFail($id);
 
+        $this->abortIfHiddenJobType($import->entity_type);
+
         $isValid = $this->importHelper
             ->setImport($import)
             ->validate();
@@ -264,6 +276,8 @@ abstract class AbstractJobInstanceController extends Controller
     public function start(int $id): JsonResponse
     {
         $import = $this->jobInstancesRepository->findOrFail($id);
+
+        $this->abortIfHiddenJobType($import->entity_type);
 
         if (! $import->processed_rows_count) {
             return new JsonResponse([
@@ -324,6 +338,8 @@ abstract class AbstractJobInstanceController extends Controller
     public function link(int $id): JsonResponse
     {
         $import = $this->jobInstancesRepository->findOrFail($id);
+
+        $this->abortIfHiddenJobType($import->entity_type);
 
         if (! $import->processed_rows_count) {
             return new JsonResponse([
@@ -386,6 +402,8 @@ abstract class AbstractJobInstanceController extends Controller
     {
         $import = $this->jobInstancesRepository->findOrFail($id);
 
+        $this->abortIfHiddenJobType($import->entity_type);
+
         if (! $import->processed_rows_count) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.imports.nothing-to-import'),
@@ -446,6 +464,8 @@ abstract class AbstractJobInstanceController extends Controller
     {
         $import = $this->jobTrackRepository->findOrFail($id);
 
+        $this->abortIfHiddenJobType($import->jobInstance?->entity_type);
+
         $stats = $this->importHelper
             ->setImport($import)
             ->stats($state);
@@ -471,6 +491,8 @@ abstract class AbstractJobInstanceController extends Controller
     {
         $import = $this->jobInstancesRepository->findOrFail($id);
 
+        $this->abortIfHiddenJobType($import->entity_type);
+
         return Storage::disk('private')->download($import->file_path);
     }
 
@@ -480,6 +502,8 @@ abstract class AbstractJobInstanceController extends Controller
     public function downloadErrorReport(int $id)
     {
         $import = $this->jobInstancesRepository->findOrFail($id);
+
+        $this->abortIfHiddenJobType($import->entity_type);
 
         return Storage::disk('private')->download($import->error_file_path);
     }

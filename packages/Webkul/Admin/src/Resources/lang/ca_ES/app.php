@@ -2155,6 +2155,26 @@ return [
                     'info'  => '',
                     'title' => 'Geral',
                 ],
+                'platform' => [
+                    'info'  => 'Trieu quins mòduls de la plataforma estan activats.',
+                    'title' => 'Plataforma',
+
+                    'settings' => [
+                        'info'  => 'Executeu qualsevol mòdul sol o diversos alhora; un mòdul que en necessita un altre només es pot activar amb aquest.',
+                        'title' => 'Mòduls',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Desactivar un mòdul n’amaga els menús, les pàgines i les rutes de l’API; les dades es conserven.',
+                        'title' => 'Mòduls',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Només s’aplica mentre la Informació de producte (PIM) està desactivada. Les seccions seleccionades s’eliminen del menú i se’n bloquegen les pàgines; les dades es conserven.',
+                        'title' => 'Seccions ocultes',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -3099,6 +3119,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Tauler de control',
+        'home'      => 'Inici',
         'go-back'   => 'Torna enrere',
         'support'   => 'Si el problema persisteix, contacta\'ns a través de <a href=":link" class=":class">:email</a> per obtenir assistència.',
         '404'       => [

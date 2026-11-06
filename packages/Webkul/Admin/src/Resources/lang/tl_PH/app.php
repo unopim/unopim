@@ -2157,6 +2157,26 @@ return [
                     'info'  => '',
                     'title' => 'Pangkalahatan',
                 ],
+                'platform' => [
+                    'info'  => 'Piliin kung aling mga module ng platform ang naka-on.',
+                    'title' => 'Platform',
+
+                    'settings' => [
+                        'info'  => 'Patakbuhin ang anumang module nang mag-isa o ang ilan nang sabay; ang module na nangangailangan ng iba ay maaari lamang i-on kasama nito.',
+                        'title' => 'Mga module',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Kapag pinatay ang isang module, itinatago ang mga menu, pahina at API route nito; nananatili ang data nito.',
+                        'title' => 'Mga module',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Nalalapat lamang habang naka-off ang Impormasyon ng Produkto (PIM). Inaalis sa menu ang mga napiling seksyon at hinaharangan ang mga pahina nito; nananatili ang data nito.',
+                        'title' => 'Mga nakatagong seksyon',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -3102,6 +3122,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Dashboard',
+        'home'      => 'Home',
         'go-back'   => 'Bumalik',
         'support'   => 'Kung ang problema ay nagpapatuloy, makipag-ugnayan sa amin sa <a href=":link" class=":class">:email</a> para sa tulong.',
         '404'       => [

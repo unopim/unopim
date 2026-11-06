@@ -5,7 +5,10 @@ namespace Webkul\Admin\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
+use Webkul\Core\Platform\ModuleGate;
+use Webkul\Core\Rules\HideableSections;
 use Webkul\Core\Rules\IpPatternRule;
+use Webkul\Core\Rules\PlatformModuleSelection;
 
 class ConfigurationForm extends FormRequest
 {
@@ -45,6 +48,10 @@ class ConfigurationForm extends FormRequest
 
         $rules['general.debug.settings.allowed_ips'] = ['nullable', new IpPatternRule];
 
+        $rules[ModuleGate::CONFIG_KEY] = ['sometimes', 'required', app(PlatformModuleSelection::class)];
+
+        $rules[ModuleGate::HIDDEN_SECTIONS_KEY] = ['nullable', app(HideableSections::class)];
+
         return $rules;
     }
 
@@ -62,6 +69,8 @@ class ConfigurationForm extends FormRequest
                 trans('admin::app.configuration.index.general.debug.settings.allowed-ips'),
                 ' ('
             ),
+            ModuleGate::CONFIG_KEY          => trans('admin::app.configuration.index.general.platform.modules.title'),
+            ModuleGate::HIDDEN_SECTIONS_KEY => trans('admin::app.configuration.index.general.platform.hidden-sections.title'),
         ];
     }
 

@@ -10,7 +10,7 @@
 
     $samples = [];
 
-    foreach (array_keys(config($configFile, [])) as $entityType) {
+    foreach (array_keys(app(\Webkul\Core\Platform\ModuleGate::class)->filter((array) config($configFile, []))) as $entityType) {
         $links = [];
 
         foreach ($sampleService->all($configFile, $entityType) as $key => $sample) {

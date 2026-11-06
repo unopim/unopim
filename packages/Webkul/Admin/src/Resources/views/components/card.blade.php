@@ -1,5 +1,7 @@
 @props([
     'icon'     => '',
+    'iconUrl'  => null,
+    'iconMask' => true,
     'title'    => '',
     'url'      => '#',
     'host'     => '',
@@ -16,10 +18,24 @@
     <div class="flex items-start justify-between mb-4">
         <span class="flex items-center justify-center w-[46px] h-[46px] rounded-xl bg-primary-50 dark:bg-cherry-900 text-primary-600 transition-all duration-150 group-hover:bg-primary-600 group-hover:text-white">
             {{-- $icon is sourced from trusted server-side config, never user input; raw output is safe. --}}
-            @if (str_starts_with(trim($icon), '<svg'))
+            @if ($iconUrl && ! $iconMask)
+                <img
+                    src="{{ $iconUrl }}"
+                    class="w-7 h-7 object-contain"
+                    alt=""
+                    aria-hidden="true"
+                    loading="lazy"
+                >
+            @elseif ($iconUrl)
+                <span
+                    class="w-7 h-7 text-primary-600 dark:text-primary-400 group-hover:text-white"
+                    style="background-color: currentColor; mask-image: url('{{ $iconUrl }}'); -webkit-mask-image: url('{{ $iconUrl }}'); mask-size: contain; -webkit-mask-size: contain; mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat; mask-position: center; -webkit-mask-position: center;"
+                    aria-hidden="true"
+                ></span>
+            @elseif (str_starts_with(trim($icon), '<svg'))
                 {!! $icon !!}
             @else
-                <span class="text-2xl {{ $icon }}"></span>
+                <span class="text-2xl text-primary-600 dark:text-primary-400 group-hover:text-white {{ $icon }}"></span>
             @endif
         </span>
 

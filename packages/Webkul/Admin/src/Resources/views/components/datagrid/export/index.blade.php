@@ -28,7 +28,7 @@
                 </x-slot>
 
                 @php
-                    $supportedType = config('quick_exporters');
+                    $supportedType = app(\Webkul\Core\Platform\ModuleGate::class)->filter((array) config('quick_exporters', []));
                     $options = [];
 
                     foreach ($supportedType as $type => $value) {

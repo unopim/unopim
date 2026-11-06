@@ -30,3 +30,12 @@ it('returns a json 404 body for an unknown route when json is requested', functi
         'description' => trans('admin::app.errors.404.description'),
     ]);
 });
+
+it('links the error page home action to the gate-aware landing route, not the dashboard', function () {
+    $html = view('admin::errors.index', ['errorCode' => 404])->render();
+
+    expect($html)
+        ->toContain('href="'.route('admin.session.create').'"')
+        ->not->toContain('href="'.route('admin.dashboard.index').'"')
+        ->toContain(trans('admin::app.errors.home'));
+});

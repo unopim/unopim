@@ -2157,6 +2157,26 @@ return [
                     'info'  => '',
                     'title' => 'Genel',
                 ],
+                'platform' => [
+                    'info'  => 'Hangi platform modüllerinin açık olacağını seçin.',
+                    'title' => 'Platform',
+
+                    'settings' => [
+                        'info'  => 'Herhangi bir modülü tek başına veya birkaçını birlikte çalıştırın; başka bir modüle ihtiyaç duyan bir modül yalnızca onunla birlikte açılabilir.',
+                        'title' => 'Modüller',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Bir modülü kapatmak menülerini, sayfalarını ve API rotalarını gizler; verileri korunur.',
+                        'title' => 'Modüller',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Yalnızca Ürün Bilgisi (PIM) kapalıyken geçerlidir. Seçilen bölümler menüden kaldırılır ve sayfaları engellenir; verileri korunur.',
+                        'title' => 'Gizli bölümler',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -3102,6 +3122,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Gösterge Paneli',
+        'home'      => 'Ana Sayfa',
         'go-back'   => 'Geri Dön',
         'support'   => 'Sorun devam ederse, bizimle iletişime geçin: <a href=":link" class=":class">:email</a> için yardım.',
         '404'       => [

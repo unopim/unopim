@@ -66,7 +66,7 @@
 
                                     @php
                                         $options = [];
-                                        foreach (config('exporters') as $index => $export) {
+                                        foreach ($exporterConfig as $index => $export) {
                                             $options[] = ['id' => $index, 'label' => trans($export['title'])];
                                         }
                                         $optionsJson = json_encode($options);
@@ -112,6 +112,22 @@
                         </div>
 
                         {!! view_render_event('unopim.admin.settings.data_transfer.exports.create.card.scope.after') !!}
+
+                        <div
+                            v-if="hasOtherFilters"
+                            class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow"
+                        >
+                            <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
+                                @lang('admin::app.settings.data-transfer.exports.create.filters')
+                            </p>
+
+                            <x-admin::data-transfer.filter-fields
+                                ::entity-type="entityType"
+                                :exporter-config="$exporterConfig"
+                                :except="\Webkul\DataTransfer\Helpers\ExportFilterFields::knownList()"
+                                grid-class="grid grid-cols-2 max-sm:grid-cols-1 gap-x-5"
+                            />
+                        </div>
 
                         <div
                             v-if="hasProductFilters"
@@ -231,10 +247,12 @@
 
         <script type="module">
             @php
-                $selectedEntityType = old('entity_type', 'categories');
+                $defaultEntityType = isset($exporterConfig['categories']) ? 'categories' : array_key_first($exporterConfig);
+
+                $selectedEntityType = old('entity_type', $defaultEntityType);
 
                 if (! isset($exporterConfig[$selectedEntityType]['filters']['fields'])) {
-                    $selectedEntityType = 'categories';
+                    $selectedEntityType = $defaultEntityType;
                 }
 
                 $setsKey = app(\Webkul\Admin\Fields\FieldConfig::class)->payload($exporterConfig)['key'];
@@ -270,6 +288,12 @@
 
                     hasOutputFields() {
                         return this.filterFields.some(field => ['file_format', 'with_media', 'with_associations', 'header_row', 'use_labels', 'date_format', 'file_path'].includes(field.name));
+                    },
+
+                    hasOtherFilters() {
+                        const known = @json(\Webkul\DataTransfer\Helpers\ExportFilterFields::KNOWN);
+
+                        return this.filterFields.some(field => ! known.includes(field.name));
                     },
 
                     supportsConditions() {
