@@ -413,8 +413,9 @@ final class ModuleGate
     }
 
     /**
-     * Before the `core_config` table exists (fresh install, pending migration) there is
-     * no stored selection, so the gate degrades to `pim`; any other query fault is rethrown.
+     * Before the `core_config` table exists (fresh install, pending migration) or while no
+     * database is reachable (`route:list` building controllers in CI) there is no stored
+     * selection, so the gate degrades to `pim`; any other query fault is rethrown.
      *
      * @return list<string>
      */
@@ -423,7 +424,7 @@ final class ModuleGate
         try {
             $value = core()->getConfigData(self::CONFIG_KEY);
         } catch (QueryException $e) {
-            throw_if(Schema::hasTable('core_config'), $e);
+            throw_if($this->configTableExists(), $e);
 
             return [Module::Pim->value];
         }
@@ -440,6 +441,15 @@ final class ModuleGate
         } while (count($modules) !== $count);
 
         return $modules === [] ? [Module::Pim->value] : $modules;
+    }
+
+    private function configTableExists(): bool
+    {
+        try {
+            return Schema::hasTable('core_config');
+        } catch (QueryException) {
+            return false;
+        }
     }
 
     private function label(string $module): string
