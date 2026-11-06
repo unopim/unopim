@@ -98,6 +98,24 @@ it('stores a zero amount for a required measurement saved through the product re
     expect((float) Product::find($product->id)->values['common'][$attribute->code]['amount'])->toBe(0.0);
 });
 
+it('stores a negative amount for a measurement saved through the product repository', function () {
+    $attribute = requiredMeasurementAttribute();
+
+    $product = Product::factory()->withInitialValues()->create();
+
+    app(ProductRepository::class)->update([
+        'values' => ['common' => [$attribute->code => ['value' => '-20', 'unit' => 'meter']]],
+    ], $product->id);
+
+    expect((float) Product::find($product->id)->values['common'][$attribute->code]['amount'])->toBe(-20.0);
+});
+
+it('accepts a negative measurement validated as decimal', function () {
+    $attribute = decimalMeasurementAttribute();
+
+    validateCommonMeasurement($attribute, ['value' => '-20.5', 'unit' => 'meter']);
+})->throwsNoExceptions();
+
 it('removes a blank measurement saved through the product repository', function () {
     $attribute = requiredMeasurementAttribute(isRequired: false);
 

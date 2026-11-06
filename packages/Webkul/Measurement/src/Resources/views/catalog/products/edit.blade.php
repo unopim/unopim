@@ -51,7 +51,8 @@
             :placeholder="trans('measurement::app.measurement.attribute.enter_value')"
             oninput="
                 this.value = this.value
-                    .replace(/[^0-9.]/g, '')
+                    .replace(/[^0-9.-]/g, '')
+                    .replace(/(?!^)-/g, '')
                     .replace(/(\..*?)\..*/g, '$1');
             "
         />
