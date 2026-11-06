@@ -48,3 +48,19 @@ it('should return empty string when given empty input', function () {
     expect(EscapeFormulaOperators::escapeValue(''))->toBe('');
     expect(EscapeFormulaOperators::unescapeValue(''))->toBe('');
 });
+
+it('unescapes every string value of a row and leaves other values untouched', function () {
+    expect(EscapeFormulaOperators::unescapeRow([
+        'width'  => "'-20.0000'",
+        'name'   => "'=SUM(A1:A2)'",
+        'note'   => 'plain',
+        'count'  => 5,
+        'empty'  => null,
+    ]))->toBe([
+        'width'  => '-20.0000',
+        'name'   => '=SUM(A1:A2)',
+        'note'   => 'plain',
+        'count'  => 5,
+        'empty'  => null,
+    ]);
+});
