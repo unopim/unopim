@@ -153,7 +153,8 @@
 
                 onAmountInput() {
                     this.amount = String(this.amount ?? '')
-                        .replace(/[^0-9.]/g, '')
+                        .replace(/[^0-9.-]/g, '')
+                        .replace(/(?!^)-/g, '')
                         .replace(/(\..*?)\..*/g, '$1');
                 },
 
