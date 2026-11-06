@@ -11,6 +11,7 @@ use Webkul\Category\Database\Factories\CategoryFieldFactory;
 use Webkul\Core\Eloquent\TranslatableModel;
 use Webkul\Core\Rules\Decimal;
 use Webkul\Core\Rules\FileOrImageValidValue;
+use Webkul\Core\Traits\HasCatalogFieldClientValidations;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 
@@ -29,6 +30,7 @@ use Webkul\HistoryControl\Traits\HistoryTrait;
 ])]
 class CategoryField extends TranslatableModel implements CategoryFieldContract, HistoryContract
 {
+    use HasCatalogFieldClientValidations;
     use HasFactory;
     use HistoryTrait;
 
@@ -88,40 +90,6 @@ class CategoryField extends TranslatableModel implements CategoryFieldContract, 
     protected function getColumnNameField(): string
     {
         return $this->categoryTypeFields[$this->type];
-    }
-
-    /**
-     * Returns field validation rules
-     */
-    public function getValidationsField(): string
-    {
-        $validations = [];
-
-        if ($this->is_required) {
-            $validations[] = 'required: true';
-        }
-
-        if ($this->type === 'file') {
-            $validations[] = 'size:'.(core()->getConfigData('catalog.categories.fields.file_attribute_upload_size') ?? '2048');
-        }
-
-        if ($this->type === 'image') {
-            $retVal = core()->getConfigData('catalog.categories.fields.image_attribute_upload_size') ?? '2048';
-
-            if ($retVal) {
-                $validations[] = 'size:'.$retVal.', mimes: ["image/bmp", "image/jpeg", "image/jpg", "image/png", "image/webp"]';
-            }
-        }
-
-        if ($this->validation) {
-            $validations[] = match ($this->validation) {
-                'regex'  => 'regex: "'.$this->regex_pattern.'"',
-                'number' => 'numeric: true',
-                default  => $this->validation.': true'
-            };
-        }
-
-        return '{ '.implode(', ', array_filter($validations)).' }';
     }
 
     /**

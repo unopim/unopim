@@ -17,6 +17,7 @@ use Webkul\Core\Rules\BooleanString;
 use Webkul\Core\Rules\Decimal;
 use Webkul\Core\Rules\FileOrImageValidValue;
 use Webkul\Core\Rules\Sku;
+use Webkul\Core\Traits\ResolvesClientValidationRule;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Interfaces\PresentableHistoryInterface;
 use Webkul\HistoryControl\Traits\HistoryTrait;
@@ -45,6 +46,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
 {
     use HasFactory;
     use HistoryTrait;
+    use ResolvesClientValidationRule;
 
     const TEXT_TYPE = 'text';
 
@@ -187,11 +189,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
         }
 
         if ($this->validation) {
-            $validations[] = match ($this->validation) {
-                'regex'  => 'regex: "'.$this->regex_pattern.'"',
-                'number' => 'numeric: true',
-                default  => $this->validation.': true'
-            };
+            $validations[] = $this->clientValidationRule();
         }
 
         return '{ '.implode(', ', array_filter($validations)).' }';

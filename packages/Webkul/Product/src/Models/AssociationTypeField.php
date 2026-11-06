@@ -7,12 +7,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Webkul\Core\Eloquent\TranslatableModel;
 use Webkul\Core\Rules\Decimal;
 use Webkul\Core\Rules\FileOrImageValidValue;
+use Webkul\Core\Traits\HasCatalogFieldClientValidations;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\Product\Contracts\AssociationTypeField as AssociationTypeFieldContract;
 
 class AssociationTypeField extends TranslatableModel implements AssociationTypeFieldContract, HistoryContract
 {
+    use HasCatalogFieldClientValidations;
     use HistoryTrait;
 
     /** Tags for History */
@@ -110,42 +112,6 @@ class AssociationTypeField extends TranslatableModel implements AssociationTypeF
     protected function getColumnNameField(): string
     {
         return $this->associationTypeFields[$this->type];
-    }
-
-    /**
-     * Returns field validation rules
-     */
-    public function getValidationsField(): string
-    {
-        $validations = [];
-
-        if ($this->is_required) {
-            $validations[] = 'required: true';
-        }
-
-        if ($this->type === 'file') {
-            $validations[] = 'size:'.(core()->getConfigData('catalog.categories.fields.file_attribute_upload_size') ?? '2048');
-        }
-
-        if ($this->type === 'image') {
-            $retVal = core()->getConfigData('catalog.categories.fields.image_attribute_upload_size') ?? '2048';
-
-            if ($retVal) {
-                $validations[] = 'size:'.$retVal.', mimes: ["image/bmp", "image/jpeg", "image/jpg", "image/png", "image/webp"]';
-            }
-        }
-
-        if ($this->validation) {
-            $validations[] = match ($this->validation) {
-                'regex'  => 'regex: "'.$this->regex_pattern.'"',
-                'number' => 'numeric: true',
-                default  => $this->validation.': true'
-            };
-        }
-
-        $validations = '{ '.implode(', ', array_filter($validations)).' }';
-
-        return $validations;
     }
 
     /**
