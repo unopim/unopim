@@ -222,6 +222,8 @@ return [
         'console' => [
             'confirm-drop'        => 'Slette disse tabellene og installere på nytt?',
             'drop-aborted'        => 'Installasjonen ble avbrutt. Ingen tabeller ble slettet.',
+            'invalid-modules'     => 'Ugyldige plattformmoduler ":modules". Tillatte verdier: :allowed.',
+            'select-modules'      => 'Hvilke plattformmoduler vil du aktivere?',
             'force-required'      => 'Det er ikke angitt noe tabellprefiks, så alle tabeller som ingen annen installasjon gjør krav på, ville blitt slettet. Kjør på nytt med --force for å slette dem, eller angi DB_PREFIX.',
             'outside-references'  => 'Tabeller utenfor tabellprefikset refererer til tabellene som skal slettes: :references. Fjern disse fremmednøklene først.',
             'tables-to-drop'      => 'Disse :count tabellene blir slettet: :tables',
