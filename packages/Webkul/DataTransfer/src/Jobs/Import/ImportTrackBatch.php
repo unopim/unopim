@@ -111,6 +111,8 @@ class ImportTrackBatch implements ShouldQueue
             }
         } elseif ($importHelper->isLinkingRequired()) {
             $importHelper->linking();
+        } elseif ($this->importBatch->batches->isEmpty() && $this->importBatch->state !== ImportHelper::STATE_COMPLETED) {
+            $importHelper->completedWithoutBatches();
         } else {
             $importHelper->completed();
         }

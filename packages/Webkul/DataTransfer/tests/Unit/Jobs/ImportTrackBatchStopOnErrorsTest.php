@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Psr\Log\LoggerInterface;
 use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Jobs\Import\Completed;
 use Webkul\DataTransfer\Jobs\Import\ImportBatch;
@@ -176,3 +177,28 @@ it('executes permitted pending batches and completes the import', function (stri
     'skip-errors below allowance'              => [Import::VALIDATION_STRATEGY_SKIP_ERRORS, 2, true],
     'skip-errors ignores stop-on-errors limit' => [Import::VALIDATION_STRATEGY_SKIP_ERRORS, 0, true],
 ]);
+
+it('completes a skip-errors import whose rows are all invalid with a completion time', function (): void {
+    StopOnErrorsTestImporter::$rows = [['code' => 'invalid-only', 'status' => 'invalid']];
+    $track = makeStopOnErrorsTrack(Import::VALIDATION_STRATEGY_SKIP_ERRORS, 10);
+
+    (new ImportTrackBatch($track))->handle();
+
+    $track->refresh();
+    expect($track->batches)->toHaveCount(0)
+        ->and(StopOnErrorsTestImporter::$importedCodes)->toBe([])
+        ->and($track->state)->toBe(Import::STATE_COMPLETED)
+        ->and($track->completed_at)->not->toBeNull()
+        ->and($track->errors_count)->toBe(1)
+        ->and($track->summary)->toEqual(['created' => 0, 'updated' => 0, 'deleted' => 0]);
+    Event::assertNotDispatched('data_transfer.imports.started');
+    Event::assertDispatchedTimes('data_transfer.imports.completed', 1);
+});
+
+it('hands the type importer a job logger when none was set on the import helper', function (): void {
+    $track = makeStopOnErrorsTrack(Import::VALIDATION_STRATEGY_SKIP_ERRORS, 10);
+
+    $importer = app(Import::class)->setImport($track)->getTypeImporter();
+
+    expect($importer->getLogger())->toBeInstanceOf(LoggerInterface::class);
+});
