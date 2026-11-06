@@ -116,7 +116,7 @@ class CategoryField extends TranslatableModel implements CategoryFieldContract, 
         if ($this->validation) {
             $validations[] = match ($this->validation) {
                 'regex'  => 'regex: "'.$this->regex_pattern.'"',
-                'number' => 'numeric: true',
+                'number' => 'decimal: true',
                 default  => $this->validation.': true'
             };
         }

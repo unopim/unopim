@@ -189,7 +189,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
         if ($this->validation) {
             $validations[] = match ($this->validation) {
                 'regex'  => 'regex: "'.$this->regex_pattern.'"',
-                'number' => 'numeric: true',
+                'number' => 'decimal: true',
                 default  => $this->validation.': true'
             };
         }
