@@ -5,8 +5,11 @@ namespace Webkul\DataTransfer\Jobs\Export;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Psr\Log\LoggerInterface;
+use Webkul\DataTransfer\Contracts\JobTrack;
 use Webkul\DataTransfer\Helpers\Export as ExportHelper;
 use Webkul\DataTransfer\Services\JobLogger;
+use Webkul\DataTransfer\Services\JobTypeGate;
 
 class ExportTrackBatch implements ShouldQueue
 {
@@ -51,6 +54,12 @@ class ExportTrackBatch implements ShouldQueue
         $exportHelper->setExport($this->exportBatch);
 
         $exportHelper->setLogger($logger);
+
+        if ($this->exportBatch instanceof JobTrack && app(JobTypeGate::class)->hidesTrack($this->exportBatch)) {
+            $this->refuseHiddenType($logger);
+
+            return;
+        }
 
         $logger->info(trans('data_transfer::app.job.started'));
 
@@ -100,6 +109,20 @@ class ExportTrackBatch implements ShouldQueue
         };
         // Gather stats
         $exportHelper->stats($state);
+    }
+
+    /**
+     * Fail a track whose job type was switched off after it was queued.
+     */
+    protected function refuseHiddenType(LoggerInterface $logger): void
+    {
+        $message = trans('data_transfer::app.job.module-disabled', ['type' => $this->exportBatch->jobInstance?->entity_type]);
+
+        $logger->error($message);
+
+        $this->exportBatch->state = ExportHelper::STATE_FAILED;
+        $this->exportBatch->errors = [$message];
+        $this->exportBatch->save();
     }
 
     public function failed(\Throwable $exception): void

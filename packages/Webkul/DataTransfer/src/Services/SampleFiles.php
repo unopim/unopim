@@ -17,7 +17,7 @@ class SampleFiles
     /**
      * Every sample offered for a job type, keyed by download key.
      *
-     * @return array<string, array{path: string, label: string, images_path: ?string}>
+     * @return array<string, array{path: string, label: string, images_path: ?string, source: ?string}>
      */
     public function all(string $configFile, string $type): array
     {
@@ -34,6 +34,7 @@ class SampleFiles
                 'path'        => $config['sample_path'],
                 'label'       => $config['sample_label'] ?? 'data_transfer::app.samples.default',
                 'images_path' => $config['sample_images_path'] ?? null,
+                'source'      => $config['sample_source'] ?? null,
             ];
         }
 
@@ -42,6 +43,7 @@ class SampleFiles
                 'path'        => $sample['path'],
                 'label'       => $sample['label'],
                 'images_path' => $sample['images_path'] ?? null,
+                'source'      => $sample['source'] ?? null,
             ];
         }
 
@@ -52,7 +54,8 @@ class SampleFiles
      * Absolute path of a sample, or null when the type or key is unknown.
      *
      * A copy published to the `public` disk wins over the file shipped in the
-     * package, so an installation can tailor its samples without a fork.
+     * package, so an installation can tailor its samples without a fork. A job
+     * type registered by another package names its packaged file in `sample_source`.
      */
     public function path(string $configFile, string $type, ?string $key = null, bool $images = false): ?string
     {
@@ -68,7 +71,9 @@ class SampleFiles
             return Storage::disk('public')->path($path);
         }
 
-        $packagePath = dirname(__DIR__).'/Resources/samples/'.str_replace(self::PUBLIC_PREFIX, '', $path);
+        $packagePath = ! $images && is_string($sample['source'] ?? null)
+            ? $sample['source']
+            : dirname(__DIR__).'/Resources/samples/'.str_replace(self::PUBLIC_PREFIX, '', $path);
 
         return is_file($packagePath) ? $packagePath : null;
     }

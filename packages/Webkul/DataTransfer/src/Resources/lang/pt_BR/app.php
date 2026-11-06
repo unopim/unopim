@@ -308,10 +308,11 @@ return [
         ],
     ],
     'job' => [
-        'started'   => 'Início da execução do trabalho',
-        'completed' => 'Conclusão da execução do trabalho',
-        'stalled'   => 'A tarefa parou de responder por mais de :minutes minutos e foi marcada como falha. O processo que a executava provavelmente foi encerrado.',
-        'reaped'    => ':count tarefas travadas foram marcadas como falha.',
-        'stopped'   => 'A importação foi interrompida após a validação com :count erros. Nenhuma linha foi importada.',
+        'started'         => 'Início da execução do trabalho',
+        'completed'       => 'Conclusão da execução do trabalho',
+        'stalled'         => 'A tarefa parou de responder por mais de :minutes minutos e foi marcada como falha. O processo que a executava provavelmente foi encerrado.',
+        'reaped'          => ':count tarefas travadas foram marcadas como falha.',
+        'stopped'         => 'A importação foi interrompida após a validação com :count erros. Nenhuma linha foi importada.',
+        'module-disabled' => 'O tipo de tarefa :type pertence a um módulo da plataforma que está desativado, por isso não pode ser executado.',
     ],
 ];

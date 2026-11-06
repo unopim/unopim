@@ -308,10 +308,11 @@ return [
         ],
     ],
     'job' => [
-        'started'   => 'Rozpoczęcie pracy',
-        'completed' => 'Zakończenie pracy',
-        'stalled'   => 'Zadanie przestało odpowiadać przez ponad :minutes minut i zostało oznaczone jako nieudane. Proces, który je wykonywał, prawdopodobnie został zakończony.',
-        'reaped'    => 'Oznaczono :count zatrzymanych zadań jako nieudane.',
-        'stopped'   => 'Import zatrzymano po walidacji z liczbą błędów: :count. Nie zaimportowano żadnych wierszy.',
+        'started'         => 'Rozpoczęcie pracy',
+        'completed'       => 'Zakończenie pracy',
+        'stalled'         => 'Zadanie przestało odpowiadać przez ponad :minutes minut i zostało oznaczone jako nieudane. Proces, który je wykonywał, prawdopodobnie został zakończony.',
+        'reaped'          => 'Oznaczono :count zatrzymanych zadań jako nieudane.',
+        'stopped'         => 'Import zatrzymano po walidacji z liczbą błędów: :count. Nie zaimportowano żadnych wierszy.',
+        'module-disabled' => 'Typ zadania :type należy do wyłączonego modułu platformy, więc nie można go uruchomić.',
     ],
 ];
