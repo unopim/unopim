@@ -19,7 +19,7 @@ class RefreshDashboardCacheCommand extends Command
 
     protected $description = 'Recompute the dashboard statistics cache so page loads never pay for a catalog-wide scan.';
 
-    public function handle(Dashboard $dashboardHelper, ModuleGate $gate): int
+    public function handle(Dashboard $dashboardHelper): int
     {
         $warmers = [
             'dashboard.total_catalogs'       => fn () => $dashboardHelper->getTotalCatalogs(),
@@ -29,7 +29,7 @@ class RefreshDashboardCacheCommand extends Command
             'dashboard.channel_readiness'    => fn () => $dashboardHelper->getChannelReadiness(),
         ];
 
-        if (! $gate->enabled(Module::Pim)) {
+        if (! app(ModuleGate::class)->enabled(Module::Pim)) {
             $warmers = array_diff_key($warmers, array_flip($dashboardHelper::PIM_WIDGETS));
         }
 
