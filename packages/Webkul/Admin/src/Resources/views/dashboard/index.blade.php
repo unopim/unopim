@@ -47,6 +47,8 @@
 
     <!-- ═══ OVERVIEW ═══ -->
 
+    {!! view_render_event('unopim.admin.dashboard.index.cards.before') !!}
+    
     <!-- Catalog Overview -->
     <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
         <div class="flex flex-col gap-2 w-full">
@@ -69,7 +71,7 @@
         </div>
     </div>
 
-    {!! view_render_event('unopim.admin.dashboard.index.cards') !!}
+    {!! view_render_event('unopim.admin.dashboard.index.cards.after') !!}
 
     <!-- Needs Attention -->
     @include('admin::dashboard.needs-attention')
@@ -83,6 +85,9 @@
     </div>
 
     <!-- Product Statistics & Trend -->
+
+    {!! view_render_event('unopim.admin.dashboard.index.product-stats.before') !!}
+    
     <div class="flex items-stretch gap-4 max-xl:flex-wrap">
         <div class="flex flex-col gap-2 flex-1 min-w-[300px]">
             <p class="text-base text-zinc-800 dark:text-slate-50 font-bold">
@@ -101,7 +106,7 @@
         </div>
     </div>
 
-    {!! view_render_event('unopim.admin.dashboard.index.stats') !!}
+    {!! view_render_event('unopim.admin.dashboard.index.product-stats.after') !!}
 
     <!-- Completeness -->
     <div class="flex gap-2.5 mt-5 max-xl:flex-wrap">
