@@ -433,6 +433,51 @@
 
     </script>
 
+    <script type="text/x-template" id="v-select-option-label-template">
+        <span class="inline-flex items-center gap-1.5">
+            <span
+                v-if="option.iconUrl && option.iconMask"
+                class="icon-mask w-5 h-5 shrink-0"
+                :style="{ '--icon-mask-url': 'url(' + option.iconUrl + ')' }"
+                aria-hidden="true"
+            ></span>
+
+            <img
+                v-else-if="option.iconUrl"
+                :src="option.iconUrl"
+                class="w-5 h-5 shrink-0 object-contain"
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+            >
+
+            <span
+                v-else-if="option.icon"
+                :class="['text-xl', option.icon]"
+            ></span>
+
+            <span v-text="option[labelBy ?? 'label'] ?? option.label"></span>
+        </span>
+    </script>
+
+    <script type="module">
+        app.component('v-select-option-label', {
+            template: '#v-select-option-label-template',
+
+            props: {
+                option: {
+                    type: Object,
+                    required: true,
+                },
+
+                labelBy: {
+                    type: String,
+                    default: 'label',
+                },
+            },
+        });
+    </script>
+
     <script type="text/x-template" id="v-select-handler-template">
         <div :id="id">
             <v-multiselect
@@ -453,8 +498,18 @@
                 @select="selectOption"
                 @remove="removeOption"
             >
+                <template v-slot:singleLabel="{ option }">
+                    <v-select-option-label
+                        :option="option"
+                        :label-by="labelBy"
+                    ></v-select-option-label>
+                </template>
+
                 <template v-slot:option="{ option }">
-                    <span v-text="option[labelBy ?? 'label'] ?? option.label"></span>
+                    <v-select-option-label
+                        :option="option"
+                        :label-by="labelBy"
+                    ></v-select-option-label>
 
                     <span
                         v-if="option.description"

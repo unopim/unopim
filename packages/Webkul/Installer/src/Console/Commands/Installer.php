@@ -16,6 +16,7 @@ use Webkul\Installer\Database\Seeders\DatabaseSeeder as UnoPimDatabaseSeeder;
 use Webkul\Installer\Events\ComposerEvents;
 use Webkul\Installer\Helpers\DatabaseManager;
 use Webkul\Installer\Helpers\DemoDataInstaller;
+use Webkul\Installer\Helpers\PlatformModules;
 
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\multisearch;
@@ -29,6 +30,7 @@ use function Laravel\Prompts\text;
         { --skip-env-check : Skip env check. }
         { --skip-admin-creation : Skip admin creation. }
         { --with-demo-data : Seed sample products and demo data. }
+        { --modules= : Comma-separated platform modules to enable, e.g. pim. }
         { --with-packages= : Comma-separated optional packages to install (dam, shopify, bagisto). }
         { --force : Drop the existing tables without asking, also when the table prefix is empty. }')]
 class Installer extends Command
@@ -123,6 +125,23 @@ class Installer extends Command
      */
     public function handle(): void
     {
+        $platformModules = resolve(PlatformModules::class);
+
+        $option = $this->option('modules');
+
+        $modules = is_string($option)
+            ? $platformModules->parse($option)
+            : $this->resolvePlatformModules($platformModules);
+
+        $errors = $platformModules->errors($modules);
+
+        if ($errors !== []) {
+            $this->fail(trans('installer::app.installer.console.invalid-modules', [
+                'modules' => implode(', ', $modules),
+                'allowed' => implode(', ', $platformModules->options()),
+            ]).' '.implode(' ', $errors));
+        }
+
         $applicationDetails = $this->option('skip-env-check')
             ? []
             : $this->checkForEnvFile();
@@ -159,6 +178,8 @@ class Installer extends Command
             'default_currency'   => $applicationDetails['default_currency'] ?? 'USD',
             'allowed_currencies' => $applicationDetails['allowed_currencies'] ?? ['USD'],
         ]);
+
+        $platformModules->store($modules);
 
         $this->warn('Step: Linking storage directory...');
         $this->call('storage:link', ['--relative' => true]);
@@ -201,6 +222,25 @@ class Installer extends Command
         ComposerEvents::postCreateProject();
 
         $this->renderCloudHostingBanner();
+    }
+
+    /**
+     * Ask which platform modules to enable when more than one is installed, else default to `pim`.
+     *
+     * @return list<string>
+     */
+    protected function resolvePlatformModules(PlatformModules $platformModules): array
+    {
+        if (count($platformModules->options()) > 1 && $this->hasInteractiveTerminal()) {
+            return array_values(multiselect(
+                label: trans('installer::app.installer.console.select-modules'),
+                options: $platformModules->options(),
+                default: ['pim'],
+                required: true,
+            ));
+        }
+
+        return ['pim'];
     }
 
     /**

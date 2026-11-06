@@ -77,6 +77,8 @@ class SystemSettingsController extends Controller
      */
     protected function enforceSectionAccess(array $entry): void
     {
+        abort_if($this->systemSettings->isHidden($entry), 404);
+
         abort_unless(
             empty($entry['acl']) || bouncer()->hasPermission((string) $entry['acl']),
             403,

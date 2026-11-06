@@ -24,10 +24,16 @@ return [
     'file-outside-attribute-path'      => 'Plik :value nie należy do tego rekordu. Prześlij go ponownie dla pola :attribute.',
     'password-surrounding-whitespace'  => 'Pole :attribute nie może zaczynać się ani kończyć spacją.',
     'password-whitespace-only'         => 'Pole :attribute nie może składać się wyłącznie ze spacji.',
+    'hideable-sections'                => 'Pole :attribute zawiera sekcję, której nie można ukryć.',
     'active-content-detected'          => 'Nie udało się przesłać :attribute, ponieważ zawiera aktywną zawartość (:reason).',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'osadzony kod JavaScript lub automatycznie uruchamiana akcja PDF',
         'embedded_vba_macro'            => 'osadzone makro VBA',
         'auto_executing_ole_object'     => 'automatycznie uruchamiany osadzony obiekt',
+    ],
+    'platform-modules'                => [
+        'empty'    => 'Wybierz co najmniej jeden moduł platformy.',
+        'unknown'  => 'Moduł platformy „:module” nie jest zainstalowany.',
+        'requires' => ':module można włączyć tylko razem z :requires.',
     ],
 ];

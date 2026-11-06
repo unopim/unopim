@@ -308,10 +308,11 @@ return [
         ],
     ],
     'job' => [
-        'started'   => 'Trabajo iniciado',
-        'completed' => 'Trabajo completado',
-        'stalled'   => 'La tarea dejó de responder por más de :minutes minutos y se marcó como fallida. Es probable que el proceso que la ejecutaba se detuviera.',
-        'reaped'    => 'Se marcaron :count tareas detenidas como fallidas.',
-        'stopped'   => 'La importación se detuvo tras la validación con :count errores. No se importó ninguna fila.',
+        'started'         => 'Trabajo iniciado',
+        'completed'       => 'Trabajo completado',
+        'stalled'         => 'La tarea dejó de responder por más de :minutes minutos y se marcó como fallida. Es probable que el proceso que la ejecutaba se detuviera.',
+        'reaped'          => 'Se marcaron :count tareas detenidas como fallidas.',
+        'stopped'         => 'La importación se detuvo tras la validación con :count errores. No se importó ninguna fila.',
+        'module-disabled' => 'El tipo de trabajo :type pertenece a un módulo de la plataforma que está desactivado, por lo que no se puede ejecutar.',
     ],
 ];

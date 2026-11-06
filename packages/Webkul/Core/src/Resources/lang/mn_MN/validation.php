@@ -24,10 +24,16 @@ return [
     'file-outside-attribute-path'      => ':value файл энэ бичлэгт хамаарахгүй. :attribute талбарт дахин байршуулна уу.',
     'password-surrounding-whitespace'  => ':attribute нь хоосон зайгаар эхэлж эсвэл төгсөж болохгүй.',
     'password-whitespace-only'         => ':attribute нь зөвхөн хоосон зайнаас бүрдэж болохгүй.',
+    'hideable-sections'                => ':attribute нуух боломжгүй хэсэг агуулж байна.',
     'active-content-detected'          => ':attribute нь идэвхтэй агуулга (:reason) агуулж байгаа тул байршуулах боломжгүй.',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'суулгасан JavaScript эсвэл автоматаар ажилладаг PDF үйлдэл',
         'embedded_vba_macro'            => 'суулгасан VBA макро',
         'auto_executing_ole_object'     => 'автоматаар ажилладаг суулгасан объект',
+    ],
+    'platform-modules'                => [
+        'empty'    => 'Дор хаяж нэг платформын модуль сонгоно уу.',
+        'unknown'  => '":module" платформын модуль суулгаагүй байна.',
+        'requires' => ':module-ийг зөвхөн :requires-тэй хамт идэвхжүүлж болно.',
     ],
 ];

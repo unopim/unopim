@@ -24,10 +24,16 @@ return [
     'file-outside-attribute-path'      => 'Файл :value не принадлежит этой записи. Загрузите его заново для поля :attribute.',
     'password-surrounding-whitespace'  => 'Поле :attribute не может начинаться или заканчиваться пробелом.',
     'password-whitespace-only'         => 'Поле :attribute не может состоять только из пробелов.',
+    'hideable-sections'                => 'Поле :attribute содержит раздел, который нельзя скрыть.',
     'active-content-detected'          => 'Не удалось загрузить :attribute, так как он содержит активное содержимое (:reason).',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'встроенный JavaScript или автоматически запускаемое действие PDF',
         'embedded_vba_macro'            => 'встроенный макрос VBA',
         'auto_executing_ole_object'     => 'автоматически запускаемый встроенный объект',
+    ],
+    'platform-modules'                => [
+        'empty'    => 'Выберите хотя бы один модуль платформы.',
+        'unknown'  => 'Модуль платформы «:module» не установлен.',
+        'requires' => ':module можно включить только вместе с :requires.',
     ],
 ];

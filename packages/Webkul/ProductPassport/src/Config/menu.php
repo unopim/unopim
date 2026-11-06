@@ -8,9 +8,10 @@ return [
      * "Field Mapping" heading above the passports grid.
      */
     [
-        'key'   => 'catalog.passport',
-        'name'  => 'passport::app.components.layouts.sidebar.menu.passports.name',
-        'route' => 'admin.catalog.passports.index',
-        'sort'  => 9,
+        'key'    => 'catalog.passport',
+        'module' => 'pim',
+        'name'   => 'passport::app.components.layouts.sidebar.menu.passports.name',
+        'route'  => 'admin.catalog.passports.index',
+        'sort'   => 9,
     ],
 ];

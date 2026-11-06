@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Psr\Log\LoggerInterface;
 use Webkul\DataTransfer\Buffer\FileBuffer;
+use Webkul\DataTransfer\Contracts\Exporters\WritesExportFile;
 use Webkul\DataTransfer\Contracts\JobTrack as JobTrackContract;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
 use Webkul\DataTransfer\Helpers\Concerns\TracksJobHeartbeat;
@@ -369,6 +370,15 @@ class Export
         }
 
         $typeExporter = $this->getTypeExporter();
+
+        if ($typeExporter instanceof WritesExportFile) {
+            $this->jobTrackRepository->update([
+                'file_path' => $typeExporter->writeExportFile($exportBuffer),
+            ], $this->export->id);
+
+            return $this;
+        }
+
         $filters = $typeExporter->getFilters();
 
         $directory = sprintf('exports/%s/%s', $this->export->id, FileBuffer::FOLDER_PREFIX);

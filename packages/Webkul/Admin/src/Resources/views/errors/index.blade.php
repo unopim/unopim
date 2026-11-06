@@ -44,10 +44,10 @@
                         </span>
 
                         <a
-                            href="{{ route('admin.dashboard.index') }}"
+                            href="{{ route('admin.session.create') }}"
                             class="text-sm text-primary-700 font-semibold transition-all hover:underline"
                         >
-                            @lang('admin::app.errors.dashboard')
+                            @lang('admin::app.errors.home')
                         </a>
                     </div>
                 </div>

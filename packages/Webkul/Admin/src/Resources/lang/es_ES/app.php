@@ -2155,6 +2155,26 @@ return [
                     'info'  => '',
                     'title' => 'General',
                 ],
+                'platform' => [
+                    'info'  => 'Elige qué módulos de la plataforma están activados.',
+                    'title' => 'Plataforma',
+
+                    'settings' => [
+                        'info'  => 'Ejecuta cualquier módulo por separado o varios a la vez; un módulo que necesita otro solo puede activarse junto a él.',
+                        'title' => 'Selección de módulos',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Desactivar un módulo oculta sus menús, páginas y rutas de la API; sus datos se conservan.',
+                        'title' => 'Módulos',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Solo se aplica mientras la Información de producto (PIM) está desactivada. Las secciones seleccionadas se quitan del menú y sus páginas de administración se bloquean; sus datos se conservan y sus rutas de Admin API siguen disponibles.',
+                        'title' => 'Secciones ocultas',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -3099,6 +3119,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Panel',
+        'home'      => 'Inicio',
         'go-back'   => 'Regresa',
         'support'   => 'Si el problema persiste, comuníquese con nosotros en <a href=":link" class=":class">:email</a> for assistance.',
         '404'       => [

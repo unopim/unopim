@@ -25,6 +25,7 @@ use Webkul\Core\Helpers\MediaMimeTypes;
 use Webkul\Core\Models\ChannelProxy;
 use Webkul\Core\Models\CurrencyProxy;
 use Webkul\Core\Models\LocaleProxy;
+use Webkul\Core\Platform\ModuleGate;
 use Webkul\Core\Tree;
 use Webkul\Product\Models\ProductProxy;
 
@@ -192,8 +193,20 @@ class AdminServiceProvider extends ServiceProvider
     {
         $tree = Tree::create();
 
-        foreach (config('menu.admin') as $item) {
-            if (! bouncer()->hasPermission($item['key'])) {
+        $gate = app(ModuleGate::class);
+
+        $items = (array) config('menu.admin');
+
+        $visible = array_filter($items, fn (array $item): bool => $gate->allowsKey($item['key']));
+
+        $allowed = array_filter($visible, fn (array $item): bool => bouncer()->hasPermission($item['key']));
+
+        $visibleKeys = array_column($visible, 'key');
+
+        $allowedKeys = array_column($allowed, 'key');
+
+        foreach ($allowed as $item) {
+            if ($this->lostAllChildren($item['key'], $items, $allowedKeys, $visibleKeys)) {
                 continue;
             }
 
@@ -213,6 +226,28 @@ class AdminServiceProvider extends ServiceProvider
             'tree'       => $tree,
             'landingUrl' => $landing['url'] ?? route('admin.session.create'),
         ];
+    }
+
+    /**
+     * Whether the module gate removed children of a menu parent and none of its children survived
+     * the gate and permissions; such a parent would otherwise stay in the sidebar as an empty heading.
+     *
+     * A parent the gate took nothing from is kept as before, so permission-only menus are unchanged.
+     *
+     * @param  array<int, array<string, mixed>>  $items
+     * @param  list<string>  $allowedKeys
+     * @param  list<string>  $visibleKeys
+     */
+    protected function lostAllChildren(string $key, array $items, array $allowedKeys, array $visibleKeys): bool
+    {
+        $prefix = $key.'.';
+
+        $gatedChild = array_any(
+            $items,
+            fn (array $item): bool => str_starts_with((string) $item['key'], $prefix) && ! in_array($item['key'], $visibleKeys, true),
+        );
+
+        return $gatedChild && ! array_any($allowedKeys, fn (string $allowedKey): bool => str_starts_with($allowedKey, $prefix));
     }
 
     /**

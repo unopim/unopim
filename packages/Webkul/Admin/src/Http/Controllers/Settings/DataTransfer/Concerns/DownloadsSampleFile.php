@@ -3,6 +3,7 @@
 namespace Webkul\Admin\Http\Controllers\Settings\DataTransfer\Concerns;
 
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Webkul\DataTransfer\Services\JobTypeGate;
 use Webkul\DataTransfer\Services\SampleFiles;
 
 trait DownloadsSampleFile
@@ -16,6 +17,8 @@ trait DownloadsSampleFile
      */
     protected function downloadSampleFile(string $configFile, ?string $type, ?string $key = null, bool $images = false): BinaryFileResponse
     {
+        abort_if(app(JobTypeGate::class)->hides($type), 404);
+
         $path = $type ? app(SampleFiles::class)->path($configFile, $type, $key, $images) : null;
 
         abort_if(! $path, 404);

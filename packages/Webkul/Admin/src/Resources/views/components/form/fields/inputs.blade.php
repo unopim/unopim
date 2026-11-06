@@ -99,6 +99,8 @@
                 />
             </v-field>
 
+            <span class="contents" :data-error-slot="qualifiedName"></span>
+
             <v-error-message :name="qualifiedName" v-slot="{ message }">
                 <p class="mt-1 text-red-600 text-xs italic" v-text="message"></p>
             </v-error-message>

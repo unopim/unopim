@@ -9,6 +9,7 @@ use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Settings\RolesDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\RoleForm;
+use Webkul\Core\Platform\ModuleGate;
 use Webkul\User\Repositories\AdminRepository;
 use Webkul\User\Repositories\RoleRepository;
 
@@ -53,12 +54,17 @@ class RoleController extends Controller
     {
         Event::dispatch('user.role.create.before');
 
-        $role = $this->roleRepository->create($request->only([
+        $data = $request->only([
             'name',
             'description',
             'permission_type',
-            'permissions',
-        ]));
+        ]);
+
+        if (is_array($request->input('permissions'))) {
+            $data['permissions'] = app(ModuleGate::class)->keepHiddenKeys($request->input('permissions'), []);
+        }
+
+        $role = $this->roleRepository->create($data);
 
         Event::dispatch('user.role.create.after', $role);
 
@@ -102,7 +108,10 @@ class RoleController extends Controller
             'description',
             'permission_type',
         ]), [
-            'permissions' => $request->has('permissions') ? $request->permissions : [],
+            'permissions' => app(ModuleGate::class)->keepHiddenKeys(
+                $request->has('permissions') ? (array) $request->permissions : [],
+                (array) ($role->permissions ?? []),
+            ),
         ]);
 
         Event::dispatch('user.role.update.before', $id);

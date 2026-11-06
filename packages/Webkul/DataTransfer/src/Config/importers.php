@@ -16,6 +16,7 @@ use Webkul\DataTransfer\Validators\JobInstances\Import\UserJobValidator;
 
 return [
     'products' => [
+        'module'             => 'pim',
         'title'              => 'data_transfer::app.importers.products.title',
         'importer'           => Importer::class,
         'sample_path'        => 'data-transfer/samples/import/products.csv',
@@ -39,6 +40,7 @@ return [
     ],
 
     'categories' => [
+        'module'           => 'pim',
         'title'            => 'data_transfer::app.importers.categories.title',
         'importer'         => Webkul\DataTransfer\Helpers\Importers\Category\Importer::class,
         'sample_path'      => 'data-transfer/samples/import/categories.csv',
@@ -53,6 +55,7 @@ return [
     ],
 
     'attributes' => [
+        'module'           => 'pim',
         'title'            => 'data_transfer::app.importers.attributes.title',
         'importer'         => Webkul\DataTransfer\Helpers\Importers\Attribute\Importer::class,
         'sample_path'      => 'data-transfer/samples/import/attributes.csv',
@@ -67,6 +70,7 @@ return [
     ],
 
     'category-fields' => [
+        'module'           => 'pim',
         'title'            => 'data_transfer::app.importers.category-fields.title',
         'importer'         => Webkul\DataTransfer\Helpers\Importers\CategoryField\Importer::class,
         'sample_path'      => 'data-transfer/samples/import/category-fields.csv',
@@ -81,6 +85,7 @@ return [
     ],
 
     'product-associations' => [
+        'module'           => 'pim',
         'title'            => 'data_transfer::app.importers.product-associations.title',
         'importer'         => 'Webkul\DataTransfer\Helpers\Importers\ProductAssociation\Importer',
         'sample_path'      => 'data-transfer/samples/import/product-associations.csv',
@@ -99,6 +104,7 @@ return [
     ],
 
     'attribute-groups' => [
+        'module'           => 'pim',
         'title'            => 'data_transfer::app.importers.attribute-groups.title',
         'importer'         => Webkul\DataTransfer\Helpers\Importers\AttributeGroup\Importer::class,
         'sample_path'      => 'data-transfer/samples/import/attribute-groups.csv',
@@ -113,6 +119,7 @@ return [
     ],
 
     'attribute-families' => [
+        'module'           => 'pim',
         'title'            => 'data_transfer::app.importers.attribute-families.title',
         'importer'         => Webkul\DataTransfer\Helpers\Importers\AttributeFamily\Importer::class,
         'sample_path'      => 'data-transfer/samples/import/attribute-families.csv',
@@ -127,6 +134,7 @@ return [
     ],
 
     'attribute-options' => [
+        'module'           => 'pim',
         'title'            => 'data_transfer::app.importers.attribute-options.title',
         'importer'         => Webkul\DataTransfer\Helpers\Importers\AttributeOption\Importer::class,
         'sample_path'      => 'data-transfer/samples/import/attribute-options.csv',
@@ -141,6 +149,7 @@ return [
     ],
 
     'locales' => [
+        'module'           => 'pim',
         'title'            => 'data_transfer::app.importers.locales.title',
         'importer'         => Webkul\DataTransfer\Helpers\Importers\Locale\Importer::class,
         'sample_path'      => 'data-transfer/samples/import/locales.csv',
@@ -155,6 +164,7 @@ return [
     ],
 
     'channels' => [
+        'module'           => 'pim',
         'title'            => 'data_transfer::app.importers.channels.title',
         'importer'         => Webkul\DataTransfer\Helpers\Importers\Channel\Importer::class,
         'sample_path'      => 'data-transfer/samples/import/channels.csv',
@@ -169,6 +179,7 @@ return [
     ],
 
     'currencies' => [
+        'module'           => 'pim',
         'title'            => 'data_transfer::app.importers.currencies.title',
         'importer'         => Webkul\DataTransfer\Helpers\Importers\Currency\Importer::class,
         'sample_path'      => 'data-transfer/samples/import/currencies.csv',
@@ -203,6 +214,7 @@ return [
     ],
 
     'roles' => [
+        'module'           => 'pim',
         'title'            => 'data_transfer::app.importers.roles.title',
         'importer'         => Webkul\DataTransfer\Helpers\Importers\Role\Importer::class,
         'sample_path'      => 'data-transfer/samples/import/roles.csv',
@@ -217,6 +229,7 @@ return [
     ],
 
     'users' => [
+        'module'           => 'pim',
         'title'            => 'data_transfer::app.importers.users.title',
         'importer'         => Webkul\DataTransfer\Helpers\Importers\User\Importer::class,
         'sample_path'      => 'data-transfer/samples/import/users.csv',

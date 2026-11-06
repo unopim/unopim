@@ -222,6 +222,8 @@ return [
         'console' => [
             'confirm-drop'        => 'Deze tabellen verwijderen en opnieuw installeren?',
             'drop-aborted'        => 'Installatie afgebroken. Er zijn geen tabellen verwijderd.',
+            'invalid-modules'     => 'Ongeldige platformmodules ":modules". Toegestane waarden: :allowed.',
+            'select-modules'      => 'Welke platformmodules wilt u inschakelen?',
             'force-required'      => 'Er is geen tabelvoorvoegsel ingesteld, dus alle tabellen die door geen enkele andere installatie worden geclaimd, zouden worden verwijderd. Voer opnieuw uit met --force om ze te verwijderen, of stel DB_PREFIX in.',
             'outside-references'  => 'Tabellen buiten het tabelvoorvoegsel verwijzen naar de te verwijderen tabellen: :references. Verwijder eerst deze foreign keys.',
             'tables-to-drop'      => 'Deze :count tabellen worden verwijderd: :tables',

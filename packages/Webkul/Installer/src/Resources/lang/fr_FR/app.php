@@ -222,6 +222,8 @@ return [
         'console' => [
             'confirm-drop'        => 'Supprimer ces tables et réinstaller ?',
             'drop-aborted'        => 'Installation annulée. Aucune table n\'a été supprimée.',
+            'invalid-modules'     => 'Modules de plateforme invalides « :modules ». Valeurs autorisées : :allowed.',
+            'select-modules'      => 'Quels modules de la plateforme voulez-vous activer ?',
             'force-required'      => 'Aucun préfixe de table n\'est défini, donc toutes les tables qu\'aucune autre installation ne revendique seraient supprimées. Relancez avec --force pour les supprimer, ou définissez DB_PREFIX.',
             'outside-references'  => 'Des tables en dehors du préfixe de table référencent les tables à supprimer : :references. Supprimez d\'abord ces clés étrangères.',
             'tables-to-drop'      => 'Ces :count tables seront supprimées : :tables',

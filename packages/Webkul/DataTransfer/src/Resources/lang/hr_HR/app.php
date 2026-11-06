@@ -308,10 +308,11 @@ return [
         ],
     ],
     'job' => [
-        'started'   => 'Izvršenje posla je započelo',
-        'completed' => 'Izvršenje posla je završeno',
-        'stalled'   => 'Zadatak nije odgovarao više od :minutes minuta i označen je kao neuspješan. Proces koji ga je izvršavao vjerojatno je prekinut.',
-        'reaped'    => 'Označeno je :count zaustavljenih zadataka kao neuspješnih.',
-        'stopped'   => 'Uvoz je zaustavljen nakon provjere s :count pogrešaka. Nijedan redak nije uvezen.',
+        'started'         => 'Izvršenje posla je započelo',
+        'completed'       => 'Izvršenje posla je završeno',
+        'stalled'         => 'Zadatak nije odgovarao više od :minutes minuta i označen je kao neuspješan. Proces koji ga je izvršavao vjerojatno je prekinut.',
+        'reaped'          => 'Označeno je :count zaustavljenih zadataka kao neuspješnih.',
+        'stopped'         => 'Uvoz je zaustavljen nakon provjere s :count pogrešaka. Nijedan redak nije uvezen.',
+        'module-disabled' => 'Vrsta posla :type pripada isključenom modulu platforme pa se ne može pokrenuti.',
     ],
 ];

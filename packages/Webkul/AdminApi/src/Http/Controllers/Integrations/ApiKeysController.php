@@ -19,6 +19,7 @@ use Webkul\AdminApi\Http\Requests\Integrations\StoreApiKeyRequest;
 use Webkul\AdminApi\Http\Requests\Integrations\UpdateApiKeyRequest;
 use Webkul\AdminApi\Repositories\ApiKeyRepository;
 use Webkul\AdminApi\Traits\OauthClientGenerator;
+use Webkul\Core\Platform\ModuleGate;
 use Webkul\User\Repositories\AdminRepository;
 
 class ApiKeysController extends Controller
@@ -72,8 +73,11 @@ class ApiKeysController extends Controller
         $data = $request->only([
             'name',
             'permission_type',
-            'permissions',
         ]);
+
+        if ($request->has('permissions')) {
+            $data['permissions'] = app(ModuleGate::class)->keepHiddenKeys((array) $request->input('permissions'), []);
+        }
 
         $apiKey = $this->apiKeyRepository->create($data);
 
@@ -108,11 +112,16 @@ class ApiKeysController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
+        $apiKey = $this->apiKeyRepository->findOrFail($id);
+
         $data = array_merge($request->only([
             'name',
             'permission_type',
         ]), [
-            'permissions' => $request->has('permissions') ? $request->input('permissions') : [],
+            'permissions' => app(ModuleGate::class)->keepHiddenKeys(
+                $request->has('permissions') ? (array) $request->input('permissions') : [],
+                (array) ($apiKey->permissions ?? []),
+            ),
         ]);
 
         Event::dispatch('user.api_integration.update.before', $id);
