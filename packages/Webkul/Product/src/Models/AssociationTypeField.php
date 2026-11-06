@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Webkul\Core\Eloquent\TranslatableModel;
 use Webkul\Core\Rules\Decimal;
 use Webkul\Core\Rules\FileOrImageValidValue;
+use Webkul\Core\Traits\ResolvesClientValidationRule;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\Product\Contracts\AssociationTypeField as AssociationTypeFieldContract;
@@ -14,6 +15,7 @@ use Webkul\Product\Contracts\AssociationTypeField as AssociationTypeFieldContrac
 class AssociationTypeField extends TranslatableModel implements AssociationTypeFieldContract, HistoryContract
 {
     use HistoryTrait;
+    use ResolvesClientValidationRule;
 
     /** Tags for History */
     protected $historyTags = ['association_type'];
@@ -136,11 +138,7 @@ class AssociationTypeField extends TranslatableModel implements AssociationTypeF
         }
 
         if ($this->validation) {
-            $validations[] = match ($this->validation) {
-                'regex'  => 'regex: "'.$this->regex_pattern.'"',
-                'number' => 'decimal: true',
-                default  => $this->validation.': true'
-            };
+            $validations[] = $this->clientValidationRule();
         }
 
         $validations = '{ '.implode(', ', array_filter($validations)).' }';

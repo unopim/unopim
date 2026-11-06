@@ -11,6 +11,7 @@ use Webkul\Category\Database\Factories\CategoryFieldFactory;
 use Webkul\Core\Eloquent\TranslatableModel;
 use Webkul\Core\Rules\Decimal;
 use Webkul\Core\Rules\FileOrImageValidValue;
+use Webkul\Core\Traits\ResolvesClientValidationRule;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 
@@ -31,6 +32,7 @@ class CategoryField extends TranslatableModel implements CategoryFieldContract, 
 {
     use HasFactory;
     use HistoryTrait;
+    use ResolvesClientValidationRule;
 
     const NON_DELETABLE_FIELD_CODE = 'name';
 
@@ -114,11 +116,7 @@ class CategoryField extends TranslatableModel implements CategoryFieldContract, 
         }
 
         if ($this->validation) {
-            $validations[] = match ($this->validation) {
-                'regex'  => 'regex: "'.$this->regex_pattern.'"',
-                'number' => 'decimal: true',
-                default  => $this->validation.': true'
-            };
+            $validations[] = $this->clientValidationRule();
         }
 
         return '{ '.implode(', ', array_filter($validations)).' }';
