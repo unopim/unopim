@@ -88,6 +88,10 @@
         dl.fields > div:first-child { border-top: 0; }
         dl.fields dt { font-size: .78rem; color: var(--muted); margin-bottom: .15rem; }
         dl.fields dd { margin: 0; }
+        dl.fields dd.rich-text p { margin: 0 0 .5em; }
+        dl.fields dd.rich-text p:last-child { margin-bottom: 0; }
+        dl.fields dd.rich-text ul, dl.fields dd.rich-text ol { margin: 0 0 .5em; padding-left: 1.2em; }
+        dl.fields dd.rich-text li { margin-bottom: .2em; }
         .media { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: .75rem; }
         .media figure { margin: 0; }
         .media img { width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--line); display: block; }
@@ -182,7 +186,11 @@
                         @foreach ($section['fields'] as $field)
                             <div>
                                 <dt>{{ $field['label'] }}</dt>
-                                <dd>{{ $field['value'] }}</dd>
+                                @if ($field['is_rich_text'] ?? false)
+                                    <dd class="rich-text">{{ new \Illuminate\Support\HtmlString($field['value']) }}</dd>
+                                @else
+                                    <dd>{{ $field['value'] }}</dd>
+                                @endif
                             </div>
                         @endforeach
                     </dl>

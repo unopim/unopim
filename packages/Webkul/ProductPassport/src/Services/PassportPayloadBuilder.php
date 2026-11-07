@@ -5,6 +5,7 @@ namespace Webkul\ProductPassport\Services;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Attribute\Contracts\Attribute as AttributeContract;
+use Webkul\Core\Traits\HtmlPurifier;
 use Webkul\Product\Models\Product;
 use Webkul\ProductPassport\Contracts\PassportTemplateField as PassportTemplateFieldContract;
 use Webkul\ProductPassport\Enums\PassportFieldRole;
@@ -19,6 +20,8 @@ use Webkul\Publication\DataTransferObjects\PublicationContext;
  */
 class PassportPayloadBuilder implements PayloadBuilder
 {
+    use HtmlPurifier;
+
     private const DOCUMENT_TYPES = ['file', 'image'];
 
     private const DEFAULT_SECTION = 'passport';
@@ -32,6 +35,13 @@ class PassportPayloadBuilder implements PayloadBuilder
         private readonly PassportTemplateResolver $templates,
     ) {}
 
+    /**
+     * A field sourced from a WYSIWYG attribute additionally carries `is_rich_text`
+     * and a markup-free `value_text` sibling for consumers such as JSON-LD; every
+     * other field keeps the plain `code`/`label`/`value`/`section` shape, so the
+     * checksum of a passport without rich text is unchanged and republishing it
+     * mints no new version.
+     */
     public function build(Product $product, PublicationContext $context): array
     {
         $channelCode = $context->channel->code;
@@ -83,12 +93,20 @@ class PassportPayloadBuilder implements PayloadBuilder
                 continue;
             }
 
-            $tiers[$tier]['fields'][] = [
+            $formattedValue = $this->formatValue($field, $raw, $channelCode);
+
+            $entry = [
                 'code'    => $field->code,
                 'label'   => $label,
-                'value'   => $this->formatValue($field, $raw, $channelCode),
+                'value'   => $formattedValue,
                 'section' => $sectionKey,
             ];
+
+            if ($this->isRichText($field)) {
+                $entry += ['value_text' => $this->toPlainText($formattedValue), 'is_rich_text' => true];
+            }
+
+            $tiers[$tier]['fields'][] = $entry;
         }
 
         $base = $order[0];
@@ -233,6 +251,10 @@ class PassportPayloadBuilder implements PayloadBuilder
             return (string) $value;
         }
 
+        if ($this->isRichText($field)) {
+            return $this->sanitizeRichText((string) $value);
+        }
+
         return match ($attribute->type) {
             'multiselect', 'checkbox' => implode(', ', $this->resolveOptionLabels($attribute, is_array($value) ? $value : explode(',', (string) $value))),
             'select'                  => $this->resolveOptionLabels($attribute, [(string) $value])[0] ?? (string) $value,
@@ -241,6 +263,48 @@ class PassportPayloadBuilder implements PayloadBuilder
             'measurement'             => $this->formatMeasurement($value),
             default                   => is_array($value) ? implode(', ', array_map(strval(...), $value)) : (string) $value,
         };
+    }
+
+    /**
+     * A field only counts as rich text when it is actually sourced from a WYSIWYG
+     * attribute — a fixed value or a plain textarea never carries markup, so they
+     * stay on the escaped-text path instead of being sent through the purifier.
+     */
+    private function isRichText(PassportTemplateFieldContract $field): bool
+    {
+        $attribute = $field->attribute;
+
+        return $field->source_type === PassportFieldSource::Attribute
+            && $attribute instanceof AttributeContract
+            && $attribute->type === 'textarea'
+            && (bool) $attribute->enable_wysiwyg;
+    }
+
+    /**
+     * Purifies WYSIWYG content to the shared safe subset, then drops `<img>` tags:
+     * the public passport CSP only allows same-origin and `data:` images, so an
+     * image the editor embedded from another host would render as a broken
+     * placeholder rather than the picture.
+     */
+    private function sanitizeRichText(string $html): string
+    {
+        $purified = (string) $this->purifyText($html);
+
+        return preg_replace('/<img\b[^>]*>/i', '', $purified) ?? $purified;
+    }
+
+    /**
+     * Strips the sanitized HTML back down to plain text for consumers that must not
+     * receive markup (JSON-LD, exports): block-level tags become line breaks first,
+     * so "paragraph, paragraph" does not collapse into one run-on sentence.
+     */
+    private function toPlainText(string $html): string
+    {
+        $withBreaks = preg_replace('/<(p|br|li|h[1-6]|tr)\b[^>]*>/i', "\n", $html) ?? $html;
+
+        $text = html_entity_decode(strip_tags($withBreaks), ENT_QUOTES);
+
+        return trim(preg_replace('/[ \t]+/', ' ', preg_replace('/\n{2,}/', "\n", $text) ?? $text) ?? $text);
     }
 
     /**

@@ -3,6 +3,7 @@
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 use Webkul\ProductPassport\Services\PassportPayloadBuilder;
+use Webkul\Publication\Services\Publisher;
 
 it('includes only attributes from the dpp group, scoped to the product\'s own family', function (): void {
     [$product, $context] = $this->productWithSecretAndDppAttributes();
@@ -52,6 +53,88 @@ it('excludes the whole meta key from being treated as content by never placing c
     $payload = resolve(PassportPayloadBuilder::class)->build($product, $context);
 
     expect(array_keys($payload['meta']))->toEqualCanonicalizing(['uuid', 'url', 'locale', 'channel', 'built_at', 'template']);
+});
+
+it('keeps a plain attribute field in the original payload shape, without rich-text keys', function (): void {
+    [$product, $context] = $this->productWithSecretAndDppAttributes();
+
+    $payload = resolve(PassportPayloadBuilder::class)->build($product, $context);
+
+    $field = collect($payload['sections'][0]['fields'])->firstWhere('code', 'dpp_material_composition');
+
+    expect(array_keys($field))->toBe(['code', 'label', 'value', 'section'])
+        ->and($field)->not->toHaveKey('value_text')
+        ->and($field)->not->toHaveKey('is_rich_text');
+});
+
+it('mints no new version when an unchanged plain-field passport is republished', function (): void {
+    [$product, $context] = $this->productWithSecretAndDppAttributes();
+
+    $this->enablePublicTier($context->channel->code);
+    $this->enablePassportPublishing($context->channel->code);
+
+    $publisher = resolve(Publisher::class);
+
+    expect($publisher->publish($product, $context->channel, $context->locale, 'dpp'))->not->toBeNull()
+        ->and($publisher->publish($product, $context->channel, $context->locale, 'dpp'))->toBeNull();
+});
+
+it('sanitizes a WYSIWYG attribute field to a safe HTML subset and flags it as rich text', function (): void {
+    [$product, $context] = $this->productWithRichTextPassportField(
+        '<p onclick="steal()">Hand <b>wash</b> only.</p><script>alert(1)</script><ul><li>Do not bleach</li></ul>'
+    );
+
+    $payload = resolve(PassportPayloadBuilder::class)->build($product, $context);
+
+    $field = collect($payload['sections'][0]['fields'])->firstWhere('code', 'dpp_care_instructions');
+
+    expect($field['is_rich_text'])->toBeTrue()
+        ->and($field['value'])->toContain('<p>Hand <b>wash</b> only.</p>')
+        ->and($field['value'])->toContain('<ul><li>Do not bleach</li></ul>')
+        ->and($field['value'])->not->toContain('<script>')
+        ->and($field['value'])->not->toContain('onclick');
+});
+
+it('strips a rich-text field down to a clean plain-text sibling for non-HTML consumers', function (): void {
+    [$product, $context] = $this->productWithRichTextPassportField(
+        '<p>Hand wash only.</p><p>Line two.</p><ul><li>Do not bleach</li><li>No tumble dry</li></ul>'
+    );
+
+    $payload = resolve(PassportPayloadBuilder::class)->build($product, $context);
+
+    $field = collect($payload['sections'][0]['fields'])->firstWhere('code', 'dpp_care_instructions');
+
+    expect($field['value_text'])
+        ->not->toContain('<')
+        ->toContain('Hand wash only.')
+        ->toContain('Line two.')
+        ->toContain('Do not bleach')
+        ->toContain('No tumble dry');
+});
+
+it('never puts raw markup behind a non-rich-text field, even when the value looks like HTML', function (): void {
+    [$product, $context] = $this->makeProductWithValues(['country' => '<b>Germany</b>']);
+
+    $payload = resolve(PassportPayloadBuilder::class)->build($product, $context);
+
+    $field = collect($payload['sections'][0]['fields'])->firstWhere('code', 'dpp_country_of_origin');
+
+    expect($field)->not->toHaveKey('is_rich_text')
+        ->and($field['value'])->toBe('<b>Germany</b>');
+});
+
+it('drops embedded images from a rich-text field, which the public passport CSP would block', function (): void {
+    [$product, $context] = $this->productWithRichTextPassportField(
+        '<p>Hand wash only.</p><p><img src="https://cdn.example.com/care.png" alt="Care label"></p>'
+    );
+
+    $payload = resolve(PassportPayloadBuilder::class)->build($product, $context);
+
+    $field = collect($payload['sections'][0]['fields'])->firstWhere('code', 'dpp_care_instructions');
+
+    expect($field['value'])->toContain('<p>Hand wash only.</p>')
+        ->and($field['value'])->not->toContain('<img')
+        ->and($field['value'])->not->toContain('cdn.example.com');
 });
 
 it('addresses a copied document by its content so a re-issued file lands beside the old one', function (): void {
