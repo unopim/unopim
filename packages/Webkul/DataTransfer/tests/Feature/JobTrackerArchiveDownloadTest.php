@@ -102,4 +102,47 @@ describe('Job tracker archive download', function () {
         Storage::disk('private')->deleteDirectory($folder);
         $jobInstance->delete();
     });
+
+    it('downloads a file tracked on the public disk by an earlier release', function () {
+        [$jobInstance, $jobTrack, $folder] = exportedJob([]);
+
+        $path = 'exports/legacy-'.uniqid().'/products.csv';
+
+        Storage::disk('public')->put($path, "sku,name\nBATT-1,Battery\n");
+
+        $jobTrack->update(['file_path' => $path]);
+
+        $this->get(route('admin.settings.data_transfer.tracker.download', $jobTrack->id))
+            ->assertOk()
+            ->assertDownload('products.csv');
+
+        Storage::disk('public')->deleteDirectory(dirname($path));
+        $jobInstance->delete();
+    });
+
+    it('returns not found for a job without a file path', function (string $route) {
+        [$jobInstance, $jobTrack] = exportedJob([]);
+
+        $jobTrack->update(['file_path' => null]);
+
+        $this->get(route($route, $jobTrack->id))->assertNotFound();
+
+        $jobInstance->delete();
+    })->with([
+        'admin.settings.data_transfer.tracker.download',
+        'admin.settings.data_transfer.tracker.archive.download',
+    ]);
+
+    it('refuses a file path that climbs out of the storage disks', function () {
+        [$jobInstance, $jobTrack] = exportedJob([]);
+
+        $jobTrack->update(['file_path' => '../../.env']);
+
+        $response = $this->get(route('admin.settings.data_transfer.tracker.download', $jobTrack->id));
+
+        expect($response->status())->not->toBe(200);
+        expect($response->headers->get('content-disposition'))->toBeNull();
+
+        $jobInstance->delete();
+    });
 });

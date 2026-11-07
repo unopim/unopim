@@ -458,6 +458,7 @@
                             v-if="field.async"
                             :name="name"
                             multiple="true"
+                            :onselect="false"
                             :class="hasErrors ? 'border border-red-500' : ''"
                             :track-by="field.track_by"
                             :label-by="field.label_by"
