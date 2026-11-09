@@ -5,8 +5,11 @@ namespace Webkul\AdminApi\ApiDataSource\Catalog;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Webkul\AdminApi\ApiDataSource;
+use Webkul\AdminApi\Services\ProductAttributeFilterService;
+use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Completeness\Repositories\ProductCompletenessScoreRepository;
+use Webkul\ElasticSearch\Enums\FilterOperators;
 use Webkul\Product\Contracts\VariantValueResolver;
 use Webkul\Product\Database\Eloquent\Builder;
 use Webkul\Product\Enums\ProductType;
@@ -24,6 +27,15 @@ class ProductDataSource extends ApiDataSource
 
     protected ?VariantValueResolver $variantValueResolver = null;
 
+    protected ?ProductAttributeFilterService $attributeFilterService = null;
+
+    /**
+     * Requested attribute value filters, validated and shaped for the filter engine.
+     *
+     * @var list<array{attribute: Attribute, operator: FilterOperators, value: array<int, mixed>, context: array{locale: ?string, channel: ?string}}>
+     */
+    protected array $attributeFilters = [];
+
     /**
      * Create a new DataSource instance.
      *
@@ -39,6 +51,11 @@ class ProductDataSource extends ApiDataSource
     protected function variantValueResolver(): VariantValueResolver
     {
         return $this->variantValueResolver ??= app(VariantValueResolver::class);
+    }
+
+    protected function attributeFilterService(): ProductAttributeFilterService
+    {
+        return $this->attributeFilterService ??= app(ProductAttributeFilterService::class);
     }
 
     /**
@@ -70,6 +87,44 @@ class ProductDataSource extends ApiDataSource
 
         $this->addFilter('updated_at', $operators, null, 'datetime');
         $this->addFilter('created_at', $operators, null, 'datetime');
+    }
+
+    /**
+     * Keep only the property filters for the column filter pass; attribute filters are
+     * applied separately through the product filter engine.
+     *
+     * @param  array  $requestedParams
+     * @return array
+     */
+    public function validateFilterCriterias($requestedParams)
+    {
+        return array_intersect_key(parent::validateFilterCriterias($requestedParams), $this->fieldFiltersAndOperators);
+    }
+
+    /**
+     * Validate property filters as before and resolve every other filter key as an attribute code.
+     *
+     * @param  array  $filterParameters
+     *
+     * @throws UnprocessableEntityHttpException
+     */
+    public function validateFilterParameters($filterParameters)
+    {
+        parent::validateFilterParameters(array_intersect_key($filterParameters, $this->fieldFiltersAndOperators));
+
+        $this->attributeFilters = $this->attributeFilterService()->resolve(
+            array_diff_key($filterParameters, $this->fieldFiltersAndOperators)
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function applyAdditionalFilters($queryBuilder)
+    {
+        $this->attributeFilterService()->apply($queryBuilder, $this->attributeFilters);
+
+        return $queryBuilder;
     }
 
     /**
