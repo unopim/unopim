@@ -43,13 +43,24 @@ class FormulaFunctions implements ExpressionFunctionProviderInterface
     public const INTERNAL_PREFIX = '__';
 
     /**
-     * Ceiling on any argument that decides how long a produced string is.
+     * Ceiling on the length of every string a function produces or consumes.
      *
      * A calculated attribute ends up in a grid cell, an export column or a JSON
-     * field, so nothing longer than this is useful — and an unbounded length
-     * argument is an out-of-memory exploit reachable from an admin text field.
+     * field, so nothing longer than this is useful. More importantly, several
+     * functions multiply their input (`replace`, `concat`/`join` with a long
+     * separator, `number_format` decimals, `date_format` format characters), so
+     * without a ceiling a short nested formula asks PHP for gigabytes and kills
+     * the worker with a fatal error no `catch` can contain. Inputs are cut to
+     * this length before use, amplifying functions build their result
+     * incrementally and stop at it, and every string result is truncated to it.
      */
-    public const MAX_LENGTH = 1000;
+    public const MAX_LENGTH = 10000;
+
+    /**
+     * Ceiling on the decimals argument of `number_format`. A float carries
+     * about 17 significant digits, so anything beyond this is padding.
+     */
+    public const MAX_DECIMALS = 20;
 
     public function __construct(
         protected CategoryPathProvider $categories,
@@ -95,15 +106,15 @@ class FormulaFunctions implements ExpressionFunctionProviderInterface
     protected function stringFunctions(): array
     {
         return [
-            $this->fn('concat', fn (array $context, mixed $separator, mixed ...$parts): string => implode(
-                self::toString($separator),
+            $this->fn('concat', fn (array $context, mixed $separator, mixed ...$parts): string => self::implodeBounded(
+                self::text($separator),
                 self::stringifyPresent($parts)
             )),
 
             $this->fn('join', function (array $context, mixed $separator, mixed $list): string {
                 $items = is_array($list) ? $list : (self::isBlank($list) ? [] : [$list]);
 
-                return implode(self::toString($separator), self::stringifyPresent($items));
+                return self::implodeBounded(self::text($separator), self::stringifyPresent($items));
             }),
 
             $this->fn('coalesce', function (array $context, mixed ...$values): mixed {
@@ -127,11 +138,16 @@ class FormulaFunctions implements ExpressionFunctionProviderInterface
                 $length === null ? null : (int) $length
             )),
 
-            $this->fn('replace', fn (array $context, mixed $value, mixed $search, mixed $replace): string => str_replace(
-                self::toString($search),
-                self::toString($replace),
-                self::toString($value)
-            )),
+            $this->fn('replace', function (array $context, mixed $value, mixed $search, mixed $replace): string {
+                $haystack = self::text($value);
+                $needle = self::text($search);
+
+                if ($needle === '') {
+                    return $haystack;
+                }
+
+                return self::implodeBounded(self::text($replace), explode($needle, $haystack));
+            }),
 
             $this->fn('pad_left', fn (array $context, mixed $value, mixed $length, mixed $pad = ' '): string => self::pad(
                 $value,
@@ -148,13 +164,13 @@ class FormulaFunctions implements ExpressionFunctionProviderInterface
             )),
 
             $this->fn('split', function (array $context, mixed $value, mixed $separator): array {
-                $separator = self::toString($separator);
+                $separator = self::text($separator);
 
                 if ($separator === '') {
-                    return [self::toString($value)];
+                    return [self::text($value)];
                 }
 
-                return explode($separator, self::toString($value));
+                return explode($separator, self::text($value));
             }),
         ];
     }
@@ -195,9 +211,9 @@ class FormulaFunctions implements ExpressionFunctionProviderInterface
 
             $this->fn('number_format', fn (array $context, mixed $value, mixed $decimals = 2, mixed $decimalPoint = '.', mixed $thousandsSeparator = ''): string => number_format(
                 (float) $value,
-                (int) $decimals,
-                self::toString($decimalPoint),
-                self::toString($thousandsSeparator)
+                min(max((int) $decimals, 0), self::MAX_DECIMALS),
+                self::text($decimalPoint),
+                self::text($thousandsSeparator)
             )),
         ];
     }
@@ -215,7 +231,7 @@ class FormulaFunctions implements ExpressionFunctionProviderInterface
         return [
             $this->fn('now', fn (array $context): string => Carbon::now()->toDateTimeString()),
 
-            $this->fn('date_format', fn (array $context, mixed $value, mixed $format): ?string => self::toDate($value)?->format(self::toString($format))),
+            $this->fn('date_format', fn (array $context, mixed $value, mixed $format): ?string => self::toDate($value)?->format(self::text($format))),
 
             $this->fn('date_add', function (array $context, mixed $value, mixed $modifier): ?string {
                 $date = self::toDate($value);
@@ -243,13 +259,13 @@ class FormulaFunctions implements ExpressionFunctionProviderInterface
     protected function categoryFunctions(): array
     {
         return [
-            $this->fn('category_path', fn (array $context, mixed $separator = '/'): string => implode(
-                self::toString($separator),
+            $this->fn('category_path', fn (array $context, mixed $separator = '/'): string => self::implodeBounded(
+                self::text($separator),
                 $this->categories->deepestPath(self::contextCategories($context))
             )),
 
-            $this->fn('category_label_path', fn (array $context, mixed $separator = '/'): string => implode(
-                self::toString($separator),
+            $this->fn('category_label_path', fn (array $context, mixed $separator = '/'): string => self::implodeBounded(
+                self::text($separator),
                 $this->categories->deepestPath(
                     self::contextCategories($context),
                     self::contextLocale($context)
@@ -266,7 +282,9 @@ class FormulaFunctions implements ExpressionFunctionProviderInterface
     }
 
     /**
-     * Build an ExpressionFunction whose compiler is disabled.
+     * Build an ExpressionFunction whose compiler is disabled and whose string
+     * result never exceeds {@see MAX_LENGTH}, so no function can hand the next
+     * one an input larger than the ceiling.
      */
     protected function fn(string $name, callable $evaluator): ExpressionFunction
     {
@@ -275,8 +293,42 @@ class FormulaFunctions implements ExpressionFunctionProviderInterface
             static function () use ($name): never {
                 throw new \LogicException(sprintf('Calculated attribute formulas are evaluated, never compiled; "%s" has no compiler.', $name));
             },
-            $evaluator
+            static function (mixed ...$arguments) use ($evaluator): mixed {
+                $result = $evaluator(...$arguments);
+
+                return is_string($result) ? mb_substr($result, 0, self::MAX_LENGTH) : $result;
+            }
         );
+    }
+
+    /**
+     * Join pieces like implode(), but stop as soon as the result reaches
+     * {@see MAX_LENGTH} instead of allocating the whole product of glue and
+     * piece count first.
+     *
+     * @param  array<int, string>  $pieces
+     */
+    protected static function implodeBounded(string $glue, array $pieces): string
+    {
+        $result = '';
+
+        foreach (array_values($pieces) as $index => $piece) {
+            $result .= ($index === 0 ? '' : $glue).mb_substr($piece, 0, self::MAX_LENGTH);
+
+            if (strlen($result) >= self::MAX_LENGTH) {
+                return mb_substr($result, 0, self::MAX_LENGTH);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Render a value as a string no longer than {@see MAX_LENGTH}.
+     */
+    protected static function text(mixed $value): string
+    {
+        return mb_substr(self::toString($value), 0, self::MAX_LENGTH);
     }
 
     /**
@@ -287,9 +339,9 @@ class FormulaFunctions implements ExpressionFunctionProviderInterface
      */
     protected static function stringifyPresent(array $values): array
     {
-        $present = array_filter($values, static fn ($value): bool => ! self::isBlank($value));
+        $present = array_filter($values, static fn (mixed $value): bool => ! self::isBlank($value));
 
-        return array_map(static fn ($value): string => self::toString($value), array_values($present));
+        return array_map(static fn (mixed $value): string => self::text($value), array_values($present));
     }
 
     /**
@@ -325,7 +377,7 @@ class FormulaFunctions implements ExpressionFunctionProviderInterface
         $pad = self::toString($pad);
 
         return str_pad(
-            self::toString($value),
+            self::text($value),
             min(max((int) $length, 0), self::MAX_LENGTH),
             $pad === '' ? ' ' : $pad,
             $type
@@ -368,7 +420,7 @@ class FormulaFunctions implements ExpressionFunctionProviderInterface
         }
 
         if (is_array($value)) {
-            return implode(',', array_map(static fn ($item): string => self::toString($item), $value));
+            return implode(',', array_map(static fn (mixed $item): string => self::toString($item), $value));
         }
 
         if (is_scalar($value)) {
