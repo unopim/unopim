@@ -9,6 +9,7 @@ use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
 use Webkul\DataTransfer\Helpers\Export;
 use Webkul\DataTransfer\Helpers\Exporters\AbstractExporter;
 use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
+use Webkul\DataTransfer\Helpers\Formatters\ScopeFilterValue;
 use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 use Webkul\Product\Models\ProductProxy;
@@ -77,7 +78,7 @@ class Exporter extends AbstractExporter
      */
     public function prepareCategories(JobTrackBatchContract $batch, mixed $filePath): array
     {
-        $locales = core()->getAllActiveLocales()->pluck('code');
+        $locales = $this->getExportLocales();
         $categories = [];
         foreach ($batch->data as $rowData) {
             $productCounts = $this->productCountsByCategory($rowData['code']);
@@ -104,6 +105,24 @@ class Exporter extends AbstractExporter
         }
 
         return $categories;
+    }
+
+    /**
+     * Active locale codes narrowed to the profile's locale filter, if any.
+     *
+     * @return array<int, string>
+     */
+    protected function getExportLocales(): array
+    {
+        $locales = core()->getAllActiveLocales()->pluck('code')->all();
+
+        $selectedLocales = ScopeFilterValue::toCodes($this->getFilters()['locales'] ?? null);
+
+        if ($selectedLocales === []) {
+            return $locales;
+        }
+
+        return array_values(array_intersect($locales, $selectedLocales));
     }
 
     /**

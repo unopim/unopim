@@ -57,3 +57,39 @@ it('exports categories when the job instance carries no filters at all', functio
 
     expect($result)->toBeArray();
 });
+
+function callGetExportLocales(Exporter $exporter): array
+{
+    $method = new ReflectionMethod($exporter, 'getExportLocales');
+
+    return $method->invoke($exporter);
+}
+
+it('exports every active locale when no locale filter is set', function () {
+    $activeLocales = core()->getAllActiveLocales()->pluck('code')->all();
+
+    expect(callGetExportLocales(makeCategoryExporter(['file_format' => 'Csv'])))
+        ->toEqualCanonicalizing($activeLocales);
+});
+
+it('narrows exported locales to the selected locale filter', function () {
+    $locale = core()->getAllActiveLocales()->first()->code;
+
+    $exporter = makeCategoryExporter(['file_format' => 'Csv', 'locales' => [$locale, 'xx_XX']]);
+
+    expect(callGetExportLocales($exporter))->toBe([$locale]);
+});
+
+it('accepts the locale filter as a comma separated string', function () {
+    $locale = core()->getAllActiveLocales()->first()->code;
+
+    $exporter = makeCategoryExporter(['file_format' => 'Csv', 'locales' => $locale.',xx_XX']);
+
+    expect(callGetExportLocales($exporter))->toBe([$locale]);
+});
+
+it('exposes the locales scope filter on the categories exporter', function () {
+    $fieldNames = collect(config('exporters.categories.filters.fields'))->pluck('name');
+
+    expect($fieldNames)->toContain('locales');
+});
