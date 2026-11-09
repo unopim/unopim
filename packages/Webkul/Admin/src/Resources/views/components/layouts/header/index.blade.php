@@ -16,25 +16,7 @@
         </i>
 
         <a href="{{ $adminLandingUrl ?? route('admin.dashboard.index') }}">
-            @if ($logo = core()->getConfigData('general.design.admin_logo.logo_image'))
-                <img
-                    class="h-10"
-                    src="{{ Storage::url($logo) }}"
-                    alt="{{ config('app.name') }}"
-                />
-            @else
-                <img
-                    src="{{ unopim_asset('images/logo.svg') }}"
-                    class="theme-logo-light block dark:hidden"
-                    alt="{{ config('app.name') }}"
-                />
-
-                <img
-                    src="{{ unopim_asset('images/dark_logo.svg') }}"
-                    class="theme-logo-dark hidden dark:block"
-                    alt="{{ config('app.name') }}"
-                />
-            @endif
+            <x-admin::layouts.logo />
         </a>
 
     </div>
@@ -129,25 +111,7 @@
 >
     <x-slot:header>
         <div class="flex justify-between items-center">
-            @if ($logo = core()->getConfigData('general.design.admin_logo.logo_image'))
-                <img
-                    class="h-10"
-                    src="{{ Storage::url($logo) }}"
-                    alt="{{ config('app.name') }}"
-                />
-            @else
-                <img
-                    src="{{ unopim_asset('images/logo.svg') }}"
-                    class="theme-logo-light block dark:hidden"
-                    alt="{{ config('app.name') }}"
-                />
-
-                <img
-                    src="{{ unopim_asset('images/dark_logo.svg') }}"
-                    class="theme-logo-dark hidden dark:block"
-                    alt="{{ config('app.name') }}"
-                />
-            @endif
+            <x-admin::layouts.logo />
         </div>
     </x-slot>
 

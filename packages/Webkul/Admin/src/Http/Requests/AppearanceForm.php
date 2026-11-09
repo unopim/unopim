@@ -39,10 +39,24 @@ class AppearanceForm extends FormRequest
         $faviconRules = $this->imageRules(self::FAVICON_EXTENSIONS, 1024, false);
 
         return [
-            'logo_image'   => $this->file('logo_image') instanceof UploadedFile ? $logoImageRules : ['nullable'],
-            'logo_image.*' => $logoImageRules,
-            'favicon'      => $this->file('favicon') instanceof UploadedFile ? $faviconRules : ['nullable'],
-            'favicon.*'    => $faviconRules,
+            ...$this->uploadRules('logo_image', $logoImageRules),
+            ...$this->uploadRules('logo_image_dark', $logoImageRules),
+            ...$this->uploadRules('favicon', $faviconRules),
+            ...$this->uploadRules('favicon_dark', $faviconRules),
+        ];
+    }
+
+    /**
+     * Apply the image rules to a field sent either as a scalar file or as a media-component array.
+     *
+     * @param  array<int, mixed>  $rules
+     * @return array<string, array<int, mixed>>
+     */
+    private function uploadRules(string $field, array $rules): array
+    {
+        return [
+            $field      => $this->file($field) instanceof UploadedFile ? $rules : ['nullable'],
+            $field.'.*' => $rules,
         ];
     }
 

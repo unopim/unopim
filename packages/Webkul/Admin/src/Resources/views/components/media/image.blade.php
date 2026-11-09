@@ -14,6 +14,7 @@
     'instructions'         => '',
     'readOnly'           => false,
     'allowDownload'      => false,
+    'darkSurface'        => false,
 ])
 
 @php
@@ -42,6 +43,7 @@
     v-bind:full-preview="{{ $fullPreview ? 'true' : 'false' }}"
     v-bind:read-only="{{ $readOnly ? 'true' : 'false' }}"
     v-bind:allow-download="{{ $allowDownload ? 'true' : 'false' }}"
+    v-bind:dark-surface="{{ $darkSurface ? 'true' : 'false' }}"
     :accepted-extensions='@json($acceptedExtensions)'
     :errors="errors"
 >
@@ -67,7 +69,11 @@
                 :style="responsive ? { gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))' } : null"
             >
                 {{-- Add Image tile (shared dropzone; ordered last via CSS order) --}}
-                <template v-if="images.length === 0">
+                <div
+                    v-if="images.length === 0"
+                    class="contents"
+                    :class="{ dark: darkSurface }"
+                >
                     <v-media-add-tile
                         v-if="ai.enabled"
                         :trigger-modal="true"
@@ -94,7 +100,7 @@
                         @change="add"
                         @drop="onDrop"
                     ></v-media-add-tile>
-                </template>
+                </div>
 
                 <draggable
                     class="contents"
@@ -117,6 +123,7 @@
                             :accepted-extensions="acceptedExtensions"
                             :read-only="readOnly"
                             :allow-download="allowDownload"
+                            :dark-surface="darkSurface"
                             @onRemove="remove($event)"
                         >
                         </v-media-image-item>
@@ -445,23 +452,28 @@
 
     <script type="text/x-template" id="v-media-image-item-template">
         <div>
-            <v-media-card
-                :media="image"
-                mode="image"
-                :width="responsive ? null : width"
-                :height="responsive ? '176px' : `calc(${height} + 36px)`"
-                :object-fit="objectFit"
-                :allow-preview="true"
-                :allow-replace="! readOnly"
-                :allow-remove="! readOnly"
-                :allow-download="allowDownload"
-                :show-drag-handle="! readOnly"
-                :show-extension="false"
-                :invalid="isInvalid"
-                @preview="preview"
-                @replace="replace"
-                @remove="remove"
-            ></v-media-card>
+            <div
+                class="contents"
+                :class="{ dark: darkSurface }"
+            >
+                <v-media-card
+                    :media="image"
+                    mode="image"
+                    :width="responsive ? null : width"
+                    :height="responsive ? '176px' : `calc(${height} + 36px)`"
+                    :object-fit="objectFit"
+                    :allow-preview="true"
+                    :allow-replace="! readOnly"
+                    :allow-remove="! readOnly"
+                    :allow-download="allowDownload"
+                    :show-drag-handle="! readOnly"
+                    :show-extension="false"
+                    :invalid="isInvalid"
+                    @preview="preview"
+                    @replace="replace"
+                    @remove="remove"
+                ></v-media-card>
+            </div>
 
             <input type="hidden" :name="name" v-if="! readOnly && ! image.is_new && image.value" :value="image.value"/>
             <input
@@ -574,6 +586,11 @@
                 },
 
                 fullPreview: {
+                    type: Boolean,
+                    default: false,
+                },
+
+                darkSurface: {
                     type: Boolean,
                     default: false,
                 },
@@ -1046,7 +1063,7 @@
         app.component('v-media-image-item', {
             template: '#v-media-image-item-template',
 
-            props: ['index', 'image', 'name', 'width', 'height', 'objectFit', 'responsive', 'fullPreview', 'acceptedExtensions', 'readOnly', 'allowDownload'],
+            props: ['index', 'image', 'name', 'width', 'height', 'objectFit', 'responsive', 'fullPreview', 'acceptedExtensions', 'readOnly', 'allowDownload', 'darkSurface'],
 
             computed: {
                 acceptAttribute() {

@@ -1,7 +1,16 @@
 @php
-    $logo = core()->getConfigData('general.design.admin_logo.logo_image');
+    $fields = collect([
+        ['name' => 'logo_image', 'label' => 'logo', 'hints' => ['logo-size'], 'extensions' => \Webkul\Admin\Http\Requests\AppearanceForm::LOGO_EXTENSIONS, 'width' => '240px', 'dark' => false],
+        ['name' => 'favicon', 'label' => 'favicon', 'hints' => ['favicon-size'], 'extensions' => \Webkul\Admin\Http\Requests\AppearanceForm::FAVICON_EXTENSIONS, 'width' => '120px', 'dark' => false],
+        ['name' => 'logo_image_dark', 'label' => 'dark-logo', 'hints' => ['logo-size', 'dark-logo-info'], 'extensions' => \Webkul\Admin\Http\Requests\AppearanceForm::LOGO_EXTENSIONS, 'width' => '240px', 'dark' => true],
+        ['name' => 'favicon_dark', 'label' => 'dark-favicon', 'hints' => ['favicon-size', 'dark-favicon-info'], 'extensions' => \Webkul\Admin\Http\Requests\AppearanceForm::FAVICON_EXTENSIONS, 'width' => '120px', 'dark' => true],
+    ])->map(function (array $field): array {
+        $value = core()->getConfigData('general.design.admin_logo.'.$field['name']);
 
-    $favicon = core()->getConfigData('general.design.admin_logo.favicon');
+        $field['images'] = $value ? [['id' => $field['name'], 'url' => Storage::url($value), 'value' => $value]] : [];
+
+        return $field;
+    });
 @endphp
 
 <x-admin::page
@@ -19,54 +28,33 @@
     </x-slot>
 
     <div class="mt-6 grid grid-cols-1 gap-6 p-4 bg-white dark:bg-cherry-900 box-shadow rounded sm:grid-cols-2">
-        {{-- Logo --}}
-        <div class="flex gap-4 flex-col">
-            <x-admin::form.control-group class="!mb-0 shrink-0">
-                <x-admin::form.control-group.label>
-                    @lang('admin::app.settings.appearance.logo')
-                </x-admin::form.control-group.label>
+        @foreach ($fields as $field)
+            <div class="flex gap-4 flex-col">
+                <x-admin::form.control-group class="!mb-0 shrink-0">
+                    <x-admin::form.control-group.label>
+                        @lang('admin::app.settings.appearance.'.$field['label'])
+                    </x-admin::form.control-group.label>
 
-                <x-admin::media.image
-                    name="logo_image"
-                    :show-suggestions="false"
-                    :accepted-extensions="\Webkul\Admin\Http\Requests\AppearanceForm::LOGO_EXTENSIONS"
-                    width="240px"
-                    height="120px"
-                    object-fit="contain"
-                    :uploaded-images="$logo ? [['id' => 'logo_image', 'url' => Storage::url($logo), 'value' => $logo]] : []"
-                />
+                    <x-admin::media.image
+                        :name="$field['name']"
+                        :show-suggestions="false"
+                        :accepted-extensions="$field['extensions']"
+                        :width="$field['width']"
+                        height="120px"
+                        object-fit="contain"
+                        :dark-surface="$field['dark']"
+                        :uploaded-images="$field['images']"
+                    />
 
-                <x-admin::form.control-group.error control-name="logo_image" />
-            </x-admin::form.control-group>
+                    <x-admin::form.control-group.error :control-name="$field['name']" />
+                </x-admin::form.control-group>
 
-            <p class="text-xs text-gray-600 dark:text-gray-300 leading-[140%]">
-                @lang('admin::app.settings.appearance.logo-size')
-            </p>
-        </div>
-
-        {{-- Favicon --}}
-        <div class="flex gap-4 flex-col">
-            <x-admin::form.control-group class="!mb-0 shrink-0">
-                <x-admin::form.control-group.label>
-                    @lang('admin::app.settings.appearance.favicon')
-                </x-admin::form.control-group.label>
-
-                <x-admin::media.image
-                    name="favicon"
-                    :show-suggestions="false"
-                    :accepted-extensions="\Webkul\Admin\Http\Requests\AppearanceForm::FAVICON_EXTENSIONS"
-                    width="120px"
-                    height="120px"
-                    object-fit="contain"
-                    :uploaded-images="$favicon ? [['id' => 'favicon', 'url' => Storage::url($favicon), 'value' => $favicon]] : []"
-                />
-
-                <x-admin::form.control-group.error control-name="favicon" />
-            </x-admin::form.control-group>
-
-            <p class="text-xs text-gray-600 dark:text-gray-300 leading-[140%]">
-                @lang('admin::app.settings.appearance.favicon-size')
-            </p>
-        </div>
+                <p class="text-xs text-gray-600 dark:text-gray-300 leading-[140%]">
+                    @foreach ($field['hints'] as $hint)
+                        <span class="block">@lang('admin::app.settings.appearance.'.$hint)</span>
+                    @endforeach
+                </p>
+            </div>
+        @endforeach
     </div>
 </x-admin::page>
