@@ -162,6 +162,7 @@ return [
             'of'                   => 'of',
             'products-ready'       => 'المنتجات جاهزة',
             'no-readiness-data'    => 'لا توجد بيانات اكتمال متاحة بعد.',
+            'readiness-drilldown'  => 'عرض المنتجات غير المكتملة المتبقية لقناة :channel',
             'no-products'          => 'لا توجد منتجات بعد.',
             'last-7-days'          => 'آخر 7 أيام',
             'days'                 => [

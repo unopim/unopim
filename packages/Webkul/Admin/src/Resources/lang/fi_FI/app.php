@@ -162,6 +162,7 @@ return [
             'of'                   => 'of',
             'products-ready'       => 'tuotteet valmiina',
             'no-readiness-data'    => 'Ei täydellisyystietoja saatavilla vielä.',
+            'readiness-drilldown'  => 'Näytä kanavan :channel keskeneräiset tuotteet',
             'no-products'          => 'Ei vielä tuotteita.',
             'last-7-days'          => 'Viimeiset 7 päivää',
             'days'                 => [

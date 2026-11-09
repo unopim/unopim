@@ -95,6 +95,8 @@
 
                     viewScope: null,
 
+                    urlScope: null,
+
                     appliedViewId: null,
 
                     appliedViewLabel: null,
@@ -407,6 +409,8 @@
                     const urlFilters = this.parseUrlFilters();
                     const hasUrlFilters = Object.keys(urlFilters).length > 0;
 
+                    this.urlScope = this.parseUrlScope(urlParams);
+
                     if (urlParams.has('search')) {
                         let searchAppliedColumn = this.findAppliedColumn('all');
 
@@ -617,12 +621,16 @@
                         params.filters[column.index] = column.value;
                     });
 
-                    if (this.viewScope?.channel) {
-                        params.channel = this.viewScope.channel;
+                    const channel = this.urlScope?.channel ?? this.viewScope?.channel;
+
+                    if (channel) {
+                        params.channel = channel;
                     }
 
-                    if (this.viewScope?.locale) {
-                        params.locale = this.viewScope.locale;
+                    const locale = this.urlScope?.locale ?? this.viewScope?.locale;
+
+                    if (locale) {
+                        params.locale = locale;
                     }
 
                     params.managedColumns = this.available.meta?.managedColumn?.columns;
@@ -977,29 +985,76 @@
 
                 /**
                  * Parse filter parameters from URL query string.
-                 * Supports format: ?filters[column][]=value
+                 *
+                 * Supports two shapes:
+                 * - value-list filters:     ?filters[column][]=value
+                 * - operator/condition filters (for integer/date/price columns
+                 *   with an operator control, e.g. a dashboard drill-down link
+                 *   that needs "less than 80"): ?filters[column][operator]=lt&filters[column][value]=80
                  *
                  * @returns {object}
                  */
                 parseUrlFilters() {
                     const filters = {};
+                    const conditions = {};
                     const params = new URLSearchParams(window.location.search);
 
                     for (const [key, value] of params.entries()) {
-                        const match = key.match(/^filters\[([^\]]+)\]\[\]$/);
+                        const listMatch = key.match(/^filters\[([^\]]+)\]\[\]$/);
 
-                        if (match) {
-                            const filterIndex = match[1];
+                        if (listMatch) {
+                            const filterIndex = listMatch[1];
 
                             if (! filters[filterIndex]) {
                                 filters[filterIndex] = [];
                             }
 
                             filters[filterIndex].push(value);
+
+                            continue;
+                        }
+
+                        const conditionMatch = key.match(/^filters\[([^\]]+)\]\[(operator|value|value2|currency)\]$/);
+
+                        if (conditionMatch) {
+                            const [, filterIndex, field] = conditionMatch;
+
+                            if (! conditions[filterIndex]) {
+                                conditions[filterIndex] = {};
+                            }
+
+                            conditions[filterIndex][field] = value;
+                        }
+                    }
+
+                    for (const [filterIndex, condition] of Object.entries(conditions)) {
+                        if (condition.operator) {
+                            filters[filterIndex] = [condition];
                         }
                     }
 
                     return filters;
+                },
+
+                /**
+                 * Read the channel/locale scope off the page URL, so a deep link such as the
+                 * dashboard's channel-readiness drill-down wins over a saved view's stored scope.
+                 *
+                 * @param {URLSearchParams} urlParams
+                 * @returns {object|null}
+                 */
+                parseUrlScope(urlParams) {
+                    const scope = {};
+
+                    ['channel', 'locale'].forEach(key => {
+                        const value = urlParams.get(key);
+
+                        if (value) {
+                            scope[key] = value;
+                        }
+                    });
+
+                    return Object.keys(scope).length ? scope : null;
                 },
 
                 /**
