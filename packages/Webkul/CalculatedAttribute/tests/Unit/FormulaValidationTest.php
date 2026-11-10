@@ -121,6 +121,13 @@ it('rejects the range operator, which would build an unbounded array', function 
         ->toThrow(InvalidFormulaException::class, 'The ".." operator is not allowed');
 });
 
+it('rejects the unbounded ~ concatenation operator', function (): void {
+    $validator = calcValidator(['sku' => ['type' => 'text']]);
+
+    expect(fn () => $validator->validate('out', '(sku ~ sku) ~ (sku ~ sku)'))
+        ->toThrow(InvalidFormulaException::class, 'The "~" operator is not allowed');
+});
+
 it('names the calculated attributes a formula reads', function (): void {
     $validator = calcValidator([
         'manufacturer' => ['type' => 'text'],

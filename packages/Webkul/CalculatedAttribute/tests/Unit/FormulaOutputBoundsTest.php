@@ -99,6 +99,29 @@ it('keeps a nested category path separator within the ceiling', function (): voi
         ->and($memory)->toBeLessThan(32 * 1024 * 1024);
 });
 
+it('keeps an array literal repeating a long value within the ceiling', function (string $wrapper): void {
+    $formula = sprintf($wrapper, '['.implode(', ', array_fill(0, 300, 'body')).']');
+
+    [$resolver] = boundsResolver([
+        'body'      => ['type' => 'textarea'],
+        'amplified' => ['type' => 'calculated', 'formula' => $formula],
+    ]);
+
+    $product = new ProductContext(values: ['common' => ['body' => str_repeat('x', 65536)]]);
+
+    $before = memory_get_usage();
+    memory_reset_peak_usage();
+
+    $value = $resolver->resolveOne('amplified', $product, 'default', 'de_DE');
+
+    expect(strtolower((string) $value))->toStartWith('xxxx')
+        ->and(mb_strlen((string) $value))->toBeLessThanOrEqual(FormulaFunctions::MAX_LENGTH)
+        ->and(memory_get_peak_usage() - $before)->toBeLessThan(32 * 1024 * 1024);
+})->with([
+    'returned as the value' => ['%s'],
+    'passed to a function'  => ['upper(%s)'],
+]);
+
 it('still replaces normally below the ceiling', function (string $formula, string $expected): void {
     [$value] = boundsEvaluate($formula);
 

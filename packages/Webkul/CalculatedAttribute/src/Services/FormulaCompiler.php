@@ -35,9 +35,12 @@ class FormulaCompiler
      * foot-gun (catastrophic backtracking inside an export worker) for a
      * capability this feature never advertised. `..` materialises its whole
      * range as an array when evaluated, so `1..100000000` is the same risk by a
-     * different route.
+     * different route. `~` concatenates without any length bound and is not a
+     * function, so `(x~x)~(x~x)` doubles a value per nesting level past the
+     * {@see FormulaFunctions::MAX_LENGTH} ceiling; `concat()` is the bounded
+     * way to combine values.
      */
-    protected const FORBIDDEN_OPERATORS = ['matches', '..'];
+    protected const FORBIDDEN_OPERATORS = ['matches', '..', '~'];
 
     /**
      * Parsed formulas, keyed by source alone.
