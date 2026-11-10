@@ -22,7 +22,7 @@ class AttributeDeletionGuard
      */
     public static function reason(object $attribute): ?string
     {
-        foreach (Event::dispatch(self::EVENT, [$attribute]) as $objection) {
+        foreach (Event::dispatch(self::EVENT, [$attribute]) ?? [] as $objection) {
             if (is_string($objection) && $objection !== '') {
                 return $objection;
             }

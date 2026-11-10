@@ -3,6 +3,10 @@
 use Illuminate\Support\Str;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\CalculatedAttribute\Services\AttributeRegistry;
+use Webkul\DataTransfer\Contracts\JobTrack as JobTrackContract;
+use Webkul\DataTransfer\Helpers\Error;
+use Webkul\DataTransfer\Helpers\Import;
+use Webkul\DataTransfer\Helpers\Importers\Attribute\Importer as AttributeImporter;
 
 /**
  * Deleting an attribute a formula reads empties every column derived from it,
@@ -76,6 +80,26 @@ it('skips an attribute a formula reads during a mass delete', function (): void 
 
     $this->assertDatabaseHas('attributes', ['id' => $source->id]);
     $this->assertDatabaseMissing('attributes', ['id' => $unrelated->id]);
+});
+
+it('refuses to delete an attribute a formula reads, through an attribute import', function (): void {
+    [$source, $derived] = calcDependencyPair();
+
+    $import = Mockery::mock(JobTrackContract::class)->makePartial();
+    $import->action = Import::ACTION_DELETE;
+
+    $errors = app(Error::class);
+
+    $importer = app(AttributeImporter::class);
+    $importer->setErrorHelper($errors);
+    $importer->setImport($import);
+
+    (fn () => $this->attributeStorage->load([$source->code]))->call($importer);
+
+    expect($importer->validateRow(['code' => $source->code], 1))->toBeFalse()
+        ->and(json_encode($errors->getAllErrors()))->toContain($derived->code);
+
+    $this->assertDatabaseHas('attributes', ['id' => $source->id]);
 });
 
 it('allows deleting an attribute no formula reads', function (): void {
