@@ -164,6 +164,44 @@ it('should show the edit attribute form', function () {
         ->assertSeeText(trans('admin::app.catalog.attributes.edit.title'));
 });
 
+it('should reject an unknown validation type on the admin create form', function () {
+    $this->loginAsAdmin();
+
+    $response = postJson(route('admin.catalog.attributes.store'), [
+        'code'       => 'injected_validation',
+        'type'       => 'text',
+        'validation' => 'x: alert(document.domain), y',
+    ]);
+
+    $response->assertStatus(422)->assertJsonValidationErrors('validation');
+
+    $this->assertDatabaseMissing($this->getFullTableName(Attribute::class), ['code' => 'injected_validation']);
+});
+
+it('should still accept a known validation type and none on the admin create form', function (string $validation) {
+    $this->loginAsAdmin();
+
+    postJson(route('admin.catalog.attributes.store'), [
+        'code'       => 'validated_'.$validation,
+        'type'       => 'text',
+        'validation' => $validation,
+    ])->assertStatus(302);
+
+    $this->assertDatabaseHas($this->getFullTableName(Attribute::class), ['code' => 'validated_'.$validation]);
+})->with(['email', 'none']);
+
+it('should reject an unknown validation type on the admin edit form', function () {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create(['type' => 'text']);
+
+    putJson(route('admin.catalog.attributes.update', $attribute->id), [
+        'code'       => $attribute->code,
+        'type'       => $attribute->type,
+        'validation' => 'x: alert(document.domain), y',
+    ])->assertStatus(422)->assertJsonValidationErrors('validation');
+});
+
 it('should update the Attribute', function () {
     $this->loginAsAdmin();
 
