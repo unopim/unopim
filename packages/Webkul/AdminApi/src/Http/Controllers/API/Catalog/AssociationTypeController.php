@@ -226,7 +226,7 @@ class AssociationTypeController extends ApiController
             return $this->modelNotFoundResponse(trans('admin::app.catalog.association_types.fields.not-found', ['code' => $fieldCode]));
         }
 
-        $immutable = array_intersect(['code', 'type'], array_keys(request()->all()));
+        $immutable = array_intersect(['code', 'type', 'association_type_id'], array_keys(request()->all()));
 
         if (! empty($immutable)) {
             return $this->validateErrorResponse([
@@ -284,12 +284,11 @@ class AssociationTypeController extends ApiController
      * entry creates, edits or deletes an association type field, which the
      * dedicated field endpoints guard with their own permissions. The payload
      * checked is the one handed to the repository (after `labels` is merged in),
-     * and an entry counts as an existing field exactly when
-     * `AssociationTypeRepository::update()` would resolve it to one: by its key
-     * unless flagged `isNew`, otherwise or as a fallback by its code. An entry
-     * flagged `isDelete` needs the delete permission, an existing field needs
-     * edit, anything else needs create. An entry naming another association type
-     * is refused, because writing it would move the field out of this type.
+     * and whether an entry addresses an existing field is decided by the
+     * repository's own resolution. An entry flagged `isDelete` needs the delete
+     * permission, an existing field needs edit, anything else needs create. An
+     * entry naming another association type is refused, because writing it
+     * would move the field out of this type.
      */
     protected function mayWriteNestedFields(mixed $fields, ?AssociationType $associationType): bool
     {
@@ -297,7 +296,9 @@ class AssociationTypeController extends ApiController
             return true;
         }
 
-        $existingIds = $associationType?->fields()->pluck('id', 'code') ?? collect();
+        $resolvedIds = $associationType
+            ? $this->associationTypeRepository->resolveFieldIds($associationType->id, $fields)
+            : [];
 
         $scope = app(ScopeMiddleware::class);
 
@@ -308,16 +309,9 @@ class AssociationTypeController extends ApiController
                 return false;
             }
 
-            $isNew = filter_var($entry['isNew'] ?? false, FILTER_VALIDATE_BOOLEAN);
-
-            $code = $entry['code'] ?? null;
-
-            $isExisting = (! $isNew && $existingIds->contains($key))
-                || (is_string($code) && $existingIds->has($code));
-
             $permission = match (true) {
                 filter_var($entry['isDelete'] ?? false, FILTER_VALIDATE_BOOLEAN) => 'api.catalog.association_types.fields.delete',
-                $isExisting                                                      => 'api.catalog.association_types.fields.edit',
+                (bool) ($resolvedIds[$key] ?? null)                              => 'api.catalog.association_types.fields.edit',
                 default                                                          => 'api.catalog.association_types.fields.create',
             };
 

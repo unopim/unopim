@@ -188,3 +188,39 @@ it('accepts a nested entry that names its own association type', function (): vo
 
     expect((bool) $field->fresh()->is_required)->toBeTrue();
 });
+
+it('treats an entry with a numeric code as an edit of the field with that code', function (): void {
+    $code = 'bundle_'.Str::random(8);
+
+    $associationType = app(AssociationTypeRepository::class)->create([
+        'code'            => $code,
+        'is_user_defined' => 1,
+        'fields'          => [['code' => '123', 'type' => 'text', 'is_required' => 0]],
+    ]);
+
+    $field = $associationType->fields()->first();
+
+    $this->withHeaders(headersWithAssociationTypePermissions(['api.catalog.association_types.edit', 'api.catalog.association_types.fields.create']))
+        ->json('PUT', route('admin.api.association-types.update', ['code' => $code]), [
+            'fields' => [['code' => 123, 'type' => 'text', 'is_required' => 1]],
+        ])
+        ->assertForbidden();
+
+    expect((bool) $field->fresh()->is_required)->toBeFalse()
+        ->and($associationType->fields()->count())->toBe(1);
+});
+
+it('refuses moving a field to another association type through the field endpoint', function (): void {
+    [$code, $field] = associationTypeWithQuantityField();
+
+    [, $otherField] = associationTypeWithQuantityField();
+
+    $this->withHeaders(headersWithAssociationTypePermissions(['api.catalog.association_types.fields.edit']))
+        ->json('PUT', route('admin.api.association-types-fields.update', ['code' => $code, 'fieldCode' => 'quantity']), [
+            'association_type_id' => $otherField->association_type_id,
+        ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors('immutable');
+
+    expect($field->fresh()->association_type_id)->not->toBe($otherField->association_type_id);
+});
