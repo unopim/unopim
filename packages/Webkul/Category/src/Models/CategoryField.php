@@ -9,9 +9,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Webkul\Category\Contracts\CategoryField as CategoryFieldContract;
 use Webkul\Category\Database\Factories\CategoryFieldFactory;
 use Webkul\Core\Eloquent\TranslatableModel;
-use Webkul\Core\Rules\Decimal;
 use Webkul\Core\Rules\FileOrImageValidValue;
-use Webkul\Core\Traits\ClientValidationRule;
+use Webkul\Core\Traits\ValidationSettingRules;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 
@@ -30,9 +29,9 @@ use Webkul\HistoryControl\Traits\HistoryTrait;
 ])]
 class CategoryField extends TranslatableModel implements CategoryFieldContract, HistoryContract
 {
-    use ClientValidationRule;
     use HasFactory;
     use HistoryTrait;
+    use ValidationSettingRules;
 
     const NON_DELETABLE_FIELD_CODE = 'name';
 
@@ -129,13 +128,10 @@ class CategoryField extends TranslatableModel implements CategoryFieldContract, 
 
         $validations[] = $this->is_required ? 'required' : 'nullable';
 
-        if ($this->validation) {
-            $validations[] = match ($this->validation) {
-                'regex'   => 'regex: "'.$this->regex_pattern.'"',
-                'number'  => 'numeric',
-                'decimal' => new Decimal,
-                default   => $this->validation
-            };
+        $serverRule = $this->serverValidationRule();
+
+        if ($serverRule !== null) {
+            $validations[] = $serverRule;
         }
 
         return $validations;
@@ -239,13 +235,10 @@ class CategoryField extends TranslatableModel implements CategoryFieldContract, 
             $validations[] = $rule;
         }
 
-        if ($this->validation) {
-            $validations[] = match ($this->validation) {
-                'regex'   => 'regex: "'.$this->regex_pattern.'"',
-                'number'  => 'numeric',
-                'decimal' => new Decimal,
-                default   => $this->validation
-            };
+        $serverRule = $this->serverValidationRule();
+
+        if ($serverRule !== null) {
+            $validations[] = $serverRule;
         }
 
         return $validations;

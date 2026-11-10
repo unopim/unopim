@@ -14,10 +14,9 @@ use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Core\Eloquent\TranslatableModel;
 use Webkul\Core\Helpers\MediaContent;
 use Webkul\Core\Rules\BooleanString;
-use Webkul\Core\Rules\Decimal;
 use Webkul\Core\Rules\FileOrImageValidValue;
 use Webkul\Core\Rules\Sku;
-use Webkul\Core\Traits\ClientValidationRule;
+use Webkul\Core\Traits\ValidationSettingRules;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Interfaces\PresentableHistoryInterface;
 use Webkul\HistoryControl\Traits\HistoryTrait;
@@ -44,9 +43,9 @@ use Webkul\Product\Validator\Rule\Elasticsearch\UniqueAttributeValue;
 ])]
 class Attribute extends TranslatableModel implements AttributeContract, HistoryContract, PresentableHistoryInterface
 {
-    use ClientValidationRule;
     use HasFactory;
     use HistoryTrait;
+    use ValidationSettingRules;
 
     const TEXT_TYPE = 'text';
 
@@ -232,13 +231,10 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
             $validations[] = $rule;
         }
 
-        if ($this->validation) {
-            $validations[] = match ($this->validation) {
-                'regex'   => 'regex: "'.$this->regex_pattern.'"',
-                'number'  => 'numeric',
-                'decimal' => new Decimal,
-                default   => $this->validation
-            };
+        $serverRule = $this->serverValidationRule();
+
+        if ($serverRule !== null) {
+            $validations[] = $serverRule;
         }
 
         if ($this->code === 'sku') {

@@ -3,6 +3,7 @@
 use Illuminate\Database\Eloquent\Model;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Category\Models\CategoryField;
+use Webkul\Core\Rules\Decimal;
 
 dataset('fields with client-side rules', [
     'attribute'      => [Attribute::class],
@@ -19,6 +20,21 @@ function clientRulesFor(string $class, array $settings): string
     $field->forceFill($settings);
 
     return $field->getValidationsField();
+}
+
+/**
+ * @param  class-string<Model>  $class
+ * @param  array<string, string>  $settings
+ * @return array<int, mixed>
+ */
+function serverRulesFor(string $class, array $settings): array
+{
+    $field = new $class;
+    $field->forceFill(['type' => 'text', 'code' => 'field_under_test', ...$settings]);
+
+    return $field instanceof Attribute
+        ? $field->getValidationRules(withUniqueValidation: false)
+        : $field->getValidationsFieldWithOutMedia();
 }
 
 it('keeps a quote in the regex pattern inside one string literal', function (string $class): void {
@@ -47,4 +63,23 @@ it('still renders the known validation types', function (string $class, string $
     ['url', '{ url: true }'],
     ['decimal', '{ decimal: true }'],
     ['number', '{ numeric: true }'],
+]);
+
+it('does not hand an unknown stored validation type to the server-side validator', function (string $class): void {
+    expect(serverRulesFor($class, ['validation' => 'exists:admin_users,email']))
+        ->not->toContain('exists:admin_users,email')
+        ->toBe(['nullable']);
+})->with('fields with client-side rules');
+
+it('maps the known validation types to server-side rules', function (string $class, string $validation, string $expected): void {
+    $rules = serverRulesFor($class, ['validation' => $validation]);
+
+    $expected === Decimal::class
+        ? expect(end($rules))->toBeInstanceOf(Decimal::class)
+        : expect(end($rules))->toBe($expected);
+})->with('fields with client-side rules')->with([
+    ['email', 'email'],
+    ['url', 'url'],
+    ['number', 'numeric'],
+    ['decimal', Decimal::class],
 ]);
