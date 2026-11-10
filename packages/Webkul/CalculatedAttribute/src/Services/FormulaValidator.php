@@ -70,12 +70,14 @@ class FormulaValidator
      */
     protected function assertAcyclic(string $code, array $dependencies): void
     {
+        $explored = [];
+
         foreach ($dependencies as $dependency) {
             if (! $this->registry->isCalculated($dependency)) {
                 continue;
             }
 
-            $path = $this->findPath($dependency, $code, [$dependency]);
+            $path = $this->findPath($dependency, $code, [$dependency], $explored);
 
             if ($path !== null) {
                 throw InvalidFormulaException::circular(array_merge([$code], $path));
@@ -90,17 +92,31 @@ class FormulaValidator
      * was renamed or deleted) contributes no edges: failing here would block
      * editing an unrelated attribute.
      *
+     * `$explored` is shared by every search made for one save. An attribute
+     * whose dependencies have all been searched without reaching `$target`
+     * can never reach it, so it is expanded once per save rather than once per
+     * route that leads to it. Without that, the cost grows with the number of
+     * distinct paths, which is exponential for a ladder of formulas that each
+     * read all the previous ones.
+     *
      * @param  array<int, string>  $visited  the path walked so far, used both as
      *                                       the cycle report and as the guard
      *                                       against looping on a graph that is
      *                                       already cyclic in the database
+     * @param  array<string, true>  $explored  attributes already searched to the end
      * @return array<int, string>|null the path including `$target`, or null
      */
-    protected function findPath(string $from, string $target, array $visited): ?array
+    protected function findPath(string $from, string $target, array $visited, array &$explored): ?array
     {
         if ($from === $target) {
             return $visited;
         }
+
+        if (isset($explored[$from])) {
+            return null;
+        }
+
+        $explored[$from] = true;
 
         $formula = $this->registry->formula($from);
 
@@ -123,7 +139,7 @@ class FormulaValidator
                 continue;
             }
 
-            $path = $this->findPath($dependency, $target, array_merge($visited, [$dependency]));
+            $path = $this->findPath($dependency, $target, array_merge($visited, [$dependency]), $explored);
 
             if ($path !== null) {
                 return $path;
