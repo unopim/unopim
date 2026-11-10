@@ -408,6 +408,11 @@ class FormulaFunctions implements ExpressionFunctionProviderInterface
     /**
      * Render any supported value as a string. Arrays (multiselect, gallery) are
      * comma-joined, which matches how the exporter already flattens them.
+     *
+     * The join stops at {@see MAX_LENGTH}: an array literal repeating a long
+     * value (`[x, x, x, ...]`) would otherwise flatten into a string hundreds of
+     * times the size of anything in the product. A scalar is returned whole, so
+     * `length()` still measures a long text correctly.
      */
     public static function toString(mixed $value): string
     {
@@ -420,7 +425,17 @@ class FormulaFunctions implements ExpressionFunctionProviderInterface
         }
 
         if (is_array($value)) {
-            return implode(',', array_map(static fn (mixed $item): string => self::toString($item), $value));
+            $result = '';
+
+            foreach (array_values($value) as $index => $item) {
+                $result .= ($index === 0 ? '' : ',').mb_substr(self::toString($item), 0, self::MAX_LENGTH);
+
+                if (strlen($result) >= self::MAX_LENGTH) {
+                    return mb_substr($result, 0, self::MAX_LENGTH);
+                }
+            }
+
+            return $result;
         }
 
         if (is_scalar($value)) {
