@@ -3,8 +3,10 @@
 namespace Webkul\Admin\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Webkul\Attribute\Rules\NotSupportedAttributes;
 use Webkul\Attribute\Rules\SwatchTypes;
+use Webkul\Attribute\Rules\ValidationTypes;
 use Webkul\Attribute\Support\AttributeValidationRules;
 use Webkul\Core\Rules\Code;
 
@@ -35,6 +37,7 @@ class AttributeStoreForm extends FormRequest
                 'prohibited_unless:type,select,multiselect',
                 new SwatchTypes,
             ],
+            'validation'  => ['nullable', Rule::in([...ValidationTypes::VALIDATION_TYPES, 'none'])],
         ], $this->all());
     }
 }
