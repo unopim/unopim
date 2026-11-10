@@ -128,6 +128,38 @@ it('rejects the unbounded ~ concatenation operator', function (): void {
         ->toThrow(InvalidFormulaException::class, 'The "~" operator is not allowed');
 });
 
+it('checks a densely connected ladder of formulas in linear time', function (): void {
+    $attributes = ['a1' => ['type' => 'calculated', 'formula' => "concat('-', sku)"], 'sku' => ['type' => 'text']];
+
+    for ($level = 2; $level <= 24; $level++) {
+        $previous = implode(', ', array_map(fn (int $index): string => "a{$index}", range(1, $level - 1)));
+
+        $attributes["a{$level}"] = ['type' => 'calculated', 'formula' => "concat('-', {$previous})"];
+    }
+
+    $validator = calcValidator($attributes);
+
+    $started = microtime(true);
+
+    $validator->validate('top', "concat('-', ".implode(', ', array_map(fn (int $index): string => "a{$index}", range(1, 24))).')');
+
+    expect(microtime(true) - $started)->toBeLessThan(2.0);
+});
+
+it('still finds a cycle that runs through an already explored branch', function (): void {
+    $validator = calcValidator([
+        'a'   => ['type' => 'calculated', 'formula' => "concat('-', c, b)"],
+        'b'   => ['type' => 'calculated', 'formula' => "concat('-', c, d)"],
+        'c'   => ['type' => 'calculated', 'formula' => "concat('-', sku)"],
+        'd'   => ['type' => 'calculated', 'formula' => "concat('-', c, top)"],
+        'top' => ['type' => 'calculated', 'formula' => "concat('-', sku)"],
+        'sku' => ['type' => 'text'],
+    ]);
+
+    expect(fn () => $validator->validate('top', "concat('-', c, a)"))
+        ->toThrow(InvalidFormulaException::class, 'top -> a -> b -> d -> top');
+});
+
 it('names the calculated attributes a formula reads', function (): void {
     $validator = calcValidator([
         'manufacturer' => ['type' => 'text'],
