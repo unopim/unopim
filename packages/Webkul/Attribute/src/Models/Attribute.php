@@ -231,11 +231,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
             $validations[] = $rule;
         }
 
-        $serverRule = $this->serverValidationRule();
-
-        if ($serverRule !== null) {
-            $validations[] = $serverRule;
-        }
+        $validations = [...$validations, ...$this->serverValidationRules()];
 
         if ($this->code === 'sku') {
             $validations[] = new Sku;

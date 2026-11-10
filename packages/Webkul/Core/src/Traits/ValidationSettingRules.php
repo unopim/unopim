@@ -58,4 +58,17 @@ trait ValidationSettingRules
             default             => null,
         };
     }
+
+    /**
+     * The server-side rule for the configured validation as a list, empty when
+     * there is none, so callers can spread it onto their own rules.
+     *
+     * @return array<int, string|ValidationRule>
+     */
+    protected function serverValidationRules(): array
+    {
+        $rule = $this->serverValidationRule();
+
+        return $rule === null ? [] : [$rule];
+    }
 }

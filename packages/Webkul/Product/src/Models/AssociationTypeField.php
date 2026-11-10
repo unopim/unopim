@@ -154,13 +154,7 @@ class AssociationTypeField extends TranslatableModel implements AssociationTypeF
             $validations[] = 'nullable';
         }
 
-        $serverRule = $this->serverValidationRule();
-
-        if ($serverRule !== null) {
-            $validations[] = $serverRule;
-        }
-
-        return $validations;
+        return [...$validations, ...$this->serverValidationRules()];
     }
 
     /**
@@ -244,13 +238,7 @@ class AssociationTypeField extends TranslatableModel implements AssociationTypeF
             $validations[] = $rule;
         }
 
-        $serverRule = $this->serverValidationRule();
-
-        if ($serverRule !== null) {
-            $validations[] = $serverRule;
-        }
-
-        return $validations;
+        return [...$validations, ...$this->serverValidationRules()];
     }
 
     /**

@@ -150,6 +150,51 @@ it('rejects a nested field validation outside the offered types when updating an
     expect($field->fresh()->validation)->toBe('number');
 });
 
+it('rejects nested fields the single-field endpoints would reject when creating an association type', function (array $field, string $error): void {
+    $code = 'bundle_'.Str::random(8);
+
+    $this->withHeaders($this->headers)
+        ->json('POST', route('admin.api.association-types.store'), [
+            'code'   => $code,
+            'fields' => [$field],
+        ])
+        ->assertStatus(422)
+        ->assertJsonValidationErrors($error);
+
+    expect(app(AssociationTypeRepository::class)->findByCode($code))->toBeNull();
+})->with([
+    'missing code'        => [['type' => 'text'], 'fields.0.code'],
+    'invalid code'        => [['code' => 'not a code!', 'type' => 'text'], 'fields.0.code'],
+    'unknown type'        => [['code' => 'quantity', 'type' => 'unknown_type'], 'fields.0.type'],
+    'non-boolean flag'    => [['code' => 'quantity', 'type' => 'text', 'is_required' => 'maybe'], 'fields.0.is_required'],
+    'owning type'         => [['code' => 'quantity', 'type' => 'text', 'association_type_id' => 1], 'fields.0.association_type_id'],
+]);
+
+it('rejects moving a nested field onto another association type when updating', function (): void {
+    $repository = app(AssociationTypeRepository::class);
+
+    $code = 'bundle_'.Str::random(8);
+
+    $associationType = $repository->create([
+        'code'            => $code,
+        'is_user_defined' => 1,
+        'fields'          => [['code' => 'quantity', 'type' => 'text']],
+    ]);
+
+    $other = $repository->create(['code' => 'bundle_'.Str::random(8), 'is_user_defined' => 1]);
+
+    $field = $associationType->fields()->first();
+
+    $this->withHeaders($this->headers)
+        ->json('PUT', route('admin.api.association-types.update', ['code' => $code]), [
+            'fields' => [$field->id => ['code' => 'quantity', 'association_type_id' => $other->id]],
+        ])
+        ->assertStatus(422)
+        ->assertJsonValidationErrors('fields.'.$field->id.'.association_type_id');
+
+    expect($field->fresh()->association_type_id)->toBe($associationType->id);
+});
+
 it('accepts nested fields with an offered validation type when creating an association type', function (): void {
     $code = 'bundle_'.Str::random(8);
 

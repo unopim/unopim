@@ -128,13 +128,7 @@ class CategoryField extends TranslatableModel implements CategoryFieldContract, 
 
         $validations[] = $this->is_required ? 'required' : 'nullable';
 
-        $serverRule = $this->serverValidationRule();
-
-        if ($serverRule !== null) {
-            $validations[] = $serverRule;
-        }
-
-        return $validations;
+        return [...$validations, ...$this->serverValidationRules()];
     }
 
     /**
@@ -235,13 +229,7 @@ class CategoryField extends TranslatableModel implements CategoryFieldContract, 
             $validations[] = $rule;
         }
 
-        $serverRule = $this->serverValidationRule();
-
-        if ($serverRule !== null) {
-            $validations[] = $serverRule;
-        }
-
-        return $validations;
+        return [...$validations, ...$this->serverValidationRules()];
     }
 
     /**

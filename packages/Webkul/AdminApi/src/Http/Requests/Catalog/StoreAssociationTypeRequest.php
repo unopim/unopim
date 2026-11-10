@@ -3,25 +3,25 @@
 namespace Webkul\AdminApi\Http\Requests\Catalog;
 
 use Webkul\AdminApi\Http\Requests\ApiFormRequest;
-use Webkul\Category\Rules\ValidationTypes;
+use Webkul\AdminApi\Http\Requests\Catalog\Concerns\ValidatesNestedAssociationTypeFields;
 use Webkul\Core\Rules\Code;
 use Webkul\Product\Rules\AssociationNotSupportedFields;
 
 class StoreAssociationTypeRequest extends ApiFormRequest
 {
+    use ValidatesNestedAssociationTypeFields;
+
     public function rules(): array
     {
         $rules = [
-            'code'                => [
+            'code' => [
                 'required',
                 'unique:association_types,code',
                 new Code,
                 new AssociationNotSupportedFields,
             ],
-            'status'              => ['sometimes', 'boolean'],
-            'fields'              => ['sometimes', 'array'],
-            'fields.*'            => ['array'],
-            'fields.*.validation' => ['sometimes', 'nullable', new ValidationTypes],
+            'status' => ['sometimes', 'boolean'],
+            ...$this->nestedFieldRules(creating: true),
         ];
 
         foreach (core()->getAllActiveLocales() as $locale) {
