@@ -3,6 +3,7 @@
 namespace Webkul\AdminApi\Http\Requests\Catalog;
 
 use Webkul\AdminApi\Http\Requests\ApiFormRequest;
+use Webkul\Category\Rules\ValidationTypes;
 use Webkul\Core\Rules\Code;
 use Webkul\Product\Rules\AssociationNotSupportedFields;
 
@@ -11,13 +12,16 @@ class StoreAssociationTypeRequest extends ApiFormRequest
     public function rules(): array
     {
         $rules = [
-            'code' => [
+            'code'                => [
                 'required',
                 'unique:association_types,code',
                 new Code,
                 new AssociationNotSupportedFields,
             ],
-            'status' => ['sometimes', 'boolean'],
+            'status'              => ['sometimes', 'boolean'],
+            'fields'              => ['sometimes', 'array'],
+            'fields.*'            => ['array'],
+            'fields.*.validation' => ['sometimes', 'nullable', new ValidationTypes],
         ];
 
         foreach (core()->getAllActiveLocales() as $locale) {

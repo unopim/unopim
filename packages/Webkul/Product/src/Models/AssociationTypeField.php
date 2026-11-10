@@ -5,8 +5,8 @@ namespace Webkul\Product\Models;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Webkul\Core\Eloquent\TranslatableModel;
-use Webkul\Core\Rules\Decimal;
 use Webkul\Core\Rules\FileOrImageValidValue;
+use Webkul\Core\Traits\ValidationSettingRules;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\Product\Contracts\AssociationTypeField as AssociationTypeFieldContract;
@@ -14,6 +14,7 @@ use Webkul\Product\Contracts\AssociationTypeField as AssociationTypeFieldContrac
 class AssociationTypeField extends TranslatableModel implements AssociationTypeFieldContract, HistoryContract
 {
     use HistoryTrait;
+    use ValidationSettingRules;
 
     /** Tags for History */
     protected $historyTags = ['association_type'];
@@ -135,17 +136,9 @@ class AssociationTypeField extends TranslatableModel implements AssociationTypeF
             }
         }
 
-        if ($this->validation) {
-            $validations[] = match ($this->validation) {
-                'regex'  => 'regex: "'.$this->regex_pattern.'"',
-                'number' => 'numeric: true',
-                default  => $this->validation.': true'
-            };
-        }
+        $validations[] = $this->clientValidationRule();
 
-        $validations = '{ '.implode(', ', array_filter($validations)).' }';
-
-        return $validations;
+        return '{ '.implode(', ', array_filter($validations)).' }';
     }
 
     /**
@@ -161,13 +154,10 @@ class AssociationTypeField extends TranslatableModel implements AssociationTypeF
             $validations[] = 'nullable';
         }
 
-        if ($this->validation) {
-            $validations[] = match ($this->validation) {
-                'regex'   => 'regex: "'.$this->regex_pattern.'"',
-                'number'  => 'numeric',
-                'decimal' => new Decimal,
-                default   => $this->validation
-            };
+        $serverRule = $this->serverValidationRule();
+
+        if ($serverRule !== null) {
+            $validations[] = $serverRule;
         }
 
         return $validations;
@@ -254,13 +244,10 @@ class AssociationTypeField extends TranslatableModel implements AssociationTypeF
             $validations[] = $rule;
         }
 
-        if ($this->validation) {
-            $validations[] = match ($this->validation) {
-                'regex'   => 'regex: "'.$this->regex_pattern.'"',
-                'number'  => 'numeric',
-                'decimal' => new Decimal,
-                default   => $this->validation
-            };
+        $serverRule = $this->serverValidationRule();
+
+        if ($serverRule !== null) {
+            $validations[] = $serverRule;
         }
 
         return $validations;

@@ -2,7 +2,9 @@
 
 namespace Webkul\Core\Traits;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Webkul\Core\Rules\Decimal;
+use Webkul\Core\Rules\StoredRegexPattern;
 
 /**
  * Turns a field's `validation` / `regex_pattern` settings into rules: one entry
@@ -15,7 +17,10 @@ use Webkul\Core\Rules\Decimal;
  * apostrophes hex-escaped, and a validation type that is not a plain identifier
  * is dropped. Server-side, only the known validation types map to a rule; any
  * other stored value is ignored instead of being handed to the validator,
- * where something like `exists:admin_users,email` would run a query.
+ * where something like `exists:admin_users,email` would run a query. The
+ * pattern goes to the validator as a rule object rather than a `regex:` string,
+ * so it never reaches Laravel's rule-string parser. `numeric` is the legacy
+ * spelling of `number` that seeded demo attributes still carry.
  *
  * @property string|null $validation
  * @property string|null $regex_pattern
@@ -33,9 +38,9 @@ trait ValidationSettingRules
         }
 
         return match ($this->validation) {
-            'regex'  => 'regex: '.json_encode((string) $this->regex_pattern, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE),
-            'number' => 'numeric: true',
-            default  => preg_match('/^[a-z_]+$/', (string) $this->validation) === 1 ? $this->validation.': true' : null,
+            'regex'             => 'regex: '.json_encode((string) $this->regex_pattern, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE),
+            'number', 'numeric' => 'numeric: true',
+            default             => preg_match('/^[a-z_]+$/', (string) $this->validation) === 1 ? $this->validation.': true' : null,
         };
     }
 
@@ -43,14 +48,14 @@ trait ValidationSettingRules
      * The server-side rule for the configured validation, or null when there
      * is none or the stored type is not one this application offers.
      */
-    protected function serverValidationRule(): string|Decimal|null
+    protected function serverValidationRule(): string|ValidationRule|null
     {
         return match ($this->validation) {
-            'regex'        => 'regex: "'.$this->regex_pattern.'"',
-            'number'       => 'numeric',
-            'decimal'      => new Decimal,
-            'email', 'url' => $this->validation,
-            default        => null,
+            'regex'             => new StoredRegexPattern((string) $this->regex_pattern),
+            'number', 'numeric' => 'numeric',
+            'decimal'           => new Decimal,
+            'email', 'url'      => $this->validation,
+            default             => null,
         };
     }
 }

@@ -112,6 +112,57 @@ it('rejects updating the immutable code and is_user_defined fields', function ()
         ->and(app(AssociationTypeRepository::class)->findByCode('renamed'))->toBeNull();
 });
 
+it('rejects a nested field validation outside the offered types when creating an association type', function (mixed $validation): void {
+    $code = 'bundle_'.Str::random(8);
+
+    $this->withHeaders($this->headers)
+        ->json('POST', route('admin.api.association-types.store'), [
+            'code'   => $code,
+            'fields' => [['code' => 'quantity', 'type' => 'text', 'validation' => $validation]],
+        ])
+        ->assertStatus(422)
+        ->assertJsonValidationErrors('fields.0.validation');
+
+    expect(app(AssociationTypeRepository::class)->findByCode($code))->toBeNull();
+})->with([
+    'rule string' => ['exists:admin_users,email'],
+    'boolean'     => [true],
+]);
+
+it('rejects a nested field validation outside the offered types when updating an association type', function (): void {
+    $code = 'bundle_'.Str::random(8);
+
+    $associationType = app(AssociationTypeRepository::class)->create([
+        'code'            => $code,
+        'is_user_defined' => 1,
+        'fields'          => [['code' => 'quantity', 'type' => 'text', 'validation' => 'number']],
+    ]);
+
+    $field = $associationType->fields()->where('code', 'quantity')->first();
+
+    $this->withHeaders($this->headers)
+        ->json('PUT', route('admin.api.association-types.update', ['code' => $code]), [
+            'fields' => [$field->id => ['code' => 'quantity', 'validation' => 'exists:admin_users,email']],
+        ])
+        ->assertStatus(422)
+        ->assertJsonValidationErrors('fields.'.$field->id.'.validation');
+
+    expect($field->fresh()->validation)->toBe('number');
+});
+
+it('accepts nested fields with an offered validation type when creating an association type', function (): void {
+    $code = 'bundle_'.Str::random(8);
+
+    $this->withHeaders($this->headers)
+        ->json('POST', route('admin.api.association-types.store'), [
+            'code'   => $code,
+            'fields' => [['code' => 'quantity', 'type' => 'text', 'validation' => 'number']],
+        ])
+        ->assertStatus(201);
+
+    expect(app(AssociationTypeRepository::class)->findByCode($code)->fields()->value('validation'))->toBe('number');
+});
+
 it('deletes a user-defined association type', function () {
     $code = 'bundle_'.Str::random(8);
 
