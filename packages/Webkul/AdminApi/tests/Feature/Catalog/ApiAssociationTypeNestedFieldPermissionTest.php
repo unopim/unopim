@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Str;
+use Webkul\AdminApi\Http\Middleware\LocaleMiddleware;
 use Webkul\Product\Repositories\AssociationTypeRepository;
 
 /**
@@ -109,4 +110,81 @@ it('still updates an association type without nested fields under the type permi
         ->assertOk();
 
     expect((bool) app(AssociationTypeRepository::class)->findByCode($code)->status)->toBeFalse();
+});
+
+it('refuses nested fields in the labels envelope as an unknown locale', function (): void {
+    $code = 'bundle_'.Str::random(8);
+
+    $this->withHeaders(headersWithAssociationTypePermissions(['api.catalog.association_types.create']))
+        ->json('POST', route('admin.api.association-types.store'), [
+            'code'   => $code,
+            'labels' => ['fields' => ['code' => 'quantity', 'type' => 'text']],
+        ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors('locale');
+
+    expect(app(AssociationTypeRepository::class)->findByCode($code))->toBeNull();
+});
+
+it('checks nested fields from the labels envelope even without the locale middleware', function (): void {
+    $this->withoutMiddleware(LocaleMiddleware::class);
+
+    $code = 'bundle_'.Str::random(8);
+
+    $this->withHeaders(headersWithAssociationTypePermissions(['api.catalog.association_types.create']))
+        ->json('POST', route('admin.api.association-types.store'), [
+            'code'   => $code,
+            'labels' => ['fields' => ['code' => 'quantity', 'type' => 'text']],
+        ])
+        ->assertForbidden();
+
+    expect(app(AssociationTypeRepository::class)->findByCode($code))->toBeNull();
+
+    [$existingCode, $field] = associationTypeWithQuantityField();
+
+    $this->withHeaders(headersWithAssociationTypePermissions(['api.catalog.association_types.edit']))
+        ->json('PUT', route('admin.api.association-types.update', ['code' => $existingCode]), [
+            'labels' => ['fields' => ['code' => 'quantity', 'isDelete' => 'true']],
+        ])
+        ->assertForbidden();
+
+    expect($field->fresh())->not->toBeNull();
+});
+
+it('treats a non-canonical id key as an edit of the field it resolves to', function (): void {
+    [$code, $field] = associationTypeWithQuantityField();
+
+    $this->withHeaders(headersWithAssociationTypePermissions(['api.catalog.association_types.edit', 'api.catalog.association_types.fields.create']))
+        ->json('PUT', route('admin.api.association-types.update', ['code' => $code]), [
+            'fields' => ['0'.$field->id => ['is_required' => 1]],
+        ])
+        ->assertForbidden();
+
+    expect((bool) $field->fresh()->is_required)->toBeFalse();
+});
+
+it('refuses a nested entry that names another association type', function (): void {
+    [$code, $field] = associationTypeWithQuantityField();
+
+    [, $otherField] = associationTypeWithQuantityField();
+
+    $this->withHeaders(headersWithAssociationTypePermissions(['api.catalog.association_types.edit', 'api.catalog.association_types.fields.edit']))
+        ->json('PUT', route('admin.api.association-types.update', ['code' => $code]), [
+            'fields' => [$field->id => ['code' => 'quantity', 'association_type_id' => $otherField->association_type_id]],
+        ])
+        ->assertForbidden();
+
+    expect($field->fresh()->association_type_id)->not->toBe($otherField->association_type_id);
+});
+
+it('accepts a nested entry that names its own association type', function (): void {
+    [$code, $field] = associationTypeWithQuantityField();
+
+    $this->withHeaders(headersWithAssociationTypePermissions(['api.catalog.association_types.edit', 'api.catalog.association_types.fields.edit']))
+        ->json('PUT', route('admin.api.association-types.update', ['code' => $code]), [
+            'fields' => [$field->id => ['code' => 'quantity', 'is_required' => 1, 'association_type_id' => $field->association_type_id]],
+        ])
+        ->assertOk();
+
+    expect((bool) $field->fresh()->is_required)->toBeTrue();
 });
