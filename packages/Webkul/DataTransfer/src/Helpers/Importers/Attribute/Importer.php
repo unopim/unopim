@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Validator;
 use Webkul\Attribute\Repositories\AttributeRepository;
+use Webkul\Attribute\Support\AttributeDeletionGuard;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Core\Rules\Code;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
@@ -23,6 +24,8 @@ class Importer extends AbstractImporter
     public const ERROR_NOT_FOUND_LOCALE = 'locale_not_exist';
 
     public const ERROR_CODE_IS_SYSTEM = 'code_is_system';
+
+    public const ERROR_CODE_IS_REFERENCED = 'code_is_referenced';
 
     /**
      * Boolean attribute columns
@@ -153,6 +156,14 @@ class Importer extends AbstractImporter
                 return false;
             }
 
+            $objection = $this->deletionObjection($id, $rowData['code']);
+
+            if ($objection !== null) {
+                $this->skipRow($rowNumber, self::ERROR_CODE_IS_REFERENCED, 'code', str_replace('%', '%%', $objection));
+
+                return false;
+            }
+
             return true;
         }
 
@@ -246,7 +257,13 @@ class Importer extends AbstractImporter
                 continue;
             }
 
-            $idsToDelete[] = $this->attributeStorage->get($rowData['code']);
+            $id = $this->attributeStorage->get($rowData['code']);
+
+            if ($this->deletionObjection($id, $rowData['code']) !== null) {
+                continue;
+            }
+
+            $idsToDelete[] = $id;
         }
 
         $idsToDelete = array_unique($idsToDelete);
@@ -255,6 +272,19 @@ class Importer extends AbstractImporter
         $this->attributeRepository->deleteWhere([['id', 'IN', $idsToDelete]]);
 
         return true;
+    }
+
+    /**
+     * Why the attribute may not be deleted, or null when nothing objects.
+     *
+     * Runs the same guard as the admin and REST delete paths, so a package
+     * that refuses a deletion (e.g. because a formula reads the attribute) is
+     * not bypassed by an import. It is asked again while deleting because the
+     * data may have changed since the row was validated.
+     */
+    protected function deletionObjection(mixed $id, string $code): ?string
+    {
+        return AttributeDeletionGuard::reason((object) ['id' => $id, 'code' => $code]);
     }
 
     /**
