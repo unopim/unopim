@@ -10,6 +10,7 @@ use Webkul\Category\Repositories\CategoryFieldRepository;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Repositories\CurrencyRepository;
 use Webkul\Core\Repositories\LocaleRepository;
+use Webkul\Measurement\Helpers\MeasurementHelper;
 use Webkul\Measurement\Repositories\AttributeMeasurementRepository;
 use Webkul\Measurement\Repositories\MeasurementFamilyRepository;
 
@@ -36,7 +37,7 @@ class MeasurementOptionsController extends AbstractOptionsController
     /**
      * Get measurement unit options for the given attribute.
      */
-    public function getOptions(): JsonResponse
+    public function getOptions(MeasurementHelper $measurementHelper): JsonResponse
     {
         $attributeId = request('attribute_id');
         $page = request('page', 1);
@@ -61,9 +62,11 @@ class MeasurementOptionsController extends AbstractOptionsController
         $this->measurementFamilyRepository->findOneByField('code', $familyCode);
         $defaultUnit = $attributeMeasurement?->unit_code;
 
+        $displayUnitSymbol = $measurementHelper->displaysUnitSymbol();
+
         $units = collect(
             $this->measurementFamilyRepository->getUnitsByFamilyCode($familyCode)
-        )->map(function ($unit) use ($currentLocale, $currentLang, $defaultUnit) {
+        )->map(function ($unit) use ($currentLocale, $currentLang, $defaultUnit, $measurementHelper, $displayUnitSymbol) {
 
             $labels = $unit['labels'] ?? [];
 
@@ -77,7 +80,7 @@ class MeasurementOptionsController extends AbstractOptionsController
 
             return (object) [
                 'id'         => $unit['code'],
-                'label'      => $label,
+                'label'      => $measurementHelper->formatUnitLabel($unit, $label, $displayUnitSymbol),
                 'code'       => $unit['code'],
                 'is_default' => $unit['code'] === $defaultUnit,
                 'attribute'  => [

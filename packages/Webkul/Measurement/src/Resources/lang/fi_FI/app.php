@@ -124,6 +124,8 @@ return [
                     'base'           => 'Perusarvon desimaalit',
                     'base-info'      => 'Vakioyksikköön muunnetulle arvolle säilytettävien desimaalien määrä.',
                 ],
+                'display-unit-symbol'      => 'Näytä yksiköiden symbolit',
+                'display-unit-symbol-info' => 'Näytä mittausarvot yksikön symbolilla (esimerkiksi 100 °C) yksikön nimen sijaan hallinnassa ja vienneissä. Yksiköt, joilla ei ole symbolia, näytetään nimellään.',
             ],
         ],
     ],

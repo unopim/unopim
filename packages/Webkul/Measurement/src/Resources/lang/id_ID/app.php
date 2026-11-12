@@ -124,6 +124,8 @@ return [
                     'base'           => 'Desimal nilai dasar',
                     'base-info'      => 'Jumlah tempat desimal yang dipertahankan untuk nilai yang dikonversi ke unit standar.',
                 ],
+                'display-unit-symbol'      => 'Tampilkan simbol satuan',
+                'display-unit-symbol-info' => 'Tampilkan nilai pengukuran dengan simbol satuan (misalnya 100 °C) alih-alih nama satuan, di admin dan di ekspor. Satuan tanpa simbol tetap menggunakan namanya.',
             ],
         ],
     ],
