@@ -1,4 +1,4 @@
-@if ($attribute && $attribute->type === 'measurement')
+@if ($attribute && app(\Webkul\Measurement\Helpers\MeasurementHelper::class)->isMeasurementBacked($attribute->type))
     @php
         $measurementData = app(\Webkul\Measurement\Services\AttributeMeasurementService::class)
             ->buildPayload($attribute->id);
