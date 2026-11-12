@@ -57,7 +57,7 @@
 
                             {{ ! empty($currentChannel->name) ? $currentChannel->name : '[' . $currentChannel->code . ']' }}
 
-                            <input type="hidden" name="channel" value="{{ $currentChannel->code }}"/>
+                            <input type="hidden" name="channel" value="{{ $currentChannel->code }}" data-catalog-scope/>
 
                             <span class="icon-chevron-down   text-2xl"></span>
                         </button>
@@ -85,7 +85,7 @@
 
                             {{ $currentLocale?->name }}
 
-                            <input type="hidden" name="locale" value="{{ $currentLocale?->code }}"/>
+                            <input type="hidden" name="locale" value="{{ $currentLocale?->code }}" data-catalog-scope/>
 
                             <span class="icon-chevron-down text-2xl"></span>
                         </button>
