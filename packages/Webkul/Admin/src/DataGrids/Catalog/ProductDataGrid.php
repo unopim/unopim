@@ -14,6 +14,8 @@ use Webkul\Attribute\Models\Attribute as AttributeModel;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Services\AttributeService;
+use Webkul\Completeness\Enums\ScoreLevel;
+use Webkul\Completeness\Services\ScoreThresholds;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\DataGrid\Column;
 use Webkul\DataGrid\Contracts\ExportableInterface;
@@ -176,6 +178,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
      */
     public function getPropertyColumns()
     {
+        $scoreThresholds = app(ScoreThresholds::class);
+
         return [
             'sku' => [
                 'index'      => 'sku',
@@ -280,20 +284,20 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'categories' => ProductPropertyFilters::get(ProductPropertyFilters::CATEGORIES),
 
             'completeness' => ProductPropertyFilters::get(ProductPropertyFilters::COMPLETENESS) + [
-                'closure' => function ($row) {
+                'closure' => function ($row) use ($scoreThresholds) {
                     if (is_null($row->completeness)) {
                         return '<span class="label-info break-words">'.trans('completeness::app.catalog.products.index.datagrid.missing-completeness-setting').'</span>';
                     }
 
-                    $score = number_format((float) $row->completeness);
+                    $rounded = round((float) $row->completeness);
 
-                    if ($score < 30) {
-                        $bgClass = 'pill-low';
-                    } elseif ($score < 70) {
-                        $bgClass = 'pill-medium';
-                    } else {
-                        $bgClass = 'pill-high';
-                    }
+                    $score = number_format($rounded);
+
+                    $bgClass = match ($scoreThresholds->level($rounded)) {
+                        ScoreLevel::Success => 'pill-high',
+                        ScoreLevel::Warning => 'pill-medium',
+                        ScoreLevel::Danger  => 'pill-low',
+                    };
 
                     return '<span class="inline-flex items-center justify-center text-center px-2 py-1 w-10 rounded-md text-xs fon-base text-white '.$bgClass.'">'
                         .$score.'%</span>';

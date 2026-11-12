@@ -69,4 +69,16 @@ return [
             ],
         ],
     ],
+
+    'configuration' => [
+        'score-thresholds' => [
+            'title'           => 'Completeness Score Colours',
+            'info'            => 'Set the scores at which completeness indicators turn green or red.',
+            'green-from'      => 'Green From (%)',
+            'green-from-info' => 'Scores at or above this value are shown in green.',
+            'red-below'       => 'Red Below (%)',
+            'red-below-info'  => 'Scores below this value are shown in red. Scores in between are shown in amber.',
+            'order-error'     => 'The green threshold must be higher than the red threshold.',
+        ],
+    ],
 ];

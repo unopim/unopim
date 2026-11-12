@@ -69,4 +69,16 @@ return [
             ],
         ],
     ],
+
+    'configuration' => [
+        'score-thresholds' => [
+            'title'           => 'Cores da pontuação de completude',
+            'info'            => 'Defina as pontuações a partir das quais os indicadores de completude ficam verdes ou vermelhos.',
+            'green-from'      => 'Verde a partir de (%)',
+            'green-from-info' => 'Pontuações iguais ou superiores a este valor são exibidas em verde.',
+            'red-below'       => 'Vermelho abaixo de (%)',
+            'red-below-info'  => 'Pontuações abaixo deste valor são exibidas em vermelho. As intermediárias são exibidas em âmbar.',
+            'order-error'     => 'O limite do verde deve ser maior que o limite do vermelho.',
+        ],
+    ],
 ];

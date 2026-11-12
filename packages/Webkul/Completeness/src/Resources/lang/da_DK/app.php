@@ -69,4 +69,16 @@ return [
             ],
         ],
     ],
+
+    'configuration' => [
+        'score-thresholds' => [
+            'title'           => 'Farver for fuldstændighedsscore',
+            'info'            => 'Angiv de scorer, hvor fuldstændighedsindikatorer bliver grønne eller røde.',
+            'green-from'      => 'Grøn fra (%)',
+            'green-from-info' => 'Scorer på eller over denne værdi vises med grønt.',
+            'red-below'       => 'Rød under (%)',
+            'red-below-info'  => 'Scorer under denne værdi vises med rødt. Scorer derimellem vises med ravgult.',
+            'order-error'     => 'Grænsen for grøn skal være højere end grænsen for rød.',
+        ],
+    ],
 ];

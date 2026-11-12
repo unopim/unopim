@@ -69,4 +69,16 @@ return [
             ],
         ],
     ],
+
+    'configuration' => [
+        'score-thresholds' => [
+            'title'           => '完整度分数颜色',
+            'info'            => '设置完整度指示器变为绿色或红色的分数。',
+            'green-from'      => '绿色起始值 (%)',
+            'green-from-info' => '等于或高于此值的分数显示为绿色。',
+            'red-below'       => '红色上限 (%)',
+            'red-below-info'  => '低于此值的分数显示为红色，介于两者之间的分数显示为黄色。',
+            'order-error'     => '绿色阈值必须高于红色阈值。',
+        ],
+    ],
 ];
