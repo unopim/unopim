@@ -246,3 +246,33 @@ it('re-imports a symbol export to the original unit code', function () {
         expect($attributeValues['common'][$attribute->code]['unit'] ?? null)->toBe($code);
     }
 });
+
+it('resolves a symbol that differs only in case to its exact unit', function (string $value, string $code) {
+    $family = MeasurementFamily::factory()->create([
+        'standard_unit' => 'WATT',
+        'units'         => [
+            ['code' => 'MILLIWATT', 'labels' => ['en_US' => 'Milliwatt'], 'symbol' => 'mW', 'convert_from_standard' => [['operator' => 'mul', 'value' => '1000']]],
+            ['code' => 'WATT', 'labels' => ['en_US' => 'Watt'], 'symbol' => 'W', 'convert_from_standard' => [['operator' => 'mul', 'value' => '1']]],
+            ['code' => 'MEGAWATT', 'labels' => ['en_US' => 'Megawatt'], 'symbol' => 'MW', 'convert_from_standard' => [['operator' => 'div', 'value' => '1000000']]],
+            ['code' => 'BIT', 'labels' => ['en_US' => 'Bit'], 'symbol' => 'b', 'convert_from_standard' => [['operator' => 'mul', 'value' => '8']]],
+            ['code' => 'BYTE', 'labels' => ['en_US' => 'Byte'], 'symbol' => 'B', 'convert_from_standard' => [['operator' => 'mul', 'value' => '1']]],
+        ],
+    ]);
+
+    $attribute = Attribute::factory()->create(['code' => 'power_'.uniqid(), 'type' => 'measurement']);
+
+    AttributeMeasurement::create([
+        'attribute_id' => $attribute->id,
+        'family_code'  => $family->code,
+        'unit_code'    => 'WATT',
+    ]);
+
+    expect(app(MeasurementHelper::class)->resolveUnitCode($value, $attribute))->toBe($code);
+})->with([
+    'megawatt symbol'       => ['MW', 'MEGAWATT'],
+    'milliwatt symbol'      => ['mW', 'MILLIWATT'],
+    'byte symbol'           => ['B', 'BYTE'],
+    'bit symbol'            => ['b', 'BIT'],
+    'label in another case' => ['megawatt', 'MEGAWATT'],
+    'code in another case'  => ['byte', 'BYTE'],
+]);

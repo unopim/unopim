@@ -187,6 +187,9 @@ class MeasurementHelper
 
     /**
      * Resolve a unit code from a code, symbol or label.
+     *
+     * An exact match wins over a case-insensitive one, because symbols such as
+     * "MW" (megawatt) and "mW" (milliwatt) differ only in case.
      */
     public function resolveUnitCode($unitValue, $attribute, ?string $locale = null)
     {
@@ -196,25 +199,33 @@ class MeasurementHelper
             return $unitValue;
         }
 
-        $normalizedUnitValue = $this->normalizeUnitValue($unitValue);
+        $units = $attributeMeasurement->family->units ?? [];
 
-        foreach ($attributeMeasurement->family->units ?? [] as $unit) {
-            if ($this->normalizeUnitValue($unit['code'] ?? null) === $normalizedUnitValue) {
-                return $unit['code'];
-            }
+        $exactValue = trim((string) $unitValue);
 
-            if ($this->normalizeUnitValue($unit['symbol'] ?? null) === $normalizedUnitValue) {
-                return $unit['code'];
-            }
+        return $this->findUnitCodeMatching($units, $exactValue, fn ($value): ?string => $value === null ? null : trim((string) $value), $locale)
+            ?? $this->findUnitCodeMatching($units, $this->normalizeUnitValue($unitValue), $this->normalizeUnitValue(...), $locale)
+            ?? $unitValue;
+    }
 
-            foreach ($this->getUnitLabels($unit, $locale) as $label) {
-                if ($this->normalizeUnitValue($label) === $normalizedUnitValue) {
+    /**
+     * Find the code of the first unit whose code, symbol or label equals the value once both are passed through $normalize.
+     *
+     * @param  callable(mixed): ?string  $normalize
+     */
+    protected function findUnitCodeMatching(iterable $units, ?string $value, callable $normalize, ?string $locale): ?string
+    {
+        foreach ($units as $unit) {
+            $candidates = [$unit['code'] ?? null, $unit['symbol'] ?? null, ...$this->getUnitLabels($unit, $locale)];
+
+            foreach ($candidates as $candidate) {
+                if ($candidate !== null && $candidate !== '' && $normalize($candidate) === $value) {
                     return $unit['code'];
                 }
             }
         }
 
-        return $unitValue;
+        return null;
     }
 
     /**
