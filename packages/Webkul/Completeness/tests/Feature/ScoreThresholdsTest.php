@@ -1,5 +1,10 @@
 <?php
 
+use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Testing\TestResponse;
 use Webkul\Admin\DataGrids\Catalog\ProductDataGrid;
 use Webkul\Completeness\Enums\ScoreLevel;
 use Webkul\Completeness\Services\ScoreThresholds;
@@ -111,6 +116,27 @@ it('rejects thresholds that are missing or outside 0 to 100', function (array $p
     'green not numeric' => [['green_from' => 'abc', 'red_below' => '50'], 'green_from'],
     'red missing'       => [['green_from' => '80'], 'red_below'],
 ]);
+
+it('rejects a file posted at a threshold field alongside its text value and stores nothing', function () {
+    Storage::fake();
+
+    $request = Request::create(
+        route('admin.settings.system.update', ['key' => 'system.completeness']),
+        'PUT',
+        ['system' => ['completeness' => ['green_from' => '90', 'red_below' => '60']]],
+        [],
+        ['system' => ['completeness' => ['green_from' => UploadedFile::fake()->create('payload.php', 1)]]],
+        ['HTTP_ACCEPT' => 'application/json'],
+    );
+
+    TestResponse::fromBaseResponse(app(Kernel::class)->handle($request))
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors('system.completeness.green_from');
+
+    $this->assertDatabaseMissing('core_config', ['code' => ScoreThresholds::GREEN_FROM_CODE]);
+    $this->assertDatabaseMissing('core_config', ['code' => ScoreThresholds::RED_BELOW_CODE]);
+    expect(Storage::allFiles('configuration'))->toBeEmpty();
+});
 
 it('returns the ordering error as json for an ajax save', function () {
     $this->putJson(route('admin.settings.system.update', ['key' => 'system.completeness']), [
