@@ -1,0 +1,73 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Webkul\Product\Templates\Filters;
+
+use Illuminate\Contracts\Container\Container;
+use Webkul\Attribute\Models\Attribute;
+use Webkul\Product\Templates\Expression;
+use Webkul\Product\Templates\FilterCall;
+use Webkul\Product\Templates\TemplateMessage;
+
+class FilterRegistry
+{
+    protected array $filters = [
+        'capitalize'  => CapitalizeFilter::class,
+        'format_date' => FormatDateFilter::class,
+        'lower'       => LowerFilter::class,
+        'slug'        => SlugFilter::class,
+        'title'       => TitleFilter::class,
+        'upper'       => UpperFilter::class,
+    ];
+
+    protected array $instances = [];
+
+    public function __construct(protected Container $app) {}
+
+    public function has(string $name): bool
+    {
+        return isset($this->filters[$name]);
+    }
+
+    public function get(string $name): TemplateFilter
+    {
+        return $this->instances[$name] ??= $this->app->make($this->filters[$name]);
+    }
+
+    public function names(): array
+    {
+        return array_keys($this->filters);
+    }
+
+    public function inspect(Expression $expression, string $attributeType): ?TemplateMessage
+    {
+        foreach ($expression->filters as $position => $call) {
+            $problem = $this->inspectCall($call, $position, $expression, $attributeType);
+
+            if ($problem !== null) {
+                return $problem;
+            }
+        }
+
+        return null;
+    }
+
+    private function inspectCall(FilterCall $call, int $position, Expression $expression, string $attributeType): ?TemplateMessage
+    {
+        if (! $this->has($call->name)) {
+            return new TemplateMessage('unknown-filter', ['filter' => $call->name, 'filters' => implode(', ', $this->names())]);
+        }
+
+        $filter = $this->get($call->name);
+
+        $inputType = $position === 0 ? $attributeType : Attribute::TEXT_TYPE;
+
+        return match (true) {
+            ! $filter->supports($attributeType)         => new TemplateMessage('filter-not-supported', ['filter' => $call->name, 'attribute' => $expression->attributeCode]),
+            ! $filter->supports($inputType)             => new TemplateMessage('format-date-position', ['filter' => $call->name, 'expression' => $expression->label]),
+            ! $filter->acceptsArgument($call->argument) => new TemplateMessage('invalid-filter-argument', ['filter' => $call->name, 'expression' => $expression->label]),
+            default                                     => null,
+        };
+    }
+}

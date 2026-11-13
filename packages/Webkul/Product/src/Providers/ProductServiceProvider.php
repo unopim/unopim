@@ -47,6 +47,7 @@ use Webkul\Product\ProductVideo;
 use Webkul\Product\Services\ProductValueMapper;
 use Webkul\Product\Services\VariantStructurePlanner;
 use Webkul\Product\Services\VariantValueResolver;
+use Webkul\Product\Templates\Filters\FilterRegistry;
 use Webkul\Product\ValueSetter;
 
 class ProductServiceProvider extends ServiceProvider
@@ -96,6 +97,7 @@ class ProductServiceProvider extends ServiceProvider
         // Bound (fresh per resolve), not scoped: the per-product memo must not survive a same-request mutation.
         $this->app->bind(VariantValueResolverContract::class, VariantValueResolver::class);
         $this->app->bind(VariantStructurePlannerContract::class, VariantStructurePlanner::class);
+        $this->app->singleton(FilterRegistry::class);
     }
 
     /**
