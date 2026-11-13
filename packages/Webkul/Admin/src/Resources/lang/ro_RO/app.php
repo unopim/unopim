@@ -676,6 +676,8 @@ return [
                 'usable-in-grid'         => 'Utilizabil în grilă',
                 'is-filterable'          => 'Este filtrabil',
                 'ai-translate'           => 'Traducere IA',
+                'enable-templates'       => 'Activează șabloanele',
+                'templates-unsupported'  => 'Șabloanele pot fi activate doar pentru atributele de tip text și câmp text care nu au validare a intrării și nu sunt unice.',
                 'invalid-swatch-type'    => 'Atributul :attribute nu este permis pentru tipul de atribut :type cu tipul de eșantion :swatch_type.',
                 'single-object-only'     => 'Fiecare cerere de creare trebuie să trimită un singur obiect de atribut.',
                 'option'                 => [

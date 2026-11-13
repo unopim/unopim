@@ -675,6 +675,8 @@ return [
                 'usable-in-grid'         => 'Brugbar i gitter',
                 'is-filterable'          => 'Er filtrerbar',
                 'ai-translate'           => 'AI Oversæt',
+                'enable-templates'       => 'Aktivér skabeloner',
+                'templates-unsupported'  => 'Skabeloner kan kun aktiveres på tekst- og tekstområdeattributter, der ikke har indtastningsvalidering og ikke er unikke.',
                 'invalid-swatch-type'    => 'Attributten :attribute er ikke tilladt for attributtype :type med swatchtype :swatch_type.',
                 'single-object-only'     => 'Hver oprettelsesanmodning må kun indeholde ét attributobjekt.',
                 'option'                 => [

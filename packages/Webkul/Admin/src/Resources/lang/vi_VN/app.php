@@ -675,6 +675,8 @@ return [
                 'usable-in-grid'         => 'Có thể sử dụng trong lưới',
                 'is-filterable'          => 'Có thể lọc',
                 'ai-translate'           => 'Dịch thuật AI',
+                'enable-templates'       => 'Bật mẫu',
+                'templates-unsupported'  => 'Chỉ có thể bật mẫu cho các thuộc tính văn bản và văn bản lớn không có xác thực nhập liệu và không phải là duy nhất.',
                 'invalid-swatch-type'    => ':attribute không được phép cho loại thuộc tính :type với loại mẫu :swatch_type.',
                 'single-object-only'     => 'Mỗi yêu cầu tạo chỉ được gửi một đối tượng thuộc tính.',
                 'option'                 => [

@@ -676,6 +676,8 @@ return [
                 'usable-in-grid'         => 'Bruikbaar in het raster',
                 'is-filterable'          => 'Filterbaar',
                 'ai-translate'           => 'AI-vertaling',
+                'enable-templates'       => 'Sjablonen inschakelen',
+                'templates-unsupported'  => 'Sjablonen kunnen alleen worden ingeschakeld voor tekst- en textarea-attributen die geen invoervalidatie hebben en niet uniek zijn.',
                 'invalid-swatch-type'    => 'De :attribute is niet toegestaan voor attribuuttype :type met staaltype :swatch_type.',
                 'single-object-only'     => 'Per aanvraag mag slechts één attribuutobject worden aangemaakt.',
                 'option'                 => [

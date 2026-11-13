@@ -676,6 +676,8 @@ return [
                 'usable-in-grid'         => 'Brukes i rutenett',
                 'is-filterable'          => 'Er filtrerbar',
                 'ai-translate'           => 'AI Oversettelse',
+                'enable-templates'       => 'Aktiver maler',
+                'templates-unsupported'  => 'Maler kan bare aktiveres for tekst- og tekstområdeattributter som ikke har inndatavalidering og ikke er unike.',
                 'invalid-swatch-type'    => ':attribute er ikke tillatt for attributttype :type med fargeprøvetype :swatch_type.',
                 'single-object-only'     => 'Hver opprettelsesforespørsel må inneholde kun ett attributtobjekt.',
                 'option'                 => [

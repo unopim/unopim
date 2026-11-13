@@ -675,6 +675,8 @@ return [
                 'usable-in-grid'         => 'Käytettävissä ruudukossa',
                 'is-filterable'          => 'On suodatettavissa',
                 'ai-translate'           => 'AI Käännös',
+                'enable-templates'       => 'Ota mallipohjat käyttöön',
+                'templates-unsupported'  => 'Mallipohjat voidaan ottaa käyttöön vain teksti- ja tekstikenttäattribuuteille, joilla ei ole syötteen validointia ja jotka eivät ole ainutlaatuisia.',
                 'invalid-swatch-type'    => ':attribute ei ole sallittu attribuuttityypille :type, jossa on swatch-tyyppi :swatch_type.',
                 'single-object-only'     => 'Jokaisen luontipyynnön tulee sisältää vain yksi attribuuttiolio.',
                 'option'                 => [

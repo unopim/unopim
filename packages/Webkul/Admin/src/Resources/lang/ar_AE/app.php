@@ -675,6 +675,8 @@ return [
                 'usable-in-grid'         => 'قابلة للاستخدام في الشبكة',
                 'is-filterable'          => 'قابل للتصفية',
                 'ai-translate'           => 'ترجمة الذكاء الاصطناعي',
+                'enable-templates'       => 'تفعيل القوالب',
+                'templates-unsupported'  => 'يمكن تفعيل القوالب فقط على سمات النص ومنطقة النص التي لا تحتوي على تحقق من صحة المدخلات وليست فريدة.',
                 'invalid-swatch-type'    => 'ال:attribute غير مسموح به لنوع السمة :type مع نوع العينة :swatch_type.',
                 'single-object-only'     => 'يجب إرسال كائن سمة واحد فقط لكل طلب إنشاء.',
                 'option'                 => [

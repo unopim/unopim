@@ -675,6 +675,8 @@ return [
                 'usable-in-grid'         => 'Dapat digunakan dalam grid',
                 'is-filterable'          => 'Dapat difilter',
                 'ai-translate'           => 'AI Terjemahan',
+                'enable-templates'       => 'Aktifkan Templat',
+                'templates-unsupported'  => 'Templat hanya dapat diaktifkan pada atribut teks dan textarea yang tidak memiliki validasi input dan tidak unik.',
                 'invalid-swatch-type'    => 'Atribut :attribute tidak diperbolehkan untuk tipe atribut :type dengan tipe swatch :swatch_type.',
                 'single-object-only'     => 'Setiap permintaan pembuatan harus mengirim satu objek atribut.',
                 'option'                 => [

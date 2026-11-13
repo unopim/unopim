@@ -676,6 +676,8 @@ return [
                 'usable-in-grid'         => '그리드에서 사용 가능',
                 'is-filterable'          => '필터링 가능',
                 'ai-translate'           => 'AI 번역',
+                'enable-templates'       => '템플릿 활성화',
+                'templates-unsupported'  => '템플릿은 입력 유효성 검사가 없고 고유하지 않은 텍스트 및 텍스트 영역 속성에서만 활성화할 수 있습니다.',
                 'invalid-swatch-type'    => ':attribute는 스와치 유형 :swatch_type의 속성 유형 :type에 대해 허용되지 않습니다.',
                 'single-object-only'     => '각 생성 요청은 속성 객체를 하나만 보내야 합니다.',
                 'option'                 => [

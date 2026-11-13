@@ -675,6 +675,8 @@ return [
                 'usable-in-grid'         => 'Izgarada Kullanılabilir',
                 'is-filterable'          => 'Filtrelenebilir',
                 'ai-translate'           => 'AI Çeviri',
+                'enable-templates'       => 'Şablonları Etkinleştir',
+                'templates-unsupported'  => 'Şablonlar yalnızca girdi doğrulaması olmayan ve benzersiz olmayan metin ve metin alanı özniteliklerinde etkinleştirilebilir.',
                 'invalid-swatch-type'    => ':attribute, :type türü için :swatch_type swatch türü ile kullanılamaz.',
                 'single-object-only'     => 'Her oluşturma isteği yalnızca bir öznitelik nesnesi göndermelidir.',
                 'option'                 => [

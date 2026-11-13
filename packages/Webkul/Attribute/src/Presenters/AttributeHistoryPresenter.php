@@ -18,6 +18,7 @@ class AttributeHistoryPresenter implements HistoryPresenterInterface
         'value_per_channel' => 'admin::app.catalog.attributes.create.value-per-channel',
         'is_filterable'     => 'admin::app.catalog.attributes.create.is-filterable',
         'ai_translate'      => 'admin::app.catalog.attributes.create.ai-translate',
+        'enable_templates'  => 'admin::app.catalog.attributes.create.enable-templates',
         'position'          => 'admin::app.catalog.attributes.create.position',
     ];
 
@@ -29,6 +30,7 @@ class AttributeHistoryPresenter implements HistoryPresenterInterface
         'value_per_channel',
         'is_filterable',
         'ai_translate',
+        'enable_templates',
     ];
 
     /**

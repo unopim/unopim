@@ -675,6 +675,8 @@ return [
                 'usable-in-grid'         => 'Magagamit sa grid',
                 'is-filterable'          => 'Nafifilter',
                 'ai-translate'           => 'AI Pagsasalin',
+                'enable-templates'       => 'I-enable ang mga Template',
+                'templates-unsupported'  => 'Maaari lamang i-enable ang mga template sa mga katangiang text at textarea na walang pag-validate ng input at hindi natatangi.',
                 'invalid-swatch-type'    => 'Ang :attribute ay hindi pinapayagan para sa uri ng katangian :type na may uri ng swatch :swatch_type.',
                 'single-object-only'     => 'Ang bawat create request ay dapat magpadala ng iisang attribute object.',
                 'option'                 => [

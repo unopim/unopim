@@ -675,6 +675,8 @@ return [
                 'usable-in-grid'         => '可在网格中使用',
                 'is-filterable'          => '可筛选',
                 'ai-translate'           => 'AI翻译',
+                'enable-templates'       => '启用模板',
+                'templates-unsupported'  => '只有没有输入验证且非唯一的文本和文本区域属性才能启用模板。',
                 'invalid-swatch-type'    => ':attribute 不允许用于属性类型 :type 和样本类型 :swatch_type。',
                 'single-object-only'     => '每个创建请求只能发送一个属性对象。',
                 'option'                 => [

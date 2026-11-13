@@ -5,8 +5,10 @@ namespace Webkul\Attribute\Repositories;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Webkul\Attribute\Contracts\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Core\Eloquent\Repository;
@@ -16,7 +18,9 @@ class AttributeRepository extends Repository
 {
     use HtmlPurifier;
 
-    const BOOLEAN_FIELDS = ['is_required', 'is_unique', 'enable_wysiwyg', 'is_filterable', 'ai_translate'];
+    const BOOLEAN_FIELDS = ['is_required', 'is_unique', 'enable_wysiwyg', 'is_filterable', 'ai_translate', 'enable_templates'];
+
+    const TEMPLATE_SETTINGS = ['type', 'validation', 'is_unique', 'enable_templates'];
 
     protected $attributes = [];
 
@@ -47,6 +51,8 @@ class AttributeRepository extends Repository
     {
         $validatedData = $this->validateUserInput($data);
 
+        $this->ensureTemplatesAreSupported($validatedData);
+
         $options = $validatedData['options'] ?? [];
 
         unset($validatedData['options']);
@@ -76,6 +82,8 @@ class AttributeRepository extends Repository
         $validatedData = $this->validateUserInput($data);
 
         $attribute = $this->find($id);
+
+        $this->ensureTemplatesAreSupported($validatedData, $attribute);
 
         if ($attribute->code === 'sku' && isset($data['is_filterable']) && $data['is_filterable'] === 0) {
             $data['is_filterable'] = 1;
@@ -123,6 +131,18 @@ class AttributeRepository extends Repository
         }
 
         return $data;
+    }
+
+    private function ensureTemplatesAreSupported(array $data, ?Attribute $attribute = null): void
+    {
+        $candidate = ($attribute ? clone $attribute : $this->model->newInstance())
+            ->forceFill(Arr::only($data, self::TEMPLATE_SETTINGS));
+
+        if ($candidate->enable_templates && ! $candidate->canHoldTemplate()) {
+            throw ValidationException::withMessages([
+                'enable_templates' => trans('admin::app.catalog.attributes.create.templates-unsupported'),
+            ]);
+        }
     }
 
     /**

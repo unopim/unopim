@@ -37,6 +37,7 @@ use Webkul\Product\Validator\Rule\Elasticsearch\UniqueAttributeValue;
     'value_per_channel',
     'is_filterable',
     'ai_translate',
+    'enable_templates',
     'usable_in_grid',
     'allowed_extensions',
     'max_file_size',
@@ -252,6 +253,19 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
         return $validations;
     }
 
+    public function canHoldTemplate(): bool
+    {
+        return (bool) $this->enable_templates
+            && in_array($this->type, [self::TEXT_TYPE, self::TEXTAREA_TYPE], true)
+            && blank($this->validation)
+            && ! $this->is_unique;
+    }
+
+    public function isRichText(): bool
+    {
+        return $this->type === self::TEXTAREA_TYPE && (bool) $this->enable_wysiwyg;
+    }
+
     /**
      * Returns field validation rules for API and internal functions
      */
@@ -440,6 +454,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
             'value_per_channel' => AttributeHistoryPresenter::class,
             'is_filterable'     => AttributeHistoryPresenter::class,
             'ai_translate'      => AttributeHistoryPresenter::class,
+            'enable_templates'  => AttributeHistoryPresenter::class,
         ];
     }
 

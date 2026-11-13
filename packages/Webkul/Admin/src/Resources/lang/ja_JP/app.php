@@ -675,6 +675,8 @@ return [
                 'usable-in-grid'         => 'グリッドで使用可能',
                 'is-filterable'          => 'フィルタリング可能',
                 'ai-translate'           => 'AI翻訳',
+                'enable-templates'       => 'テンプレートを有効にする',
+                'templates-unsupported'  => 'テンプレートは、入力検証がなく、一意ではないテキストおよびテキストエリア属性でのみ有効にできます。',
                 'invalid-swatch-type'    => ':attribute は、スウォッチタイプ :swatch_type の属性タイプ :type には許可されていません。',
                 'single-object-only'     => '属性の作成リクエストには属性オブジェクトを1つだけ送信してください。',
                 'option'                 => [

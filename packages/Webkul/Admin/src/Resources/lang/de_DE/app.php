@@ -675,6 +675,8 @@ return [
                 'usable-in-grid'         => 'Verwendbar im Raster',
                 'is-filterable'          => 'Ist filterbar',
                 'ai-translate'           => 'KI Übersetzen',
+                'enable-templates'       => 'Vorlagen aktivieren',
+                'templates-unsupported'  => 'Vorlagen können nur für Text- und Textbereich-Attribute aktiviert werden, die keine Eingabevalidierung haben und nicht eindeutig sind.',
                 'invalid-swatch-type'    => 'Der :attribute ist für den Attributtyp :type mit dem Farbmuster :swatch_type nicht erlaubt.',
                 'single-object-only'     => 'Pro Erstellungsanfrage darf nur ein Attributobjekt gesendet werden.',
                 'option'                 => [

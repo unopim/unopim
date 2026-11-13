@@ -675,6 +675,8 @@ return [
                 'usable-in-grid'         => '可在網格中使用',
                 'is-filterable'          => '可篩選',
                 'ai-translate'           => '人工智慧翻譯',
+                'enable-templates'       => '啟用範本',
+                'templates-unsupported'  => '只有沒有輸入驗證且非唯一的文本和文本區屬性才能啟用範本。',
                 'invalid-swatch-type'    => ':attribute 不允許用於屬性類型 :type，搭配色板類型 :swatch_type。',
                 'single-object-only'     => '每個建立請求只能傳送一個屬性物件。',
                 'option'                 => [

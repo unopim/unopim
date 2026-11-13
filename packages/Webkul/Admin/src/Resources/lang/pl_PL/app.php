@@ -676,6 +676,8 @@ return [
                 'usable-in-grid'         => 'Można używać w siatce',
                 'is-filterable'          => 'Jest filtrowalne',
                 'ai-translate'           => 'Tłumaczenie SI',
+                'enable-templates'       => 'Włącz szablony',
+                'templates-unsupported'  => 'Szablony można włączyć tylko dla atrybutów typu tekst i pole tekstowe, które nie mają weryfikacji danych wejściowych i nie są unikalne.',
                 'invalid-swatch-type'    => 'Atrybut :attribute nie jest dozwolony dla typu atrybutu :type z typem próbki :swatch_type.',
                 'single-object-only'     => 'Każde żądanie tworzenia musi zawierać tylko jeden obiekt atrybutu.',
                 'option'                 => [

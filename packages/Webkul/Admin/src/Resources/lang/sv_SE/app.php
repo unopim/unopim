@@ -675,6 +675,8 @@ return [
                 'usable-in-grid'         => 'Kan användas i rutnät',
                 'is-filterable'          => 'Är filtrerbar',
                 'ai-translate'           => 'AI Översättning',
+                'enable-templates'       => 'Aktivera mallar',
+                'templates-unsupported'  => 'Mallar kan endast aktiveras för text- och textområdesattribut som saknar inmatningsvalidering och inte är unika.',
                 'invalid-swatch-type'    => 'Attributet :attribute är inte tillåtet för attributtyp :type med swatchtyp :swatch_type.',
                 'single-object-only'     => 'Varje skapandeförfrågan får endast innehålla ett attributobjekt.',
                 'option'                 => [

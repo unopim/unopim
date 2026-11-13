@@ -675,6 +675,8 @@ return [
                 'usable-in-grid'         => 'Útil a la graella',
                 'is-filterable'          => 'És filtrable',
                 'ai-translate'           => 'Traducció IA',
+                'enable-templates'       => 'Habilitar plantilles',
+                'templates-unsupported'  => 'Les plantilles només es poden habilitar en atributs de text i àrea de text que no tinguin validació d\'entrada i no siguin únics.',
                 'invalid-swatch-type'    => 'L\':attribute no està permès per al tipus d\'atribut :type amb el tipus de mostra :swatch_type.',
                 'single-object-only'     => 'Cada sol·licitud de creació ha d\'enviar només un objecte d\'atribut.',
                 'option'                 => [

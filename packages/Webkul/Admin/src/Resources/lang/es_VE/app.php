@@ -675,6 +675,8 @@ return [
                 'usable-in-grid'         => 'Utilizable en cuadrícula',
                 'is-filterable'          => 'Es filtrable',
                 'ai-translate'           => 'Traducción IA',
+                'enable-templates'       => 'Habilitar plantillas',
+                'templates-unsupported'  => 'Las plantillas solo se pueden habilitar en atributos de texto y área de texto que no tengan validación de entrada y no sean únicos.',
                 'invalid-swatch-type'    => 'El :attribute no está permitido para el tipo de atributo :type con el tipo de muestra :swatch_type.',
                 'single-object-only'     => 'Cada solicitud de creación debe enviar un único objeto de atributo.',
                 'option'                 => [

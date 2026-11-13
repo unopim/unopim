@@ -676,6 +676,8 @@ return [
                 'usable-in-grid'         => 'Usável na grade',
                 'is-filterable'          => 'É filtrável',
                 'ai-translate'           => 'Tradução IA',
+                'enable-templates'       => 'Habilitar modelos',
+                'templates-unsupported'  => 'Os modelos só podem ser habilitados em atributos de texto e área de texto que não tenham validação de entrada e não sejam únicos.',
                 'invalid-swatch-type'    => 'O :attribute não é permitido para o tipo de atributo :type com o tipo de amostra :swatch_type.',
                 'single-object-only'     => 'Cada requisição de criação deve enviar um único objeto de atributo.',
                 'option'                 => [
