@@ -69,4 +69,16 @@ return [
             ],
         ],
     ],
+
+    'configuration' => [
+        'score-thresholds' => [
+            'title'           => 'Boje ocjene potpunosti',
+            'info'            => 'Postavite ocjene pri kojima pokazatelji potpunosti postaju zeleni ili crveni.',
+            'green-from'      => 'Zeleno od (%)',
+            'green-from-info' => 'Ocjene jednake ili veće od ove vrijednosti prikazuju se zeleno.',
+            'red-below'       => 'Crveno ispod (%)',
+            'red-below-info'  => 'Ocjene ispod ove vrijednosti prikazuju se crveno. Ocjene između prikazuju se žuto.',
+            'order-error'     => 'Prag za zelenu mora biti viši od praga za crvenu.',
+        ],
+    ],
 ];

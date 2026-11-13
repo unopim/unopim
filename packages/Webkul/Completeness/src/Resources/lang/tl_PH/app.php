@@ -69,4 +69,16 @@ return [
             ],
         ],
     ],
+
+    'configuration' => [
+        'score-thresholds' => [
+            'title'           => 'Mga Kulay ng Iskor ng Pagkakumpleto',
+            'info'            => 'Itakda ang mga iskor kung kailan nagiging berde o pula ang mga indicator ng pagkakumpleto.',
+            'green-from'      => 'Berde Mula (%)',
+            'green-from-info' => 'Ang mga iskor na katumbas o mas mataas sa halagang ito ay ipinapakita nang berde.',
+            'red-below'       => 'Pula Kapag Mas Mababa sa (%)',
+            'red-below-info'  => 'Ang mga iskor na mas mababa sa halagang ito ay ipinapakita nang pula. Ang mga nasa pagitan ay ipinapakita nang dilaw.',
+            'order-error'     => 'Dapat mas mataas ang hangganan ng berde kaysa sa hangganan ng pula.',
+        ],
+    ],
 ];

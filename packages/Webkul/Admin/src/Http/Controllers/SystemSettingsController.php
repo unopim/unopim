@@ -5,9 +5,12 @@ namespace Webkul\Admin\Http\Controllers;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use LogicException;
 use Webkul\Admin\Http\Requests\ConfigurationForm;
 use Webkul\Admin\SystemSettings;
+use Webkul\Core\Contracts\Validator\ConfigValidator;
 use Webkul\Core\Repositories\CoreConfigRepository;
 
 class SystemSettingsController extends Controller
@@ -60,6 +63,10 @@ class SystemSettingsController extends Controller
 
         $this->enforceSectionAccess($entry);
 
+        $this->rejectUploadsToNonFileFields($group, $request);
+
+        $this->runGroupValidator($group, $request);
+
         $this->coreConfigRepository->create($this->allowedConfig($request, $group));
 
         session()->flash('success', trans('admin::app.settings.system-settings.save-message'));
@@ -82,6 +89,59 @@ class SystemSettingsController extends Controller
             403,
             trans('admin::app.errors.403.message')
         );
+    }
+
+    /**
+     * Fail the save when a file is posted at a field not declared as `file` or `image`.
+     * The repository stores any upload it finds at a config code, which would let a
+     * file replace a validated scalar such as a number.
+     *
+     * @param  array<string, mixed>  $group
+     *
+     * @throws ValidationException
+     */
+    protected function rejectUploadsToNonFileFields(array $group, Request $request): void
+    {
+        $fileFields = collect((array) ($group['fields'] ?? []))
+            ->filter(fn ($field): bool => in_array($field['type'] ?? null, ['file', 'image'], true))
+            ->map(fn ($field): string => ((string) $group['key']).'.'.((string) $field['name']))
+            ->all();
+
+        $errors = [];
+
+        foreach (array_keys(Arr::dot($request->allFiles())) as $code) {
+            if (! in_array($code, $fileFields, true)) {
+                $errors[$code] = trans('validation.prohibited', ['attribute' => $code]);
+            }
+        }
+
+        if ($errors !== []) {
+            throw ValidationException::withMessages($errors);
+        }
+    }
+
+    /**
+     * Run the cross-field `validator` a settings group may declare, the same
+     * ConfigValidator contract the configuration pages honour. A declared class
+     * that does not implement the contract fails the save rather than skipping it.
+     *
+     * @param  array<string, mixed>  $group
+     */
+    protected function runGroupValidator(array $group, Request $request): void
+    {
+        if (empty($group['validator'])) {
+            return;
+        }
+
+        $validator = app((string) $group['validator']);
+
+        throw_unless(
+            $validator instanceof ConfigValidator,
+            LogicException::class,
+            sprintf('Settings validator [%s] must implement %s.', $group['validator'], ConfigValidator::class)
+        );
+
+        $validator->validate($request->all());
     }
 
     /**

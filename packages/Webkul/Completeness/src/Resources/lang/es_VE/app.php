@@ -69,4 +69,16 @@ return [
             ],
         ],
     ],
+
+    'configuration' => [
+        'score-thresholds' => [
+            'title'           => 'Colores del puntaje de completitud',
+            'info'            => 'Define los puntajes a partir de los cuales los indicadores de completitud se muestran en verde o en rojo.',
+            'green-from'      => 'Verde desde (%)',
+            'green-from-info' => 'Los puntajes iguales o superiores a este valor se muestran en verde.',
+            'red-below'       => 'Rojo por debajo de (%)',
+            'red-below-info'  => 'Los puntajes inferiores a este valor se muestran en rojo. Los intermedios se muestran en ámbar.',
+            'order-error'     => 'El umbral del verde debe ser mayor que el umbral del rojo.',
+        ],
+    ],
 ];

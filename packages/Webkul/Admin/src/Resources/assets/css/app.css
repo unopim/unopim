@@ -544,15 +544,15 @@
     }
 
     .pill-low {
-        @apply bg-red-600 border border-red-700;
+        @apply bg-danger border border-danger;
     }
 
     .pill-medium {
-        @apply bg-yellow-500 border border-yellow-600;
+        @apply bg-warning border border-warning;
     }
 
     .pill-high {
-        @apply bg-green-600 border border-green-700;
+        @apply bg-success border border-success;
     }
 
     .shimmer {
