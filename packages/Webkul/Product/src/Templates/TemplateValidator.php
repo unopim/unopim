@@ -1,0 +1,97 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Webkul\Product\Templates;
+
+use Webkul\Attribute\Contracts\Attribute;
+use Webkul\Attribute\Models\Attribute as AttributeModel;
+use Webkul\Attribute\Services\AttributeService;
+use Webkul\Core\Repositories\CurrencyRepository;
+use Webkul\Product\Contracts\TemplateValidator as TemplateValidatorContract;
+use Webkul\Product\Templates\Filters\FilterRegistry;
+use Webkul\Product\Templates\Results\ValidationResult;
+
+class TemplateValidator implements TemplateValidatorContract
+{
+    private const string TAG_EXPRESSION_PATTERN = '/<[^>]*\{\{/';
+
+    private const string SINGLE_BRACE_PATTERN = '/(?<!\{)\{\s*(\w+)\s*\}(?!\})/';
+
+    private ?array $currencyCodes = null;
+
+    public function __construct(
+        protected TemplateParser $parser,
+        protected FilterRegistry $filters,
+        protected TemplateValueFormatter $formatter,
+        protected AttributeService $attributeService,
+        protected CurrencyRepository $currencyRepository,
+    ) {}
+
+    public function validate(string $source, Attribute $attribute): ValidationResult
+    {
+        if (! $attribute->canHoldTemplate() || ! str_contains($source, '{')) {
+            return new ValidationResult;
+        }
+
+        $template = $this->parser->parse($source, $attribute->isRichText());
+
+        $variables = $this->attributeService->findByCodes($template->attributeCodes());
+
+        $errors = [...$template->errors, ...$this->markupErrors($source, $attribute)];
+
+        foreach ($template->expressions() as $expression) {
+            $errors[] = $this->expressionProblem($expression, $variables[$expression->attributeCode] ?? null, $attribute);
+        }
+
+        return new ValidationResult(
+            collect($errors)->filter()->unique(fn (TemplateMessage $error): string => $error->identity())->values()->all(),
+            $this->singleBraceWarnings($template),
+        );
+    }
+
+    private function expressionProblem(Expression $expression, ?Attribute $variable, Attribute $attribute): ?TemplateMessage
+    {
+        return match (true) {
+            $variable === null                      => new TemplateMessage('unknown-attribute', ['attribute' => $expression->attributeCode]),
+            $variable->code === $attribute->code    => new TemplateMessage('self-reference', ['attribute' => $attribute->code]),
+            ! $this->formatter->supports($variable) => new TemplateMessage('unsupported-attribute', ['attribute' => $variable->code]),
+            default                                 => $this->currencyProblem($expression, $variable)
+                ?? $this->filters->inspect($expression, $variable->type),
+        };
+    }
+
+    private function currencyProblem(Expression $expression, Attribute $variable): ?TemplateMessage
+    {
+        return match (true) {
+            $expression->currency === null                                  => null,
+            $variable->type !== AttributeModel::PRICE_FIELD_TYPE            => new TemplateMessage('currency-not-allowed', ['attribute' => $variable->code]),
+            ! in_array($expression->currency, $this->currencyCodes(), true) => new TemplateMessage('unknown-currency', ['currency' => $expression->currency]),
+            default                                                         => null,
+        };
+    }
+
+    private function markupErrors(string $source, Attribute $attribute): array
+    {
+        return $attribute->isRichText() && preg_match(self::TAG_EXPRESSION_PATTERN, $source) === 1
+            ? [new TemplateMessage('inside-html-tag')]
+            : [];
+    }
+
+    private function singleBraceWarnings(ParsedTemplate $template): array
+    {
+        $literalText = implode(' ', array_filter($template->segments, is_string(...)));
+
+        preg_match_all(self::SINGLE_BRACE_PATTERN, $literalText, $matches);
+
+        return array_map(
+            fn (string $word): TemplateMessage => new TemplateMessage('single-brace', ['text' => $word]),
+            array_values(array_unique($matches[1])),
+        );
+    }
+
+    private function currencyCodes(): array
+    {
+        return $this->currencyCodes ??= $this->currencyRepository->all()->pluck('code')->all();
+    }
+}

@@ -24,6 +24,8 @@ class ProductValuesValidator
 
     protected $associationsValidator;
 
+    protected $templatesValidator;
+
     /**
      * @return self
      */
@@ -71,6 +73,8 @@ class ProductValuesValidator
         $this->categoriesValidator->validate(data: $data[AbstractType::CATEGORY_VALUES_KEY] ?? []);
 
         $this->associationsValidator->validate(data: $data[AbstractType::ASSOCIATION_VALUES_KEY] ?? []);
+
+        $this->templatesValidator->validate(data: $data, productId: $productId);
     }
 
     /**
@@ -142,6 +146,8 @@ class ProductValuesValidator
         if (isset($data[AbstractType::ASSOCIATION_VALUES_KEY])) {
             $this->associationsValidator->validate(data: $data[AbstractType::ASSOCIATION_VALUES_KEY]);
         }
+
+        $this->templatesValidator->validate(data: $data, productId: $productId);
     }
 
     /**
@@ -162,5 +168,7 @@ class ProductValuesValidator
         $this->categoriesValidator = new ProductCategoriesValidator;
 
         $this->associationsValidator = new ProductAssociationsValidator;
+
+        $this->templatesValidator = resolve(ProductTemplatesValidator::class);
     }
 }

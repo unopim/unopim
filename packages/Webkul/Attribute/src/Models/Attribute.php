@@ -22,6 +22,7 @@ use Webkul\HistoryControl\Interfaces\PresentableHistoryInterface;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\Product\Validator\Rule\AttributeOptionRule;
 use Webkul\Product\Validator\Rule\Elasticsearch\UniqueAttributeValue;
+use Webkul\Product\Validator\Rule\TemplateExpressionRule;
 
 #[Fillable([
     'code',
@@ -248,6 +249,10 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
 
         if ($this->code === 'sku') {
             $validations[] = new Sku;
+        }
+
+        if ($this->canHoldTemplate()) {
+            $validations[] = new TemplateExpressionRule($this);
         }
 
         return $validations;
