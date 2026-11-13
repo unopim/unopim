@@ -25,6 +25,21 @@ class MeasurementHelper
     }
 
     /**
+     * Whether the attribute type carries a measurement family and default unit.
+     *
+     * Packages opt a type in by setting `measurement_backed` to true on its
+     * `attribute_types` config entry.
+     */
+    public function isMeasurementBacked(?string $type): bool
+    {
+        if ($type === null || $type === '') {
+            return false;
+        }
+
+        return (config('attribute_types')[$type]['measurement_backed'] ?? false) === true;
+    }
+
+    /**
      * Calculate base value using unit conversion rules.
      *
      * @param  mixed  $value

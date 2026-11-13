@@ -5,6 +5,7 @@ namespace Webkul\Measurement\Http\Controllers\Api;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Webkul\Attribute\Repositories\AttributeRepository;
+use Webkul\Measurement\Helpers\MeasurementHelper;
 use Webkul\Measurement\Repositories\AttributeMeasurementRepository;
 use Webkul\Measurement\Repositories\MeasurementFamilyRepository;
 
@@ -22,7 +23,8 @@ class AttributeMeasurementApiController extends Controller
         /**
          * Attribute repository instance.
          */
-        protected AttributeRepository $attributeMasterRepository
+        protected AttributeRepository $attributeMasterRepository,
+        protected MeasurementHelper $measurementHelper
     ) {}
 
     /**
@@ -119,7 +121,7 @@ class AttributeMeasurementApiController extends Controller
             ], 404);
         }
 
-        if ($attribute->type !== 'measurement') {
+        if (! $this->measurementHelper->isMeasurementBacked($attribute->type)) {
             return response()->json([
                 'success' => false,
                 'message' => trans('measurement::app.messages.attribute.not_measurement_type'),
