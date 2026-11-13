@@ -125,6 +125,8 @@ return [
                     'base'           => 'Decimales del valor base',
                     'base-info'      => 'Número de decimales que se conservan para el valor convertido a la unidad estándar.',
                 ],
+                'display-unit-symbol'      => 'Mostrar símbolos de unidad',
+                'display-unit-symbol-info' => 'Muestra los valores de medida con el símbolo de la unidad (por ejemplo 100 °C) en lugar del nombre de la unidad, en la administración y en las exportaciones. Las unidades sin símbolo conservan su nombre.',
             ],
         ],
     ],

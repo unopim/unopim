@@ -114,6 +114,8 @@ return [
                     'base'           => 'Base value decimals',
                     'base-info'      => 'Decimal places kept for the value converted to the standard unit.',
                 ],
+                'display-unit-symbol'      => 'Display unit symbols',
+                'display-unit-symbol-info' => 'Show measurement values with the unit symbol (for example 100 °C) instead of the unit name, in the admin and in exports. Units without a symbol keep their name.',
             ],
         ],
     ],

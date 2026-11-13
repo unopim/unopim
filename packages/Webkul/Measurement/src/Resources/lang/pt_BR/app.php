@@ -126,6 +126,8 @@ return [
                     'base'           => 'Decimais do valor base',
                     'base-info'      => 'Número de casas decimais mantidas para o valor convertido para a unidade padrão.',
                 ],
+                'display-unit-symbol'      => 'Exibir símbolos de unidade',
+                'display-unit-symbol-info' => 'Exibe os valores de medida com o símbolo da unidade (por exemplo 100 °C) em vez do nome da unidade, no admin e nas exportações. Unidades sem símbolo mantêm o nome.',
             ],
         ],
     ],

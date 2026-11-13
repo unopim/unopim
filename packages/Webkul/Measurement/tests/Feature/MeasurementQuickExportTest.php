@@ -18,8 +18,12 @@ it('formats measurement values for product quick export', function () {
 
     $measurementHelper = Mockery::mock(MeasurementHelper::class);
     $measurementHelper
-        ->shouldReceive('getUnitLabel')
-        ->with('kg', $attribute, 'en_US')
+        ->shouldReceive('displaysUnitSymbol')
+        ->once()
+        ->andReturn(false);
+    $measurementHelper
+        ->shouldReceive('getUnitDisplayLabel')
+        ->with('kg', $attribute, 'en_US', false)
         ->andReturn('Kilogram');
 
     app()->instance(MeasurementHelper::class, $measurementHelper);

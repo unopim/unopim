@@ -4,6 +4,7 @@ namespace Webkul\Measurement\Services\Normalizers;
 
 use Webkul\Attribute\Contracts\Attribute;
 use Webkul\Attribute\Services\Normalizers\AbstractNormalizer;
+use Webkul\Measurement\Helpers\MeasurementHelper;
 use Webkul\Measurement\Repositories\AttributeMeasurementRepository;
 
 class MeasurementNormalizer extends AbstractNormalizer
@@ -12,7 +13,8 @@ class MeasurementNormalizer extends AbstractNormalizer
         /**
          * Attribute measurement repository instance.
          */
-        protected AttributeMeasurementRepository $attributeMeasurementRepository
+        protected AttributeMeasurementRepository $attributeMeasurementRepository,
+        protected MeasurementHelper $measurementHelper
     ) {}
 
     /**
@@ -86,7 +88,7 @@ class MeasurementNormalizer extends AbstractNormalizer
             $unitLabel = $unitLabel[$locale] ?? current($unitLabel) ?? $unitCode;
         }
 
-        return $formattedAmount.' '.$unitLabel;
+        return $formattedAmount.' '.$this->measurementHelper->formatUnitLabel($unitData, (string) $unitLabel);
     }
 
     /**

@@ -106,20 +106,77 @@ class MeasurementHelper
      */
     public function getUnitLabel($unitCode, $attribute, ?string $locale = null)
     {
-        $attributeMeasurement = $this->attributeMeasurementRepository->getByAttributeId($attribute->id);
-
-        if (! $attributeMeasurement || ! $attributeMeasurement->family || ! $unitCode) {
-            return $unitCode;
-        }
-
-        $unit = collect($attributeMeasurement->family->units ?? [])
-            ->firstWhere('code', $unitCode);
+        $unit = $this->findAttributeUnit($unitCode, $attribute);
 
         if (! $unit) {
             return $unitCode;
         }
 
         return $this->getLabelFromUnit($unit, $locale) ?? $unitCode;
+    }
+
+    /**
+     * Resolve the text shown or exported for a unit code: its symbol when the
+     * display_unit_symbol setting is on and the unit has one, its label otherwise.
+     *
+     * @param  mixed  $unitCode
+     * @param  mixed  $attribute
+     * @param  bool|null  $displaySymbol  Pre-read setting, so per-row callers read it once.
+     * @return mixed
+     */
+    public function getUnitDisplayLabel($unitCode, $attribute, ?string $locale = null, ?bool $displaySymbol = null)
+    {
+        $unit = $this->findAttributeUnit($unitCode, $attribute);
+
+        if (! $unit) {
+            return $unitCode;
+        }
+
+        return $this->formatUnitLabel($unit, $this->getLabelFromUnit($unit, $locale) ?? $unitCode, $displaySymbol);
+    }
+
+    /**
+     * Choose between a unit's symbol and the given label according to the
+     * display_unit_symbol setting, keeping the label when the unit has no symbol.
+     *
+     * @param  bool|null  $displaySymbol  Pre-read setting, so per-row callers read it once.
+     */
+    public function formatUnitLabel(array $unit, string $label, ?bool $displaySymbol = null): string
+    {
+        $displaySymbol ??= $this->displaysUnitSymbol();
+
+        $symbol = trim((string) ($unit['symbol'] ?? ''));
+
+        return $displaySymbol && $symbol !== '' ? $symbol : $label;
+    }
+
+    /**
+     * Whether measurement units are displayed by symbol instead of name.
+     */
+    public function displaysUnitSymbol(): bool
+    {
+        return (bool) core()->getConfigData('system.measurement.display_unit_symbol');
+    }
+
+    /**
+     * Find a unit by code within the attribute's measurement family.
+     *
+     * @param  mixed  $unitCode
+     * @param  mixed  $attribute
+     */
+    protected function findAttributeUnit($unitCode, $attribute): ?array
+    {
+        if (! $unitCode) {
+            return null;
+        }
+
+        $attributeMeasurement = $this->attributeMeasurementRepository->getByAttributeId($attribute->id);
+
+        if (! $attributeMeasurement || ! $attributeMeasurement->family) {
+            return null;
+        }
+
+        return collect($attributeMeasurement->family->units ?? [])->firstWhere('code', $unitCode);
     }
 
     /**
@@ -145,6 +202,9 @@ class MeasurementHelper
 
     /**
      * Resolve a unit code from a code, symbol or label.
+     *
+     * An exact match wins over a case-insensitive one, because symbols such as
+     * "MW" (megawatt) and "mW" (milliwatt) differ only in case.
      */
     public function resolveUnitCode($unitValue, $attribute, ?string $locale = null)
     {
@@ -154,25 +214,33 @@ class MeasurementHelper
             return $unitValue;
         }
 
-        $normalizedUnitValue = $this->normalizeUnitValue($unitValue);
+        $units = $attributeMeasurement->family->units ?? [];
 
-        foreach ($attributeMeasurement->family->units ?? [] as $unit) {
-            if ($this->normalizeUnitValue($unit['code'] ?? null) === $normalizedUnitValue) {
-                return $unit['code'];
-            }
+        $exactValue = trim((string) $unitValue);
 
-            if ($this->normalizeUnitValue($unit['symbol'] ?? null) === $normalizedUnitValue) {
-                return $unit['code'];
-            }
+        return $this->findUnitCodeMatching($units, $exactValue, fn ($value): ?string => $value === null ? null : trim((string) $value), $locale)
+            ?? $this->findUnitCodeMatching($units, $this->normalizeUnitValue($unitValue), $this->normalizeUnitValue(...), $locale)
+            ?? $unitValue;
+    }
 
-            foreach ($this->getUnitLabels($unit, $locale) as $label) {
-                if ($this->normalizeUnitValue($label) === $normalizedUnitValue) {
+    /**
+     * Find the code of the first unit whose code, symbol or label equals the value once both are passed through $normalize.
+     *
+     * @param  callable(mixed): ?string  $normalize
+     */
+    protected function findUnitCodeMatching(iterable $units, ?string $value, callable $normalize, ?string $locale): ?string
+    {
+        foreach ($units as $unit) {
+            $candidates = [$unit['code'] ?? null, $unit['symbol'] ?? null, ...$this->getUnitLabels($unit, $locale)];
+
+            foreach ($candidates as $candidate) {
+                if ($candidate !== null && $candidate !== '' && $normalize($candidate) === $value) {
                     return $unit['code'];
                 }
             }
         }
 
-        return $unitValue;
+        return null;
     }
 
     /**
