@@ -7,10 +7,12 @@ use Illuminate\Support\Facades\Event;
 use Symfony\Component\HttpFoundation\Response;
 use Webkul\AdminApi\ApiDataSource\Catalog\AssociationTypeDataSource;
 use Webkul\AdminApi\Http\Controllers\API\ApiController;
+use Webkul\AdminApi\Http\Middleware\ScopeMiddleware;
 use Webkul\AdminApi\Http\Requests\Catalog\StoreAssociationTypeFieldRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\StoreAssociationTypeRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\UpdateAssociationTypeFieldRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\UpdateAssociationTypeRequest;
+use Webkul\Product\Contracts\AssociationType;
 use Webkul\Product\Repositories\AssociationTypeFieldRepository;
 use Webkul\Product\Repositories\AssociationTypeRepository;
 
@@ -57,6 +59,10 @@ class AssociationTypeController extends ApiController
     {
         $requestData = $this->setLabels($request->all());
 
+        if (! $this->mayWriteNestedFields($requestData['fields'] ?? null, null)) {
+            return $this->unauthorizedNestedFieldsResponse();
+        }
+
         $requestData['status'] = $requestData['status'] ?? true;
         $requestData['is_user_defined'] = 1;
         $requestData['position'] = ((int) $this->associationTypeRepository->max('position')) + 1;
@@ -97,6 +103,10 @@ class AssociationTypeController extends ApiController
         }
 
         $requestData = $this->setLabels(request()->except(['code', 'is_user_defined']));
+
+        if (! $this->mayWriteNestedFields($requestData['fields'] ?? null, $associationType)) {
+            return $this->unauthorizedNestedFieldsResponse();
+        }
 
         try {
             Event::dispatch('catalog.association_type.update.before');
@@ -216,7 +226,7 @@ class AssociationTypeController extends ApiController
             return $this->modelNotFoundResponse(trans('admin::app.catalog.association_types.fields.not-found', ['code' => $fieldCode]));
         }
 
-        $immutable = array_intersect(['code', 'type'], array_keys(request()->all()));
+        $immutable = array_intersect(['code', 'type', 'association_type_id'], array_keys(request()->all()));
 
         if (! empty($immutable)) {
             return $this->validateErrorResponse([
@@ -265,5 +275,69 @@ class AssociationTypeController extends ApiController
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);
         }
+    }
+
+    /**
+     * Whether the API key may apply every entry of a nested `fields` payload.
+     *
+     * The type endpoints are scoped to the type permissions, but each nested
+     * entry creates, edits or deletes an association type field, which the
+     * dedicated field endpoints guard with their own permissions. The payload
+     * checked is the one handed to the repository (after `labels` is merged in),
+     * and whether an entry addresses an existing field is decided by the
+     * repository's own resolution. An entry flagged `isDelete` needs the delete
+     * permission, an existing field needs edit, anything else needs create. An
+     * entry naming another association type is refused, because writing it
+     * would move the field out of this type.
+     */
+    protected function mayWriteNestedFields(mixed $fields, ?AssociationType $associationType): bool
+    {
+        if (! is_array($fields) || $fields === []) {
+            return true;
+        }
+
+        $resolvedIds = $associationType
+            ? $this->associationTypeRepository->resolveFieldIds($associationType->id, $fields)
+            : [];
+
+        $scope = app(ScopeMiddleware::class);
+
+        foreach ($fields as $key => $entry) {
+            $entry = is_array($entry) ? $entry : [];
+
+            if (array_key_exists('association_type_id', $entry) && ! $this->namesAssociationType($entry['association_type_id'], $associationType)) {
+                return false;
+            }
+
+            $permission = match (true) {
+                filter_var($entry['isDelete'] ?? false, FILTER_VALIDATE_BOOLEAN) => 'api.catalog.association_types.fields.delete',
+                (bool) ($resolvedIds[$key] ?? null)                              => 'api.catalog.association_types.fields.edit',
+                default                                                          => 'api.catalog.association_types.fields.create',
+            };
+
+            if (! $scope->hasPermission($permission)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Whether a nested entry's `association_type_id` names the association type in the URL.
+     */
+    protected function namesAssociationType(mixed $associationTypeId, ?AssociationType $associationType): bool
+    {
+        return is_scalar($associationTypeId)
+            && $associationType !== null
+            && (string) $associationTypeId === (string) $associationType->id;
+    }
+
+    /**
+     * The response the API scope middleware returns for a missing permission.
+     */
+    protected function unauthorizedNestedFieldsResponse(): JsonResponse
+    {
+        return response()->json(['error' => 'This action is unauthorized'], Response::HTTP_FORBIDDEN);
     }
 }
