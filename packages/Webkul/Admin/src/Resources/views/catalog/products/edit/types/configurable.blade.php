@@ -778,7 +778,7 @@
                 return {
                     defaultId: parseInt('{{ $product->additional['default_variant_id'] ?? null }}'),
 
-                    variants: @json($product->variants()->with(['attribute_family'])->get()->map(fn ($item) => $item->normalizeWithImage())),
+                    variants: @json($product->variants()->with(['attribute_family', 'parent.parent'])->get()->map(fn ($item) => $item->normalizeWithImage())),
 
                     superAttributes: @json($product->super_attributes()->with(['options', 'options.attribute', 'options.translations'])->get()),
 
