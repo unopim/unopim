@@ -3,11 +3,14 @@
 namespace Webkul\AdminApi\Http\Requests\Catalog;
 
 use Webkul\AdminApi\Http\Requests\ApiFormRequest;
+use Webkul\AdminApi\Http\Requests\Catalog\Concerns\ValidatesNestedAssociationTypeFields;
 use Webkul\Core\Rules\Code;
 use Webkul\Product\Rules\AssociationNotSupportedFields;
 
 class StoreAssociationTypeRequest extends ApiFormRequest
 {
+    use ValidatesNestedAssociationTypeFields;
+
     public function rules(): array
     {
         $rules = [
@@ -18,6 +21,7 @@ class StoreAssociationTypeRequest extends ApiFormRequest
                 new AssociationNotSupportedFields,
             ],
             'status' => ['sometimes', 'boolean'],
+            ...$this->nestedFieldRules(creating: true),
         ];
 
         foreach (core()->getAllActiveLocales() as $locale) {
