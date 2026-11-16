@@ -74,8 +74,14 @@ it('defaults to the hideable menu keys flagged hidden by default', function () {
         'catalog.measurements',
         'settings.currencies',
         'ai-agent',
-        'configuration.webhook',
     ]);
+});
+
+it('keeps webhooks visible by default while pim is off so other modules can deliver events', function () {
+    $gate = $this->setPlatformModules('records');
+
+    expect($gate->hiddenSections())->not->toContain('configuration.webhook')
+        ->and($gate->hideableSections())->toContain('configuration.webhook');
 });
 
 it('leaves out a hidden-by-default menu key that is not hideable', function () {
