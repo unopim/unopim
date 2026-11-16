@@ -22,7 +22,7 @@ class Decimal implements ValidationRule
             return;
         }
 
-        if (! preg_match('/^\d*(\.\d{1,4})?$/', (string) $value)) {
+        if (! preg_match('/^(-(?=\.?\d))?\d*(\.\d{1,4})?$/', (string) $value)) {
             $fail('core::validation.decimal')->translate();
         }
     }
