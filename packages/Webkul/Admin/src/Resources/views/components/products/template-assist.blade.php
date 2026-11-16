@@ -1,4 +1,4 @@
-@props(['productId', 'field', 'fieldName', 'localeCode', 'currencies' => [], 'filters' => []])
+@props(['productId', 'field', 'fieldName', 'localeCode', 'currencies' => [], 'filters' => [], 'rich' => false])
 
 <v-product-template-assist
     suggestions-url="{{ route('admin.catalog.products.template_suggestions', ['id' => $productId]) }}"
@@ -7,6 +7,7 @@
     locale="{{ $localeCode }}"
     :currencies='@json($currencies)'
     :filters='@json($filters)'
+    :rich='@json((bool) $rich)'
 ></v-product-template-assist>
 
 @pushOnce('scripts')
@@ -106,6 +107,11 @@
                     type: Array,
                     default: () => [],
                 },
+
+                rich: {
+                    type: Boolean,
+                    default: false,
+                },
             },
 
             data() {
@@ -119,6 +125,10 @@
             },
 
             mounted() {
+                if (this.rich) {
+                    return;
+                }
+
                 this.$nextTick(() => {
                     this.input = this.$el
                         .closest('[data-control-group]')

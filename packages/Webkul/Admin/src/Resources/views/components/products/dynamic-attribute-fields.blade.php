@@ -150,8 +150,7 @@
 
         $hasTemplateAssist = $templateProductId
             && ! $isDisabled
-            && $field->canHoldTemplate()
-            && ! $field->isRichText();
+            && $field->canHoldTemplate();
     @endphp
 
     {!! view_render_event('unopim.admin.products.dynamic-attribute-fields.field.before', ['field' => $field]) !!}
@@ -186,6 +185,7 @@
                         :locale-code="$currentLocaleCode"
                         :currencies="$templateCurrencies"
                         :filters="$templateFilters"
+                        :rich="$field->isRichText()"
                     />
 
                     <x-admin::products.template-preview

@@ -66,8 +66,14 @@
                         v-if="loaded"
                         class="max-h-[50vh] overflow-y-auto p-3 rounded-md border border-gray-200 dark:border-cherry-800 bg-gray-50 dark:bg-cherry-900"
                     >
+                        <div
+                            v-if="output !== '' && richOutput !== null"
+                            class="rich-content-preview break-words text-sm text-gray-800 dark:text-white"
+                            v-html="richOutput"
+                        ></div>
+
                         <p
-                            v-if="output !== ''"
+                            v-else-if="output !== ''"
                             class="whitespace-pre-wrap break-words text-sm text-gray-800 dark:text-white"
                             v-text="output"
                         ></p>
@@ -152,10 +158,25 @@
 
                     output: '',
 
+                    rich: false,
+
                     errors: [],
 
                     warnings: [],
                 };
+            },
+
+            computed: {
+                richOutput() {
+                    if (! this.rich || typeof window.DOMPurify === 'undefined') {
+                        return null;
+                    }
+
+                    return window.DOMPurify.sanitize(this.output, {
+                        FORBID_TAGS: ['style'],
+                        FORBID_ATTR: ['style', 'class'],
+                    });
+                },
             },
 
             methods: {
@@ -184,6 +205,8 @@
                             }
 
                             this.output = data.output;
+
+                            this.rich = data.rich_text === true;
 
                             this.errors = data.errors;
 

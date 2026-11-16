@@ -26,11 +26,18 @@ function templateAssistCodes(string $html): array
     return $matches[1];
 }
 
+function templatePreviewCodes(string $html): array
+{
+    preg_match_all('/<v-product-template-preview[^>]*\sattribute="([^"]+)"/', $html, $matches);
+
+    return $matches[1];
+}
+
 function templateAssistProp(string $html, string $prop): array
 {
     preg_match_all('/<v-product-template-assist[^>]*\s:'.$prop.'=\'([^\']*)\'/', $html, $matches);
 
-    return array_map(fn (string $json): array => json_decode($json, true), $matches[1]);
+    return array_map(fn (string $json): mixed => json_decode($json, true), $matches[1]);
 }
 
 function renderTemplateAssistFields($test, array $props = []): string
@@ -47,12 +54,18 @@ function renderTemplateAssistFields($test, array $props = []): string
     );
 }
 
-it('adds the template assist only to plain text fields that can hold templates', function () {
+it('adds the template assist and preview only to fields that can hold templates', function () {
     $html = renderTemplateAssistFields($this);
 
-    expect(templateAssistCodes($html))->toBe(['tpl_plain'])
+    expect(templateAssistCodes($html))->toBe(['tpl_plain', 'tpl_rich'])
+        ->and(templatePreviewCodes($html))->toBe(['tpl_plain', 'tpl_rich'])
         ->and($html)->toContain(route('admin.catalog.products.template_suggestions', ['id' => 7]))
-        ->and($html)->toContain('field-name="values[common][tpl_plain]"');
+        ->and($html)->toContain('field-name="values[common][tpl_plain]"')
+        ->and($html)->toContain('field-name="values[common][tpl_rich]"');
+});
+
+it('marks only rich text fields as rich in the template assist', function () {
+    expect(templateAssistProp(renderTemplateAssistFields($this), 'rich'))->toBe([false, true]);
 });
 
 it('passes the channel currencies to the template assist', function () {
@@ -60,8 +73,8 @@ it('passes the channel currencies to the template assist', function () {
 
     $html = renderTemplateAssistFields($this, ['channelCurrencies' => $channel->currencies]);
 
-    expect(templateAssistProp($html, 'currencies'))->toHaveCount(1)
-        ->and(templateAssistProp($html, 'currencies')[0])->toEqualCanonicalizing([
+    expect(templateAssistProp($html, 'currencies'))->toHaveCount(2)
+        ->each->toEqualCanonicalizing([
             ['code' => 'EUR', 'symbol' => core()->currencySymbol('EUR')],
             ['code' => 'USD', 'symbol' => core()->currencySymbol('USD')],
         ]);
@@ -70,8 +83,8 @@ it('passes the channel currencies to the template assist', function () {
 it('passes the template filters to the template assist', function () {
     $filters = templateAssistProp(renderTemplateAssistFields($this), 'filters');
 
-    expect($filters)->toHaveCount(1)
-        ->and($filters[0])->toBe(app(FilterRegistry::class)->suggestions());
+    expect($filters)->toHaveCount(2)
+        ->each->toBe(app(FilterRegistry::class)->suggestions());
 });
 
 it('does not add the template assist without a product', function () {
@@ -83,7 +96,8 @@ it('does not add the template assist to locked variant fields', function () {
         'lockedFields' => ['tpl_plain' => ['level' => 'common', 'value' => 'Inherited']],
     ]);
 
-    expect(templateAssistCodes($html))->toBe([]);
+    expect(templateAssistCodes($html))->toBe(['tpl_rich'])
+        ->and(templatePreviewCodes($html))->toBe(['tpl_rich']);
 });
 
 it('adds the template assist to the product edit page and its lazy attribute groups', function () {
@@ -95,7 +109,7 @@ it('adds the template assist to the product edit page and its lazy attribute gro
 
     $page = get(route('admin.catalog.products.edit', $product->id))->assertOk()->getContent();
 
-    expect(templateAssistCodes($page))->toBe(['tpl_plain'])
+    expect(templateAssistCodes($page))->toBe(['tpl_plain', 'tpl_rich'])
         ->and($page)->toMatch('/v-pre\s*>\{\{ name \| upper \}\}<\/code>/')
         ->and($page)->toMatch('/v-pre\s*>\{\{ price\.EUR \}\}<\/code>/');
 
@@ -105,6 +119,6 @@ it('adds the template assist to the product edit page and its lazy attribute gro
         ->assertOk()
         ->json('html');
 
-    expect(templateAssistCodes($html))->toBe(['tpl_plain'])
+    expect(templateAssistCodes($html))->toBe(['tpl_plain', 'tpl_rich'])
         ->and($html)->toContain("app.component('v-product-template-assist'");
 });
