@@ -1248,7 +1248,7 @@ class Importer extends AbstractImporter
             foreach ($validator->errors()->getMessages() as $attributeCode => $message) {
                 $errorCode = array_key_first($failedAttributes[$attributeCode] ?? []);
 
-                $this->skipRow($rowNumber, $errorCode, $attributeCode, current($message));
+                $this->skipRow($rowNumber, $errorCode, $attributeCode, str_replace('%', '%%', current($message)));
             }
         }
 
