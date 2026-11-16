@@ -218,9 +218,13 @@
                     let open = false;
 
                     const remember = (range) => {
-                        before = range.startContainer.nodeType === Node.TEXT_NODE
-                            ? range.startContainer.data.slice(0, range.startOffset)
-                            : '';
+                        const preceding = editor.dom.createRng();
+
+                        preceding.setStart(editor.dom.getParent(range.startContainer, editor.dom.isBlock) ?? editor.getBody(), 0);
+
+                        preceding.setEnd(range.startContainer, range.startOffset);
+
+                        before = preceding.toString();
 
                         return before;
                     };
