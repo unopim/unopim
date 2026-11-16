@@ -292,6 +292,15 @@ return [
                     'example'  => 'Halimbawa',
                     'filters'  => 'Mga filter',
                     'currency' => 'Presyo sa iisang currency',
+
+                    'preview'  => [
+                        'button'       => 'I-preview ang template',
+                        'title'        => 'Preview ng template',
+                        'refresh'      => 'I-refresh',
+                        'empty'        => 'Walang laman ang resulta ng template.',
+                        'failed'       => 'Hindi ma-load ang preview. Pakisubukang muli.',
+                        'saved-values' => 'Ginagamit ang mga hindi pa naka-save na value ng mga seksyong naka-load sa pahinang ito. Ang ibang value ay mula sa huling pag-save.',
+                    ],
                 ],
 
                 'attribute-groups' => [

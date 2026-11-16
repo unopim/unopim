@@ -56,12 +56,9 @@ class ProductTemplatesValidator
         $messages = [];
 
         foreach ($this->scopes() as [$channel, $locale]) {
-            $references = $this->references($values, $channel, $locale);
-
             $messages = array_merge_recursive(
                 $messages,
-                $this->familyMessages($references, $familyCodes, $channel, $locale),
-                $this->circularMessages($references, $channel, $locale),
+                $this->scopeMessages($this->references($values, $channel, $locale), $familyCodes, $channel, $locale),
             );
         }
 
@@ -71,6 +68,30 @@ class ProductTemplatesValidator
                 $messages,
             ));
         }
+    }
+
+    public function attributeErrors(Attribute $attribute, array $values, ?Product $product, string $channel, string $locale): array
+    {
+        if (! $this->templateAttributes()->has($attribute->code)) {
+            return [];
+        }
+
+        $messages = $this->scopeMessages(
+            $this->reachableReferences($attribute->code, $values, $channel, $locale),
+            $this->familyAttributeCodes($product),
+            $channel,
+            $locale,
+        );
+
+        return array_values(array_unique($messages[$this->path($attribute->code, $channel, $locale)] ?? []));
+    }
+
+    private function scopeMessages(array $references, ?array $familyCodes, string $channel, string $locale): array
+    {
+        return array_merge_recursive(
+            $this->familyMessages($references, $familyCodes, $channel, $locale),
+            $this->circularMessages($references, $channel, $locale),
+        );
     }
 
     private function submitsTemplates(array $data): bool
@@ -88,6 +109,37 @@ class ProductTemplatesValidator
 
             if ($this->parser->containsTemplate($source)) {
                 $references[$code] = $this->parser->parse($source, $attribute->isRichText())->attributeCodes();
+            }
+        }
+
+        return $references;
+    }
+
+    private function reachableReferences(string $code, array $values, string $channel, string $locale): array
+    {
+        $references = [];
+
+        $visited = [];
+
+        $pending = [$code];
+
+        while ($pending !== []) {
+            $current = array_shift($pending);
+
+            if (isset($visited[$current]) || ! $this->templateAttributes()->has($current)) {
+                continue;
+            }
+
+            $visited[$current] = true;
+
+            $attribute = $this->templateAttributes()->get($current);
+
+            $source = $attribute->getValueFromProductValues($values, $channel, $locale);
+
+            if ($this->parser->containsTemplate($source)) {
+                $references[$current] = $this->parser->parse($source, $attribute->isRichText())->attributeCodes();
+
+                array_push($pending, ...$references[$current]);
             }
         }
 

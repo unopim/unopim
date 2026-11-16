@@ -292,6 +292,15 @@ return [
                     'example'  => 'Contoh',
                     'filters'  => 'Filter',
                     'currency' => 'Harga dalam satu mata uang',
+
+                    'preview'  => [
+                        'button'       => 'Pratinjau templat',
+                        'title'        => 'Pratinjau templat',
+                        'refresh'      => 'Muat ulang',
+                        'empty'        => 'Templat menghasilkan nilai kosong.',
+                        'failed'       => 'Pratinjau tidak dapat dimuat. Silakan coba lagi.',
+                        'saved-values' => 'Menggunakan nilai yang belum disimpan dari bagian yang dimuat di halaman ini. Nilai lainnya berasal dari penyimpanan terakhir.',
+                    ],
                 ],
 
                 'attribute-groups' => [

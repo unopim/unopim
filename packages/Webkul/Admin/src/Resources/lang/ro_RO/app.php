@@ -293,6 +293,15 @@ return [
                     'example'  => 'Exemplu',
                     'filters'  => 'Filtre',
                     'currency' => 'Preț într-o singură monedă',
+
+                    'preview'  => [
+                        'button'       => 'Previzualizează șablonul',
+                        'title'        => 'Previzualizare șablon',
+                        'refresh'      => 'Reîmprospătează',
+                        'empty'        => 'Șablonul generează o valoare goală.',
+                        'failed'       => 'Previzualizarea nu a putut fi încărcată. Încercați din nou.',
+                        'saved-values' => 'Folosește valorile nesalvate ale secțiunilor încărcate pe această pagină. Celelalte valori provin din ultima salvare.',
+                    ],
                 ],
 
                 'attribute-groups' => [

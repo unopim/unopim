@@ -292,6 +292,15 @@ return [
                     'example'  => 'Primjer',
                     'filters'  => 'Filtri',
                     'currency' => 'Cijena u jednoj valuti',
+
+                    'preview'  => [
+                        'button'       => 'Pregledaj predložak',
+                        'title'        => 'Pregled predloška',
+                        'refresh'      => 'Osvježi',
+                        'empty'        => 'Predložak daje praznu vrijednost.',
+                        'failed'       => 'Pregled nije moguće učitati. Pokušajte ponovno.',
+                        'saved-values' => 'Koristi nespremljene vrijednosti odjeljaka učitanih na ovoj stranici. Ostale vrijednosti dolaze iz posljednjeg spremanja.',
+                    ],
                 ],
 
                 'attribute-groups' => [

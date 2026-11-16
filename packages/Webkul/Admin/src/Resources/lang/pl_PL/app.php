@@ -293,6 +293,15 @@ return [
                     'example'  => 'Przykład',
                     'filters'  => 'Filtry',
                     'currency' => 'Cena w jednej walucie',
+
+                    'preview'  => [
+                        'button'       => 'Podgląd szablonu',
+                        'title'        => 'Podgląd szablonu',
+                        'refresh'      => 'Odśwież',
+                        'empty'        => 'Szablon daje pustą wartość.',
+                        'failed'       => 'Nie udało się wczytać podglądu. Spróbuj ponownie.',
+                        'saved-values' => 'Używa niezapisanych wartości z sekcji wczytanych na tej stronie. Pozostałe wartości pochodzą z ostatniego zapisu.',
+                    ],
                 ],
 
                 'attribute-groups' => [

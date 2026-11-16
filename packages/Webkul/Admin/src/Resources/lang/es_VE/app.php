@@ -292,6 +292,15 @@ return [
                     'example'  => 'Ejemplo',
                     'filters'  => 'Filtros',
                     'currency' => 'Precio en una sola moneda',
+
+                    'preview'  => [
+                        'button'       => 'Previsualizar plantilla',
+                        'title'        => 'Vista previa de la plantilla',
+                        'refresh'      => 'Actualizar',
+                        'empty'        => 'La plantilla genera un valor vacío.',
+                        'failed'       => 'No se pudo cargar la vista previa. Inténtelo de nuevo.',
+                        'saved-values' => 'Usa los valores no guardados de las secciones cargadas en esta página. Los demás valores provienen del último guardado.',
+                    ],
                 ],
 
                 'attribute-groups' => [

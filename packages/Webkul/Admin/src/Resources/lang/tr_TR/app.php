@@ -292,6 +292,15 @@ return [
                     'example'  => 'Örnek',
                     'filters'  => 'Filtreler',
                     'currency' => 'Tek para biriminde fiyat',
+
+                    'preview'  => [
+                        'button'       => 'Şablonu önizle',
+                        'title'        => 'Şablon önizlemesi',
+                        'refresh'      => 'Yenile',
+                        'empty'        => 'Şablon boş bir değer üretiyor.',
+                        'failed'       => 'Önizleme yüklenemedi. Lütfen tekrar deneyin.',
+                        'saved-values' => 'Bu sayfada yüklenen bölümlerin kaydedilmemiş değerlerini kullanır. Diğer değerler son kayıttan gelir.',
+                    ],
                 ],
 
                 'attribute-groups' => [

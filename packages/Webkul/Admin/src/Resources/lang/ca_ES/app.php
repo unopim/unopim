@@ -292,6 +292,15 @@ return [
                     'example'  => 'Exemple',
                     'filters'  => 'Filtres',
                     'currency' => 'Preu en una sola moneda',
+
+                    'preview'  => [
+                        'button'       => 'Previsualitza la plantilla',
+                        'title'        => 'Previsualització de la plantilla',
+                        'refresh'      => 'Actualitza',
+                        'empty'        => 'La plantilla genera un valor buit.',
+                        'failed'       => 'No s\'ha pogut carregar la previsualització. Torneu-ho a provar.',
+                        'saved-values' => 'Utilitza els valors no desats de les seccions carregades en aquesta pàgina. La resta de valors provenen de l\'últim desament.',
+                    ],
                 ],
 
                 'attribute-groups' => [

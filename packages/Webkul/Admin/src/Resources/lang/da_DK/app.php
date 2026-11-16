@@ -292,6 +292,15 @@ return [
                     'example'  => 'Eksempel',
                     'filters'  => 'Filtre',
                     'currency' => 'Pris i én valuta',
+
+                    'preview'  => [
+                        'button'       => 'Forhåndsvis skabelon',
+                        'title'        => 'Forhåndsvisning af skabelon',
+                        'refresh'      => 'Opdater',
+                        'empty'        => 'Skabelonen giver en tom værdi.',
+                        'failed'       => 'Forhåndsvisningen kunne ikke indlæses. Prøv igen.',
+                        'saved-values' => 'Bruger de ikke-gemte værdier fra de sektioner, der er indlæst på denne side. Andre værdier kommer fra den seneste gemning.',
+                    ],
                 ],
 
                 'attribute-groups' => [

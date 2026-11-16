@@ -189,6 +189,20 @@ it('reports template errors once and not again as warnings', function () {
         ->assertJsonPath('warnings', []);
 });
 
+it('keeps missing value warnings next to template errors', function () {
+    postJson(templatePreviewUrl($this->product, ['channel' => $this->channel->code, 'locale' => 'en_US']), [
+        'attribute' => 'tpl_description',
+        'values'    => ['common' => ['tpl_description' => '{{ tpl_color }} {{ tpl_unknown }}']],
+    ])
+        ->assertOk()
+        ->assertJsonPath('errors', [
+            trans('product::app.templates.messages.unknown-attribute', ['attribute' => 'tpl_unknown']),
+        ])
+        ->assertJsonPath('warnings', [
+            trans('product::app.templates.messages.missing-value', ['attribute' => 'tpl_color']),
+        ]);
+});
+
 it('reports a self reference only as an error', function () {
     postJson(templatePreviewUrl($this->product, ['channel' => $this->channel->code, 'locale' => 'en_US']), [
         'attribute' => 'tpl_description',

@@ -292,6 +292,15 @@ return [
                     'example'  => 'Beispiel',
                     'filters'  => 'Filter',
                     'currency' => 'Preis in einer Währung',
+
+                    'preview'  => [
+                        'button'       => 'Vorlagenvorschau anzeigen',
+                        'title'        => 'Vorlagenvorschau',
+                        'refresh'      => 'Aktualisieren',
+                        'empty'        => 'Die Vorlage ergibt einen leeren Wert.',
+                        'failed'       => 'Die Vorschau konnte nicht geladen werden. Bitte versuchen Sie es erneut.',
+                        'saved-values' => 'Verwendet die nicht gespeicherten Werte der auf dieser Seite geladenen Abschnitte. Andere Werte stammen aus der letzten Speicherung.',
+                    ],
                 ],
 
                 'attribute-groups' => [

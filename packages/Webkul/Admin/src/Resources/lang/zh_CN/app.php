@@ -292,6 +292,15 @@ return [
                     'example'  => '示例',
                     'filters'  => '过滤器',
                     'currency' => '单一货币价格',
+
+                    'preview'  => [
+                        'button'       => '预览模板',
+                        'title'        => '模板预览',
+                        'refresh'      => '刷新',
+                        'empty'        => '模板渲染结果为空。',
+                        'failed'       => '无法加载预览，请重试。',
+                        'saved-values' => '使用本页已加载部分中未保存的值，其他值来自上次保存。',
+                    ],
                 ],
 
                 'attribute-groups' => [

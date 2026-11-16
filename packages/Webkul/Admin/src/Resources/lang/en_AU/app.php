@@ -292,6 +292,15 @@ return [
                     'example'  => 'Example',
                     'filters'  => 'Filters',
                     'currency' => 'Price in one currency',
+
+                    'preview'  => [
+                        'button'       => 'Preview template',
+                        'title'        => 'Template preview',
+                        'refresh'      => 'Refresh',
+                        'empty'        => 'The template renders an empty value.',
+                        'failed'       => 'The preview could not be loaded. Please try again.',
+                        'saved-values' => 'Uses the unsaved values of the sections loaded on this page. Other values come from the last save.',
+                    ],
                 ],
 
                 'attribute-groups' => [

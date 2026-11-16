@@ -293,6 +293,15 @@ return [
                     'example'  => 'Eksempel',
                     'filters'  => 'Filtre',
                     'currency' => 'Pris i én valuta',
+
+                    'preview'  => [
+                        'button'       => 'Forhåndsvis mal',
+                        'title'        => 'Forhåndsvisning av mal',
+                        'refresh'      => 'Oppdater',
+                        'empty'        => 'Malen gir en tom verdi.',
+                        'failed'       => 'Forhåndsvisningen kunne ikke lastes inn. Prøv igjen.',
+                        'saved-values' => 'Bruker de ulagrede verdiene fra seksjonene som er lastet inn på denne siden. Andre verdier kommer fra siste lagring.',
+                    ],
                 ],
 
                 'attribute-groups' => [

@@ -292,6 +292,15 @@ return [
                     'example'  => 'Esempio',
                     'filters'  => 'Filtri',
                     'currency' => 'Prezzo in una sola valuta',
+
+                    'preview'  => [
+                        'button'       => 'Anteprima modello',
+                        'title'        => 'Anteprima del modello',
+                        'refresh'      => 'Aggiorna',
+                        'empty'        => 'Il modello genera un valore vuoto.',
+                        'failed'       => 'Impossibile caricare l\'anteprima. Riprova.',
+                        'saved-values' => 'Usa i valori non salvati delle sezioni caricate in questa pagina. Gli altri valori provengono dall\'ultimo salvataggio.',
+                    ],
                 ],
 
                 'attribute-groups' => [

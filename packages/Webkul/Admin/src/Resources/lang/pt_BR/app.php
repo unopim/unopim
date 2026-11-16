@@ -293,6 +293,15 @@ return [
                     'example'  => 'Exemplo',
                     'filters'  => 'Filtros',
                     'currency' => 'Preço em uma única moeda',
+
+                    'preview'  => [
+                        'button'       => 'Pré-visualizar modelo',
+                        'title'        => 'Pré-visualização do modelo',
+                        'refresh'      => 'Atualizar',
+                        'empty'        => 'O modelo gera um valor vazio.',
+                        'failed'       => 'Não foi possível carregar a pré-visualização. Tente novamente.',
+                        'saved-values' => 'Usa os valores não salvos das seções carregadas nesta página. Os demais valores vêm do último salvamento.',
+                    ],
                 ],
 
                 'attribute-groups' => [

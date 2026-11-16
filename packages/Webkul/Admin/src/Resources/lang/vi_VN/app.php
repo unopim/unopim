@@ -292,6 +292,15 @@ return [
                     'example'  => 'Ví dụ',
                     'filters'  => 'Bộ lọc',
                     'currency' => 'Giá theo một loại tiền tệ',
+
+                    'preview'  => [
+                        'button'       => 'Xem trước mẫu',
+                        'title'        => 'Xem trước mẫu',
+                        'refresh'      => 'Làm mới',
+                        'empty'        => 'Mẫu tạo ra giá trị trống.',
+                        'failed'       => 'Không thể tải bản xem trước. Vui lòng thử lại.',
+                        'saved-values' => 'Sử dụng các giá trị chưa lưu của những phần đã tải trên trang này. Các giá trị khác lấy từ lần lưu gần nhất.',
+                    ],
                 ],
 
                 'attribute-groups' => [

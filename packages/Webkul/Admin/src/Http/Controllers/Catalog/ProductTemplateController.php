@@ -5,21 +5,23 @@ declare(strict_types=1);
 namespace Webkul\Admin\Http\Controllers\Catalog;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Validation\ValidationException;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Attribute\Contracts\Attribute;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Product\Contracts\TemplateRenderer;
 use Webkul\Product\Contracts\TemplateValidator;
 use Webkul\Product\Contracts\VariantValueResolver;
-use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Templates\Results\RenderResult;
+use Webkul\Product\Templates\TemplateMessage;
 use Webkul\Product\Templates\TemplateValueFormatter;
 use Webkul\Product\Type\AbstractType;
 use Webkul\Product\Validator\ProductTemplatesValidator;
 
 class ProductTemplateController extends Controller
 {
+    private const array DATA_WARNINGS = ['missing-value'];
+
     public function __construct(
         protected ProductRepository $productRepository,
         protected AttributeRepository $attributeRepository,
@@ -73,9 +75,7 @@ class ProductTemplateController extends Controller
 
         $attribute = $this->attributeRepository->findOneByField('code', $data['attribute']);
 
-        $submitted = $data['values'] ?? [];
-
-        $values = $this->variantValueResolver->mergeChain([$product->resolvedValues(), $submitted]);
+        $values = $this->variantValueResolver->mergeChain([$product->resolvedValues(), $data['values'] ?? []]);
 
         $channel = core()->getRequestedChannelCode();
 
@@ -93,13 +93,13 @@ class ProductTemplateController extends Controller
 
         $errors = array_values(array_unique([
             ...$validation->errorMessages(),
-            ...($valid ? $this->productErrors($product, $attribute, $submitted, $channel, $locale) : []),
+            ...($valid ? $this->productTemplatesValidator->attributeErrors($attribute, $values, $product, $channel, $locale) : []),
             ...$result->errorMessages(),
         ]));
 
         $warnings = array_values(array_diff(array_unique([
             ...$validation->warningMessages(),
-            ...($valid ? $result->warningMessages() : []),
+            ...$this->renderWarnings($result, $valid),
         ]), $errors));
 
         return new JsonResponse([
@@ -112,14 +112,18 @@ class ProductTemplateController extends Controller
         ]);
     }
 
-    private function productErrors(Product $product, Attribute $attribute, array $submitted, string $channel, string $locale): array
+    private function renderWarnings(RenderResult $result, bool $valid): array
     {
-        try {
-            $this->productTemplatesValidator->validate($submitted, $product->id);
-        } catch (ValidationException $exception) {
-            return $exception->errors()[ltrim($attribute->getFlatAttributeName($channel, $locale), '.')] ?? [];
+        if ($valid) {
+            return $result->warningMessages();
         }
 
-        return [];
+        return array_map(
+            fn (TemplateMessage $warning): string => $warning->message(),
+            array_values(array_filter(
+                $result->warnings,
+                fn (TemplateMessage $warning): bool => in_array($warning->key, self::DATA_WARNINGS, true),
+            )),
+        );
     }
 }

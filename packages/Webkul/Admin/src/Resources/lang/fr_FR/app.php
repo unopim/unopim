@@ -292,6 +292,15 @@ return [
                     'example'  => 'Exemple',
                     'filters'  => 'Filtres',
                     'currency' => 'Prix dans une seule devise',
+
+                    'preview'  => [
+                        'button'       => 'Prévisualiser le modèle',
+                        'title'        => 'Aperçu du modèle',
+                        'refresh'      => 'Actualiser',
+                        'empty'        => 'Le modèle produit une valeur vide.',
+                        'failed'       => 'L\'aperçu n\'a pas pu être chargé. Veuillez réessayer.',
+                        'saved-values' => 'Utilise les valeurs non enregistrées des sections chargées sur cette page. Les autres valeurs proviennent du dernier enregistrement.',
+                    ],
                 ],
 
                 'attribute-groups' => [

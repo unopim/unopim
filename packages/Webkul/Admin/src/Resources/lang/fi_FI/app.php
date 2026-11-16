@@ -292,6 +292,15 @@ return [
                     'example'  => 'Esimerkki',
                     'filters'  => 'Suodattimet',
                     'currency' => 'Hinta yhdessä valuutassa',
+
+                    'preview'  => [
+                        'button'       => 'Esikatsele mallipohjaa',
+                        'title'        => 'Mallipohjan esikatselu',
+                        'refresh'      => 'Päivitä',
+                        'empty'        => 'Mallipohja tuottaa tyhjän arvon.',
+                        'failed'       => 'Esikatselua ei voitu ladata. Yritä uudelleen.',
+                        'saved-values' => 'Käyttää tällä sivulla ladattujen osioiden tallentamattomia arvoja. Muut arvot tulevat viimeisimmästä tallennuksesta.',
+                    ],
                 ],
 
                 'attribute-groups' => [

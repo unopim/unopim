@@ -292,6 +292,15 @@ return [
                     'example'  => 'Exempel',
                     'filters'  => 'Filter',
                     'currency' => 'Pris i en valuta',
+
+                    'preview'  => [
+                        'button'       => 'Förhandsgranska mall',
+                        'title'        => 'Förhandsgranskning av mall',
+                        'refresh'      => 'Uppdatera',
+                        'empty'        => 'Mallen ger ett tomt värde.',
+                        'failed'       => 'Förhandsgranskningen kunde inte läsas in. Försök igen.',
+                        'saved-values' => 'Använder de osparade värdena från avsnitten som har lästs in på den här sidan. Övriga värden kommer från den senaste sparningen.',
+                    ],
                 ],
 
                 'attribute-groups' => [

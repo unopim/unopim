@@ -293,6 +293,15 @@ return [
                     'example'  => 'Voorbeeld',
                     'filters'  => 'Filters',
                     'currency' => 'Prijs in één valuta',
+
+                    'preview'  => [
+                        'button'       => 'Sjabloon bekijken',
+                        'title'        => 'Sjabloonvoorbeeld',
+                        'refresh'      => 'Vernieuwen',
+                        'empty'        => 'Het sjabloon levert een lege waarde op.',
+                        'failed'       => 'Het voorbeeld kon niet worden geladen. Probeer het opnieuw.',
+                        'saved-values' => 'Gebruikt de niet-opgeslagen waarden van de secties die op deze pagina zijn geladen. Andere waarden komen uit de laatste opslag.',
+                    ],
                 ],
 
                 'attribute-groups' => [

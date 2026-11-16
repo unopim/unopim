@@ -292,6 +292,15 @@ return [
                     'example'  => '範例',
                     'filters'  => '篩選器',
                     'currency' => '單一貨幣價格',
+
+                    'preview'  => [
+                        'button'       => '預覽範本',
+                        'title'        => '範本預覽',
+                        'refresh'      => '重新整理',
+                        'empty'        => '範本轉譯結果為空。',
+                        'failed'       => '無法載入預覽，請再試一次。',
+                        'saved-values' => '使用本頁已載入區段中未儲存的值，其他值來自上次儲存。',
+                    ],
                 ],
 
                 'attribute-groups' => [

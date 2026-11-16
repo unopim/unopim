@@ -187,6 +187,14 @@
                         :currencies="$templateCurrencies"
                         :filters="$templateFilters"
                     />
+
+                    <x-admin::products.template-preview
+                        :product-id="$templateProductId"
+                        :field="$field"
+                        :label="$fieldLabel"
+                        :channel-code="$currentChannelCode"
+                        :locale-code="$currentLocaleCode"
+                    />
                 @endif
 
                 @if ($isLocked && $lockLabel)
