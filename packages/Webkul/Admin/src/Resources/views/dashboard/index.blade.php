@@ -14,6 +14,8 @@
         class="mb-5"
     >
         <x-slot:actions>
+            {!! view_render_event('unopim.admin.dashboard.index.quick-actions.before') !!}
+
             <!-- Quick Actions -->
             <div class="flex gap-2 max-sm:flex-wrap">
                 @if ($pimEnabled && bouncer()->hasPermission('catalog.products.create'))
@@ -46,10 +48,14 @@
                     </a>
                 @endif
             </div>
+
+            {!! view_render_event('unopim.admin.dashboard.index.quick-actions.after') !!}
         </x-slot>
     </x-admin::page-header>
 
     <!-- ═══ OVERVIEW ═══ -->
+
+    {!! view_render_event('unopim.admin.dashboard.index.cards.before') !!}
 
     @if ($pimEnabled)
         <!-- Catalog Overview -->
@@ -73,10 +79,18 @@
                 @include('admin::dashboard.total-catalog-structure')
             </div>
         </div>
+    @endif
 
+    {!! view_render_event('unopim.admin.dashboard.index.cards.after') !!}
+
+    @if ($pimEnabled)
         <!-- Needs Attention -->
         @include('admin::dashboard.needs-attention')
+    @endif
 
+    {!! view_render_event('unopim.admin.dashboard.index.analytics.before') !!}
+
+    @if ($pimEnabled)
         <!-- ═══ ANALYTICS ═══ -->
         <div class="flex items-center gap-3 mt-8 mb-4">
             <p class="text-xs font-semibold text-zinc-400 dark:text-slate-500 uppercase tracking-widest">
@@ -86,6 +100,8 @@
         </div>
 
         <!-- Product Statistics & Trend -->
+        {!! view_render_event('unopim.admin.dashboard.index.product-stats.before') !!}
+
         <div class="flex items-stretch gap-4 max-xl:flex-wrap">
             <div class="flex flex-col gap-2 flex-1 min-w-[300px]">
                 <p class="text-base text-zinc-800 dark:text-slate-50 font-bold">
@@ -103,6 +119,8 @@
                 @include('admin::dashboard.product-trend')
             </div>
         </div>
+
+        {!! view_render_event('unopim.admin.dashboard.index.product-stats.after') !!}
 
         <!-- Completeness -->
         <div class="flex gap-2.5 mt-5 max-xl:flex-wrap">
@@ -127,6 +145,8 @@
         </div>
     @endif
 
+    {!! view_render_event('unopim.admin.dashboard.index.analytics.after') !!}
+
     <!-- ═══ OPERATIONS ═══ -->
     <div class="flex items-center gap-3 mt-8 mb-4">
         <p class="text-xs font-semibold text-zinc-400 dark:text-slate-500 uppercase tracking-widest">
@@ -134,6 +154,8 @@
         </p>
         <div class="flex-1 border-t border-zinc-200 dark:border-cherry-800"></div>
     </div>
+
+    {!! view_render_event('unopim.admin.dashboard.index.operations.before') !!}
 
     <!-- Recent Activity & Data Transfer -->
     <div class="flex items-stretch gap-4 max-xl:flex-wrap">
@@ -153,4 +175,6 @@
             @include('admin::dashboard.data-transfer')
         </div>
     </div>
+
+    {!! view_render_event('unopim.admin.dashboard.index.operations.after') !!}
 </x-admin::layouts>
