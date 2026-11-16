@@ -76,6 +76,23 @@ it('suggests the supported attributes of the product family except the edited at
         ->not->toContain('tpl_description', 'tpl_image', 'tpl_outsider');
 });
 
+it('suggests every supported attribute of a large family', function () {
+    $codes = collect(range(1, 25))->map(fn (int $number): string => sprintf('tpl_extra_%02d', $number));
+
+    AttributeFamily::factory()->linkAttributesToFamily(
+        $this->family,
+        $codes->map(fn (string $code): int => $this->variableAttribute($code)->id)->all(),
+    );
+
+    $suggested = collect(getJson(templateSuggestionsUrl($this->product, ['attribute' => 'tpl_description']))
+        ->assertOk()
+        ->json())
+        ->pluck('code');
+
+    expect($suggested)->toHaveCount(30)
+        ->toContain(...$codes->all());
+});
+
 it('returns the code, translated name and type of every suggestion', function () {
     getJson(templateSuggestionsUrl($this->product, ['query' => 'tpl_name', 'locale' => 'de_DE']))
         ->assertOk()

@@ -20,8 +20,6 @@ use Webkul\Product\Validator\ProductTemplatesValidator;
 
 class ProductTemplateController extends Controller
 {
-    private const int SUGGESTION_LIMIT = 20;
-
     public function __construct(
         protected ProductRepository $productRepository,
         protected AttributeRepository $attributeRepository,
@@ -50,7 +48,6 @@ class ProductTemplateController extends Controller
                     ->where('locale', $locale)
                     ->whereLike('name', "%{$search}%"))))
             ->orderBy('code')
-            ->limit(self::SUGGESTION_LIMIT)
             ->get();
 
         return new JsonResponse($attributes->map(fn (Attribute $attribute): array => [
