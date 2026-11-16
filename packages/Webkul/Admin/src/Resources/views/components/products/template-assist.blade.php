@@ -121,11 +121,15 @@
                     tribute: null,
 
                     query: null,
+
+                    latestSuggestions: null,
                 };
             },
 
             mounted() {
                 if (this.rich) {
+                    window.tinymce?.on('SetupEditor', this.setupEditor);
+
                     return;
                 }
 
@@ -167,7 +171,9 @@
                                 values: this.fetchFilters,
                                 lookup: 'name',
                                 fillAttr: 'name',
-                                selectTemplate: (item) => item ? this.filterCall(item.original.value) : null,
+                                selectTemplate: (item) => item
+                                    ? this.filterCall(this.textBeforeTrigger(this.tribute.current.mentionText), item.original.value)
+                                    : null,
                                 menuItemTemplate: (item) => this.menuItem(
                                     item.original.name,
                                     item.original.value === item.original.name ? null : item.original.value,
@@ -185,6 +191,8 @@
             },
 
             beforeUnmount() {
+                window.tinymce?.off('SetupEditor', this.setupEditor);
+
                 if (this.tribute && this.input) {
                     this.tribute.detach(this.input);
 
@@ -195,46 +203,175 @@
             },
 
             methods: {
-                fetchCurrencies(text, callback) {
-                    this.tribute.current.filteredItems = [];
+                setupEditor({ editor }) {
+                    const element = editor.getElement();
 
-                    const before = this.input.value.slice(0, this.input.selectionStart - text.length - 1);
-
-                    const code = before.match(/\{\{\s*(\w+)$/)?.[1];
-
-                    if (! code || ! this.currencies.length) {
-                        callback([]);
-
+                    if (
+                        element?.name !== this.fieldName
+                        || ! this.$el.closest('[data-control-group]')?.contains(element)
+                    ) {
                         return;
                     }
 
-                    this.loadAttributeTypes().then((types) => {
-                        callback(types[code] === 'price' ? this.currencies : []);
+                    let before = '';
+
+                    let open = false;
+
+                    const remember = (range) => {
+                        before = range.startContainer.nodeType === Node.TEXT_NODE
+                            ? range.startContainer.data.slice(0, range.startOffset)
+                            : '';
+
+                        return before;
+                    };
+
+                    const insert = (api, range, text) => {
+                        editor.selection.setRng(range);
+
+                        editor.insertContent(editor.dom.encode(text));
+
+                        api.hide();
+                    };
+
+                    this.limitEditorMenuHeight();
+
+                    editor.ui.registry.addAutocompleter('templateAttributes', {
+                        trigger: '@',
+                        minChars: 0,
+                        columns: 1,
+                        fetch: (pattern) => this.latestAttributeSuggestions(pattern)
+                            .then((items) => items.map((item) => this.editorItem(item.code, item.name))),
+                        onAction: (api, range, value) => insert(api, range, `@{{ ${value} }}`),
                     });
+
+                    editor.ui.registry.addAutocompleter('templateCurrencies', {
+                        trigger: '.',
+                        minChars: 0,
+                        columns: 1,
+                        matches: (range) => this.currencyCode(remember(range)) !== null,
+                        fetch: (pattern) => this.currencyOptions(this.currencyCode(before))
+                            .then((currencies) => currencies
+                                .filter((currency) => this.contains(currency.code, pattern))
+                                .map((currency) => this.editorItem(currency.code, currency.code))),
+                        onAction: (api, range, value) => insert(api, range, `.${value}`),
+                    });
+
+                    editor.ui.registry.addAutocompleter('templateFilters', {
+                        trigger: '|',
+                        minChars: 0,
+                        columns: 1,
+                        matches: (range) => this.filterExpression(remember(range)) !== null,
+                        fetch: (pattern) => this.filterOptions(this.filterExpression(before))
+                            .then((filters) => filters
+                                .filter((filter) => this.contains(filter.name, pattern))
+                                .map((filter) => this.editorItem(filter.value, filter.name))),
+                        onAction: (api, range, value) => insert(api, range, this.filterCall(remember(range), value)),
+                    });
+
+                    editor.on('AutocompleterStart', () => {
+                        open = true;
+                    });
+
+                    editor.on('AutocompleterEnd', () => {
+                        open = false;
+                    });
+
+                    editor.on('keydown', (event) => {
+                        if (! open || event.key !== 'Tab' || event.shiftKey) {
+                            return;
+                        }
+
+                        const item = document.querySelector('.tox-autocompleter .tox-collection__item--active');
+
+                        if (! item) {
+                            return;
+                        }
+
+                        event.preventDefault();
+
+                        event.stopImmediatePropagation();
+
+                        item.click();
+                    });
+
+                    editor.once('focus', this.loadAttributeTypes);
+                },
+
+                editorItem(value, text) {
+                    return {
+                        type: 'autocompleteitem',
+                        value,
+                        text,
+                    };
+                },
+
+                limitEditorMenuHeight() {
+                    if (document.getElementById('product-template-assist-menu')) {
+                        return;
+                    }
+
+                    const style = document.createElement('style');
+
+                    style.id = 'product-template-assist-menu';
+
+                    style.textContent = '.tox-autocompleter .tox-menu { max-height: 15rem !important; overflow-y: auto !important; }';
+
+                    document.head.appendChild(style);
+                },
+
+                contains(value, pattern) {
+                    return value.toLowerCase().includes(pattern.toLowerCase());
+                },
+
+                textBeforeTrigger(text) {
+                    return this.input.value.slice(0, this.input.selectionStart - text.length - 1);
+                },
+
+                currencyCode(before) {
+                    return before.match(/\{\{\s*(\w+)$/)?.[1] ?? null;
+                },
+
+                filterExpression(before) {
+                    const expression = before.match(/\{\{\s*(\w+)(?:\.\w+)?\s*((?:\|\s*\w+\s*(?:\([^)]*\)\s*)?)*)$/);
+
+                    return expression
+                        ? { code: expression[1], chained: expression[2].includes('|') }
+                        : null;
+                },
+
+                currencyOptions(code) {
+                    if (! code || ! this.currencies.length) {
+                        return Promise.resolve([]);
+                    }
+
+                    return this.loadAttributeTypes()
+                        .then((types) => types[code] === 'price' ? this.currencies : []);
+                },
+
+                filterOptions(expression) {
+                    if (! expression || ! this.filters.length) {
+                        return Promise.resolve([]);
+                    }
+
+                    return this.loadAttributeTypes().then((types) => {
+                        const type = types[expression.code];
+
+                        return type
+                            ? this.filters.filter((filter) => filter.types.includes(type) && (! expression.chained || filter.types.includes('text')))
+                            : [];
+                    });
+                },
+
+                fetchCurrencies(text, callback) {
+                    this.tribute.current.filteredItems = [];
+
+                    this.currencyOptions(this.currencyCode(this.textBeforeTrigger(text))).then(callback);
                 },
 
                 fetchFilters(text, callback) {
                     this.tribute.current.filteredItems = [];
 
-                    const before = this.input.value.slice(0, this.input.selectionStart - text.length - 1);
-
-                    const expression = before.match(/\{\{\s*(\w+)(?:\.\w+)?\s*((?:\|\s*\w+\s*(?:\([^)]*\)\s*)?)*)$/);
-
-                    if (! expression || ! this.filters.length) {
-                        callback([]);
-
-                        return;
-                    }
-
-                    const chained = expression[2].includes('|');
-
-                    this.loadAttributeTypes().then((types) => {
-                        const type = types[expression[1]];
-
-                        callback(type
-                            ? this.filters.filter((filter) => filter.types.includes(type) && (! chained || filter.types.includes('text')))
-                            : []);
-                    });
+                    this.filterOptions(this.filterExpression(this.textBeforeTrigger(text))).then(callback);
                 },
 
                 loadAttributeTypes() {
@@ -256,12 +393,8 @@
                     return templateAttributeTypes.get(this.suggestionsUrl);
                 },
 
-                filterCall(value) {
-                    const trigger = this.input.selectionStart - this.tribute.current.mentionText.length - 1;
-
-                    const spacer = /\s/.test(this.input.value.charAt(trigger - 1)) ? '' : ' ';
-
-                    return `${spacer}| ${value}`;
+                filterCall(before, value) {
+                    return `${/\s$/.test(before) ? '' : ' '}| ${value}`;
                 },
 
                 tidySpacing() {
@@ -278,12 +411,8 @@
                     this.input.dispatchEvent(new Event('input', { bubbles: true }));
                 },
 
-                fetchSuggestions(text, callback) {
-                    this.tribute.current.filteredItems = [];
-
-                    this.query = text;
-
-                    this.$axios
+                attributeSuggestions(text) {
+                    return this.$axios
                         .get(this.suggestionsUrl, {
                             params: {
                                 attribute: this.attribute,
@@ -291,16 +420,28 @@
                                 locale: this.locale,
                             },
                         })
-                        .then(({ data }) => {
-                            if (this.query === text) {
-                                callback(data);
-                            }
-                        })
-                        .catch(() => {
-                            if (this.query === text) {
-                                callback([]);
-                            }
-                        });
+                        .then(({ data }) => data)
+                        .catch(() => []);
+                },
+
+                latestAttributeSuggestions(text) {
+                    const request = this.attributeSuggestions(text);
+
+                    this.latestSuggestions = request;
+
+                    return request.then(() => this.latestSuggestions);
+                },
+
+                fetchSuggestions(text, callback) {
+                    this.tribute.current.filteredItems = [];
+
+                    this.query = text;
+
+                    this.attributeSuggestions(text).then((data) => {
+                        if (this.query === text) {
+                            callback(data);
+                        }
+                    });
                 },
 
                 menuItem(label, code = null) {
