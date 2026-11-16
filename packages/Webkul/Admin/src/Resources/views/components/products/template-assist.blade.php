@@ -233,14 +233,15 @@
                         api.hide();
                     };
 
-                    this.limitEditorMenuHeight();
+                    this.styleEditorMenu();
 
                     editor.ui.registry.addAutocompleter('templateAttributes', {
                         trigger: '@',
                         minChars: 0,
                         columns: 1,
+                        highlightOn: ['label', 'detail'],
                         fetch: (pattern) => this.latestAttributeSuggestions(pattern)
-                            .then((items) => items.map((item) => this.editorItem(item.code, item.name))),
+                            .then((items) => items.map((item) => this.editorItem(item.code, item.name, item.code))),
                         onAction: (api, range, value) => insert(api, range, `@{{ ${value} }}`),
                     });
 
@@ -248,11 +249,12 @@
                         trigger: '.',
                         minChars: 0,
                         columns: 1,
+                        highlightOn: ['label'],
                         matches: (range) => this.currencyCode(remember(range)) !== null,
                         fetch: (pattern) => this.currencyOptions(this.currencyCode(before))
                             .then((currencies) => currencies
                                 .filter((currency) => this.contains(currency.code, pattern))
-                                .map((currency) => this.editorItem(currency.code, currency.code))),
+                                .map((currency) => this.editorItem(currency.code, currency.code, currency.symbol))),
                         onAction: (api, range, value) => insert(api, range, `.${value}`),
                     });
 
@@ -260,11 +262,16 @@
                         trigger: '|',
                         minChars: 0,
                         columns: 1,
+                        highlightOn: ['label'],
                         matches: (range) => this.filterExpression(remember(range)) !== null,
                         fetch: (pattern) => this.filterOptions(this.filterExpression(before))
                             .then((filters) => filters
                                 .filter((filter) => this.contains(filter.name, pattern))
-                                .map((filter) => this.editorItem(filter.value, filter.name))),
+                                .map((filter) => this.editorItem(
+                                    filter.value,
+                                    filter.name,
+                                    filter.value === filter.name ? null : filter.value,
+                                ))),
                         onAction: (api, range, value) => insert(api, range, this.filterCall(remember(range), value)),
                     });
 
@@ -297,15 +304,27 @@
                     editor.once('focus', this.loadAttributeTypes);
                 },
 
-                editorItem(value, text) {
+                editorItem(value, label, detail = null) {
+                    const items = [{ type: 'cardtext', name: 'label', text: label }];
+
+                    if (detail) {
+                        items.push({
+                            type: 'cardtext',
+                            name: 'detail',
+                            text: detail,
+                            classes: ['tox-collection__item-accessory', 'product-template-assist-detail'],
+                        });
+                    }
+
                     return {
-                        type: 'autocompleteitem',
+                        type: 'cardmenuitem',
                         value,
-                        text,
+                        label,
+                        items,
                     };
                 },
 
-                limitEditorMenuHeight() {
+                styleEditorMenu() {
                     if (document.getElementById('product-template-assist-menu')) {
                         return;
                     }
@@ -314,7 +333,11 @@
 
                     style.id = 'product-template-assist-menu';
 
-                    style.textContent = '.tox-autocompleter .tox-menu { max-height: 15rem !important; overflow-y: auto !important; }';
+                    style.textContent = [
+                        '.tox .tox-autocompleter, .tox .tox-autocompleter .tox-menu { min-width: 18rem !important; max-width: 30rem !important; }',
+                        '.tox-autocompleter .tox-menu { max-height: 15rem !important; overflow-y: auto !important; }',
+                        '.tox .tox-autocompleter .product-template-assist-detail { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; white-space: nowrap; }',
+                    ].join(' ');
 
                     document.head.appendChild(style);
                 },
