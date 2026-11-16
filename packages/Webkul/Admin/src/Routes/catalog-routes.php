@@ -12,6 +12,7 @@ use Webkul\Admin\Http\Controllers\Catalog\Options\AjaxOptionsController;
 use Webkul\Admin\Http\Controllers\Catalog\ProductBulkEditController;
 use Webkul\Admin\Http\Controllers\Catalog\ProductController;
 use Webkul\Admin\Http\Controllers\Catalog\ProductGridViewController;
+use Webkul\Admin\Http\Controllers\Catalog\ProductTemplateController;
 use Webkul\Admin\Http\Middleware\EnsureChannelLocaleIsValid;
 
 /**
@@ -228,6 +229,12 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
             Route::get('get/locale', 'getLocale')->name('admin.catalog.product.get_locale');
 
             Route::get('get/attributes', 'getAttribute')->name('admin.catalog.product.get_attribute');
+        });
+
+        Route::controller(ProductTemplateController::class)->prefix('products/edit/{id}/templates')->group(function () {
+            Route::get('suggestions', 'suggestions')->name('admin.catalog.products.template_suggestions');
+
+            Route::post('preview', 'preview')->name('admin.catalog.products.template_preview');
         });
 
         Route::controller(ProductGridViewController::class)->prefix('products/grid-views')->group(function () {
