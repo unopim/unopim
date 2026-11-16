@@ -285,6 +285,15 @@ return [
                     'root-not-allowed' => 'Korijensku kategoriju nije moguće dodijeliti proizvodu.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Pomoć za predloške',
+                    'title'    => 'Dinamički predlošci',
+                    'info'     => 'Upišite @ za umetanje drugog atributa ovog proizvoda. Varijable se pri izvozu zamjenjuju vrijednostima proizvoda.',
+                    'example'  => 'Primjer',
+                    'filters'  => 'Filtri',
+                    'currency' => 'Cijena u jednoj valuti',
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Grupa atributa:',
                     'title'              => 'Grupe atributa',

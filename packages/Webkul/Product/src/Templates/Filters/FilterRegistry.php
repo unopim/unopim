@@ -9,9 +9,12 @@ use Webkul\Attribute\Models\Attribute;
 use Webkul\Product\Templates\Expression;
 use Webkul\Product\Templates\FilterCall;
 use Webkul\Product\Templates\TemplateMessage;
+use Webkul\Product\Templates\TemplateValueFormatter;
 
 class FilterRegistry
 {
+    public const string SUGGESTED_ARGUMENT = 'd.m.Y';
+
     protected array $filters = [
         'capitalize'  => CapitalizeFilter::class,
         'format_date' => FormatDateFilter::class,
@@ -40,6 +43,15 @@ class FilterRegistry
         return array_keys($this->filters);
     }
 
+    public function suggestions(): array
+    {
+        return array_map(fn (string $name): array => [
+            'name'  => $name,
+            'value' => $this->suggestedCall($name),
+            'types' => array_values(array_filter(TemplateValueFormatter::SUPPORTED_TYPES, $this->get($name)->supports(...))),
+        ], $this->names());
+    }
+
     public function inspect(Expression $expression, string $attributeType): ?TemplateMessage
     {
         foreach ($expression->filters as $position => $call) {
@@ -51,6 +63,17 @@ class FilterRegistry
         }
 
         return null;
+    }
+
+    private function suggestedCall(string $name): string
+    {
+        $filter = $this->get($name);
+
+        return match (true) {
+            $filter->acceptsArgument(null)                     => $name,
+            $filter->acceptsArgument(self::SUGGESTED_ARGUMENT) => sprintf("%s('%s')", $name, self::SUGGESTED_ARGUMENT),
+            default                                            => "{$name}('')",
+        };
     }
 
     private function inspectCall(FilterCall $call, int $position, Expression $expression, string $attributeType): ?TemplateMessage

@@ -285,6 +285,15 @@ return [
                     'root-not-allowed' => 'Ang kategoryang ugat ay hindi maaaring italaga sa isang produkto.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Tulong sa template',
+                    'title'    => 'Mga dynamic na template',
+                    'info'     => 'I-type ang @ para maglagay ng ibang attribute ng produktong ito. Papalitan ang mga variable ng mga value ng produkto sa pag-export.',
+                    'example'  => 'Halimbawa',
+                    'filters'  => 'Mga filter',
+                    'currency' => 'Presyo sa iisang currency',
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Pangkat ng katangian:',
                     'title'              => 'Mga Pangkat ng Katangian',

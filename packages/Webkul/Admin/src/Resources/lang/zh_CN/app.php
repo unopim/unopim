@@ -285,6 +285,15 @@ return [
                     'root-not-allowed' => '根类别不能分配给产品。',
                 ],
 
+                'templates' => [
+                    'help'     => '模板帮助',
+                    'title'    => '动态模板',
+                    'info'     => '输入 @ 可插入此产品的其他属性。导出时变量会被替换为产品的值。',
+                    'example'  => '示例',
+                    'filters'  => '过滤器',
+                    'currency' => '单一货币价格',
+                ],
+
                 'attribute-groups' => [
                     'label'              => '属性组：',
                     'title'              => '属性组',

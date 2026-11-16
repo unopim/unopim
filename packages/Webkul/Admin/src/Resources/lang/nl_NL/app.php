@@ -286,6 +286,15 @@ return [
                     'root-not-allowed' => 'De hoofdcategorie kan niet aan een product worden toegewezen.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Hulp bij sjablonen',
+                    'title'    => 'Dynamische sjablonen',
+                    'info'     => 'Typ @ om een ander attribuut van dit product in te voegen. Variabelen worden bij export vervangen door de productwaarden.',
+                    'example'  => 'Voorbeeld',
+                    'filters'  => 'Filters',
+                    'currency' => 'Prijs in één valuta',
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Attribuutgroep:',
                     'title'              => 'Attribuutgroepen',

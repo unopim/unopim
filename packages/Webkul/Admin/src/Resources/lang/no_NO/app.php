@@ -286,6 +286,15 @@ return [
                     'root-not-allowed' => 'Rotkategorien kan ikke tildeles et produkt.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Hjelp for maler',
+                    'title'    => 'Dynamiske maler',
+                    'info'     => 'Skriv @ for å sette inn et annet attributt fra dette produktet. Variabler erstattes med produktverdiene ved eksport.',
+                    'example'  => 'Eksempel',
+                    'filters'  => 'Filtre',
+                    'currency' => 'Pris i én valuta',
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Attributtgruppe:',
                     'title'              => 'Attributtgrupper',

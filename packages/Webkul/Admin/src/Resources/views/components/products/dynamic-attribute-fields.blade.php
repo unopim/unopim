@@ -9,6 +9,7 @@
     'completenessAttributes' => [],
     'lockedFields'           => [],
     'requirementIndicators'  => [],
+    'templateProductId'      => null,
 ])
 
 @php
@@ -61,6 +62,20 @@
             ->get()
             ->groupBy('attribute_id')
         : collect();
+
+    $templateCurrencies = $templateProductId
+        ? collect($channelCurrencies)
+            ->map(fn ($currency): array => [
+                'code'   => $currency->code,
+                'symbol' => core()->currencySymbol($currency),
+            ])
+            ->values()
+            ->all()
+        : [];
+
+    $templateFilters = $templateProductId
+        ? app(\Webkul\Product\Templates\Filters\FilterRegistry::class)->suggestions()
+        : [];
 @endphp
 
 @foreach($fields as $field)
@@ -132,6 +147,11 @@
         $fieldType = $field->type;
 
         $isDisabled = $isLocked && ! $isReadOnlyMedia;
+
+        $hasTemplateAssist = $templateProductId
+            && ! $isDisabled
+            && $field->canHoldTemplate()
+            && ! $field->isRichText();
     @endphp
 
     {!! view_render_event('unopim.admin.products.dynamic-attribute-fields.field.before', ['field' => $field]) !!}
@@ -157,6 +177,17 @@
                 <x-admin::products.attribute-requirements
                     :requirements="$requirementIndicators[$field->id] ?? []"
                 />
+
+                @if ($hasTemplateAssist)
+                    <x-admin::products.template-assist
+                        :product-id="$templateProductId"
+                        :field="$field"
+                        :field-name="$fieldName"
+                        :locale-code="$currentLocaleCode"
+                        :currencies="$templateCurrencies"
+                        :filters="$templateFilters"
+                    />
+                @endif
 
                 @if ($isLocked && $lockLabel)
                     <a

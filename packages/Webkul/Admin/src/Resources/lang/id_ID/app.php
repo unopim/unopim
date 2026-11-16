@@ -285,6 +285,15 @@ return [
                     'root-not-allowed' => 'Kategori induk tidak dapat ditetapkan ke produk.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Bantuan templat',
+                    'title'    => 'Templat dinamis',
+                    'info'     => 'Ketik @ untuk menyisipkan atribut lain dari produk ini. Variabel diganti dengan nilai produk saat ekspor.',
+                    'example'  => 'Contoh',
+                    'filters'  => 'Filter',
+                    'currency' => 'Harga dalam satu mata uang',
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Grup atribut:',
                     'title'              => 'Grup Atribut',

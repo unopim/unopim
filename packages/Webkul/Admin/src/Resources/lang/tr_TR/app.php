@@ -285,6 +285,15 @@ return [
                     'root-not-allowed' => 'Kök kategori bir ürüne atanamaz.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Şablon yardımı',
+                    'title'    => 'Dinamik şablonlar',
+                    'info'     => 'Bu ürünün başka bir niteliğini eklemek için @ yazın. Değişkenler dışa aktarma sırasında ürün değerleriyle değiştirilir.',
+                    'example'  => 'Örnek',
+                    'filters'  => 'Filtreler',
+                    'currency' => 'Tek para biriminde fiyat',
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Öznitelik grubu:',
                     'title'              => 'Öznitelik Grupları',

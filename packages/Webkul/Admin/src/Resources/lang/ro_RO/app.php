@@ -286,6 +286,15 @@ return [
                     'root-not-allowed' => 'Categoria rădăcină nu poate fi atribuită unui produs.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Ajutor pentru șabloane',
+                    'title'    => 'Șabloane dinamice',
+                    'info'     => 'Tastați @ pentru a insera un alt atribut al acestui produs. Variabilele sunt înlocuite cu valorile produsului la export.',
+                    'example'  => 'Exemplu',
+                    'filters'  => 'Filtre',
+                    'currency' => 'Preț într-o singură monedă',
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Grup de atribute:',
                     'title'              => 'Grupuri de atribute',

@@ -285,6 +285,15 @@ return [
                     'root-not-allowed' => '根類別不能指派給產品。',
                 ],
 
+                'templates' => [
+                    'help'     => '範本說明',
+                    'title'    => '動態範本',
+                    'info'     => '輸入 @ 可插入此產品的其他屬性。匯出時變數會被替換為產品的值。',
+                    'example'  => '範例',
+                    'filters'  => '篩選器',
+                    'currency' => '單一貨幣價格',
+                ],
+
                 'attribute-groups' => [
                     'label'              => '屬性群組：',
                     'title'              => '屬性群組',

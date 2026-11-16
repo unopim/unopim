@@ -286,6 +286,15 @@ return [
                     'root-not-allowed' => 'Kategorii głównej nie można przypisać do produktu.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Pomoc dotycząca szablonów',
+                    'title'    => 'Szablony dynamiczne',
+                    'info'     => 'Wpisz @, aby wstawić inny atrybut tego produktu. Zmienne są zastępowane wartościami produktu podczas eksportu.',
+                    'example'  => 'Przykład',
+                    'filters'  => 'Filtry',
+                    'currency' => 'Cena w jednej walucie',
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Grupa atrybutów:',
                     'title'              => 'Grupy atrybutów',

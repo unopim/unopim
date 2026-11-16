@@ -285,6 +285,15 @@ return [
                     'root-not-allowed' => 'Juuriluokkaa ei voi liittää tuotteeseen.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Mallipohjien ohje',
+                    'title'    => 'Dynaamiset mallipohjat',
+                    'info'     => 'Kirjoita @ lisätäksesi toisen tämän tuotteen attribuutin. Muuttujat korvataan tuotteen arvoilla viennissä.',
+                    'example'  => 'Esimerkki',
+                    'filters'  => 'Suodattimet',
+                    'currency' => 'Hinta yhdessä valuutassa',
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Attribuuttiryhmä:',
                     'title'              => 'Attribuuttiryhmät',

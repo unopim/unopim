@@ -286,6 +286,15 @@ return [
                     'root-not-allowed' => 'A categoria raiz não pode ser atribuída a um produto.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Ajuda de modelos',
+                    'title'    => 'Modelos dinâmicos',
+                    'info'     => 'Escreva @ para inserir outro atributo deste produto. As variáveis são substituídas pelos valores do produto na exportação.',
+                    'example'  => 'Exemplo',
+                    'filters'  => 'Filtros',
+                    'currency' => 'Preço numa única moeda',
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Grupo de atributos:',
                     'title'              => 'Grupos de atributos',

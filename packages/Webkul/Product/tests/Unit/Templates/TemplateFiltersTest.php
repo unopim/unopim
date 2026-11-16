@@ -4,6 +4,7 @@ use Webkul\Product\Templates\Expression;
 use Webkul\Product\Templates\FilterCall;
 use Webkul\Product\Templates\Filters\FilterRegistry;
 use Webkul\Product\Templates\Filters\FormatDateFilter;
+use Webkul\Product\Templates\TemplateValueFormatter;
 
 beforeEach(function () {
     $this->filters = app(FilterRegistry::class);
@@ -13,6 +14,16 @@ it('exposes exactly the allow-listed filters', function () {
     expect($this->filters->names())->toBe(['capitalize', 'format_date', 'lower', 'slug', 'title', 'upper'])
         ->and($this->filters->has('date'))->toBeFalse()
         ->and($this->filters->has('raw'))->toBeFalse();
+});
+
+it('describes every filter for the editor suggestions', function () {
+    $suggestions = collect($this->filters->suggestions())->keyBy('name');
+
+    expect($suggestions->keys()->all())->toBe($this->filters->names())
+        ->and($suggestions['upper']['value'])->toBe('upper')
+        ->and($suggestions['upper']['types'])->toBe(TemplateValueFormatter::SUPPORTED_TYPES)
+        ->and($suggestions['format_date']['value'])->toBe("format_date('d.m.Y')")
+        ->and($suggestions['format_date']['types'])->toBe(['date', 'datetime']);
 });
 
 it('is shared as a single registry instance', function () {

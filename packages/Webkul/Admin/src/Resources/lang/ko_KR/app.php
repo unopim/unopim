@@ -286,6 +286,15 @@ return [
                     'root-not-allowed' => '루트 카테고리는 제품에 할당할 수 없습니다.',
                 ],
 
+                'templates' => [
+                    'help'     => '템플릿 도움말',
+                    'title'    => '동적 템플릿',
+                    'info'     => '@를 입력하여 이 상품의 다른 속성을 삽입하세요. 변수는 내보내기 시 상품 값으로 대체됩니다.',
+                    'example'  => '예시',
+                    'filters'  => '필터',
+                    'currency' => '단일 통화 가격',
+                ],
+
                 'attribute-groups' => [
                     'label'              => '속성 그룹:',
                     'title'              => '속성 그룹',

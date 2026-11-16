@@ -285,6 +285,15 @@ return [
                     'root-not-allowed' => 'Rodkategorien kan ikke tildeles et produkt.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Hjælp til skabeloner',
+                    'title'    => 'Dynamiske skabeloner',
+                    'info'     => 'Skriv @ for at indsætte en anden egenskab fra dette produkt. Variabler erstattes med produktets værdier ved eksport.',
+                    'example'  => 'Eksempel',
+                    'filters'  => 'Filtre',
+                    'currency' => 'Pris i én valuta',
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Attributgruppe:',
                     'title'              => 'Attributgrupper',

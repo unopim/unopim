@@ -285,6 +285,15 @@ return [
                     'root-not-allowed' => 'Die Stammkategorie kann einem Produkt nicht zugewiesen werden.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Hilfe zu Vorlagen',
+                    'title'    => 'Dynamische Vorlagen',
+                    'info'     => 'Geben Sie @ ein, um ein anderes Attribut dieses Produkts einzufügen. Variablen werden beim Export durch die Produktwerte ersetzt.',
+                    'example'  => 'Beispiel',
+                    'filters'  => 'Filter',
+                    'currency' => 'Preis in einer Währung',
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Attributgruppe:',
                     'title'              => 'Attributgruppen',

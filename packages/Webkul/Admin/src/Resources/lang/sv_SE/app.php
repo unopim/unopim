@@ -285,6 +285,15 @@ return [
                     'root-not-allowed' => 'Rotkategorin kan inte tilldelas en produkt.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Hjälp för mallar',
+                    'title'    => 'Dynamiska mallar',
+                    'info'     => 'Skriv @ för att infoga ett annat attribut från den här produkten. Variabler ersätts med produktens värden vid export.',
+                    'example'  => 'Exempel',
+                    'filters'  => 'Filter',
+                    'currency' => 'Pris i en valuta',
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Attributgrupp:',
                     'title'              => 'Attributgrupper',

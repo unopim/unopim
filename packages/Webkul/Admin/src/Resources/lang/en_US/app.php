@@ -298,6 +298,15 @@ return [
                     'root-not-allowed' => 'Root category cannot be assigned to a product.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Template help',
+                    'title'    => 'Dynamic templates',
+                    'info'     => 'Type @ to insert another attribute of this product. Variables are replaced with the product values on export.',
+                    'example'  => 'Example',
+                    'filters'  => 'Filters',
+                    'currency' => 'Price in one currency',
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Attribute group:',
                     'title'              => 'Attribute Groups',

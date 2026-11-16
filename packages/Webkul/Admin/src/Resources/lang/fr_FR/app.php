@@ -285,6 +285,15 @@ return [
                     'root-not-allowed' => 'La catégorie racine ne peut pas être attribuée à un produit.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Aide sur les modèles',
+                    'title'    => 'Modèles dynamiques',
+                    'info'     => 'Saisissez @ pour insérer un autre attribut de ce produit. Les variables sont remplacées par les valeurs du produit lors de l\'export.',
+                    'example'  => 'Exemple',
+                    'filters'  => 'Filtres',
+                    'currency' => 'Prix dans une seule devise',
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Groupe d\'attributs :',
                     'title'              => 'Groupes d\'attributs',

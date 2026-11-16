@@ -285,6 +285,15 @@ return [
                     'root-not-allowed' => 'La categoria arrel no es pot assignar a un producte.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Ajuda de plantilles',
+                    'title'    => 'Plantilles dinàmiques',
+                    'info'     => 'Escriu @ per inserir un altre atribut d\'aquest producte. Les variables se substitueixen pels valors del producte en exportar.',
+                    'example'  => 'Exemple',
+                    'filters'  => 'Filtres',
+                    'currency' => 'Preu en una sola moneda',
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Grup d\'atributs:',
                     'title'              => 'Grups d\'atributs',

@@ -285,6 +285,15 @@ return [
                     'root-not-allowed' => 'La categoria radice non può essere assegnata a un prodotto.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Guida ai modelli',
+                    'title'    => 'Modelli dinamici',
+                    'info'     => 'Digita @ per inserire un altro attributo di questo prodotto. Le variabili vengono sostituite con i valori del prodotto durante l\'esportazione.',
+                    'example'  => 'Esempio',
+                    'filters'  => 'Filtri',
+                    'currency' => 'Prezzo in una sola valuta',
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Gruppo di attributi:',
                     'title'              => 'Gruppi di attributi',

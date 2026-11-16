@@ -285,6 +285,15 @@ return [
                     'root-not-allowed' => 'Danh mục gốc không thể được gán cho sản phẩm.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Trợ giúp mẫu',
+                    'title'    => 'Mẫu động',
+                    'info'     => 'Nhập @ để chèn một thuộc tính khác của sản phẩm này. Các biến được thay bằng giá trị của sản phẩm khi xuất.',
+                    'example'  => 'Ví dụ',
+                    'filters'  => 'Bộ lọc',
+                    'currency' => 'Giá theo một loại tiền tệ',
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Nhóm thuộc tính:',
                     'title'              => 'Nhóm thuộc tính',

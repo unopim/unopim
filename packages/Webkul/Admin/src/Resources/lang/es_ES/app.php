@@ -285,6 +285,15 @@ return [
                     'root-not-allowed' => 'La categoría raíz no se puede asignar a un producto.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Ayuda de plantillas',
+                    'title'    => 'Plantillas dinámicas',
+                    'info'     => 'Escribe @ para insertar otro atributo de este producto. Las variables se sustituyen por los valores del producto al exportar.',
+                    'example'  => 'Ejemplo',
+                    'filters'  => 'Filtros',
+                    'currency' => 'Precio en una sola moneda',
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Grupo de atributos:',
                     'title'              => 'Grupos de atributos',
