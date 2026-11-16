@@ -124,6 +124,8 @@ return [
                     'base'           => 'Mga desimal ng batayang halaga',
                     'base-info'      => 'Bilang ng mga decimal na pinapanatili para sa halagang na-convert sa karaniwang yunit.',
                 ],
+                'display-unit-symbol'      => 'Ipakita ang mga simbolo ng unit',
+                'display-unit-symbol-info' => 'Ipakita ang mga halaga ng sukat gamit ang simbolo ng unit (halimbawa 100 °C) sa halip na pangalan ng unit, sa admin at sa mga export. Ang mga unit na walang simbolo ay mananatili sa kanilang pangalan.',
             ],
         ],
     ],
