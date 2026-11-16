@@ -166,6 +166,38 @@
                                     :label="trans('admin::app.catalog.attributes.create.enable-wysiwyg')"
                                 />
                             </x-admin::form.control-group>
+
+                            <x-admin::form.control-group v-show="templatableType">
+                                <x-admin::form.control-group.label>
+                                    @lang('admin::app.catalog.attributes.create.enable-templates')
+                                </x-admin::form.control-group.label>
+
+                                <input
+                                    type="hidden"
+                                    name="enable_templates"
+                                    value="0"
+                                />
+
+                                <x-admin::form.control-group.control
+                                    type="switch"
+                                    id="enable_templates"
+                                    name="enable_templates"
+                                    :value="1"
+                                    v-model="enableTemplates"
+                                    ::checked="enableTemplates"
+                                    ::disabled="! templatesSupported"
+                                    :label="trans('admin::app.catalog.attributes.create.enable-templates')"
+                                />
+
+                                <p
+                                    v-if="! templatesSupported"
+                                    class="mt-1 text-xs text-gray-500 dark:text-gray-400"
+                                >
+                                    @lang('admin::app.catalog.attributes.create.templates-unsupported')
+                                </p>
+
+                                <x-admin::form.control-group.error control-name="enable_templates" />
+                            </x-admin::form.control-group>
                         </div>
 
                         <div class="bg-white dark:bg-cherry-900 box-shadow rounded">
@@ -276,6 +308,7 @@
                                         name="is_unique"
                                         value="1"
                                         for="is_unique"
+                                        @change="isUnique = $event.target.checked"
                                     />
 
                                     <label
@@ -406,11 +439,37 @@
                         }
                     ],
                         valuePerLocale: 0,
+
+                        isUnique: false,
+
+                        enableTemplates: @json((bool) old('enable_templates')),
                     }
+                },
+                computed: {
+                    templatableType() {
+                        return ['text', 'textarea'].includes(this.selectedAttributeType);
+                    },
+
+                    templatesSupported() {
+                        if (this.selectedAttributeType === 'textarea') {
+                            return true;
+                        }
+
+                        return this.selectedAttributeType === 'text'
+                            && ['', 'none', null, undefined].includes(this.selectedValidationType)
+                            && ! this.isUnique;
+                    },
                 },
                 watch: {
                     attributeType(value) {
                         this.selectedAttributeType = this.parseValue(value)?.id;
+
+                        this.isUnique = false;
+                    },
+                    templatesSupported(supported) {
+                        if (! supported) {
+                            this.enableTemplates = false;
+                        }
                     },
                     validationType(value) {
                         this.selectedValidationType = this.parseValue(value)?.id;
