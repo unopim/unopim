@@ -33,6 +33,13 @@ return [
                 'default_value' => '6',
                 'validation'    => 'numeric|min:0|max_value:10',
             ],
+            [
+                'name'          => 'display_unit_symbol',
+                'title'         => 'measurement::app.config.catalog.measurement.display-unit-symbol',
+                'type'          => 'boolean',
+                'info'          => 'measurement::app.config.catalog.measurement.display-unit-symbol-info',
+                'default_value' => '0',
+            ],
         ],
     ],
 ];
