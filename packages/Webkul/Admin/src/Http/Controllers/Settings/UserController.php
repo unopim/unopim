@@ -278,6 +278,12 @@ class UserController extends Controller
             ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
+        if ($this->cannotAssignRole($user->role)) {
+            return new JsonResponse([
+                'message' => trans('admin::app.common.unauthorized'),
+            ], JsonResponse::HTTP_FORBIDDEN);
+        }
+
         try {
             if (! $this->deleteUnlessLastActiveFullAccessAdmin((int) $id)) {
                 return new JsonResponse([
@@ -382,6 +388,10 @@ class UserController extends Controller
 
         if ($user->isApiUser()) {
             abort(404);
+        }
+
+        if ($this->cannotAssignRole($user->role)) {
+            return $this->cannotChangeRedirectResponse('role');
         }
 
         /**

@@ -143,7 +143,8 @@ class Importer extends AbstractImporter
                 return false;
             }
 
-            if (! $this->holdsImportPermission('settings.users.users.delete', $rowNumber, self::ERROR_CANNOT_ASSIGN_ROLE, 'email')) {
+            if (! $this->holdsImportPermission('settings.users.users.delete', $rowNumber, self::ERROR_CANNOT_ASSIGN_ROLE, 'email')
+                || ! $this->canManageExistingAdmin($rowData['email'], $rowNumber)) {
                 return false;
             }
 
@@ -195,7 +196,8 @@ class Importer extends AbstractImporter
 
         $permission = $this->userStorage->getAdminId($rowData['email']) ? 'settings.users.users.edit' : 'settings.users.users.create';
 
-        if (! $this->holdsImportPermission($permission, $rowNumber, self::ERROR_CANNOT_ASSIGN_ROLE, 'email')) {
+        if (! $this->holdsImportPermission($permission, $rowNumber, self::ERROR_CANNOT_ASSIGN_ROLE, 'email')
+            || ! $this->canManageExistingAdmin($rowData['email'], $rowNumber)) {
             return false;
         }
 
@@ -226,6 +228,34 @@ class Importer extends AbstractImporter
         }
 
         return $this->keepsFullAccess($rowNumber, 'role_name', ...$this->fullAccessLoss($rowData));
+    }
+
+    /**
+     * Reject the row when the importing admins could not assign the current role of the existing admin it changes or deletes.
+     */
+    protected function canManageExistingAdmin(string $email, int $rowNumber): bool
+    {
+        if ($this->existingAdminAccessError($email) === null) {
+            return true;
+        }
+
+        $this->skipRow($rowNumber, self::ERROR_CANNOT_ASSIGN_ROLE, 'email', trans('admin::app.common.unauthorized'));
+
+        return false;
+    }
+
+    /**
+     * Translation key explaining why the importing admins cannot manage the existing admin with this email, or null when they can or no such admin exists.
+     */
+    protected function existingAdminAccessError(string $email): ?string
+    {
+        if (! $this->userStorage->getAdminId($email)) {
+            return null;
+        }
+
+        $currentRole = $this->findRole($this->userStorage->getAdminRoleId($email));
+
+        return $this->importAccessError(fn ($admin): ?string => $this->roleAccessGuard->assignmentError($admin, $currentRole));
     }
 
     /**
@@ -323,7 +353,9 @@ class Importer extends AbstractImporter
         foreach ($batch->data as $rowData) {
             $id = $this->userStorage->getAdminId($rowData['email']);
 
-            if ($id && $this->allowsFullAccessChange(adminId: $this->deletedFullAccessAdminId($rowData))) {
+            if ($id
+                && $this->existingAdminAccessError($rowData['email']) === null
+                && $this->allowsFullAccessChange(adminId: $this->deletedFullAccessAdminId($rowData))) {
                 $idsToDelete[] = $id;
             }
         }
@@ -345,7 +377,8 @@ class Importer extends AbstractImporter
         $this->userStorage->loadAdmins(Arr::pluck($batch->data, 'email'));
 
         foreach ($batch->data as $rowData) {
-            if (! $this->allowsFullAccessChange(...$this->fullAccessLoss($rowData))) {
+            if ($this->existingAdminAccessError($rowData['email']) !== null
+                || ! $this->allowsFullAccessChange(...$this->fullAccessLoss($rowData))) {
                 continue;
             }
 
@@ -387,6 +420,7 @@ class Importer extends AbstractImporter
                 }
 
                 $this->adminRepository->update($data, $id);
+                $this->userStorage->setAdmin($rowData['email'], $id, $roleId);
                 $this->updatedItemsCount++;
             } else {
                 $data['password'] = null;
@@ -397,7 +431,7 @@ class Importer extends AbstractImporter
                     $this->adminRepository->update(['image' => $imagePath], $admin->id);
                 }
 
-                $this->userStorage->setAdmin($admin->email, $admin->id);
+                $this->userStorage->setAdmin($admin->email, $admin->id, $roleId);
                 $this->createdItemsCount++;
             }
         }

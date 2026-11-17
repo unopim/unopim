@@ -52,9 +52,9 @@ function importerFor(string $importerClass, string $action, ?Admin $initiator, ?
     return $importer;
 }
 
-function writeImportBatch(string $importerClass, string $action, array $rows): void
+function writeImportBatch(string $importerClass, string $action, array $rows, ?Admin $actor = null): void
 {
-    importerFor($importerClass, $action, null)->importBatch(JobTrackBatch::factory()->create([
+    importerFor($importerClass, $action, $actor)->importBatch(JobTrackBatch::factory()->create([
         'job_track_id' => JobTrack::factory()->create(['action' => $action]),
         'data'         => $rows,
     ]));
@@ -216,8 +216,10 @@ describe('user importer', function () {
         expect(importerFor(UserImporter::class, $action, $this->fullAdmin)->validateRow($rowFor($this->fullAdmin), 1))->toBeTrue()
             ->and(importerFor(UserImporter::class, $action, $this->fullAdmin)->validateRow($rowFor($secondFullAdmin), 1))->toBeTrue();
 
-        writeImportBatch(UserImporter::class, $action, [$rowFor($this->fullAdmin)]);
-        writeImportBatch(UserImporter::class, $action, [$rowFor($secondFullAdmin)]);
+        $writer = Admin::factory()->create(['role_id' => $this->fullRole->id, 'status' => 0]);
+
+        writeImportBatch(UserImporter::class, $action, [$rowFor($this->fullAdmin)], $writer);
+        writeImportBatch(UserImporter::class, $action, [$rowFor($secondFullAdmin)], $writer);
 
         expect(hasActiveFullAccessAdmin())->toBeTrue();
     })->with([
@@ -248,10 +250,11 @@ describe('user importer', function () {
         ]);
         $userManager = Admin::factory()->create(['role_id' => $userManagerRole->id, 'status' => 1]);
         $heldRole = Role::factory()->create(['name' => 'Held '.uniqid(), 'permission_type' => 'custom', 'permissions' => ['dashboard']]);
+        $managedUser = Admin::factory()->create(['role_id' => $heldRole->id, 'status' => 1]);
 
         $rewriteRow = [
             'name'            => 'Other User',
-            'email'           => $this->limitedAdmin->email,
+            'email'           => $managedUser->email,
             'role_name'       => $heldRole->name,
             'permission_type' => 'custom',
             'permissions'     => 'dashboard',
@@ -263,6 +266,54 @@ describe('user importer', function () {
             ->and(importerFor(UserImporter::class, Import::ACTION_APPEND, $userManager)->validateRow($assignRow, 1))->toBeTrue()
             ->and(importerFor(UserImporter::class, Import::ACTION_APPEND, $this->fullAdmin)->validateRow($rewriteRow, 1))->toBeTrue();
     });
+
+    it('rejects changing or deleting an existing admin whose current role the runner or uploader could not assign', function (string $action, string $targetRole) {
+        $userManager = Admin::factory()->create(['role_id' => Role::factory()->create([
+            'permission_type' => 'custom',
+            'permissions'     => ['dashboard', 'data_transfer.imports', 'settings.users.users.create', 'settings.users.users.edit', 'settings.users.users.delete'],
+        ])->id, 'status' => 1]);
+        $heldRole = Role::factory()->create(['name' => 'Held '.uniqid(), 'permission_type' => 'custom', 'permissions' => ['dashboard']]);
+
+        Admin::factory()->create(['role_id' => $this->fullRole->id, 'status' => 1]);
+
+        $privileged = Admin::factory()->create(['role_id' => $this->{$targetRole}->id, 'status' => 1]);
+        $managed = Admin::factory()->create(['role_id' => $heldRole->id, 'status' => 1]);
+
+        $rowFor = fn (Admin $admin): array => ['name' => 'Taken Over', 'email' => $admin->email, 'role_name' => $heldRole->name];
+
+        expect(importerFor(UserImporter::class, $action, $userManager)->validateRow($rowFor($privileged), 1))->toBeFalse()
+            ->and(importerFor(UserImporter::class, $action, $this->fullAdmin, $userManager)->validateRow($rowFor($privileged), 1))->toBeFalse()
+            ->and(importerFor(UserImporter::class, $action, $userManager)->validateRow($rowFor($managed), 1))->toBeTrue()
+            ->and(importerFor(UserImporter::class, $action, $this->fullAdmin)->validateRow($rowFor($privileged), 1))->toBeTrue();
+    })->with([
+        'edit full access'           => [Import::ACTION_APPEND, 'fullRole'],
+        'edit wider custom access'   => [Import::ACTION_APPEND, 'limitedRole'],
+        'delete full access'         => [Import::ACTION_DELETE, 'fullRole'],
+        'delete wider custom access' => [Import::ACTION_DELETE, 'limitedRole'],
+    ]);
+
+    it('skips writing a row for an admin whose role was raised beyond the importing admin after validation', function (string $action) {
+        $userManager = Admin::factory()->create(['role_id' => Role::factory()->create([
+            'permission_type' => 'custom',
+            'permissions'     => ['dashboard', 'data_transfer.imports', 'settings.users.users.edit', 'settings.users.users.delete'],
+        ])->id, 'status' => 1]);
+        $heldRole = Role::factory()->create(['name' => 'Held '.uniqid(), 'permission_type' => 'custom', 'permissions' => ['dashboard']]);
+        $target = Admin::factory()->create(['name' => 'Original Name', 'role_id' => $heldRole->id, 'status' => 1]);
+
+        $row = ['name' => 'Taken Over', 'email' => $target->email, 'role_name' => $heldRole->name];
+
+        expect(importerFor(UserImporter::class, $action, $userManager)->validateRow($row, 1))->toBeTrue();
+
+        $target->update(['role_id' => $this->fullRole->id]);
+
+        writeImportBatch(UserImporter::class, $action, [$row], $userManager);
+
+        $target = Admin::find($target->id);
+
+        expect($target)->not->toBeNull()
+            ->and($target->name)->toBe('Original Name')
+            ->and($target->role_id)->toBe($this->fullRole->id);
+    })->with(['edit' => Import::ACTION_APPEND, 'delete' => Import::ACTION_DELETE]);
 
     it('rejects a row that turns an existing role into full access when the importing admin lacks it', function () {
         $importer = importerFor(UserImporter::class, Import::ACTION_APPEND, $this->limitedAdmin);
