@@ -10,6 +10,7 @@ use function Pest\Laravel\putJson;
 
 beforeEach(function () {
     Storage::fake();
+    Storage::fake('private');
 
     $this->loginAsAdmin();
 
@@ -61,4 +62,18 @@ it('records the admin who uploads a new file to an import profile and ignores a 
     )->assertStatus(302);
 
     expect($importJob->fresh()->updated_by)->toBe(auth()->guard('admin')->id());
+});
+
+it('stores each uploaded import file under its own key even for the same name in the same second', function () {
+    $first = importProfilePayload(['file' => UploadedFile::fake()->createWithContent('users.csv', 'first')]);
+    $second = importProfilePayload(['file' => UploadedFile::fake()->createWithContent('users.csv', 'second')]);
+
+    postJson(route('admin.settings.data_transfer.imports.store'), $first)->assertStatus(302);
+    postJson(route('admin.settings.data_transfer.imports.store'), $second)->assertStatus(302);
+
+    $firstPath = JobInstances::query()->where('code', $first['code'])->value('file_path');
+    $secondPath = JobInstances::query()->where('code', $second['code'])->value('file_path');
+
+    expect($firstPath)->not->toBe($secondPath)
+        ->and(Storage::disk('private')->get($firstPath))->toBe('first');
 });

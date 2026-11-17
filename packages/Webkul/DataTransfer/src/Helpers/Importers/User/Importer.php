@@ -202,6 +202,15 @@ class Importer extends AbstractImporter
         $role = $this->findRole($this->userStorage->getRoleId($rowData['role_name']));
         $permissionType = $rowData['permission_type'] ?? null;
 
+        if (! empty($permissionType) && ! $this->holdsImportPermission(
+            $role instanceof Role ? 'settings.roles.edit' : 'settings.roles.create',
+            $rowNumber,
+            self::ERROR_CANNOT_ASSIGN_ROLE,
+            'role_name'
+        )) {
+            return false;
+        }
+
         $error = $this->importAccessError(fn ($admin): ?string => empty($permissionType)
             ? $this->roleAccessGuard->assignmentError($admin, $role)
             : $this->roleAccessGuard->grantError(

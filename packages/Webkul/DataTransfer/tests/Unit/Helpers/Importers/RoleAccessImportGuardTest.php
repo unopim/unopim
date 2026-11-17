@@ -240,6 +240,30 @@ describe('user importer', function () {
             ->and(importerFor(UserImporter::class, $action, $this->fullAdmin)->validateRow($row, 1))->toBeTrue();
     })->with(['edit' => Import::ACTION_APPEND, 'delete' => Import::ACTION_DELETE]);
 
+    it('rejects a user row that rewrites a role definition unless the runner and uploader hold role rights', function () {
+        $userManagerRole = Role::factory()->create([
+            'name'            => 'User Manager '.uniqid(),
+            'permission_type' => 'custom',
+            'permissions'     => ['dashboard', 'data_transfer.imports', 'settings.users.users.create', 'settings.users.users.edit'],
+        ]);
+        $userManager = Admin::factory()->create(['role_id' => $userManagerRole->id, 'status' => 1]);
+        $heldRole = Role::factory()->create(['name' => 'Held '.uniqid(), 'permission_type' => 'custom', 'permissions' => ['dashboard']]);
+
+        $rewriteRow = [
+            'name'            => 'Other User',
+            'email'           => $this->limitedAdmin->email,
+            'role_name'       => $heldRole->name,
+            'permission_type' => 'custom',
+            'permissions'     => 'dashboard',
+        ];
+        $assignRow = array_diff_key($rewriteRow, array_flip(['permission_type', 'permissions']));
+
+        expect(importerFor(UserImporter::class, Import::ACTION_APPEND, $userManager)->validateRow($rewriteRow, 1))->toBeFalse()
+            ->and(importerFor(UserImporter::class, Import::ACTION_APPEND, $this->fullAdmin, $userManager)->validateRow($rewriteRow, 1))->toBeFalse()
+            ->and(importerFor(UserImporter::class, Import::ACTION_APPEND, $userManager)->validateRow($assignRow, 1))->toBeTrue()
+            ->and(importerFor(UserImporter::class, Import::ACTION_APPEND, $this->fullAdmin)->validateRow($rewriteRow, 1))->toBeTrue();
+    });
+
     it('rejects a row that turns an existing role into full access when the importing admin lacks it', function () {
         $importer = importerFor(UserImporter::class, Import::ACTION_APPEND, $this->limitedAdmin);
 

@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\Mime\MimeTypes;
@@ -112,11 +113,7 @@ class ImportController extends Controller
 
         if (isset($importerConfig[$data['entity_type']]['has_file_options']) && $importerConfig[$data['entity_type']]['has_file_options'] == 'true') {
             $fileData = [
-                'file_path' => request()->file('file')->storeAs(
-                    'imports',
-                    time().'-'.request()->file('file')->getClientOriginalName(),
-                    'private'
-                ),
+                'file_path' => $this->storeImportFile(),
                 'type'      => self::TYPE,
             ];
         }
@@ -202,11 +199,7 @@ class ImportController extends Controller
         if (request()->file('file') && request()->file('file')->isValid()) {
             Storage::disk('private')->delete($import->file_path);
 
-            $data['file_path'] = request()->file('file')->storeAs(
-                'imports',
-                time().'-'.request()->file('file')->getClientOriginalName(),
-                'private'
-            );
+            $data['file_path'] = $this->storeImportFile();
         }
 
         $import = $this->jobInstancesRepository->update($data, $import->id);
@@ -220,6 +213,18 @@ class ImportController extends Controller
         session()->flash('success', trans('admin::app.settings.data-transfer.imports.update-success'));
 
         return redirect()->route('admin.settings.data_transfer.imports.import-view', $import->id);
+    }
+
+    /**
+     * Store the uploaded import file under a key no other upload can reuse, so its bytes stay tied to the admin who supplied them.
+     */
+    private function storeImportFile(): string
+    {
+        return request()->file('file')->storeAs(
+            'imports',
+            time().'-'.Str::random(16).'-'.request()->file('file')->getClientOriginalName(),
+            'private'
+        );
     }
 
     /**
