@@ -15,9 +15,12 @@ class StoreCategoryRequest extends ApiFormRequest
     public function rules(): array
     {
         return [
-            'code'            => ['required', 'string', 'unique:categories,code', new Code],
-            'additional_data' => ['sometimes', 'array'],
-            'parent'          => ['sometimes', 'nullable', 'string'],
+            'code'                              => ['required', 'string', 'unique:categories,code', new Code],
+            'additional_data'                   => ['sometimes', 'array'],
+            'additional_data.common'            => ['sometimes', 'array'],
+            'additional_data.locale_specific'   => ['sometimes', 'array'],
+            'additional_data.locale_specific.*' => ['array'],
+            'parent'                            => ['sometimes', 'nullable', 'string'],
         ];
     }
 }
