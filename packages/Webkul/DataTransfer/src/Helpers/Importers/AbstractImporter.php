@@ -602,6 +602,15 @@ abstract class AbstractImporter
     }
 
     /**
+     * Drop the cached runner and uploader so the next access check reads their current roles.
+     */
+    protected function forgetImportActors(): void
+    {
+        $this->initiatingAdmin = false;
+        $this->fileUploader = false;
+    }
+
+    /**
      * First access error the check reports for the admin running the job or the admin who supplied its file.
      *
      * @param  callable(?Admin): ?string  $check

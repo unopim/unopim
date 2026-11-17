@@ -72,6 +72,8 @@ trait GuardsLastFullAccess
         DB::transaction(function () use ($write): void {
             $this->lockFullAccess();
 
+            $this->forgetImportActors();
+
             $write();
         });
     }

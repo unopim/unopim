@@ -138,9 +138,9 @@ class RoleController extends Controller
     {
         $role = $this->roleRepository->findOrFail($id);
 
-        if ($name = $role->admins()->value('name')) {
+        if ($role->admins()->exists()) {
             return new JsonResponse([
-                'message' => trans('admin::app.settings.roles.being-used-by', ['name' => $name]),
+                'message' => trans('admin::app.settings.roles.being-used-by', ['name' => $role->admins()->orderBy('id')->value('name')]),
             ], JsonResponse::HTTP_BAD_REQUEST);
         }
 

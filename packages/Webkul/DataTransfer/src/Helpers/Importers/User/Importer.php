@@ -355,6 +355,8 @@ class Importer extends AbstractImporter
 
     protected function deleteUserData(JobTrackBatchContract $batch): bool
     {
+        $this->roles = [];
+
         $this->userStorage->loadAdmins(Arr::pluck($batch->data, 'email'));
 
         $idsToDelete = [];
@@ -382,6 +384,8 @@ class Importer extends AbstractImporter
 
     protected function saveUserData(JobTrackBatchContract $batch): bool
     {
+        $this->roles = [];
+
         $this->userStorage->init();
 
         $this->userStorage->loadAdmins(Arr::pluck($batch->data, 'email'));

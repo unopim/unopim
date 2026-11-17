@@ -372,6 +372,31 @@ describe('user importer', function () {
         expect($user->fresh()->name)->toBe('Original Name');
     });
 
+    it('re-reads the importing admin when the same importer validates and then writes the batch', function () {
+        $managerRole = Role::factory()->create([
+            'permission_type' => 'custom',
+            'permissions'     => ['dashboard', 'data_transfer.imports', 'settings.users.users.edit'],
+        ]);
+        $manager = Admin::factory()->create(['role_id' => $managerRole->id, 'status' => 1]);
+        $heldRole = Role::factory()->create(['name' => 'Held '.uniqid(), 'permission_type' => 'custom', 'permissions' => ['dashboard']]);
+        $target = Admin::factory()->create(['name' => 'Original Name', 'role_id' => $heldRole->id, 'status' => 1]);
+
+        $row = ['name' => 'Taken Over', 'email' => $target->email, 'role_name' => $heldRole->name];
+
+        $importer = importerFor(UserImporter::class, Import::ACTION_APPEND, $manager);
+
+        expect($importer->validateRow($row, 1))->toBeTrue();
+
+        $managerRole->update(['permissions' => ['dashboard', 'data_transfer.imports']]);
+
+        $importer->importBatch(JobTrackBatch::factory()->create([
+            'job_track_id' => JobTrack::factory()->create(['action' => Import::ACTION_APPEND]),
+            'data'         => [$row],
+        ]));
+
+        expect($target->fresh()->name)->toBe('Original Name');
+    });
+
     it('rejects a row that turns an existing role into full access when the importing admin lacks it', function () {
         $importer = importerFor(UserImporter::class, Import::ACTION_APPEND, $this->limitedAdmin);
 
