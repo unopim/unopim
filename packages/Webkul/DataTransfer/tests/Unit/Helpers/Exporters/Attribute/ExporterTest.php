@@ -46,6 +46,7 @@ function attributeRow(array $overrides = []): array
         'value_per_channel' => 0,
         'is_filterable'     => 1,
         'ai_translate'      => 0,
+        'enable_templates'  => 0,
         'translations'      => [
             ['locale' => 'en_US', 'name' => 'Color'],
             ['locale' => 'fr_FR', 'name' => 'Couleur'],
@@ -114,6 +115,7 @@ $sharedPrepareAssertions = function (string $fileFormat, Exporter $exporter): vo
         ->and($enRow['is_unique'])->toBe(0)
         ->and($enRow['validation'])->toBeNull()
         ->and($enRow['is_filterable'])->toBe(1)
+        ->and($enRow['enable_templates'])->toBe(0)
         ->and($enRow['productCounts'])->toBe(0);
 
     if ($locales->contains('fr_FR')) {
@@ -129,7 +131,7 @@ $sharedPrepareAssertions = function (string $fileFormat, Exporter $exporter): vo
             'enable_wysiwyg', 'swatch_type', 'is_required',
             'is_unique', 'validation', 'regex_pattern',
             'value_per_locale', 'value_per_channel',
-            'is_filterable', 'ai_translate', 'productCounts',
+            'is_filterable', 'ai_translate', 'enable_templates', 'productCounts',
         ]);
     }
 };
@@ -373,6 +375,39 @@ describe('prepareAttributes [XLSX]', function () use ($sharedPrepareAssertions) 
         $result = $this->exporter->prepareAttributes($batch, 'dummy/path/attributes.xlsx');
 
         expect(count($result))->toBe(2 * count($locales));
+    });
+});
+
+describe('prepareAttributes templates flag', function () {
+    it('exports the enable_templates flag on every locale row', function () {
+        $this->exporter->setExport(makeExportTrack('Csv'));
+
+        $batch = makeAttributeExportBatch([attributeRow([
+            'code'             => 'description',
+            'type'             => 'textarea',
+            'enable_templates' => 1,
+        ])]);
+        $result = $this->exporter->prepareAttributes($batch, 'dummy/path/attributes.csv');
+
+        foreach ($result as $row) {
+            expect($row['enable_templates'])->toBe(1);
+        }
+    });
+
+    it('places enable_templates right before productCounts', function () {
+        $this->exporter->setExport(makeExportTrack('Csv'));
+
+        $result = $this->exporter->prepareAttributes(makeAttributeExportBatch([attributeRow()]), 'dummy/path/attributes.csv');
+
+        expect(array_slice(array_keys($result[0]), -3))->toBe(['ai_translate', 'enable_templates', 'productCounts']);
+    });
+
+    it('leaves enable_templates empty when the attribute row has no flag', function () {
+        $this->exporter->setExport(makeExportTrack('Csv'));
+
+        $result = $this->exporter->prepareAttributes(makeAttributeExportBatch([['code' => 'size']]), 'dummy/path/attributes.csv');
+
+        expect($result[0]['enable_templates'])->toBeNull();
     });
 });
 
