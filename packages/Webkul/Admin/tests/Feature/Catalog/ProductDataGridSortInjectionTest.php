@@ -1,7 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Webkul\Admin\DataGrids\Catalog\ProductDataGrid;
+use Webkul\Attribute\Models\Attribute;
 
 function sortedProductSql(array $sort): string
 {
@@ -35,4 +37,32 @@ it('preserves a valid descending sort', function () {
     $sql = strtolower(sortedProductSql(['column' => 'name', 'order' => 'desc']));
 
     expect($sql)->toContain('desc');
+});
+
+it('sorts measurement attributes numerically by their normalised base value', function () {
+    $attribute = Attribute::factory()->create([
+        'code' => 'measurement_sort_'.Str::random(8),
+        'type' => Attribute::MEASUREMENT_FIELD_TYPE,
+    ]);
+
+    $sql = strtolower(sortedProductSql(['column' => $attribute->code, 'order' => 'asc']));
+
+    expect($sql)->toContain('base_data')
+        // own value, parent value and grandparent value (variants inherit)
+        ->and(substr_count($sql, 'base_data'))->toBe(3)
+        ->and($sql)->toContain('coalesce(')
+        ->and($sql)->toContain('grandparent_products')
+        ->and($sql)->toContain('decimal')
+        ->and($sql)->toContain('asc');
+});
+
+it('casts decimal-validated attributes before sorting', function () {
+    $attribute = Attribute::factory()->validation_decimal()->create([
+        'code' => 'decimal_sort_'.Str::random(8),
+        'type' => 'text',
+    ]);
+
+    $sql = strtolower(sortedProductSql(['column' => $attribute->code, 'order' => 'asc']));
+
+    expect($sql)->toContain('decimal');
 });

@@ -688,11 +688,15 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         if ($attributePath = $this->getAttributePathForSort($sortColumn)) {
             $attribute = $this->attributeService->findAttributeByCode($sortColumn);
 
-            $castType = $attribute && ($attribute->type === 'price' || $attribute->validation === 'numeric')
-                ? 'DECIMAL'
+            $castType = $attribute && (
+                $attribute->type === 'price'
+                || $attribute->type === AttributeModel::MEASUREMENT_FIELD_TYPE
+                || in_array($attribute->validation, ['numeric', 'number', 'decimal'], true)
+            )
+                ? 'DECIMAL(30,10)'
                 : null;
 
-            $jsonCondition = DB::rawQueryGrammar()->jsonExtract(DB::getTablePrefix().'products.values', ...$attributePath);
+            $jsonCondition = $this->inheritedJsonExtract($attributePath);
 
             if ($castType) {
                 return $this->queryBuilder->orderByRaw(
@@ -706,6 +710,47 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         }
 
         return $this->queryBuilder->orderBy($sortColumn, $sortOrder);
+    }
+
+    /**
+     * Build the SQL expression that reads an attribute for sorting the way the grid displays it.
+     *
+     * Variants do not store values they inherit, so the product's own JSON is NULL for them and
+     * ordering by it alone leaves those rows in arbitrary order. The nearest non-null value up
+     * the parent chain (own, parent, grandparent) is used instead, matching VariantValueResolver.
+     */
+    protected function inheritedJsonExtract(array $attributePath): string
+    {
+        $grammar = DB::rawQueryGrammar();
+        $prefix = DB::getTablePrefix();
+
+        $this->joinGrandparentForSort();
+
+        $extracts = array_map(
+            fn (string $table) => $grammar->jsonExtract($prefix.$table.'.values', ...$attributePath),
+            ['products', 'parent_products', 'grandparent_products']
+        );
+
+        return 'COALESCE('.implode(', ', $extracts).')';
+    }
+
+    /**
+     * Join the grandparent product once so sub-variants can inherit through two levels.
+     */
+    protected function joinGrandparentForSort(): void
+    {
+        foreach ($this->queryBuilder->joins ?? [] as $join) {
+            if (str_contains((string) $join->table, 'grandparent_products')) {
+                return;
+            }
+        }
+
+        $this->queryBuilder->leftJoin(
+            'products as grandparent_products',
+            'parent_products.parent_id',
+            '=',
+            'grandparent_products.id'
+        );
     }
 
     /**
@@ -972,6 +1017,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 $path .= '.'.$currencyCode;
             }
 
+            if ($attributeType === AttributeModel::MEASUREMENT_FIELD_TYPE) {
+                $path .= '.base_data';
+            }
+
             return $path;
         }
 
@@ -983,6 +1032,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         if ($attributeType === 'price' && $currencyCode) {
             $path[] = $currencyCode;
+        }
+
+        if ($attributeType === AttributeModel::MEASUREMENT_FIELD_TYPE) {
+            $path[] = 'base_data';
         }
 
         return $path;
