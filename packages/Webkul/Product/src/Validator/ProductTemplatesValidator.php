@@ -237,7 +237,7 @@ class ProductTemplatesValidator
     private function templateAttributes(): Collection
     {
         return $this->templateAttributes ??= $this->attributeRepository
-            ->findWhere(['enable_templates' => 1])
+            ->findWhere(['enable_templates' => true])
             ->filter(fn (Attribute $attribute): bool => $attribute->canHoldTemplate())
             ->keyBy('code');
     }

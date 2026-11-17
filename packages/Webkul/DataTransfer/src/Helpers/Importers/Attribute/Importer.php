@@ -136,7 +136,7 @@ class Importer extends AbstractImporter
         $this->templateSettings = [];
 
         $this->templateAttributes = $this->attributeRepository->query()
-            ->where('enable_templates', 1)
+            ->where('enable_templates', true)
             ->get()
             ->keyBy('code')
             ->all();
