@@ -23,6 +23,7 @@ use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
 use Webkul\DataTransfer\Models\JobTrack;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 use Webkul\Measurement\Helpers\MeasurementHelper;
+use Webkul\Product\Contracts\TemplateRenderer;
 use Webkul\Product\Contracts\VariantValueResolver;
 use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Repositories\ProductRepository;
@@ -99,6 +100,10 @@ class Exporter extends AbstractExporter
 
     protected ?VariantValueResolver $variantValueResolver = null;
 
+    protected array $templateAttributes = [];
+
+    protected ?TemplateRenderer $templateRenderer = null;
+
     /**
      * Create a new instance.
      */
@@ -115,6 +120,11 @@ class Exporter extends AbstractExporter
     protected function variantValueResolver(): VariantValueResolver
     {
         return $this->variantValueResolver ??= app(VariantValueResolver::class);
+    }
+
+    protected function templateRenderer(): TemplateRenderer
+    {
+        return $this->templateRenderer ??= app(TemplateRenderer::class);
     }
 
     /**
@@ -146,6 +156,7 @@ class Exporter extends AbstractExporter
                 'currencies'         => array_values($currencies),
                 'attributes'         => $attributes,
                 'attributeMeta'      => $this->buildAttributeMeta($attributes),
+                'templateAttributes' => $this->buildTemplateAttributes($attributes),
             ];
         }
 
@@ -154,8 +165,32 @@ class Exporter extends AbstractExporter
         $this->currencies = self::$staticInitCache['currencies'];
         $this->attributes = self::$staticInitCache['attributes'];
         $this->attributeMeta = self::$staticInitCache['attributeMeta'];
+        $this->templateAttributes = self::$staticInitCache['templateAttributes'];
 
         $this->applyScopeFilters();
+    }
+
+    protected function buildTemplateAttributes($attributes): array
+    {
+        return collect($attributes)
+            ->filter(fn ($attribute): bool => $attribute->canHoldTemplate())
+            ->keyBy('code')
+            ->all();
+    }
+
+    protected function renderTemplateValues(array $fields, array $values, string $channel, string $locale): array
+    {
+        foreach ($this->templateAttributes as $code => $attribute) {
+            $source = $fields[$code] ?? null;
+
+            if (! is_string($source) || ! str_contains($source, '{{') || ! $this->isAttributeValueExported($code)) {
+                continue;
+            }
+
+            $fields[$code] = $this->templateRenderer()->render($source, $attribute, $values, $channel, $locale)->output;
+        }
+
+        return $fields;
     }
 
     protected function buildAttributeMeta($attributes): array
@@ -561,6 +596,8 @@ class Exporter extends AbstractExporter
                         $channelSpecificFields,
                         $channelLocaleSpecificFields
                     );
+
+                    $mergedFields = $this->renderTemplateValues($mergedFields, $productValues, $channel, $locale);
 
                     $values = $this->setAttributesValues($mergedFields, $filePath, $locale);
 
