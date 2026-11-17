@@ -194,23 +194,38 @@ class Importer extends AbstractImporter
     {
         $this->userStorage->loadAdmins([$rowData['email']]);
 
-        $permission = $this->userStorage->getAdminId($rowData['email']) ? 'settings.users.users.edit' : 'settings.users.users.create';
+        if ($denial = $this->accessDenial($rowData)) {
+            $this->skipRow($rowNumber, self::ERROR_CANNOT_ASSIGN_ROLE, $denial['columnName'], trans($denial['error']));
 
-        if (! $this->holdsImportPermission($permission, $rowNumber, self::ERROR_CANNOT_ASSIGN_ROLE, 'email')
-            || ! $this->canManageExistingAdmin($rowData['email'], $rowNumber)) {
             return false;
+        }
+
+        return $this->keepsFullAccess($rowNumber, 'role_name', ...$this->fullAccessLoss($rowData));
+    }
+
+    /**
+     * Column and translation key of the first access rule the row breaks for the importing admins against the users and roles as stored now, or null when it breaks none.
+     *
+     * @return array{columnName: string, error: string}|null
+     */
+    protected function accessDenial(array $rowData): ?array
+    {
+        $userPermission = $this->userStorage->getAdminId($rowData['email']) ? 'settings.users.users.edit' : 'settings.users.users.create';
+
+        if ($error = $this->importPermissionError($userPermission)) {
+            return ['columnName' => 'email', 'error' => $error];
+        }
+
+        if ($this->existingAdminAccessError($rowData['email']) !== null) {
+            return ['columnName' => 'email', 'error' => 'admin::app.common.unauthorized'];
         }
 
         $role = $this->findRole($this->userStorage->getRoleId($rowData['role_name']));
         $permissionType = $rowData['permission_type'] ?? null;
 
-        if (! empty($permissionType) && ! $this->holdsImportPermission(
-            $role instanceof Role ? 'settings.roles.edit' : 'settings.roles.create',
-            $rowNumber,
-            self::ERROR_CANNOT_ASSIGN_ROLE,
-            'role_name'
-        )) {
-            return false;
+        if (! empty($permissionType)
+            && $error = $this->importPermissionError($role instanceof Role ? 'settings.roles.edit' : 'settings.roles.create')) {
+            return ['columnName' => 'role_name', 'error' => $error];
         }
 
         $error = $this->importAccessError(fn ($admin): ?string => empty($permissionType)
@@ -221,13 +236,7 @@ class Importer extends AbstractImporter
                 empty($rowData['permissions']) ? [] : explode(',', $rowData['permissions'])
             ));
 
-        if ($error) {
-            $this->skipRow($rowNumber, self::ERROR_CANNOT_ASSIGN_ROLE, 'role_name', trans($error));
-
-            return false;
-        }
-
-        return $this->keepsFullAccess($rowNumber, 'role_name', ...$this->fullAccessLoss($rowData));
+        return $error ? ['columnName' => 'role_name', 'error' => $error] : null;
     }
 
     /**
@@ -354,6 +363,7 @@ class Importer extends AbstractImporter
             $id = $this->userStorage->getAdminId($rowData['email']);
 
             if ($id
+                && $this->importPermissionError('settings.users.users.delete') === null
                 && $this->existingAdminAccessError($rowData['email']) === null
                 && $this->allowsFullAccessChange(adminId: $this->deletedFullAccessAdminId($rowData))) {
                 $idsToDelete[] = $id;
@@ -377,7 +387,7 @@ class Importer extends AbstractImporter
         $this->userStorage->loadAdmins(Arr::pluck($batch->data, 'email'));
 
         foreach ($batch->data as $rowData) {
-            if ($this->existingAdminAccessError($rowData['email']) !== null
+            if ($this->accessDenial($rowData) !== null
                 || ! $this->allowsFullAccessChange(...$this->fullAccessLoss($rowData))) {
                 continue;
             }

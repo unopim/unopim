@@ -616,9 +616,7 @@ abstract class AbstractImporter
      */
     protected function holdsImportPermission(string $permission, int $rowNumber, string $errorCode, string $columnName): bool
     {
-        $guard = resolve(RoleAccessGuard::class);
-
-        $error = $this->importAccessError(fn ($admin): ?string => $guard->permissionError($admin, $permission));
+        $error = $this->importPermissionError($permission);
 
         if ($error) {
             $this->skipRow($rowNumber, $errorCode, $columnName, trans($error));
@@ -627,5 +625,15 @@ abstract class AbstractImporter
         }
 
         return true;
+    }
+
+    /**
+     * Translation key explaining why the admin running the job or the admin who uploaded its file lacks the permission, or null when both hold it.
+     */
+    protected function importPermissionError(string $permission): ?string
+    {
+        $guard = resolve(RoleAccessGuard::class);
+
+        return $this->importAccessError(fn ($admin): ?string => $guard->permissionError($admin, $permission));
     }
 }

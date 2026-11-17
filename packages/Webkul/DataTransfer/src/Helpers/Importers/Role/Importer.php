@@ -148,21 +148,35 @@ class Importer extends AbstractImporter
      */
     protected function validateAccess(array $rowData, int $rowNumber): void
     {
-        $permission = $this->roleStorage->get($rowData['name']) ? 'settings.roles.edit' : 'settings.roles.create';
-
-        if (! $this->holdsImportPermission($permission, $rowNumber, self::ERROR_CANNOT_GRANT_ACCESS, 'name')) {
-            return;
-        }
-
-        $permissions = empty($rowData['permissions']) ? [] : explode(',', $rowData['permissions']);
-
-        if ($this->importAccessError(fn ($admin): ?string => $this->roleAccessGuard->grantError($admin, $rowData['permission_type'], $permissions))) {
-            $this->skipRow($rowNumber, self::ERROR_CANNOT_GRANT_ACCESS, 'permission_type');
+        if ($denial = $this->accessDenial($rowData)) {
+            $this->skipRow($rowNumber, self::ERROR_CANNOT_GRANT_ACCESS, ...$denial);
 
             return;
         }
 
         $this->keepsFullAccess($rowNumber, 'permission_type', roleId: $this->demotedRoleId($rowData));
+    }
+
+    /**
+     * Column and message of the first access rule the row breaks for the importing admins against the roles as stored now, or null when it breaks none.
+     *
+     * @return array{columnName: string, errorMessage: ?string}|null
+     */
+    protected function accessDenial(array $rowData): ?array
+    {
+        $permission = $this->roleStorage->get($rowData['name']) ? 'settings.roles.edit' : 'settings.roles.create';
+
+        if ($error = $this->importPermissionError($permission)) {
+            return ['columnName' => 'name', 'errorMessage' => trans($error)];
+        }
+
+        $permissions = empty($rowData['permissions']) ? [] : explode(',', $rowData['permissions']);
+
+        if ($this->importAccessError(fn ($admin): ?string => $this->roleAccessGuard->grantError($admin, $rowData['permission_type'], $permissions))) {
+            return ['columnName' => 'permission_type', 'errorMessage' => null];
+        }
+
+        return null;
     }
 
     /**
@@ -219,6 +233,10 @@ class Importer extends AbstractImporter
 
         $idsToDelete = array_unique($idsToDelete);
 
+        if ($idsToDelete !== [] && $this->importPermissionError('settings.roles.delete') !== null) {
+            return true;
+        }
+
         foreach ($idsToDelete as $id) {
             if (! $this->allowsFullAccessChange(roleId: $id) || $this->roleRepository->find($id)?->admins()->exists()) {
                 continue;
@@ -236,7 +254,8 @@ class Importer extends AbstractImporter
         $this->roleStorage->load(Arr::pluck($batch->data, 'name'));
 
         foreach ($batch->data as $rowData) {
-            if (! $this->allowsFullAccessChange(roleId: $this->demotedRoleId($rowData))) {
+            if ($this->accessDenial($rowData) !== null
+                || ! $this->allowsFullAccessChange(roleId: $this->demotedRoleId($rowData))) {
                 continue;
             }
 

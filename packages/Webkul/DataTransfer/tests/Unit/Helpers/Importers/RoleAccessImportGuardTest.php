@@ -163,6 +163,44 @@ describe('role importer', function () {
         expect(Role::find($role->id))->not->toBeNull();
     });
 
+    it('skips a row validated as a new role when a role with that name appears before the write and the importing admin cannot edit roles', function () {
+        $createOnlyAdmin = Admin::factory()->create(['role_id' => Role::factory()->create([
+            'permission_type' => 'custom',
+            'permissions'     => ['dashboard', 'data_transfer.imports', 'settings.roles.create'],
+        ])->id, 'status' => 1]);
+
+        $name = 'Appears Later '.uniqid();
+        $row = ['name' => $name, 'permission_type' => 'custom', 'permissions' => 'dashboard', 'description' => 'Overwritten'];
+
+        expect(importerFor(RoleImporter::class, Import::ACTION_APPEND, $createOnlyAdmin)->validateRow($row, 1))->toBeTrue();
+
+        $role = Role::factory()->create(['name' => $name, 'description' => 'Original', 'permission_type' => 'all', 'permissions' => null]);
+
+        writeImportBatch(RoleImporter::class, Import::ACTION_APPEND, [$row], $createOnlyAdmin);
+
+        $role->refresh();
+
+        expect($role->permission_type)->toBe('all')
+            ->and($role->description)->toBe('Original');
+    });
+
+    it('skips deleting a role when the importing admin lost the delete permission after validation', function () {
+        $deleterRole = Role::factory()->create([
+            'permission_type' => 'custom',
+            'permissions'     => ['dashboard', 'data_transfer.imports', 'settings.roles.delete'],
+        ]);
+        $deleter = Admin::factory()->create(['role_id' => $deleterRole->id, 'status' => 1]);
+        $unusedRole = Role::factory()->create(['name' => 'Unused '.uniqid(), 'permission_type' => 'custom', 'permissions' => ['dashboard']]);
+
+        expect(importerFor(RoleImporter::class, Import::ACTION_DELETE, $deleter)->validateRow(['name' => $unusedRole->name], 1))->toBeTrue();
+
+        $deleterRole->update(['permissions' => ['dashboard', 'data_transfer.imports']]);
+
+        writeImportBatch(RoleImporter::class, Import::ACTION_DELETE, [['name' => $unusedRole->name]], $deleter);
+
+        expect(Role::find($unusedRole->id))->not->toBeNull();
+    });
+
     it('rejects deleting a role that admins still use', function () {
         $unusedRole = Role::factory()->create(['name' => 'Unused '.uniqid(), 'permission_type' => 'custom', 'permissions' => ['dashboard']]);
 
@@ -314,6 +352,25 @@ describe('user importer', function () {
             ->and($target->name)->toBe('Original Name')
             ->and($target->role_id)->toBe($this->fullRole->id);
     })->with(['edit' => Import::ACTION_APPEND, 'delete' => Import::ACTION_DELETE]);
+
+    it('skips a row validated as a new user when that user appears before the write and the importing admin cannot edit users', function () {
+        $heldRole = Role::factory()->create(['name' => 'Held '.uniqid(), 'permission_type' => 'custom', 'permissions' => ['dashboard']]);
+        $createOnlyAdmin = Admin::factory()->create(['role_id' => Role::factory()->create([
+            'permission_type' => 'custom',
+            'permissions'     => ['dashboard', 'data_transfer.imports', 'settings.users.users.create'],
+        ])->id, 'status' => 1]);
+
+        $email = 'appears-later-'.uniqid().'@example.com';
+        $row = ['name' => 'Taken Over', 'email' => $email, 'role_name' => $heldRole->name];
+
+        expect(importerFor(UserImporter::class, Import::ACTION_APPEND, $createOnlyAdmin)->validateRow($row, 1))->toBeTrue();
+
+        $user = Admin::factory()->create(['name' => 'Original Name', 'email' => $email, 'role_id' => $heldRole->id, 'status' => 1]);
+
+        writeImportBatch(UserImporter::class, Import::ACTION_APPEND, [$row], $createOnlyAdmin);
+
+        expect($user->fresh()->name)->toBe('Original Name');
+    });
 
     it('rejects a row that turns an existing role into full access when the importing admin lacks it', function () {
         $importer = importerFor(UserImporter::class, Import::ACTION_APPEND, $this->limitedAdmin);
