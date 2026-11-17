@@ -4,7 +4,6 @@ namespace Webkul\DataTransfer\Helpers\Importers\User;
 
 use Illuminate\Http\File;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage as StorageFacade;
 use Illuminate\Support\Facades\Validator;
@@ -191,7 +190,7 @@ class Importer extends AbstractImporter
         $role = $this->findRole($this->userStorage->getRoleId($rowData['role_name']));
         $permissionType = $rowData['permission_type'] ?? null;
 
-        $error = $this->importAccessError(fn ($admin) => empty($permissionType)
+        $error = $this->importAccessError(fn ($admin): ?string => empty($permissionType)
             ? $this->roleAccessGuard->assignmentError($admin, $role)
             : $this->roleAccessGuard->grantError(
                 $admin,
@@ -272,9 +271,7 @@ class Importer extends AbstractImporter
     {
         Event::dispatch('data_transfer.imports.batch.import.before', $batch);
 
-        DB::transaction(function () use ($batch): void {
-            $this->lockFullAccess();
-
+        $this->writeWithFullAccessLock(function () use ($batch): void {
             if ($batch->jobTrack->action == Import::ACTION_DELETE) {
                 $this->deleteUserData($batch);
             } else {

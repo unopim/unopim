@@ -2,6 +2,9 @@
 
 namespace Webkul\DataTransfer\Helpers\Importers\Concerns;
 
+use Closure;
+use Illuminate\Support\Facades\DB;
+
 /**
  * Keeps at least one active admin with full access through a role or user import,
  * counting every demotion and removal earlier rows of the same file make: once while
@@ -59,6 +62,18 @@ trait GuardsLastFullAccess
         $this->activeFullAccessAdmins = $this->adminRepository->activeFullAccessAdmins(lock: true);
         $this->demotedRoleIds = [];
         $this->removedAdminIds = [];
+    }
+
+    /**
+     * Write a batch in one transaction that first locks full access, so every row is re-checked as it is written.
+     */
+    protected function writeWithFullAccessLock(Closure $write): void
+    {
+        DB::transaction(function () use ($write): void {
+            $this->lockFullAccess();
+
+            $write();
+        });
     }
 
     /**

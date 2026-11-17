@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\Mime\MimeTypes;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\ImportDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\DataTransfer\Contracts\JobInstances as JobInstancesContract;
 use Webkul\DataTransfer\Contracts\JobTrack as JobTrackContract;
 use Webkul\DataTransfer\Contracts\Validator\JobInstances\JobValidator;
 use Webkul\DataTransfer\Enums\JobType;
@@ -123,10 +124,11 @@ class ImportController extends Controller
         $import = $this->jobInstancesRepository->create(
             array_merge(
                 $fileData,
-                $data,
-                ['updated_by' => auth()->guard('admin')->id()]
+                $data
             )
         );
+
+        $this->recordProfileSaver($import);
 
         Event::dispatch('data_transfer.imports.create.after', $import);
 
@@ -188,7 +190,6 @@ class ImportController extends Controller
                 'completed_at'         => null,
                 'summary'              => null,
                 'type'                 => self::TYPE,
-                'updated_by'           => auth()->guard('admin')->id(),
             ]
         );
 
@@ -210,11 +211,21 @@ class ImportController extends Controller
 
         $import = $this->jobInstancesRepository->update($data, $import->id);
 
+        $this->recordProfileSaver($import);
+
         Event::dispatch('data_transfer.imports.update.after', $import);
 
         session()->flash('success', trans('admin::app.settings.data-transfer.imports.update-success'));
 
         return redirect()->route('admin.settings.data_transfer.imports.import-view', $import->id);
+    }
+
+    /**
+     * Record the admin who saved the import profile and its file; importers check this admin's access too.
+     */
+    private function recordProfileSaver(JobInstancesContract $import): void
+    {
+        $import->forceFill(['updated_by' => auth()->guard('admin')->id()])->saveQuietly();
     }
 
     /**

@@ -3,7 +3,6 @@
 namespace Webkul\DataTransfer\Helpers\Importers\Role;
 
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Validator;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
@@ -147,7 +146,7 @@ class Importer extends AbstractImporter
     {
         $permissions = empty($rowData['permissions']) ? [] : explode(',', $rowData['permissions']);
 
-        if ($this->importAccessError(fn ($admin) => $this->roleAccessGuard->grantError($admin, $rowData['permission_type'], $permissions))) {
+        if ($this->importAccessError(fn ($admin): ?string => $this->roleAccessGuard->grantError($admin, $rowData['permission_type'], $permissions))) {
             $this->skipRow($rowNumber, self::ERROR_CANNOT_GRANT_ACCESS, 'permission_type');
 
             return;
@@ -172,9 +171,7 @@ class Importer extends AbstractImporter
     {
         Event::dispatch('data_transfer.imports.batch.import.before', $batch);
 
-        DB::transaction(function () use ($batch): void {
-            $this->lockFullAccess();
-
+        $this->writeWithFullAccessLock(function () use ($batch): void {
             if ($batch->jobTrack->action == Import::ACTION_DELETE) {
                 $this->deleteRoleData($batch);
             } else {
