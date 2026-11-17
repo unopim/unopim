@@ -96,7 +96,7 @@ it('combines submitted values with the stored and inherited values of the produc
         productId: $variant->id,
     ));
 
-    expect($errors)->toHaveKey('common.tpl_short_description');
+    expect(array_keys($errors))->toBe(['common.tpl_short_description']);
 });
 
 it('rejects variables that are not part of the product family', function () {
@@ -111,6 +111,56 @@ it('rejects variables that are not part of the product family', function () {
 
     expect($errors)->toBe(['common.tpl_description' => ['The attribute "tpl_outsider" used in the template does not belong to the product family.']])
         ->and($outsider->exists)->toBeTrue();
+});
+
+it('ignores broken templates stored in scopes that are not submitted', function () {
+    $this->templateChannel();
+    $this->variableAttribute('tpl_outsider');
+
+    $product = Product::factory()->create([
+        'attribute_family_id' => $this->family->id,
+        'values'              => ['locale_specific' => ['de_DE' => ['tpl_meta_description' => 'Kaufen {{ tpl_outsider }}']]],
+    ]);
+
+    $errors = templateValidationErrors(fn () => $this->valuesValidator->validate(
+        data: ['locale_specific' => ['en_US' => ['tpl_meta_description' => 'Buy {{ tpl_name }}']]],
+        productId: $product->id,
+    ));
+
+    expect($errors)->toBe([]);
+});
+
+it('still rejects a broken stored template when its own scope is submitted', function () {
+    $this->templateChannel();
+    $this->variableAttribute('tpl_outsider');
+
+    $product = Product::factory()->create([
+        'attribute_family_id' => $this->family->id,
+        'values'              => ['locale_specific' => ['de_DE' => ['tpl_meta_description' => 'Kaufen {{ tpl_outsider }}']]],
+    ]);
+
+    $errors = templateValidationErrors(fn () => $this->valuesValidator->validate(
+        data: ['locale_specific' => ['de_DE' => ['tpl_meta_description' => 'Kaufen {{ tpl_outsider }}']]],
+        productId: $product->id,
+    ));
+
+    expect($errors)->toBe(['locale_specific.de_DE.tpl_meta_description' => ['The attribute "tpl_outsider" used in the template does not belong to the product family.']]);
+});
+
+it('reports a cycle closed through a stored scope on the submitted field only', function () {
+    $this->templateChannel();
+
+    $product = Product::factory()->create([
+        'attribute_family_id' => $this->family->id,
+        'values'              => ['locale_specific' => ['de_DE' => ['tpl_meta_description' => '{{ tpl_description }}']]],
+    ]);
+
+    $errors = templateValidationErrors(fn () => $this->valuesValidator->validate(
+        data: ['common' => ['tpl_description' => 'About {{ tpl_meta_description }}']],
+        productId: $product->id,
+    ));
+
+    expect($errors)->toBe(['common.tpl_description' => ['Circular template reference detected: tpl_description → tpl_meta_description → tpl_description.']]);
 });
 
 it('also validates templates on partial updates', function () {

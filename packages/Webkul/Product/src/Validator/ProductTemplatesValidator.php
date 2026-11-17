@@ -62,6 +62,12 @@ class ProductTemplatesValidator
             );
         }
 
+        $messages = array_filter(
+            $messages,
+            fn (string $path): bool => Arr::has($data, $path),
+            ARRAY_FILTER_USE_KEY,
+        );
+
         if ($messages !== []) {
             throw ValidationException::withMessages(array_map(
                 fn (array $pathMessages): array => array_values(array_unique($pathMessages)),
