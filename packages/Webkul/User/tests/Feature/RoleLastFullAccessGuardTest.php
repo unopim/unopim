@@ -5,6 +5,7 @@ use Webkul\User\Models\Admin;
 use Webkul\User\Models\Role;
 use Webkul\User\Repositories\AdminRepository;
 
+use function Pest\Laravel\postJson;
 use function Pest\Laravel\put;
 use function Pest\Laravel\putJson;
 
@@ -144,9 +145,47 @@ it('reports whether an active full-access admin remains outside a role', functio
     $repository = app(AdminRepository::class);
 
     expect($repository->hasOtherActiveFullAccessAdmin())->toBeTrue()
-        ->and($repository->hasOtherActiveFullAccessAdmin(exceptRoleId: $role->id))->toBeFalse();
+        ->and($repository->hasOtherActiveFullAccessAdmin([$role->id]))->toBeFalse();
 
     $inactiveAdmin->update(['status' => 1]);
 
-    expect($repository->hasOtherActiveFullAccessAdmin(exceptRoleId: $role->id))->toBeTrue();
+    expect($repository->hasOtherActiveFullAccessAdmin([$role->id]))->toBeTrue();
+});
+
+it('rejects a non-canonical permission type even when the body carries id=0', function (string $permissionType) {
+    $role = makeOnlyFullAccessRole();
+
+    $this->loginAsAdmin(Admin::factory()->create(['role_id' => $role->id, 'status' => 1]));
+    Admin::factory()->create(['role_id' => $role->id, 'status' => 1]);
+
+    putJson(route('admin.settings.roles.update', $role->id), [
+        ...rolePayload($role, 'custom'),
+        'id'              => 0,
+        'permission_type' => $permissionType,
+    ])->assertUnprocessable()->assertJsonValidationErrors('permission_type');
+
+    expect($role->refresh()->permission_type)->toBe('all');
+})->with(['àll', 'ALL', 'none']);
+
+it('rejects a non-canonical permission type when creating a role', function (string $permissionType) {
+    $this->loginAsAdmin();
+
+    postJson(route('admin.settings.roles.store'), [
+        'name'            => 'Phantom '.uniqid(),
+        'permission_type' => $permissionType,
+    ])->assertUnprocessable()->assertJsonValidationErrors('permission_type');
+
+    expect(Role::query()->where('name', 'like', 'Phantom %')->exists())->toBeFalse();
+})->with(['àll', 'ALL', 'none']);
+
+it('stores every non-canonical permission type as custom', function () {
+    $phantom = Role::factory()->create(['permission_type' => 'àll', 'permissions' => null]);
+    $full = Role::factory()->create(['permission_type' => 'all', 'permissions' => null]);
+    $custom = Role::factory()->create(['permission_type' => 'custom', 'permissions' => ['dashboard']]);
+
+    (require base_path('packages/Webkul/User/src/Database/Migrations/2026_11_17_100000_normalize_role_permission_type.php'))->up();
+
+    expect($phantom->refresh()->permission_type)->toBe('custom')
+        ->and($full->refresh()->permission_type)->toBe('all')
+        ->and($custom->refresh()->permission_type)->toBe('custom');
 });

@@ -13,8 +13,10 @@ use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
 use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Helpers\Importers\AbstractImporter;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
+use Webkul\User\Contracts\Role;
 use Webkul\User\Repositories\AdminRepository;
 use Webkul\User\Repositories\RoleRepository;
+use Webkul\User\Services\RoleAccessGuard;
 
 class Importer extends AbstractImporter
 {
@@ -44,6 +46,16 @@ class Importer extends AbstractImporter
     public const ERROR_INVALID_LOCALE = 'invalid_locale';
 
     /**
+     * Error code for a role the importing admin cannot assign or grant
+     */
+    public const ERROR_CANNOT_ASSIGN_ROLE = 'cannot_assign_role';
+
+    /**
+     * Error code for a change that leaves no active admin with full access
+     */
+    public const ERROR_LAST_FULL_ACCESS = 'last_full_access';
+
+    /**
      * Permanent entity columns
      */
     protected array $validColumnNames = [
@@ -70,7 +82,37 @@ class Importer extends AbstractImporter
         self::ERROR_EMAIL_NOT_FOUND_FOR_DELETE => 'data_transfer::app.importers.users.validation.errors.email-not-found-to-delete',
         self::ERROR_INVALID_ROLE               => 'data_transfer::app.importers.users.validation.errors.invalid-role',
         self::ERROR_INVALID_LOCALE             => 'data_transfer::app.importers.users.validation.errors.invalid-locale',
+        self::ERROR_CANNOT_ASSIGN_ROLE         => 'admin::app.settings.users.cannot-escalate-role',
+        self::ERROR_LAST_FULL_ACCESS           => 'admin::app.settings.roles.last-full-access',
     ];
+
+    /**
+     * Roles loaded during validation, keyed by id
+     *
+     * @var array<int, Role|null>
+     */
+    protected array $roles = [];
+
+    /**
+     * Active admins with full access when validation started
+     *
+     * @var array<int, int>|null
+     */
+    protected ?array $fullAccessAdminIds = null;
+
+    /**
+     * Full-access roles this file already demotes
+     *
+     * @var array<int, int>
+     */
+    protected array $demotedRoleIds = [];
+
+    /**
+     * Full-access admins this file already removes, disables or moves off full access
+     *
+     * @var array<int, int>
+     */
+    protected array $removedAdminIds = [];
 
     /**
      * Create a new helper instance.
@@ -80,7 +122,8 @@ class Importer extends AbstractImporter
         protected AdminRepository $adminRepository,
         protected RoleRepository $roleRepository,
         protected Storage $userStorage,
-        protected FileStorer $fileStorer
+        protected FileStorer $fileStorer,
+        protected RoleAccessGuard $roleAccessGuard
     ) {
         parent::__construct($importBatchRepository);
     }
@@ -115,13 +158,15 @@ class Importer extends AbstractImporter
         if ($this->import->action == Import::ACTION_DELETE) {
             $this->userStorage->loadAdmins([$rowData['email']]);
 
-            if (! $this->userStorage->getAdminId($rowData['email'])) {
+            $adminId = $this->userStorage->getAdminId($rowData['email']);
+
+            if (! $adminId) {
                 $this->skipRow($rowNumber, self::ERROR_EMAIL_NOT_FOUND_FOR_DELETE, $rowData['email']);
 
                 return false;
             }
 
-            return true;
+            return $this->keepsFullAccess($rowNumber, adminId: $adminId);
         }
 
         if (! $this->shouldImportRow($rowData)) {
@@ -153,7 +198,89 @@ class Importer extends AbstractImporter
             $this->skipRow($rowNumber, self::ERROR_INVALID_LOCALE, $rowData['ui_locale_code']);
         }
 
-        return ! $this->errorHelper->isRowInvalid($rowNumber);
+        if ($this->errorHelper->isRowInvalid($rowNumber)) {
+            return false;
+        }
+
+        return $this->validateAccess($rowData, $rowNumber);
+    }
+
+    /**
+     * Reject a row whose role the importing admin cannot assign or grant, or that leaves no active admin with full access.
+     */
+    protected function validateAccess(array $rowData, int $rowNumber): bool
+    {
+        $role = $this->findRole($this->userStorage->getRoleId($rowData['role_name']));
+        $permissionType = $rowData['permission_type'] ?? null;
+
+        $error = empty($permissionType)
+            ? $this->roleAccessGuard->assignmentError($this->initiatingAdmin(), $role)
+            : $this->roleAccessGuard->grantError(
+                $this->initiatingAdmin(),
+                $permissionType,
+                empty($rowData['permissions']) ? [] : explode(',', $rowData['permissions'])
+            );
+
+        if ($error) {
+            $this->skipRow($rowNumber, self::ERROR_CANNOT_ASSIGN_ROLE, 'role_name', trans($error));
+
+            return false;
+        }
+
+        $demotesRole = ! empty($permissionType)
+            && $permissionType !== RoleAccessGuard::FULL_ACCESS
+            && $this->roleAccessGuard->hasFullAccess($role);
+
+        $grantsFullAccess = ($rowData['status'] ?? self::FILTER_STATUS_ACTIVE) === self::FILTER_STATUS_ACTIVE
+            && ($permissionType ?: $role?->permission_type) === RoleAccessGuard::FULL_ACCESS;
+
+        $this->userStorage->loadAdmins([$rowData['email']]);
+
+        return $this->keepsFullAccess(
+            $rowNumber,
+            roleId: $demotesRole ? $role?->id : null,
+            adminId: $grantsFullAccess ? null : $this->userStorage->getAdminId($rowData['email'])
+        );
+    }
+
+    /**
+     * Reject the row when demoting the role or removing the admin leaves no active admin with full access.
+     */
+    protected function keepsFullAccess(int $rowNumber, ?int $roleId = null, ?int $adminId = null): bool
+    {
+        $this->fullAccessAdminIds ??= $this->adminRepository->activeFullAccessAdminIds();
+
+        $removesAdmin = $adminId !== null && in_array($adminId, $this->fullAccessAdminIds, true);
+
+        if ($roleId === null && ! $removesAdmin) {
+            return true;
+        }
+
+        $demotedRoleIds = $roleId === null ? $this->demotedRoleIds : [...$this->demotedRoleIds, $roleId];
+        $removedAdminIds = $removesAdmin ? [...$this->removedAdminIds, $adminId] : $this->removedAdminIds;
+
+        if (! $this->adminRepository->hasOtherActiveFullAccessAdmin($demotedRoleIds, $removedAdminIds)) {
+            $this->skipRow($rowNumber, self::ERROR_LAST_FULL_ACCESS, 'role_name');
+
+            return false;
+        }
+
+        $this->demotedRoleIds = $demotedRoleIds;
+        $this->removedAdminIds = $removedAdminIds;
+
+        return true;
+    }
+
+    /**
+     * Role by id, loaded once per import.
+     */
+    protected function findRole(?int $roleId): ?Role
+    {
+        if (! $roleId) {
+            return null;
+        }
+
+        return $this->roles[$roleId] ??= $this->roleRepository->find($roleId);
     }
 
     protected function shouldImportRow(array $rowData): bool

@@ -25,14 +25,32 @@ class AdminRepository extends Repository
     }
 
     /**
-     * Whether an active admin outside the given role keeps full access.
+     * Whether an active admin outside the given roles and admins keeps full access.
+     *
+     * @param  array<int, int>  $exceptRoleIds
+     * @param  array<int, int>  $exceptAdminIds
      */
-    public function hasOtherActiveFullAccessAdmin(?int $exceptRoleId = null): bool
+    public function hasOtherActiveFullAccessAdmin(array $exceptRoleIds = [], array $exceptAdminIds = []): bool
     {
         return $this->fullAccessAdminsQuery()
             ->where('admins.status', 1)
-            ->when($exceptRoleId !== null, fn (Builder $query) => $query->where('admins.role_id', '!=', $exceptRoleId))
+            ->when($exceptRoleIds !== [], fn (Builder $query) => $query->whereNotIn('admins.role_id', $exceptRoleIds))
+            ->when($exceptAdminIds !== [], fn (Builder $query) => $query->whereNotIn('admins.id', $exceptAdminIds))
             ->exists();
+    }
+
+    /**
+     * Ids of the active admins whose role grants every permission.
+     *
+     * @return array<int, int>
+     */
+    public function activeFullAccessAdminIds(): array
+    {
+        return $this->fullAccessAdminsQuery()
+            ->where('admins.status', 1)
+            ->pluck('admins.id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
     }
 
     /**

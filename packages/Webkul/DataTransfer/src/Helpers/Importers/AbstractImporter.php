@@ -18,6 +18,8 @@ use Webkul\DataTransfer\Jobs\Import\Indexing as IndexingJob;
 use Webkul\DataTransfer\Jobs\Import\LinkBatch as LinkBatchJob;
 use Webkul\DataTransfer\Jobs\Import\Linking as LinkingJob;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository as ImportJobBatchRepository;
+use Webkul\User\Contracts\Admin;
+use Webkul\User\Services\RoleAccessGuard;
 
 abstract class AbstractImporter
 {
@@ -102,6 +104,11 @@ abstract class AbstractImporter
      * Import instance.
      */
     protected ImportJobTrackContract $import;
+
+    /**
+     * Admin who started the import, false until resolved.
+     */
+    protected Admin|false|null $initiatingAdmin = false;
 
     /**
      * Source instance.
@@ -563,5 +570,17 @@ abstract class AbstractImporter
         }
 
         return $this->indexingRequired;
+    }
+
+    /**
+     * Admin who started the import, or null for a console run.
+     */
+    protected function initiatingAdmin(): ?Admin
+    {
+        if ($this->initiatingAdmin === false) {
+            $this->initiatingAdmin = resolve(RoleAccessGuard::class)->actor($this->import->user_id);
+        }
+
+        return $this->initiatingAdmin;
     }
 }

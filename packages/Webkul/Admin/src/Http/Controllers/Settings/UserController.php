@@ -17,6 +17,7 @@ use Webkul\Core\Filesystem\FileStorer;
 use Webkul\User\Models\Role;
 use Webkul\User\Repositories\AdminRepository;
 use Webkul\User\Repositories\RoleRepository;
+use Webkul\User\Services\RoleAccessGuard;
 
 class UserController extends Controller
 {
@@ -28,7 +29,8 @@ class UserController extends Controller
     public function __construct(
         protected AdminRepository $adminRepository,
         protected RoleRepository $roleRepository,
-        protected FileStorer $fileStorer
+        protected FileStorer $fileStorer,
+        protected RoleAccessGuard $roleAccessGuard
     ) {}
 
     /**
@@ -61,25 +63,7 @@ class UserController extends Controller
 
     protected function roleAssignmentError(?Role $targetRole): ?string
     {
-        if (! $targetRole) {
-            return null;
-        }
-
-        $actingRole = auth()->guard('admin')->user()->role;
-
-        if ($actingRole->permission_type === 'all') {
-            return null;
-        }
-
-        if ($targetRole->permission_type === 'all') {
-            return 'admin::app.settings.users.cannot-escalate-role';
-        }
-
-        if (array_diff($targetRole->permissions ?? [], $actingRole->permissions ?? [])) {
-            return 'admin::app.settings.users.cannot-assign-unheld-permissions';
-        }
-
-        return null;
+        return $this->roleAccessGuard->assignmentError(auth()->guard('admin')->user(), $targetRole);
     }
 
     /**

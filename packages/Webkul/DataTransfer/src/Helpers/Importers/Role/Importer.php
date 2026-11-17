@@ -10,7 +10,9 @@ use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
 use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Helpers\Importers\AbstractImporter;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
+use Webkul\User\Repositories\AdminRepository;
 use Webkul\User\Repositories\RoleRepository;
+use Webkul\User\Services\RoleAccessGuard;
 
 class Importer extends AbstractImporter
 {
@@ -23,6 +25,21 @@ class Importer extends AbstractImporter
      * Error code for non existing name
      */
     public const ERROR_CODE_NOT_FOUND_FOR_DELETE = 'name_not_found_to_delete';
+
+    /**
+     * Error code for a role the importing admin cannot grant
+     */
+    public const ERROR_CANNOT_GRANT_ACCESS = 'cannot_grant_access';
+
+    /**
+     * Error code for a change that leaves no active admin with full access
+     */
+    public const ERROR_LAST_FULL_ACCESS = 'last_full_access';
+
+    /**
+     * Error code for deleting a role that admins still use
+     */
+    public const ERROR_ROLE_IN_USE = 'role_in_use';
 
     /**
      * Permanent entity columns
@@ -45,7 +62,17 @@ class Importer extends AbstractImporter
     protected array $messages = [
         self::ERROR_DUPLICATE_NAME            => 'data_transfer::app.importers.roles.validation.errors.duplicate-name',
         self::ERROR_CODE_NOT_FOUND_FOR_DELETE => 'data_transfer::app.importers.roles.validation.errors.name-not-found-to-delete',
+        self::ERROR_CANNOT_GRANT_ACCESS       => 'admin::app.settings.roles.cannot-grant-unheld-permissions',
+        self::ERROR_LAST_FULL_ACCESS          => 'admin::app.settings.roles.last-full-access',
+        self::ERROR_ROLE_IN_USE               => 'admin::app.settings.roles.being-used',
     ];
+
+    /**
+     * Full-access roles this file already demotes
+     *
+     * @var array<int, int>
+     */
+    protected array $demotedRoleIds = [];
 
     /**
      * Create a new helper instance.
@@ -53,7 +80,9 @@ class Importer extends AbstractImporter
     public function __construct(
         protected JobTrackBatchRepository $importBatchRepository,
         protected RoleRepository $roleRepository,
-        protected Storage $roleStorage
+        protected Storage $roleStorage,
+        protected AdminRepository $adminRepository,
+        protected RoleAccessGuard $roleAccessGuard
     ) {
         parent::__construct($importBatchRepository);
     }
@@ -83,8 +112,16 @@ class Importer extends AbstractImporter
         $this->validatedRows[$rowNumber] = true;
 
         if ($this->import->action == Import::ACTION_DELETE) {
-            if (! $this->roleStorage->get($rowData['name'])) {
+            $roleId = $this->roleStorage->get($rowData['name']);
+
+            if (! $roleId) {
                 $this->skipRow($rowNumber, self::ERROR_CODE_NOT_FOUND_FOR_DELETE, $rowData['name']);
+
+                return false;
+            }
+
+            if ($this->roleRepository->find($roleId)?->admins()->exists()) {
+                $this->skipRow($rowNumber, self::ERROR_ROLE_IN_USE, $rowData['name']);
 
                 return false;
             }
@@ -102,9 +139,43 @@ class Importer extends AbstractImporter
             foreach ($validator->errors()->getMessages() as $attributeCode => $message) {
                 $this->skipRow($rowNumber, 'invalid_field', $attributeCode, current($message));
             }
+
+            return false;
         }
 
+        $this->validateAccess($rowData, $rowNumber);
+
         return ! $this->errorHelper->isRowInvalid($rowNumber);
+    }
+
+    /**
+     * Reject a row that grants access the importing admin lacks, or that demotes the last active full-access role.
+     */
+    protected function validateAccess(array $rowData, int $rowNumber): void
+    {
+        $permissions = empty($rowData['permissions']) ? [] : explode(',', $rowData['permissions']);
+
+        if ($this->roleAccessGuard->grantError($this->initiatingAdmin(), $rowData['permission_type'], $permissions)) {
+            $this->skipRow($rowNumber, self::ERROR_CANNOT_GRANT_ACCESS, 'permission_type');
+
+            return;
+        }
+
+        $roleId = $this->roleStorage->get($rowData['name']);
+
+        if (! $roleId
+            || $rowData['permission_type'] === RoleAccessGuard::FULL_ACCESS
+            || ! $this->roleAccessGuard->hasFullAccess($this->roleRepository->find($roleId))) {
+            return;
+        }
+
+        if (! $this->adminRepository->hasOtherActiveFullAccessAdmin([...$this->demotedRoleIds, $roleId])) {
+            $this->skipRow($rowNumber, self::ERROR_LAST_FULL_ACCESS, 'permission_type');
+
+            return;
+        }
+
+        $this->demotedRoleIds[] = $roleId;
     }
 
     public function importBatch(JobTrackBatchContract $batch): bool

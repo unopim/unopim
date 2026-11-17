@@ -11,6 +11,7 @@ use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\RoleForm;
 use Webkul\User\Repositories\AdminRepository;
 use Webkul\User\Repositories\RoleRepository;
+use Webkul\User\Services\RoleAccessGuard;
 
 class RoleController extends Controller
 {
@@ -85,9 +86,10 @@ class RoleController extends Controller
     {
         $role = $this->roleRepository->findOrFail($id);
 
-        $isChangedFromAll = $request->permission_type == 'custom' && $role->permission_type == 'all';
+        $losesFullAccess = $role->permission_type === RoleAccessGuard::FULL_ACCESS
+            && $request->input('permission_type') !== RoleAccessGuard::FULL_ACCESS;
 
-        if ($isChangedFromAll && ! $this->adminRepository->hasOtherActiveFullAccessAdmin(exceptRoleId: $role->id)) {
+        if ($losesFullAccess && ! $this->adminRepository->hasOtherActiveFullAccessAdmin([$role->id])) {
             return $this->respondError(
                 trans('admin::app.settings.roles.last-full-access'),
                 redirectUrl: route('admin.settings.roles.index')
