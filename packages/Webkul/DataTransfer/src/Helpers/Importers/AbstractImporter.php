@@ -111,6 +111,11 @@ abstract class AbstractImporter
     protected Admin|false|null $initiatingAdmin = false;
 
     /**
+     * Admin who last saved the import profile and its file, false until resolved.
+     */
+    protected Admin|false|null $profileEditor = false;
+
+    /**
      * Source instance.
      *
      * @var AbstractSource
@@ -582,5 +587,27 @@ abstract class AbstractImporter
         }
 
         return $this->initiatingAdmin;
+    }
+
+    /**
+     * Admin who last saved the import profile and its file when the job started, or null when none is recorded.
+     */
+    protected function profileEditor(): ?Admin
+    {
+        if ($this->profileEditor === false) {
+            $this->profileEditor = resolve(RoleAccessGuard::class)->actor($this->import->meta['updated_by'] ?? null);
+        }
+
+        return $this->profileEditor;
+    }
+
+    /**
+     * First access error the check reports for the admin running the job or the admin who supplied its file.
+     *
+     * @param  callable(?Admin): ?string  $check
+     */
+    protected function importAccessError(callable $check): ?string
+    {
+        return $check($this->initiatingAdmin()) ?? $check($this->profileEditor());
     }
 }

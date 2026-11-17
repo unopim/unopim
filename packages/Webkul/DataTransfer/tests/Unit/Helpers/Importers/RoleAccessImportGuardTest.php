@@ -7,6 +7,7 @@ use Webkul\DataTransfer\Helpers\Importers\Role\Importer as RoleImporter;
 use Webkul\DataTransfer\Helpers\Importers\User\Importer as UserImporter;
 use Webkul\DataTransfer\Models\JobInstances;
 use Webkul\DataTransfer\Models\JobTrack;
+use Webkul\DataTransfer\Models\JobTrackBatch;
 use Webkul\User\Models\Admin;
 use Webkul\User\Models\Role;
 
@@ -29,15 +30,35 @@ beforeEach(function () {
     $this->loginAsAdmin($this->fullAdmin);
 });
 
-function importerFor(string $importerClass, string $action, ?Admin $initiator): RoleImporter|UserImporter
+function importerFor(string $importerClass, string $action, ?Admin $initiator, ?Admin $uploader = null): RoleImporter|UserImporter
 {
     $importer = app($importerClass);
-    $importer->setImport(JobTrack::factory()->create(['action' => $action, 'user_id' => $initiator?->id]));
+    $importer->setImport(JobTrack::factory()->create([
+        'action'  => $action,
+        'user_id' => $initiator?->id,
+        'meta'    => ['batch_count' => 0, 'updated_by' => ($uploader ?? $initiator)?->id],
+    ]));
     $importer->setErrorHelper(app(Error::class));
 
     (fn () => $importer instanceof RoleImporter ? $this->roleStorage->init() : $this->userStorage->init())->call($importer);
 
     return $importer;
+}
+
+function writeImportBatch(string $importerClass, string $action, array $rows): void
+{
+    importerFor($importerClass, $action, null)->importBatch(JobTrackBatch::factory()->create([
+        'job_track_id' => JobTrack::factory()->create(['action' => $action]),
+        'data'         => $rows,
+    ]));
+}
+
+function hasActiveFullAccessAdmin(): bool
+{
+    return Admin::query()
+        ->where('status', 1)
+        ->whereIn('role_id', Role::query()->where('permission_type', 'all')->select('id'))
+        ->exists();
 }
 
 describe('role importer', function () {
@@ -79,6 +100,36 @@ describe('role importer', function () {
             ->and($importer->validateRow(['name' => $secondFullRole->name, 'permission_type' => 'custom', 'permissions' => 'dashboard'], 2))->toBeFalse();
     });
 
+    it('rejects a full-access grant from a limited admin who uploaded the file even when a full-access admin runs it', function () {
+        $importer = importerFor(RoleImporter::class, Import::ACTION_APPEND, $this->fullAdmin, $this->limitedAdmin);
+
+        expect($importer->validateRow(['name' => $this->limitedRole->name, 'permission_type' => 'all'], 1))->toBeFalse()
+            ->and($importer->validateRow(['name' => 'New '.uniqid(), 'permission_type' => 'custom', 'permissions' => 'dashboard'], 2))->toBeTrue();
+    });
+
+    it('re-checks the last full-access role when writing two files that were validated one after another', function () {
+        $secondFullRole = Role::factory()->create(['name' => 'Full B '.uniqid(), 'permission_type' => 'all', 'permissions' => null]);
+        Admin::factory()->create(['role_id' => $secondFullRole->id, 'status' => 1]);
+
+        $demote = fn (Role $role): array => ['name' => $role->name, 'permission_type' => 'custom', 'permissions' => 'dashboard'];
+
+        expect(importerFor(RoleImporter::class, Import::ACTION_APPEND, $this->fullAdmin)->validateRow($demote($this->fullRole), 1))->toBeTrue()
+            ->and(importerFor(RoleImporter::class, Import::ACTION_APPEND, $this->fullAdmin)->validateRow($demote($secondFullRole), 1))->toBeTrue();
+
+        writeImportBatch(RoleImporter::class, Import::ACTION_APPEND, [$demote($this->fullRole)]);
+        writeImportBatch(RoleImporter::class, Import::ACTION_APPEND, [$demote($secondFullRole)]);
+
+        expect(hasActiveFullAccessAdmin())->toBeTrue();
+    });
+
+    it('accepts changing a custom role while no active admin holds full access', function () {
+        Admin::query()->update(['status' => 0]);
+
+        $importer = importerFor(RoleImporter::class, Import::ACTION_APPEND, $this->fullAdmin);
+
+        expect($importer->validateRow(['name' => $this->limitedRole->name, 'permission_type' => 'custom', 'permissions' => 'dashboard'], 1))->toBeTrue();
+    });
+
     it('rejects deleting a role that admins still use', function () {
         $unusedRole = Role::factory()->create(['name' => 'Unused '.uniqid(), 'permission_type' => 'custom', 'permissions' => ['dashboard']]);
 
@@ -99,6 +150,47 @@ describe('user importer', function () {
             'role_name' => $this->fullRole->name,
         ], 1))->toBeFalse();
     });
+
+    it('rejects assigning the full-access role from a file a limited admin uploaded even when a full-access admin runs it', function () {
+        $importer = importerFor(UserImporter::class, Import::ACTION_APPEND, $this->fullAdmin, $this->limitedAdmin);
+
+        expect($importer->validateRow([
+            'name'      => $this->limitedAdmin->name,
+            'email'     => $this->limitedAdmin->email,
+            'role_name' => $this->fullRole->name,
+        ], 1))->toBeFalse();
+    });
+
+    it('lets a full-access admin assign the full-access role from a file a full-access admin uploaded', function () {
+        $importer = importerFor(UserImporter::class, Import::ACTION_APPEND, $this->fullAdmin, Admin::factory()->create(['role_id' => $this->fullRole->id, 'status' => 1]));
+
+        expect($importer->validateRow([
+            'name'      => $this->limitedAdmin->name,
+            'email'     => $this->limitedAdmin->email,
+            'role_name' => $this->fullRole->name,
+        ], 1))->toBeTrue();
+    });
+
+    it('re-checks the last full-access admin when writing two files that were validated one after another', function (string $action) {
+        $secondFullAdmin = Admin::factory()->create(['role_id' => $this->fullRole->id, 'status' => 1]);
+
+        $rowFor = fn (Admin $admin): array => [
+            'name'      => 'Demoted User',
+            'email'     => $admin->email,
+            'role_name' => $this->limitedRole->name,
+        ];
+
+        expect(importerFor(UserImporter::class, $action, $this->fullAdmin)->validateRow($rowFor($this->fullAdmin), 1))->toBeTrue()
+            ->and(importerFor(UserImporter::class, $action, $this->fullAdmin)->validateRow($rowFor($secondFullAdmin), 1))->toBeTrue();
+
+        writeImportBatch(UserImporter::class, $action, [$rowFor($this->fullAdmin)]);
+        writeImportBatch(UserImporter::class, $action, [$rowFor($secondFullAdmin)]);
+
+        expect(hasActiveFullAccessAdmin())->toBeTrue();
+    })->with([
+        'moved to a custom role' => Import::ACTION_APPEND,
+        'deleted'                => Import::ACTION_DELETE,
+    ]);
 
     it('rejects a row that turns an existing role into full access when the importing admin lacks it', function () {
         $importer = importerFor(UserImporter::class, Import::ACTION_APPEND, $this->limitedAdmin);

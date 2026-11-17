@@ -3,9 +3,10 @@
 namespace Webkul\DataTransfer\Helpers\Importers\Concerns;
 
 /**
- * Keeps at least one active admin with full access while validating a role or user
- * import, counting every demotion and removal earlier rows of the same file make.
- * The using importer provides `$adminRepository` and `skipRow()`.
+ * Keeps at least one active admin with full access through a role or user import,
+ * counting every demotion and removal earlier rows of the same file make: once while
+ * validating, and again under a lock while each batch is written.
+ * The using importer provides `$adminRepository`, `$roleRepository` and `skipRow()`.
  */
 trait GuardsLastFullAccess
 {
@@ -22,7 +23,7 @@ trait GuardsLastFullAccess
     protected ?array $activeFullAccessAdmins = null;
 
     /**
-     * Full-access roles this file already demotes
+     * Roles this file already takes full access away from
      *
      * @var array<int, int>
      */
@@ -48,9 +49,36 @@ trait GuardsLastFullAccess
     }
 
     /**
+     * Lock full access for the current transaction and restart the bookkeeping from the locked state,
+     * so a batch being written re-checks every row against what is true now, not at validation.
+     */
+    protected function lockFullAccess(): void
+    {
+        $this->roleRepository->lockFullAccessRoles();
+
+        $this->activeFullAccessAdmins = $this->adminRepository->activeFullAccessAdmins(lock: true);
+        $this->demotedRoleIds = [];
+        $this->removedAdminIds = [];
+    }
+
+    /**
      * Reject the row when demoting the role or removing the admin leaves no active admin with full access.
      */
     protected function keepsFullAccess(int $rowNumber, string $columnName, ?int $roleId = null, ?int $adminId = null): bool
+    {
+        if ($this->allowsFullAccessChange($roleId, $adminId)) {
+            return true;
+        }
+
+        $this->skipRow($rowNumber, self::ERROR_LAST_FULL_ACCESS, $columnName);
+
+        return false;
+    }
+
+    /**
+     * Record the demotion or removal and allow it, unless it leaves no active admin with full access.
+     */
+    protected function allowsFullAccessChange(?int $roleId = null, ?int $adminId = null): bool
     {
         if ($roleId === null && $adminId === null) {
             return true;
@@ -59,9 +87,9 @@ trait GuardsLastFullAccess
         $demotedRoleIds = $roleId === null ? $this->demotedRoleIds : [...$this->demotedRoleIds, $roleId];
         $removedAdminIds = $adminId === null ? $this->removedAdminIds : [...$this->removedAdminIds, $adminId];
 
-        if (! $this->adminRepository->hasOtherActiveFullAccessAdmin($demotedRoleIds, $removedAdminIds)) {
-            $this->skipRow($rowNumber, self::ERROR_LAST_FULL_ACCESS, $columnName);
+        $remainingCount = $this->remainingFullAccessCount($demotedRoleIds, $removedAdminIds);
 
+        if ($remainingCount === 0 && $remainingCount < $this->remainingFullAccessCount($this->demotedRoleIds, $this->removedAdminIds)) {
             return false;
         }
 
@@ -69,5 +97,22 @@ trait GuardsLastFullAccess
         $this->removedAdminIds = $removedAdminIds;
 
         return true;
+    }
+
+    /**
+     * Number of active full-access admins left after demoting the roles and removing the admins.
+     *
+     * @param  array<int, int>  $demotedRoleIds
+     * @param  array<int, int>  $removedAdminIds
+     */
+    protected function remainingFullAccessCount(array $demotedRoleIds, array $removedAdminIds): int
+    {
+        $this->activeFullAccessAdmins ??= $this->adminRepository->activeFullAccessAdmins();
+
+        return count(array_filter(
+            $this->activeFullAccessAdmins,
+            fn (array $admin): bool => ! in_array($admin['role_id'], $demotedRoleIds, true)
+                && ! in_array($admin['id'], $removedAdminIds, true)
+        ));
     }
 }

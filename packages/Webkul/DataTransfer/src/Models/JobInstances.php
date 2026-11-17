@@ -24,6 +24,7 @@ use Webkul\HistoryControl\Traits\HistoryTrait;
     'file_path',
     'images_directory_path',
     'filters',
+    'updated_by',
 ])]
 #[Table(name: 'job_instances')]
 class JobInstances extends Model implements HistoryContract, JobInstancesContract

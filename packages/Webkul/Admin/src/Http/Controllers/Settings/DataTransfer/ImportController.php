@@ -123,7 +123,8 @@ class ImportController extends Controller
         $import = $this->jobInstancesRepository->create(
             array_merge(
                 $fileData,
-                $data
+                $data,
+                ['updated_by' => auth()->guard('admin')->id()]
             )
         );
 
@@ -187,6 +188,7 @@ class ImportController extends Controller
                 'completed_at'         => null,
                 'summary'              => null,
                 'type'                 => self::TYPE,
+                'updated_by'           => auth()->guard('admin')->id(),
             ]
         );
 

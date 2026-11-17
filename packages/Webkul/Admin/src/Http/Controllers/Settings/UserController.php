@@ -5,6 +5,7 @@ namespace Webkul\Admin\Http\Controllers\Settings;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -199,17 +200,27 @@ class UserController extends Controller
     {
         $id = request()->id;
 
-        $data = $this->prepareUserData($request, $id);
+        $data = null;
 
-        if ($data instanceof RedirectResponse) {
+        $admin = DB::transaction(function () use ($request, $id, &$data) {
+            $this->roleRepository->lockFullAccessRoles();
+
+            $data = $this->prepareUserData($request, $id);
+
+            if ($data instanceof RedirectResponse) {
+                return null;
+            }
+
+            Event::dispatch('user.admin.update.before', $id);
+
+            return $this->adminRepository->update($data, $id);
+        });
+
+        if (! $admin) {
             return new JsonResponse([
                 'message' => session('error', trans('admin::app.settings.users.cannot-change', ['name' => ''])),
             ], JsonResponse::HTTP_FORBIDDEN);
         }
-
-        Event::dispatch('user.admin.update.before', $id);
-
-        $admin = $this->adminRepository->update($data, $id);
 
         if (request()->hasFile('image')) {
             $image = request()->file('image');
@@ -267,16 +278,12 @@ class UserController extends Controller
             ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
-        if ($this->isLastActiveFullAccessAdmin($user)) {
-            return new JsonResponse([
-                'message' => trans('admin::app.settings.users.last-all-access-delete-error'),
-            ], JsonResponse::HTTP_BAD_REQUEST);
-        }
-
         try {
-            Event::dispatch('user.admin.delete.before', $id);
-
-            $this->adminRepository->delete($id);
+            if (! $this->deleteUnlessLastActiveFullAccessAdmin((int) $id)) {
+                return new JsonResponse([
+                    'message' => trans('admin::app.settings.users.last-all-access-delete-error'),
+                ], JsonResponse::HTTP_BAD_REQUEST);
+            }
 
             Event::dispatch('user.admin.delete.after', $id);
 
@@ -316,29 +323,47 @@ class UserController extends Controller
                 return new JsonResponse([
                     'message' => trans('admin::app.settings.users.delete-last'),
                 ], JsonResponse::HTTP_BAD_REQUEST);
-            } elseif ($this->isLastActiveFullAccessAdmin(auth()->guard('admin')->user())) {
+            }
+
+            $id = auth()->guard('admin')->user()->id;
+
+            if (! $this->deleteUnlessLastActiveFullAccessAdmin($id)) {
                 return new JsonResponse([
                     'message' => trans('admin::app.settings.users.last-all-access-delete-error'),
                 ], JsonResponse::HTTP_BAD_REQUEST);
-            } else {
-                $id = auth()->guard('admin')->user()->id;
-
-                Event::dispatch('user.admin.delete.before', $id);
-
-                $this->adminRepository->delete($id);
-
-                Event::dispatch('user.admin.delete.after', $id);
-
-                return new JsonResponse([
-                    'redirectUrl' => route('admin.session.create'),
-                    'message'     => trans('admin::app.settings.users.delete-success'),
-                ]);
             }
+
+            Event::dispatch('user.admin.delete.after', $id);
+
+            return new JsonResponse([
+                'redirectUrl' => route('admin.session.create'),
+                'message'     => trans('admin::app.settings.users.delete-success'),
+            ]);
         } else {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.users.incorrect-password'),
             ], JsonResponse::HTTP_NOT_FOUND);
         }
+    }
+
+    /**
+     * Delete the user, unless they are the last active admin with full access; checked and written under one lock.
+     */
+    private function deleteUnlessLastActiveFullAccessAdmin(int $id): bool
+    {
+        return DB::transaction(function () use ($id): bool {
+            $this->roleRepository->lockFullAccessRoles();
+
+            if ($this->isLastActiveFullAccessAdmin($this->adminRepository->find($id))) {
+                return false;
+            }
+
+            Event::dispatch('user.admin.delete.before', $id);
+
+            $this->adminRepository->delete($id);
+
+            return true;
+        });
     }
 
     /**

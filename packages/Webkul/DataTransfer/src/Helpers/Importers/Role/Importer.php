@@ -3,6 +3,7 @@
 namespace Webkul\DataTransfer\Helpers\Importers\Role;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Validator;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
@@ -146,32 +147,40 @@ class Importer extends AbstractImporter
     {
         $permissions = empty($rowData['permissions']) ? [] : explode(',', $rowData['permissions']);
 
-        if ($this->roleAccessGuard->grantError($this->initiatingAdmin(), $rowData['permission_type'], $permissions)) {
+        if ($this->importAccessError(fn ($admin) => $this->roleAccessGuard->grantError($admin, $rowData['permission_type'], $permissions))) {
             $this->skipRow($rowNumber, self::ERROR_CANNOT_GRANT_ACCESS, 'permission_type');
 
             return;
         }
 
-        $roleId = $this->roleStorage->get($rowData['name']);
+        $this->keepsFullAccess($rowNumber, 'permission_type', roleId: $this->demotedRoleId($rowData));
+    }
 
-        if (! $roleId
-            || $rowData['permission_type'] === RoleAccessGuard::FULL_ACCESS
-            || ! $this->roleAccessGuard->hasFullAccess($this->roleRepository->find($roleId))) {
-            return;
+    /**
+     * Id of the existing role the row leaves without full access, or null.
+     */
+    protected function demotedRoleId(array $rowData): ?int
+    {
+        if ($rowData['permission_type'] === RoleAccessGuard::FULL_ACCESS) {
+            return null;
         }
 
-        $this->keepsFullAccess($rowNumber, 'permission_type', roleId: $roleId);
+        return $this->roleStorage->get($rowData['name']) ?: null;
     }
 
     public function importBatch(JobTrackBatchContract $batch): bool
     {
         Event::dispatch('data_transfer.imports.batch.import.before', $batch);
 
-        if ($batch->jobTrack->action == Import::ACTION_DELETE) {
-            $this->deleteRoleData($batch);
-        } else {
-            $this->saveRoleData($batch);
-        }
+        DB::transaction(function () use ($batch): void {
+            $this->lockFullAccess();
+
+            if ($batch->jobTrack->action == Import::ACTION_DELETE) {
+                $this->deleteRoleData($batch);
+            } else {
+                $this->saveRoleData($batch);
+            }
+        });
 
         $batch = $this->importBatchRepository->update([
             'state'   => Import::STATE_PROCESSED,
@@ -204,6 +213,10 @@ class Importer extends AbstractImporter
         $idsToDelete = array_unique($idsToDelete);
 
         foreach ($idsToDelete as $id) {
+            if (! $this->allowsFullAccessChange(roleId: $id)) {
+                continue;
+            }
+
             $this->roleRepository->delete($id);
             $this->deletedItemsCount++;
         }
@@ -216,6 +229,10 @@ class Importer extends AbstractImporter
         $this->roleStorage->load(Arr::pluck($batch->data, 'name'));
 
         foreach ($batch->data as $rowData) {
+            if (! $this->allowsFullAccessChange(roleId: $this->demotedRoleId($rowData))) {
+                continue;
+            }
+
             $id = $this->roleStorage->get($rowData['name']);
 
             $data = [

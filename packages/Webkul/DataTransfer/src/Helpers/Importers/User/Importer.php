@@ -4,6 +4,7 @@ namespace Webkul\DataTransfer\Helpers\Importers\User;
 
 use Illuminate\Http\File;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage as StorageFacade;
 use Illuminate\Support\Facades\Validator;
@@ -143,7 +144,7 @@ class Importer extends AbstractImporter
                 return false;
             }
 
-            return $this->keepsFullAccess($rowNumber, 'email', adminId: $this->activeFullAccessAdmin($rowData['email'])['id'] ?? null);
+            return $this->keepsFullAccess($rowNumber, 'email', adminId: $this->deletedFullAccessAdminId($rowData));
         }
 
         if (! $this->shouldImportRow($rowData)) {
@@ -190,13 +191,13 @@ class Importer extends AbstractImporter
         $role = $this->findRole($this->userStorage->getRoleId($rowData['role_name']));
         $permissionType = $rowData['permission_type'] ?? null;
 
-        $error = empty($permissionType)
-            ? $this->roleAccessGuard->assignmentError($this->initiatingAdmin(), $role)
+        $error = $this->importAccessError(fn ($admin) => empty($permissionType)
+            ? $this->roleAccessGuard->assignmentError($admin, $role)
             : $this->roleAccessGuard->grantError(
-                $this->initiatingAdmin(),
+                $admin,
                 $permissionType,
                 empty($rowData['permissions']) ? [] : explode(',', $rowData['permissions'])
-            );
+            ));
 
         if ($error) {
             $this->skipRow($rowNumber, self::ERROR_CANNOT_ASSIGN_ROLE, 'role_name', trans($error));
@@ -204,22 +205,39 @@ class Importer extends AbstractImporter
             return false;
         }
 
-        $demotesRole = ! empty($permissionType)
-            && $permissionType !== RoleAccessGuard::FULL_ACCESS
-            && $this->roleAccessGuard->hasFullAccess($role);
+        return $this->keepsFullAccess($rowNumber, 'role_name', ...$this->fullAccessLoss($rowData));
+    }
+
+    /**
+     * The role the row takes full access away from and the active full-access admin it moves, disables or demotes.
+     *
+     * @return array{roleId: ?int, adminId: ?int}
+     */
+    protected function fullAccessLoss(array $rowData): array
+    {
+        $roleId = $this->userStorage->getRoleId($rowData['role_name']) ?: null;
+        $permissionType = $rowData['permission_type'] ?? null;
+
+        $demotesRole = ! empty($permissionType) && $permissionType !== RoleAccessGuard::FULL_ACCESS;
 
         $fullAccessAdmin = $this->activeFullAccessAdmin($rowData['email']);
 
         $leavesFullAccess = $fullAccessAdmin !== null
-            && ($fullAccessAdmin['role_id'] !== $role?->id
+            && ($fullAccessAdmin['role_id'] !== $roleId
                 || ($rowData['status'] ?? self::FILTER_STATUS_ACTIVE) !== self::FILTER_STATUS_ACTIVE);
 
-        return $this->keepsFullAccess(
-            $rowNumber,
-            'role_name',
-            roleId: $demotesRole ? $role?->id : null,
-            adminId: $leavesFullAccess ? $fullAccessAdmin['id'] : null
-        );
+        return [
+            'roleId'  => $demotesRole ? $roleId : null,
+            'adminId' => $leavesFullAccess ? $fullAccessAdmin['id'] : null,
+        ];
+    }
+
+    /**
+     * Id of the active full-access admin a delete row removes, or null.
+     */
+    protected function deletedFullAccessAdminId(array $rowData): ?int
+    {
+        return $this->activeFullAccessAdmin($rowData['email'])['id'] ?? null;
     }
 
     /**
@@ -254,11 +272,15 @@ class Importer extends AbstractImporter
     {
         Event::dispatch('data_transfer.imports.batch.import.before', $batch);
 
-        if ($batch->jobTrack->action == Import::ACTION_DELETE) {
-            $this->deleteUserData($batch);
-        } else {
-            $this->saveUserData($batch);
-        }
+        DB::transaction(function () use ($batch): void {
+            $this->lockFullAccess();
+
+            if ($batch->jobTrack->action == Import::ACTION_DELETE) {
+                $this->deleteUserData($batch);
+            } else {
+                $this->saveUserData($batch);
+            }
+        });
 
         $batch = $this->importBatchRepository->update([
             'state'   => Import::STATE_PROCESSED,
@@ -283,7 +305,7 @@ class Importer extends AbstractImporter
         foreach ($batch->data as $rowData) {
             $id = $this->userStorage->getAdminId($rowData['email']);
 
-            if ($id) {
+            if ($id && $this->allowsFullAccessChange(adminId: $this->deletedFullAccessAdminId($rowData))) {
                 $idsToDelete[] = $id;
             }
         }
@@ -305,6 +327,10 @@ class Importer extends AbstractImporter
         $this->userStorage->loadAdmins(Arr::pluck($batch->data, 'email'));
 
         foreach ($batch->data as $rowData) {
+            if (! $this->allowsFullAccessChange(...$this->fullAccessLoss($rowData))) {
+                continue;
+            }
+
             $id = $this->userStorage->getAdminId($rowData['email']);
 
             $roleId = $this->userStorage->getRoleId($rowData['role_name']);

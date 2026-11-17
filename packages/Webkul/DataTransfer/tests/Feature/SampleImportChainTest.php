@@ -85,6 +85,8 @@ function importSample(string $entityType, string $samplePath, string $action = I
         'images_directory_path' => $imagesDirectory,
     ]);
 
+    $fullAccessAdminId = Admin::factory()->create(['role_id' => Role::query()->where('permission_type', 'all')->value('id')])->id;
+
     $jobTrack = JobTrack::factory()->create([
         'job_instances_id'      => $jobInstance->id,
         'type'                  => 'import',
@@ -95,7 +97,8 @@ function importSample(string $entityType, string $samplePath, string $action = I
         'file_path'             => $filePath,
         'images_directory_path' => $imagesDirectory,
         'state'                 => Import::STATE_PENDING,
-        'user_id'               => Admin::factory()->create(['role_id' => Role::query()->where('permission_type', 'all')->value('id')])->id,
+        'user_id'               => $fullAccessAdminId,
+        'meta'                  => ['batch_count' => 0, 'updated_by' => $fullAccessAdminId],
     ]);
 
     Storage::forgetDisk(['public', 'local', 'private']);

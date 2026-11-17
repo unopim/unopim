@@ -21,13 +21,24 @@ class RoleRepository extends Repository
      */
     public function lockForFullAccessChange(int $id): Role
     {
+        $this->lockFullAccessRoles($id);
+
+        return $this->getModel()->newQuery()->findOrFail($id);
+    }
+
+    /**
+     * Lock every full-access role, and the given role, for the current transaction, in id order.
+     *
+     * Every write that can take full access away from an admin takes this lock first,
+     * so those writes run one after another and each sees the others' result.
+     */
+    public function lockFullAccessRoles(?int $alsoLockId = null): void
+    {
         $this->getModel()->newQuery()
             ->where('permission_type', RoleAccessGuard::FULL_ACCESS)
-            ->orWhereKey($id)
+            ->when($alsoLockId !== null, fn ($query) => $query->orWhereKey($alsoLockId))
             ->orderBy('id')
             ->lockForUpdate()
             ->pluck('id');
-
-        return $this->getModel()->newQuery()->findOrFail($id);
     }
 }

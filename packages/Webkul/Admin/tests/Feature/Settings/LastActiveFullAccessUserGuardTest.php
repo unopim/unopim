@@ -2,6 +2,7 @@
 
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Webkul\Core\Models\Locale;
 use Webkul\User\Models\Admin;
@@ -84,3 +85,31 @@ it('allows deleting an inactive full-access admin while an active one remains', 
 
     expect(Admin::find($this->inactiveFullAdmin->id))->toBeNull();
 });
+
+it('locks the full-access roles before writing a user change that can remove full access', function (string $change) {
+    $secondActiveAdmin = Admin::factory()->create([
+        'role_id'  => $this->fullRole->id,
+        'status'   => 1,
+        'password' => Hash::make('password'),
+    ]);
+
+    $this->loginAsAdmin($change === 'self delete' ? $secondActiveAdmin : $this->lastActiveAdmin);
+
+    $queries = [];
+    DB::listen(function ($query) use (&$queries) {
+        $queries[] = strtolower($query->sql);
+    });
+
+    match ($change) {
+        'role change' => moveUserToRole($secondActiveAdmin, $this->customRole->id),
+        'delete'      => deleteJson(route('admin.settings.users.delete', $secondActiveAdmin->id)),
+        'self delete' => putJson(route('admin.settings.users.destroy'), ['password' => 'password']),
+    };
+
+    $lockAt = collect($queries)->search(fn (string $sql): bool => str_contains($sql, 'roles') && str_contains($sql, 'for update'));
+    $writeAt = collect($queries)->search(fn (string $sql): bool => preg_match('/^(update|delete from) \S*admins/', $sql) === 1);
+
+    expect($lockAt)->toBeInt()
+        ->and($writeAt)->toBeInt()
+        ->and($lockAt)->toBeLessThan($writeAt);
+})->with(['role change', 'delete', 'self delete']);

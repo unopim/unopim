@@ -40,14 +40,15 @@ class AdminRepository extends Repository
     }
 
     /**
-     * Active admins whose role grants every permission, keyed by email.
+     * Active admins whose role grants every permission, keyed by email; locked for the current transaction when asked.
      *
      * @return array<string, array{id: int, role_id: int}>
      */
-    public function activeFullAccessAdmins(): array
+    public function activeFullAccessAdmins(bool $lock = false): array
     {
         return $this->fullAccessAdminsQuery()
             ->where('admins.status', 1)
+            ->when($lock, fn (Builder $query) => $query->orderBy('admins.id')->lockForUpdate())
             ->get(['admins.id', 'admins.email', 'admins.role_id'])
             ->mapWithKeys(fn ($admin): array => [$admin->email => ['id' => (int) $admin->id, 'role_id' => (int) $admin->role_id]])
             ->all();
