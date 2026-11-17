@@ -311,3 +311,65 @@ it('imports templates on a product model and validates them on its variants', fu
         ->and($red->values['common']['tpl_imp_variant_title'])->toBe('{{ tpl_imp_name }} in {{ tpl_imp_color }}')
         ->and(importedTemplateSkus(['tpl-chair-blue']))->toBe([]);
 })->with('template import formats');
+
+it('rejects a template that references an attribute outside the product family', function (string $format) {
+    $this->variableAttribute('tpl_imp_outsider');
+
+    $errors = importTemplateRows([
+        ($this->row)('tpl-family-valid', ['tpl_imp_title' => '{{ tpl_imp_name }}']),
+        ($this->row)('tpl-family-outsider', ['tpl_imp_title' => '{{ tpl_imp_name }} {{ tpl_imp_outsider }}']),
+    ], $format);
+
+    expect($errors)->toBe([
+        templateImportLine($format, 2) => [templateImportError('tpl_imp_title', 'The attribute "tpl_imp_outsider" used in the template does not belong to the product family.')],
+    ])->and(importedTemplateSkus(['tpl-family-valid', 'tpl-family-outsider']))->toBe(['tpl-family-valid']);
+})->with('template import formats');
+
+it('rejects circular references between the template columns of a row', function (string $format) {
+    $cycle = 'Circular template reference detected: tpl_imp_title → tpl_imp_description → tpl_imp_title.';
+
+    $errors = importTemplateRows([
+        ($this->row)('tpl-chain', [
+            'tpl_imp_title'       => '{{ tpl_imp_description }}',
+            'tpl_imp_description' => '<p>{{ tpl_imp_name }}</p>',
+        ]),
+        ($this->row)('tpl-cycle', [
+            'tpl_imp_title'       => '{{ tpl_imp_description }}',
+            'tpl_imp_description' => '<p>{{ tpl_imp_title }}</p>',
+        ]),
+    ], $format);
+
+    expect($errors)->toBe([
+        templateImportLine($format, 2) => [
+            templateImportError('tpl_imp_title', $cycle),
+            templateImportError('tpl_imp_description', $cycle),
+        ],
+    ])->and(importedTemplateSkus(['tpl-chain', 'tpl-cycle']))->toBe(['tpl-chain']);
+})->with('template import formats');
+
+it('detects a circular reference between common and locale values of a row', function (string $format) {
+    $cycle = 'Circular template reference detected: tpl_imp_title → tpl_imp_summary → tpl_imp_title.';
+
+    $errors = importTemplateRows([($this->row)('tpl-scoped-cycle', [
+        'tpl_imp_title'   => '{{ tpl_imp_summary }}',
+        'tpl_imp_summary' => '{{ tpl_imp_title | upper }}',
+    ])], $format);
+
+    expect($errors)->toBe([
+        templateImportLine($format, 1) => [
+            templateImportError('tpl_imp_title', $cycle),
+            templateImportError('tpl_imp_summary', $cycle),
+        ],
+    ])->and(importedTemplateSkus(['tpl-scoped-cycle']))->toBe([]);
+})->with('template import formats');
+
+it('reports a self reference once without a circular reference error', function (string $format) {
+    $errors = importTemplateRows([($this->row)('tpl-self', [
+        'tpl_imp_title'       => '{{ tpl_imp_title }}',
+        'tpl_imp_description' => '<p>{{ tpl_imp_title }}</p>',
+    ])], $format);
+
+    expect($errors)->toBe([
+        templateImportLine($format, 1) => [templateImportError('tpl_imp_title', 'The template cannot reference its own attribute "tpl_imp_title".')],
+    ]);
+})->with('template import formats');
