@@ -4,6 +4,7 @@ use Illuminate\Validation\ValidationException;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Tests\Concerns\InteractsWithTemplates;
+use Webkul\Product\Validator\ProductTemplatesValidator;
 use Webkul\Product\Validator\ProductValuesValidator;
 
 uses(InteractsWithTemplates::class);
@@ -127,6 +128,41 @@ it('leaves products without templates untouched', function () {
     $errors = templateValidationErrors(fn () => $this->valuesValidator->validate([
         'common' => ['tpl_name' => 'Sunglasses {not a template}'],
     ]));
+
+    expect($errors)->toBe([]);
+});
+
+it('reports family and circular problems of flat template sources by attribute code', function () {
+    $this->variableAttribute('tpl_outsider');
+
+    $errors = app(ProductTemplatesValidator::class)->sourceErrors(
+        sources: [
+            'tpl_description'       => 'About {{ tpl_short_description }} {{ tpl_outsider }}',
+            'tpl_short_description' => 'See {{ tpl_description }}',
+        ],
+        familyCodes: $this->family->customAttributes()->pluck('attributes.code')->all(),
+    );
+
+    $cycle = 'Circular template reference detected: tpl_description → tpl_short_description → tpl_description.';
+
+    expect($errors)->toBe([
+        'tpl_description' => [
+            'The attribute "tpl_outsider" used in the template does not belong to the product family.',
+            $cycle,
+        ],
+        'tpl_short_description' => [$cycle],
+    ]);
+});
+
+it('ignores plain values and attributes without templates when checking flat sources', function () {
+    $errors = app(ProductTemplatesValidator::class)->sourceErrors(
+        sources: [
+            'tpl_name'              => '{{ tpl_description }}',
+            'tpl_description'       => 'About {{ tpl_name }}',
+            'tpl_short_description' => 'Plain {text}',
+        ],
+        familyCodes: $this->family->customAttributes()->pluck('attributes.code')->all(),
+    );
 
     expect($errors)->toBe([]);
 });

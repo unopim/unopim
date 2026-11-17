@@ -86,12 +86,49 @@ class ProductTemplatesValidator
         return array_values(array_unique($messages[$this->path($attribute->code, $channel, $locale)] ?? []));
     }
 
+    public function sourceErrors(array $sources, array $familyCodes): array
+    {
+        $references = [];
+
+        foreach ($sources as $code => $source) {
+            $attribute = $this->templateAttributes()->get($code);
+
+            $codes = $attribute ? $this->referencedCodes($attribute, $source) : null;
+
+            if ($codes !== null) {
+                $references[$code] = $codes;
+            }
+        }
+
+        return array_map(
+            fn (array $messages): array => array_values(array_unique($messages)),
+            $this->codeMessages($references, $familyCodes),
+        );
+    }
+
     private function scopeMessages(array $references, ?array $familyCodes, string $channel, string $locale): array
     {
-        return array_merge_recursive(
-            $this->familyMessages($references, $familyCodes, $channel, $locale),
-            $this->circularMessages($references, $channel, $locale),
-        );
+        return collect($this->codeMessages($references, $familyCodes))
+            ->mapWithKeys(fn (array $messages, string|int $code): array => [$this->path($code, $channel, $locale) => $messages])
+            ->all();
+    }
+
+    private function codeMessages(array $references, ?array $familyCodes): array
+    {
+        $messages = [];
+
+        foreach ([...$this->familyMessages($references, $familyCodes), ...$this->circularMessages($references)] as [$code, $message]) {
+            $messages[$code][] = $message;
+        }
+
+        return $messages;
+    }
+
+    private function referencedCodes(Attribute $attribute, mixed $source): ?array
+    {
+        return $this->parser->containsTemplate($source)
+            ? $this->parser->parse($source, $attribute->isRichText())->attributeCodes()
+            : null;
     }
 
     private function submitsTemplates(array $data): bool
@@ -105,10 +142,10 @@ class ProductTemplatesValidator
         $references = [];
 
         foreach ($this->templateAttributes() as $code => $attribute) {
-            $source = $attribute->getValueFromProductValues($values, $channel, $locale);
+            $codes = $this->referencedCodes($attribute, $attribute->getValueFromProductValues($values, $channel, $locale));
 
-            if ($this->parser->containsTemplate($source)) {
-                $references[$code] = $this->parser->parse($source, $attribute->isRichText())->attributeCodes();
+            if ($codes !== null) {
+                $references[$code] = $codes;
             }
         }
 
@@ -134,19 +171,19 @@ class ProductTemplatesValidator
 
             $attribute = $this->templateAttributes()->get($current);
 
-            $source = $attribute->getValueFromProductValues($values, $channel, $locale);
+            $codes = $this->referencedCodes($attribute, $attribute->getValueFromProductValues($values, $channel, $locale));
 
-            if ($this->parser->containsTemplate($source)) {
-                $references[$current] = $this->parser->parse($source, $attribute->isRichText())->attributeCodes();
+            if ($codes !== null) {
+                $references[$current] = $codes;
 
-                array_push($pending, ...$references[$current]);
+                array_push($pending, ...$codes);
             }
         }
 
         return $references;
     }
 
-    private function familyMessages(array $references, ?array $familyCodes, string $channel, string $locale): array
+    private function familyMessages(array $references, ?array $familyCodes): array
     {
         if ($familyCodes === null) {
             return [];
@@ -156,14 +193,14 @@ class ProductTemplatesValidator
 
         foreach ($references as $code => $referencedCodes) {
             foreach (array_diff($referencedCodes, $familyCodes) as $referencedCode) {
-                $messages[$this->path($code, $channel, $locale)][] = (new TemplateMessage('not-in-family', ['attribute' => $referencedCode]))->message();
+                $messages[] = [$code, (new TemplateMessage('not-in-family', ['attribute' => $referencedCode]))->message()];
             }
         }
 
         return $messages;
     }
 
-    private function circularMessages(array $references, string $channel, string $locale): array
+    private function circularMessages(array $references): array
     {
         $messages = [];
 
@@ -171,7 +208,7 @@ class ProductTemplatesValidator
             $message = (new TemplateMessage('circular-reference', ['path' => implode(' → ', $cycle)]))->message();
 
             foreach (array_unique($cycle) as $code) {
-                $messages[$this->path($code, $channel, $locale)][] = $message;
+                $messages[] = [$code, $message];
             }
         }
 
