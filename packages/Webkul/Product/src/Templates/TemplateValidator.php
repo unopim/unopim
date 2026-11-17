@@ -14,7 +14,7 @@ use Webkul\Product\Templates\Results\ValidationResult;
 
 class TemplateValidator implements TemplateValidatorContract
 {
-    private const string TAG_EXPRESSION_PATTERN = '/<[^>]*\{\{/';
+    private const string TAG_EXPRESSION_PATTERN = '/<[a-zA-Z\/!?][^>]*\{\{/';
 
     private const string SINGLE_BRACE_PATTERN = '/(?<!\{)\{\s*(\w+)\s*\}(?!\})/';
 

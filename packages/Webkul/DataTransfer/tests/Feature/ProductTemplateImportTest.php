@@ -181,6 +181,15 @@ it('keeps a rich text template intact through html purification', function (stri
         ->and(templateImportValues('tpl-rich')['common']['tpl_imp_description'])->toBe($source);
 })->with('template import formats');
 
+it('imports a rich text template that follows a literal less than sign', function (string $format) {
+    $errors = importTemplateRows([($this->row)('tpl-rich-less-than', [
+        'tpl_imp_description' => '<p>Size < 10 {{ tpl_imp_name }}</p>',
+    ])], $format);
+
+    expect($errors)->toBe([])
+        ->and(templateImportValues('tpl-rich-less-than')['common']['tpl_imp_description'])->toBe('<p>Size &lt; 10 {{ tpl_imp_name }}</p>');
+})->with('template import formats');
+
 it('replaces the value of an existing product with the template source', function (string $format) {
     importTemplateRows([($this->row)('tpl-shelf', ['tpl_imp_title' => 'Plain shelf title'])], $format);
 

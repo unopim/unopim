@@ -79,6 +79,24 @@ it('rejects expressions inside html tags of rich text', function () {
         ->and($this->validator->validate('<p {{ tpl_name }}', $this->description)->passes())->toBeTrue();
 });
 
+it('rejects expressions inside any kind of html tag of rich text', function (string $source) {
+    expect(messageKeys($this->validator->validate($source, $this->richDescription)->errors))->toBe(['inside-html-tag']);
+})->with([
+    'image attribute' => ['<p><img src="https://example.com/a.png" alt="{{ tpl_name }}"></p>'],
+    'closing tag'     => ['<p>Shop</p {{ tpl_name }}>'],
+    'comment'         => ['<!-- {{ tpl_name }} -->'],
+    'adjacent tag'    => ['<p>a<b {{ tpl_name }}</p>'],
+]);
+
+it('accepts a literal less than sign before an expression in rich text', function (string $source) {
+    expect($this->validator->validate($source, $this->richDescription)->passes())->toBeTrue();
+})->with([
+    'spaced comparison' => ['<p>Size < 10 {{ tpl_name }}</p>'],
+    'tight comparison'  => ['<p>5<10 {{ tpl_name }}</p>'],
+    'less or equal'     => ['<p>Size <= 10 {{ tpl_name }}</p>'],
+    'shift operator'    => ['<p>1 << 2 {{ tpl_name }}</p>'],
+]);
+
 it('accepts expressions whose quotes were encoded by the editor', function () {
     $result = $this->validator->validate('<p>{{&nbsp;tpl_released | format_date(&#39;d/m/Y&#39;) }}</p>', $this->richDescription);
 
