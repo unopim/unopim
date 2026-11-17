@@ -178,6 +178,11 @@ class Exporter extends AbstractExporter
             ->all();
     }
 
+    protected function shouldRenderTemplates(): bool
+    {
+        return (string) ($this->getFilters()['render_templates'] ?? '1') !== '0';
+    }
+
     protected function renderTemplateValues(array $fields, array $values, string $channel, string $locale): array
     {
         foreach ($this->templateAttributes as $code => $attribute) {
@@ -553,6 +558,7 @@ class Exporter extends AbstractExporter
         );
 
         $withAssociations = (bool) ($this->getFilters()['with_associations'] ?? false);
+        $renderTemplates = $this->shouldRenderTemplates();
 
         foreach ($productsByIds as $product) {
             $productValues = $mergedValuesById[$product->id] ?? ($product->values ?? []);
@@ -597,7 +603,9 @@ class Exporter extends AbstractExporter
                         $channelLocaleSpecificFields
                     );
 
-                    $mergedFields = $this->renderTemplateValues($mergedFields, $productValues, $channel, $locale);
+                    if ($renderTemplates) {
+                        $mergedFields = $this->renderTemplateValues($mergedFields, $productValues, $channel, $locale);
+                    }
 
                     $values = $this->setAttributesValues($mergedFields, $filePath, $locale);
 

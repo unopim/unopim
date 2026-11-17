@@ -184,6 +184,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => '템플릿 렌더링',
+            'render-templates-info'  => '원본 템플릿 소스 대신 렌더링된 템플릿 값을 내보냅니다',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

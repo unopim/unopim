@@ -184,6 +184,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'टेम्पलेट रेंडर करें',
+            'render-templates-info'  => 'कच्चे टेम्पलेट स्रोत के बजाय रेंडर किए गए टेम्पलेट मान निर्यात करें',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
