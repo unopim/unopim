@@ -2157,6 +2157,26 @@ return [
                     'info'  => '',
                     'title' => 'Allmänt',
                 ],
+                'platform' => [
+                    'info'  => 'Välj vilka plattformsmoduler som är påslagna.',
+                    'title' => 'Plattform',
+
+                    'settings' => [
+                        'info'  => 'Kör valfri modul ensam eller flera tillsammans; en modul som behöver en annan kan bara slås på tillsammans med den.',
+                        'title' => 'Val av moduler',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'När en modul stängs av döljs dess menyer, sidor och API-vägar; dess data behålls.',
+                        'title' => 'Moduler',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Gäller bara medan Produktinformation (PIM) är avstängd. Valda avsnitt tas bort från menyn och deras administrationssidor blockeras; data behålls och deras Admin API-rutter förblir tillgängliga.',
+                        'title' => 'Dolda avsnitt',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -3102,6 +3122,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Instrumentpanel',
+        'home'      => 'Hem',
         'go-back'   => 'Tillbaka',
         'support'   => 'Om problemet kvarstår, vänligen kontakta oss via <a href=":link" class=":class">:email</a> för hjälp.',
         '404'       => [
