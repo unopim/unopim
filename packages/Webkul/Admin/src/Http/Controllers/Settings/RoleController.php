@@ -4,6 +4,7 @@ namespace Webkul\Admin\Http\Controllers\Settings;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Settings\RolesDataGrid;
@@ -84,18 +85,6 @@ class RoleController extends Controller
      */
     public function update(RoleForm $request, int $id): JsonResponse|RedirectResponse
     {
-        $role = $this->roleRepository->findOrFail($id);
-
-        $losesFullAccess = $role->permission_type === RoleAccessGuard::FULL_ACCESS
-            && $request->input('permission_type') !== RoleAccessGuard::FULL_ACCESS;
-
-        if ($losesFullAccess && ! $this->adminRepository->hasOtherActiveFullAccessAdmin([$role->id])) {
-            return $this->respondError(
-                trans('admin::app.settings.roles.last-full-access'),
-                redirectUrl: route('admin.settings.roles.index')
-            );
-        }
-
         $data = array_merge($request->only([
             'name',
             'description',
@@ -104,9 +93,27 @@ class RoleController extends Controller
             'permissions' => $request->has('permissions') ? $request->permissions : [],
         ]);
 
-        Event::dispatch('user.role.update.before', $id);
+        $role = DB::transaction(function () use ($data, $id) {
+            $role = $this->roleRepository->lockForFullAccessChange($id);
 
-        $role = $this->roleRepository->update($data, $id);
+            $losesFullAccess = $role->permission_type === RoleAccessGuard::FULL_ACCESS
+                && $data['permission_type'] !== RoleAccessGuard::FULL_ACCESS;
+
+            if ($losesFullAccess && ! $this->adminRepository->hasOtherActiveFullAccessAdmin([$role->id])) {
+                return null;
+            }
+
+            Event::dispatch('user.role.update.before', $id);
+
+            return $this->roleRepository->update($data, $id);
+        });
+
+        if (! $role) {
+            return $this->respondError(
+                trans('admin::app.settings.roles.last-full-access'),
+                redirectUrl: route('admin.settings.roles.index')
+            );
+        }
 
         Event::dispatch('user.role.update.after', $role);
 

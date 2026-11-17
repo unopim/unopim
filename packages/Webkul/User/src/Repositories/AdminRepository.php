@@ -40,16 +40,16 @@ class AdminRepository extends Repository
     }
 
     /**
-     * Ids of the active admins whose role grants every permission.
+     * Active admins whose role grants every permission, keyed by email.
      *
-     * @return array<int, int>
+     * @return array<string, array{id: int, role_id: int}>
      */
-    public function activeFullAccessAdminIds(): array
+    public function activeFullAccessAdmins(): array
     {
         return $this->fullAccessAdminsQuery()
             ->where('admins.status', 1)
-            ->pluck('admins.id')
-            ->map(fn ($id): int => (int) $id)
+            ->get(['admins.id', 'admins.email', 'admins.role_id'])
+            ->mapWithKeys(fn ($admin): array => [$admin->email => ['id' => (int) $admin->id, 'role_id' => (int) $admin->role_id]])
             ->all();
     }
 

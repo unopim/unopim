@@ -8,8 +8,9 @@ use Webkul\User\Repositories\AdminRepository;
 
 /**
  * The single authority for who may give or assign role access, shared by the
- * role and user screens and the role and user importers. A null actor is a
- * trusted console run (e.g. `unopim:queue:job:execute` without a user).
+ * role and user screens and the role and user importers. A missing actor holds
+ * no permissions: a job whose admin is unknown or deleted can grant nothing, and
+ * a console run that must grant access names the admin it acts for.
  */
 class RoleAccessGuard
 {
@@ -34,13 +35,13 @@ class RoleAccessGuard
      */
     public function grantError(?Admin $actor, mixed $permissionType, array $permissions): ?string
     {
-        if (! $actor instanceof Admin || $this->hasFullAccess($actor->role)) {
+        if ($this->hasFullAccess($actor?->role)) {
             return null;
         }
 
         if ($permissionType !== self::CUSTOM_ACCESS
             || array_filter($permissions, is_string(...)) !== $permissions
-            || array_diff($permissions, $actor->role?->permissions ?? []) !== []) {
+            || array_diff($permissions, $actor?->role?->permissions ?? []) !== []) {
             return 'admin::app.settings.roles.cannot-grant-unheld-permissions';
         }
 
@@ -52,7 +53,7 @@ class RoleAccessGuard
      */
     public function assignmentError(?Admin $actor, ?Role $targetRole): ?string
     {
-        if (! $actor instanceof Admin || ! $targetRole instanceof Role || $this->hasFullAccess($actor->role)) {
+        if (! $targetRole instanceof Role || $this->hasFullAccess($actor?->role)) {
             return null;
         }
 
@@ -60,7 +61,7 @@ class RoleAccessGuard
             return 'admin::app.settings.users.cannot-escalate-role';
         }
 
-        if (array_diff($targetRole->permissions ?? [], $actor->role?->permissions ?? []) !== []) {
+        if (array_diff($targetRole->permissions ?? [], $actor?->role?->permissions ?? []) !== []) {
             return 'admin::app.settings.users.cannot-assign-unheld-permissions';
         }
 
@@ -68,7 +69,7 @@ class RoleAccessGuard
     }
 
     /**
-     * The admin who started a job, with their role, or null for a console run.
+     * The admin who started a job, with their role, or null when none is recorded.
      */
     public function actor(?int $adminId): ?Admin
     {

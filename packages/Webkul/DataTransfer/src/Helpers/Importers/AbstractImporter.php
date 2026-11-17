@@ -573,7 +573,7 @@ abstract class AbstractImporter
     }
 
     /**
-     * Admin who started the import, or null for a console run.
+     * Admin who started the import, or null when none is recorded.
      */
     protected function initiatingAdmin(): ?Admin
     {

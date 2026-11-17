@@ -10,6 +10,8 @@ use Webkul\DataTransfer\Models\JobTrack;
 use Webkul\DataTransfer\Services\SampleFiles;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Services\VariantStructureWriter;
+use Webkul\User\Models\Admin;
+use Webkul\User\Models\Role;
 
 /**
  * The shipped samples are only meant to import against a stock installation:
@@ -93,6 +95,7 @@ function importSample(string $entityType, string $samplePath, string $action = I
         'file_path'             => $filePath,
         'images_directory_path' => $imagesDirectory,
         'state'                 => Import::STATE_PENDING,
+        'user_id'               => Admin::factory()->create(['role_id' => Role::query()->where('permission_type', 'all')->value('id')])->id,
     ]);
 
     Storage::forgetDisk(['public', 'local', 'private']);

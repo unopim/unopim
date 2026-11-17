@@ -12,6 +12,7 @@ use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
 use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
 use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Helpers\Importers\AbstractImporter;
+use Webkul\DataTransfer\Helpers\Importers\Concerns\GuardsLastFullAccess;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 use Webkul\User\Contracts\Role;
 use Webkul\User\Repositories\AdminRepository;
@@ -20,6 +21,8 @@ use Webkul\User\Services\RoleAccessGuard;
 
 class Importer extends AbstractImporter
 {
+    use GuardsLastFullAccess;
+
     /**
      * Filter value to import active rows only.
      */
@@ -49,11 +52,6 @@ class Importer extends AbstractImporter
      * Error code for a role the importing admin cannot assign or grant
      */
     public const ERROR_CANNOT_ASSIGN_ROLE = 'cannot_assign_role';
-
-    /**
-     * Error code for a change that leaves no active admin with full access
-     */
-    public const ERROR_LAST_FULL_ACCESS = 'last_full_access';
 
     /**
      * Permanent entity columns
@@ -92,27 +90,6 @@ class Importer extends AbstractImporter
      * @var array<int, Role|null>
      */
     protected array $roles = [];
-
-    /**
-     * Active admins with full access when validation started
-     *
-     * @var array<int, int>|null
-     */
-    protected ?array $fullAccessAdminIds = null;
-
-    /**
-     * Full-access roles this file already demotes
-     *
-     * @var array<int, int>
-     */
-    protected array $demotedRoleIds = [];
-
-    /**
-     * Full-access admins this file already removes, disables or moves off full access
-     *
-     * @var array<int, int>
-     */
-    protected array $removedAdminIds = [];
 
     /**
      * Create a new helper instance.
@@ -166,7 +143,7 @@ class Importer extends AbstractImporter
                 return false;
             }
 
-            return $this->keepsFullAccess($rowNumber, adminId: $adminId);
+            return $this->keepsFullAccess($rowNumber, 'email', adminId: $this->activeFullAccessAdmin($rowData['email'])['id'] ?? null);
         }
 
         if (! $this->shouldImportRow($rowData)) {
@@ -231,44 +208,18 @@ class Importer extends AbstractImporter
             && $permissionType !== RoleAccessGuard::FULL_ACCESS
             && $this->roleAccessGuard->hasFullAccess($role);
 
-        $grantsFullAccess = ($rowData['status'] ?? self::FILTER_STATUS_ACTIVE) === self::FILTER_STATUS_ACTIVE
-            && ($permissionType ?: $role?->permission_type) === RoleAccessGuard::FULL_ACCESS;
+        $fullAccessAdmin = $this->activeFullAccessAdmin($rowData['email']);
 
-        $this->userStorage->loadAdmins([$rowData['email']]);
+        $leavesFullAccess = $fullAccessAdmin !== null
+            && ($fullAccessAdmin['role_id'] !== $role?->id
+                || ($rowData['status'] ?? self::FILTER_STATUS_ACTIVE) !== self::FILTER_STATUS_ACTIVE);
 
         return $this->keepsFullAccess(
             $rowNumber,
+            'role_name',
             roleId: $demotesRole ? $role?->id : null,
-            adminId: $grantsFullAccess ? null : $this->userStorage->getAdminId($rowData['email'])
+            adminId: $leavesFullAccess ? $fullAccessAdmin['id'] : null
         );
-    }
-
-    /**
-     * Reject the row when demoting the role or removing the admin leaves no active admin with full access.
-     */
-    protected function keepsFullAccess(int $rowNumber, ?int $roleId = null, ?int $adminId = null): bool
-    {
-        $this->fullAccessAdminIds ??= $this->adminRepository->activeFullAccessAdminIds();
-
-        $removesAdmin = $adminId !== null && in_array($adminId, $this->fullAccessAdminIds, true);
-
-        if ($roleId === null && ! $removesAdmin) {
-            return true;
-        }
-
-        $demotedRoleIds = $roleId === null ? $this->demotedRoleIds : [...$this->demotedRoleIds, $roleId];
-        $removedAdminIds = $removesAdmin ? [...$this->removedAdminIds, $adminId] : $this->removedAdminIds;
-
-        if (! $this->adminRepository->hasOtherActiveFullAccessAdmin($demotedRoleIds, $removedAdminIds)) {
-            $this->skipRow($rowNumber, self::ERROR_LAST_FULL_ACCESS, 'role_name');
-
-            return false;
-        }
-
-        $this->demotedRoleIds = $demotedRoleIds;
-        $this->removedAdminIds = $removedAdminIds;
-
-        return true;
     }
 
     /**

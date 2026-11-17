@@ -5,6 +5,7 @@ use Webkul\DataTransfer\Helpers\Error;
 use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Helpers\Importers\Role\Importer as RoleImporter;
 use Webkul\DataTransfer\Helpers\Importers\User\Importer as UserImporter;
+use Webkul\DataTransfer\Models\JobInstances;
 use Webkul\DataTransfer\Models\JobTrack;
 use Webkul\User\Models\Admin;
 use Webkul\User\Models\Role;
@@ -48,11 +49,19 @@ describe('role importer', function () {
             ->and($importer->validateRow(['name' => 'New '.uniqid(), 'permission_type' => 'custom', 'permissions' => 'dashboard'], 3))->toBeTrue();
     });
 
-    it('lets a full-access admin and a console run grant full access', function (bool $fromConsole) {
-        $importer = importerFor(RoleImporter::class, Import::ACTION_APPEND, $fromConsole ? null : $this->fullAdmin);
+    it('lets a full-access admin grant full access', function () {
+        $importer = importerFor(RoleImporter::class, Import::ACTION_APPEND, $this->fullAdmin);
 
         expect($importer->validateRow(['name' => 'New '.uniqid(), 'permission_type' => 'all'], 1))->toBeTrue();
-    })->with(['full-access admin' => false, 'console run' => true]);
+    });
+
+    it('grants nothing for a job whose admin is unknown or deleted', function () {
+        $importer = importerFor(RoleImporter::class, Import::ACTION_APPEND, null);
+
+        expect($importer->validateRow(['name' => 'New '.uniqid(), 'permission_type' => 'all'], 1))->toBeFalse()
+            ->and($importer->validateRow(['name' => 'New '.uniqid(), 'permission_type' => 'custom', 'permissions' => 'dashboard'], 2))->toBeFalse()
+            ->and($importer->validateRow(['name' => 'New '.uniqid(), 'permission_type' => 'custom'], 3))->toBeTrue();
+    });
 
     it('rejects demoting the last active full-access role', function () {
         $importer = importerFor(RoleImporter::class, Import::ACTION_APPEND, $this->fullAdmin);
@@ -127,6 +136,31 @@ describe('user importer', function () {
         'deleted'                => [Import::ACTION_DELETE, []],
     ]);
 
+    it('rejects moving the last full-access admin onto a role the same file demotes, in either row order', function (bool $moveFirst) {
+        $spareFullRole = Role::factory()->create(['name' => 'Spare '.uniqid(), 'permission_type' => 'all', 'permissions' => null]);
+        $other = Admin::factory()->create(['role_id' => $this->limitedRole->id, 'status' => 1]);
+
+        $importer = importerFor(UserImporter::class, Import::ACTION_APPEND, $this->fullAdmin);
+
+        $demoteRow = [
+            'name'            => $other->name,
+            'email'           => $other->email,
+            'role_name'       => $spareFullRole->name,
+            'permission_type' => 'custom',
+        ];
+        $moveRow = [
+            'name'      => $this->fullAdmin->name,
+            'email'     => $this->fullAdmin->email,
+            'role_name' => $spareFullRole->name,
+        ];
+
+        [$first, $second] = $moveFirst ? [$moveRow, $demoteRow] : [$demoteRow, $moveRow];
+
+        $results = [$importer->validateRow($first, 1), $importer->validateRow($second, 2)];
+
+        expect($results)->toContain(false);
+    })->with(['demote first' => false, 'move first' => true]);
+
     it('rejects demoting the last active full-access role through a user row', function () {
         $importer = importerFor(UserImporter::class, Import::ACTION_APPEND, $this->fullAdmin);
 
@@ -150,4 +184,20 @@ describe('user importer', function () {
             'role_name' => $this->limitedRole->name,
         ], 1))->toBeTrue();
     });
+});
+
+it('keeps the importer chosen when the job was created even if the profile entity type changes', function () {
+    $jobInstance = JobInstances::factory()->create(['type' => 'import', 'action' => Import::ACTION_APPEND, 'entity_type' => 'users']);
+
+    $jobTrack = JobTrack::factory()->create([
+        'action'           => Import::ACTION_APPEND,
+        'job_instances_id' => $jobInstance->id,
+        'meta'             => $jobInstance->toArray(),
+    ]);
+
+    $jobInstance->update(['entity_type' => 'roles']);
+
+    $importHelper = app(Import::class)->setImport($jobTrack->fresh());
+
+    expect((fn () => $this->pinnedEntityType())->call($importHelper))->toBe('users');
 });

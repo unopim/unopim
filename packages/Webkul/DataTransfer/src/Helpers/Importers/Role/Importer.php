@@ -9,6 +9,7 @@ use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
 use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
 use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Helpers\Importers\AbstractImporter;
+use Webkul\DataTransfer\Helpers\Importers\Concerns\GuardsLastFullAccess;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 use Webkul\User\Repositories\AdminRepository;
 use Webkul\User\Repositories\RoleRepository;
@@ -16,6 +17,8 @@ use Webkul\User\Services\RoleAccessGuard;
 
 class Importer extends AbstractImporter
 {
+    use GuardsLastFullAccess;
+
     /**
      * Error code for duplicated name
      */
@@ -30,11 +33,6 @@ class Importer extends AbstractImporter
      * Error code for a role the importing admin cannot grant
      */
     public const ERROR_CANNOT_GRANT_ACCESS = 'cannot_grant_access';
-
-    /**
-     * Error code for a change that leaves no active admin with full access
-     */
-    public const ERROR_LAST_FULL_ACCESS = 'last_full_access';
 
     /**
      * Error code for deleting a role that admins still use
@@ -66,13 +64,6 @@ class Importer extends AbstractImporter
         self::ERROR_LAST_FULL_ACCESS          => 'admin::app.settings.roles.last-full-access',
         self::ERROR_ROLE_IN_USE               => 'admin::app.settings.roles.being-used',
     ];
-
-    /**
-     * Full-access roles this file already demotes
-     *
-     * @var array<int, int>
-     */
-    protected array $demotedRoleIds = [];
 
     /**
      * Create a new helper instance.
@@ -169,13 +160,7 @@ class Importer extends AbstractImporter
             return;
         }
 
-        if (! $this->adminRepository->hasOtherActiveFullAccessAdmin([...$this->demotedRoleIds, $roleId])) {
-            $this->skipRow($rowNumber, self::ERROR_LAST_FULL_ACCESS, 'permission_type');
-
-            return;
-        }
-
-        $this->demotedRoleIds[] = $roleId;
+        $this->keepsFullAccess($rowNumber, 'permission_type', roleId: $roleId);
     }
 
     public function importBatch(JobTrackBatchContract $batch): bool

@@ -14,6 +14,7 @@ use Webkul\Admin\DataGrids\Settings\UserDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\UserForm;
 use Webkul\Core\Filesystem\FileStorer;
+use Webkul\User\Contracts\Admin;
 use Webkul\User\Models\Role;
 use Webkul\User\Repositories\AdminRepository;
 use Webkul\User\Repositories\RoleRepository;
@@ -59,6 +60,17 @@ class UserController extends Controller
     protected function cannotAssignRole(?Role $targetRole): bool
     {
         return $this->roleAssignmentError($targetRole) !== null;
+    }
+
+    /**
+     * Whether the user is the last active admin whose role grants every permission.
+     */
+    protected function isLastActiveFullAccessAdmin(?Admin $user): bool
+    {
+        return $user instanceof Admin
+            && (bool) $user->status
+            && $this->roleAccessGuard->hasFullAccess($user->role)
+            && ! $this->adminRepository->hasOtherActiveFullAccessAdmin(exceptAdminIds: [$user->id]);
     }
 
     protected function roleAssignmentError(?Role $targetRole): ?string
@@ -255,10 +267,7 @@ class UserController extends Controller
             ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
-        if (
-            $user->role?->permission_type === 'all'
-            && $this->adminRepository->countAdminsWithAllAccessAndActiveStatus() === 1
-        ) {
+        if ($this->isLastActiveFullAccessAdmin($user)) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.users.last-all-access-delete-error'),
             ], JsonResponse::HTTP_BAD_REQUEST);
@@ -306,6 +315,10 @@ class UserController extends Controller
             if ($this->adminRepository->count() == 1) {
                 return new JsonResponse([
                     'message' => trans('admin::app.settings.users.delete-last'),
+                ], JsonResponse::HTTP_BAD_REQUEST);
+            } elseif ($this->isLastActiveFullAccessAdmin(auth()->guard('admin')->user())) {
+                return new JsonResponse([
+                    'message' => trans('admin::app.settings.users.last-all-access-delete-error'),
                 ], JsonResponse::HTTP_BAD_REQUEST);
             } else {
                 $id = auth()->guard('admin')->user()->id;
@@ -364,12 +377,7 @@ class UserController extends Controller
 
         $isStatusChangedToInactive = ! $data['status'] && (bool) $user->status;
 
-        if (
-            $isStatusChangedToInactive
-            && (auth()->guard('admin')->user()->id === (int) $id
-                && $this->adminRepository->countAdminsWithAllAccessAndActiveStatus() === 1
-            )
-        ) {
+        if ($isStatusChangedToInactive && $this->isLastActiveFullAccessAdmin($user)) {
             return $this->cannotChangeRedirectResponse('status');
         }
 
@@ -377,17 +385,9 @@ class UserController extends Controller
             return $this->cannotChangeRedirectResponse('role');
         }
 
-        /**
-         * Is user with `permission_type` all role changed.
-         */
-        $isRoleChanged = $user->role->permission_type === 'all'
-            && isset($data['role_id'])
-            && (int) $data['role_id'] !== $user->role_id;
+        $isRoleChanged = isset($data['role_id']) && (int) $data['role_id'] !== (int) $user->role_id;
 
-        if (
-            $isRoleChanged
-            && $this->adminRepository->countAdminsWithAllAccess() === 1
-        ) {
+        if ($isRoleChanged && $this->isLastActiveFullAccessAdmin($user)) {
             return $this->cannotChangeRedirectResponse('role');
         }
 
