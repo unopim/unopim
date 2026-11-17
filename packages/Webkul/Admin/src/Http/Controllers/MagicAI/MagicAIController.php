@@ -13,6 +13,8 @@ use Webkul\Admin\Http\Requests\MagicAI\ImageGenerationRequest;
 use Webkul\Admin\Http\Requests\MagicAI\MagicPromptRequest;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Category\Repositories\CategoryFieldRepository;
+use Webkul\Core\Contracts\Locale;
+use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\MagicAI\Facades\MagicAI;
 use Webkul\MagicAI\Jobs\SaveTranslatedAllAttributesJob;
 use Webkul\MagicAI\Jobs\SaveTranslatedDataJob;
@@ -28,6 +30,21 @@ use Webkul\Product\Repositories\ProductRepository;
 
 class MagicAIController extends Controller
 {
+    /**
+     * Locale options of the requested channel, for the Magic AI translation settings.
+     */
+    public function channelLocales(ChannelRepository $channelRepository): JsonResponse
+    {
+        $channel = $channelRepository->findOneByField('code', (string) request()->query('channel'));
+
+        return new JsonResponse([
+            'locales' => $channel?->locales()->get()
+                ->map(fn (Locale $locale): array => ['id' => $locale->code, 'label' => $locale->name])
+                ->values()
+                ->all() ?? [],
+        ]);
+    }
+
     /**
      * Rich-text (WYSIWYG textarea) flag per attribute code, resolved once per request.
      *

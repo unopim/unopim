@@ -308,10 +308,11 @@ return [
         ],
     ],
     'job' => [
-        'started'   => 'Job udførelsen startet',
-        'completed' => 'Job udførelsen afsluttet',
-        'stalled'   => 'Jobbet holdt op med at svare i mere end :minutes minutter og blev markeret som mislykket. Arbejdsprocessen blev sandsynligvis afbrudt.',
-        'reaped'    => ':count fastlåste job blev markeret som mislykkede.',
-        'stopped'   => 'Importen blev stoppet efter validering med :count fejl. Ingen rækker blev importeret.',
+        'started'         => 'Job udførelsen startet',
+        'completed'       => 'Job udførelsen afsluttet',
+        'stalled'         => 'Jobbet holdt op med at svare i mere end :minutes minutter og blev markeret som mislykket. Arbejdsprocessen blev sandsynligvis afbrudt.',
+        'reaped'          => ':count fastlåste job blev markeret som mislykkede.',
+        'stopped'         => 'Importen blev stoppet efter validering med :count fejl. Ingen rækker blev importeret.',
+        'module-disabled' => 'Jobtypen :type hører til et platformmodul, der er slået fra, så den kan ikke køre.',
     ],
 ];
