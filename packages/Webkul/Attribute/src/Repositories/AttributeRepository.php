@@ -133,12 +133,17 @@ class AttributeRepository extends Repository
         return $data;
     }
 
-    private function ensureTemplatesAreSupported(array $data, ?Attribute $attribute = null): void
+    public function supportsTemplates(array $data, ?Attribute $attribute = null): bool
     {
         $candidate = ($attribute ? clone $attribute : $this->model->newInstance())
             ->forceFill(Arr::only($data, self::TEMPLATE_SETTINGS));
 
-        if ($candidate->enable_templates && ! $candidate->canHoldTemplate()) {
+        return ! $candidate->enable_templates || $candidate->canHoldTemplate();
+    }
+
+    private function ensureTemplatesAreSupported(array $data, ?Attribute $attribute = null): void
+    {
+        if (! $this->supportsTemplates($data, $attribute)) {
             throw ValidationException::withMessages([
                 'enable_templates' => trans('admin::app.catalog.attributes.create.templates-unsupported'),
             ]);
