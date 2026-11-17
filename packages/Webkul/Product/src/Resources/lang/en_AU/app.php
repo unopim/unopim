@@ -24,6 +24,7 @@ return [
         'messages' => [
             'circular-reference'      => 'Circular template reference detected: :path.',
             'currency-not-allowed'    => 'Only price attributes accept a currency, but ":attribute" is not a price attribute.',
+            'currency-not-enabled'    => 'The currency ":currency" used in the template is not enabled for any channel.',
             'currency-not-in-channel' => 'The currency ":currency" is not enabled for the channel ":channel".',
             'filter-failed'           => 'The filter ":filter" could not be applied to the value of ":attribute".',
             'filter-not-supported'    => 'The filter ":filter" cannot be applied to the attribute ":attribute".',

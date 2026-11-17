@@ -26,6 +26,7 @@ return [
         'messages' => [
             'circular-reference'      => 'Mallipohjasta löytyi kehäviittaus: :path.',
             'currency-not-allowed'    => 'Vain hinta-attribuutit hyväksyvät valuutan, mutta ":attribute" ei ole hinta-attribuutti.',
+            'currency-not-enabled'    => 'Mallipohjassa käytetty valuutta ":currency" ei ole käytössä millään kanavalla.',
             'currency-not-in-channel' => 'Valuutta ":currency" ei ole käytössä kanavalla ":channel".',
             'filter-failed'           => 'Suodatinta ":filter" ei voitu käyttää attribuutin ":attribute" arvoon.',
             'filter-not-supported'    => 'Suodatinta ":filter" ei voi käyttää attribuuttiin ":attribute".',

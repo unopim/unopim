@@ -26,6 +26,7 @@ return [
         'messages' => [
             'circular-reference'      => '检测到模板循环引用：:path',
             'currency-not-allowed'    => '只有价格属性可以接受货币，但 ":attribute" 不是价格属性。',
+            'currency-not-enabled'    => '模板中使用的货币 ":currency" 未在任何频道中启用。',
             'currency-not-in-channel' => '货币 ":currency" 未在频道 ":channel" 中启用。',
             'filter-failed'           => '无法将筛选器 ":filter" 应用于 ":attribute" 的值。',
             'filter-not-supported'    => '筛选器 ":filter" 不能应用于属性 ":attribute"。',

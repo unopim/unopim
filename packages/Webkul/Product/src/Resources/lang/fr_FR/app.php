@@ -23,6 +23,7 @@ return [
         'messages' => [
             'circular-reference'      => 'Référence circulaire détectée dans le modèle : :path.',
             'currency-not-allowed'    => 'Seuls les attributs de prix acceptent une devise, mais ":attribute" n\'est pas un attribut de prix.',
+            'currency-not-enabled'    => 'La devise ":currency" utilisée dans le modèle n\'est activée pour aucun canal.',
             'currency-not-in-channel' => 'La devise ":currency" n\'est pas activée pour le canal ":channel".',
             'filter-failed'           => 'Le filtre ":filter" n\'a pas pu être appliqué à la valeur de ":attribute".',
             'filter-not-supported'    => 'Le filtre ":filter" ne peut pas être appliqué à l\'attribut ":attribute".',

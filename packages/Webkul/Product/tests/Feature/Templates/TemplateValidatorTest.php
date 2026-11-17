@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Validator;
+use Webkul\Core\Models\Currency;
 use Webkul\Product\Contracts\TemplateValidator as TemplateValidatorContract;
 use Webkul\Product\Templates\TemplateMessage;
 use Webkul\Product\Tests\Concerns\InteractsWithTemplates;
@@ -10,6 +11,8 @@ uses(InteractsWithTemplates::class);
 
 beforeEach(function () {
     $this->validator = app(TemplateValidatorContract::class);
+
+    $this->templateChannel();
 
     $this->variableAttribute('tpl_name');
     $this->variableAttribute('tpl_price', 'price');
@@ -56,6 +59,15 @@ it('reports a meaningful error for each invalid expression', function (string $s
     'argument on text filter'  => ["{{ tpl_name | upper('x') }}", 'invalid-filter-argument'],
     'too many filters'         => ['{{ tpl_name | upper | lower | title | slug | capitalize | upper }}', 'too-many-filters'],
 ]);
+
+it('rejects a currency that is not enabled for any channel', function () {
+    Currency::factory()->create(['code' => 'XTS', 'status' => 0]);
+
+    $result = $this->validator->validate('{{ tpl_price.XTS }} {{ tpl_price.EUR }}', $this->description);
+
+    expect(messageKeys($result->errors))->toBe(['currency-not-enabled'])
+        ->and($result->errorMessages('en_US'))->toBe(['The currency "XTS" used in the template is not enabled for any channel.']);
+});
 
 it('reports every distinct problem once', function () {
     $result = $this->validator->validate('{{ tpl_missing }} {{ tpl_missing }} {{ tpl_name | uper }}', $this->description);

@@ -26,6 +26,7 @@ return [
         'messages' => [
             'circular-reference'      => 'Zirkulärer Vorlagenverweis erkannt: :path.',
             'currency-not-allowed'    => 'Nur Preisattribute akzeptieren eine Währung, aber ":attribute" ist kein Preisattribut.',
+            'currency-not-enabled'    => 'Die in der Vorlage verwendete Währung ":currency" ist für keinen Kanal aktiviert.',
             'currency-not-in-channel' => 'Die Währung ":currency" ist für den Kanal ":channel" nicht aktiviert.',
             'filter-failed'           => 'Der Filter ":filter" konnte nicht auf den Wert von ":attribute" angewendet werden.',
             'filter-not-supported'    => 'Der Filter ":filter" kann nicht auf das Attribut ":attribute" angewendet werden.',

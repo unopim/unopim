@@ -26,6 +26,7 @@ return [
         'messages' => [
             'circular-reference'      => 'Загварын тойрог лавлагаа илэрлээ: :path.',
             'currency-not-allowed'    => 'Зөвхөн үнийн шинж чанар валют хүлээн авдаг боловч ":attribute" нь үнийн шинж чанар биш байна.',
+            'currency-not-enabled'    => 'Загварт ашигласан ":currency" валют аль ч сувагт идэвхжээгүй байна.',
             'currency-not-in-channel' => '":currency" валют ":channel" сувагт идэвхжээгүй байна.',
             'filter-failed'           => '":filter" шүүлтүүрийг ":attribute" шинж чанарын утгад хэрэглэж чадсангүй.',
             'filter-not-supported'    => '":filter" шүүлтүүрийг ":attribute" шинж чанарт хэрэглэх боломжгүй.',

@@ -26,6 +26,7 @@ return [
         'messages' => [
             'circular-reference'      => 'Cirkulær skabelonreference fundet: :path.',
             'currency-not-allowed'    => 'Kun prisattributter accepterer en valuta, men ":attribute" er ikke en prisattribut.',
+            'currency-not-enabled'    => 'Valutaen ":currency", der bruges i skabelonen, er ikke aktiveret for nogen kanal.',
             'currency-not-in-channel' => 'Valutaen ":currency" er ikke aktiveret for kanalen ":channel".',
             'filter-failed'           => 'Filteret ":filter" kunne ikke anvendes på værdien af ":attribute".',
             'filter-not-supported'    => 'Filteret ":filter" kan ikke anvendes på attributten ":attribute".',

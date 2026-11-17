@@ -26,6 +26,7 @@ return [
         'messages' => [
             'circular-reference'      => 'A fost detectată o referință circulară în șablon: :path.',
             'currency-not-allowed'    => 'Doar atributele de preț acceptă o monedă, dar ":attribute" nu este un atribut de preț.',
+            'currency-not-enabled'    => 'Moneda ":currency" folosită în șablon nu este activată pentru niciun canal.',
             'currency-not-in-channel' => 'Moneda ":currency" nu este activată pentru canalul ":channel".',
             'filter-failed'           => 'Filtrul ":filter" nu a putut fi aplicat valorii atributului ":attribute".',
             'filter-not-supported'    => 'Filtrul ":filter" nu poate fi aplicat atributului ":attribute".',

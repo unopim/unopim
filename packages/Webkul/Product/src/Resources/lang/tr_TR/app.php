@@ -26,6 +26,7 @@ return [
         'messages' => [
             'circular-reference'      => 'Döngüsel şablon referansı algılandı: :path.',
             'currency-not-allowed'    => 'Yalnızca fiyat öznitelikleri para birimi kabul eder, ancak ":attribute" bir fiyat özniteliği değildir.',
+            'currency-not-enabled'    => 'Şablonda kullanılan ":currency" para birimi hiçbir kanal için etkin değil.',
             'currency-not-in-channel' => '":currency" para birimi ":channel" kanalı için etkin değil.',
             'filter-failed'           => '":filter" filtresi ":attribute" değerine uygulanamadı.',
             'filter-not-supported'    => '":filter" filtresi ":attribute" özniteliğine uygulanamaz.',

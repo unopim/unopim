@@ -26,6 +26,7 @@ return [
         'messages' => [
             'circular-reference'      => '순환 템플릿 참조가 감지되었습니다: :path',
             'currency-not-allowed'    => '가격 속성만 통화를 허용하지만 ":attribute"은(는) 가격 속성이 아닙니다.',
+            'currency-not-enabled'    => '템플릿에 사용된 통화 ":currency"은(는) 어떤 채널에서도 활성화되어 있지 않습니다.',
             'currency-not-in-channel' => '통화 ":currency"은(는) 채널 ":channel"에 대해 활성화되어 있지 않습니다.',
             'filter-failed'           => '필터 ":filter"을(를) ":attribute"의 값에 적용할 수 없습니다.',
             'filter-not-supported'    => '필터 ":filter"은(는) 속성 ":attribute"에 적용할 수 없습니다.',

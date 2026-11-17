@@ -26,6 +26,7 @@ return [
         'messages' => [
             'circular-reference'      => '偵測到範本循環引用：:path',
             'currency-not-allowed'    => '只有價格屬性可以接受貨幣，但 ":attribute" 不是價格屬性。',
+            'currency-not-enabled'    => '範本中使用的貨幣 ":currency" 未在任何頻道中啟用。',
             'currency-not-in-channel' => '貨幣 ":currency" 未在頻道 ":channel" 中啟用。',
             'filter-failed'           => '無法將篩選器 ":filter" 套用至 ":attribute" 的值。',
             'filter-not-supported'    => '篩選器 ":filter" 無法套用至屬性 ":attribute"。',

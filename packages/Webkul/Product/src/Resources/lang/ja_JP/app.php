@@ -26,6 +26,7 @@ return [
         'messages' => [
             'circular-reference'      => 'テンプレートの循環参照が検出されました: :path',
             'currency-not-allowed'    => '通貨を指定できるのは価格属性のみですが、":attribute" は価格属性ではありません。',
+            'currency-not-enabled'    => 'テンプレートで使用されている通貨 ":currency" はどのチャネルでも有効になっていません。',
             'currency-not-in-channel' => '通貨 ":currency" はチャネル ":channel" で有効になっていません。',
             'filter-failed'           => 'フィルター ":filter" を ":attribute" の値に適用できませんでした。',
             'filter-not-supported'    => 'フィルター ":filter" は属性 ":attribute" に適用できません。',

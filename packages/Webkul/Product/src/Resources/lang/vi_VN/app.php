@@ -26,6 +26,7 @@ return [
         'messages' => [
             'circular-reference'      => 'Phát hiện tham chiếu vòng trong mẫu: :path.',
             'currency-not-allowed'    => 'Chỉ thuộc tính giá mới chấp nhận tiền tệ, nhưng ":attribute" không phải là thuộc tính giá.',
+            'currency-not-enabled'    => 'Tiền tệ ":currency" được dùng trong mẫu chưa được bật cho kênh nào.',
             'currency-not-in-channel' => 'Tiền tệ ":currency" chưa được bật cho kênh ":channel".',
             'filter-failed'           => 'Không thể áp dụng bộ lọc ":filter" cho giá trị của ":attribute".',
             'filter-not-supported'    => 'Không thể áp dụng bộ lọc ":filter" cho thuộc tính ":attribute".',

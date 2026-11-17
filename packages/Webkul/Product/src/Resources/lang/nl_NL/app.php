@@ -26,6 +26,7 @@ return [
         'messages' => [
             'circular-reference'      => 'Circulaire sjabloonverwijzing gedetecteerd: :path.',
             'currency-not-allowed'    => 'Alleen prijsattributen accepteren een valuta, maar ":attribute" is geen prijsattribuut.',
+            'currency-not-enabled'    => 'De valuta ":currency" die in het sjabloon wordt gebruikt, is voor geen enkel kanaal ingeschakeld.',
             'currency-not-in-channel' => 'De valuta ":currency" is niet ingeschakeld voor het kanaal ":channel".',
             'filter-failed'           => 'Het filter ":filter" kon niet worden toegepast op de waarde van ":attribute".',
             'filter-not-supported'    => 'Het filter ":filter" kan niet worden toegepast op het attribuut ":attribute".',

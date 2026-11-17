@@ -26,6 +26,7 @@ return [
         'messages' => [
             'circular-reference'      => 'Referência circular de modelo detectada: :path.',
             'currency-not-allowed'    => 'Somente atributos de preço aceitam uma moeda, mas ":attribute" não é um atributo de preço.',
+            'currency-not-enabled'    => 'A moeda ":currency" usada no modelo não está habilitada para nenhum canal.',
             'currency-not-in-channel' => 'A moeda ":currency" não está habilitada para o canal ":channel".',
             'filter-failed'           => 'Não foi possível aplicar o filtro ":filter" ao valor de ":attribute".',
             'filter-not-supported'    => 'O filtro ":filter" não pode ser aplicado ao atributo ":attribute".',

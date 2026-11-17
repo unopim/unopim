@@ -26,6 +26,7 @@ return [
         'messages' => [
             'circular-reference'      => 'Sirkulær malreferanse oppdaget: :path.',
             'currency-not-allowed'    => 'Bare prisattributter godtar en valuta, men ":attribute" er ikke et prisattributt.',
+            'currency-not-enabled'    => 'Valutaen ":currency" som brukes i malen, er ikke aktivert for noen kanal.',
             'currency-not-in-channel' => 'Valutaen ":currency" er ikke aktivert for kanalen ":channel".',
             'filter-failed'           => 'Filteret ":filter" kunne ikke brukes på verdien til ":attribute".',
             'filter-not-supported'    => 'Filteret ":filter" kan ikke brukes på attributtet ":attribute".',

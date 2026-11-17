@@ -26,6 +26,7 @@ return [
         'messages' => [
             'circular-reference'      => 'Otkrivena je kružna referenca predloška: :path.',
             'currency-not-allowed'    => 'Samo atributi cijene prihvaćaju valutu, ali ":attribute" nije atribut cijene.',
+            'currency-not-enabled'    => 'Valuta ":currency" korištena u predlošku nije omogućena ni za jedan kanal.',
             'currency-not-in-channel' => 'Valuta ":currency" nije omogućena za kanal ":channel".',
             'filter-failed'           => 'Filtar ":filter" nije bilo moguće primijeniti na vrijednost atributa ":attribute".',
             'filter-not-supported'    => 'Filtar ":filter" ne može se primijeniti na atribut ":attribute".',

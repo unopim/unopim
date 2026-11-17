@@ -18,7 +18,7 @@ class TemplateValidator implements TemplateValidatorContract
 
     private const string SINGLE_BRACE_PATTERN = '/(?<!\{)\{\s*(\w+)\s*\}(?!\})/';
 
-    private ?array $currencyCodes = null;
+    private ?array $currencies = null;
 
     public function __construct(
         protected TemplateParser $parser,
@@ -64,10 +64,11 @@ class TemplateValidator implements TemplateValidatorContract
     private function currencyProblem(Expression $expression, Attribute $variable): ?TemplateMessage
     {
         return match (true) {
-            $expression->currency === null                                  => null,
-            $variable->type !== AttributeModel::PRICE_FIELD_TYPE            => new TemplateMessage('currency-not-allowed', ['attribute' => $variable->code]),
-            ! in_array($expression->currency, $this->currencyCodes(), true) => new TemplateMessage('unknown-currency', ['currency' => $expression->currency]),
-            default                                                         => null,
+            $expression->currency === null                                 => null,
+            $variable->type !== AttributeModel::PRICE_FIELD_TYPE           => new TemplateMessage('currency-not-allowed', ['attribute' => $variable->code]),
+            ! array_key_exists($expression->currency, $this->currencies()) => new TemplateMessage('unknown-currency', ['currency' => $expression->currency]),
+            ! $this->currencies()[$expression->currency]                   => new TemplateMessage('currency-not-enabled', ['currency' => $expression->currency]),
+            default                                                        => null,
         };
     }
 
@@ -90,8 +91,11 @@ class TemplateValidator implements TemplateValidatorContract
         );
     }
 
-    private function currencyCodes(): array
+    private function currencies(): array
     {
-        return $this->currencyCodes ??= $this->currencyRepository->all()->pluck('code')->all();
+        return $this->currencies ??= $this->currencyRepository->getModel()->newQuery()
+            ->withExists('channel')
+            ->pluck('channel_exists', 'code')
+            ->all();
     }
 }

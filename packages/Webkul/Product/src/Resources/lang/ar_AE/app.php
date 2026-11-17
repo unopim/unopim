@@ -26,6 +26,7 @@ return [
         'messages' => [
             'circular-reference'      => 'تم اكتشاف مرجع دائري في القالب: :path.',
             'currency-not-allowed'    => 'سمات السعر فقط هي التي تقبل عملة، لكن ":attribute" ليست سمة سعر.',
+            'currency-not-enabled'    => 'العملة ":currency" المستخدمة في القالب غير مفعلة لأي قناة.',
             'currency-not-in-channel' => 'العملة ":currency" غير مفعلة للقناة ":channel".',
             'filter-failed'           => 'تعذر تطبيق عامل التصفية ":filter" على قيمة ":attribute".',
             'filter-not-supported'    => 'لا يمكن تطبيق عامل التصفية ":filter" على السمة ":attribute".',

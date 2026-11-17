@@ -26,6 +26,7 @@ return [
         'messages' => [
             'circular-reference'      => 'Обнаружена циклическая ссылка в шаблоне: :path.',
             'currency-not-allowed'    => 'Валюту принимают только атрибуты цены, но ":attribute" не является атрибутом цены.',
+            'currency-not-enabled'    => 'Валюта ":currency", используемая в шаблоне, не включена ни для одного канала.',
             'currency-not-in-channel' => 'Валюта ":currency" не включена для канала ":channel".',
             'filter-failed'           => 'Не удалось применить фильтр ":filter" к значению ":attribute".',
             'filter-not-supported'    => 'Фильтр ":filter" нельзя применить к атрибуту ":attribute".',

@@ -26,6 +26,7 @@ return [
         'messages' => [
             'circular-reference'      => 'Виявлено циклічне посилання в шаблоні: :path.',
             'currency-not-allowed'    => 'Валюту приймають лише атрибути ціни, але ":attribute" не є атрибутом ціни.',
+            'currency-not-enabled'    => 'Валюту ":currency", використану в шаблоні, не ввімкнено для жодного каналу.',
             'currency-not-in-channel' => 'Валюту ":currency" не ввімкнено для каналу ":channel".',
             'filter-failed'           => 'Не вдалося застосувати фільтр ":filter" до значення ":attribute".',
             'filter-not-supported'    => 'Фільтр ":filter" не можна застосувати до атрибута ":attribute".',

@@ -26,6 +26,7 @@ return [
         'messages' => [
             'circular-reference'      => 'Wykryto cykliczne odwołanie w szablonie: :path.',
             'currency-not-allowed'    => 'Tylko atrybuty ceny akceptują walutę, ale ":attribute" nie jest atrybutem ceny.',
+            'currency-not-enabled'    => 'Waluta ":currency" użyta w szablonie nie jest włączona dla żadnego kanału.',
             'currency-not-in-channel' => 'Waluta ":currency" nie jest włączona dla kanału ":channel".',
             'filter-failed'           => 'Nie udało się zastosować filtra ":filter" do wartości ":attribute".',
             'filter-not-supported'    => 'Filtra ":filter" nie można zastosować do atrybutu ":attribute".',

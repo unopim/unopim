@@ -26,6 +26,7 @@ return [
         'messages' => [
             'circular-reference'      => 'Cirkulär mallreferens upptäcktes: :path.',
             'currency-not-allowed'    => 'Endast prisattribut accepterar en valuta, men ":attribute" är inte ett prisattribut.',
+            'currency-not-enabled'    => 'Valutan ":currency" som används i mallen är inte aktiverad för någon kanal.',
             'currency-not-in-channel' => 'Valutan ":currency" är inte aktiverad för kanalen ":channel".',
             'filter-failed'           => 'Filtret ":filter" kunde inte tillämpas på värdet för ":attribute".',
             'filter-not-supported'    => 'Filtret ":filter" kan inte tillämpas på attributet ":attribute".',

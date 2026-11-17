@@ -26,6 +26,7 @@ return [
         'messages' => [
             'circular-reference'      => 'चक्रीय टेम्पलेट संदर्भ का पता चला: :path।',
             'currency-not-allowed'    => 'केवल कीमत विशेषताएँ मुद्रा स्वीकार करती हैं, लेकिन ":attribute" कीमत विशेषता नहीं है।',
+            'currency-not-enabled'    => 'टेम्पलेट में उपयोग की गई मुद्रा ":currency" किसी भी चैनल के लिए सक्षम नहीं है।',
             'currency-not-in-channel' => 'मुद्रा ":currency" चैनल ":channel" के लिए सक्षम नहीं है।',
             'filter-failed'           => 'फ़िल्टर ":filter" को ":attribute" के मान पर लागू नहीं किया जा सका।',
             'filter-not-supported'    => 'फ़िल्टर ":filter" को विशेषता ":attribute" पर लागू नहीं किया जा सकता।',

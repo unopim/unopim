@@ -26,6 +26,7 @@ return [
         'messages' => [
             'circular-reference'      => 'Terdeteksi referensi templat melingkar: :path.',
             'currency-not-allowed'    => 'Hanya atribut harga yang menerima mata uang, tetapi ":attribute" bukan atribut harga.',
+            'currency-not-enabled'    => 'Mata uang ":currency" yang digunakan dalam templat tidak diaktifkan untuk saluran mana pun.',
             'currency-not-in-channel' => 'Mata uang ":currency" tidak diaktifkan untuk saluran ":channel".',
             'filter-failed'           => 'Filter ":filter" tidak dapat diterapkan pada nilai ":attribute".',
             'filter-not-supported'    => 'Filter ":filter" tidak dapat diterapkan pada atribut ":attribute".',

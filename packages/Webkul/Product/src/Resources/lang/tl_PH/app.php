@@ -24,6 +24,7 @@ return [
         'messages' => [
             'circular-reference'      => 'May natukoy na paikot na reference ng template: :path.',
             'currency-not-allowed'    => 'Ang mga katangian ng presyo lamang ang tumatanggap ng pera, ngunit ang ":attribute" ay hindi katangian ng presyo.',
+            'currency-not-enabled'    => 'Ang pera na ":currency" na ginamit sa template ay hindi naka-enable para sa anumang channel.',
             'currency-not-in-channel' => 'Ang pera na ":currency" ay hindi naka-enable para sa channel na ":channel".',
             'filter-failed'           => 'Hindi mailapat ang filter na ":filter" sa halaga ng ":attribute".',
             'filter-not-supported'    => 'Hindi maaaring ilapat ang filter na ":filter" sa katangiang ":attribute".',
