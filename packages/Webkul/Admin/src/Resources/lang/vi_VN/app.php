@@ -2118,6 +2118,7 @@ return [
             'delete-failed'                   => 'Không thể xóa vai trò',
             'delete-success'                  => 'Vai trò đã bị xóa thành công',
             'last-delete-error'               => 'Không thể xóa vai trò cuối cùng',
+            'last-full-access'                => 'Ít nhất một người dùng đang hoạt động phải giữ toàn quyền truy cập.',
             'update-success'                  => 'Vai trò đã được cập nhật thành công',
         ],
     ],

@@ -85,14 +85,11 @@ class RoleController extends Controller
     {
         $role = $this->roleRepository->findOrFail($id);
 
-        /**
-         * Check for other admins if the role has been changed from all to custom.
-         */
         $isChangedFromAll = $request->permission_type == 'custom' && $role->permission_type == 'all';
 
-        if ($isChangedFromAll && $role->admins()->count() === 1 && $this->adminRepository->countAdminsWithAllAccess() === 1) {
+        if ($isChangedFromAll && ! $this->adminRepository->hasOtherActiveFullAccessAdmin(exceptRoleId: $role->id)) {
             return $this->respondError(
-                trans('admin::app.settings.roles.being-used'),
+                trans('admin::app.settings.roles.last-full-access'),
                 redirectUrl: route('admin.settings.roles.index')
             );
         }

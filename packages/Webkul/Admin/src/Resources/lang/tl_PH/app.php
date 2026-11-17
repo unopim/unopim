@@ -2118,6 +2118,7 @@ return [
             'delete-failed'                   => 'Nabigo ang pagtanggal ng Tungkulin',
             'delete-success'                  => 'Tungkulin na tinanggal ng matagumpay',
             'last-delete-error'               => 'Ang huling Tungkulin ay hindi maaaring tanggalin',
+            'last-full-access'                => 'Kailangang manatili ang buong access ng hindi bababa sa isang aktibong user.',
             'update-success'                  => 'Tungkulin na na-update ng matagumpay',
         ],
     ],

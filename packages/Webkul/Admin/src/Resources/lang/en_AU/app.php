@@ -2116,6 +2116,7 @@ return [
             'delete-failed'                   => 'Roles deletion failed',
             'delete-success'                  => 'Roles deleted successfully',
             'last-delete-error'               => 'Last Roles cannot be deleted',
+            'last-full-access'                => 'At least one active user must keep full access.',
             'update-success'                  => 'Roles updated successfully',
         ],
     ],

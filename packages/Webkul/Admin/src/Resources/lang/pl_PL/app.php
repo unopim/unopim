@@ -2118,6 +2118,7 @@ return [
             'delete-failed'                   => 'Usuwanie roli nie powiodło się',
             'delete-success'                  => 'Rola została usunięta pomyślnie',
             'last-delete-error'               => 'Ostatnia rola nie może zostać usunięta',
+            'last-full-access'                => 'Co najmniej jeden aktywny użytkownik musi zachować pełny dostęp.',
             'update-success'                  => 'Rola została zaktualizowana pomyślnie',
         ],
     ],

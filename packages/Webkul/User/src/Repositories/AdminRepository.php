@@ -2,6 +2,7 @@
 
 namespace Webkul\User\Repositories;
 
+use Illuminate\Database\Eloquent\Builder;
 use Webkul\Core\Eloquent\Repository;
 use Webkul\User\Contracts\Admin;
 
@@ -20,11 +21,18 @@ class AdminRepository extends Repository
      */
     public function countAdminsWithAllAccess(): int
     {
-        return $this->getModel()
-            ->leftJoin('roles', 'admins.role_id', '=', 'roles.id')
-            ->where('roles.permission_type', 'all')
-            ->get()
-            ->count();
+        return $this->fullAccessAdminsQuery()->count();
+    }
+
+    /**
+     * Whether an active admin outside the given role keeps full access.
+     */
+    public function hasOtherActiveFullAccessAdmin(?int $exceptRoleId = null): bool
+    {
+        return $this->fullAccessAdminsQuery()
+            ->where('admins.status', 1)
+            ->when($exceptRoleId !== null, fn (Builder $query) => $query->where('admins.role_id', '!=', $exceptRoleId))
+            ->exists();
     }
 
     /**
@@ -32,11 +40,18 @@ class AdminRepository extends Repository
      */
     public function countAdminsWithAllAccessAndActiveStatus(): int
     {
-        return $this->getModel()
-            ->leftJoin('roles', 'admins.role_id', '=', 'roles.id')
+        return $this->fullAccessAdminsQuery()
             ->where('admins.status', 1)
-            ->where('roles.permission_type', 'all')
-            ->get()
             ->count();
+    }
+
+    /**
+     * Admins whose role grants every permission.
+     */
+    protected function fullAccessAdminsQuery(): Builder
+    {
+        return $this->getModel()->newQuery()
+            ->join('roles', 'admins.role_id', '=', 'roles.id')
+            ->where('roles.permission_type', 'all');
     }
 }

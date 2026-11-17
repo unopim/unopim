@@ -2118,6 +2118,7 @@ return [
             'delete-failed'                   => 'Rol silinemedi',
             'delete-success'                  => 'Rol başarıyla silindi',
             'last-delete-error'               => 'Son rol silinemedi',
+            'last-full-access'                => 'En az bir aktif kullanıcı tam erişimi korumalıdır.',
             'update-success'                  => 'Rol başarıyla güncellendi',
         ],
     ],

@@ -2116,6 +2116,7 @@ return [
             'delete-failed'                   => 'ロールの削除に失敗しました',
             'delete-success'                  => 'ロールが正常に削除されました',
             'last-delete-error'               => '最後のロールは削除できません',
+            'last-full-access'                => '少なくとも1人のアクティブなユーザーがフルアクセスを維持する必要があります。',
             'update-success'                  => 'ロールが正常に更新されました',
         ],
     ],

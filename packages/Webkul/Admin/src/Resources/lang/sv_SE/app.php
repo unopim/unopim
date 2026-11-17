@@ -2118,6 +2118,7 @@ return [
             'delete-failed'                   => 'Det gick inte att ta bort rollen',
             'delete-success'                  => 'Rollen togs bort framgångsrikt',
             'last-delete-error'               => 'Den sista rollen kan inte tas bort',
+            'last-full-access'                => 'Minst en aktiv användare måste behålla full åtkomst.',
             'update-success'                  => 'Rollen uppdaterades framgångsrikt',
         ],
     ],
