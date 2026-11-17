@@ -111,6 +111,10 @@ class Importer extends AbstractImporter
                 return false;
             }
 
+            if (! $this->holdsImportPermission('settings.roles.delete', $rowNumber, self::ERROR_CANNOT_GRANT_ACCESS, 'name')) {
+                return false;
+            }
+
             if ($this->roleRepository->find($roleId)?->admins()->exists()) {
                 $this->skipRow($rowNumber, self::ERROR_ROLE_IN_USE, $rowData['name']);
 
@@ -144,6 +148,12 @@ class Importer extends AbstractImporter
      */
     protected function validateAccess(array $rowData, int $rowNumber): void
     {
+        $permission = $this->roleStorage->get($rowData['name']) ? 'settings.roles.edit' : 'settings.roles.create';
+
+        if (! $this->holdsImportPermission($permission, $rowNumber, self::ERROR_CANNOT_GRANT_ACCESS, 'name')) {
+            return;
+        }
+
         $permissions = empty($rowData['permissions']) ? [] : explode(',', $rowData['permissions']);
 
         if ($this->importAccessError(fn ($admin): ?string => $this->roleAccessGuard->grantError($admin, $rowData['permission_type'], $permissions))) {
@@ -210,7 +220,7 @@ class Importer extends AbstractImporter
         $idsToDelete = array_unique($idsToDelete);
 
         foreach ($idsToDelete as $id) {
-            if (! $this->allowsFullAccessChange(roleId: $id)) {
+            if (! $this->allowsFullAccessChange(roleId: $id) || $this->roleRepository->find($id)?->admins()->exists()) {
                 continue;
             }
 

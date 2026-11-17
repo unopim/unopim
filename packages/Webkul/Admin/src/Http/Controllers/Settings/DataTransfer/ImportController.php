@@ -211,7 +211,9 @@ class ImportController extends Controller
 
         $import = $this->jobInstancesRepository->update($data, $import->id);
 
-        $this->recordProfileSaver($import);
+        if (isset($data['file_path'])) {
+            $this->recordProfileSaver($import);
+        }
 
         Event::dispatch('data_transfer.imports.update.after', $import);
 
@@ -221,7 +223,7 @@ class ImportController extends Controller
     }
 
     /**
-     * Record the admin who saved the import profile and its file; importers check this admin's access too.
+     * Record the admin who supplied the import file; importers check this admin's access too.
      */
     private function recordProfileSaver(JobInstancesContract $import): void
     {

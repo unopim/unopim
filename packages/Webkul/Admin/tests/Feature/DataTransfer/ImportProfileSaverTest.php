@@ -39,7 +39,19 @@ it('records the admin who creates an import profile and ignores a posted saver',
         ->toBe(auth()->guard('admin')->id());
 });
 
-it('records the admin who last saves an import profile and ignores a posted saver', function () {
+it('keeps the uploader when a profile is saved again without a new file', function () {
+    $importJob = JobInstances::factory()->importJob()->create(['entity_type' => 'users']);
+    $importJob->forceFill(['updated_by' => $this->otherAdmin->id])->saveQuietly();
+
+    $payload = importProfilePayload(['code' => $importJob->code]);
+    unset($payload['file']);
+
+    putJson(route('admin.settings.data_transfer.imports.update', ['id' => $importJob->id]), $payload)->assertStatus(302);
+
+    expect($importJob->fresh()->updated_by)->toBe($this->otherAdmin->id);
+});
+
+it('records the admin who uploads a new file to an import profile and ignores a posted saver', function () {
     $importJob = JobInstances::factory()->importJob()->create(['entity_type' => 'users']);
     $importJob->forceFill(['updated_by' => $this->otherAdmin->id])->saveQuietly();
 

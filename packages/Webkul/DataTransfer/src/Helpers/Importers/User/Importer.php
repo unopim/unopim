@@ -143,6 +143,10 @@ class Importer extends AbstractImporter
                 return false;
             }
 
+            if (! $this->holdsImportPermission('settings.users.users.delete', $rowNumber, self::ERROR_CANNOT_ASSIGN_ROLE, 'email')) {
+                return false;
+            }
+
             return $this->keepsFullAccess($rowNumber, 'email', adminId: $this->deletedFullAccessAdminId($rowData));
         }
 
@@ -187,6 +191,14 @@ class Importer extends AbstractImporter
      */
     protected function validateAccess(array $rowData, int $rowNumber): bool
     {
+        $this->userStorage->loadAdmins([$rowData['email']]);
+
+        $permission = $this->userStorage->getAdminId($rowData['email']) ? 'settings.users.users.edit' : 'settings.users.users.create';
+
+        if (! $this->holdsImportPermission($permission, $rowNumber, self::ERROR_CANNOT_ASSIGN_ROLE, 'email')) {
+            return false;
+        }
+
         $role = $this->findRole($this->userStorage->getRoleId($rowData['role_name']));
         $permissionType = $rowData['permission_type'] ?? null;
 

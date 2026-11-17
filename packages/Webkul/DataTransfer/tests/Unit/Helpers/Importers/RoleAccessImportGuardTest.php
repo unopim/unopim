@@ -18,7 +18,14 @@ beforeEach(function () {
     $this->limitedRole = Role::factory()->create([
         'name'            => 'Limited '.uniqid(),
         'permission_type' => 'custom',
-        'permissions'     => ['dashboard', 'data_transfer.imports'],
+        'permissions'     => [
+            'dashboard',
+            'data_transfer.imports',
+            'settings.roles.create',
+            'settings.roles.edit',
+            'settings.users.users.create',
+            'settings.users.users.edit',
+        ],
     ]);
 
     Admin::query()->update(['role_id' => $this->limitedRole->id]);
@@ -81,7 +88,7 @@ describe('role importer', function () {
 
         expect($importer->validateRow(['name' => 'New '.uniqid(), 'permission_type' => 'all'], 1))->toBeFalse()
             ->and($importer->validateRow(['name' => 'New '.uniqid(), 'permission_type' => 'custom', 'permissions' => 'dashboard'], 2))->toBeFalse()
-            ->and($importer->validateRow(['name' => 'New '.uniqid(), 'permission_type' => 'custom'], 3))->toBeTrue();
+            ->and($importer->validateRow(['name' => 'New '.uniqid(), 'permission_type' => 'custom'], 3))->toBeFalse();
     });
 
     it('rejects demoting the last active full-access role', function () {
@@ -128,6 +135,32 @@ describe('role importer', function () {
         $importer = importerFor(RoleImporter::class, Import::ACTION_APPEND, $this->fullAdmin);
 
         expect($importer->validateRow(['name' => $this->limitedRole->name, 'permission_type' => 'custom', 'permissions' => 'dashboard'], 1))->toBeTrue();
+    });
+
+    it('rejects role rows from a runner or uploader without the matching role permission', function (string $action) {
+        $unusedRole = Role::factory()->create(['name' => 'Unused '.uniqid(), 'permission_type' => 'custom', 'permissions' => ['dashboard']]);
+        $importOnlyAdmin = Admin::factory()->create(['role_id' => Role::factory()->create([
+            'permission_type' => 'custom',
+            'permissions'     => ['dashboard', 'data_transfer.imports'],
+        ])->id]);
+
+        $row = ['name' => $unusedRole->name, 'permission_type' => 'custom', 'permissions' => 'dashboard'];
+
+        expect(importerFor(RoleImporter::class, $action, $importOnlyAdmin)->validateRow($row, 1))->toBeFalse()
+            ->and(importerFor(RoleImporter::class, $action, $this->fullAdmin, $importOnlyAdmin)->validateRow($row, 1))->toBeFalse()
+            ->and(importerFor(RoleImporter::class, $action, $this->fullAdmin)->validateRow($row, 1))->toBeTrue();
+    })->with(['edit' => Import::ACTION_APPEND, 'delete' => Import::ACTION_DELETE]);
+
+    it('skips deleting a role that gained admins after its file was validated', function () {
+        $role = Role::factory()->create(['name' => 'Soon Used '.uniqid(), 'permission_type' => 'custom', 'permissions' => ['dashboard']]);
+
+        expect(importerFor(RoleImporter::class, Import::ACTION_DELETE, $this->fullAdmin)->validateRow(['name' => $role->name], 1))->toBeTrue();
+
+        Admin::factory()->create(['role_id' => $role->id, 'status' => 1]);
+
+        writeImportBatch(RoleImporter::class, Import::ACTION_DELETE, [['name' => $role->name]]);
+
+        expect(Role::find($role->id))->not->toBeNull();
     });
 
     it('rejects deleting a role that admins still use', function () {
@@ -192,6 +225,21 @@ describe('user importer', function () {
         'deleted'                => Import::ACTION_DELETE,
     ]);
 
+    it('rejects user rows from a runner or uploader without the matching user permission', function (string $action) {
+        $importOnlyAdmin = Admin::factory()->create(['role_id' => Role::factory()->create([
+            'permission_type' => 'custom',
+            'permissions'     => ['dashboard', 'data_transfer.imports'],
+        ])->id]);
+
+        $heldRole = Role::factory()->create(['name' => 'Held '.uniqid(), 'permission_type' => 'custom', 'permissions' => ['dashboard']]);
+
+        $row = ['name' => 'Other User', 'email' => $this->limitedAdmin->email, 'role_name' => $heldRole->name];
+
+        expect(importerFor(UserImporter::class, $action, $importOnlyAdmin)->validateRow($row, 1))->toBeFalse()
+            ->and(importerFor(UserImporter::class, $action, $this->fullAdmin, $importOnlyAdmin)->validateRow($row, 1))->toBeFalse()
+            ->and(importerFor(UserImporter::class, $action, $this->fullAdmin)->validateRow($row, 1))->toBeTrue();
+    })->with(['edit' => Import::ACTION_APPEND, 'delete' => Import::ACTION_DELETE]);
+
     it('rejects a row that turns an existing role into full access when the importing admin lacks it', function () {
         $importer = importerFor(UserImporter::class, Import::ACTION_APPEND, $this->limitedAdmin);
 
@@ -214,7 +262,7 @@ describe('user importer', function () {
     });
 
     it('rejects moving, disabling or deleting the last active full-access admin', function (string $action, array $row) {
-        $importer = importerFor(UserImporter::class, $action, null);
+        $importer = importerFor(UserImporter::class, $action, $this->fullAdmin);
 
         expect($importer->validateRow([
             'name'      => $this->fullAdmin->name,

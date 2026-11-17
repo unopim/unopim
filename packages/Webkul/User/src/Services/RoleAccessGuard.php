@@ -53,11 +53,11 @@ class RoleAccessGuard
      */
     public function assignmentError(?Admin $actor, ?Role $targetRole): ?string
     {
-        if (! $targetRole instanceof Role || $this->hasFullAccess($actor?->role)) {
+        if ($this->hasFullAccess($actor?->role)) {
             return null;
         }
 
-        if ($this->hasFullAccess($targetRole)) {
+        if (! $targetRole instanceof Role || $this->hasFullAccess($targetRole)) {
             return 'admin::app.settings.users.cannot-escalate-role';
         }
 
@@ -66,6 +66,18 @@ class RoleAccessGuard
         }
 
         return null;
+    }
+
+    /**
+     * Translation key explaining why the actor lacks the permission, or null when it holds it.
+     */
+    public function permissionError(?Admin $actor, string $permission): ?string
+    {
+        if ($this->hasFullAccess($actor?->role) || $actor?->hasPermission($permission)) {
+            return null;
+        }
+
+        return 'admin::app.common.unauthorized';
     }
 
     /**

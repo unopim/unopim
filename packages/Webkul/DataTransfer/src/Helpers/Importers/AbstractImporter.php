@@ -111,9 +111,9 @@ abstract class AbstractImporter
     protected Admin|false|null $initiatingAdmin = false;
 
     /**
-     * Admin who last saved the import profile and its file, false until resolved.
+     * Admin who uploaded the import file, false until resolved.
      */
-    protected Admin|false|null $profileEditor = false;
+    protected Admin|false|null $fileUploader = false;
 
     /**
      * Source instance.
@@ -590,15 +590,15 @@ abstract class AbstractImporter
     }
 
     /**
-     * Admin who last saved the import profile and its file when the job started, or null when none is recorded.
+     * Admin who uploaded the import file when the job started, or null when none is recorded.
      */
-    protected function profileEditor(): ?Admin
+    protected function fileUploader(): ?Admin
     {
-        if ($this->profileEditor === false) {
-            $this->profileEditor = resolve(RoleAccessGuard::class)->actor($this->import->meta['updated_by'] ?? null);
+        if ($this->fileUploader === false) {
+            $this->fileUploader = resolve(RoleAccessGuard::class)->actor($this->import->meta['updated_by'] ?? null);
         }
 
-        return $this->profileEditor;
+        return $this->fileUploader;
     }
 
     /**
@@ -608,6 +608,24 @@ abstract class AbstractImporter
      */
     protected function importAccessError(callable $check): ?string
     {
-        return $check($this->initiatingAdmin()) ?? $check($this->profileEditor());
+        return $check($this->initiatingAdmin()) ?? $check($this->fileUploader());
+    }
+
+    /**
+     * Reject the row unless the admin running the job and the admin who uploaded its file both hold the permission.
+     */
+    protected function holdsImportPermission(string $permission, int $rowNumber, string $errorCode, string $columnName): bool
+    {
+        $guard = resolve(RoleAccessGuard::class);
+
+        $error = $this->importAccessError(fn ($admin): ?string => $guard->permissionError($admin, $permission));
+
+        if ($error) {
+            $this->skipRow($rowNumber, $errorCode, $columnName, trans($error));
+
+            return false;
+        }
+
+        return true;
     }
 }
