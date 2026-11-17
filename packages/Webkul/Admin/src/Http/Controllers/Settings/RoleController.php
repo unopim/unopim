@@ -10,6 +10,7 @@ use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Settings\RolesDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\RoleForm;
+use Webkul\Core\Platform\ModuleGate;
 use Webkul\User\Repositories\AdminRepository;
 use Webkul\User\Repositories\RoleRepository;
 use Webkul\User\Services\RoleAccessGuard;
@@ -55,12 +56,17 @@ class RoleController extends Controller
     {
         Event::dispatch('user.role.create.before');
 
-        $role = $this->roleRepository->create($request->only([
+        $data = $request->only([
             'name',
             'description',
             'permission_type',
-            'permissions',
-        ]));
+        ]);
+
+        if (is_array($request->input('permissions'))) {
+            $data['permissions'] = app(ModuleGate::class)->keepHiddenKeys($request->input('permissions'), []);
+        }
+
+        $role = $this->roleRepository->create($data);
 
         Event::dispatch('user.role.create.after', $role);
 
@@ -85,16 +91,21 @@ class RoleController extends Controller
      */
     public function update(RoleForm $request, int $id): JsonResponse|RedirectResponse
     {
-        $data = array_merge($request->only([
+        $data = $request->only([
             'name',
             'description',
             'permission_type',
-        ]), [
-            'permissions' => $request->has('permissions') ? $request->permissions : [],
         ]);
 
-        $role = DB::transaction(function () use ($data, $id) {
+        $submittedPermissions = $request->has('permissions') ? (array) $request->permissions : [];
+
+        $role = DB::transaction(function () use ($data, $submittedPermissions, $id) {
             $role = $this->roleRepository->lockForFullAccessChange($id);
+
+            $data['permissions'] = app(ModuleGate::class)->keepHiddenKeys(
+                $submittedPermissions,
+                (array) ($role->permissions ?? []),
+            );
 
             $losesFullAccess = $role->permission_type === RoleAccessGuard::FULL_ACCESS
                 && $data['permission_type'] !== RoleAccessGuard::FULL_ACCESS;
