@@ -42,9 +42,15 @@ class TemplateParser
 
     private function compile(string $source, bool $html): ParsedTemplate
     {
-        $count = (int) preg_match_all(self::EXPRESSION_PATTERN, $source, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
+        $matches = [];
+        $offset = 0;
 
-        if ($count > self::MAX_EXPRESSIONS) {
+        while (count($matches) <= self::MAX_EXPRESSIONS && preg_match(self::EXPRESSION_PATTERN, $source, $match, PREG_OFFSET_CAPTURE, $offset) === 1) {
+            $matches[] = $match;
+            $offset = $match[0][1] + strlen($match[0][0]);
+        }
+
+        if (count($matches) > self::MAX_EXPRESSIONS) {
             return new ParsedTemplate([$source], [new TemplateMessage('too-many-expressions', ['max' => self::MAX_EXPRESSIONS])]);
         }
 

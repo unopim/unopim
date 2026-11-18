@@ -83,6 +83,16 @@ it('warns about single braces without failing', function () {
         ->and($result->warnings[0]->replace)->toBe(['text' => 'tpl_name']);
 });
 
+it('limits how many single braces are scanned for warnings', function () {
+    $source = '{{ tpl_name }} '.implode(' ', array_map(fn (int $index): string => "{w{$index}}", range(1, 150)));
+
+    $result = $this->validator->validate($source, $this->description);
+
+    expect($result->passes())->toBeTrue()
+        ->and($result->warnings)->toHaveCount(100)
+        ->and($result->warnings[0]->replace)->toBe(['text' => 'w1']);
+});
+
 it('rejects expressions inside html tags of rich text', function () {
     $result = $this->validator->validate('<p><a href="https://example.com/{{ tpl_name }}">Shop</a></p>', $this->richDescription);
 

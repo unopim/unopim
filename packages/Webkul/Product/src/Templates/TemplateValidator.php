@@ -18,6 +18,8 @@ class TemplateValidator implements TemplateValidatorContract
 
     private const string SINGLE_BRACE_PATTERN = '/(?<!\{)\{\s*(\w+)\s*\}(?!\})/';
 
+    private const int MAX_SINGLE_BRACES = 100;
+
     private ?array $currencies = null;
 
     public function __construct(
@@ -83,11 +85,17 @@ class TemplateValidator implements TemplateValidatorContract
     {
         $literalText = implode(' ', array_filter($template->segments, is_string(...)));
 
-        preg_match_all(self::SINGLE_BRACE_PATTERN, $literalText, $matches);
+        $words = [];
+        $offset = 0;
+
+        while (count($words) < self::MAX_SINGLE_BRACES && preg_match(self::SINGLE_BRACE_PATTERN, $literalText, $match, PREG_OFFSET_CAPTURE, $offset) === 1) {
+            $words[] = $match[1][0];
+            $offset = $match[0][1] + strlen($match[0][0]);
+        }
 
         return array_map(
             fn (string $word): TemplateMessage => new TemplateMessage('single-brace', ['text' => $word]),
-            array_values(array_unique($matches[1])),
+            array_values(array_unique($words)),
         );
     }
 
