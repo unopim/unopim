@@ -6,7 +6,6 @@
     "test": "npx playwright test",
     "test:headed": "npx playwright test --headed",
     "test:ui": "npx playwright test --ui",
-    "test:datagrid": "npx playwright test tests/01-catalog/product-grid-attribute-sort",
     "test:api": "npx playwright test tests/api",
     "test:api:oauth": "npx playwright test tests/api/01-oauth",
     "test:api:locales": "npx playwright test tests/api/02-locales",
