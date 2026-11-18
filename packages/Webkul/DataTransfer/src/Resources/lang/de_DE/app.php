@@ -308,10 +308,11 @@ return [
         ],
     ],
     'job' => [
-        'started'   => 'Jobausführung gestartet',
-        'completed' => 'Jobausführung abgeschlossen',
-        'stalled'   => 'Der Auftrag hat länger als :minutes Minuten nicht reagiert und wurde als fehlgeschlagen markiert. Der ausführende Worker wurde vermutlich beendet.',
-        'reaped'    => ':count hängengebliebene Aufträge wurden als fehlgeschlagen markiert.',
-        'stopped'   => 'Import nach der Validierung mit :count Fehlern abgebrochen. Es wurden keine Zeilen importiert.',
+        'started'         => 'Jobausführung gestartet',
+        'completed'       => 'Jobausführung abgeschlossen',
+        'stalled'         => 'Der Auftrag hat länger als :minutes Minuten nicht reagiert und wurde als fehlgeschlagen markiert. Der ausführende Worker wurde vermutlich beendet.',
+        'reaped'          => ':count hängengebliebene Aufträge wurden als fehlgeschlagen markiert.',
+        'stopped'         => 'Import nach der Validierung mit :count Fehlern abgebrochen. Es wurden keine Zeilen importiert.',
+        'module-disabled' => 'Der Auftragstyp :type gehört zu einem deaktivierten Plattformmodul und kann daher nicht ausgeführt werden.',
     ],
 ];

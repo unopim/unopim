@@ -24,10 +24,16 @@ return [
     'file-outside-attribute-path'      => 'Filen :value tillhör inte den här posten. Ladda upp den igen för fältet :attribute.',
     'password-surrounding-whitespace'  => 'Fältet :attribute får inte börja eller sluta med ett mellanslag.',
     'password-whitespace-only'         => 'Fältet :attribute får inte bestå enbart av mellanslag.',
+    'hideable-sections'                => ':attribute innehåller ett avsnitt som inte kan döljas.',
     'active-content-detected'          => ':attribute kunde inte laddas upp eftersom den innehåller aktivt innehåll (:reason).',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'inbäddad JavaScript eller en PDF-åtgärd som körs automatiskt',
         'embedded_vba_macro'            => 'ett inbäddat VBA-makro',
         'auto_executing_ole_object'     => 'ett automatiskt körande inbäddat objekt',
+    ],
+    'platform-modules'                => [
+        'empty'    => 'Välj minst en plattformsmodul.',
+        'unknown'  => 'Plattformsmodulen ":module" är inte installerad.',
+        'requires' => ':module kan bara slås på tillsammans med :requires.',
     ],
 ];
