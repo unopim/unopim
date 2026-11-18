@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
 use OpenSpout\Reader\CSV\Reader as CsvReader;
 use OpenSpout\Reader\XLSX\Reader as XlsxReader;
@@ -47,7 +48,7 @@ beforeEach(function () {
     $this->variableAttribute('tpl_exp_headline', 'text', ['enable_templates' => 1, 'value_per_locale' => 1, 'value_per_channel' => 1]);
     $this->templateAttribute('tpl_exp_description', ['enable_wysiwyg' => 1]);
 
-    $this->filters = ['channels' => [$this->channel->code], 'locales' => ['en_US', 'de_DE']];
+    $this->filters = ['channels' => [$this->channel->code], 'locales' => ['en_US', 'de_DE'], 'render_templates' => '1'];
 
     $this->names = [
         'en_US' => ['tpl_exp_name' => 'Sunglasses'],
@@ -304,20 +305,26 @@ it('writes the stored template sources when the profile turns rendering off', fu
         ->and($rows['de_DE'])->toMatchArray([...$sources, 'tpl_exp_headline' => 'Nur {{ tpl_exp_tagline | lower }}']);
 })->with('template export formats');
 
-it('renders templates when the profile turns rendering on or predates the option', function (array $option) {
+it('renders templates only when the profile turns rendering on', function (array $option, array $titles) {
     $product = Product::factory()->create(['values' => [
         'common'          => ['tpl_exp_brand' => 'Acme', 'tpl_exp_title' => '{{ tpl_exp_name }} by {{ tpl_exp_brand | upper }}'],
         'locale_specific' => $this->names,
     ]]);
 
-    $rows = templateRowsBySku(templateExportRows([$product], [...$this->filters, ...$option]))[$product->sku];
+    $rows = templateRowsBySku(templateExportRows([$product], [...Arr::except($this->filters, 'render_templates'), ...$option]))[$product->sku];
 
-    expect($rows['en_US']['tpl_exp_title'])->toBe('Sunglasses by ACME')
-        ->and($rows['de_DE']['tpl_exp_title'])->toBe('Sonnenbrille by ACME');
+    expect([$rows['en_US']['tpl_exp_title'], $rows['de_DE']['tpl_exp_title']])->toBe($titles);
 })->with([
-    'option on'     => [['render_templates' => '1']],
-    'older profile' => [[]],
+    'option on'     => [['render_templates' => '1'], ['Sunglasses by ACME', 'Sonnenbrille by ACME']],
+    'option off'    => [['render_templates' => '0'], array_fill(0, 2, '{{ tpl_exp_name }} by {{ tpl_exp_brand | upper }}')],
+    'older profile' => [[], array_fill(0, 2, '{{ tpl_exp_name }} by {{ tpl_exp_brand | upper }}')],
 ]);
+
+it('leaves the render templates option off on a new export profile', function () {
+    $field = collect(config('exporters.products.filters.fields'))->firstWhere('name', 'render_templates');
+
+    expect($field)->not->toHaveKey('default');
+});
 
 it('stores the render templates option on the export profile and rejects other values', function () {
     $profile = templateExportProfile('0');

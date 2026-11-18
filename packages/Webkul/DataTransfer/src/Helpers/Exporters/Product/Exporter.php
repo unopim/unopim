@@ -180,7 +180,7 @@ class Exporter extends AbstractExporter
 
     protected function shouldRenderTemplates(): bool
     {
-        return (string) ($this->getFilters()['render_templates'] ?? '1') !== '0';
+        return (string) ($this->getFilters()['render_templates'] ?? '0') === '1';
     }
 
     protected function renderTemplateValues(array $fields, array $values, string $channel, string $locale): array

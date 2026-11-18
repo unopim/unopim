@@ -85,7 +85,6 @@ return [
                     'info'     => 'data_transfer::app.exporters.fields.render-templates-info',
                     'required' => false,
                     'type'     => 'boolean',
-                    'default'  => '1',
                 ], [
                     'name'     => 'date_format',
                     'title'    => 'data_transfer::app.exporters.fields.date-format',
