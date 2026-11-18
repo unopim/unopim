@@ -450,6 +450,10 @@ class Importer extends AbstractImporter
             if ($id) {
                 $admin = $this->adminRepository->find($id);
 
+                if (blank($rowData['timezone'] ?? null)) {
+                    unset($data['timezone']);
+                }
+
                 if ($imagePath = $this->storeUserImage($rowData['image'] ?? null, $admin)) {
                     $data['image'] = $imagePath;
                 }

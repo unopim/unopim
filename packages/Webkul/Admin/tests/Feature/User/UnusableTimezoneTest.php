@@ -6,13 +6,13 @@ use Webkul\Product\Models\Product;
 use Webkul\User\Models\Admin;
 use Webkul\User\Models\Role;
 
-beforeEach(function () {
+beforeEach(function (): void {
     config(['elasticsearch.enabled' => false]);
 });
 
 dataset('unusable timezones', ['blank' => '', 'invalid' => 'Mars/Phobos']);
 
-it('opens the product grid with the updated at column for a user with an unusable timezone', function (string $timezone) {
+it('opens the product grid with the updated at column for a user with an unusable timezone', function (string $timezone): void {
     $this->loginAsAdmin(Admin::factory()->create(['timezone' => $timezone]));
 
     Product::factory()->create();
@@ -22,7 +22,7 @@ it('opens the product grid with the updated at column for a user with an unusabl
         ->assertOk();
 })->with('unusable timezones');
 
-it('opens the product edit page for a user with an unusable timezone', function (string $timezone) {
+it('opens the product edit page for a user with an unusable timezone', function (string $timezone): void {
     $this->loginAsAdmin(Admin::factory()->create(['timezone' => $timezone]));
 
     $product = Product::factory()->create();
@@ -30,7 +30,7 @@ it('opens the product edit page for a user with an unusable timezone', function 
     $this->get(route('admin.catalog.products.edit', $product->id))->assertOk();
 })->with('unusable timezones');
 
-it('opens the product history for a user with an unusable timezone', function (string $timezone) {
+it('opens the product history for a user with an unusable timezone', function (string $timezone): void {
     $this->loginAsAdmin(Admin::factory()->create(['timezone' => $timezone]));
 
     $product = Product::factory()->create();
@@ -40,7 +40,7 @@ it('opens the product history for a user with an unusable timezone', function (s
         ->assertOk();
 })->with('unusable timezones');
 
-it('formats dates in the app timezone for an unusable user timezone and in the user timezone otherwise', function () {
+it('formats dates in the app timezone for an unusable user timezone and in the user timezone otherwise', function (): void {
     $date = Date::parse('2026-01-01 12:00:00', 'UTC');
 
     config(['app.timezone' => 'UTC']);
@@ -54,7 +54,7 @@ it('formats dates in the app timezone for an unusable user timezone and in the u
     expect(core()->formatDateWithTimeZone($date->copy(), 'Y-m-d H:i'))->toBe('2026-01-01 17:30');
 });
 
-it('rejects an invalid timezone when creating a user', function () {
+it('rejects an invalid timezone when creating a user', function (): void {
     $this->loginAsAdmin();
 
     $this->postJson(route('admin.settings.users.store'), [
@@ -71,22 +71,20 @@ it('rejects an invalid timezone when creating a user', function () {
     $this->assertDatabaseMissing('admins', ['email' => 'invalid.tz@example.com']);
 });
 
-it('rejects an invalid timezone on the account form and repairs a stored unusable one', function () {
-    $admin = $this->loginAsAdmin(Admin::factory()->create(['timezone' => 'Mars/Phobos']));
+it('rejects an invalid timezone when editing a user and keeps the stored one', function (): void {
+    $this->loginAsAdmin();
 
-    $payload = [
-        'name'         => $admin->name,
-        'email'        => $admin->email,
-        'ui_locale_id' => $admin->ui_locale_id ?: Locale::where('code', 'en_US')->value('id'),
-    ];
+    $user = Admin::factory()->create(['timezone' => 'Asia/Kolkata']);
 
-    $this->putJson(route('admin.account.update'), $payload + ['timezone' => 'Mars/Phobos'])
-        ->assertUnprocessable()
-        ->assertJsonValidationErrors('timezone');
+    $this->putJson(route('admin.settings.users.update'), [
+        'id'           => $user->id,
+        'name'         => 'Invalid Timezone User',
+        'email'        => $user->email,
+        'role_id'      => $user->role_id,
+        'ui_locale_id' => Locale::where('code', 'en_US')->value('id'),
+        'timezone'     => 'Mars/Phobos',
+        'status'       => 1,
+    ])->assertUnprocessable()->assertOnlyJsonValidationErrors('timezone');
 
-    $this->withHeader('X-Ajax-Form', 'true')
-        ->put(route('admin.account.update'), $payload + ['timezone' => ''])
-        ->assertSuccessful();
-
-    expect($admin->fresh()->timezone)->toBe(config('app.timezone'));
+    expect($user->fresh()->timezone)->toBe('Asia/Kolkata');
 });
