@@ -178,7 +178,7 @@ it('executes permitted pending batches and completes the import', function (stri
     'skip-errors ignores stop-on-errors limit' => [Import::VALIDATION_STRATEGY_SKIP_ERRORS, 0, true],
 ]);
 
-it('completes a skip-errors import whose rows are all invalid with a completion time', function (): void {
+it('fails a skip-errors import whose rows are all invalid with a completion time', function (): void {
     StopOnErrorsTestImporter::$rows = [['code' => 'invalid-only', 'status' => 'invalid']];
     $track = makeStopOnErrorsTrack(Import::VALIDATION_STRATEGY_SKIP_ERRORS, 10);
 
@@ -187,12 +187,11 @@ it('completes a skip-errors import whose rows are all invalid with a completion 
     $track->refresh();
     expect($track->batches)->toHaveCount(0)
         ->and(StopOnErrorsTestImporter::$importedCodes)->toBe([])
-        ->and($track->state)->toBe(Import::STATE_COMPLETED)
+        ->and($track->state)->toBe(Import::STATE_FAILED)
         ->and($track->completed_at)->not->toBeNull()
-        ->and($track->errors_count)->toBe(1)
-        ->and($track->summary)->toEqual(['created' => 0, 'updated' => 0, 'deleted' => 0]);
+        ->and($track->errors_count)->toBe(1);
     Event::assertNotDispatched('data_transfer.imports.started');
-    Event::assertDispatchedTimes('data_transfer.imports.completed', 1);
+    Event::assertNotDispatched('data_transfer.imports.completed');
 });
 
 it('hands the type importer a job logger when none was set on the import helper', function (): void {

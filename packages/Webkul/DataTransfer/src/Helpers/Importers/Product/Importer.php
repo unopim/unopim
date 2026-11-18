@@ -1236,7 +1236,7 @@ class Importer extends AbstractImporter
             $structure = $parentType === ProductType::Configurable->value ? $this->getRowVariantStructure($rowData) : null;
             $levelsError = $this->variantStructureLevelsError($rowData['type'], $structure);
 
-            if ($structure instanceof VariantStructure && $levelsError !== null) {
+            if ($levelsError !== null) {
                 $message = trans($this->messages[$levelsError], ['code' => $structure->code]);
 
                 $this->skipRow($rowNumber, $levelsError, 'type', str_replace('%', '%%', $message));

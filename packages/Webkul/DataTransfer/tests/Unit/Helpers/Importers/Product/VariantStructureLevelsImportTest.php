@@ -92,6 +92,8 @@ function levelsTwoLevelMismatchMessage(VariantStructure $structure): string
 
 /**
  * Run an append import of the given CSV lines through the queued job.
+ *
+ * @param  array<int, string>  $rows
  */
 function runLevelsImport(string $header, array $rows, string $strategy = Import::VALIDATION_STRATEGY_STOP_ON_ERROR): JobTrack
 {
@@ -131,7 +133,16 @@ function runLevelsImport(string $header, array $rows, string $strategy = Import:
     return $jobTrack->refresh();
 }
 
+/**
+ * Import error expected for a row whose parent row was rejected.
+ */
+function levelsOrphanMessage(): string
+{
+    return trans('data_transfer::app.importers.products.validation.errors.parent-not-exist');
+}
+
 beforeEach(function (): void {
+    Storage::fake('private');
     $this->loginAsAdmin();
 });
 
@@ -150,6 +161,7 @@ it('rejects variant_group rows under a single-level variant structure', function
     expect($jobTrack->state)->toBe(Import::STATE_FAILED)
         ->and($jobTrack->completed_at)->not->toBeNull()
         ->and($jobTrack->errors)->toContain('Row(s) 2: '.levelsMismatchMessage($fixture['structure']))
+        ->and($jobTrack->errors)->toContain('Row(s) 3: '.levelsOrphanMessage())
         ->and(Product::whereIn('sku', [$sku, $sku.'-black', $sku.'-black-m'])->exists())->toBeFalse();
 });
 
@@ -189,6 +201,8 @@ it('keeps the configurable and skips the variant_group branch when errors are sk
 
     expect($jobTrack->state)->toBe('completed')
         ->and($jobTrack->errors)->toContain('Row(s) 2: '.levelsMismatchMessage($fixture['structure']))
+        ->and($jobTrack->errors)->toContain('Row(s) 3: '.levelsOrphanMessage())
+        ->and($jobTrack->invalid_rows_count)->toBe(2)
         ->and(Product::where('sku', $sku)->exists())->toBeTrue()
         ->and(Product::where('sku', $sku.'-white')->first()?->parent?->sku)->toBe($sku)
         ->and(Product::whereIn('sku', [$sku.'-black', $sku.'-black-m'])->exists())->toBeFalse();
