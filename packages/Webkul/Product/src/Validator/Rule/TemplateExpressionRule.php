@@ -11,8 +11,14 @@ use Webkul\Product\Contracts\TemplateValidator;
 
 class TemplateExpressionRule implements ValidationRule
 {
+    /**
+     * Create a new rule instance.
+     */
     public function __construct(protected Attribute $attribute) {}
 
+    /**
+     * Run the template validator on the value and fail with each error it reports.
+     */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if (! is_string($value) || ! str_contains($value, '{{')) {

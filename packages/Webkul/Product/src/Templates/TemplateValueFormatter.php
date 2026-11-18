@@ -31,16 +31,25 @@ class TemplateValueFormatter
 
     private array $optionLabels = [];
 
+    /**
+     * Create a new template value formatter instance.
+     */
     public function __construct(
         protected AttributeNormalizerFactory $normalizerFactory,
         protected ChannelRepository $channelRepository,
     ) {}
 
+    /**
+     * Determine if the attribute type can be used as a template variable.
+     */
     public function supports(AttributeContract $attribute): bool
     {
         return in_array($attribute->type, self::SUPPORTED_TYPES, true);
     }
 
+    /**
+     * Format the attribute value as text for a template, or return null when it is empty.
+     */
     public function format(AttributeContract $attribute, mixed $value, string $channel, string $locale, ?string $currency = null): ?string
     {
         if (! is_filled_value($value)) {
@@ -60,6 +69,9 @@ class TemplateValueFormatter
         return is_filled_value($formatted) ? $formatted : null;
     }
 
+    /**
+     * Convert HTML into plain text, keeping a space between block elements.
+     */
     public function toPlainText(string $html): string
     {
         $text = preg_replace(self::BLOCK_BOUNDARY_PATTERN, ' ', $html) ?? $html;
@@ -67,6 +79,9 @@ class TemplateValueFormatter
         return Str::squish(html_entity_decode(strip_tags($text), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
     }
 
+    /**
+     * Get the currency codes assigned to the given channel.
+     */
     public function channelCurrencies(string $channel): array
     {
         return $this->channelCurrencies[$channel] ??= $this->channelRepository

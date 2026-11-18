@@ -25,6 +25,9 @@ class ProductTemplateController extends Controller
 
     private const array DATA_WARNINGS = ['missing-value'];
 
+    /**
+     * Create a new controller instance.
+     */
     public function __construct(
         protected ProductRepository $productRepository,
         protected AttributeRepository $attributeRepository,
@@ -34,6 +37,9 @@ class ProductTemplateController extends Controller
         protected VariantValueResolver $variantValueResolver,
     ) {}
 
+    /**
+     * Return the product family attributes usable as template variables, filtered by the query.
+     */
     public function suggestions(int $id): JsonResponse
     {
         $product = $this->productRepository->findOrFail($id);
@@ -66,6 +72,9 @@ class ProductTemplateController extends Controller
         ])->all());
     }
 
+    /**
+     * Render the attribute template for the product and return the output with its errors and warnings.
+     */
     public function preview(ProductTemplatePreviewForm $request, int $id): JsonResponse
     {
         $product = $this->productRepository->findOrFail($id);

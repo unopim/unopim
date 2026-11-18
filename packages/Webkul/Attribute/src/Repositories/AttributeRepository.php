@@ -133,6 +133,9 @@ class AttributeRepository extends Repository
         return $data;
     }
 
+    /**
+     * Determine if the given settings leave templates disabled or describe an attribute that can hold them.
+     */
     public function supportsTemplates(array $data, ?Attribute $attribute = null): bool
     {
         $candidate = ($attribute ? clone $attribute : $this->model->newInstance())

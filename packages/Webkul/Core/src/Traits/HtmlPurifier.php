@@ -21,6 +21,9 @@ trait HtmlPurifier
         return $purifier->purify($value);
     }
 
+    /**
+     * Purify rendered template HTML with a purifier instance that is reused across calls.
+     */
     public function purifyRenderedHtml(string $value): string
     {
         $this->renderedHtmlPurifier ??= new BaseHTMLPurifier($this->htmlPurifierConfig());

@@ -26,23 +26,38 @@ class FilterRegistry
 
     protected array $instances = [];
 
+    /**
+     * Create a new filter registry instance.
+     */
     public function __construct(protected Container $app) {}
 
+    /**
+     * Determine if a filter with the given name is registered.
+     */
     public function has(string $name): bool
     {
         return isset($this->filters[$name]);
     }
 
+    /**
+     * Get the filter instance for the given name, resolving it from the container only once.
+     */
     public function get(string $name): TemplateFilter
     {
         return $this->instances[$name] ??= $this->app->make($this->filters[$name]);
     }
 
+    /**
+     * Get the names of all registered filters.
+     */
     public function names(): array
     {
         return array_keys($this->filters);
     }
 
+    /**
+     * Get each filter's name, suggested call and supported attribute types.
+     */
     public function suggestions(): array
     {
         return array_map(fn (string $name): array => [
@@ -52,6 +67,9 @@ class FilterRegistry
         ], $this->names());
     }
 
+    /**
+     * Return the first problem found in the expression's filter chain, or null when it is valid.
+     */
     public function inspect(Expression $expression, string $attributeType): ?TemplateMessage
     {
         foreach ($expression->filters as $position => $call) {

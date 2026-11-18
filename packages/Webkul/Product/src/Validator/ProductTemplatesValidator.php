@@ -31,6 +31,9 @@ class ProductTemplatesValidator
 
     private ?array $scopes = null;
 
+    /**
+     * Create a new product templates validator instance.
+     */
     public function __construct(
         protected TemplateParser $parser,
         protected AttributeRepository $attributeRepository,
@@ -39,6 +42,9 @@ class ProductTemplatesValidator
         protected VariantValueResolver $variantValueResolver,
     ) {}
 
+    /**
+     * Validate submitted templates for family and circular reference errors across all channels and locales.
+     */
     public function validate(mixed $data, ?int $productId = null): void
     {
         if (! is_array($data) || ! $this->submitsTemplates($data) || $this->templateAttributes()->isEmpty()) {
@@ -76,6 +82,9 @@ class ProductTemplatesValidator
         }
     }
 
+    /**
+     * Get the family and circular reference errors for the attribute's template in the given scope.
+     */
     public function attributeErrors(Attribute $attribute, array $values, ?Product $product, string $channel, string $locale): array
     {
         if (! $this->templateAttributes()->has($attribute->code)) {
@@ -92,6 +101,9 @@ class ProductTemplatesValidator
         return array_values(array_unique($messages[$this->path($attribute->code, $channel, $locale)] ?? []));
     }
 
+    /**
+     * Get the family and circular reference errors for the given template sources, keyed by attribute code.
+     */
     public function sourceErrors(array $sources, array $familyCodes): array
     {
         $references = [];

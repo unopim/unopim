@@ -22,6 +22,9 @@ class TemplateValidator implements TemplateValidatorContract
 
     private ?array $currencies = null;
 
+    /**
+     * Create a new template validator instance.
+     */
     public function __construct(
         protected TemplateParser $parser,
         protected FilterRegistry $filters,
@@ -30,6 +33,9 @@ class TemplateValidator implements TemplateValidatorContract
         protected CurrencyRepository $currencyRepository,
     ) {}
 
+    /**
+     * Validate the attribute's template source and collect its errors and single brace warnings.
+     */
     public function validate(string $source, Attribute $attribute): ValidationResult
     {
         if (! $attribute->canHoldTemplate() || ! str_contains($source, '{')) {

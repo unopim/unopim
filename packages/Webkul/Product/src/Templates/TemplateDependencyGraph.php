@@ -10,8 +10,14 @@ final class TemplateDependencyGraph
 
     private array $cycles = [];
 
+    /**
+     * Create a new dependency graph instance from the attribute references.
+     */
     public function __construct(private readonly array $references) {}
 
+    /**
+     * Find every circular reference path in the graph.
+     */
     public function cycles(): array
     {
         $this->finished = [];

@@ -21,6 +21,9 @@ class TemplateRenderer implements TemplateRendererContract
 
     public const int MAX_RENDERED_BYTES = 1_000_000;
 
+    /**
+     * Create a new template renderer instance.
+     */
     public function __construct(
         protected TemplateParser $parser,
         protected FilterRegistry $filters,
@@ -28,6 +31,9 @@ class TemplateRenderer implements TemplateRendererContract
         protected AttributeService $attributeService,
     ) {}
 
+    /**
+     * Render the template source with the given values, or return it unchanged when it holds no template.
+     */
     public function render(string $source, Attribute $attribute, array $values, string $channel, string $locale): RenderResult
     {
         if (! $attribute->canHoldTemplate() || ! $this->parser->containsTemplate($source)) {
@@ -41,6 +47,9 @@ class TemplateRenderer implements TemplateRendererContract
         return new RenderResult($source, $output, $context->errors(), $context->warnings());
     }
 
+    /**
+     * Render the attribute's template stored on the product for the given channel and locale.
+     */
     public function renderProduct(Product $product, Attribute $attribute, string $channel, string $locale): RenderResult
     {
         $values = $product->resolvedValues();

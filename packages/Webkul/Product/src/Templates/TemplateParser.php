@@ -24,6 +24,9 @@ class TemplateParser
 
     private array $cache = [];
 
+    /**
+     * Parse the template source into text and expression segments, caching the result.
+     */
     public function parse(string $source, bool $html = false): ParsedTemplate
     {
         $key = ($html ? 'html:' : 'text:').hash('xxh128', $source);
@@ -35,6 +38,9 @@ class TemplateParser
         return $this->cache[$key] ??= $this->compile($source, $html);
     }
 
+    /**
+     * Determine if the value is a string that contains a template expression.
+     */
     public function containsTemplate(mixed $value): bool
     {
         return is_string($value) && str_contains($value, '{{');

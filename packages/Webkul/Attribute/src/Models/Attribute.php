@@ -258,6 +258,9 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
         return $validations;
     }
 
+    /**
+     * Determine if templates are enabled and allowed by the attribute's type, validation and uniqueness.
+     */
     public function canHoldTemplate(): bool
     {
         return (bool) $this->enable_templates
@@ -266,6 +269,9 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
             && ! $this->is_unique;
     }
 
+    /**
+     * Determine if the attribute is a textarea with the WYSIWYG editor enabled.
+     */
     public function isRichText(): bool
     {
         return $this->type === self::TEXTAREA_TYPE && (bool) $this->enable_wysiwyg;

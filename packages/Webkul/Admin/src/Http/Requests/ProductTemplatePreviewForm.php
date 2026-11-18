@@ -9,11 +9,17 @@ use Webkul\Product\Type\AbstractType;
 
 class ProductTemplatePreviewForm extends FormRequest
 {
+    /**
+     * Determine if the user is authorized to preview product templates.
+     */
     public function authorize(): bool
     {
         return bouncer()->hasPermission('catalog.products.edit');
     }
 
+    /**
+     * Get the validation rules that apply to the request.
+     */
     public function rules(): array
     {
         return [
