@@ -1240,7 +1240,9 @@ class Importer extends AbstractImporter
         }
 
         $validator = $this->cachedValidators[$cacheKey];
-        $validator->setData(EscapeFormulaOperators::unescapeRow($rowData));
+        $validatableRow = EscapeFormulaOperators::unescapeRow($rowData);
+
+        $validator->setData($validatableRow);
 
         if ($validator->fails()) {
             $failedAttributes = $validator->failed();
@@ -1252,7 +1254,7 @@ class Importer extends AbstractImporter
             }
         }
 
-        $this->validatUniqueAttributeValues($rowData, $rowNumber);
+        $this->validatUniqueAttributeValues([...$validatableRow, 'sku' => $rowData['sku']], $rowNumber);
 
         if ($rowData['type'] == ProductType::Configurable->value && empty($rowData[self::VARIANT_STRUCTURE_CODE])) {
             if (empty($rowData['configurable_attributes'])) {

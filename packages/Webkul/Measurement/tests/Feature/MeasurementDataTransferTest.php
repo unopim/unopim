@@ -225,7 +225,7 @@ it('unescapes a formula-escaped amount before casting it (R8)', function () {
         ->and((float) ($stored['amount'] ?? 0))->toBe(-5.0);
 });
 
-it('validates a formula-escaped negative value as the number it will be stored as', function () {
+it('validates a formula-escaped negative value as the number it will be stored as', function (): void {
     [$family, $measurement, $plain] = measurementAttributeInFamily();
 
     $measurement->update(['validation' => 'number']);
@@ -247,4 +247,26 @@ it('validates a formula-escaped negative value as the number it will be stored a
     ], 1);
 
     expect($isValid)->toBeTrue();
+});
+
+it('checks uniqueness on the unescaped value of a row', function (): void {
+    [$family, , $plain] = measurementAttributeInFamily();
+
+    $plain->update(['is_unique' => 1]);
+
+    $importer = app(CoreImporter::class)->setImport(JobTrack::factory()->create());
+    $importer->setErrorHelper(app(Error::class));
+
+    $row = fn (string $value): array => [
+        'sku'              => 'unique-import-'.uniqid(),
+        'type'             => ProductType::Simple->value,
+        'attribute_family' => $family->code,
+        'channel'          => 'default',
+        'locale'           => 'en_US',
+        'status'           => 'true',
+        $plain->code       => $value,
+    ];
+
+    expect($importer->validateRow($row(EscapeFormulaOperators::escapeValue('-5')), 1))->toBeTrue()
+        ->and($importer->validateRow($row('-5'), 2))->toBeFalse();
 });

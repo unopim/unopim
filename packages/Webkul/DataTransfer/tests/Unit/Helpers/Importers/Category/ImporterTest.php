@@ -25,7 +25,7 @@ it('keeps the productCounts allowance consistent across catalog importers', func
         ->and(validColumnNamesOf(CategoryFieldImporter::class))->toContain('productCounts');
 });
 
-it('validates a formula-escaped negative category field value as the number it will be stored as', function () {
+it('validates a formula-escaped negative category field value as the number it will be stored as', function (): void {
     $field = CategoryField::factory()->create([
         'type'       => 'text',
         'validation' => 'number',
