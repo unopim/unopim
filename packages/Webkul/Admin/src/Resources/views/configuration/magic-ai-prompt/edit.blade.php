@@ -79,7 +79,7 @@
                     <x-admin::form.control-group.control
                         type="text"
                         name="title"
-                        rules="required"
+                        rules="required|max:255"
                         :value="old('title') ?: $prompt->title"
                         :label="trans('admin::app.configuration.prompt.create.label-title')"
                         :placeholder="trans('admin::app.configuration.prompt.create.label-title')"
