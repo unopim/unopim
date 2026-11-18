@@ -2118,6 +2118,7 @@ return [
             'delete-failed'                   => 'Ștergerea rolului a eșuat',
             'delete-success'                  => 'Rolul a fost șters cu succes',
             'last-delete-error'               => 'Ultimul rol nu poate fi șters',
+            'last-full-access'                => 'Cel puțin un utilizator activ trebuie să păstreze accesul complet.',
             'update-success'                  => 'Rolul a fost actualizat cu succes',
         ],
     ],

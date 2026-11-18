@@ -7,12 +7,14 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\Mime\MimeTypes;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\ImportDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Traits\GatesJobTypes;
+use Webkul\DataTransfer\Contracts\JobInstances as JobInstancesContract;
 use Webkul\DataTransfer\Contracts\JobTrack as JobTrackContract;
 use Webkul\DataTransfer\Contracts\Validator\JobInstances\JobValidator;
 use Webkul\DataTransfer\Enums\JobType;
@@ -113,11 +115,7 @@ class ImportController extends Controller
 
         if (isset($importerConfig[$data['entity_type']]['has_file_options']) && $importerConfig[$data['entity_type']]['has_file_options'] == 'true') {
             $fileData = [
-                'file_path' => request()->file('file')->storeAs(
-                    'imports',
-                    time().'-'.request()->file('file')->getClientOriginalName(),
-                    'private'
-                ),
+                'file_path' => $this->storeImportFile(),
                 'type'      => self::TYPE,
             ];
         }
@@ -128,6 +126,8 @@ class ImportController extends Controller
                 $data
             )
         );
+
+        $this->recordProfileSaver($import, isset($fileData['file_path']));
 
         Event::dispatch('data_transfer.imports.create.after', $import);
 
@@ -201,20 +201,43 @@ class ImportController extends Controller
         if (request()->file('file') && request()->file('file')->isValid()) {
             Storage::disk('private')->delete($import->file_path);
 
-            $data['file_path'] = request()->file('file')->storeAs(
-                'imports',
-                time().'-'.request()->file('file')->getClientOriginalName(),
-                'private'
-            );
+            $data['file_path'] = $this->storeImportFile();
         }
 
         $import = $this->jobInstancesRepository->update($data, $import->id);
+
+        $this->recordProfileSaver($import, isset($data['file_path']));
 
         Event::dispatch('data_transfer.imports.update.after', $import);
 
         session()->flash('success', trans('admin::app.settings.data-transfer.imports.update-success'));
 
         return redirect()->route('admin.settings.data_transfer.imports.import-view', $import->id);
+    }
+
+    /**
+     * Store the uploaded import file under a key no other upload can reuse, so its bytes stay tied to the admin who supplied them.
+     */
+    private function storeImportFile(): string
+    {
+        return request()->file('file')->storeAs(
+            'imports',
+            time().'-'.Str::random(16).'-'.request()->file('file')->getClientOriginalName(),
+            'private'
+        );
+    }
+
+    /**
+     * Record the admin who saved the profile, and who supplied its file when a new one was uploaded; importers check both admins' access.
+     */
+    private function recordProfileSaver(JobInstancesContract $import, bool $uploadedFile): void
+    {
+        $adminId = auth()->guard('admin')->id();
+
+        $import->forceFill([
+            'updated_by' => $adminId,
+            ...($uploadedFile ? ['file_uploaded_by' => $adminId] : []),
+        ])->saveQuietly();
     }
 
     /**

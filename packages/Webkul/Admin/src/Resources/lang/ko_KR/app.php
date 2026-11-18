@@ -2118,6 +2118,7 @@ return [
             'delete-failed'                   => '역할 삭제 실패.',
             'delete-success'                  => '역할 삭제 성공.',
             'last-delete-error'               => '마지막 역할을 삭제할 수 없습니다.',
+            'last-full-access'                => '최소 한 명의 활성 사용자는 전체 액세스 권한을 유지해야 합니다.',
             'update-success'                  => '역할이 성공적으로 업데이트되었습니다.',
         ],
     ],
