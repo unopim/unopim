@@ -27,7 +27,7 @@ it('defines create, edit and delete children for each Magic AI area', function (
 ]);
 
 it('maps every Magic AI route to exactly one permission key', function () {
-    $byRoute = magicAiAcl()->groupBy('route')->map(fn ($entries) => $entries->pluck('key')->unique()->values());
+    $byRoute = magicAiAcl()->groupBy('route')->map(fn (Collection $entries): Collection => $entries->pluck('key')->unique()->values());
 
     expect($byRoute->filter(fn ($keys) => $keys->count() > 1)->keys()->all())->toBe([]);
 });
