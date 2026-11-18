@@ -416,6 +416,7 @@
                             type="button"
                             class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-2 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-900 px-2.5 py-1.5 text-center leading-6 text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
                             aria-label="@lang('admin::app.components.datagrid.toolbar.per-page')"
+                            data-testid="datagrid-per-page-toggle"
                         >
                             <span v-text="applied.pagination.perPage"></span>
 
@@ -423,7 +424,7 @@
                         </button>
                     </x-slot>
 
-                    <x-slot:menu>
+                    <x-slot:menu data-testid="datagrid-per-page-menu">
                         <x-admin::dropdown.menu.item
                             v-for="perPageOption in available.meta.per_page_options"
                             ::key="perPageOption"

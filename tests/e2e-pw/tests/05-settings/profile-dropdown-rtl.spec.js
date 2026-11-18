@@ -1,79 +1,106 @@
 const { test, expect } = require('../../utils/fixtures');
 const { navigateTo } = require('../../utils/helpers');
 
-const PROFILE_TOGGLE = 'header .flex.gap-2\\.5.items-center > :last-child button';
-
-const SAVED_VIEWS_TOGGLE = '[data-grid-views]';
-
-async function openProfileMenu(page, direction) {
-  await navigateTo(page, 'dashboard');
+async function setDirection(page, direction) {
   await page.evaluate((dir) => { document.documentElement.dir = dir; }, direction);
-
-  await page.locator(PROFILE_TOGGLE).click();
-
-  const panel = page.locator('div.w-max', { has: page.locator('a[href$="/admin/account"]') });
-
-  await expect(panel).toBeVisible();
-  await expect(panel).not.toHaveClass(/\bduration-100\b/);
-
-  return panel;
 }
 
-async function openSavedViewsMenu(page, direction) {
-  await navigateTo(page, 'products');
-  await page.evaluate((dir) => { document.documentElement.dir = dir; }, direction);
-
-  const toggle = page.locator(SAVED_VIEWS_TOGGLE);
-
+async function openPanel(page, toggle, panel) {
   await expect(toggle).toBeVisible();
   await toggle.click();
 
-  const panel = page.locator('body > div.fixed.w-max', { has: page.locator('[data-view-search]') });
-
   await expect(panel).toBeVisible();
   await expect(panel).not.toHaveClass(/\bduration-100\b/);
-
-  return { toggle, panel };
 }
 
-test.describe('Profile dropdown alignment', () => {
+function dropdownToggleFor(page, inner) {
+  return page.getByTestId('dropdown-toggle').filter({ has: inner });
+}
+
+function dropdownPanelFor(page, inner) {
+  return page.getByTestId('dropdown-panel').filter({ has: inner });
+}
+
+async function boxes(page, anchor, panel) {
+  return {
+    anchorBox: await anchor.boundingBox(),
+    panelBox: await panel.boundingBox(),
+    viewportWidth: page.viewportSize().width,
+  };
+}
+
+function expectInsideViewport({ panelBox, viewportWidth }) {
+  expect(panelBox.x).toBeGreaterThanOrEqual(0);
+  expect(panelBox.x + panelBox.width).toBeLessThanOrEqual(viewportWidth);
+}
+
+function expectAlignedWithStartEdge({ anchorBox, panelBox }, direction) {
+  if (direction === 'rtl') {
+    expect(Math.abs((panelBox.x + panelBox.width) - (anchorBox.x + anchorBox.width))).toBeLessThan(1);
+  } else {
+    expect(Math.abs(panelBox.x - anchorBox.x)).toBeLessThan(1);
+  }
+}
+
+function expectAlignedWithEndEdge({ anchorBox, panelBox }, direction) {
+  expectAlignedWithStartEdge({ anchorBox, panelBox }, direction === 'rtl' ? 'ltr' : 'rtl');
+}
+
+test.describe('Profile dropdown alignment (bottom-right)', () => {
   for (const direction of ['ltr', 'rtl']) {
-    test(`opens inside the viewport and aligned with the profile toggle in ${direction}`, async ({ adminPage }) => {
-      const panel = await openProfileMenu(adminPage, direction);
+    test(`opens inside the viewport and aligned with the profile toggle end edge in ${direction}`, async ({ adminPage }) => {
+      await navigateTo(adminPage, 'dashboard');
+      await setDirection(adminPage, direction);
 
-      const panelBox = await panel.boundingBox();
-      const toggleBox = await adminPage.locator(PROFILE_TOGGLE).boundingBox();
-      const viewportWidth = adminPage.viewportSize().width;
+      const toggle = adminPage.getByTestId('profile-toggle');
+      const panel = dropdownPanelFor(adminPage, adminPage.getByTestId('profile-menu'));
 
-      expect(panelBox.x).toBeGreaterThanOrEqual(0);
-      expect(panelBox.x + panelBox.width).toBeLessThanOrEqual(viewportWidth);
+      await openPanel(adminPage, toggle, panel);
 
-      if (direction === 'rtl') {
-        expect(Math.abs(panelBox.x - toggleBox.x)).toBeLessThan(1);
-      } else {
-        expect(Math.abs((panelBox.x + panelBox.width) - (toggleBox.x + toggleBox.width))).toBeLessThan(1);
-      }
+      const measured = await boxes(adminPage, toggle, panel);
+
+      expectInsideViewport(measured);
+      expectAlignedWithEndEdge(measured, direction);
     });
   }
 });
 
-test.describe('Teleported dropdown alignment', () => {
+test.describe('Per-page dropdown alignment (bottom-left)', () => {
+  for (const direction of ['ltr', 'rtl']) {
+    test(`opens inside the viewport and aligned with the per-page toggle start edge in ${direction}`, async ({ adminPage }) => {
+      await navigateTo(adminPage, 'products');
+      await setDirection(adminPage, direction);
+
+      const button = adminPage.getByTestId('datagrid-per-page-toggle');
+      const anchor = dropdownToggleFor(adminPage, button);
+      const panel = dropdownPanelFor(adminPage, adminPage.getByTestId('datagrid-per-page-menu'));
+
+      await openPanel(adminPage, button, panel);
+
+      const measured = await boxes(adminPage, anchor, panel);
+
+      expectInsideViewport(measured);
+      expectAlignedWithStartEdge(measured, direction);
+    });
+  }
+});
+
+test.describe('Teleported dropdown alignment (bottom-left)', () => {
   for (const direction of ['ltr', 'rtl']) {
     test(`saved views panel opens inside the viewport and aligned with the toggle start edge in ${direction}`, async ({ adminPage }) => {
-      const { toggle, panel } = await openSavedViewsMenu(adminPage, direction);
+      await navigateTo(adminPage, 'products');
+      await setDirection(adminPage, direction);
 
-      const panelBox = await panel.boundingBox();
-      const toggleBox = await toggle.locator('xpath=..').boundingBox();
-      const viewportWidth = adminPage.viewportSize().width;
+      const button = adminPage.locator('[data-grid-views]');
+      const anchor = dropdownToggleFor(adminPage, button);
+      const panel = dropdownPanelFor(adminPage, adminPage.locator('[data-view-search]'));
 
-      expect(panelBox.x).toBeGreaterThanOrEqual(0);
-      expect(panelBox.x + panelBox.width).toBeLessThanOrEqual(viewportWidth);
+      await openPanel(adminPage, button, panel);
 
-      if (direction === 'rtl') {
-        expect(Math.abs((panelBox.x + panelBox.width) - (toggleBox.x + toggleBox.width))).toBeLessThan(1);
-      } else {
-        expect(Math.abs(panelBox.x - toggleBox.x)).toBeLessThan(1);
-      }
+      const measured = await boxes(adminPage, anchor, panel);
+
+      expectInsideViewport(measured);
+      expectAlignedWithStartEdge(measured, direction);
     });
   }
 });

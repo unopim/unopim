@@ -42,6 +42,7 @@
             <div
                 class="select-none flex"
                 ref="toggleBlock"
+                data-testid="dropdown-toggle"
                 @click="toggle()"
             >
                 <slot name="toggle">Toggle</slot>
@@ -69,6 +70,7 @@
                     <div
                         class="bg-white dark:bg-cherry-900 shadow-[0px_8px_10px_0px_rgba(0,0,0,0.20),0px_6px_30px_0px_rgba(0,0,0,0.12),0px_16px_24px_0px_rgba(0,0,0,0.14)] rounded w-max"
                         ref="panel"
+                        data-testid="dropdown-panel"
                         :class="teleport ? 'fixed' : 'absolute z-10'"
                         :style="positionStyles"
                         v-show="isActive"
