@@ -7,6 +7,7 @@ use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\DataTransfer\Models\JobTrack;
 use Webkul\Notification\Events\NotificationEvent;
 use Webkul\Notification\Listeners\SendNotificationListener;
+use Webkul\Notification\Mail\MailConfiguration;
 use Webkul\Notification\Mail\UserNotify;
 use Webkul\User\Models\Admin;
 
@@ -133,3 +134,29 @@ it('resolves the data transfer meta type and code when building the notification
             && $event->notificationData['description'] === sprintf('Export "product-export" %s', $jobTrack->state);
     });
 });
+
+it('reports mail as configured only when a mailer and an smtp host and port are set', function (array $mail, bool $expected) {
+    config(['mail.default' => $mail[0], 'mail.mailers.smtp.host' => $mail[1], 'mail.mailers.smtp.port' => $mail[2]]);
+
+    expect(app(MailConfiguration::class)->isConfigured())->toBe($expected);
+})->with([
+    'complete'      => [['smtp', 'mail.example.com', 587], true],
+    'no mailer'     => [[null, 'mail.example.com', 587], false],
+    'no smtp host'  => [['smtp', null, 587], false],
+    'no smtp port'  => [['smtp', 'mail.example.com', null], false],
+]);
+
+it('marks the notification mailable only when mail is configured', function (bool $configured) {
+    Event::fake([NotificationEvent::class]);
+
+    $this->mock(MailConfiguration::class)->shouldReceive('isConfigured')->andReturn($configured);
+
+    $jobTrack = JobTrack::factory()->export()->completed()->create([
+        'meta'    => ['type' => 'export', 'code' => 'product-export'],
+        'user_id' => Admin::factory()->create()->id,
+    ]);
+
+    app(SendNotificationListener::class)->sendNotification($jobTrack);
+
+    Event::assertDispatched(NotificationEvent::class, fn ($event): bool => $event->notificationData['mailable'] === $configured);
+})->with([true, false]);

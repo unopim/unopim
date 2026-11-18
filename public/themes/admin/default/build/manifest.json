@@ -1,17 +1,17 @@
 {
-  "_veeValidate-BW9dJRnn.js": {
-    "file": "assets/veeValidate-BW9dJRnn.js",
+  "_veeValidate-CWDh9CQp.js": {
+    "file": "assets/veeValidate-CWDh9CQp.js",
     "name": "veeValidate",
     "imports": [
-      "_vue-CbF8TRqb.js"
+      "_vue-CB3nxXLa.js"
     ]
   },
-  "_vendor-Cy61opEo.js": {
-    "file": "assets/vendor-Cy61opEo.js",
+  "_vendor-CUhAFa6J.js": {
+    "file": "assets/vendor-CUhAFa6J.js",
     "name": "vendor"
   },
-  "_vue-CbF8TRqb.js": {
-    "file": "assets/vue-CbF8TRqb.js",
+  "_vue-CB3nxXLa.js": {
+    "file": "assets/vue-CB3nxXLa.js",
     "name": "vue"
   },
   "node_modules/@fontsource/inter/files/inter-cyrillic-400-normal.woff": {
@@ -239,12 +239,12 @@
     "src": "node_modules/@fontsource/inter/files/inter-vietnamese-700-normal.woff2"
   },
   "src/Resources/assets/css/app.css": {
-    "file": "assets/app-CeivU6xR.css",
+    "file": "assets/app-DI2tJ7-v.css",
     "src": "src/Resources/assets/css/app.css",
     "isEntry": true
   },
   "src/Resources/assets/fonts/unopim-admin.woff": {
-    "file": "assets/unopim-admin-DPhl93Ph.woff",
+    "file": "assets/unopim-admin-zd0Pb4jf.woff",
     "src": "src/Resources/assets/fonts/unopim-admin.woff"
   },
   "src/Resources/assets/images/dark_logo.svg": {
@@ -336,14 +336,14 @@
     "src": "src/Resources/assets/images/favicon.svg"
   },
   "src/Resources/assets/js/app.js": {
-    "file": "assets/app-DVcySgng.js",
+    "file": "assets/app-CzUqNzs_.js",
     "name": "app",
     "src": "src/Resources/assets/js/app.js",
     "isEntry": true,
     "imports": [
-      "_vue-CbF8TRqb.js",
-      "_vendor-Cy61opEo.js",
-      "_veeValidate-BW9dJRnn.js"
+      "_vue-CB3nxXLa.js",
+      "_vendor-CUhAFa6J.js",
+      "_veeValidate-CWDh9CQp.js"
     ]
   }
 }
