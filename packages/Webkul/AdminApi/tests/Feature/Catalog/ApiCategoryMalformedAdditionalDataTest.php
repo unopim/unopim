@@ -2,7 +2,7 @@
 
 use Webkul\Category\Models\Category;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->headers = $this->getAuthenticationHeaders();
 });
 
