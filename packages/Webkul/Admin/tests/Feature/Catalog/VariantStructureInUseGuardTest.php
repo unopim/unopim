@@ -1,15 +1,19 @@
 <?php
 
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\VariantStructure;
+use Webkul\Product\Models\VariantStructureAttribute;
 use Webkul\Product\Models\VariantStructureAxis;
 use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Services\VariantStructureWriter;
 
 uses(DatabaseTransactions::class);
 
@@ -123,6 +127,54 @@ function vsGuardAxisIds(VariantStructure $structure): array
         ->orderBy('position')
         ->pluck('attribute_id')
         ->all();
+}
+
+/**
+ * Lower-cased SQL of every query the callback runs, in order.
+ *
+ * @return array<int, string>
+ */
+function vsGuardQueriesDuring(callable $callback): array
+{
+    $queries = [];
+    $listening = true;
+
+    DB::listen(function (QueryExecuted $query) use (&$queries, &$listening): void {
+        if ($listening) {
+            $queries[] = strtolower($query->sql);
+        }
+    });
+
+    $callback();
+
+    $listening = false;
+
+    return $queries;
+}
+
+/**
+ * Position of the first query reading the table, optionally only a row-locking one
+ * or one whose SQL also contains the given fragment.
+ *
+ * @param  array<int, string>  $queries
+ */
+function vsGuardQueryIndex(array $queries, string $table, bool $forUpdate, string $contains = ''): ?int
+{
+    foreach ($queries as $index => $sql) {
+        if (! preg_match('/from [`"]?\w*'.$table.'[`"]?\s/', $sql)) {
+            continue;
+        }
+
+        if ($forUpdate !== str_contains($sql, 'for update')) {
+            continue;
+        }
+
+        if ($contains === '' || str_contains($sql, $contains)) {
+            return $index;
+        }
+    }
+
+    return null;
 }
 
 it('refuses to delete a variant structure that a product still uses', function (): void {
@@ -260,4 +312,89 @@ it('still lets the bulk save rename a structure whose product has variants', fun
 
     expect($structure->refresh()->name)->toBe('Renamed with variants')
         ->and($product->refresh()->variant_structure_id)->toBe($structure->id);
+});
+
+it('locks the structure before a locking reference check when deleting it', function (): void {
+    [$family, $structure] = vsGuardFamilyWithStructure();
+
+    $queries = vsGuardQueriesDuring(fn () => $this->deleteJson(route('admin.catalog.families.variant-structures.delete', [$family->id, $structure->id]))
+        ->assertOk());
+
+    $structureLock = vsGuardQueryIndex($queries, 'variant_structures', true);
+    $referenceCheck = vsGuardQueryIndex($queries, 'products', true);
+
+    expect($structureLock)->not->toBeNull()
+        ->and($referenceCheck)->not->toBeNull()
+        ->and($structureLock)->toBeLessThan($referenceCheck);
+});
+
+it('locks every structure the bulk save drops before the first reference check', function (): void {
+    [$family, $first] = vsGuardFamilyWithStructure();
+
+    $second = VariantStructure::create([
+        'attribute_family_id' => $family->id,
+        'code'                => 'vsg_unused_'.Str::random(8),
+        'levels'              => 1,
+    ]);
+
+    $queries = vsGuardQueriesDuring(fn () => $this->putJson(route('admin.catalog.families.variant-structures.save', $family->id), [
+        'structures' => [],
+    ])->assertOk());
+
+    $firstReferenceCheck = vsGuardQueryIndex($queries, 'products', true);
+    $locksAfterCheck = array_filter(
+        array_slice($queries, (int) $firstReferenceCheck),
+        fn (string $sql): bool => vsGuardQueryIndex([$sql], 'variant_structures', true) !== null
+    );
+
+    expect($firstReferenceCheck)->not->toBeNull()
+        ->and($locksAfterCheck)->toBe([])
+        ->and(VariantStructure::whereKey([$first->id, $second->id])->exists())->toBeFalse();
+});
+
+it('checks for variants only after locking the structure', function (string $mode): void {
+    [$family, $structure] = vsGuardFamilyWithStructure();
+
+    $otherAxis = vsGuardSecondAxis($family);
+
+    vsGuardProductWithVariant($family, $structure);
+
+    $payload = vsGuardBulkPayload($structure, $otherAxis->code, 'Changed axes');
+    $body = $mode === 'single' ? ['structure' => ['id' => $structure->id] + $payload] : ['structures' => [$payload]];
+
+    $queries = vsGuardQueriesDuring(fn () => $this->putJson(route('admin.catalog.families.variant-structures.save', $family->id), $body)
+        ->assertUnprocessable()
+        ->assertJsonPath('message', trans('admin::app.catalog.families.edit.variant-structure-locked')));
+
+    $structureLock = vsGuardQueryIndex($queries, 'variant_structures', true);
+    $variantCheck = vsGuardQueryIndex($queries, 'products', false, 'parent_id');
+
+    expect($structureLock)->not->toBeNull()
+        ->and($variantCheck)->not->toBeNull()
+        ->and($structureLock)->toBeLessThan($variantCheck);
+})->with(['single', 'bulk']);
+
+it('rolls back the axis and placement rows when writing them fails part way', function (): void {
+    [$family, $structure, $axis] = vsGuardFamilyWithStructure();
+
+    $placed = vsGuardSecondAxis($family);
+
+    VariantStructureAttribute::create([
+        'variant_structure_id' => $structure->id,
+        'attribute_id'         => $placed->id,
+        'level'                => 'common',
+    ]);
+
+    $familyAttributes = $family->customAttributes()->get()->keyBy('code');
+
+    expect(fn () => app(VariantStructureWriter::class)->writeRows(
+        $structure,
+        1,
+        ['level_1' => ['vsg_missing_'.Str::random(8)]],
+        [],
+        $familyAttributes
+    ))->toThrow(ErrorException::class);
+
+    expect(vsGuardAxisIds($structure))->toBe([$axis->id])
+        ->and(VariantStructureAttribute::where('variant_structure_id', $structure->id)->pluck('attribute_id')->all())->toBe([$placed->id]);
 });
