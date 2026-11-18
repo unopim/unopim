@@ -79,7 +79,11 @@
 
             computed: {
                 strokeColor() {
-                    return 'text-' + this.$completeness.level(this.score);
+                    return {
+                        success: 'text-success',
+                        warning: 'text-warning',
+                        danger: 'text-danger',
+                    }[this.$completeness.level(this.score)];
                 },
 
                 containerSize() {
