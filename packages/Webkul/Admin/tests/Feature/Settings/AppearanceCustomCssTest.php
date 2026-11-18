@@ -164,3 +164,34 @@ it('renders custom css through the shared component on every admin layout', func
     'with-history/index.blade.php',
     'anonymous.blade.php',
 ]);
+
+it('blocks external resource loading in custom css', function (string $css, string $forbidden) {
+    $this->loginAsAdmin();
+
+    put(route('admin.settings.appearance.update'), ['custom_css' => $css])->assertRedirect();
+
+    expect(strtolower((string) storedCustomCss()))->not->toContain($forbidden);
+
+    get(route('admin.dashboard.index'))
+        ->assertOk()
+        ->assertDontSee($forbidden, false);
+})->with([
+    'import'           => ['@import "https://evil.test/a.css"; a{color:red}', '@import'],
+    'import url'       => ["@IMPORT url('https://evil.test/a.css');", '@import'],
+    'url function'     => ['a{background:url(https://evil.test/x.png)}', 'url('],
+    'url with space'   => ['a{background:URL (https://evil.test/x.png)}', 'url ('],
+    'escaped url'      => ['a{background:\\75 rl(https://evil.test/x.png)}', 'url('],
+    'escaped import'   => ['@\\69mport "https://evil.test/a.css";', '@import'],
+    'image-set'        => ['a{background:image-set("https://evil.test/x.png" 1x)}', 'image-set('],
+    'webkit image-set' => ['a{background:-webkit-image-set("https://evil.test/x.png" 1x)}', 'image-set('],
+]);
+
+it('keeps unrelated css and escapes intact when blocking external resources', function () {
+    $this->loginAsAdmin();
+
+    put(route('admin.settings.appearance.update'), [
+        'custom_css' => '.a::before { content: "\\2022"; } .b { color: red; }',
+    ])->assertRedirect();
+
+    expect(storedCustomCss())->toBe('.a::before { content: "\\2022"; } .b { color: red; }');
+});
