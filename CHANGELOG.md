@@ -6,6 +6,7 @@
 
 ## Bug fixes
 
+- Fixed the Magic AI system prompt form accepting a Max Tokens value outside the 100 to 5000 range its help text gives; the server allowed 1 to 32768. A saved prompt already outside the range keeps its value and is still used as is when generating content, but its Max Tokens must be brought within 100 to 5000 before the prompt can be saved again.
 - Fixed a product quick search none of whose fields resolves to an attribute returning the entire catalogue instead of no products. The database path dropped the empty condition group; the Elasticsearch path emitted an empty `should`, which Elasticsearch answers with a match_all because it applies `minimum_should_match` only once there are `should` clauses to count. Both now refuse the term, with `1 = 0` and with `match_none`.
 
 ## New features

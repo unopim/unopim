@@ -35,11 +35,11 @@ class MagicAISystemPrompt extends Model implements HistoryAuditable, MagicAISyst
     protected array $historyTags = ['magicSystemPrompt'];
 
     /**
-     * Get the validation rule bounding max_tokens, shared by the server and the admin forms.
+     * Get the max_tokens validation rules, shared by the server and the admin forms.
      */
-    public static function maxTokensRangeRule(): string
+    public static function maxTokensRules(): string
     {
-        return 'between:'.self::MAX_TOKENS_LOWER_BOUND.','.self::MAX_TOKENS_UPPER_BOUND;
+        return 'required|integer|between:'.self::MAX_TOKENS_LOWER_BOUND.','.self::MAX_TOKENS_UPPER_BOUND;
     }
 
     protected static function newFactory(): Factory

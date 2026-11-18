@@ -26,7 +26,7 @@ class SystemPromptRequest extends FormRequest
             'title'       => ['required'],
             'tone'        => ['required'],
             'is_enabled'  => ['required', 'boolean'],
-            'max_tokens'  => ['required', 'integer', MagicAISystemPrompt::maxTokensRangeRule()],
+            'max_tokens'  => MagicAISystemPrompt::maxTokensRules(),
             'temperature' => ['required', 'numeric', 'between:0,2'],
         ];
     }

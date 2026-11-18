@@ -84,7 +84,7 @@
                         <x-admin::form.control-group.control
                             type="number"
                             name="max_tokens"
-                            :rules="'required|integer|'.\Webkul\MagicAI\Models\MagicAISystemPrompt::maxTokensRangeRule()"
+                            :rules="\Webkul\MagicAI\Models\MagicAISystemPrompt::maxTokensRules()"
                             :min="\Webkul\MagicAI\Models\MagicAISystemPrompt::MAX_TOKENS_LOWER_BOUND"
                             :max="\Webkul\MagicAI\Models\MagicAISystemPrompt::MAX_TOKENS_UPPER_BOUND"
                             step="1"

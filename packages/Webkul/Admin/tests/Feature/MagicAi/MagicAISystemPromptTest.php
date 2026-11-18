@@ -86,7 +86,7 @@ it('should delete system prompt successfully', function () {
     );
 });
 
-it('rejects an out of range max_tokens when creating a system prompt', function (int $maxTokens) {
+it('rejects an out of range max_tokens when creating a system prompt', function (int $maxTokens): void {
     $systemPrompt = MagicAISystemPrompt::factory()->make(['max_tokens' => $maxTokens])->toArray();
 
     $this->postJson(route('admin.magic_ai.system_prompt.store'), $systemPrompt)
@@ -102,7 +102,7 @@ it('rejects an out of range max_tokens when creating a system prompt', function 
     'issue example'         => [6000],
 ]);
 
-it('rejects an out of range max_tokens when updating a system prompt', function (int $maxTokens) {
+it('rejects an out of range max_tokens when updating a system prompt', function (int $maxTokens): void {
     $prompt = MagicAISystemPrompt::factory()->create();
 
     $this->putJson(route('admin.magic_ai.system_prompt.update'), [
@@ -123,7 +123,7 @@ it('rejects an out of range max_tokens when updating a system prompt', function 
     'issue example'         => [6000],
 ]);
 
-it('accepts max_tokens at both bounds when creating and updating a system prompt', function (int $maxTokens) {
+it('accepts max_tokens at both bounds when creating and updating a system prompt', function (int $maxTokens): void {
     $systemPrompt = MagicAISystemPrompt::factory()->make(['max_tokens' => $maxTokens, 'is_enabled' => 0])->toArray();
 
     $this->postJson(route('admin.magic_ai.system_prompt.store'), $systemPrompt)
@@ -152,10 +152,10 @@ it('accepts max_tokens at both bounds when creating and updating a system prompt
     'upper bound' => [MagicAISystemPrompt::MAX_TOKENS_UPPER_BOUND],
 ]);
 
-it('renders the same max_tokens range on the create and edit forms', function () {
+it('renders the same max_tokens range on the create and edit forms', function (): void {
     $prompt = MagicAISystemPrompt::factory()->create();
 
-    $rule = 'required|integer|'.MagicAISystemPrompt::maxTokensRangeRule();
+    $rule = MagicAISystemPrompt::maxTokensRules();
 
     $this->get(route('admin.magic_ai.system_prompt.index'))
         ->assertOk()
@@ -169,7 +169,7 @@ it('renders the same max_tokens range on the create and edit forms', function ()
         ->assertDontSee('max="32768"', false);
 });
 
-it('shows the max_tokens range tooltip on the edit form', function () {
+it('shows the max_tokens range tooltip on the edit form', function (): void {
     $prompt = MagicAISystemPrompt::factory()->create();
 
     $this->get(route('admin.magic_ai.system_prompt.edit', $prompt->id))
@@ -177,7 +177,7 @@ it('shows the max_tokens range tooltip on the edit form', function () {
         ->assertSee(trans('admin::app.configuration.system-prompt.create.max-tokens-tooltip'));
 });
 
-it('forbids creating or updating a system prompt with only the view permission', function () {
+it('forbids creating or updating a system prompt with only the view permission', function (): void {
     $this->loginWithPermissions('custom', ['ai-agent', 'ai-agent.system-prompt']);
 
     $prompt = MagicAISystemPrompt::factory()->create(['max_tokens' => 1000]);
@@ -199,7 +199,7 @@ it('forbids creating or updating a system prompt with only the view permission',
     expect($prompt->fresh()->max_tokens)->toBe(1000);
 });
 
-it('allows creating and updating a system prompt with the edit permission', function () {
+it('allows creating and updating a system prompt with the edit permission', function (): void {
     $this->loginWithPermissions('custom', ['ai-agent', 'ai-agent.system-prompt', 'ai-agent.system-prompt.edit']);
 
     $prompt = MagicAISystemPrompt::factory()->create(['max_tokens' => 1000]);
