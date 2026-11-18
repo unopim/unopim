@@ -38,6 +38,7 @@ return [
             'max-depth'               => 'Referințele de șablon sunt imbricate pe mai mult de :max niveluri la ":attribute".',
             'missing-value'           => 'Atributul ":attribute" nu are nicio valoare pentru acest canal și această localitate.',
             'not-in-family'           => 'Atributul ":attribute" folosit în șablon nu aparține familiei produsului.',
+            'output-too-large'        => 'Șablonul randat depășește :max octeți și a fost trunchiat.',
             'self-reference'          => 'Șablonul nu poate face referire la propriul atribut ":attribute".',
             'single-brace'            => 'S-a găsit ":text" între acolade simple. Expresiile de șablon necesită acolade duble.',
             'too-many-expressions'    => 'Un șablon poate conține cel mult :max expresii.',

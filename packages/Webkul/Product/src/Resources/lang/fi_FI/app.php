@@ -38,6 +38,7 @@ return [
             'max-depth'               => 'Mallipohjien viittaukset ovat sisäkkäin yli :max tason syvyydellä kohdassa ":attribute".',
             'missing-value'           => 'Attribuutilla ":attribute" ei ole arvoa tälle kanavalle ja kielelle.',
             'not-in-family'           => 'Mallipohjassa käytetty attribuutti ":attribute" ei kuulu tuoteperheeseen.',
+            'output-too-large'        => 'Hahmonnettu mallipohja on suurempi kuin :max tavua, ja se katkaistiin.',
             'self-reference'          => 'Mallipohja ei voi viitata omaan attribuuttiinsa ":attribute".',
             'single-brace'            => 'Löytyi ":text" yksinkertaisissa aaltosulkeissa. Mallipohjan lausekkeet vaativat kaksinkertaiset aaltosulkeet.',
             'too-many-expressions'    => 'Mallipohja voi sisältää enintään :max lauseketta.',

@@ -14,6 +14,8 @@ final class RenderContext
 
     private array $warnings = [];
 
+    private int $renderedBytes = 0;
+
     public function __construct(
         public readonly array $values,
         public readonly string $channel,
@@ -58,6 +60,11 @@ final class RenderContext
     public function remember(string $attributeCode, ?string $output): ?string
     {
         return $this->rendered[$attributeCode] = $output;
+    }
+
+    public function consumeOutput(int $bytes): int
+    {
+        return $this->renderedBytes += $bytes;
     }
 
     public function error(TemplateMessage $message): void

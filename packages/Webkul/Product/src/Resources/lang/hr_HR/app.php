@@ -38,6 +38,7 @@ return [
             'max-depth'               => 'Reference predloška ugniježđene su dublje od :max razina kod ":attribute".',
             'missing-value'           => 'Atribut ":attribute" nema vrijednost za ovaj kanal i jezik.',
             'not-in-family'           => 'Atribut ":attribute" korišten u predlošku ne pripada obitelji proizvoda.',
+            'output-too-large'        => 'Iscrtani predložak veći je od :max bajtova i skraćen je.',
             'self-reference'          => 'Predložak ne može referencirati vlastiti atribut ":attribute".',
             'single-brace'            => 'Pronađeno ":text" u jednostrukim vitičastim zagradama. Izrazi predloška zahtijevaju dvostruke vitičaste zagrade.',
             'too-many-expressions'    => 'Predložak može sadržavati najviše :max izraza.',

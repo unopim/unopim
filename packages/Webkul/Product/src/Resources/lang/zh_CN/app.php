@@ -38,6 +38,7 @@ return [
             'max-depth'               => '模板引用在 ":attribute" 处的嵌套层级超过 :max 层。',
             'missing-value'           => '属性 ":attribute" 在此频道和地区下没有值。',
             'not-in-family'           => '模板中使用的属性 ":attribute" 不属于该产品的属性族。',
+            'output-too-large'        => '渲染后的模板超过 :max 字节，已被截断。',
             'self-reference'          => '模板不能引用其自身的属性 ":attribute"。',
             'single-brace'            => '发现单花括号中的 ":text"。模板表达式需要使用双花括号。',
             'too-many-expressions'    => '一个模板最多只能包含 :max 个表达式。',

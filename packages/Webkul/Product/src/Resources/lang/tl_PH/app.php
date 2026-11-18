@@ -36,6 +36,7 @@ return [
             'max-depth'               => 'Ang mga reference ng template ay naka-nest nang higit sa :max antas ang lalim sa ":attribute".',
             'missing-value'           => 'Walang halaga ang katangiang ":attribute" para sa channel at wikang ito.',
             'not-in-family'           => 'Ang katangiang ":attribute" na ginamit sa template ay hindi kabilang sa pamilya ng produkto.',
+            'output-too-large'        => 'Ang na-render na template ay mas malaki sa :max byte kaya ito ay pinutol.',
             'self-reference'          => 'Hindi maaaring i-reference ng template ang sarili nitong katangian na ":attribute".',
             'single-brace'            => 'Natagpuan ang ":text" sa iisang curly brace. Kailangan ng mga expression ng template ang dobleng curly brace.',
             'too-many-expressions'    => 'Ang isang template ay maaaring maglaman ng hindi hihigit sa :max na expression.',

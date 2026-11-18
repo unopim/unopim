@@ -38,6 +38,7 @@ return [
             'max-depth'               => 'Mallreferenser är kapslade mer än :max nivåer djupt vid ":attribute".',
             'missing-value'           => 'Attributet ":attribute" har inget värde för den här kanalen och det här språket.',
             'not-in-family'           => 'Attributet ":attribute" som används i mallen tillhör inte produktfamiljen.',
+            'output-too-large'        => 'Den renderade mallen är större än :max byte och har kortats av.',
             'self-reference'          => 'Mallen kan inte referera till sitt eget attribut ":attribute".',
             'single-brace'            => 'Hittade ":text" inom enkla klammerparenteser. Malluttryck kräver dubbla klammerparenteser.',
             'too-many-expressions'    => 'En mall kan innehålla högst :max uttryck.',

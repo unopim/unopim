@@ -183,6 +183,24 @@ it('limits the depth of nested template references', function () {
         ->and($result->output)->toBe('1 2 3 4 ');
 });
 
+it('stops rendering once the output exceeds the size budget', function () {
+    $this->variableAttribute('tpl_blob', 'text');
+    $this->templateAttribute('tpl_chunk');
+
+    $blob = str_repeat('x', 2000);
+
+    $values = ['common' => [
+        'tpl_blob'  => $blob,
+        'tpl_chunk' => str_repeat('{{ tpl_blob }}', 100),
+    ]];
+
+    $result = $this->renderer->render(str_repeat('{{ tpl_chunk }}', 100), $this->description, $values, $this->channel->code, 'en_US');
+
+    expect(warningKeys($result))->toContain('output-too-large')
+        ->and(strlen($result->output))->toBeLessThanOrEqual(TemplateRenderer::MAX_RENDERED_BYTES)
+        ->and($result->output)->toStartWith($blob);
+});
+
 it('returns the source unchanged when the attribute does not hold templates', function () {
     $plain = $this->variableAttribute('tpl_plain', 'textarea');
 

@@ -38,6 +38,7 @@ return [
             'max-depth'               => 'Malreferanser er nestet mer enn :max nivåer dypt ved ":attribute".',
             'missing-value'           => 'Attributtet ":attribute" har ingen verdi for denne kanalen og dette språket.',
             'not-in-family'           => 'Attributtet ":attribute" som brukes i malen, tilhører ikke produktfamilien.',
+            'output-too-large'        => 'Den gjengitte malen er større enn :max byte og ble avkortet.',
             'self-reference'          => 'Malen kan ikke referere til sitt eget attributt ":attribute".',
             'single-brace'            => 'Fant ":text" i enkle krøllparenteser. Maluttrykk krever doble krøllparenteser.',
             'too-many-expressions'    => 'En mal kan inneholde maksimalt :max uttrykk.',

@@ -38,6 +38,7 @@ return [
             'max-depth'               => 'Referensi templat bersarang lebih dari :max tingkat di ":attribute".',
             'missing-value'           => 'Atribut ":attribute" tidak memiliki nilai untuk saluran dan lokal ini.',
             'not-in-family'           => 'Atribut ":attribute" yang digunakan dalam templat bukan bagian dari keluarga produk.',
+            'output-too-large'        => 'Templat yang dirender lebih besar dari :max byte dan telah dipotong.',
             'self-reference'          => 'Templat tidak dapat mereferensikan atributnya sendiri ":attribute".',
             'single-brace'            => 'Ditemukan ":text" dalam kurung kurawal tunggal. Ekspresi templat memerlukan kurung kurawal ganda.',
             'too-many-expressions'    => 'Templat dapat berisi paling banyak :max ekspresi.',

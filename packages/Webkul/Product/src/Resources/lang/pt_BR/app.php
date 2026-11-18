@@ -38,6 +38,7 @@ return [
             'max-depth'               => 'As referências de modelo estão aninhadas em mais de :max níveis de profundidade em ":attribute".',
             'missing-value'           => 'O atributo ":attribute" não tem valor para este canal e localidade.',
             'not-in-family'           => 'O atributo ":attribute" usado no modelo não pertence à família do produto.',
+            'output-too-large'        => 'O modelo renderizado excede :max bytes e foi truncado.',
             'self-reference'          => 'O modelo não pode referenciar seu próprio atributo ":attribute".',
             'single-brace'            => '":text" encontrado entre chaves simples. Expressões de modelo precisam de chaves duplas.',
             'too-many-expressions'    => 'Um modelo pode conter no máximo :max expressões.',

@@ -38,6 +38,7 @@ return [
             'max-depth'               => 'Odwołania szablonu są zagnieżdżone na więcej niż :max poziomów w ":attribute".',
             'missing-value'           => 'Atrybut ":attribute" nie ma wartości dla tego kanału i języka.',
             'not-in-family'           => 'Atrybut ":attribute" użyty w szablonie nie należy do rodziny produktu.',
+            'output-too-large'        => 'Wyrenderowany szablon przekracza :max bajtów i został obcięty.',
             'self-reference'          => 'Szablon nie może odwoływać się do własnego atrybutu ":attribute".',
             'single-brace'            => 'Znaleziono ":text" w pojedynczych nawiasach klamrowych. Wyrażenia szablonu wymagają podwójnych nawiasów klamrowych.',
             'too-many-expressions'    => 'Szablon może zawierać maksymalnie :max wyrażeń.',

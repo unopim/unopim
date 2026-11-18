@@ -38,6 +38,7 @@ return [
             'max-depth'               => 'テンプレート参照が ":attribute" で :max 階層を超えてネストされています。',
             'missing-value'           => '属性 ":attribute" には、このチャネルとロケールの値がありません。',
             'not-in-family'           => 'テンプレートで使用されている属性 ":attribute" は、製品の属性ファミリに属していません。',
+            'output-too-large'        => 'レンダリングされたテンプレートが :max バイトを超えたため、切り詰められました。',
             'self-reference'          => 'テンプレートは自身の属性 ":attribute" を参照できません。',
             'single-brace'            => '単一の波括弧で囲まれた ":text" が見つかりました。テンプレート式には二重の波括弧が必要です。',
             'too-many-expressions'    => 'テンプレートに含めることができる式は最大 :max 個です。',

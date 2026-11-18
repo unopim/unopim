@@ -36,6 +36,7 @@ return [
             'max-depth'               => 'Template references are nested more than :max levels deep at ":attribute".',
             'missing-value'           => 'The attribute ":attribute" has no value for this channel and locale.',
             'not-in-family'           => 'The attribute ":attribute" used in the template does not belong to the product family.',
+            'output-too-large'        => 'The rendered template is larger than :max bytes and was cut off.',
             'self-reference'          => 'The template cannot reference its own attribute ":attribute".',
             'single-brace'            => 'Found ":text" in single curly braces. Template expressions need double curly braces.',
             'too-many-expressions'    => 'A template can contain at most :max expressions.',

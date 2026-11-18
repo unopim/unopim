@@ -38,6 +38,7 @@ return [
             'max-depth'               => 'Tham chiếu mẫu được lồng sâu hơn :max cấp tại ":attribute".',
             'missing-value'           => 'Thuộc tính ":attribute" không có giá trị cho kênh và ngôn ngữ này.',
             'not-in-family'           => 'Thuộc tính ":attribute" được dùng trong mẫu không thuộc họ sản phẩm.',
+            'output-too-large'        => 'Mẫu đã hiển thị lớn hơn :max byte và đã bị cắt bớt.',
             'self-reference'          => 'Mẫu không thể tham chiếu đến chính thuộc tính ":attribute" của nó.',
             'single-brace'            => 'Tìm thấy ":text" trong dấu ngoặc nhọn đơn. Biểu thức mẫu cần dấu ngoặc nhọn kép.',
             'too-many-expressions'    => 'Một mẫu chỉ có thể chứa tối đa :max biểu thức.',

@@ -38,6 +38,7 @@ return [
             'max-depth'               => 'I riferimenti del modello sono annidati per più di :max livelli in ":attribute".',
             'missing-value'           => 'L\'attributo ":attribute" non ha alcun valore per questo canale e questa lingua.',
             'not-in-family'           => 'L\'attributo ":attribute" usato nel modello non appartiene alla famiglia del prodotto.',
+            'output-too-large'        => 'Il modello renderizzato supera i :max byte ed è stato troncato.',
             'self-reference'          => 'Il modello non può fare riferimento al proprio attributo ":attribute".',
             'single-brace'            => 'Trovato ":text" tra parentesi graffe singole. Le espressioni del modello richiedono doppie parentesi graffe.',
             'too-many-expressions'    => 'Un modello può contenere al massimo :max espressioni.',

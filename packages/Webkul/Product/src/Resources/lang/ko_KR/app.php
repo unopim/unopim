@@ -38,6 +38,7 @@ return [
             'max-depth'               => '템플릿 참조가 ":attribute"에서 :max 단계보다 깊게 중첩되어 있습니다.',
             'missing-value'           => '속성 ":attribute"에 이 채널 및 로케일에 대한 값이 없습니다.',
             'not-in-family'           => '템플릿에 사용된 속성 ":attribute"이(가) 제품 패밀리에 속하지 않습니다.',
+            'output-too-large'        => '렌더링된 템플릿이 :max 바이트를 초과하여 잘렸습니다.',
             'self-reference'          => '템플릿은 자신의 속성 ":attribute"을(를) 참조할 수 없습니다.',
             'single-brace'            => '단일 중괄호로 묶인 ":text"이(가) 발견되었습니다. 템플릿 표현식에는 이중 중괄호가 필요합니다.',
             'too-many-expressions'    => '템플릿에는 최대 :max 개의 표현식만 포함할 수 있습니다.',

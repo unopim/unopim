@@ -19,6 +19,8 @@ class TemplateRenderer implements TemplateRendererContract
 
     public const int MAX_DEPTH = 5;
 
+    public const int MAX_RENDERED_BYTES = 1_000_000;
+
     public function __construct(
         protected TemplateParser $parser,
         protected FilterRegistry $filters,
@@ -65,9 +67,17 @@ class TemplateRenderer implements TemplateRendererContract
         $output = '';
 
         foreach ($template->segments as $segment) {
-            $output .= $segment instanceof Expression
+            $appended = $segment instanceof Expression
                 ? $this->escape($this->evaluate($segment, $variables[$segment->attributeCode] ?? null, $context) ?? '', $attribute)
                 : $segment;
+
+            if ($context->consumeOutput(strlen($appended)) > self::MAX_RENDERED_BYTES) {
+                $context->warn(new TemplateMessage('output-too-large', ['max' => self::MAX_RENDERED_BYTES]));
+
+                break;
+            }
+
+            $output .= $appended;
         }
 
         $context->leave();

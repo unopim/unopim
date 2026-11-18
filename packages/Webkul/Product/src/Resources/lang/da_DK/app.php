@@ -38,6 +38,7 @@ return [
             'max-depth'               => 'Skabelonreferencer er indlejret mere end :max niveauer dybt ved ":attribute".',
             'missing-value'           => 'Attributten ":attribute" har ingen værdi for denne kanal og lokalitet.',
             'not-in-family'           => 'Attributten ":attribute", der bruges i skabelonen, tilhører ikke produktfamilien.',
+            'output-too-large'        => 'Den gengivne skabelon er større end :max bytes og blev afkortet.',
             'self-reference'          => 'Skabelonen kan ikke referere til sin egen attribut ":attribute".',
             'single-brace'            => 'Fandt ":text" i enkelte krøllede parenteser. Skabelonudtryk kræver dobbelte krøllede parenteser.',
             'too-many-expressions'    => 'En skabelon kan højst indeholde :max udtryk.',

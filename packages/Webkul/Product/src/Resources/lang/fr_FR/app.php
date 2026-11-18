@@ -35,6 +35,7 @@ return [
             'max-depth'               => 'Les références de modèle sont imbriquées sur plus de :max niveaux dans ":attribute".',
             'missing-value'           => 'L\'attribut ":attribute" n\'a pas de valeur pour ce canal et cette langue.',
             'not-in-family'           => 'L\'attribut ":attribute" utilisé dans le modèle n\'appartient pas à la famille du produit.',
+            'output-too-large'        => 'Le modèle rendu dépasse :max octets et a été tronqué.',
             'self-reference'          => 'Le modèle ne peut pas faire référence à son propre attribut ":attribute".',
             'single-brace'            => '":text" trouvé entre accolades simples. Les expressions de modèle nécessitent des accolades doubles.',
             'too-many-expressions'    => 'Un modèle peut contenir au maximum :max expressions.',

@@ -38,6 +38,7 @@ return [
             'max-depth'               => 'Şablon referansları ":attribute" konumunda :max seviyeden daha derin iç içe geçmiş.',
             'missing-value'           => '":attribute" özniteliğinin bu kanal ve yerel ayar için bir değeri yok.',
             'not-in-family'           => 'Şablonda kullanılan ":attribute" özniteliği ürün ailesine ait değil.',
+            'output-too-large'        => 'İşlenen şablon :max bayttan büyük olduğu için kesildi.',
             'self-reference'          => 'Şablon, kendi özniteliği olan ":attribute" özniteliğine referans veremez.',
             'single-brace'            => 'Tek süslü parantez içinde ":text" bulundu. Şablon ifadeleri çift süslü parantez gerektirir.',
             'too-many-expressions'    => 'Bir şablon en fazla :max ifade içerebilir.',

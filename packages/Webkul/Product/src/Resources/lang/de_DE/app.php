@@ -38,6 +38,7 @@ return [
             'max-depth'               => 'Vorlagenverweise sind bei ":attribute" tiefer als :max Ebenen verschachtelt.',
             'missing-value'           => 'Das Attribut ":attribute" hat keinen Wert für diesen Kanal und dieses Gebietsschema.',
             'not-in-family'           => 'Das in der Vorlage verwendete Attribut ":attribute" gehört nicht zur Produktfamilie.',
+            'output-too-large'        => 'Die gerenderte Vorlage ist größer als :max Bytes und wurde abgeschnitten.',
             'self-reference'          => 'Die Vorlage kann nicht auf ihr eigenes Attribut ":attribute" verweisen.',
             'single-brace'            => '":text" in einfachen geschweiften Klammern gefunden. Vorlagenausdrücke benötigen doppelte geschweifte Klammern.',
             'too-many-expressions'    => 'Eine Vorlage darf höchstens :max Ausdrücke enthalten.',

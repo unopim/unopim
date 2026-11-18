@@ -38,6 +38,7 @@ return [
             'max-depth'               => 'Sjabloonverwijzingen zijn bij ":attribute" meer dan :max niveaus diep genest.',
             'missing-value'           => 'Het attribuut ":attribute" heeft geen waarde voor dit kanaal en deze taal.',
             'not-in-family'           => 'Het attribuut ":attribute" dat in het sjabloon wordt gebruikt, behoort niet tot de productfamilie.',
+            'output-too-large'        => 'Het gerenderde sjabloon is groter dan :max bytes en is afgekapt.',
             'self-reference'          => 'Het sjabloon kan niet verwijzen naar zijn eigen attribuut ":attribute".',
             'single-brace'            => '":text" gevonden tussen enkele accolades. Sjabloonexpressies vereisen dubbele accolades.',
             'too-many-expressions'    => 'Een sjabloon kan maximaal :max expressies bevatten.',

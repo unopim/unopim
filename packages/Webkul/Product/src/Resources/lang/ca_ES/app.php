@@ -36,6 +36,7 @@ return [
             'max-depth'               => 'Les referències de plantilla estan imbricades més de :max nivells de profunditat a ":attribute".',
             'missing-value'           => 'L\'atribut ":attribute" no té cap valor per a aquest canal i aquesta localització.',
             'not-in-family'           => 'L\'atribut ":attribute" utilitzat a la plantilla no pertany a la família del producte.',
+            'output-too-large'        => 'La plantilla renderitzada supera els :max bytes i ha estat retallada.',
             'self-reference'          => 'La plantilla no pot fer referència al seu propi atribut ":attribute".',
             'single-brace'            => 'S\'ha trobat ":text" entre claus simples. Les expressions de plantilla necessiten claus dobles.',
             'too-many-expressions'    => 'Una plantilla pot contenir com a màxim :max expressions.',

@@ -38,6 +38,7 @@ return [
             'max-depth'               => '範本引用在 ":attribute" 處的巢狀層級超過 :max 層。',
             'missing-value'           => '屬性 ":attribute" 在此頻道和語言下沒有值。',
             'not-in-family'           => '範本中使用的屬性 ":attribute" 不屬於該產品的屬性族。',
+            'output-too-large'        => '渲染後的範本超過 :max 位元組，已被截斷。',
             'self-reference'          => '範本不能引用其自身的屬性 ":attribute"。',
             'single-brace'            => '發現單大括號中的 ":text"。範本運算式需要使用雙大括號。',
             'too-many-expressions'    => '一個範本最多只能包含 :max 個運算式。',
