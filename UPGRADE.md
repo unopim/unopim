@@ -79,6 +79,9 @@ most often bite:
 | Removed classes and services | `Webkul\FPC`, `spatie/laravel-responsecache`, `ThemeCustomizationRepository`, old webhook settings classes |
 | Prefixed index names | With a `DB_PREFIX` set and `prefix_indexes` on, an explicit index, unique or foreign key name gets the table prefix on fresh installs (`products_type_status_idx` becomes `3X_products_type_status_idx`). Installs that ran a migration before keep the old name. Check names with `PrefixedIndexNameBlueprint::indexExists()` and drop them through the Blueprint `drop*` methods instead of `Schema::hasIndex()`, raw `DROP INDEX` or `information_schema` lookups on a literal name. Names that already start with the prefix are left as they are. |
 | Unattended reinstall without a table prefix | `unopim:install` with an empty `DB_PREFIX` lists every table no other install claims and, without a terminal, now stops instead of dropping them. Scripts that reinstall over an existing unprefixed database must pass `--force`. Installs into an empty database are not affected. |
+| Menu parents with no visible child | A parent menu item now disappears when the platform module gate removed all of its children, even if it has its own route. Parents whose children were only hidden by role permissions stay as before. |
+| Platform module tags on Magic AI tools | Tools registered in `ai-agent.tools` without a `module` key are always offered. Product, category and family tools in core are tagged `'module' => 'pim'` and are hidden while PIM is switched off; tag your own product tools the same way. |
+| Platform module route gating | `platform_modules.<module>.route_prefixes` and ACL routes only gate named routes. Name every route your package wants hidden with its module. |
 
 ### Take a backup you have restored before
 
