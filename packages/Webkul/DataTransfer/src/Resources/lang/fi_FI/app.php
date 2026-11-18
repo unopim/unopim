@@ -308,10 +308,11 @@ return [
         ],
     ],
     'job' => [
-        'started'   => 'Työn suoritus aloitettiin',
-        'completed' => 'Työn suoritus saatiin päätökseen',
-        'stalled'   => 'Työ lakkasi vastaamasta yli :minutes minuutin ajan ja merkittiin epäonnistuneeksi. Sen suoritusprosessi todennäköisesti keskeytyi.',
-        'reaped'    => ':count jumittunutta työtä merkittiin epäonnistuneiksi.',
-        'stopped'   => 'Tuonti pysäytettiin validoinnin jälkeen, virheitä :count. Yhtään riviä ei tuotu.',
+        'started'         => 'Työn suoritus aloitettiin',
+        'completed'       => 'Työn suoritus saatiin päätökseen',
+        'stalled'         => 'Työ lakkasi vastaamasta yli :minutes minuutin ajan ja merkittiin epäonnistuneeksi. Sen suoritusprosessi todennäköisesti keskeytyi.',
+        'reaped'          => ':count jumittunutta työtä merkittiin epäonnistuneiksi.',
+        'stopped'         => 'Tuonti pysäytettiin validoinnin jälkeen, virheitä :count. Yhtään riviä ei tuotu.',
+        'module-disabled' => 'Työtyyppi :type kuuluu alustan moduuliin, joka on poistettu käytöstä, joten sitä ei voi suorittaa.',
     ],
 ];

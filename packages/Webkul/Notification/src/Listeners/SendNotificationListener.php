@@ -4,16 +4,19 @@ namespace Webkul\Notification\Listeners;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Webkul\Notification\Events\NotificationEvent;
+use Webkul\Notification\Mail\MailConfiguration;
 use Webkul\User\Repositories\AdminRepository;
 
 class SendNotificationListener implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(public AdminRepository $adminRepository) {}
+    public function __construct(
+        public AdminRepository $adminRepository,
+        protected MailConfiguration $mailConfiguration,
+    ) {}
 
     /**
      * Handle the event.
@@ -26,9 +29,7 @@ class SendNotificationListener implements ShouldQueue
             return;
         }
 
-        $mailConfigured = Config::get('mail.default') &&
-            Config::get('mail.mailers.smtp.host') &&
-            Config::get('mail.mailers.smtp.port');
+        $mailConfigured = $this->mailConfiguration->isConfigured();
 
         $metaData = (object) array_merge(
             ['type' => '', 'code' => ''],

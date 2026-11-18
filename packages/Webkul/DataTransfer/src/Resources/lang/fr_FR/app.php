@@ -308,10 +308,11 @@ return [
         ],
     ],
     'job' => [
-        'started'   => 'L\'exécution du travail a commencé',
-        'completed' => 'Exécution du travail terminée',
-        'stalled'   => 'La tâche n\'a plus répondu pendant plus de :minutes minutes et a été marquée comme échouée. Le processus qui l\'exécutait a probablement été interrompu.',
-        'reaped'    => ':count tâches bloquées ont été marquées comme échouées.',
-        'stopped'   => 'Importation arrêtée après la validation avec :count erreurs. Aucune ligne n\'a été importée.',
+        'started'         => 'L\'exécution du travail a commencé',
+        'completed'       => 'Exécution du travail terminée',
+        'stalled'         => 'La tâche n\'a plus répondu pendant plus de :minutes minutes et a été marquée comme échouée. Le processus qui l\'exécutait a probablement été interrompu.',
+        'reaped'          => ':count tâches bloquées ont été marquées comme échouées.',
+        'stopped'         => 'Importation arrêtée après la validation avec :count erreurs. Aucune ligne n\'a été importée.',
+        'module-disabled' => 'Le type de tâche :type appartient à un module de la plateforme désactivé et ne peut donc pas s’exécuter.',
     ],
 ];
