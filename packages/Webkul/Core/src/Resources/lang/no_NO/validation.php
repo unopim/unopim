@@ -24,10 +24,16 @@ return [
     'file-outside-attribute-path'      => 'Filen :value hører ikke til denne posten. Last den opp på nytt for feltet :attribute.',
     'password-surrounding-whitespace'  => ':attribute kan ikke begynne eller slutte med et mellomrom.',
     'password-whitespace-only'         => ':attribute kan ikke bestå av bare mellomrom.',
+    'hideable-sections'                => ':attribute inneholder en seksjon som ikke kan skjules.',
     'active-content-detected'          => ':attribute kunne ikke lastes opp fordi den inneholder aktivt innhold (:reason).',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'innebygd JavaScript eller en PDF-handling som kjøres automatisk',
         'embedded_vba_macro'            => 'en innebygd VBA-makro',
         'auto_executing_ole_object'     => 'et automatisk kjørende innebygd objekt',
+    ],
+    'platform-modules'                => [
+        'empty'    => 'Velg minst én plattformmodul.',
+        'unknown'  => 'Plattformmodulen «:module» er ikke installert.',
+        'requires' => ':module kan bare slås på sammen med :requires.',
     ],
 ];
