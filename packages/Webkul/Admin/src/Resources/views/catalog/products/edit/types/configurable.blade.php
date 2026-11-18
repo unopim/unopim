@@ -962,14 +962,12 @@
 
                     this.isLoading = true;
 
-                    return this.$axios.get("{{ route('admin.catalog.products.configurable_variants', $product->id) }}", {
-                            params: {
-                                page,
-                                perPage: this.perPage,
-                                query: this.search.trim() || undefined,
-                                filters,
-                                exclude: this.removedIds,
-                            },
+                    return this.$axios.post("{{ route('admin.catalog.products.configurable_variants', $product->id) }}", {
+                            page,
+                            perPage: this.perPage,
+                            query: this.search.trim() || undefined,
+                            filters,
+                            exclude: this.removedIds,
                         })
                         .then(({ data }) => {
                             if (requestId !== this.requestId) {

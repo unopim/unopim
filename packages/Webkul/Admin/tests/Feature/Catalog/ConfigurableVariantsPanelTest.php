@@ -168,13 +168,22 @@ it('leaves out variants staged for removal so the page refills', function () {
 
     $this->loginAsAdmin();
 
-    $response = $this->getJson(route('admin.catalog.products.configurable_variants', [
-        $configurable->id,
+    $response = $this->postJson(route('admin.catalog.products.configurable_variants', $configurable->id), [
         'exclude' => [$variants[0]->id, $variants[1]->id],
-    ]))->assertOk()->assertJsonPath('meta.total', 10);
+    ])->assertOk()->assertJsonPath('meta.total', 10);
 
     expect(collect($response->json('data'))->pluck('id')->all())
         ->toBe(collect($variants)->slice(2)->pluck('id')->values()->all());
+});
+
+it('rejects more than 1000 excluded or removed variant ids', function () {
+    [$configurable] = makeLegacyConfigurableWithVariants();
+
+    $this->loginAsAdmin();
+
+    $this->postJson(route('admin.catalog.products.configurable_variants', $configurable->id), [
+        'exclude' => range(1, 1001),
+    ])->assertUnprocessable()->assertJsonValidationErrors('exclude');
 });
 
 it('works the same when elasticsearch is enabled', function () {

@@ -548,7 +548,7 @@ class Configurable extends AbstractType
                 new ConfigurableUniqueSku($this->getChildrenIds()),
             ],
             'variants_partial'   => ['nullable', 'boolean'],
-            'removed_variants'   => ['nullable', 'array'],
+            'removed_variants'   => ['nullable', 'array', 'max:1000'],
             'removed_variants.*' => ['integer'],
         ];
     }

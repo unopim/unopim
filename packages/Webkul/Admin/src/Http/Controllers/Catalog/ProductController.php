@@ -539,7 +539,7 @@ class ProductController extends Controller
             excludeIds: array_map(intval(...), (array) $request->input('exclude', [])),
         );
 
-        $paginator->through(fn (Product $variant) => new ConfigurableVariantResource($variant, $superAttributeCodes));
+        $paginator->through(fn (Product $variant): ConfigurableVariantResource => new ConfigurableVariantResource($variant, $superAttributeCodes));
 
         return ConfigurableVariantResource::collection($paginator)->response();
     }

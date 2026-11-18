@@ -12,10 +12,9 @@ class ConfigurableVariantResource extends JsonResource
     /**
      * Create a new resource instance.
      *
-     * @param  mixed  $resource
      * @param  array<int, string>  $superAttributeCodes
      */
-    public function __construct($resource, protected array $superAttributeCodes = [])
+    public function __construct(mixed $resource, protected array $superAttributeCodes = [])
     {
         parent::__construct($resource);
     }
