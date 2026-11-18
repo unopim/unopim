@@ -76,9 +76,9 @@ describe('why the timezone can no longer fail on its own', function () {
             base_path('packages/Webkul/Admin/src/Http/Requests/AccountForm.php')
         );
 
-        expect($accountForm)->toContain("'timezone'           => 'required'")
+        expect($accountForm)->toContain("'timezone'           => ['required', 'timezone:all_with_bc']")
             ->and($accountForm)->toContain('protected function prepareForValidation(): void')
-            ->and($accountForm)->toContain("\$this->input('timezone') ?: (\$user?->timezone ?: config('app.timezone', 'UTC'))");
+            ->and($accountForm)->toContain("\$this->input('timezone') ?: core()->resolveTimezone(\$user?->timezone)");
 
         $column = collect(Schema::getColumns('admins'))->firstWhere('name', 'timezone');
 
