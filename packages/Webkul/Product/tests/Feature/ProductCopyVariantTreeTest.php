@@ -14,12 +14,12 @@ uses(DatabaseTransactions::class);
 it('copies the simple products under each variant group of a 2-level configurable', function () {
     $configurable = Product::factory()->withInitialValues()->create(['type' => ProductType::Configurable->value]);
 
-    $groups = collect(range(1, 2))->map(fn () => Product::factory()->create([
+    $groups = collect(range(1, 2))->map(fn (): Product => Product::factory()->create([
         'type'      => ProductType::VariantGroup->value,
         'parent_id' => $configurable->id,
     ]));
 
-    $groups->each(fn ($group) => Product::factory()->create([
+    $groups->each(fn (Product $group): Product => Product::factory()->create([
         'type'      => ProductType::Simple->value,
         'parent_id' => $group->id,
     ]));
@@ -39,6 +39,27 @@ it('copies the simple products under each variant group of a 2-level configurabl
             ->and($leaves->first()->type)->toBe(ProductType::Simple->value);
     }
 
-    // The source tree is untouched.
     expect(Product::where('parent_id', $groups->first()->id)->count())->toBe(1);
+});
+
+it('does not copy the simple products under a variant group when variants are skipped on copy', function () {
+    config(['products.skipAttributesOnCopy' => ['variants']]);
+
+    $configurable = Product::factory()->withInitialValues()->create(['type' => ProductType::Configurable->value]);
+
+    $group = Product::factory()->create([
+        'type'      => ProductType::VariantGroup->value,
+        'parent_id' => $configurable->id,
+    ]);
+
+    Product::factory()->create([
+        'type'      => ProductType::Simple->value,
+        'parent_id' => $group->id,
+    ]);
+
+    $copy = $group->getTypeInstance()->copy();
+
+    expect($copy->type)->toBe(ProductType::VariantGroup->value)
+        ->and(Product::where('parent_id', $copy->id)->count())->toBe(0)
+        ->and(Product::where('parent_id', $group->id)->count())->toBe(1);
 });
