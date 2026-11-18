@@ -487,6 +487,7 @@
 
                                     <label
                                         class="text-xs text-gray-600 dark:text-gray-300 font-medium cursor-not-allowed"
+                                        for="value_per_locale"
                                     >
                                         @lang('admin::app.catalog.attributes.edit.value-per-locale')
                                     </label>   
@@ -545,6 +546,7 @@
 
                                     <label
                                         class="text-xs text-gray-600 dark:text-gray-300 font-medium cursor-not-allowed"
+                                        for="value_per_channel"
                                     >
                                         @lang('admin::app.catalog.attributes.edit.value-per-channel')
                                     </label>   

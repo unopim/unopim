@@ -26,4 +26,19 @@ class Channel extends AbstractReporting
             ->resetModel()
             ->count();
     }
+
+    /**
+     * Channel display labels for the current locale, keyed by channel code.
+     * Channels without a name fall back to "[code]".
+     *
+     * @return array<string, string>
+     */
+    public function getLabelsByCode(): array
+    {
+        return $this->channelRepository
+            ->resetModel()
+            ->getChannelAsOptions()
+            ->pluck('label', 'code')
+            ->all();
+    }
 }

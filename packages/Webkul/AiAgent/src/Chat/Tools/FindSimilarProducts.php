@@ -127,8 +127,6 @@ class FindSimilarProducts implements PimTool
                     return $this->presentKnnResults($knnRanked, $sourceProduct, $familyScoped, $queryText, $limit);
                 }
 
-                $prefix = DB::getTablePrefix();
-
                 $qb = DB::table('products as p')
                     ->leftJoin('attribute_families as af', 'af.id', '=', 'p.attribute_family_id')
                     ->select('p.id', 'p.sku', 'p.type', 'p.status', DB::raw(DB::getQueryGrammar()->wrap('p.values')), 'af.code as family_code')
@@ -358,8 +356,6 @@ class FindSimilarProducts implements PimTool
                         'scoped_to_same_family' => $familyScoped,
                     ]);
                 }
-
-                $prefix = DB::getTablePrefix();
 
                 $products = DB::table('products as p')
                     ->leftJoin('attribute_families as af', 'af.id', '=', 'p.attribute_family_id')

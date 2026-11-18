@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, expectSuccessToast } = require('../../utils/helpers');
+const { navigateTo, generateUid, expectSuccessToast, waitForAppReady } = require('../../utils/helpers');
 
 test.describe('Association Type - Locale Label Validation (#1238)', () => {
   test.setTimeout(90000);
@@ -11,15 +11,15 @@ test.describe('Association Type - Locale Label Validation (#1238)', () => {
     await navigateTo(adminPage, 'associationTypes');
 
     await adminPage.getByRole('button', { name: 'Create Association Type' }).click();
-    await adminPage.waitForTimeout(500);
 
-    await adminPage.locator('input[name="code"]').last().fill(code);
+    const codeInput = adminPage.locator('input[name="code"]').last();
+    await codeInput.waitFor({ state: 'visible' });
+    await codeInput.fill(code);
 
     await adminPage.getByRole('button', { name: 'Save Association Type' }).click();
-    await adminPage.waitForLoadState('domcontentloaded');
-    await adminPage.waitForTimeout(1000);
 
     await expect(adminPage).toHaveURL(/association-types\/edit\/\d+/);
+    await waitForAppReady(adminPage);
 
     await adminPage.locator('input[name="position"]').fill('7');
     await adminPage.locator('input[name="position"]').press('Tab');

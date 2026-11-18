@@ -125,6 +125,8 @@ return [
                     'base'           => 'Decimals del valor base',
                     'base-info'      => 'Nombre de decimals que es mantenen per al valor convertit a la unitat estàndard.',
                 ],
+                'display-unit-symbol'      => 'Mostra els símbols de les unitats',
+                'display-unit-symbol-info' => 'Mostra els valors de mesura amb el símbol de la unitat (per exemple 100 °C) en lloc del nom de la unitat, a l\'administració i a les exportacions. Les unitats sense símbol conserven el nom.',
             ],
         ],
     ],

@@ -46,7 +46,7 @@ it('gives an auto generated index the table prefix', function () {
 
     Schema::dropIfExists('index_prefix_probe');
 
-    expect($name)->toBe($prefix.'index_prefix_probe_code_index');
+    expect($name)->toBe(strtolower($prefix.'index_prefix_probe_code_index'));
 });
 
 it('cannot find a prefixed index by its unprefixed name', function () {
@@ -55,7 +55,7 @@ it('cannot find a prefixed index by its unprefixed name', function () {
     probeTableIndexes();
 
     $unprefixed = Schema::hasIndex('index_prefix_probe', 'index_prefix_probe_code_index');
-    $prefixed = Schema::hasIndex('index_prefix_probe', $prefix.'index_prefix_probe_code_index');
+    $prefixed = Schema::hasIndex('index_prefix_probe', strtolower($prefix.'index_prefix_probe_code_index'));
 
     Schema::dropIfExists('index_prefix_probe');
 

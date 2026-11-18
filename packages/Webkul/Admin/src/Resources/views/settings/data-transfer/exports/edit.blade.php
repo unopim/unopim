@@ -50,6 +50,9 @@
                     $productFilterFields = $fieldNames->intersect(['attribute_families', 'categories', 'completeness', 'time_condition', 'status', 'sku']);
                     $outputFields = $fieldNames->intersect(['file_format', 'with_media', 'with_associations', 'header_row', 'use_labels', 'date_format', 'file_path']);
                     $supportsConditions = $fieldNames->contains('custom_attributes');
+                    $otherFilterFields = \Webkul\DataTransfer\Helpers\ExportFilterFields::usesGenericCard($exporterConfig[$export->entity_type] ?? null)
+                        ? $fieldNames->diff(\Webkul\DataTransfer\Helpers\ExportFilterFields::KNOWN)
+                        : collect();
                     $supportsCategories = $fieldNames->contains('categories');
                 @endphp
 
@@ -95,7 +98,7 @@
 
                                     @php
                                         $options = [];
-                                        foreach (config('exporters') as $index => $exporter) {
+                                        foreach ($exporterConfig as $index => $exporter) {
                                             $options[] = ['id' => $index, 'label' => trans($exporter['title'])];
                                         }
                                         $optionsJson = json_encode($options);
@@ -121,6 +124,22 @@
                             </div>
                         </div>
                         {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.card.general.after') !!}
+
+                        @if ($otherFilterFields->isNotEmpty())
+                            <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
+                                <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
+                                    @lang('admin::app.settings.data-transfer.exports.create.filters')
+                                </p>
+
+                                <x-admin::data-transfer.filter-fields
+                                    :entity-type="$export->entity_type"
+                                    :values="$exportFilters"
+                                    :exporter-config="$exporterConfig"
+                                    :except="\Webkul\DataTransfer\Helpers\ExportFilterFields::knownList()"
+                                    grid-class="grid grid-cols-2 max-sm:grid-cols-1 gap-x-5"
+                                />
+                            </div>
+                        @endif
 
                         @if ($scopeFields->isNotEmpty())
                             {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.card.scope.before') !!}

@@ -5,6 +5,7 @@ namespace Webkul\Publication\Http\Controllers;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 use Webkul\Publication\DataTransferObjects\PublicationType;
 use Webkul\Publication\Enums\PublicationStatus;
@@ -328,11 +329,41 @@ class PublicationController extends Controller
             $documents = array_merge($documents, $payload['tiers'][$tier]['documents'] ?? []);
         }
 
-        $payload['sections'][0]['fields'] = $fields;
+        $payload['sections'] = $this->groupIntoSections($payload['sections'] ?? [], $fields);
         $payload['documents'] = $documents;
         unset($payload['tiers']);
 
         return $payload;
+    }
+
+    /**
+     * Places each visible field under the section it was published in. A field
+     * from a section the payload does not list (a version published before every
+     * section was listed) gets a heading from its section key; a field without a
+     * section key (a pre-section payload) joins the first section.
+     *
+     * @param  list<array<string, mixed>>  $sections
+     * @param  list<array<string, mixed>>  $fields
+     * @return list<array<string, mixed>>
+     */
+    private function groupIntoSections(array $sections, array $fields): array
+    {
+        $grouped = [];
+
+        foreach ($sections as $section) {
+            $grouped[(string) ($section['key'] ?? '')] = [...$section, 'fields' => []];
+        }
+
+        $firstKey = array_key_first($grouped) ?? '';
+
+        foreach ($fields as $field) {
+            $key = isset($field['section']) ? (string) $field['section'] : $firstKey;
+
+            $grouped[$key] ??= ['key' => $key, 'label' => Str::headline($key), 'fields' => []];
+            $grouped[$key]['fields'][] = $field;
+        }
+
+        return array_values($grouped);
     }
 
     /**

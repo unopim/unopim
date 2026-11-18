@@ -14,7 +14,6 @@ tests/e2e-pw/dbg.mjs
 /ignorables/*
 /node_modules
 npm-debug.log
-package-lock.json
 /public/css
 /public/fonts
 /public/js

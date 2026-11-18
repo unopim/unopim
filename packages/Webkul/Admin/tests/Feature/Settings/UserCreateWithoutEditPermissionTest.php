@@ -2,6 +2,7 @@
 
 use Webkul\User\Models\Admin;
 use Webkul\User\Models\Role;
+use Webkul\User\Services\RoleAccessGuard;
 
 use function Pest\Laravel\postJson;
 
@@ -116,4 +117,25 @@ it('keeps the all-access wording for an all-access target role', function () use
         ->assertJsonFragment([
             'message' => trans('admin::app.settings.users.cannot-escalate-role'),
         ]);
+});
+
+it('rejects a role id that does not name an existing role, so it cannot round onto the full-access role', function (string $roleIdSuffix) use ($createOnly, $payload) {
+    $this->loginWithPermissions('custom', $createOnly);
+
+    $fullRole = Role::factory()->create(['permission_type' => 'all', 'permissions' => null]);
+
+    postJson(route('admin.settings.users.store'), [
+        ...$payload($fullRole->id),
+        'role_id' => $fullRole->id.$roleIdSuffix,
+    ])->assertUnprocessable()->assertJsonValidationErrors('role_id');
+
+    $this->assertDatabaseMissing('admins', ['name' => 'Created Without Edit']);
+})->with(['fraction' => '.4', 'not a number' => 'x']);
+
+it('treats a role that cannot be resolved as not assignable for an admin without full access', function () {
+    $limitedAdmin = Admin::factory()->create([
+        'role_id' => Role::factory()->create(['permission_type' => 'custom', 'permissions' => ['dashboard']])->id,
+    ]);
+
+    expect(app(RoleAccessGuard::class)->assignmentError($limitedAdmin, null))->not->toBeNull();
 });

@@ -122,324 +122,324 @@
                         </v-media-image-item>
                     </template>
                 </draggable>
+            </div>
 
-                <x-admin::form
-                    v-slot="{ meta, errors, handleSubmit }"
-                    as="div"
-                >
-                    <form>
-                        <x-admin::modal ref="choiceImageModal">
-                            <x-slot:header>
-                                <p class="grid text-base text-gray-800 dark:text-gray-300 font-semibold text-center">
-                                    @lang('admin::app.components.media.images.add-image-btn')
+            <x-admin::form
+                v-slot="{ meta, errors, handleSubmit }"
+                as="div"
+            >
+                <form>
+                    <x-admin::modal ref="choiceImageModal">
+                        <x-slot:header>
+                            <p class="grid text-base text-gray-800 dark:text-gray-300 font-semibold text-center">
+                                @lang('admin::app.components.media.images.add-image-btn')
+                            </p>
+                        </x-slot>
+
+                        <x-slot:content>
+                            <div class="mb-4">
+                                <label
+                                    class="cursor-pointer mb-2"
+                                    @click="resetAIModal(); toggleImageAIModal(); $refs.choiceImageModal.close()"
+                                >
+                                    <div class="flex flex-col">
+                                        <div class="flex gap-1 p-3 border rounded-md text-sm">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" class="dark:invert">
+                                                <g clip-path="url(#clip0_3148_2242)"> <path fill-rule="evenodd" clip-rule="evenodd" d="M12.1484 9.31989L9.31995 12.1483L19.9265 22.7549L22.755 19.9265L12.1484 9.31989ZM12.1484 10.7341L10.7342 12.1483L13.5626 14.9767L14.9768 13.5625L12.1484 10.7341Z" fill="#27272A"/>
+                                                    <path d="M11.0877 3.30949L13.5625 4.44748L16.0374 3.30949L14.8994 5.78436L16.0374 8.25924L13.5625 7.12124L11.0877 8.25924L12.2257 5.78436L11.0877 3.30949Z" fill="#27272A"/>
+                                                    <path d="M2.39219 2.39217L5.78438 3.95197L9.17656 2.39217L7.61677 5.78436L9.17656 9.17655L5.78438 7.61676L2.39219 9.17655L3.95198 5.78436L2.39219 2.39217Z" fill="#27272A"/>
+                                                    <path d="M3.30947 11.0877L5.78434 12.2257L8.25922 11.0877L7.12122 13.5626L8.25922 16.0374L5.78434 14.8994L3.30947 16.0374L4.44746 13.5626L3.30947 11.0877Z" fill="#27272A"/>
+                                                </g>
+                                                <defs>
+                                                    <clipPath id="clip0_3148_2242">
+                                                        <rect width="24" height="24"/>
+                                                    </clipPath>
+                                                </defs>
+                                            </svg>
+
+                                            <span class="text-gray-600 dark:text-slate-50 text-sm font-semibold">@lang('admin::app.components.media.images.generate-with-ai')</span>
+                                        </div>
+
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div class="mb-4">
+                                <label
+                                    class="cursor-pointer mb-2"
+                                    :for="$.uid + '_imageInput_ai'"
+                                >
+                                    <div class="flex flex-col">
+                                        <div class="flex gap-1 p-3 border rounded-md text-sm">
+                                            <span class="icon-export text-xl"></span>
+
+                                            <span class="text-gray-600 dark:text-slate-50 text-sm font-semibold">@lang('admin::app.components.media.images.upload-from-device')</span>
+                                        </div>
+
+                                    </div>
+                                    <input
+                                        type="file"
+                                        class="hidden"
+                                        :id="$.uid + '_imageInput_ai'"
+                                        :accept="acceptAttribute"
+                                        @change="add($event.target.files)"
+                                    />
+                                </label>
+                            </div>
+                        </x-slot>
+
+                        <x-slot:footer>
+                            <div class="flex gap-x-2.5 items-center">
+                                <a href="#" @click="$refs.choiceImageModal.close()" class="secondary-button">
+                                    @lang('admin::app.components.media.images.cancel')
+                                </a>
+                            </div>
+                        </x-slot>
+                    </x-admin::modal>
+                </form>
+            </x-admin::form>
+
+            <x-admin::form
+                v-slot="{ meta, errors, handleSubmit }"
+                as="div"
+            >
+                <form @submit="handleSubmit($event, generate)">
+                    <x-admin::modal ref="magicAIImageModal">
+                        <x-slot:header>
+                            <template v-if="! ai.images.length">
+                                <p class="flex gap-2.5 items-center text-lg text-gray-800 dark:text-white font-bold">
+                                    <span class="icon-magic text-2xl text-gray-800 dark:text-white"></span>
+
+                                    @lang('admin::app.components.media.images.ai-generation.title')
                                 </p>
-                            </x-slot>
+                            </template>
 
-                            <x-slot:content>
-                                <div class="mb-4">
-                                    <label
-                                        class="cursor-pointer mb-2"
-                                        @click="resetAIModal(); toggleImageAIModal(); $refs.choiceImageModal.close()"
+                            <template v-else>
+                                <p class="text-lg text-gray-800 truncate dark:text-white font-bold">
+                                    <span
+                                        class="align-middle mr-1 icon-arrow-right text-2xl cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800 hover:rounded-md"
+                                        @click="ai.images = []"
+                                    ></span>
+
+                                    <span class="align-middle">
+                                        @{{ ai.prompt }}
+                                    </span>
+                                </p>
+                            </template>
+                        </x-slot>
+
+                        <x-slot:content>
+                            <div v-show="! ai.images.length">
+                                <x-admin::form.control-group v-if="imagePrompts.length">
+                                    <x-admin::form.control-group.label>
+                                        @lang('admin::app.components.tinymce.ai-generation.default-prompt')
+                                    </x-admin::form.control-group.label>
+                                    <select
+                                        @change="onImagePromptChange($event)"
+                                        class="w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 dark:bg-cherry-800 dark:border-cherry-800"
                                     >
-                                        <div class="flex flex-col">
-                                            <div class="flex gap-1 p-3 border rounded-md text-sm">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" class="dark:invert">
-                                                    <g clip-path="url(#clip0_3148_2242)"> <path fill-rule="evenodd" clip-rule="evenodd" d="M12.1484 9.31989L9.31995 12.1483L19.9265 22.7549L22.755 19.9265L12.1484 9.31989ZM12.1484 10.7341L10.7342 12.1483L13.5626 14.9767L14.9768 13.5625L12.1484 10.7341Z" fill="#27272A"/>
-                                                        <path d="M11.0877 3.30949L13.5625 4.44748L16.0374 3.30949L14.8994 5.78436L16.0374 8.25924L13.5625 7.12124L11.0877 8.25924L12.2257 5.78436L11.0877 3.30949Z" fill="#27272A"/>
-                                                        <path d="M2.39219 2.39217L5.78438 3.95197L9.17656 2.39217L7.61677 5.78436L9.17656 9.17655L5.78438 7.61676L2.39219 9.17655L3.95198 5.78436L2.39219 2.39217Z" fill="#27272A"/>
-                                                        <path d="M3.30947 11.0877L5.78434 12.2257L8.25922 11.0877L7.12122 13.5626L8.25922 16.0374L5.78434 14.8994L3.30947 16.0374L4.44746 13.5626L3.30947 11.0877Z" fill="#27272A"/>
-                                                    </g>
-                                                    <defs>
-                                                        <clipPath id="clip0_3148_2242">
-                                                            <rect width="24" height="24"/>
-                                                        </clipPath>
-                                                    </defs>
-                                                </svg>
+                                        <option value="">@lang('admin::app.components.tinymce.ai-generation.select-prompt-template')</option>
+                                        <option v-for="p in imagePrompts" :key="p.title" :value="p.prompt">@{{ p.title }}</option>
+                                    </select>
+                                </x-admin::form.control-group>
 
-                                                <span class="text-gray-600 dark:text-slate-50 text-sm font-semibold">@lang('admin::app.components.media.images.generate-with-ai')</span>
-                                            </div>
+                                <x-admin::form.control-group>
+                                    <x-admin::form.control-group.label class="required">
+                                        @lang('admin::app.components.media.images.ai-generation.prompt')
+                                    </x-admin::form.control-group.label>
 
-                                        </div>
-                                    </label>
-                                </div>
-
-                                <div class="mb-4">
-                                    <label
-                                        class="cursor-pointer mb-2"
-                                        :for="$.uid + '_imageInput_ai'"
-                                    >
-                                        <div class="flex flex-col">
-                                            <div class="flex gap-1 p-3 border rounded-md text-sm">
-                                                <span class="icon-export text-xl"></span>
-
-                                                <span class="text-gray-600 dark:text-slate-50 text-sm font-semibold">@lang('admin::app.components.media.images.upload-from-device')</span>
-                                            </div>
-
-                                        </div>
-                                        <input
-                                            type="file"
-                                            class="hidden"
-                                            :id="$.uid + '_imageInput_ai'"
-                                            :accept="acceptAttribute"
-                                            @change="add($event.target.files)"
+                                    <div class="relative w-full">
+                                        <x-admin::form.control-group.control
+                                            type="textarea"
+                                            class="h-[120px]"
+                                            name="prompt"
+                                            rules="required"
+                                            v-model="ai.prompt"
+                                            ref="imagePromptInput"
+                                            :label="trans('admin::app.components.media.images.ai-generation.prompt')"
                                         />
-                                    </label>
-                                </div>
-                            </x-slot>
 
-                            <x-slot:footer>
+                                        {{-- Icon inside textarea (only when there's a resource context to interpolate from) --}}
+                                        <div
+                                            v-if="hasContext && showSuggestions"
+                                            class="absolute bottom-2.5 left-1 text-gray-400 cursor-pointer text-2xl"
+                                            @click="openSuggestions"
+                                        >
+                                            <span class="icon-at"></span>
+                                        </div>
+                                    </div>
+
+                                    <x-admin::form.control-group.error control-name="prompt" />
+                                </x-admin::form.control-group>
+
+                                <x-admin::form.control-group>
+                                    <x-admin::form.control-group.label class="required">
+                                        @lang('admin::app.components.media.images.ai-generation.size')
+                                    </x-admin::form.control-group.label>
+
+
+                                    @php
+                                        $aiImageSizes = json_encode([
+                                                [
+                                                    'label' => trans('admin::app.components.media.images.ai-generation.1024x1024'),
+                                                    'value' => '1024x1024'
+                                                ], [
+                                                    'label' => trans('admin::app.components.media.images.ai-generation.1024x1792'),
+                                                    'value' => '1024x1792'
+                                                ], [
+                                                    'label' => trans('admin::app.components.media.images.ai-generation.1792x1024'),
+                                                    'value' => '1792x1024'
+                                                ]
+                                            ]);
+                                    @endphp
+
+                                    <x-admin::form.control-group.control
+                                        type="select"
+                                        name="size"
+                                        rules="required"
+                                        v-model="ai.size"
+                                        :options="$aiImageSizes"
+                                        track-by="value"
+                                        label-by="label"
+                                        :label="trans('admin::app.components.media.images.ai-generation.size')"
+                                    >
+                                    </x-admin::form.control-group.control>
+
+                                    <x-admin::form.control-group.error control-name="size" />
+                                </x-admin::form.control-group>
+
+                                <x-admin::form.control-group v-if="ai.model == 'dall-e-3'">
+                                    <x-admin::form.control-group.label class="required">
+                                        @lang('admin::app.components.media.images.ai-generation.quality')
+                                    </x-admin::form.control-group.label>
+                                    @php
+                                        $aiImageQualities = json_encode([
+                                                [
+                                                    'label' => trans('admin::app.components.media.images.ai-generation.standard'),
+                                                    'value' => 'standard'
+                                                ], [
+                                                    'label' => trans('admin::app.components.media.images.ai-generation.hd'),
+                                                    'value' => 'hd'
+                                                ]
+                                            ]);
+                                    @endphp
+                                    <x-admin::form.control-group.control
+                                        type="select"
+                                        name="quality"
+                                        rules="required"
+                                        v-model="ai.quality"
+                                        :options="$aiImageQualities"
+                                        track-by="value"
+                                        label-by="label"
+                                        :label="trans('admin::app.components.media.images.ai-generation.quality')"
+                                    >
+                                    </x-admin::form.control-group.control>
+
+                                    <x-admin::form.control-group.error control-name="quality" />
+                                </x-admin::form.control-group>
+                            </div>
+
+                            <div v-show="ai.images.length">
+                                <div class="grid grid-cols-4 gap-5">
+                                    <div
+                                        class="grid justify-items-center min-w-[120px] max-h-[120px] relative border-[3px] border-transparent rounded overflow-hidden transition-all hover:opacity-80 cursor-pointer"
+                                        :class="{'!border-primary-700 ': image.selected}"
+                                        v-for="image in ai.images"
+                                        :key="image.url"
+                                        @click="selectImage(image)"
+                                    >
+                                        <img
+                                            class="w-[120px] h-[120px]"
+                                            :src="image.url"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </x-slot>
+
+                        <x-slot:footer>
+                            <div class="flex items-center justify-between w-full">
+                                <p
+                                    v-if="! ai.images.length && platformsFetched && ! aiModels.length"
+                                    class="text-xs text-danger max-w-[320px]"
+                                >
+                                    @lang('admin::app.configuration.platform.fields.no-image-platform')
+                                </p>
+
+                                <div class="flex items-center gap-2" v-if="!ai.images.length && aiModels.length">
+                                    <select
+                                        v-model="ai.platform_id"
+                                        @change="onPlatformChange()"
+                                        class="py-1.5 px-2 border rounded-md text-xs text-gray-600 dark:text-gray-300 dark:bg-cherry-800 dark:border-cherry-800 max-w-[140px]"
+                                        title="@lang('admin::app.components.tinymce.ai-generation.platform')"
+                                    >
+                                        <option v-for="p in platforms" :key="p.id" :value="p.id">@{{ p.label }}</option>
+                                    </select>
+                                    <select
+                                        v-model="ai.model"
+                                        class="py-1.5 px-2 border rounded-md text-xs text-gray-600 dark:text-gray-300 dark:bg-cherry-800 dark:border-cherry-800 max-w-[160px]"
+                                        title="@lang('admin::app.components.media.images.ai-generation.model')"
+                                    >
+                                        <option v-for="m in aiModels" :key="m.id" :value="m.id">@{{ m.label }}</option>
+                                    </select>
+                                </div>
+                                <div v-else></div>
+
                                 <div class="flex gap-x-2.5 items-center">
-                                    <a href="#" @click="$refs.choiceImageModal.close()" class="secondary-button">
-                                        @lang('admin::app.components.media.images.cancel')
-                                    </a>
-                                </div>
-                            </x-slot>
-                        </x-admin::modal>
-                    </form>
-                </x-admin::form>
-
-                <x-admin::form
-                    v-slot="{ meta, errors, handleSubmit }"
-                    as="div"
-                >
-                    <form @submit="handleSubmit($event, generate)">
-                        <x-admin::modal ref="magicAIImageModal">
-                            <x-slot:header>
                                 <template v-if="! ai.images.length">
-                                    <p class="flex gap-2.5 items-center text-lg text-gray-800 dark:text-white font-bold">
-                                        <span class="icon-magic text-2xl text-gray-800 dark:text-white"></span>
+                                    <button
+                                        class="secondary-button"
+                                        :disabled="isLoading || ! aiModels.length"
+                                        :class="{ 'opacity-50 cursor-not-allowed': isLoading || ! aiModels.length }">
+                                        <template v-if="isLoading">
+                                            <img
+                                                class="animate-spin h-5 w-5 text-primary-700"
+                                                src="{{ unopim_asset('images/spinner.svg') }}"
+                                            />
+                                            @lang('admin::app.components.tinymce.ai-generation.generating')
+                                        </template>
 
-                                        @lang('admin::app.components.media.images.ai-generation.title')
-                                    </p>
+                                        <template v-else>
+                                            <span class="icon-magic text-2xl text-primary-700"></span>
+                                            @lang('admin::app.components.tinymce.ai-generation.generate')
+                                        </template>
+                                    </button>
                                 </template>
 
                                 <template v-else>
-                                    <p class="text-lg text-gray-800 truncate dark:text-white font-bold">
-                                        <span
-                                            class="align-middle mr-1 icon-arrow-right text-2xl cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800 hover:rounded-md"
-                                            @click="ai.images = []"
-                                        ></span>
-
-                                        <span class="align-middle">
-                                            @{{ ai.prompt }}
-                                        </span>
-                                    </p>
-                                </template>
-                            </x-slot>
-
-                            <x-slot:content>
-                                <div v-show="! ai.images.length">
-                                    <x-admin::form.control-group v-if="imagePrompts.length">
-                                        <x-admin::form.control-group.label>
-                                            @lang('admin::app.components.tinymce.ai-generation.default-prompt')
-                                        </x-admin::form.control-group.label>
-                                        <select
-                                            @change="onImagePromptChange($event)"
-                                            class="w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 dark:bg-cherry-800 dark:border-cherry-800"
-                                        >
-                                            <option value="">@lang('admin::app.components.tinymce.ai-generation.select-prompt-template')</option>
-                                            <option v-for="p in imagePrompts" :key="p.title" :value="p.prompt">@{{ p.title }}</option>
-                                        </select>
-                                    </x-admin::form.control-group>
-
-                                    <x-admin::form.control-group>
-                                        <x-admin::form.control-group.label class="required">
-                                            @lang('admin::app.components.media.images.ai-generation.prompt')
-                                        </x-admin::form.control-group.label>
-
-                                        <div class="relative w-full">
-                                            <x-admin::form.control-group.control
-                                                type="textarea"
-                                                class="h-[120px]"
-                                                name="prompt"
-                                                rules="required"
-                                                v-model="ai.prompt"
-                                                ref="imagePromptInput"
-                                                :label="trans('admin::app.components.media.images.ai-generation.prompt')"
-                                            />
-
-                                            {{-- Icon inside textarea (only when there's a resource context to interpolate from) --}}
-                                            <div
-                                                v-if="hasContext && showSuggestions"
-                                                class="absolute bottom-2.5 left-1 text-gray-400 cursor-pointer text-2xl"
-                                                @click="openSuggestions"
-                                            >
-                                                <span class="icon-at"></span>
-                                            </div>
-                                        </div>
-
-                                        <x-admin::form.control-group.error control-name="prompt" />
-                                    </x-admin::form.control-group>
-
-                                    <x-admin::form.control-group>
-                                        <x-admin::form.control-group.label class="required">
-                                            @lang('admin::app.components.media.images.ai-generation.size')
-                                        </x-admin::form.control-group.label>
-
-
-                                        @php
-                                            $aiImageSizes = json_encode([
-                                                    [
-                                                        'label' => trans('admin::app.components.media.images.ai-generation.1024x1024'),
-                                                        'value' => '1024x1024'
-                                                    ], [
-                                                        'label' => trans('admin::app.components.media.images.ai-generation.1024x1792'),
-                                                        'value' => '1024x1792'
-                                                    ], [
-                                                        'label' => trans('admin::app.components.media.images.ai-generation.1792x1024'),
-                                                        'value' => '1792x1024'
-                                                    ]
-                                                ]);
-                                        @endphp
-
-                                        <x-admin::form.control-group.control
-                                            type="select"
-                                            name="size"
-                                            rules="required"
-                                            v-model="ai.size"
-                                            :options="$aiImageSizes"
-                                            track-by="value"
-                                            label-by="label"
-                                            :label="trans('admin::app.components.media.images.ai-generation.size')"
-                                        >
-                                        </x-admin::form.control-group.control>
-
-                                        <x-admin::form.control-group.error control-name="size" />
-                                    </x-admin::form.control-group>
-
-                                    <x-admin::form.control-group v-if="ai.model == 'dall-e-3'">
-                                        <x-admin::form.control-group.label class="required">
-                                            @lang('admin::app.components.media.images.ai-generation.quality')
-                                        </x-admin::form.control-group.label>
-                                        @php
-                                            $aiImageQualities = json_encode([
-                                                    [
-                                                        'label' => trans('admin::app.components.media.images.ai-generation.standard'),
-                                                        'value' => 'standard'
-                                                    ], [
-                                                        'label' => trans('admin::app.components.media.images.ai-generation.hd'),
-                                                        'value' => 'hd'
-                                                    ]
-                                                ]);
-                                        @endphp
-                                        <x-admin::form.control-group.control
-                                            type="select"
-                                            name="quality"
-                                            rules="required"
-                                            v-model="ai.quality"
-                                            :options="$aiImageQualities"
-                                            track-by="value"
-                                            label-by="label"
-                                            :label="trans('admin::app.components.media.images.ai-generation.quality')"
-                                        >
-                                        </x-admin::form.control-group.control>
-
-                                        <x-admin::form.control-group.error control-name="quality" />
-                                    </x-admin::form.control-group>
-                                </div>
-
-                                <div v-show="ai.images.length">
-                                    <div class="grid grid-cols-4 gap-5">
-                                        <div
-                                            class="grid justify-items-center min-w-[120px] max-h-[120px] relative border-[3px] border-transparent rounded overflow-hidden transition-all hover:opacity-80 cursor-pointer"
-                                            :class="{'!border-primary-700 ': image.selected}"
-                                            v-for="image in ai.images"
-                                            :key="image.url"
-                                            @click="selectImage(image)"
-                                        >
+                                     <button
+                                        class="secondary-button"
+                                        :disabled="isLoading"
+                                        :class="{ 'opacity-50 cursor-not-allowed': isLoading }">
+                                        <template v-if="isLoading">
                                             <img
-                                                class="w-[120px] h-[120px]"
-                                                :src="image.url"
+                                                class="animate-spin h-5 w-5 text-primary-700"
+                                                src="{{ unopim_asset('images/spinner.svg') }}"
                                             />
-                                        </div>
-                                    </div>
-                                </div>
-                            </x-slot>
+                                            @lang('admin::app.components.media.images.ai-generation.regenerating')
+                                        </template>
 
-                            <x-slot:footer>
-                                <div class="flex items-center justify-between w-full">
-                                    <p
-                                        v-if="! ai.images.length && platformsFetched && ! aiModels.length"
-                                        class="text-xs text-danger max-w-[320px]"
+                                        <template v-else>
+                                            <span class="icon-magic text-2xl text-primary-700"></span>
+                                            @lang('admin::app.components.media.images.ai-generation.regenerate')
+                                        </template>
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        class="primary-button"
+                                        :disabled="! selectedAIImages.length"
+                                        @click="apply"
                                     >
-                                        @lang('admin::app.configuration.platform.fields.no-image-platform')
-                                    </p>
-
-                                    <div class="flex items-center gap-2" v-if="!ai.images.length && aiModels.length">
-                                        <select
-                                            v-model="ai.platform_id"
-                                            @change="onPlatformChange()"
-                                            class="py-1.5 px-2 border rounded-md text-xs text-gray-600 dark:text-gray-300 dark:bg-cherry-800 dark:border-cherry-800 max-w-[140px]"
-                                            title="@lang('admin::app.components.tinymce.ai-generation.platform')"
-                                        >
-                                            <option v-for="p in platforms" :key="p.id" :value="p.id">@{{ p.label }}</option>
-                                        </select>
-                                        <select
-                                            v-model="ai.model"
-                                            class="py-1.5 px-2 border rounded-md text-xs text-gray-600 dark:text-gray-300 dark:bg-cherry-800 dark:border-cherry-800 max-w-[160px]"
-                                            title="@lang('admin::app.components.media.images.ai-generation.model')"
-                                        >
-                                            <option v-for="m in aiModels" :key="m.id" :value="m.id">@{{ m.label }}</option>
-                                        </select>
-                                    </div>
-                                    <div v-else></div>
-
-                                    <div class="flex gap-x-2.5 items-center">
-                                    <template v-if="! ai.images.length">
-                                        <button
-                                            class="secondary-button"
-                                            :disabled="isLoading || ! aiModels.length"
-                                            :class="{ 'opacity-50 cursor-not-allowed': isLoading || ! aiModels.length }">
-                                            <template v-if="isLoading">
-                                                <img
-                                                    class="animate-spin h-5 w-5 text-primary-700"
-                                                    src="{{ unopim_asset('images/spinner.svg') }}"
-                                                />
-                                                @lang('admin::app.components.tinymce.ai-generation.generating')
-                                            </template>
-
-                                            <template v-else>
-                                                <span class="icon-magic text-2xl text-primary-700"></span>
-                                                @lang('admin::app.components.tinymce.ai-generation.generate')
-                                            </template>
-                                        </button>
-                                    </template>
-
-                                    <template v-else>
-                                         <button
-                                            class="secondary-button"
-                                            :disabled="isLoading"
-                                            :class="{ 'opacity-50 cursor-not-allowed': isLoading }">
-                                            <template v-if="isLoading">
-                                                <img
-                                                    class="animate-spin h-5 w-5 text-primary-700"
-                                                    src="{{ unopim_asset('images/spinner.svg') }}"
-                                                />
-                                                @lang('admin::app.components.media.images.ai-generation.regenerating')
-                                            </template>
-
-                                            <template v-else>
-                                                <span class="icon-magic text-2xl text-primary-700"></span>
-                                                @lang('admin::app.components.media.images.ai-generation.regenerate')
-                                            </template>
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            class="primary-button"
-                                            :disabled="! selectedAIImages.length"
-                                            @click="apply"
-                                        >
-                                            @lang('admin::app.components.media.images.ai-generation.apply')
-                                        </button>
-                                    </template>
-                                    </div>
+                                        @lang('admin::app.components.media.images.ai-generation.apply')
+                                    </button>
+                                </template>
                                 </div>
-                            </x-slot>
-                        </x-admin::modal>
-                    </form>
-                </x-admin::form>
-            </div>
+                            </div>
+                        </x-slot>
+                    </x-admin::modal>
+                </form>
+            </x-admin::form>
         </div>
     </script>
 

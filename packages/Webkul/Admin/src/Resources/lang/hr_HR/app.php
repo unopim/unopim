@@ -2116,6 +2116,7 @@ return [
             'delete-failed'                   => 'Brisanje uloge nije uspjelo',
             'delete-success'                  => 'Uloga uspješno izbrisana',
             'last-delete-error'               => 'Posljednju ulogu nije moguće obrisati',
+            'last-full-access'                => 'Barem jedan aktivni korisnik mora zadržati puni pristup.',
             'update-success'                  => 'Uloga uspješno ažurirana',
         ],
     ],
@@ -2155,6 +2156,26 @@ return [
                     'info'  => '',
                     'title' => 'Opće',
                 ],
+                'platform' => [
+                    'info'  => 'Odaberite koji su moduli platforme uključeni.',
+                    'title' => 'Platforma',
+
+                    'settings' => [
+                        'info'  => 'Pokrenite bilo koji modul samostalno ili više njih zajedno; modul kojemu je potreban drugi može se uključiti samo uz njega.',
+                        'title' => 'Odabir modula',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Isključivanje modula skriva njegove izbornike, stranice i API rute; podaci se zadržavaju.',
+                        'title' => 'Moduli',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Primjenjuje se samo dok su informacije o proizvodima (PIM) isključene. Odabrani odjeljci uklanjaju se iz izbornika, a njihove administratorske stranice blokiraju; podaci se zadržavaju, a njihove Admin API rute ostaju dostupne.',
+                        'title' => 'Skriveni odjeljci',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -2326,6 +2347,7 @@ return [
                 'title'               => 'Upit',
                 'create-btn'          => 'Kreiraj upit',
                 'edit-title'          => 'Uredi upit',
+                'insert-attribute'    => 'Umetni atribut',
                 'create-title'        => 'Kreiraj novi upit',
                 'label-title'         => 'Naslov',
                 'purpose'             => 'Namjena',
@@ -3098,6 +3120,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Nadzorna ploča',
+        'home'      => 'Početna',
         'go-back'   => 'Idi nazad',
         'support'   => 'Ako problem i dalje traje, obratite nam se na <a href=":link" class=":class">:email</a> za pomoć.',
         '404'       => [

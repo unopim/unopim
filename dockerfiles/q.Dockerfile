@@ -12,7 +12,7 @@
 # ---------------------------------------------------------------------------
 # Stage 1: Composer dependencies
 # ---------------------------------------------------------------------------
-FROM composer:2 AS composer
+FROM composer:2@sha256:c7f68260503e3c1f0ece10bdbe84519fd98d48ba091f2c02f16ea94a7faae337 AS composer
 
 WORKDIR /app
 COPY composer.json composer.lock ./
@@ -28,7 +28,7 @@ RUN composer install \
 # ---------------------------------------------------------------------------
 # Stage 2: Production image
 # ---------------------------------------------------------------------------
-FROM php:8.4-cli
+FROM php:8.4-cli@sha256:9cf851bc2c1b37c3e59dfd677a3c3e56d485af5a47c93f629424bb039eafcb69
 
 LABEL maintainer="Webkul <support@webkul.com>"
 LABEL org.opencontainers.image.title="UnoPim Queue Worker"

@@ -60,7 +60,7 @@
 
 @font-face {
     font-family: "unopim-admin";
-    src: url("../fonts/unopim-admin.woff?jwnnow") format("woff");
+    src: url("../fonts/unopim-admin.woff?dh93b") format("woff");
     font-weight: normal;
     font-style: normal;
     font-display: block;
@@ -179,13 +179,12 @@
     [class^="icon-"],
     [class*=" icon-"] {
         /* use !important to prevent issues with browser extensions that change fonts */
-        font-family: "unopim-admin" !important;
+        font-family: "unopim-admin", sans-serif !important;
         speak: never;
         font-style: normal;
         font-weight: normal;
         font-variant: normal;
         text-transform: none;
-        line-height: 1;
         @apply text-gray-600;
 
         /* Better Font Rendering =========== */
@@ -474,7 +473,18 @@
     .icon-manage-column:before {
         content: "\e93a";
     }
+
+    .icon-data-hub:before {
+        content: "\e93b";
+    }
     /** Icons END */
+
+    .icon-mask {
+        display: inline-block;
+        background-color: currentColor;
+        -webkit-mask: var(--icon-mask-url) center / contain no-repeat;
+        mask: var(--icon-mask-url) center / contain no-repeat;
+    }
 
     .custom-select {
         -webkit-appearance: none;

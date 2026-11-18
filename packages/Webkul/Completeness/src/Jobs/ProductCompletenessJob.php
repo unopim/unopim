@@ -113,9 +113,9 @@ class ProductCompletenessJob implements ShouldQueue
                 $cases .= ' WHEN '.((int) $pid).' THEN '.($score === null ? 'NULL' : (int) $score);
             }
 
-            $prefix = DB::getTablePrefix();
+            $productsTable = DB::getQueryGrammar()->wrapTable('products');
             $castType = DB::getDriverName() === 'pgsql' ? 'INTEGER' : 'SIGNED';
-            DB::statement("UPDATE {$prefix}products SET avg_completeness_score = CAST(CASE id {$cases} END AS {$castType}) WHERE id IN ({$idList})");
+            DB::statement("UPDATE {$productsTable} SET avg_completeness_score = CAST(CASE id {$cases} END AS {$castType}) WHERE id IN ({$idList})");
         }
     }
 
@@ -161,11 +161,9 @@ class ProductCompletenessJob implements ShouldQueue
             return [[], null, []];
         }
 
-        if (! isset($this->completenessSettings[$familyId])) {
-            $this->completenessSettings[$familyId] = $this->completenessSettingsRepository
-                ->findWhere(['family_id' => $familyId])
-                ->groupBy('channel_id');
-        }
+        $this->completenessSettings[$familyId] ??= $this->completenessSettingsRepository
+            ->findWhere(['family_id' => $familyId])
+            ->groupBy('channel_id');
 
         $settingsByChannel = $this->completenessSettings[$familyId];
 
@@ -191,11 +189,9 @@ class ProductCompletenessJob implements ShouldQueue
 
             $cacheKey = implode(',', $attributeIds);
 
-            if (! isset($this->attributeCache[$cacheKey])) {
-                $this->attributeCache[$cacheKey] = $this->attributeRepository
-                    ->findWhereIn('id', $attributeIds)
-                    ->keyBy('id');
-            }
+            $this->attributeCache[$cacheKey] ??= $this->attributeRepository
+                ->findWhereIn('id', $attributeIds)
+                ->keyBy('id');
 
             $attributes = $this->ownedAttributes($this->attributeCache[$cacheKey], $model);
 
@@ -212,7 +208,7 @@ class ProductCompletenessJob implements ShouldQueue
             $scoreRows = array_merge($scoreRows, $channelRows);
         }
 
-        $avgScore = $channelCount !== 0 ? round($averageScore / $channelCount) : null;
+        $avgScore = $channelCount !== 0 ? (int) round($averageScore / $channelCount) : null;
 
         return [$scoreRows, $avgScore, $deleteQueue];
     }

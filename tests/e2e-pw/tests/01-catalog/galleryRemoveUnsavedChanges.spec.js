@@ -3,6 +3,8 @@ const { clickSave, generateUid } = require('../../utils/helpers');
 const {
   IMAGE_1,
   createGalleryAttribute,
+  createGalleryFamily,
+  deleteFamilyByCode,
   assignAttributeToMediaGroup,
   deleteAttributeByCode,
   deleteProductBySku,
@@ -26,7 +28,9 @@ test.describe('Gallery removal marks the product form dirty', () => {
     const code = `gallery_rm_e2e_${uid}`;
     const label = `Gallery Remove QA ${uid}`;
     const sku = `gal-remove-${uid}`;
+    const familyCode = `gal_rm_fam_${uid}`;
 
+    let family = null;
     let attributeCreated = false;
     let productCreated = false;
 
@@ -34,11 +38,12 @@ test.describe('Gallery removal marks the product form dirty', () => {
       await test.step('provision a gallery attribute on the Media group', async () => {
         await createGalleryAttribute(adminPage, code, label);
         attributeCreated = true;
-        await assignAttributeToMediaGroup(adminPage, code);
+        family = await createGalleryFamily(adminPage, familyCode);
+        await assignAttributeToMediaGroup(adminPage, code, family.id);
       });
 
       await test.step('create a product with one saved gallery image', async () => {
-        await createSimpleProduct(adminPage, sku);
+        await createSimpleProduct(adminPage, sku, familyCode);
         productCreated = true;
 
         await ensureMediaGroupOpen(adminPage);
@@ -92,6 +97,9 @@ test.describe('Gallery removal marks the product form dirty', () => {
     } finally {
       if (productCreated) {
         await deleteProductBySku(adminPage, sku);
+      }
+      if (family) {
+        await deleteFamilyByCode(adminPage, familyCode);
       }
       if (attributeCreated) {
         await deleteAttributeByCode(adminPage, code);

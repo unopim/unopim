@@ -1,5 +1,9 @@
 # Unreleased
 
+## Security
+
+- Hardened the TinyMCE 6.8 editor against CVE-2024-29881, CVE-2026-47759, CVE-2026-47760, CVE-2026-47761 and CVE-2026-47762 while staying on its last MIT-licensed release. The unused media plugin is removed, unsafe embeds are converted, and content is run through DOMPurify on load and paste, removing `svg`, `math`, `object` and `embed` elements, `data-*` attributes and comments. Saved WYSIWYG content is still sanitized server-side by HTMLPurifier.
+
 ## Bug fixes
 
 - Fixed a product quick search none of whose fields resolves to an attribute returning the entire catalogue instead of no products. The database path dropped the empty condition group; the Elasticsearch path emitted an empty `should`, which Elasticsearch answers with a match_all because it applies `minimum_should_match` only once there are `should` clauses to count. Both now refuse the term, with `1 = 0` and with `match_none`.

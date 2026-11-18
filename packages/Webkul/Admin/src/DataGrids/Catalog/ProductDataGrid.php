@@ -131,9 +131,11 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
     public function prepareQueryBuilder()
     {
-        $tablePrefix = DB::getTablePrefix();
-
         $grammar = DB::rawQueryGrammar();
+
+        $familyNameColumn = DB::getQueryGrammar()->wrap('attribute_family_name.name');
+
+        $familyCodeColumn = DB::getQueryGrammar()->wrap('af.code');
 
         $this->prepareQuery = ProductQueryBuilderFactory::make()->prepareQueryBuilder();
 
@@ -154,10 +156,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'parent_products.sku as parent',
                 DB::raw(
                     "(CASE
-                        WHEN {$tablePrefix}attribute_family_name.name IS NULL
-                            OR {$grammar->length("TRIM({$tablePrefix}attribute_family_name.name)")} < 1
-                        THEN {$grammar->concat("'['", "{$tablePrefix}af.code", "']'")}
-                        ELSE {$tablePrefix}attribute_family_name.name
+                        WHEN {$familyNameColumn} IS NULL
+                            OR {$grammar->length("TRIM({$familyNameColumn})")} < 1
+                        THEN {$grammar->concat("'['", $familyCodeColumn, "']'")}
+                        ELSE {$familyNameColumn}
                     END) as attribute_family"
                 ),
                 'products.values as raw_values',
@@ -598,7 +600,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
             if (! empty($ids)) {
                 $this->queryBuilder->orderByRaw(
-                    DB::rawQueryGrammar()->orderByField(DB::getTablePrefix().'products.id', $ids)
+                    DB::rawQueryGrammar()->orderByField(DB::getQueryGrammar()->wrap('products.id'), $ids)
                 );
             }
 
@@ -1183,6 +1185,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $mergedValuesByProductId = $this->resolveMergedValuesForPage($paginator['data']);
 
         foreach ($paginator['data'] as $record) {
+            $values = $mergedValuesByProductId[$record->product_id] ?? $this->decodeRawValues($record);
+
             $record = $this->sanitizeRow($record);
 
             foreach ($this->columns as $column) {
@@ -1197,7 +1201,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 }
             }
 
-            $this->processRawValues($record, $mergedValuesByProductId[$record->product_id] ?? null);
+            $this->processRawValues($record, $values);
 
             unset($record->parent_id);
 
@@ -1267,6 +1271,23 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     }
 
     /**
+     * Decode the row's stored values before the row is sanitized, since stripping
+     * tags from the encoded JSON corrupts it whenever a value contains "<".
+     */
+    protected function decodeRawValues(object $record): ?array
+    {
+        $rawValues = $record->raw_values ?? null;
+
+        if (! is_string($rawValues) || $rawValues === '') {
+            return null;
+        }
+
+        $decoded = json_decode($rawValues, true);
+
+        return is_array($decoded) ? $decoded : null;
+    }
+
+    /**
      * Process raw values and update record.
      *
      * @param  array|null  $mergedValues  The row's `values`, already merged with its
@@ -1312,7 +1333,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 continue;
             }
 
-            $record->{$code} = $value;
+            $record->{$code} = $this->stripHtmlTags($value);
         }
     }
 

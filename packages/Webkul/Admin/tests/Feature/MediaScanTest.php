@@ -58,3 +58,17 @@ it('requires a file', function () {
 
     $this->postJson(route('admin.media.scan'))->assertStatus(422)->assertJsonValidationErrors('file');
 });
+
+it('rejects a file larger than the configured scan limit', function () {
+    $this->loginAsAdmin();
+
+    config(['media.scan.max_file_size_kilobytes' => 1]);
+
+    $this->postJson(route('admin.media.scan'), [
+        'file' => UploadedFile::fake()->create('large.pdf', 2, 'application/pdf'),
+    ])->assertUnprocessable()->assertJsonValidationErrors('file');
+});
+
+it('defaults the scan size limit to 100MB', function () {
+    expect((int) config('media.scan.max_file_size_kilobytes'))->toBe(102400);
+});
