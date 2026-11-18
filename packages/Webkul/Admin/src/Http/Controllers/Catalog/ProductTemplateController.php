@@ -6,6 +6,7 @@ namespace Webkul\Admin\Http\Controllers\Catalog;
 
 use Illuminate\Http\JsonResponse;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Http\Requests\ProductTemplatePreviewForm;
 use Webkul\Attribute\Contracts\Attribute;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Product\Contracts\TemplateRenderer;
@@ -15,7 +16,6 @@ use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Templates\Results\RenderResult;
 use Webkul\Product\Templates\TemplateMessage;
 use Webkul\Product\Templates\TemplateValueFormatter;
-use Webkul\Product\Type\AbstractType;
 use Webkul\Product\Validator\ProductTemplatesValidator;
 
 class ProductTemplateController extends Controller
@@ -59,19 +59,11 @@ class ProductTemplateController extends Controller
         ])->all());
     }
 
-    public function preview(int $id): JsonResponse
+    public function preview(ProductTemplatePreviewForm $request, int $id): JsonResponse
     {
         $product = $this->productRepository->findOrFail($id);
 
-        $data = $this->validate(request(), [
-            'attribute' => ['required', 'string', 'exists:attributes,code'],
-            'values'    => ['nullable', 'array'],
-
-            'values.'.AbstractType::COMMON_VALUES_KEY         => ['nullable', 'array'],
-            'values.'.AbstractType::LOCALE_VALUES_KEY         => ['nullable', 'array'],
-            'values.'.AbstractType::CHANNEL_VALUES_KEY        => ['nullable', 'array'],
-            'values.'.AbstractType::CHANNEL_LOCALE_VALUES_KEY => ['nullable', 'array'],
-        ]);
+        $data = $request->validated();
 
         $attribute = $this->attributeRepository->findOneByField('code', $data['attribute']);
 
