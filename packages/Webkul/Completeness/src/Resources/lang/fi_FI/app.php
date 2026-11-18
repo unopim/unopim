@@ -1,6 +1,18 @@
 <?php
 
 return [
+    'config' => [
+        'completeness' => [
+            'title'           => 'Täydellisyys',
+            'info'            => 'Täydellisyyspistemäärän väriraja-arvot.',
+            'green-from'      => 'Vihreä alkaen (%)',
+            'green-from-info' => 'Tämän prosenttiosuuden tai sitä suuremmat pisteet näytetään vihreänä.',
+            'red-below'       => 'Punainen alle (%)',
+            'red-below-info'  => 'Tätä prosenttiosuutta pienemmät pisteet näytetään punaisena. Väliin jäävät näytetään keltaisena.',
+            'green-gt-red'    => 'Vihreän raja-arvon on oltava suurempi kuin punaisen raja-arvon.',
+        ],
+    ],
+
     'components' => [
         'layouts' => [
             'sidebar' => [

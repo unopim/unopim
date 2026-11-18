@@ -1,6 +1,18 @@
 <?php
 
 return [
+    'config' => [
+        'completeness' => [
+            'title'           => 'Fullstendighet',
+            'info'            => 'Fargeterskler for fullstendighetsscore.',
+            'green-from'      => 'Grønn fra (%)',
+            'green-from-info' => 'Poeng på eller over denne prosentandelen vises i grønt.',
+            'red-below'       => 'Rød under (%)',
+            'red-below-info'  => 'Poeng under denne prosentandelen vises i rødt. De imellom vises i ravgult.',
+            'green-gt-red'    => 'Den grønne terskelen må være større enn den røde terskelen.',
+        ],
+    ],
+
     'components' => [
         'layouts' => [
             'sidebar' => [

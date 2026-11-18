@@ -1,6 +1,18 @@
 <?php
 
 return [
+    'config' => [
+        'completeness' => [
+            'title'           => 'Completitud',
+            'info'            => 'Umbrales de color de la puntuación de completitud.',
+            'green-from'      => 'Verde desde (%)',
+            'green-from-info' => 'Las puntuaciones iguales o superiores a este porcentaje se muestran en verde.',
+            'red-below'       => 'Rojo por debajo de (%)',
+            'red-below-info'  => 'Las puntuaciones por debajo de este porcentaje se muestran en rojo. Las intermedias se muestran en ámbar.',
+            'green-gt-red'    => 'El umbral verde debe ser mayor que el umbral rojo.',
+        ],
+    ],
+
     'components' => [
         'layouts' => [
             'sidebar' => [

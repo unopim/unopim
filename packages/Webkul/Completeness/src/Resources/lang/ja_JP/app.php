@@ -1,6 +1,18 @@
 <?php
 
 return [
+    'config' => [
+        'completeness' => [
+            'title'           => '完全性',
+            'info'            => '完全性スコアの色のしきい値。',
+            'green-from'      => '緑にする下限 (%)',
+            'green-from-info' => 'このパーセンテージ以上のスコアは緑で表示されます。',
+            'red-below'       => '赤にする上限 (%)',
+            'red-below-info'  => 'このパーセンテージ未満のスコアは赤で表示されます。その間のスコアは琥珀色で表示されます。',
+            'green-gt-red'    => '緑のしきい値は赤のしきい値より大きくする必要があります。',
+        ],
+    ],
+
     'components' => [
         'layouts' => [
             'sidebar' => [

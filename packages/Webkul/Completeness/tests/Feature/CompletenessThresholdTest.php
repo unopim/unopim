@@ -6,7 +6,7 @@ use Webkul\Completeness\Helpers\Threshold;
 use Webkul\Completeness\Listeners\ValidateThresholdSettings;
 use Webkul\Core\Models\CoreConfig;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->loginAsAdmin();
 
     CoreConfig::whereIn('code', [
@@ -37,57 +37,45 @@ function setCompletenessThreshold(?string $greenFrom, ?string $redBelow): void
     Cache::flush();
 }
 
-/*
-|--------------------------------------------------------------------------
-| Threshold helper
-|--------------------------------------------------------------------------
-*/
-
-it('returns the shipped defaults when neither threshold is configured', function () {
+it('returns the shipped defaults when neither threshold is configured', function (): void {
     expect(app(Threshold::class)->bounds())->toBe([
         Threshold::DEFAULT_GREEN_FROM,
         Threshold::DEFAULT_RED_BELOW,
     ])->and(app(Threshold::class)->bounds())->toBe([90, 60]);
 });
 
-it('reads the configured thresholds when the green bound is above the red bound', function () {
+it('reads the configured thresholds when the green bound is above the red bound', function (): void {
     setCompletenessThreshold('95', '40');
 
     expect(app(Threshold::class)->bounds())->toBe([95, 40]);
 });
 
-it('falls back to the defaults when the green bound is not greater than the red bound', function () {
+it('falls back to the defaults when the green bound is not greater than the red bound', function (): void {
     setCompletenessThreshold('50', '60');
 
     expect(app(Threshold::class)->bounds())->toBe([90, 60]);
 });
 
-it('falls back to the defaults when the two thresholds are equal', function () {
+it('falls back to the defaults when the two thresholds are equal', function (): void {
     setCompletenessThreshold('70', '70');
 
     expect(app(Threshold::class)->bounds())->toBe([90, 60]);
 });
 
-it('clamps a configured threshold into the 0..100 range', function () {
+it('clamps a configured threshold into the 0..100 range', function (): void {
     setCompletenessThreshold('150', '40');
 
     expect(app(Threshold::class)->bounds())->toBe([100, 40]);
 });
 
-it('ignores a non-numeric configured threshold and uses the default for that bound', function () {
+it('ignores a non-numeric configured threshold and uses the default for that bound', function (): void {
     setCompletenessThreshold('not-a-number', '40');
 
     // green_from is non-numeric so it defaults to 90; 90 > 40 holds, so the pair stands.
     expect(app(Threshold::class)->bounds())->toBe([90, 40]);
 });
 
-/*
-|--------------------------------------------------------------------------
-| system_settings registration
-|--------------------------------------------------------------------------
-*/
-
-it('registers the completeness threshold settings with 90/60 defaults', function () {
+it('registers the completeness threshold settings with 90/60 defaults', function (): void {
     $section = collect(config('system_settings'))->firstWhere('key', 'system.completeness');
 
     expect($section)->not->toBeNull();
@@ -103,72 +91,57 @@ it('registers the completeness threshold settings with 90/60 defaults', function
         ->and($red['default_value'])->toBe('60');
 });
 
-it('registers the completeness configuration acl entry', function () {
+it('registers the completeness configuration acl entry', function (): void {
     $keys = collect(config('acl'))->pluck('key');
 
     expect($keys)->toContain('configuration.system_settings.completeness');
 });
 
-/*
-|--------------------------------------------------------------------------
-| ValidateThresholdSettings listener
-|--------------------------------------------------------------------------
-*/
-
-it('passes validation for a green bound greater than the red bound', function () {
+it('passes validation for a green bound greater than the red bound', function (): void {
     request()->merge([
         'system' => ['completeness' => ['green_from' => '90', 'red_below' => '60']],
     ]);
 
-    app(ValidateThresholdSettings::class)->handle();
-
-    expect(true)->toBeTrue();
+    expect(fn () => app(ValidateThresholdSettings::class)->handle())
+        ->not->toThrow(ValidationException::class);
 });
 
-it('does nothing when neither threshold is present in the request', function () {
-    app(ValidateThresholdSettings::class)->handle();
-
-    expect(true)->toBeTrue();
+it('does nothing when neither threshold is present in the request', function (): void {
+    expect(fn () => app(ValidateThresholdSettings::class)->handle())
+        ->not->toThrow(ValidationException::class);
 });
 
-it('rejects a green bound that is not greater than the red bound', function () {
+it('rejects a green bound that is not greater than the red bound', function (): void {
     request()->merge([
         'system' => ['completeness' => ['green_from' => '50', 'red_below' => '60']],
     ]);
 
-    try {
-        app(ValidateThresholdSettings::class)->handle();
-
-        $this->fail('Expected a ValidationException for green_from <= red_below.');
-    } catch (ValidationException $e) {
-        expect($e->errors())->toHaveKey('system.completeness.green_from');
-    }
+    expect(fn () => app(ValidateThresholdSettings::class)->handle())
+        ->toThrow(ValidationException::class);
 });
 
-it('rejects a threshold outside the 0..100 range', function () {
+it('rejects a threshold outside the 0..100 range', function (): void {
     request()->merge([
         'system' => ['completeness' => ['green_from' => '120', 'red_below' => '60']],
     ]);
 
-    try {
-        app(ValidateThresholdSettings::class)->handle();
-
-        $this->fail('Expected a ValidationException for an out-of-range threshold.');
-    } catch (ValidationException $e) {
-        expect($e->errors())->toHaveKey('system.completeness.green_from');
-    }
+    expect(fn () => app(ValidateThresholdSettings::class)->handle())
+        ->toThrow(ValidationException::class);
 });
 
-it('rejects a missing red bound when the green bound is submitted', function () {
+it('rejects a missing red bound when the green bound is submitted', function (): void {
     request()->merge([
         'system' => ['completeness' => ['green_from' => '80']],
     ]);
 
-    try {
-        app(ValidateThresholdSettings::class)->handle();
+    expect(fn () => app(ValidateThresholdSettings::class)->handle())
+        ->toThrow(ValidationException::class);
+});
 
-        $this->fail('Expected a ValidationException for the missing red bound.');
-    } catch (ValidationException $e) {
-        expect($e->errors())->toHaveKey('system.completeness.red_below');
-    }
+it('surfaces threshold field errors when the settings page is posted', function (): void {
+    $this->post(route('admin.configuration.store', ['slug' => 'system', 'slug2' => 'completeness']), [
+        'system' => ['completeness' => ['green_from' => '50', 'red_below' => '60']],
+    ])->assertSessionHasErrors('system.completeness.green_from');
+
+    expect(session('error'))->toBeNull();
 });

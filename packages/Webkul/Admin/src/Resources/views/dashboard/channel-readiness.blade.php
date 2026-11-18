@@ -1,6 +1,3 @@
-@php
-    [$completenessGreenFrom, $completenessRedBelow] = app(\Webkul\Completeness\Helpers\Threshold::class)->bounds();
-@endphp
 
 <!-- Channel Readiness Vue Component -->
 <v-dashboard-channel-readiness>

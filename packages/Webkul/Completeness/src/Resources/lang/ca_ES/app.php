@@ -1,6 +1,18 @@
 <?php
 
 return [
+    'config' => [
+        'completeness' => [
+            'title'           => 'Completesa',
+            'info'            => 'Llindars de color de la puntuació de completesa.',
+            'green-from'      => 'Verd a partir de (%)',
+            'green-from-info' => 'Les puntuacions iguals o superiors a aquest percentatge es mostren en verd.',
+            'red-below'       => 'Vermell per sota de (%)',
+            'red-below-info'  => 'Les puntuacions per sota d\'aquest percentatge es mostren en vermell. Les intermèdies es mostren en ambre.',
+            'green-gt-red'    => 'El llindar verd ha de ser més gran que el llindar vermell.',
+        ],
+    ],
+
     'components' => [
         'layouts' => [
             'sidebar' => [

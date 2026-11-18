@@ -11,6 +11,9 @@
 ## New features
 
 - The product grid's quick search reads the attribute codes it looks in from `products.search_fields`, so an EAN, a GTIN or a supplier article number can be searched from the one search box. An attribute marked `is_filterable` could already be filtered by substring on its own grid column with the `contains` operator; this saves adding the column and picking the operator, and covers identifier attributes that are not filterable, such as the seeded `product_number`. The SKU and the name are still searched by default, codes that do not resolve to a text attribute are skipped, and at most ten are searched.
+- Measurement units show as their symbol by default (for example `°C`), falling back to the unit name when a unit has none. Toggle under Settings → Measurement. Upgrade note: the default is now on, so grids and exports show symbols instead of names unless you turn it off.
+- Completeness score colour thresholds are configurable under Settings → Completeness: a green-from and a red-below percentage (default 90 and 60), applied to the product grid, the radial progress and the dashboard. Upgrade note: the new defaults replace the old hard-coded cutoffs, so scores recolour on upgrade unless you set your own.
+- The Add Attribute modal now collects the measurement family and unit for a measurement type and saves them on create, so the attribute is ready to use without a follow-up edit and no longer flashes the "family and unit required" warning.
 
 # 3.1.3 — September 29th, 2026
 

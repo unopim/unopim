@@ -1,6 +1,18 @@
 <?php
 
 return [
+    'config' => [
+        'completeness' => [
+            'title'           => 'Completitudine',
+            'info'            => 'Praguri de culoare pentru scorul de completitudine.',
+            'green-from'      => 'Verde de la (%)',
+            'green-from-info' => 'Scorurile egale sau peste acest procent sunt afișate cu verde.',
+            'red-below'       => 'Roșu sub (%)',
+            'red-below-info'  => 'Scorurile sub acest procent sunt afișate cu roșu. Cele intermediare sunt afișate cu chihlimbar.',
+            'green-gt-red'    => 'Pragul verde trebuie să fie mai mare decât pragul roșu.',
+        ],
+    ],
+
     'components' => [
         'layouts' => [
             'sidebar' => [

@@ -1,6 +1,18 @@
 <?php
 
 return [
+    'config' => [
+        'completeness' => [
+            'title'           => 'Kelengkapan',
+            'info'            => 'Ambang warna skor kelengkapan.',
+            'green-from'      => 'Hijau dari (%)',
+            'green-from-info' => 'Skor pada atau di atas persentase ini ditampilkan dengan warna hijau.',
+            'red-below'       => 'Merah di bawah (%)',
+            'red-below-info'  => 'Skor di bawah persentase ini ditampilkan dengan warna merah. Yang di antaranya ditampilkan dengan warna amber.',
+            'green-gt-red'    => 'Ambang hijau harus lebih besar daripada ambang merah.',
+        ],
+    ],
+
     'components' => [
         'layouts' => [
             'sidebar' => [

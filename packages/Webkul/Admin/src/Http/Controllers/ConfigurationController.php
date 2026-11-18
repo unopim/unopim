@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Webkul\Admin\Http\Requests\ConfigurationForm;
@@ -205,6 +206,10 @@ class ConfigurationController extends Controller
             session()->flash('success', trans('admin::app.configuration.index.save-message'));
 
             return redirect()->back();
+        } catch (ValidationException $exception) {
+            // Field-level validation (e.g. config save.before listeners) must
+            // reach the form, not the generic error flash below.
+            throw $exception;
         } catch (\Throwable $th) {
             Log::error($th->getMessage(), ['exception' => $th]);
             session()->flash('error', trans('admin::app.catalog.products.index.magic-ai-validate-error'));

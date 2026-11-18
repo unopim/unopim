@@ -1,6 +1,18 @@
 <?php
 
 return [
+    'config' => [
+        'completeness' => [
+            'title'           => 'Mức độ hoàn thiện',
+            'info'            => 'Ngưỡng màu của điểm hoàn thiện.',
+            'green-from'      => 'Xanh lá từ (%)',
+            'green-from-info' => 'Điểm bằng hoặc trên tỷ lệ phần trăm này được hiển thị màu xanh lá.',
+            'red-below'       => 'Đỏ dưới (%)',
+            'red-below-info'  => 'Điểm dưới tỷ lệ phần trăm này được hiển thị màu đỏ. Các điểm ở giữa được hiển thị màu hổ phách.',
+            'green-gt-red'    => 'Ngưỡng xanh lá phải lớn hơn ngưỡng đỏ.',
+        ],
+    ],
+
     'components' => [
         'layouts' => [
             'sidebar' => [

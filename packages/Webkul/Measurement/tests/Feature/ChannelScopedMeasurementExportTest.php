@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Cache;
 use OpenSpout\Reader\CSV\Reader as CsvReader;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
@@ -26,7 +27,7 @@ beforeEach(function () {
         ['code' => 'system.measurement.display_unit_symbol'],
         ['value' => '1']
     );
-    \Illuminate\Support\Facades\Cache::flush();
+    Cache::flush();
 
     $cache = new ReflectionProperty(Exporter::class, 'staticInitCache');
     $cache->setAccessible(true);

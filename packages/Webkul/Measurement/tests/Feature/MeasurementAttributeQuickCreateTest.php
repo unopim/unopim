@@ -1,9 +1,10 @@
 <?php
 
+use Webkul\Attribute\Models\Attribute;
 use Webkul\Measurement\Models\AttributeMeasurement;
 use Webkul\Measurement\Models\MeasurementFamily;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->loginAsAdmin();
 });
 
@@ -19,7 +20,7 @@ function quickCreateLengthFamily(): MeasurementFamily
     ]);
 }
 
-it('injects the measurement family and unit fields into the attribute create modal', function () {
+it('injects the measurement family and unit fields into the attribute create modal', function (): void {
     quickCreateLengthFamily();
 
     $response = $this->get(route('admin.catalog.attributes.index'));
@@ -30,7 +31,7 @@ it('injects the measurement family and unit fields into the attribute create mod
         ->assertSee('measurement_unit', false);
 });
 
-it('saves the measurement configuration posted with a measurement attribute on create', function () {
+it('saves the measurement configuration posted with a measurement attribute on create', function (): void {
     $family = quickCreateLengthFamily();
 
     $code = 'meas_'.uniqid();
@@ -42,7 +43,7 @@ it('saves the measurement configuration posted with a measurement attribute on c
         'measurement_unit'   => 'meter',
     ]);
 
-    $attribute = \Webkul\Attribute\Models\Attribute::where('code', $code)->firstOrFail();
+    $attribute = Attribute::where('code', $code)->firstOrFail();
 
     $response->assertRedirect(route('admin.catalog.attributes.edit', $attribute->id));
 
@@ -55,7 +56,7 @@ it('saves the measurement configuration posted with a measurement attribute on c
     $response->assertSessionMissing('warning');
 });
 
-it('warns and stores no configuration when a measurement attribute is created without family and unit', function () {
+it('warns and stores no configuration when a measurement attribute is created without family and unit', function (): void {
     $code = 'meas_'.uniqid();
 
     $response = $this->post(route('admin.catalog.attributes.store'), [
@@ -63,14 +64,14 @@ it('warns and stores no configuration when a measurement attribute is created wi
         'type' => 'measurement',
     ]);
 
-    $attribute = \Webkul\Attribute\Models\Attribute::where('code', $code)->firstOrFail();
+    $attribute = Attribute::where('code', $code)->firstOrFail();
 
     expect(AttributeMeasurement::where('attribute_id', $attribute->id)->exists())->toBeFalse();
 
     $response->assertSessionHas('warning');
 });
 
-it('does not persist a measurement configuration whose unit is not part of the family', function () {
+it('does not persist a measurement configuration whose unit is not part of the family', function (): void {
     $family = quickCreateLengthFamily();
 
     $code = 'meas_'.uniqid();
@@ -82,12 +83,12 @@ it('does not persist a measurement configuration whose unit is not part of the f
         'measurement_unit'   => 'kilometer', // not a unit of this family
     ]);
 
-    $attribute = \Webkul\Attribute\Models\Attribute::where('code', $code)->firstOrFail();
+    $attribute = Attribute::where('code', $code)->firstOrFail();
 
     expect(AttributeMeasurement::where('attribute_id', $attribute->id)->exists())->toBeFalse();
 });
 
-it('ignores posted measurement fields for a non-measurement attribute', function () {
+it('ignores posted measurement fields for a non-measurement attribute', function (): void {
     $family = quickCreateLengthFamily();
 
     $code = 'text_'.uniqid();
@@ -99,7 +100,7 @@ it('ignores posted measurement fields for a non-measurement attribute', function
         'measurement_unit'   => 'meter',
     ]);
 
-    $attribute = \Webkul\Attribute\Models\Attribute::where('code', $code)->firstOrFail();
+    $attribute = Attribute::where('code', $code)->firstOrFail();
 
     expect(AttributeMeasurement::where('attribute_id', $attribute->id)->exists())->toBeFalse();
 });

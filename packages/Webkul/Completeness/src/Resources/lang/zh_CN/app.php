@@ -1,6 +1,18 @@
 <?php
 
 return [
+    'config' => [
+        'completeness' => [
+            'title'           => '完整度',
+            'info'            => '完整度评分的颜色阈值。',
+            'green-from'      => '绿色起始 (%)',
+            'green-from-info' => '等于或高于此百分比的评分以绿色显示。',
+            'red-below'       => '红色低于 (%)',
+            'red-below-info'  => '低于此百分比的评分以红色显示。介于两者之间的以琥珀色显示。',
+            'green-gt-red'    => '绿色阈值必须大于红色阈值。',
+        ],
+    ],
+
     'components' => [
         'layouts' => [
             'sidebar' => [

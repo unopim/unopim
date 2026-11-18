@@ -177,6 +177,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
      */
     public function getPropertyColumns()
     {
+        [$greenFrom, $redBelow] = app(Threshold::class)->bounds();
+
         return [
             'sku' => [
                 'index'      => 'sku',
@@ -281,14 +283,12 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'categories' => ProductPropertyFilters::get(ProductPropertyFilters::CATEGORIES),
 
             'completeness' => ProductPropertyFilters::get(ProductPropertyFilters::COMPLETENESS) + [
-                'closure' => function ($row) {
+                'closure' => function ($row) use ($greenFrom, $redBelow) {
                     if (is_null($row->completeness)) {
                         return '<span class="label-info break-words">'.trans('completeness::app.catalog.products.index.datagrid.missing-completeness-setting').'</span>';
                     }
 
                     $score = number_format((float) $row->completeness);
-
-                    [$greenFrom, $redBelow] = app(Threshold::class)->bounds();
 
                     if ($score < $redBelow) {
                         $bgClass = 'pill-low';

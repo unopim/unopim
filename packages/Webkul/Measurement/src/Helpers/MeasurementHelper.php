@@ -6,6 +6,11 @@ use Webkul\Measurement\Repositories\AttributeMeasurementRepository;
 
 class MeasurementHelper
 {
+    /**
+     * Default for display_unit_symbol when the setting was never saved.
+     */
+    public const DEFAULT_DISPLAY_UNIT_SYMBOL = true;
+
     public function __construct(
         /**
          * Attribute measurement repository instance.
@@ -150,11 +155,14 @@ class MeasurementHelper
         return $displaySymbol && $symbol !== '' ? $symbol : $label;
     }
 
+    /**
+     * Whether measurement units are displayed by symbol instead of name.
+     */
     public function displaysUnitSymbol(): bool
     {
         $value = core()->getConfigData('system.measurement.display_unit_symbol');
 
-        return $value === null ? true : (bool) $value;
+        return $value === null ? self::DEFAULT_DISPLAY_UNIT_SYMBOL : (bool) $value;
     }
 
     /**

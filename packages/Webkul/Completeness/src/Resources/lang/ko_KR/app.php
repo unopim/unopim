@@ -1,6 +1,18 @@
 <?php
 
 return [
+    'config' => [
+        'completeness' => [
+            'title'           => '완성도',
+            'info'            => '완성도 점수 색상 임계값.',
+            'green-from'      => '녹색 시작 (%)',
+            'green-from-info' => '이 백분율 이상인 점수는 녹색으로 표시됩니다.',
+            'red-below'       => '빨강 미만 (%)',
+            'red-below-info'  => '이 백분율 미만인 점수는 빨간색으로 표시됩니다. 그 사이의 점수는 호박색으로 표시됩니다.',
+            'green-gt-red'    => '녹색 임계값은 빨간색 임계값보다 커야 합니다.',
+        ],
+    ],
+
     'components' => [
         'layouts' => [
             'sidebar' => [

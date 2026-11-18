@@ -1,6 +1,18 @@
 <?php
 
 return [
+    'config' => [
+        'completeness' => [
+            'title'           => 'Vollständigkeit',
+            'info'            => 'Farbschwellen für den Vollständigkeitswert.',
+            'green-from'      => 'Grün ab (%)',
+            'green-from-info' => 'Werte ab diesem Prozentsatz werden grün angezeigt.',
+            'red-below'       => 'Rot unter (%)',
+            'red-below-info'  => 'Werte unter diesem Prozentsatz werden rot angezeigt. Werte dazwischen werden bernsteinfarben angezeigt.',
+            'green-gt-red'    => 'Der grüne Schwellenwert muss größer als der rote Schwellenwert sein.',
+        ],
+    ],
+
     'components' => [
         'layouts' => [
             'sidebar' => [

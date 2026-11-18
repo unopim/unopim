@@ -4,7 +4,6 @@ namespace Webkul\Completeness\Listeners;
 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-use Webkul\Admin\Http\Requests\ConfigurationForm;
 
 class ValidateThresholdSettings
 {

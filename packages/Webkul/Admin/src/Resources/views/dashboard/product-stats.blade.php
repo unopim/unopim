@@ -1,7 +1,3 @@
-@php
-    [$completenessGreenFrom, $completenessRedBelow] = app(\Webkul\Completeness\Helpers\Threshold::class)->bounds();
-@endphp
-
 <!-- Product Stats Vue Component -->
 <v-dashboard-product-stats>
     <x-admin::shimmer.dashboard.total-catalogs />

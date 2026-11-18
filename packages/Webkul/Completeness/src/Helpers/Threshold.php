@@ -9,6 +9,8 @@ class Threshold
     public const DEFAULT_RED_BELOW = 60;
 
     /**
+     * Green-from and red-below bounds for the completeness colours.
+     *
      * @return array{int, int}
      */
     public function bounds(): array

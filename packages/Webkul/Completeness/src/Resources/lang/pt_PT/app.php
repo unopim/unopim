@@ -1,6 +1,18 @@
 <?php
 
 return [
+    'config' => [
+        'completeness' => [
+            'title'           => 'Completude',
+            'info'            => 'Limiares de cor da pontuação de completude.',
+            'green-from'      => 'Verde a partir de (%)',
+            'green-from-info' => 'Pontuações iguais ou acima desta percentagem são apresentadas a verde.',
+            'red-below'       => 'Vermelho abaixo de (%)',
+            'red-below-info'  => 'Pontuações abaixo desta percentagem são apresentadas a vermelho. As intermédias são apresentadas a âmbar.',
+            'green-gt-red'    => 'O limiar verde deve ser maior do que o limiar vermelho.',
+        ],
+    ],
+
     'components' => [
         'layouts' => [
             'sidebar' => [

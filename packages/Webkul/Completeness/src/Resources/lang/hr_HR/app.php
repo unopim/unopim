@@ -1,6 +1,18 @@
 <?php
 
 return [
+    'config' => [
+        'completeness' => [
+            'title'           => 'Potpunost',
+            'info'            => 'Pragovi boja za ocjenu potpunosti.',
+            'green-from'      => 'Zeleno od (%)',
+            'green-from-info' => 'Rezultati jednaki ili veći od ovog postotka prikazuju se zeleno.',
+            'red-below'       => 'Crveno ispod (%)',
+            'red-below-info'  => 'Rezultati ispod ovog postotka prikazuju se crveno. Oni između prikazuju se jantarno.',
+            'green-gt-red'    => 'Zeleni prag mora biti veći od crvenog praga.',
+        ],
+    ],
+
     'components' => [
         'layouts' => [
             'sidebar' => [

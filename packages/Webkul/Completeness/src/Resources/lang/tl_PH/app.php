@@ -1,6 +1,18 @@
 <?php
 
 return [
+    'config' => [
+        'completeness' => [
+            'title'           => 'Kabuuan',
+            'info'            => 'Mga threshold ng kulay ng completeness score.',
+            'green-from'      => 'Berde mula (%)',
+            'green-from-info' => 'Ang mga iskor na katumbas o higit sa porsyentong ito ay ipinapakita sa berde.',
+            'red-below'       => 'Pula sa ibaba ng (%)',
+            'red-below-info'  => 'Ang mga iskor na mas mababa sa porsyentong ito ay ipinapakita sa pula. Ang nasa pagitan ay ipinapakita sa amber.',
+            'green-gt-red'    => 'Ang berdeng threshold ay dapat mas malaki kaysa sa pulang threshold.',
+        ],
+    ],
+
     'components' => [
         'layouts' => [
             'sidebar' => [

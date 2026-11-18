@@ -1,6 +1,18 @@
 <?php
 
 return [
+    'config' => [
+        'completeness' => [
+            'title'           => 'Kompletność',
+            'info'            => 'Progi kolorów wyniku kompletności.',
+            'green-from'      => 'Zielony od (%)',
+            'green-from-info' => 'Wyniki równe lub wyższe od tego procentu są wyświetlane na zielono.',
+            'red-below'       => 'Czerwony poniżej (%)',
+            'red-below-info'  => 'Wyniki poniżej tego procentu są wyświetlane na czerwono. Pośrednie są wyświetlane na bursztynowo.',
+            'green-gt-red'    => 'Próg zielony musi być większy niż próg czerwony.',
+        ],
+    ],
+
     'components' => [
         'layouts' => [
             'sidebar' => [

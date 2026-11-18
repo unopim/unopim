@@ -1,6 +1,18 @@
 <?php
 
 return [
+    'config' => [
+        'completeness' => [
+            'title'           => 'Complétude',
+            'info'            => 'Seuils de couleur du score de complétude.',
+            'green-from'      => 'Vert à partir de (%)',
+            'green-from-info' => 'Les scores égaux ou supérieurs à ce pourcentage s\'affichent en vert.',
+            'red-below'       => 'Rouge en dessous de (%)',
+            'red-below-info'  => 'Les scores inférieurs à ce pourcentage s\'affichent en rouge. Les scores intermédiaires s\'affichent en ambre.',
+            'green-gt-red'    => 'Le seuil vert doit être supérieur au seuil rouge.',
+        ],
+    ],
+
     'components' => [
         'layouts' => [
             'sidebar' => [

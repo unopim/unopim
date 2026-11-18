@@ -1,7 +1,3 @@
-@php
-    [$greenFrom, $redBelow] = app(\Webkul\Completeness\Helpers\Threshold::class)->bounds();
-@endphp
-
 @pushOnce('scripts')
     <script type="text/x-template" id="v-radial-progress-template">
         <div class="relative">
@@ -81,8 +77,8 @@
 
             computed: {
                 strokeColor() {
-                    if (this.score >= {{ $greenFrom }}) return 'text-green-600';
-                    if (this.score >= {{ $redBelow }}) return 'text-yellow-500';
+                    if (this.score >= {{ $completenessGreenFrom }}) return 'text-green-600';
+                    if (this.score >= {{ $completenessRedBelow }}) return 'text-yellow-500';
 
                     return 'text-red-600';
                 },
