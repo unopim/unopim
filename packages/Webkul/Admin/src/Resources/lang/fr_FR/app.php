@@ -2115,6 +2115,7 @@ return [
             'delete-failed'                   => 'La suppression du rôles a échoué',
             'delete-success'                  => 'Le rôle a été supprimé avec succès',
             'last-delete-error'               => 'Le dernier rôle ne peut pas être supprimé',
+            'last-full-access'                => 'Au moins un utilisateur actif doit conserver un accès complet.',
             'update-success'                  => 'Le rôle a été mis à jour avec succès',
         ],
     ],

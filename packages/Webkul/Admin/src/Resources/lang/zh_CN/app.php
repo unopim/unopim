@@ -2118,6 +2118,7 @@ return [
             'delete-failed'                   => '角色被删除失败',
             'delete-success'                  => '角色成功删除',
             'last-delete-error'               => '最后的角色无法删除',
+            'last-full-access'                => '至少有一名活跃用户必须保留完全访问权限。',
             'update-success'                  => '角色已成功更新',
         ],
     ],

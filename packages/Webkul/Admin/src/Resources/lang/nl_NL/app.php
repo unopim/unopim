@@ -2118,6 +2118,7 @@ return [
             'delete-failed'                   => 'Rol verwijderen mislukt.',
             'delete-success'                  => 'Rol succesvol verwijderd.',
             'last-delete-error'               => 'De laatste rol kan niet worden verwijderd.',
+            'last-full-access'                => 'Minstens één actieve gebruiker moet volledige toegang behouden.',
             'update-success'                  => 'Rol succesvol bijgewerkt.',
         ],
     ],

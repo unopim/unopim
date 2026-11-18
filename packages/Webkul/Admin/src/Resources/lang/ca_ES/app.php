@@ -2116,6 +2116,7 @@ return [
             'delete-failed'                   => 'No s\'ha pogut eliminar el rol',
             'delete-success'                  => 'Rol eliminat correctament',
             'last-delete-error'               => 'No es pot eliminar l\'últim rol',
+            'last-full-access'                => 'Almenys un usuari actiu ha de mantenir l\'accés complet.',
             'update-success'                  => 'Rol actualitzat correctament',
         ],
     ],
