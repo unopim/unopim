@@ -20,7 +20,7 @@ async function fetchGrid(adminPage, { column, order, columns = [] }) {
   params.set('sort[column]', column);
   params.set('sort[order]', order);
   params.set('pagination[page]', '1');
-  params.set('pagination[per_page]', '100');
+  params.set('pagination[per_page]', '50');
   columns.forEach((code) => params.append('managedColumns[]', code));
 
   const response = await adminPage.request.get(`${GRID_URL}?${params.toString()}`, {
@@ -50,7 +50,7 @@ test.describe('Product DataGrid attribute sorting', () => {
       const grid = await fetchGrid(adminPage, { column: 'weight', order, columns: ['sku', 'weight'] });
       const rows = grid.records ?? [];
 
-      test.skip(rows.length < 3, 'Needs at least 3 products to verify ordering');
+      expect(rows.length, 'Needs at least 3 products to verify ordering').toBeGreaterThanOrEqual(3);
 
       // Compare like with like: sorting is on base_data, so only rows that share a
       // unit have a meaningful relationship between the displayed amount and order.
@@ -58,7 +58,7 @@ test.describe('Product DataGrid attribute sorting', () => {
         .map((row) => ({ text: String(row.weight ?? ''), value: leadingNumber(row.weight) }))
         .filter((row) => row.value !== null);
 
-      test.skip(withWeight.length < 3, 'Needs at least 3 products with a weight');
+      expect(withWeight.length, 'Needs at least 3 products with a weight').toBeGreaterThanOrEqual(3);
 
       const unit = (text) => text.replace(/<[^>]*>/g, '').replace(/[\d.,\s-]/g, '').toLowerCase();
       const sameUnit = withWeight.filter((row) => unit(row.text) === unit(withWeight[0].text));
@@ -74,7 +74,7 @@ test.describe('Product DataGrid attribute sorting', () => {
       .map((row) => leadingNumber(row.weight))
       .filter((value) => value !== null);
 
-    test.skip(values.length < 3, 'Needs at least 3 products with a weight');
+    expect(values.length, 'Needs at least 3 products with a weight').toBeGreaterThanOrEqual(3);
 
     // With DECIMAL(10,0), 0.012 and 0.6 and 0.9 all collapse to 0/1 and tie, so the
     // sequence would not be monotonic once rows with the same integer part interleave.

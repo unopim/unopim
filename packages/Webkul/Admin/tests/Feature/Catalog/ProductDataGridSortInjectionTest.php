@@ -48,8 +48,8 @@ it('sorts measurement attributes numerically by their normalised base value', fu
     $sql = strtolower(sortedProductSql(['column' => $attribute->code, 'order' => 'asc']));
 
     expect($sql)->toContain('base_data')
-        // own value, parent value and grandparent value (variants inherit)
-        ->and(substr_count($sql, 'base_data'))->toBe(3)
+        // own, parent and grandparent value (variants inherit); PostgreSQL repeats each for its guard
+        ->and(substr_count($sql, 'base_data'))->toBeGreaterThanOrEqual(3)
         ->and($sql)->toContain('coalesce(')
         ->and($sql)->toContain('grandparent_products')
         ->and($sql)->toContain('decimal')

@@ -700,7 +700,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
             if ($castType) {
                 return $this->queryBuilder->orderByRaw(
-                    "CAST($jsonCondition AS $castType) $sortOrder",
+                    $this->numericSortExpression($jsonCondition, $castType)." $sortOrder",
                 );
             }
 
@@ -727,11 +727,28 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $this->joinGrandparentForSort();
 
         $extracts = array_map(
-            fn (string $table) => $grammar->jsonExtract($prefix.$table.'.values', ...$attributePath),
+            fn (string $table): string => $grammar->jsonExtract($prefix.$table.'.values', ...$attributePath),
             ['products', 'parent_products', 'grandparent_products']
         );
 
         return 'COALESCE('.implode(', ', $extracts).')';
+    }
+
+    /**
+     * Cast a JSON-extracted value to a number for ordering.
+     *
+     * MySQL turns a non-numeric or empty string into 0 with a warning, but PostgreSQL raises an
+     * error that would break the whole grid, so there only numeric-looking values are cast and
+     * the rest sort as NULL.
+     */
+    protected function numericSortExpression(string $expression, string $castType): string
+    {
+        if (DB::getDriverName() === 'pgsql') {
+            return "CASE WHEN CAST($expression AS TEXT) ~ '^-?[0-9]+(\\.[0-9]+)?$' "
+                ."THEN CAST($expression AS $castType) END";
+        }
+
+        return "CAST($expression AS $castType)";
     }
 
     /**
