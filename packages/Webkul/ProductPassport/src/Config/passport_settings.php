@@ -6,10 +6,11 @@ return [
         'name' => 'admin::app.settings.system-settings.system.title',
         'sort' => 2,
     ], [
-        'key'  => 'catalog.product_passport',
-        'name' => 'passport::app.configuration.product_passport.title',
-        'info' => 'passport::app.configuration.product_passport.info',
-        'sort' => 1,
+        'key'    => 'catalog.product_passport',
+        'module' => 'pim',
+        'name'   => 'passport::app.configuration.product_passport.title',
+        'info'   => 'passport::app.configuration.product_passport.info',
+        'sort'   => 1,
     ], [
         'key'    => 'catalog.product_passport.settings',
         'name'   => 'passport::app.configuration.product_passport.settings.title',

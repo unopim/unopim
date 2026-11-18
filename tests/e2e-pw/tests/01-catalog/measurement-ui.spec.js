@@ -467,6 +467,54 @@ test.describe.serial('Measurement - Product value', () => {
     const reloaded = adminPage.locator('input[placeholder="Enter value"]').first();
     await expect(reloaded).toHaveValue('42', { timeout: 20000 });
   });
+
+  test('a negative measurement value can be typed and persists', async ({ adminPage }) => {
+    test.setTimeout(120000);
+
+    expect(shared.productUrl, 'prerequisite product was not created in the earlier test').toBeTruthy();
+
+    await adminPage.goto(shared.productUrl, { waitUntil: 'domcontentloaded' });
+
+    const valueInput = adminPage.locator('input[placeholder="Enter value"]').first();
+    await valueInput.waitFor({ state: 'visible', timeout: 20000 });
+    await valueInput.scrollIntoViewIfNeeded();
+    await valueInput.fill('');
+    await valueInput.pressSequentially('-2-0');
+
+    await expect(valueInput).toHaveValue('-20');
+
+    await saveProduct(adminPage);
+    await expect(adminPage.locator('#app').getByText(/updated successfully/i).first()).toBeVisible({ timeout: 25000 });
+
+    await adminPage.reload({ waitUntil: 'domcontentloaded' });
+
+    const reloaded = adminPage.locator('input[placeholder="Enter value"]').first();
+    await expect(reloaded).toHaveValue('-20', { timeout: 20000 });
+  });
+
+  test('a comma decimal separator is kept as a decimal point', async ({ adminPage }) => {
+    test.setTimeout(120000);
+
+    expect(shared.productUrl, 'prerequisite product was not created in the earlier test').toBeTruthy();
+
+    await adminPage.goto(shared.productUrl, { waitUntil: 'domcontentloaded' });
+
+    const valueInput = adminPage.locator('input[placeholder="Enter value"]').first();
+    await valueInput.waitFor({ state: 'visible', timeout: 20000 });
+    await valueInput.scrollIntoViewIfNeeded();
+    await valueInput.fill('');
+    await valueInput.pressSequentially('-12,25');
+
+    await expect(valueInput).toHaveValue('-12.25');
+
+    await saveProduct(adminPage);
+    await expect(adminPage.locator('#app').getByText(/updated successfully/i).first()).toBeVisible({ timeout: 25000 });
+
+    await adminPage.reload({ waitUntil: 'domcontentloaded' });
+
+    const reloaded = adminPage.locator('input[placeholder="Enter value"]').first();
+    await expect(reloaded).toHaveValue('-12.25', { timeout: 20000 });
+  });
 });
 
 test.describe('Measurement - System configuration', () => {

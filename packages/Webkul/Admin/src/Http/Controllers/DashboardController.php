@@ -5,6 +5,8 @@ namespace Webkul\Admin\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 use Webkul\Admin\Helpers\Dashboard;
+use Webkul\Core\Platform\Module;
+use Webkul\Core\Platform\ModuleGate;
 
 class DashboardController extends Controller
 {
@@ -49,6 +51,10 @@ class DashboardController extends Controller
 
         if (! isset($this->typeFunctions[$type])) {
             return response()->json(['message' => trans('admin::app.dashboard.invalid-type')], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        if (isset($this->dashboardHelper::PIM_WIDGETS[$type]) && ! app(ModuleGate::class)->enabled(Module::Pim)) {
+            return response()->json(['message' => trans('admin::app.dashboard.invalid-type')], JsonResponse::HTTP_NOT_FOUND);
         }
 
         $stats = $this->dashboardHelper->{$this->typeFunctions[$type]}();
