@@ -49,7 +49,7 @@ jobs:
           - path: .
             allowed: ''
           - path: packages/Webkul/Admin
-            allowed: tinymce
+            allowed: GHSA-mh5m-5hw4-5c69 GHSA-vg35-5wq7-3x7w GHSA-q742-qvgc-gc2f GHSA-v98h-vmpc-fpqv
 
     steps:
       - name: Checkout
@@ -63,6 +63,7 @@ jobs:
           node-version: '22'
 
       - name: Resolve dependency tree
+        if: matrix.path != '.'
         working-directory: ${{ matrix.path }}
         run: npm install --package-lock-only --no-audit --no-fund --no-progress
 

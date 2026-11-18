@@ -1,8 +1,6 @@
 name: Coverage Report
 
 on:
-  push:
-    branches: ['3.x']
   schedule:
     - cron: '0 5 * * 1'
   workflow_dispatch:
@@ -63,7 +61,7 @@ jobs:
           node-version: '22'
 
       - name: Install Node dependencies
-        run: npm install --omit=dev --no-audit --no-fund --no-progress --prefer-offline
+        run: npm ci --omit=dev --no-audit --no-fund --no-progress --prefer-offline
 
       - name: Setting Environment
         run: |

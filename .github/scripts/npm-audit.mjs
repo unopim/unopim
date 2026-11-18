@@ -12,16 +12,28 @@ try {
 
 const { vulnerabilities = {} } = JSON.parse(report);
 
-const found = Object.values(vulnerabilities).filter((vulnerability) => threshold.includes(vulnerability.severity));
-const skipped = found.filter((vulnerability) => allowed.has(vulnerability.name));
-const blocking = found.filter((vulnerability) => !allowed.has(vulnerability.name));
+const advisories = new Map();
 
-for (const vulnerability of skipped) {
-    console.log(`::notice::Accepted risk, not failing: ${vulnerability.name} (${vulnerability.severity})`);
+for (const vulnerability of Object.values(vulnerabilities)) {
+    for (const via of vulnerability.via) {
+        if (typeof via === 'object' && threshold.includes(via.severity)) {
+            advisories.set(via.url, { name: via.name, severity: via.severity });
+        }
+    }
 }
 
-for (const vulnerability of blocking) {
-    console.log(`::error::${vulnerability.name} (${vulnerability.severity}) has an unresolved advisory`);
+let blocking = 0;
+
+for (const [url, { name, severity }] of advisories) {
+    const id = url.split('/').pop();
+
+    if (allowed.has(id)) {
+        console.log(`::notice::Accepted risk, not failing: ${name} ${id} (${severity})`);
+        continue;
+    }
+
+    blocking++;
+    console.log(`::error::${name} ${id} (${severity}) has an unresolved advisory`);
 }
 
-process.exit(blocking.length > 0 ? 1 : 0);
+process.exit(blocking > 0 ? 1 : 0);
