@@ -6,6 +6,8 @@
     'nameLabel' => null,
     'namePlaceholder' => null,
     'nameRequired' => true,
+    'nameLocale' => null,
+    'nameField' => null,
     'codeLabel',
     'codePlaceholder' => null,
     'codeHint' => null,
@@ -33,7 +35,9 @@
 ])
 
 @php
-    $currentLocaleCode = core()->getRequestedLocaleCode();
+    $currentLocaleCode = $nameLocale ?: core()->getRequestedLocaleCode();
+
+    $nameField = $nameField ?: $currentLocaleCode.'[name]';
 @endphp
 
 <button
@@ -70,14 +74,14 @@
 
                     <x-admin::form.control-group.control
                         type="text"
-                        name="{{ $currentLocaleCode }}[name]"
+                        name="{{ $nameField }}"
                         rules="{{ $nameRequired ? 'required' : '' }}"
                         v-code-generator="'code'"
                         :label="$nameLabel"
                         :placeholder="$namePlaceholder ?: $nameLabel"
                     />
 
-                    <x-admin::form.control-group.error control-name="{{ $currentLocaleCode }}[name]" />
+                    <x-admin::form.control-group.error control-name="{{ $nameField }}" />
                 </x-admin::form.control-group>
             @endif
 
@@ -104,6 +108,8 @@
 
                 <x-admin::form.control-group.error control-name="code" />
             </x-admin::form.control-group>
+
+            {{ $slot }}
 
             @if ($typeOptions)
                 <x-admin::form.control-group>

@@ -33,6 +33,7 @@ use Webkul\Core\Helpers\Database\GrammarQueryManager;
 use Webkul\Core\Helpers\Locales as LocalesHelper;
 use Webkul\Core\Http\Middleware\EnableDebugForAllowedIps;
 use Webkul\Core\Models\CoreConfig;
+use Webkul\Core\Platform\ModuleGate;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Core\RequestMemo;
@@ -242,6 +243,8 @@ class CoreServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(dirname(__DIR__).'/Config/media.php', 'media');
 
+        $this->mergeConfigFrom(dirname(__DIR__).'/Config/platform_modules.php', 'platform_modules');
+
         $this->app->bind(Blueprint::class, PrefixedIndexNameBlueprint::class);
 
         $this->app->singleton('image_manager', function ($app): ImageManager {
@@ -280,6 +283,8 @@ class CoreServiceProvider extends ServiceProvider
         ));
 
         $this->app->scoped(RequestMemo::class);
+
+        $this->app->scoped(ModuleGate::class);
 
         // Scope this Locales subclass so it loads once per request; Astrotomic otherwise rebuilds it per translated attribute.
         $this->app->scoped(LocalesHelper::class);
