@@ -88,6 +88,13 @@ class CompletenessSettingsController extends Controller
         $familyId = (int) $data['familyId'];
         $attributeId = (int) $data['attributeId'];
 
+        if ($this->completenessSettingsRepository->attributeIdsOutsideFamily($familyId, [$attributeId]) !== []) {
+            return response()->json([
+                'success' => false,
+                'message' => trans('validation.exists', ['attribute' => 'attributeId']),
+            ], 422);
+        }
+
         $newCodes = array_filter(explode(',', $data['channel_requirements'] ?? ''));
 
         $existingCodes = $this->completenessSettingsRepository->findWhere([
