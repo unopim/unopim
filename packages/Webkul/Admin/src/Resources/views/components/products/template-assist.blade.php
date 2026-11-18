@@ -53,7 +53,7 @@
                         class="flex flex-wrap gap-1"
                         v-pre
                     >
-                        @foreach (['upper', 'lower', 'capitalize', 'title', 'slug', "format_date('d.m.Y')"] as $filter)
+                        @foreach (array_column($filters, 'value') as $filter)
                             <code class="px-1.5 py-0.5 rounded bg-gray-100 dark:bg-cherry-800 font-mono text-gray-800 dark:text-white">{{ $filter }}</code>
                         @endforeach
                     </div>
