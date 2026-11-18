@@ -2118,6 +2118,7 @@ return [
             'delete-failed'                   => 'Falha ao eliminar a função',
             'delete-success'                  => 'Função eliminada com sucesso',
             'last-delete-error'               => 'A última função não pode ser eliminada',
+            'last-full-access'                => 'Pelo menos um utilizador ativo deve manter acesso total.',
             'update-success'                  => 'Função atualizada com sucesso',
         ],
     ],

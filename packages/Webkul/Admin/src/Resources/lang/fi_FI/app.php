@@ -2116,6 +2116,7 @@ return [
             'delete-failed'                   => 'Roolin poistaminen epäonnistui',
             'delete-success'                  => 'Rooli poistettu onnistuneesti',
             'last-delete-error'               => 'Viimeistä roolia ei voida poistaa',
+            'last-full-access'                => 'Vähintään yhdellä aktiivisella käyttäjällä on oltava täydet käyttöoikeudet.',
             'update-success'                  => 'Rooli päivitettiin onnistuneesti',
         ],
     ],
