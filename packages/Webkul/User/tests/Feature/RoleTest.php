@@ -47,7 +47,7 @@ it('should create a Role type ALL', function () {
 
     $role = [
         'name'            => 'newTests',
-        'permission_type' => 'All',
+        'permission_type' => 'all',
         'description'     => 'description for the role',
     ];
 
@@ -55,7 +55,7 @@ it('should create a Role type ALL', function () {
 
     $this->assertDatabaseHas($this->getFullTableName(Role::class), [
         'name'            => 'newTests',
-        'permission_type' => 'All',
+        'permission_type' => 'all',
     ]);
 
 });

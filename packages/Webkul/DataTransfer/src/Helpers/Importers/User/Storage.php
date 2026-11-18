@@ -14,6 +14,11 @@ class Storage
     protected array $admins = [];
 
     /**
+     * Admin role ids keyed by email
+     */
+    protected array $adminRoles = [];
+
+    /**
      * Roles contains name as key and role id as value
      */
     protected array $roles = [];
@@ -38,6 +43,7 @@ class Storage
     public function init(): void
     {
         $this->admins = [];
+        $this->adminRoles = [];
         $this->roles = [];
         $this->locales = [];
 
@@ -51,7 +57,7 @@ class Storage
     public function loadAdmins(array $emails = []): void
     {
         $query = $this->adminRepository->query()
-            ->select(['id', 'email']);
+            ->select(['id', 'email', 'role_id']);
 
         if ($emails !== []) {
             $query->whereIn('email', $emails);
@@ -61,6 +67,7 @@ class Storage
 
         foreach ($admins as $admin) {
             $this->admins[$admin->email] = $admin->id;
+            $this->adminRoles[$admin->email] = $admin->role_id;
         }
     }
 
@@ -101,6 +108,14 @@ class Storage
     }
 
     /**
+     * Get the current role id of an existing admin by email
+     */
+    public function getAdminRoleId(string $email): ?int
+    {
+        return $this->adminRoles[$email] ?? null;
+    }
+
+    /**
      * Get role id by name
      */
     public function getRoleId(string $name): ?int
@@ -119,9 +134,10 @@ class Storage
     /**
      * Set admin information
      */
-    public function setAdmin(string $email, int $id): self
+    public function setAdmin(string $email, int $id, ?int $roleId = null): self
     {
         $this->admins[$email] = $id;
+        $this->adminRoles[$email] = $roleId;
 
         return $this;
     }

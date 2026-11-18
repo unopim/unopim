@@ -17,17 +17,17 @@ it('forbids deleting the last active all-access admin', function () use ($delete
     $this->loginWithPermissions('custom', $deletePermissions);
 
     deleteJson(route('admin.settings.users.delete', ['id' => $superadmin->id]))
-        ->assertStatus(400);
+        ->assertForbidden();
 
     $this->assertDatabaseHas('admins', ['id' => $superadmin->id]);
 });
 
-it('allows deleting an all-access admin when another remains', function () use ($deletePermissions) {
+it('allows deleting an all-access admin when another remains', function () {
     $allRoleId = Role::where('permission_type', 'all')->value('id');
 
     $extra = Admin::factory()->create(['role_id' => $allRoleId, 'status' => 1]);
 
-    $this->loginWithPermissions('custom', $deletePermissions);
+    $this->loginWithPermissions('all', []);
 
     deleteJson(route('admin.settings.users.delete', ['id' => $extra->id]))
         ->assertOk();
