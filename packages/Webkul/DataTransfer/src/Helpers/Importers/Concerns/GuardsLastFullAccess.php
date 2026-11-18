@@ -67,6 +67,14 @@ trait GuardsLastFullAccess
     /**
      * Write a batch in one transaction that first locks full access, so every row is re-checked as it is written.
      */
+    /**
+     * Record in the job log a validated row the write had to skip because access changed since validation.
+     */
+    protected function logSkippedRow(string $row, string $reason): void
+    {
+        $this->jobLogger?->warning("Row '{$row}' passed validation but was not imported: {$reason}");
+    }
+
     protected function writeWithFullAccessLock(Closure $write): void
     {
         DB::transaction(function () use ($write): void {

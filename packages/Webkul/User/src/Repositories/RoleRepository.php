@@ -2,6 +2,7 @@
 
 namespace Webkul\User\Repositories;
 
+use Illuminate\Database\Eloquent\Builder;
 use Webkul\Core\Eloquent\Repository;
 use Webkul\User\Contracts\Role;
 use Webkul\User\Services\RoleAccessGuard;
@@ -36,7 +37,7 @@ class RoleRepository extends Repository
     {
         $this->getModel()->newQuery()
             ->where('permission_type', RoleAccessGuard::FULL_ACCESS)
-            ->when($alsoLockId !== null, fn ($query) => $query->orWhereKey($alsoLockId))
+            ->when($alsoLockId !== null, fn (Builder $query) => $query->orWhereKey($alsoLockId))
             ->orderBy('id')
             ->lockForUpdate()
             ->pluck('id');

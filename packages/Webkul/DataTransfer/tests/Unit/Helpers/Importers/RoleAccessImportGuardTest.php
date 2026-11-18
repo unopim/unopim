@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Psr\Log\LoggerInterface;
 use Webkul\DataTransfer\Helpers\Error;
 use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Helpers\Importers\Role\Importer as RoleImporter;
@@ -37,13 +38,21 @@ beforeEach(function () {
     $this->loginAsAdmin($this->fullAdmin);
 });
 
-function importerFor(string $importerClass, string $action, ?Admin $initiator, ?Admin $uploader = null): RoleImporter|UserImporter
+function importerFor(string $importerClass, string $action, ?Admin $initiator, ?Admin $uploader = null, ?Admin $editor = null): RoleImporter|UserImporter
+{
+    return importerWithMeta($importerClass, $action, $initiator, [
+        'updated_by'       => ($editor ?? $uploader ?? $initiator)?->id,
+        'file_uploaded_by' => ($uploader ?? $initiator)?->id,
+    ]);
+}
+
+function importerWithMeta(string $importerClass, string $action, ?Admin $initiator, array $meta): RoleImporter|UserImporter
 {
     $importer = app($importerClass);
     $importer->setImport(JobTrack::factory()->create([
         'action'  => $action,
         'user_id' => $initiator?->id,
-        'meta'    => ['batch_count' => 0, 'updated_by' => ($uploader ?? $initiator)?->id],
+        'meta'    => ['batch_count' => 0, ...$meta],
     ]));
     $importer->setErrorHelper(app(Error::class));
 
@@ -52,9 +61,15 @@ function importerFor(string $importerClass, string $action, ?Admin $initiator, ?
     return $importer;
 }
 
-function writeImportBatch(string $importerClass, string $action, array $rows, ?Admin $actor = null): void
+function writeImportBatch(string $importerClass, string $action, array $rows, ?Admin $actor = null, ?LoggerInterface $logger = null): void
 {
-    importerFor($importerClass, $action, $actor)->importBatch(JobTrackBatch::factory()->create([
+    $importer = importerFor($importerClass, $action, $actor);
+
+    if ($logger) {
+        $importer->setLogger($logger);
+    }
+
+    $importer->importBatch(JobTrackBatch::factory()->create([
         'job_track_id' => JobTrack::factory()->create(['action' => $action]),
         'data'         => $rows,
     ]));
@@ -183,6 +198,45 @@ describe('role importer', function () {
         expect($role->permission_type)->toBe('all')
             ->and($role->description)->toBe('Original');
     });
+
+    it('records in the job log why a validated role row was not written', function () {
+        $createOnlyAdmin = Admin::factory()->create(['role_id' => Role::factory()->create([
+            'permission_type' => 'custom',
+            'permissions'     => ['dashboard', 'data_transfer.imports', 'settings.roles.create'],
+        ])->id, 'status' => 1]);
+
+        $name = 'Appears Later '.uniqid();
+        Role::factory()->create(['name' => $name, 'permission_type' => 'custom', 'permissions' => ['dashboard']]);
+
+        $logger = Mockery::spy(LoggerInterface::class);
+
+        writeImportBatch(RoleImporter::class, Import::ACTION_APPEND, [['name' => $name, 'permission_type' => 'custom', 'permissions' => 'dashboard']], $createOnlyAdmin, $logger);
+
+        $logger->shouldHaveReceived('warning')->once()->withArgs(fn (string $message): bool => str_contains($message, $name)
+            && str_contains($message, trans('admin::app.common.unauthorized')));
+    });
+
+    it('rejects a role row when the admin who last edited the profile lacks the access, even if full-access admins uploaded and run it', function () {
+        $importer = importerFor(RoleImporter::class, Import::ACTION_APPEND, $this->fullAdmin, $this->fullAdmin, $this->limitedAdmin);
+
+        expect($importer->validateRow(['name' => $this->limitedRole->name, 'permission_type' => 'all'], 1))->toBeFalse()
+            ->and($importer->validateRow(['name' => 'New '.uniqid(), 'permission_type' => 'custom', 'permissions' => 'dashboard'], 2))->toBeTrue();
+    });
+
+    it('checks a profile saved before its editor and uploader were recorded against the admin running it', function () {
+        expect(importerWithMeta(RoleImporter::class, Import::ACTION_APPEND, $this->fullAdmin, [])->validateRow(['name' => 'New '.uniqid(), 'permission_type' => 'all'], 1))->toBeTrue()
+            ->and(importerWithMeta(RoleImporter::class, Import::ACTION_APPEND, $this->limitedAdmin, [])->validateRow(['name' => 'New '.uniqid(), 'permission_type' => 'all'], 1))->toBeFalse();
+    });
+
+    it('grants nothing when the recorded editor or uploader of the profile no longer exists', function (string $key) {
+        $goneAdmin = Admin::factory()->create(['role_id' => $this->fullRole->id, 'status' => 1]);
+        $goneAdminId = $goneAdmin->id;
+        $goneAdmin->delete();
+
+        $importer = importerWithMeta(RoleImporter::class, Import::ACTION_APPEND, $this->fullAdmin, [$key => $goneAdminId]);
+
+        expect($importer->validateRow(['name' => 'New '.uniqid(), 'permission_type' => 'custom', 'permissions' => 'dashboard'], 1))->toBeFalse();
+    })->with(['editor' => 'updated_by', 'uploader' => 'file_uploaded_by']);
 
     it('skips deleting a role when the importing admin lost the delete permission after validation', function () {
         $deleterRole = Role::factory()->create([

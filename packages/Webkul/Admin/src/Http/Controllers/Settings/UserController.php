@@ -3,7 +3,6 @@
 namespace Webkul\Admin\Http\Controllers\Settings;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -68,12 +67,23 @@ class UserController extends Controller
      */
     protected function isLastActiveFullAccessAdmin(?Admin $user): bool
     {
-        return $user instanceof Admin
-            && (bool) $user->status
-            && $this->roleAccessGuard->hasFullAccess($user->role)
+        return $this->holdsActiveFullAccess($user)
             && ! $this->adminRepository->hasOtherActiveFullAccessAdmin(exceptAdminIds: [$user->id]);
     }
 
+    /**
+     * Whether the user is active and their role grants every permission.
+     */
+    protected function holdsActiveFullAccess(?Admin $user): bool
+    {
+        return $user instanceof Admin
+            && (bool) $user->status
+            && $this->roleAccessGuard->hasFullAccess($user->role);
+    }
+
+    /**
+     * Translation key explaining why the acting admin cannot assign the role, or null when it can.
+     */
     protected function roleAssignmentError(?Role $targetRole): ?string
     {
         return $this->roleAccessGuard->assignmentError(auth()->guard('admin')->user(), $targetRole);
@@ -82,7 +92,7 @@ class UserController extends Controller
     /**
      * @return Collection<int, Role>
      */
-    protected function assignableRoles(?int $keepRoleId = null)
+    protected function assignableRoles(?int $keepRoleId = null): Collection
     {
         return $this->roleRepository->all()
             ->filter(fn ($role): bool => (int) $role->id === $keepRoleId || ! $this->cannotAssignRole($role))
@@ -198,16 +208,26 @@ class UserController extends Controller
      */
     public function update(UserForm $request): JsonResponse
     {
-        $id = request()->id;
+        $id = (int) request()->id;
 
-        $data = null;
+        $user = $this->adminRepository->findOrFail($id);
 
-        $admin = DB::transaction(function () use ($request, $id, &$data) {
-            $this->roleRepository->lockFullAccessRoles();
+        if ($user->isApiUser()) {
+            abort(404);
+        }
 
-            $data = $this->prepareUserData($request, $id);
+        $data = $this->prepareUserData($request);
 
-            if ($data instanceof RedirectResponse) {
+        $error = null;
+
+        $admin = DB::transaction(function () use ($id, $user, $data, &$error): ?Admin {
+            if ($this->holdsActiveFullAccess($user)) {
+                $this->roleRepository->lockFullAccessRoles();
+
+                $user = $this->adminRepository->find($id);
+            }
+
+            if ($error = $this->updateError($user, $data)) {
                 return null;
             }
 
@@ -217,9 +237,7 @@ class UserController extends Controller
         });
 
         if (! $admin) {
-            return new JsonResponse([
-                'message' => session('error', trans('admin::app.settings.users.cannot-change', ['name' => ''])),
-            ], JsonResponse::HTTP_FORBIDDEN);
+            return new JsonResponse(['message' => $error], JsonResponse::HTTP_FORBIDDEN);
         }
 
         if (request()->hasFile('image')) {
@@ -373,58 +391,25 @@ class UserController extends Controller
     }
 
     /**
-     * Prepare user data.
+     * Request data for the user update, with the password hashed and the flags cast.
      *
-     * @param  int  $id
-     * @return array|RedirectResponse
+     * @return array<string, mixed>
      */
-    private function prepareUserData(UserForm $request, $id)
+    private function prepareUserData(UserForm $request): array
     {
         $data = $request->validated();
 
         unset($data['current_password']);
 
-        $user = $this->adminRepository->find($id);
-
-        if ($user->isApiUser()) {
-            abort(404);
-        }
-
-        if ($this->cannotAssignRole($user->role)) {
-            return $this->cannotChangeRedirectResponse('role');
-        }
-
-        /**
-         * Password check.
-         */
         if (! $data['password']) {
             unset($data['password']);
         } else {
             $data['password'] = bcrypt($data['password']);
         }
 
-        /**
-         * Is user with `permission_type` all changed status.
-         */
         $data['status'] = filter_var($data['status'] ?? false, FILTER_VALIDATE_BOOLEAN);
 
         $data['use_gravatar'] = $request->boolean('use_gravatar', true);
-
-        $isStatusChangedToInactive = ! $data['status'] && (bool) $user->status;
-
-        if ($isStatusChangedToInactive && $this->isLastActiveFullAccessAdmin($user)) {
-            return $this->cannotChangeRedirectResponse('status');
-        }
-
-        if ($this->cannotAssignRole($this->roleRepository->find($data['role_id'] ?? $user->role_id))) {
-            return $this->cannotChangeRedirectResponse('role');
-        }
-
-        $isRoleChanged = isset($data['role_id']) && (int) $data['role_id'] !== (int) $user->role_id;
-
-        if ($isRoleChanged && $this->isLastActiveFullAccessAdmin($user)) {
-            return $this->cannotChangeRedirectResponse('role');
-        }
 
         unset($data['image']);
 
@@ -432,14 +417,38 @@ class UserController extends Controller
     }
 
     /**
-     * Cannot change redirect response.
+     * Message explaining why the acting admin may not apply the update to the user, or null when it may.
+     *
+     * @param  array<string, mixed>  $data
      */
-    private function cannotChangeRedirectResponse(string $columnName): RedirectResponse
+    private function updateError(Admin $user, array $data): ?string
     {
-        session()->flash('error', trans('admin::app.settings.users.cannot-change', [
-            'name' => $columnName,
-        ]));
+        if ($this->cannotAssignRole($user->role)) {
+            return $this->cannotChangeMessage('role');
+        }
 
-        return redirect()->route('admin.settings.users.index');
+        if (! $data['status'] && (bool) $user->status && $this->isLastActiveFullAccessAdmin($user)) {
+            return $this->cannotChangeMessage('status');
+        }
+
+        if ($this->cannotAssignRole($this->roleRepository->find($data['role_id'] ?? $user->role_id))) {
+            return $this->cannotChangeMessage('role');
+        }
+
+        $isRoleChanged = isset($data['role_id']) && (int) $data['role_id'] !== (int) $user->role_id;
+
+        if ($isRoleChanged && $this->isLastActiveFullAccessAdmin($user)) {
+            return $this->cannotChangeMessage('role');
+        }
+
+        return null;
+    }
+
+    /**
+     * Message refusing a change to the named user column.
+     */
+    private function cannotChangeMessage(string $columnName): string
+    {
+        return trans('admin::app.settings.users.cannot-change', ['name' => $columnName]);
     }
 }

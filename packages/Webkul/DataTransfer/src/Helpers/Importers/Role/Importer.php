@@ -221,24 +221,29 @@ class Importer extends AbstractImporter
     {
         $this->roleStorage->load(Arr::pluck($batch->data, 'name'));
 
-        $idsToDelete = [];
+        $namesToDelete = [];
 
         foreach ($batch->data as $rowData) {
             $id = $this->roleStorage->get($rowData['name']);
 
             if ($id) {
-                $idsToDelete[] = $id;
+                $namesToDelete[$id] = $rowData['name'];
             }
         }
 
-        $idsToDelete = array_unique($idsToDelete);
+        $permissionError = $this->importPermissionError('settings.roles.delete');
 
-        if ($idsToDelete !== [] && $this->importPermissionError('settings.roles.delete') !== null) {
-            return true;
-        }
+        foreach ($namesToDelete as $id => $name) {
+            $reason = match (true) {
+                $permissionError !== null                                    => trans($permissionError),
+                ! $this->allowsFullAccessChange(roleId: $id)                 => trans($this->messages[self::ERROR_LAST_FULL_ACCESS]),
+                (bool) $this->roleRepository->find($id)?->admins()->exists() => trans($this->messages[self::ERROR_ROLE_IN_USE]),
+                default                                                      => null,
+            };
 
-        foreach ($idsToDelete as $id) {
-            if (! $this->allowsFullAccessChange(roleId: $id) || $this->roleRepository->find($id)?->admins()->exists()) {
+            if ($reason !== null) {
+                $this->logSkippedRow($name, $reason);
+
                 continue;
             }
 
@@ -254,8 +259,15 @@ class Importer extends AbstractImporter
         $this->roleStorage->load(Arr::pluck($batch->data, 'name'));
 
         foreach ($batch->data as $rowData) {
-            if ($this->accessDenial($rowData) !== null
-                || ! $this->allowsFullAccessChange(roleId: $this->demotedRoleId($rowData))) {
+            if ($denial = $this->accessDenial($rowData)) {
+                $this->logSkippedRow($rowData['name'], $denial['errorMessage'] ?? trans($this->messages[self::ERROR_CANNOT_GRANT_ACCESS]));
+
+                continue;
+            }
+
+            if (! $this->allowsFullAccessChange(roleId: $this->demotedRoleId($rowData))) {
+                $this->logSkippedRow($rowData['name'], trans($this->messages[self::ERROR_LAST_FULL_ACCESS]));
+
                 continue;
             }
 

@@ -113,3 +113,26 @@ it('locks the full-access roles before writing a user change that can remove ful
         ->and($writeAt)->toBeInt()
         ->and($lockAt)->toBeLessThan($writeAt);
 })->with(['role change', 'delete', 'self delete']);
+
+it('does not lock the full-access roles when editing a user who holds no full access', function () {
+    $this->loginAsAdmin($this->lastActiveAdmin);
+
+    $customUser = Admin::factory()->create(['role_id' => $this->customRole->id, 'status' => 1]);
+
+    $queries = [];
+    DB::listen(function ($query) use (&$queries) {
+        $queries[] = strtolower($query->sql);
+    });
+
+    moveUserToRole($customUser, $this->customRole->id)->assertOk();
+
+    expect(collect($queries)->contains(fn (string $sql): bool => str_contains($sql, 'roles') && str_contains($sql, 'for update')))->toBeFalse();
+});
+
+it('returns the reason itself when a user change is refused', function () {
+    $this->loginWithPermissions('custom', ['dashboard', 'settings', 'settings.users', 'settings.users.users', 'settings.users.users.edit']);
+
+    moveUserToRole($this->lastActiveAdmin, $this->customRole->id)
+        ->assertForbidden()
+        ->assertExactJson(['message' => trans('admin::app.settings.users.cannot-change', ['name' => 'role'])]);
+});

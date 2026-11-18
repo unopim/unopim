@@ -725,9 +725,6 @@ class Import
     }
 
     /**
-     * Resolve legacy entity types to the current config keys.
-     */
-    /**
      * Entity type captured when the job was created, so editing the profile cannot swap the importer between validation and start.
      */
     protected function pinnedEntityType(): string
@@ -735,6 +732,9 @@ class Import
         return $this->resolveEntityType((string) ($this->import->meta['entity_type'] ?? $this->import->jobInstance->entity_type));
     }
 
+    /**
+     * Resolve legacy entity types to the current config keys.
+     */
     protected function resolveEntityType(string $entityType): string
     {
         return match ($entityType) {

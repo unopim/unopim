@@ -11,6 +11,7 @@ use Webkul\Admin\DataGrids\Settings\RolesDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\RoleForm;
 use Webkul\Core\Platform\ModuleGate;
+use Webkul\User\Contracts\Role;
 use Webkul\User\Repositories\AdminRepository;
 use Webkul\User\Repositories\RoleRepository;
 use Webkul\User\Services\RoleAccessGuard;
@@ -99,7 +100,7 @@ class RoleController extends Controller
 
         $submittedPermissions = $request->has('permissions') ? (array) $request->permissions : [];
 
-        $role = DB::transaction(function () use ($data, $submittedPermissions, $id) {
+        $role = DB::transaction(function () use ($data, $submittedPermissions, $id): ?Role {
             $role = $this->roleRepository->lockForFullAccessChange($id);
 
             $data['permissions'] = app(ModuleGate::class)->keepHiddenKeys(

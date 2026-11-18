@@ -127,7 +127,7 @@ class ImportController extends Controller
             )
         );
 
-        $this->recordProfileSaver($import);
+        $this->recordProfileSaver($import, isset($fileData['file_path']));
 
         Event::dispatch('data_transfer.imports.create.after', $import);
 
@@ -206,9 +206,7 @@ class ImportController extends Controller
 
         $import = $this->jobInstancesRepository->update($data, $import->id);
 
-        if (isset($data['file_path'])) {
-            $this->recordProfileSaver($import);
-        }
+        $this->recordProfileSaver($import, isset($data['file_path']));
 
         Event::dispatch('data_transfer.imports.update.after', $import);
 
@@ -230,11 +228,16 @@ class ImportController extends Controller
     }
 
     /**
-     * Record the admin who supplied the import file; importers check this admin's access too.
+     * Record the admin who saved the profile, and who supplied its file when a new one was uploaded; importers check both admins' access.
      */
-    private function recordProfileSaver(JobInstancesContract $import): void
+    private function recordProfileSaver(JobInstancesContract $import, bool $uploadedFile): void
     {
-        $import->forceFill(['updated_by' => auth()->guard('admin')->id()])->saveQuietly();
+        $adminId = auth()->guard('admin')->id();
+
+        $import->forceFill([
+            'updated_by' => $adminId,
+            ...($uploadedFile ? ['file_uploaded_by' => $adminId] : []),
+        ])->saveQuietly();
     }
 
     /**

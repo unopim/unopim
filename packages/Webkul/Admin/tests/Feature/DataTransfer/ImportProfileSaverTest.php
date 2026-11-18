@@ -31,37 +31,45 @@ function importProfilePayload(array $overrides = []): array
     ];
 }
 
-it('records the admin who creates an import profile and ignores a posted saver', function () {
-    $payload = importProfilePayload(['updated_by' => $this->otherAdmin->id]);
+it('records the admin who creates an import profile as its editor and file uploader and ignores posted ones', function () {
+    $payload = importProfilePayload(['updated_by' => $this->otherAdmin->id, 'file_uploaded_by' => $this->otherAdmin->id]);
 
     postJson(route('admin.settings.data_transfer.imports.store'), $payload)->assertStatus(302);
 
-    expect(JobInstances::query()->where('code', $payload['code'])->value('updated_by'))
-        ->toBe(auth()->guard('admin')->id());
+    $profile = JobInstances::query()->where('code', $payload['code'])->firstOrFail();
+
+    expect($profile->updated_by)->toBe(auth()->guard('admin')->id())
+        ->and($profile->file_uploaded_by)->toBe(auth()->guard('admin')->id());
 });
 
-it('keeps the uploader when a profile is saved again without a new file', function () {
+it('records the editor but keeps the file uploader when a profile is saved again without a new file', function () {
     $importJob = JobInstances::factory()->importJob()->create(['entity_type' => 'users']);
-    $importJob->forceFill(['updated_by' => $this->otherAdmin->id])->saveQuietly();
+    $importJob->forceFill(['updated_by' => $this->otherAdmin->id, 'file_uploaded_by' => $this->otherAdmin->id])->saveQuietly();
 
     $payload = importProfilePayload(['code' => $importJob->code]);
     unset($payload['file']);
 
     putJson(route('admin.settings.data_transfer.imports.update', ['id' => $importJob->id]), $payload)->assertStatus(302);
 
-    expect($importJob->fresh()->updated_by)->toBe($this->otherAdmin->id);
+    $importJob->refresh();
+
+    expect($importJob->updated_by)->toBe(auth()->guard('admin')->id())
+        ->and($importJob->file_uploaded_by)->toBe($this->otherAdmin->id);
 });
 
-it('records the admin who uploads a new file to an import profile and ignores a posted saver', function () {
+it('records the admin who uploads a new file to an import profile as editor and uploader and ignores posted ones', function () {
     $importJob = JobInstances::factory()->importJob()->create(['entity_type' => 'users']);
-    $importJob->forceFill(['updated_by' => $this->otherAdmin->id])->saveQuietly();
+    $importJob->forceFill(['updated_by' => $this->otherAdmin->id, 'file_uploaded_by' => $this->otherAdmin->id])->saveQuietly();
 
     putJson(
         route('admin.settings.data_transfer.imports.update', ['id' => $importJob->id]),
-        importProfilePayload(['code' => $importJob->code, 'updated_by' => $this->otherAdmin->id])
+        importProfilePayload(['code' => $importJob->code, 'updated_by' => $this->otherAdmin->id, 'file_uploaded_by' => $this->otherAdmin->id])
     )->assertStatus(302);
 
-    expect($importJob->fresh()->updated_by)->toBe(auth()->guard('admin')->id());
+    $importJob->refresh();
+
+    expect($importJob->updated_by)->toBe(auth()->guard('admin')->id())
+        ->and($importJob->file_uploaded_by)->toBe(auth()->guard('admin')->id());
 });
 
 it('stores each uploaded import file under its own key even for the same name in the same second', function () {

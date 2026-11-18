@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\LazyCollection;
 
 return new class extends Migration
 {
@@ -17,7 +18,7 @@ return new class extends Migration
             ->reject(fn (object $role): bool => in_array($role->permission_type, ['all', 'custom'], true))
             ->pluck('id')
             ->chunk(500)
-            ->each(fn ($ids) => DB::table('roles')->whereIn('id', $ids->all())->update(['permission_type' => 'custom']));
+            ->each(fn (LazyCollection $ids): int => DB::table('roles')->whereIn('id', $ids->all())->update(['permission_type' => 'custom']));
     }
 
     public function down(): void {}

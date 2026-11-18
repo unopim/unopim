@@ -361,15 +361,29 @@ class Importer extends AbstractImporter
 
         $idsToDelete = [];
 
+        $permissionError = $this->importPermissionError('settings.users.users.delete');
+
         foreach ($batch->data as $rowData) {
             $id = $this->userStorage->getAdminId($rowData['email']);
 
-            if ($id
-                && $this->importPermissionError('settings.users.users.delete') === null
-                && $this->existingAdminAccessError($rowData['email']) === null
-                && $this->allowsFullAccessChange(adminId: $this->deletedFullAccessAdminId($rowData))) {
-                $idsToDelete[] = $id;
+            if (! $id) {
+                continue;
             }
+
+            $reason = match (true) {
+                $permissionError !== null                                                           => trans($permissionError),
+                $this->existingAdminAccessError($rowData['email']) !== null                         => trans('admin::app.common.unauthorized'),
+                ! $this->allowsFullAccessChange(adminId: $this->deletedFullAccessAdminId($rowData)) => trans($this->messages[self::ERROR_LAST_FULL_ACCESS]),
+                default                                                                             => null,
+            };
+
+            if ($reason !== null) {
+                $this->logSkippedRow($rowData['email'], $reason);
+
+                continue;
+            }
+
+            $idsToDelete[] = $id;
         }
 
         $idsToDelete = array_unique($idsToDelete);
@@ -391,8 +405,15 @@ class Importer extends AbstractImporter
         $this->userStorage->loadAdmins(Arr::pluck($batch->data, 'email'));
 
         foreach ($batch->data as $rowData) {
-            if ($this->accessDenial($rowData) !== null
-                || ! $this->allowsFullAccessChange(...$this->fullAccessLoss($rowData))) {
+            if ($denial = $this->accessDenial($rowData)) {
+                $this->logSkippedRow($rowData['email'], trans($denial['error']));
+
+                continue;
+            }
+
+            if (! $this->allowsFullAccessChange(...$this->fullAccessLoss($rowData))) {
+                $this->logSkippedRow($rowData['email'], trans($this->messages[self::ERROR_LAST_FULL_ACCESS]));
+
                 continue;
             }
 
@@ -457,14 +478,20 @@ class Importer extends AbstractImporter
     {
         $image = $this->resolveImportImagePath($image);
 
-        if (! $image || ! StorageFacade::disk('public')->exists($image)) {
+        if (! $image) {
+            return null;
+        }
+
+        $file = new File(StorageFacade::disk('public')->path($image));
+
+        if (! str_starts_with((string) $file->getMimeType(), 'image/')) {
             return null;
         }
 
         $newPath = $this->fileStorer->storeAs(
             path: 'admins'.DIRECTORY_SEPARATOR.$admin->id,
             name: basename($image),
-            file: new File(StorageFacade::disk('public')->path($image)),
+            file: $file,
             options: ['disk' => 'public']
         );
 
@@ -489,6 +516,32 @@ class Importer extends AbstractImporter
 
         $basePath = trim((string) ($this->import->images_directory_path ?? ''), '/');
 
-        return $basePath !== '' && $basePath !== '0' ? $basePath.'/'.$image : $image;
+        if ($basePath === '0') {
+            $basePath = '';
+        }
+
+        $path = $basePath !== '' ? $basePath.'/'.$image : $image;
+
+        return $this->isInsideImagesDirectory($path, $basePath) ? $path : null;
+    }
+
+    /**
+     * Whether the path names an existing file inside the import's images directory on the public disk, after resolving every symlink.
+     */
+    protected function isInsideImagesDirectory(string $path, string $basePath): bool
+    {
+        if (str_contains($path, "\0") || in_array('..', preg_split('#[/\\\\]+#', $path), true)) {
+            return false;
+        }
+
+        $disk = StorageFacade::disk('public');
+
+        $root = realpath($disk->path($basePath));
+        $file = realpath($disk->path($path));
+
+        return $root !== false
+            && $file !== false
+            && is_file($file)
+            && str_starts_with($file, rtrim($root, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR);
     }
 }

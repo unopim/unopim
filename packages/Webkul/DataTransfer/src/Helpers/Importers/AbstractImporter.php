@@ -106,14 +106,11 @@ abstract class AbstractImporter
     protected ImportJobTrackContract $import;
 
     /**
-     * Admin who started the import, false until resolved.
+     * Admins whose access the import is checked against, false until resolved.
+     *
+     * @var list<Admin|null>|false
      */
-    protected Admin|false|null $initiatingAdmin = false;
-
-    /**
-     * Admin who uploaded the import file, false until resolved.
-     */
-    protected Admin|false|null $fileUploader = false;
+    protected array|false $importActors = false;
 
     /**
      * Source instance.
@@ -578,46 +575,52 @@ abstract class AbstractImporter
     }
 
     /**
-     * Admin who started the import, or null when none is recorded.
+     * The admin running the job, then the admins who last saved the profile and uploaded its file as recorded when the job started.
+     *
+     * A profile saved before these were recorded has no editor or uploader and is checked against its runner alone; a recorded admin who
+     * no longer exists resolves to null, which holds no permissions.
+     *
+     * @return list<Admin|null>
      */
-    protected function initiatingAdmin(): ?Admin
+    protected function importActors(): array
     {
-        if ($this->initiatingAdmin === false) {
-            $this->initiatingAdmin = resolve(RoleAccessGuard::class)->actor($this->import->user_id);
+        if ($this->importActors === false) {
+            $guard = resolve(RoleAccessGuard::class);
+
+            $this->importActors = [$guard->actor($this->import->user_id)];
+
+            foreach (['updated_by', 'file_uploaded_by'] as $key) {
+                if (($adminId = $this->import->meta[$key] ?? null) !== null) {
+                    $this->importActors[] = $guard->actor((int) $adminId);
+                }
+            }
         }
 
-        return $this->initiatingAdmin;
+        return $this->importActors;
     }
 
     /**
-     * Admin who uploaded the import file when the job started, or null when none is recorded.
-     */
-    protected function fileUploader(): ?Admin
-    {
-        if ($this->fileUploader === false) {
-            $this->fileUploader = resolve(RoleAccessGuard::class)->actor($this->import->meta['updated_by'] ?? null);
-        }
-
-        return $this->fileUploader;
-    }
-
-    /**
-     * Drop the cached runner and uploader so the next access check reads their current roles.
+     * Drop the cached import admins so the next access check reads their current roles.
      */
     protected function forgetImportActors(): void
     {
-        $this->initiatingAdmin = false;
-        $this->fileUploader = false;
+        $this->importActors = false;
     }
 
     /**
-     * First access error the check reports for the admin running the job or the admin who supplied its file.
+     * First access error the check reports for any admin the import acts for.
      *
      * @param  callable(?Admin): ?string  $check
      */
     protected function importAccessError(callable $check): ?string
     {
-        return $check($this->initiatingAdmin()) ?? $check($this->fileUploader());
+        foreach ($this->importActors() as $admin) {
+            if (($error = $check($admin)) !== null) {
+                return $error;
+            }
+        }
+
+        return null;
     }
 
     /**
