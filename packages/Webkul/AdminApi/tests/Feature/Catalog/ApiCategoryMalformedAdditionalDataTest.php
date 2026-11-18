@@ -13,7 +13,7 @@ dataset('malformedAdditionalData', [
     'locale_specific entry is null'     => [['locale_specific' => ['en_US' => null]]],
 ]);
 
-it('returns 422 instead of a server error for malformed additional_data on create', function (array $additionalData) {
+it('returns 422 instead of a server error for malformed additional_data on create', function (array $additionalData): void {
     $this->withHeaders($this->headers)
         ->json('POST', route('admin.api.categories.store'), [
             'code'            => 'edge_category_'.uniqid(),
