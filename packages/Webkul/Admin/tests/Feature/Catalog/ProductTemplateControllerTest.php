@@ -1,5 +1,6 @@
 <?php
 
+use Webkul\Admin\Http\Controllers\Catalog\ProductTemplateController;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Tests\Concerns\InteractsWithTemplates;
@@ -91,6 +92,32 @@ it('suggests every supported attribute of a large family', function () {
 
     expect($suggested)->toHaveCount(30)
         ->toContain(...$codes->all());
+});
+
+it('caps the suggestions of a very large family', function () {
+    AttributeFamily::factory()->linkAttributesToFamily(
+        $this->family,
+        collect(range(1, ProductTemplateController::SUGGESTION_LIMIT))
+            ->map(fn (int $number): int => $this->variableAttribute(sprintf('tpl_extra_%02d', $number))->id)
+            ->all(),
+    );
+
+    getJson(templateSuggestionsUrl($this->product))
+        ->assertOk()
+        ->assertJsonCount(ProductTemplateController::SUGGESTION_LIMIT);
+});
+
+it('looks up one attribute of the product family by its exact code', function () {
+    AttributeFamily::factory()->linkAttributesToFamily($this->family, [$this->variableAttribute('tpl_price_note')->id]);
+
+    $types = fn (string $code): array => collect(getJson(templateSuggestionsUrl($this->product, ['code' => $code]))
+        ->assertOk()
+        ->json())
+        ->pluck('type', 'code')
+        ->all();
+
+    expect($types('tpl_price'))->toBe(['tpl_price' => 'price'])
+        ->and($types('tpl_outsider'))->toBe([]);
 });
 
 it('returns the code, translated name and type of every suggestion', function () {

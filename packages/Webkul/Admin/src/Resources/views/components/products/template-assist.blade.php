@@ -185,8 +185,6 @@
                     this.tribute.attach(this.input);
 
                     this.input.addEventListener('tribute-replaced', this.tidySpacing);
-
-                    this.input.addEventListener('focus', this.loadAttributeTypes, { once: true });
                 });
             },
 
@@ -197,8 +195,6 @@
                     this.tribute.detach(this.input);
 
                     this.input.removeEventListener('tribute-replaced', this.tidySpacing);
-
-                    this.input.removeEventListener('focus', this.loadAttributeTypes);
                 }
             },
 
@@ -304,8 +300,6 @@
 
                         item.click();
                     });
-
-                    editor.once('focus', this.loadAttributeTypes);
                 },
 
                 editorItem(value, label, detail = null) {
@@ -371,8 +365,8 @@
                         return Promise.resolve([]);
                     }
 
-                    return this.loadAttributeTypes()
-                        .then((types) => types[code] === 'price' ? this.currencies : []);
+                    return this.attributeType(code)
+                        .then((type) => type === 'price' ? this.currencies : []);
                 },
 
                 filterOptions(expression) {
@@ -380,13 +374,9 @@
                         return Promise.resolve([]);
                     }
 
-                    return this.loadAttributeTypes().then((types) => {
-                        const type = types[expression.code];
-
-                        return type
-                            ? this.filters.filter((filter) => filter.types.includes(type) && (! expression.chained || filter.types.includes('text')))
-                            : [];
-                    });
+                    return this.attributeType(expression.code).then((type) => type
+                        ? this.filters.filter((filter) => filter.types.includes(type) && (! expression.chained || filter.types.includes('text')))
+                        : []);
                 },
 
                 fetchCurrencies(text, callback) {
@@ -401,23 +391,25 @@
                     this.filterOptions(this.filterExpression(this.textBeforeTrigger(text))).then(callback);
                 },
 
-                loadAttributeTypes() {
-                    if (! templateAttributeTypes.has(this.suggestionsUrl)) {
-                        templateAttributeTypes.set(this.suggestionsUrl, this.$axios
+                attributeType(code) {
+                    const key = `${this.suggestionsUrl}|${code}`;
+
+                    if (! templateAttributeTypes.has(key)) {
+                        templateAttributeTypes.set(key, this.$axios
                             .get(this.suggestionsUrl, {
                                 params: {
-                                    locale: this.locale,
+                                    code,
                                 },
                             })
-                            .then(({ data }) => Object.fromEntries(data.map((item) => [item.code, item.type])))
+                            .then(({ data }) => data.find((item) => item.code === code)?.type ?? null)
                             .catch(() => {
-                                templateAttributeTypes.delete(this.suggestionsUrl);
+                                templateAttributeTypes.delete(key);
 
-                                return {};
+                                return null;
                             }));
                     }
 
-                    return templateAttributeTypes.get(this.suggestionsUrl);
+                    return templateAttributeTypes.get(key);
                 },
 
                 filterCall(before, value) {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Webkul\Admin\Http\Controllers\Catalog;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\ProductTemplatePreviewForm;
@@ -20,6 +21,8 @@ use Webkul\Product\Validator\ProductTemplatesValidator;
 
 class ProductTemplateController extends Controller
 {
+    public const int SUGGESTION_LIMIT = 50;
+
     private const array DATA_WARNINGS = ['missing-value'];
 
     public function __construct(
@@ -37,6 +40,8 @@ class ProductTemplateController extends Controller
 
         $search = trim((string) request()->query('query', ''));
 
+        $code = trim((string) request()->query('code', ''));
+
         $locale = core()->getRequestedLocaleCode();
 
         $attributes = $this->attributeRepository->getModel()->newQuery()
@@ -44,12 +49,14 @@ class ProductTemplateController extends Controller
             ->whereIn('id', $product->attribute_family->customAttributes()->select('attributes.id'))
             ->whereIn('type', TemplateValueFormatter::SUPPORTED_TYPES)
             ->where('code', '!=', (string) request()->query('attribute', ''))
-            ->when($search !== '', fn ($query) => $query->where(fn ($query) => $query
+            ->when($code !== '', fn (Builder $query): Builder => $query->where('code', $code))
+            ->when($search !== '', fn (Builder $query): Builder => $query->where(fn (Builder $query): Builder => $query
                 ->whereLike('code', "%{$search}%")
-                ->orWhereHas('translations', fn ($query) => $query
+                ->orWhereHas('translations', fn (Builder $query): Builder => $query
                     ->where('locale', $locale)
                     ->whereLike('name', "%{$search}%"))))
             ->orderBy('code')
+            ->limit(self::SUGGESTION_LIMIT)
             ->get();
 
         return new JsonResponse($attributes->map(fn (Attribute $attribute): array => [
