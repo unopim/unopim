@@ -59,6 +59,8 @@ class EstimateTokens implements PimTool
                     return $denied;
                 }
 
+                $canEdit = $this->context->hasPermission('catalog.products.edit');
+
                 $filterBy = $request->string('filter_by')->toString() ?: 'all';
                 $filterValue = $request->string('filter_value')->toString() ?: null;
                 $limit = min(max($request->integer('limit', 50), 1), 1000);
@@ -104,7 +106,7 @@ class EstimateTokens implements PimTool
                     'note'                    => 'Approximate (~4 chars/token): input from the generate_content prompts of up to '.BulkEnrichmentEstimator::SAMPLE_SIZE.' sampled products, extrapolated to the selection; output is the per-call max_tokens budget, an upper bound. No cost is shown because no per-model pricing is configured.',
                 ];
 
-                if ($estimate['products'] > BulkEnrichmentEstimator::BULK_THRESHOLD) {
+                if ($canEdit && $estimate['products'] > BulkEnrichmentEstimator::BULK_THRESHOLD) {
                     $payload['token_estimate'] = $estimate;
                 }
 

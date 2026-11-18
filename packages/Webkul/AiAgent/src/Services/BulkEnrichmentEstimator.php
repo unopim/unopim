@@ -3,6 +3,7 @@
 namespace Webkul\AiAgent\Services;
 
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -41,9 +42,9 @@ class BulkEnrichmentEstimator
      */
     public function estimate(Builder $query, int $limit, string $channel, string $locale, string $instruction = ''): array
     {
-        $products = DB::query()->fromSub((clone $query)->limit($limit), 'selection')->count();
+        $products = DB::query()->fromSub((clone $query)->select('id')->limit($limit), 'selection')->count();
 
-        $sample = (clone $query)->limit(min(self::SAMPLE_SIZE, $products))->get(['values']);
+        $sample = $this->sample($query, $limit, $products);
 
         $sampleInput = 0;
         $sampleCalls = 0;
@@ -83,6 +84,27 @@ class BulkEnrichmentEstimator
         ]);
 
         return $estimate;
+    }
+
+    /**
+     * Fetch the sampled rows, spread evenly across the selection so the extrapolation is not biased towards the lowest ids.
+     *
+     * @return Collection<int, object>
+     */
+    protected function sample(Builder $query, int $limit, int $products): Collection
+    {
+        if ($products <= self::SAMPLE_SIZE) {
+            return (clone $query)->limit($limit)->get();
+        }
+
+        $ids = (clone $query)->select('id')->limit($limit)->pluck('id');
+
+        $picked = collect(range(0, self::SAMPLE_SIZE - 1))
+            ->map(fn (int $position): mixed => $ids->get((int) floor($position * $ids->count() / self::SAMPLE_SIZE)))
+            ->filter()
+            ->all();
+
+        return (clone $query)->whereIn('id', $picked)->get();
     }
 
     /**

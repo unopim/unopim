@@ -2219,8 +2219,8 @@ app.component('v-agenting-pim', {
             // Only show buttons for the LAST assistant message, not already confirmed, and not loading
             if (msg.role !== 'assistant' || msg._confirmed || this.isLoading || msg.isStreaming || msg.isRedirect) return false;
             if (idx !== this.messages.length - 1) return false;
-            if (msg.token_estimate) return true;
             const text = (msg.content || '').toLowerCase();
+            if (msg.token_estimate && text.includes('?')) return true;
             return /shall i proceed|do you want me to|should i (go ahead|proceed|create|update|delete|continue)|confirm.*(yes|no)|proceed\?|want me to (create|update|apply|execute)/i.test(text);
         },
 
