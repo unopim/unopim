@@ -4,6 +4,7 @@ namespace Webkul\Measurement\Providers;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Webkul\Measurement\Listeners\SaveAttributeMeasurementAfterCreate;
 use Webkul\Measurement\Listeners\SaveAttributeMeasurementAfterUpdate;
 use Webkul\Measurement\Listeners\ValidateAttributeMeasurementBeforeUpdate;
 use Webkul\Measurement\Listeners\WarnMissingMeasurementConfigAfterCreate;
@@ -31,6 +32,20 @@ class MeasurementEventServiceProvider extends ServiceProvider
                     'measurement::catalog.products.edit'
                 );
             }
+        );
+
+        Event::listen(
+            'unopim.admin.catalog.attributes.quick_create.type_fields.after',
+            function ($viewRenderEventManager): void {
+                $viewRenderEventManager->addTemplate(
+                    'measurement::catalog.attributes.create'
+                );
+            }
+        );
+
+        Event::listen(
+            'catalog.attribute.create.after',
+            SaveAttributeMeasurementAfterCreate::class.'@handle'
         );
 
         Event::listen(

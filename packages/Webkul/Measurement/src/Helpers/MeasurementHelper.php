@@ -150,12 +150,11 @@ class MeasurementHelper
         return $displaySymbol && $symbol !== '' ? $symbol : $label;
     }
 
-    /**
-     * Whether measurement units are displayed by symbol instead of name.
-     */
     public function displaysUnitSymbol(): bool
     {
-        return (bool) core()->getConfigData('system.measurement.display_unit_symbol');
+        $value = core()->getConfigData('system.measurement.display_unit_symbol');
+
+        return $value === null ? true : (bool) $value;
     }
 
     /**

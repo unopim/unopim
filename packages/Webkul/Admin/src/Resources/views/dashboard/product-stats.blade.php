@@ -1,3 +1,7 @@
+@php
+    [$completenessGreenFrom, $completenessRedBelow] = app(\Webkul\Completeness\Helpers\Threshold::class)->bounds();
+@endphp
+
 <!-- Product Stats Vue Component -->
 <v-dashboard-product-stats>
     <x-admin::shimmer.dashboard.total-catalogs />
@@ -264,8 +268,8 @@
 
                 getCompletenessColor(score) {
                     if (score === null) return this.cssVar('--chart-muted');
-                    if (score >= 80) return this.cssVar('--chart-success');
-                    if (score >= 50) return this.cssVar('--chart-warning');
+                    if (score >= {{ $completenessGreenFrom }}) return this.cssVar('--chart-success');
+                    if (score >= {{ $completenessRedBelow }}) return this.cssVar('--chart-warning');
 
                     return this.cssVar('--chart-danger');
                 },

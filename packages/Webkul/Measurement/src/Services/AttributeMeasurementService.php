@@ -14,16 +14,6 @@ class AttributeMeasurementService
 
     /**
      * Build the measurement configuration payload for the given attribute.
-     *
-     * Returns the family options, the saved family code and the saved unit code
-     * so the data can be rendered inline on the attribute edit page or returned
-     * as JSON.
-     *
-     * Only the saved family carries its units, because that is the only list the
-     * page can show before the user picks something; the rest are fetched when a
-     * family is chosen. Embedding every family's units instead made the payload
-     * grow with the whole measurement catalogue.
-     *
      * @param  int|string  $attributeId
      */
     public function buildPayload($attributeId): array
@@ -32,7 +22,22 @@ class AttributeMeasurementService
 
         $savedFamily = $measurement->family_code ?? '';
 
-        $familyOptions = $this->familyRepository
+        return [
+            'familyOptions' => $this->familyOptions(),
+            'oldFamily'     => $savedFamily,
+            'oldUnit'       => $measurement->unit_code ?? '',
+            'units'         => $savedFamily === '' ? [] : $this->unitsForFamily($savedFamily),
+        ];
+    }
+
+    /**
+     * All measurement families as select options (code as both id and label).
+     *
+     * @return array<int, array{id: string, label: string}>
+     */
+    public function familyOptions(): array
+    {
+        return $this->familyRepository
             ->getModel()
             ->newQuery()
             ->orderBy('id')
@@ -43,13 +48,6 @@ class AttributeMeasurementService
             ])
             ->values()
             ->toArray();
-
-        return [
-            'familyOptions' => $familyOptions,
-            'oldFamily'     => $savedFamily,
-            'oldUnit'       => $measurement->unit_code ?? '',
-            'units'         => $savedFamily === '' ? [] : $this->unitsForFamily($savedFamily),
-        ];
     }
 
     /**
@@ -82,10 +80,6 @@ class AttributeMeasurementService
             ->toArray();
     }
 
-    /**
-     * Falls back from the exact locale to any locale sharing its language, and
-     * finally to the unit code, so a unit is never rendered unlabelled.
-     */
     protected function resolveUnitLabel(array $unit, string $locale, string $language): string
     {
         $labels = $unit['labels'] ?? [];

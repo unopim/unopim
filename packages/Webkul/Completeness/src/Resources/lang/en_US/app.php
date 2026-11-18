@@ -1,6 +1,18 @@
 <?php
 
 return [
+    'config' => [
+        'completeness' => [
+            'title'           => 'Completeness',
+            'info'            => 'Completeness score colour thresholds.',
+            'green-from'      => 'Green from (%)',
+            'green-from-info' => 'Scores at or above this percentage are shown in green.',
+            'red-below'       => 'Red below (%)',
+            'red-below-info'  => 'Scores below this percentage are shown in red. Scores in between are shown in amber.',
+            'green-gt-red'    => 'The green threshold must be greater than the red threshold.',
+        ],
+    ],
+
     'components' => [
         'layouts' => [
             'sidebar' => [

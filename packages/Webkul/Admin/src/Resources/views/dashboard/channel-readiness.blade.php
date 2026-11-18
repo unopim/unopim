@@ -1,3 +1,7 @@
+@php
+    [$completenessGreenFrom, $completenessRedBelow] = app(\Webkul\Completeness\Helpers\Threshold::class)->bounds();
+@endphp
+
 <!-- Channel Readiness Vue Component -->
 <v-dashboard-channel-readiness>
     <x-admin::shimmer.dashboard.total-catalogs />
@@ -105,8 +109,8 @@
                 },
 
                 getColor(percentage) {
-                    if (percentage >= 80) return this.cssVar('--chart-success');
-                    if (percentage >= 50) return this.cssVar('--chart-warning');
+                    if (percentage >= {{ $completenessGreenFrom }}) return this.cssVar('--chart-success');
+                    if (percentage >= {{ $completenessRedBelow }}) return this.cssVar('--chart-warning');
 
                     return this.cssVar('--chart-danger');
                 }

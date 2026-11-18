@@ -39,7 +39,7 @@ return [
                 'title'         => 'measurement::app.config.catalog.measurement.display-unit-symbol',
                 'type'          => 'boolean',
                 'info'          => 'measurement::app.config.catalog.measurement.display-unit-symbol-info',
-                'default_value' => '0',
+                'default_value' => '1',
             ],
         ],
     ],

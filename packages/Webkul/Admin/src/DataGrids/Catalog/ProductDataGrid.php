@@ -14,6 +14,7 @@ use Webkul\Attribute\Models\Attribute as AttributeModel;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Services\AttributeService;
+use Webkul\Completeness\Helpers\Threshold;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\DataGrid\Column;
 use Webkul\DataGrid\Contracts\ExportableInterface;
@@ -287,9 +288,11 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
                     $score = number_format((float) $row->completeness);
 
-                    if ($score < 30) {
+                    [$greenFrom, $redBelow] = app(Threshold::class)->bounds();
+
+                    if ($score < $redBelow) {
                         $bgClass = 'pill-low';
-                    } elseif ($score < 70) {
+                    } elseif ($score < $greenFrom) {
                         $bgClass = 'pill-medium';
                     } else {
                         $bgClass = 'pill-high';
