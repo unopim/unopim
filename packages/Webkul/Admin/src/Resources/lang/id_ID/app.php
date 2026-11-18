@@ -2116,6 +2116,7 @@ return [
             'delete-failed'                   => 'Peran dihapus gagal',
             'delete-success'                  => 'Peran berhasil dihapus',
             'last-delete-error'               => 'Peran terakhir tidak dapat dihapus',
+            'last-full-access'                => 'Setidaknya satu pengguna aktif harus mempertahankan akses penuh.',
             'update-success'                  => 'Peran berhasil diperbarui',
         ],
     ],

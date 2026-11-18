@@ -232,7 +232,7 @@ class Import
         $state = self::STATE_VALIDATED;
 
         try {
-            $entityType = $this->resolveEntityType($this->import->jobInstance->entity_type);
+            $entityType = $this->pinnedEntityType();
 
             if (config('importers.'.$entityType.'.has_file_options')) {
                 $source = $this->getSource();
@@ -679,16 +679,14 @@ class Import
      */
     public function getTypeImporter(): AbstractImporter
     {
-        $jobInstance = $this->import->jobInstance;
-
         if (! $this->typeImporter) {
-            $entityType = $this->resolveEntityType($jobInstance->entity_type);
+            $entityType = $this->pinnedEntityType();
             $importerConfig = config('importers.'.$entityType);
 
             if (! is_array($importerConfig) || ! isset($importerConfig['importer'])) {
                 throw new \UnexpectedValueException(sprintf(
                     'Importer configuration not found for entity type [%s].',
-                    $jobInstance->entity_type
+                    $entityType
                 ));
             }
 
@@ -723,6 +721,14 @@ class Import
     public function isIndexingRequired(): bool
     {
         return $this->getTypeImporter()->isIndexingRequired();
+    }
+
+    /**
+     * Entity type captured when the job was created, so editing the profile cannot swap the importer between validation and start.
+     */
+    protected function pinnedEntityType(): string
+    {
+        return $this->resolveEntityType((string) ($this->import->meta['entity_type'] ?? $this->import->jobInstance->entity_type));
     }
 
     /**
