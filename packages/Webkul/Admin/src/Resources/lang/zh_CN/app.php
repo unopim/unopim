@@ -2157,6 +2157,26 @@ return [
                     'info'  => '',
                     'title' => '一般的',
                 ],
+                'platform' => [
+                    'info'  => '选择要启用的平台模块。',
+                    'title' => '平台',
+
+                    'settings' => [
+                        'info'  => '任一模块都可单独运行，也可多个一起运行；依赖其他模块的模块只能与其一同启用。',
+                        'title' => '模块选择',
+                    ],
+
+                    'modules' => [
+                        'info'  => '关闭某个模块会隐藏其菜单、页面和 API 路由；其数据会保留。',
+                        'title' => '模块',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => '仅在产品信息（PIM）关闭时生效。所选分区会从菜单中移除，其管理页面会被阻止访问；其数据会保留，其 Admin API 路由仍可使用。',
+                        'title' => '隐藏的分区',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -3102,6 +3122,7 @@ return [
     ],
     'errors' => [
         'dashboard' => '仪表板',
+        'home'      => '首页',
         'go-back'   => '回去',
         'support'   => '如果问题仍然存在，请通过 <a href=":link" class=":class">:email</a> 联系我们寻求帮助。',
         '404'       => [

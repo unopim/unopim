@@ -179,7 +179,7 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
         /**
          * Sync route.
          */
-        Route::get('/sync', [ProductController::class, 'sync']);
+        Route::get('/sync', [ProductController::class, 'sync'])->name('admin.catalog.products.sync');
 
         /**
          * Products routes.

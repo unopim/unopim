@@ -308,10 +308,11 @@ return [
         ],
     ],
     'job' => [
-        'started'   => 'Job execution started',
-        'completed' => 'Job execution completed',
-        'stalled'   => 'The job stopped responding for more than :minutes minutes and was marked as failed. Its worker was most likely terminated.',
-        'reaped'    => 'Marked :count stalled jobs as failed.',
-        'stopped'   => 'Import stopped after validation with :count errors. No rows were imported.',
+        'started'         => 'Job execution started',
+        'completed'       => 'Job execution completed',
+        'stalled'         => 'The job stopped responding for more than :minutes minutes and was marked as failed. Its worker was most likely terminated.',
+        'reaped'          => 'Marked :count stalled jobs as failed.',
+        'stopped'         => 'Import stopped after validation with :count errors. No rows were imported.',
+        'module-disabled' => 'The :type job type belongs to a platform module that is switched off, so it cannot run.',
     ],
 ];
