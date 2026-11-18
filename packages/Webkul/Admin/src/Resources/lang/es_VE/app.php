@@ -2116,6 +2116,7 @@ return [
             'delete-failed'                   => 'Error al eliminar el rol',
             'delete-success'                  => 'Rol eliminado exitosamente',
             'last-delete-error'               => 'No se puede eliminar el último rol',
+            'last-full-access'                => 'Al menos un usuario activo debe mantener el acceso completo.',
             'update-success'                  => 'Rol actualizado exitosamente',
         ],
     ],

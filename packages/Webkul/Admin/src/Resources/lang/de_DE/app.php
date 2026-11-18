@@ -2116,6 +2116,7 @@ return [
             'delete-failed'                   => 'Löschen der Rollen fehlgeschlagen',
             'delete-success'                  => 'Rollen erfolgreich gelöscht',
             'last-delete-error'               => 'Letzte Rollen können nicht gelöscht werden',
+            'last-full-access'                => 'Mindestens ein aktiver Benutzer muss vollen Zugriff behalten.',
             'update-success'                  => 'Rollen erfolgreich aktualisiert',
         ],
     ],

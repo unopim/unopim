@@ -2116,6 +2116,7 @@ return [
             'delete-failed'                   => 'Rolle sletning mislykkedes',
             'delete-success'                  => 'Rolle slettet succesfuldt',
             'last-delete-error'               => 'Sidste rolle kan ikke slettes',
+            'last-full-access'                => 'Mindst én aktiv bruger skal bevare fuld adgang.',
             'update-success'                  => 'Rolle opdateret succesfuldt',
         ],
     ],

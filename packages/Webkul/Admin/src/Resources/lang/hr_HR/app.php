@@ -2116,6 +2116,7 @@ return [
             'delete-failed'                   => 'Brisanje uloge nije uspjelo',
             'delete-success'                  => 'Uloga uspješno izbrisana',
             'last-delete-error'               => 'Posljednju ulogu nije moguće obrisati',
+            'last-full-access'                => 'Barem jedan aktivni korisnik mora zadržati puni pristup.',
             'update-success'                  => 'Uloga uspješno ažurirana',
         ],
     ],

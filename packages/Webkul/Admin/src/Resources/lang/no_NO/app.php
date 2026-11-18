@@ -2118,6 +2118,7 @@ return [
             'delete-failed'                   => 'Rolle sletting mislyktes',
             'delete-success'                  => 'Rolle slettet suksessfullt',
             'last-delete-error'               => 'Siste rolle kan ikke slettes',
+            'last-full-access'                => 'Minst én aktiv bruker må beholde full tilgang.',
             'update-success'                  => 'Rolle oppdatert suksessfullt',
         ],
     ],
