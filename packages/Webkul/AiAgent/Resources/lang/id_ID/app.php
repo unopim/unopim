@@ -4,7 +4,7 @@ return [
 
     'acl' => [
         'ai-agent'              => 'AI Ajaib',
-        'general'               => 'Umum',
+        'general'               => 'Pengaturan',
         'prompt'                => 'Perintah',
         'system-prompt'         => 'Perintah Sistem',
         'execute'               => 'Jalankan',

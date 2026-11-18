@@ -11,8 +11,18 @@ it('should restrict generate process route when user lacks permission', function
     $response->assertStatus(403);
 });
 
-it('should allow generate process route when user has permission', function () {
+it('should restrict generate process route when user cannot create products', function () {
     $this->loginWithPermissions('custom', ['ai-agent', 'ai-agent.generate']);
+
+    $this->postJson(route('ai-agent.generate.process'), [
+        'images'        => ['image.jpg'],
+        'credential_id' => 1,
+        'instruction'   => 'Test',
+    ])->assertStatus(403);
+});
+
+it('should allow generate process route when user has permission', function () {
+    $this->loginWithPermissions('custom', ['ai-agent', 'ai-agent.generate', 'catalog', 'catalog.products', 'catalog.products.create']);
 
     $response = $this->postJson(route('ai-agent.generate.process'), [
         'images'        => ['image.jpg'],

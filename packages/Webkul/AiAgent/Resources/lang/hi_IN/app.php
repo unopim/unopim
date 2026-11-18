@@ -4,7 +4,7 @@ return [
 
     'acl' => [
         'ai-agent'              => 'मैजिक AI',
-        'general'               => 'सामान्य',
+        'general'               => 'सेटिंग्स',
         'prompt'                => 'प्रॉम्प्ट',
         'system-prompt'         => 'सिस्टम प्रॉम्प्ट',
         'execute'               => 'निष्पादित करें',

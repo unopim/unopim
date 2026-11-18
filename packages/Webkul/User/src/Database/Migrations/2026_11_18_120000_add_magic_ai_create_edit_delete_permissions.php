@@ -15,6 +15,7 @@ return new class extends Migration
         'ai-agent.system-prompt.create' => 'ai-agent.system-prompt.edit',
     ];
 
+    /** Grant each new create permission to the custom roles that already hold the edit one. */
     public function up(): void
     {
         $this->eachCustomRole(function (object $role, array $permissions): void {
@@ -32,6 +33,7 @@ return new class extends Migration
         });
     }
 
+    /** Remove the create permissions again. */
     public function down(): void
     {
         $this->eachCustomRole(function (object $role, array $permissions): void {
@@ -43,6 +45,7 @@ return new class extends Migration
         });
     }
 
+    /** Run the callback for every custom role with its decoded permission list. */
     private function eachCustomRole(callable $callback): void
     {
         DB::table('roles')
@@ -57,6 +60,7 @@ return new class extends Migration
             });
     }
 
+    /** Save the permission list back to the role. */
     private function store(object $role, array $permissions): void
     {
         DB::table('roles')

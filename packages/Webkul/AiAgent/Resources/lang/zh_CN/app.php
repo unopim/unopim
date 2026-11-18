@@ -4,7 +4,7 @@ return [
 
     'acl' => [
         'ai-agent'              => '魔法 AI',
-        'general'               => '常规',
+        'general'               => '设置',
         'prompt'                => '提示词',
         'system-prompt'         => '系统提示词',
         'execute'               => '执行',

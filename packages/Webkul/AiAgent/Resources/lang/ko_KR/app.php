@@ -4,7 +4,7 @@ return [
 
     'acl' => [
         'ai-agent'              => '매직 AI',
-        'general'               => '일반',
+        'general'               => '설정',
         'prompt'                => '프롬프트',
         'system-prompt'         => '시스템 프롬프트',
         'execute'               => '실행',

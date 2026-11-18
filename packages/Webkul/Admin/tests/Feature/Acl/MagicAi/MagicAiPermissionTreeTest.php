@@ -3,10 +3,6 @@
 use Illuminate\Support\Collection;
 use Webkul\User\Models\Role;
 
-/*
- * The Magic AI permission tree mirrors Data Transfer: a labelled parent per area with
- * Create / Edit / Delete children, named like the sidebar entries.
- */
 function magicAiAcl(): Collection
 {
     return collect(require base_path('packages/Webkul/AiAgent/Config/acl.php'));
@@ -33,7 +29,7 @@ it('maps every Magic AI route to exactly one permission key', function () {
 });
 
 it('gives sibling permissions of the same parent distinct sort positions in sidebar order', function () {
-    $sort = fn (string $key) => magicAiAcl()->firstWhere('key', $key)['sort'];
+    $sort = fn (string $key): int => magicAiAcl()->firstWhere('key', $key)['sort'];
 
     expect($sort('ai-agent.platform'))->toBeLessThan($sort('ai-agent.general'))
         ->and($sort('ai-agent.general'))->toBeLessThan($sort('ai-agent.prompt'))
