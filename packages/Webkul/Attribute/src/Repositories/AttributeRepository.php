@@ -61,9 +61,9 @@ class AttributeRepository extends Repository
 
         if (in_array($attribute->type, ['select', 'multiselect', 'checkbox']) && $options) {
             foreach ($options as $optionInputs) {
-                $this->attributeOptionRepository->create(array_merge([
+                $this->attributeOptionRepository->create(array_merge($optionInputs, [
                     'attribute_id' => $attribute->id,
-                ], $optionInputs));
+                ]));
             }
         }
 
@@ -97,9 +97,9 @@ class AttributeRepository extends Repository
                     if (empty($optionInputs['code'])) {
                         $optionInputs['code'] = 'option_'.strtolower(Str::random(8));
                     }
-                    $this->attributeOptionRepository->create(array_merge([
+                    $this->attributeOptionRepository->create(array_merge($optionInputs, [
                         'attribute_id' => $attribute->id,
-                    ], $optionInputs));
+                    ]));
                 } elseif ($optionInputs['isDelete'] == 'true') {
                     $this->attributeOptionRepository->delete($optionId);
                 } else {

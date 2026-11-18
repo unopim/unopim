@@ -377,6 +377,27 @@ it('should update attribute options', function () {
         ->assertRedirect(route('admin.catalog.attributes.edit', $attribute->id));
 });
 
+it('should keep new options on the created attribute when the request names another attribute', function () {
+    $this->loginAsAdmin();
+
+    $other = Attribute::factory()->create(['type' => 'select']);
+    $otherOptionCount = $other->options()->count();
+
+    postJson(route('admin.catalog.attributes.store'), [
+        'code'        => 'ownedOptionsAttribute',
+        'type'        => 'select',
+        'swatch_type' => SwatchTypeEnum::TEXT->value,
+        'options'     => [
+            ['code' => 'owned_option', 'attribute_id' => $other->id],
+        ],
+    ])->assertStatus(302);
+
+    $created = Attribute::where('code', 'ownedOptionsAttribute')->first();
+
+    expect($created->options()->pluck('code')->all())->toBe(['owned_option'])
+        ->and($other->options()->count())->toBe($otherOptionCount);
+});
+
 it('should delete an attribute option', function () {
     $this->loginAsAdmin();
 
