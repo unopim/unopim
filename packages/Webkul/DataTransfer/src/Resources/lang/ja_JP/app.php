@@ -59,6 +59,7 @@ return [
                     'duplicate-code'                       => '属性コード :code はすでに使用されています。',
                     'code_not_found_to_delete'             => '削除する属性コードが見つかりません。',
                     'code_is_system_and_cannot_be_deleted' => 'システム属性は削除できません。',
+                    'templates-unsupported'                => 'テンプレートは、入力検証がなく、一意ではないテキストおよびテキストエリア属性でのみ有効にできます。',
                 ],
             ],
         ],

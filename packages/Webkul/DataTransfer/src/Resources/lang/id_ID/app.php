@@ -59,6 +59,7 @@ return [
                     'duplicate-code'                       => 'Kode atribut :code sudah digunakan.',
                     'code_not_found_to_delete'             => 'Kode atribut tidak ditemukan untuk dihapus.',
                     'code_is_system_and_cannot_be_deleted' => 'Atribut sistem tidak dapat dihapus.',
+                    'templates-unsupported'                => 'Templat hanya dapat diaktifkan pada atribut teks dan textarea yang tidak memiliki validasi input dan tidak unik.',
                 ],
             ],
         ],

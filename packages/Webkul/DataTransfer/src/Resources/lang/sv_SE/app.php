@@ -59,6 +59,7 @@ return [
                     'duplicate-code'                       => 'Attributkoden :code används redan.',
                     'code_not_found_to_delete'             => 'Attributkoden för borttagning hittades inte.',
                     'code_is_system_and_cannot_be_deleted' => 'Systemattributet kan inte tas bort.',
+                    'templates-unsupported'                => 'Mallar kan endast aktiveras för text- och textområdesattribut som saknar inmatningsvalidering och inte är unika.',
                 ],
             ],
         ],

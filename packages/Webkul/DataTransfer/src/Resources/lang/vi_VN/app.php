@@ -59,6 +59,7 @@ return [
                     'duplicate-code'                       => 'Mã thuộc tính :code đã được sử dụng.',
                     'code_not_found_to_delete'             => 'Không tìm thấy mã thuộc tính để xóa.',
                     'code_is_system_and_cannot_be_deleted' => 'Không thể xóa thuộc tính hệ thống.',
+                    'templates-unsupported'                => 'Chỉ có thể bật mẫu cho các thuộc tính văn bản và văn bản lớn không có xác thực nhập liệu và không phải là duy nhất.',
                 ],
             ],
         ],

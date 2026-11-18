@@ -78,7 +78,7 @@ class Importer extends AbstractImporter
         self::ERROR_CODE_NOT_FOUND_FOR_DELETE => 'data_transfer::app.importers.attributes.validation.errors.code_not_found_to_delete',
         self::ERROR_NOT_FOUND_LOCALE          => 'data_transfer::app.importers.products.validation.errors.locale-not-exist',
         self::ERROR_CODE_IS_SYSTEM            => 'data_transfer::app.importers.attributes.validation.errors.code_is_system_and_cannot_be_deleted',
-        self::ERROR_TEMPLATES_UNSUPPORTED     => 'admin::app.catalog.attributes.create.templates-unsupported',
+        self::ERROR_TEMPLATES_UNSUPPORTED     => 'data_transfer::app.importers.attributes.validation.errors.templates-unsupported',
     ];
 
     /**

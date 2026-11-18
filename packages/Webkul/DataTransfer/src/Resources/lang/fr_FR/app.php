@@ -59,6 +59,7 @@ return [
                     'duplicate-code'                       => 'Le code d\'attribut :code est déjà utilisé.',
                     'code_not_found_to_delete'             => 'Code d\'attribut introuvable pour la suppression.',
                     'code_is_system_and_cannot_be_deleted' => 'L\'attribut système ne peut pas être supprimé.',
+                    'templates-unsupported'                => 'Les modèles ne peuvent être activés que sur les attributs de type texte et zone de texte qui n\'ont pas de validation du champ et qui ne sont pas uniques.',
                 ],
             ],
         ],

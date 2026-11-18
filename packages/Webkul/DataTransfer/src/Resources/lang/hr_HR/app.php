@@ -59,6 +59,7 @@ return [
                     'duplicate-code'                       => 'Kod značajke :code već se koristi.',
                     'code_not_found_to_delete'             => 'Kod značajke nije pronađen za brisanje.',
                     'code_is_system_and_cannot_be_deleted' => 'Značajka sustava ne može se izbrisati.',
+                    'templates-unsupported'                => 'Predlošci se mogu omogućiti samo za tekstualne atribute i atribute tekstualnog polja koji nemaju validaciju unosa i nisu jedinstveni.',
                 ],
             ],
         ],

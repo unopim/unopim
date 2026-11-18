@@ -59,6 +59,7 @@ return [
                     'duplicate-code'                       => 'Ang code ng tampok na :code ay ginagamit na.',
                     'code_not_found_to_delete'             => 'Hindi natagpuan ang code ng tampok para burahin.',
                     'code_is_system_and_cannot_be_deleted' => 'Hindi maaaring burahin ang system feature.',
+                    'templates-unsupported'                => 'Maaari lamang i-enable ang mga template sa mga katangiang text at textarea na walang pag-validate ng input at hindi natatangi.',
                 ],
             ],
         ],

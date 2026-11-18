@@ -59,6 +59,7 @@ return [
                     'duplicate-code'                       => 'Attribuuttikoodi :code on jo käytössä.',
                     'code_not_found_to_delete'             => 'Attribuuttikoodia ei löytynyt poistettavaksi.',
                     'code_is_system_and_cannot_be_deleted' => 'Järjestelmäattribuuttia ei voi poistaa.',
+                    'templates-unsupported'                => 'Mallipohjat voidaan ottaa käyttöön vain teksti- ja tekstikenttäattribuuteille, joilla ei ole syötteen validointia ja jotka eivät ole ainutlaatuisia.',
                 ],
             ],
         ],

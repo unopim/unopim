@@ -59,6 +59,7 @@ return [
                     'duplicate-code'                       => '属性代码 :code 已被使用。',
                     'code_not_found_to_delete'             => '未找到要删除的属性代码。',
                     'code_is_system_and_cannot_be_deleted' => '无法删除系统属性。',
+                    'templates-unsupported'                => '只有没有输入验证且非唯一的文本和文本区域属性才能启用模板。',
                 ],
             ],
         ],

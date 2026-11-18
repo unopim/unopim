@@ -59,6 +59,7 @@ return [
                     'duplicate-code'                       => 'Attributkoden :code er allerede i brug.',
                     'code_not_found_to_delete'             => 'Attributkode blev ikke fundet til sletning.',
                     'code_is_system_and_cannot_be_deleted' => 'Systemattribut kan ikke slettes.',
+                    'templates-unsupported'                => 'Skabeloner kan kun aktiveres på tekst- og tekstområdeattributter, der ikke har indtastningsvalidering og ikke er unikke.',
                 ],
             ],
         ],

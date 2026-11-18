@@ -77,7 +77,7 @@ function unsupportedTemplatesError(): array
     return [
         'code'    => Importer::ERROR_TEMPLATES_UNSUPPORTED,
         'column'  => 'enable_templates',
-        'message' => trans('admin::app.catalog.attributes.create.templates-unsupported'),
+        'message' => trans('data_transfer::app.importers.attributes.validation.errors.templates-unsupported'),
     ];
 }
 

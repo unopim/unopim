@@ -59,6 +59,7 @@ return [
                     'duplicate-code'                       => 'Attributcode :code wird bereits verwendet.',
                     'code_not_found_to_delete'             => 'Attributcode zum Löschen nicht gefunden.',
                     'code_is_system_and_cannot_be_deleted' => 'Systemattribut kann nicht gelöscht werden.',
+                    'templates-unsupported'                => 'Vorlagen können nur für Text- und Textbereich-Attribute aktiviert werden, die keine Eingabevalidierung haben und nicht eindeutig sind.',
                 ],
             ],
         ],

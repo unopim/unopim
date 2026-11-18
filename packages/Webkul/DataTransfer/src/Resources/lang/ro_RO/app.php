@@ -59,6 +59,7 @@ return [
                     'duplicate-code'                       => 'Codul atributului :code este deja utilizat.',
                     'code_not_found_to_delete'             => 'Codul atributului nu a fost găsit pentru ștergere.',
                     'code_is_system_and_cannot_be_deleted' => 'Atributul de sistem nu poate fi șters.',
+                    'templates-unsupported'                => 'Șabloanele pot fi activate doar pentru atributele de tip text și câmp text care nu au validare a intrării și nu sunt unice.',
                 ],
             ],
         ],

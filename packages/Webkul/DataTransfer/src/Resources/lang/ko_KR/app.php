@@ -59,6 +59,7 @@ return [
                     'duplicate-code'                       => '속성 코드 :code는 이미 사용 중입니다.',
                     'code_not_found_to_delete'             => '삭제할 속성 코드를 찾을 수 없습니다.',
                     'code_is_system_and_cannot_be_deleted' => '시스템 속성은 삭제할 수 없습니다.',
+                    'templates-unsupported'                => '템플릿은 입력 유효성 검사가 없고 고유하지 않은 텍스트 및 텍스트 영역 속성에서만 활성화할 수 있습니다.',
                 ],
             ],
         ],

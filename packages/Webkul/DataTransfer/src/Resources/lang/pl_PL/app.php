@@ -59,6 +59,7 @@ return [
                     'duplicate-code'                       => 'Kod atrybutu :code jest już w użyciu.',
                     'code_not_found_to_delete'             => 'Nie znaleziono kodu atrybutu do usunięcia.',
                     'code_is_system_and_cannot_be_deleted' => 'Nie można usunąć atrybutu systemowego.',
+                    'templates-unsupported'                => 'Szablony można włączyć tylko dla atrybutów typu tekst i pole tekstowe, które nie mają weryfikacji danych wejściowych i nie są unikalne.',
                 ],
             ],
         ],

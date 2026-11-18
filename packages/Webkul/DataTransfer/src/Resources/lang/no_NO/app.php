@@ -59,6 +59,7 @@ return [
                     'duplicate-code'                       => 'Attributtkoden :code er allerede i bruk.',
                     'code_not_found_to_delete'             => 'Attributtkoden ble ikke funnet for sletting.',
                     'code_is_system_and_cannot_be_deleted' => 'Systemattributt kan ikke slettes.',
+                    'templates-unsupported'                => 'Maler kan bare aktiveres for tekst- og tekstområdeattributter som ikke har inndatavalidering og ikke er unike.',
                 ],
             ],
         ],

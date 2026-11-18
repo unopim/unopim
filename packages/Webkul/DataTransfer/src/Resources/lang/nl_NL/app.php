@@ -59,6 +59,7 @@ return [
                     'duplicate-code'                       => 'Attribuutcode :code is al in gebruik.',
                     'code_not_found_to_delete'             => 'Attribuutcode niet gevonden voor verwijdering.',
                     'code_is_system_and_cannot_be_deleted' => 'Systeemattribuut kan niet worden verwijderd.',
+                    'templates-unsupported'                => 'Sjablonen kunnen alleen worden ingeschakeld voor tekst- en textarea-attributen die geen invoervalidatie hebben en niet uniek zijn.',
                 ],
             ],
         ],

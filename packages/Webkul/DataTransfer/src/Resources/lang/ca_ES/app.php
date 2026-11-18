@@ -59,6 +59,7 @@ return [
                     'duplicate-code'                       => 'El codi d\'atribut :code ja està en ús.',
                     'code_not_found_to_delete'             => 'Codi d\'atribut no trobat per a supressió.',
                     'code_is_system_and_cannot_be_deleted' => 'L\'atribut del sistema no es pot eliminar.',
+                    'templates-unsupported'                => 'Les plantilles només es poden habilitar en atributs de text i àrea de text que no tinguin validació d\'entrada i no siguin únics.',
                 ],
             ],
         ],

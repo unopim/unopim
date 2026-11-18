@@ -59,6 +59,7 @@ return [
                     'duplicate-code'                       => 'Attribute code :code is already in use.',
                     'code_not_found_to_delete'             => 'Attribute code not found for deletion.',
                     'code_is_system_and_cannot_be_deleted' => 'System attribute cannot be deleted.',
+                    'templates-unsupported'                => 'Templates can only be enabled on text and textarea attributes that have no input validation and are not unique.',
                 ],
             ],
         ],

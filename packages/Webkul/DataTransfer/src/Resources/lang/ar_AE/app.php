@@ -59,6 +59,7 @@ return [
                     'duplicate-code'                       => 'كود السمة :code مستخدم بالفعل.',
                     'code_not_found_to_delete'             => 'لم يتم العثور على كود السمة للحذف.',
                     'code_is_system_and_cannot_be_deleted' => 'لا يمكن حذف سمة النظام.',
+                    'templates-unsupported'                => 'يمكن تفعيل القوالب فقط على سمات النص ومنطقة النص التي لا تحتوي على تحقق من صحة المدخلات وليست فريدة.',
                 ],
             ],
         ],

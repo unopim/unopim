@@ -59,6 +59,7 @@ return [
                     'duplicate-code'                       => 'Nitelik kodu :code zaten kullanımda.',
                     'code_not_found_to_delete'             => 'Silinecek nitelik kodu bulunamadı.',
                     'code_is_system_and_cannot_be_deleted' => 'Sistem niteliği silinemez.',
+                    'templates-unsupported'                => 'Şablonlar yalnızca girdi doğrulaması olmayan ve benzersiz olmayan metin ve metin alanı özniteliklerinde etkinleştirilebilir.',
                 ],
             ],
         ],
