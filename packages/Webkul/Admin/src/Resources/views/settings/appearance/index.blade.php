@@ -1,9 +1,11 @@
+@use('Webkul\Admin\Http\Requests\AppearanceForm')
+
 @php
     $fields = collect([
-        ['name' => 'logo_image', 'label' => 'logo', 'hints' => ['logo-size'], 'extensions' => \Webkul\Admin\Http\Requests\AppearanceForm::LOGO_EXTENSIONS, 'width' => '240px', 'dark' => false],
-        ['name' => 'favicon', 'label' => 'favicon', 'hints' => ['favicon-size'], 'extensions' => \Webkul\Admin\Http\Requests\AppearanceForm::FAVICON_EXTENSIONS, 'width' => '120px', 'dark' => false],
-        ['name' => 'logo_image_dark', 'label' => 'dark-logo', 'hints' => ['logo-size', 'dark-logo-info'], 'extensions' => \Webkul\Admin\Http\Requests\AppearanceForm::LOGO_EXTENSIONS, 'width' => '240px', 'dark' => true],
-        ['name' => 'favicon_dark', 'label' => 'dark-favicon', 'hints' => ['favicon-size', 'dark-favicon-info'], 'extensions' => \Webkul\Admin\Http\Requests\AppearanceForm::FAVICON_EXTENSIONS, 'width' => '120px', 'dark' => true],
+        ['name' => 'logo_image', 'label' => 'logo', 'hints' => ['logo-size'], 'extensions' => AppearanceForm::LOGO_EXTENSIONS, 'width' => '240px', 'dark' => false],
+        ['name' => 'favicon', 'label' => 'favicon', 'hints' => ['favicon-size'], 'extensions' => AppearanceForm::FAVICON_EXTENSIONS, 'width' => '120px', 'dark' => false],
+        ['name' => 'logo_image_dark', 'label' => 'dark-logo', 'hints' => ['logo-size', 'dark-logo-info'], 'extensions' => AppearanceForm::LOGO_EXTENSIONS, 'width' => '240px', 'dark' => true],
+        ['name' => 'favicon_dark', 'label' => 'dark-favicon', 'hints' => ['favicon-size', 'dark-favicon-info'], 'extensions' => AppearanceForm::FAVICON_EXTENSIONS, 'width' => '120px', 'dark' => true],
     ])->map(function (array $field): array {
         $value = core()->getConfigData('general.design.admin_logo.'.$field['name']);
 

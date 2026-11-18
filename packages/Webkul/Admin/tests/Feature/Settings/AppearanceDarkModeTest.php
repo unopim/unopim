@@ -102,6 +102,8 @@ it('rejects invalid dark mode logo and favicon uploads', function (string $field
     'svg logo'           => fn (): array => ['logo_image_dark', UploadedFile::fake()->create('logo.svg', 4, 'image/svg+xml')],
     'php favicon'        => fn (): array => ['favicon_dark', UploadedFile::fake()->create('malware.php', 10, 'application/x-php')],
     'svg favicon'        => fn (): array => ['favicon_dark', UploadedFile::fake()->create('favicon.svg', 4, 'image/svg+xml')],
+    'big logo'           => fn (): array => ['logo_image_dark', UploadedFile::fake()->image('big.png')->size(2049)],
+    'big favicon'        => fn (): array => ['favicon_dark', UploadedFile::fake()->image('big.png')->size(1025)],
 ]);
 
 it('offers dark mode logo and favicon uploads constrained to the accepted extensions', function () {

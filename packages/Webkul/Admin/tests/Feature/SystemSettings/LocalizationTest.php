@@ -13,7 +13,7 @@ it('renders the appearance settings in the requested locale', function () {
     $this->get(route('admin.settings.appearance.index'))
         ->assertOk()
         ->assertSeeText('दिखावट')
-        ->assertSeeText('अपना लोगो और फ़ेविकॉन अपलोड करके एडमिन पैनल का रूप अनुकूलित करें।')
+        ->assertSeeText('अपना लोगो और फ़ेविकॉन अपलोड करें, साथ ही चाहें तो डार्क मोड के संस्करण भी। बदलाव सहेजने के बाद लागू होते हैं।')
         ->assertSeeText('सुझाया गया इमेज रिज़ॉल्यूशन: 192px X 50px')
         ->assertDontSeeText('Appearance')
         ->assertDontSeeText('Recommended image resolution');
