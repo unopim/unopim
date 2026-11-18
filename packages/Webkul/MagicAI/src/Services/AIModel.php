@@ -52,6 +52,9 @@ class AIModel
      * Filter models to only image-capable ones based on provider.
      * Matches model names against the provider's known image-model naming patterns.
      * A platform on a custom API URL keeps its full list when nothing matches, since a proxy may name image models freely.
+     *
+     * @param  array<int, string|array{id?: string}>  $models
+     * @return array<int, string|array{id?: string}>
      */
     public static function filterImageModels(array $models, ?int $platformId = null): array
     {
