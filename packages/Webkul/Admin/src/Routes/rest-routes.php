@@ -68,6 +68,8 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
     Route::controller(MagicAIController::class)->prefix('magic-ai')->group(function () {
         Route::get('model', 'model')->name('admin.magic_ai.model');
 
+        Route::get('channel-locales', 'channelLocales')->name('admin.magic_ai.channel_locales');
+
         Route::get('validate-credential', 'validateCredential')->name('admin.magic_ai.validate_credential');
 
         Route::get('available-model', 'availableModel')->name('admin.magic_ai.available_model');

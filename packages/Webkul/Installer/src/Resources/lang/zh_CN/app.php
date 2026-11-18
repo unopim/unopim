@@ -222,6 +222,8 @@ return [
         'console' => [
             'confirm-drop'        => '删除这些表并重新安装?',
             'drop-aborted'        => '安装已中止。未删除任何表。',
+            'invalid-modules'     => '无效的平台模块“:modules”。允许的值：:allowed。',
+            'select-modules'      => '您要启用哪些平台模块？',
             'force-required'      => '未设置表前缀,因此所有未被其他安装占用的表都将被删除。请使用 --force 重新运行以删除它们,或设置 DB_PREFIX。',
             'outside-references'  => '表前缀之外的表引用了要删除的表：:references。请先移除这些外键。',
             'tables-to-drop'      => '将删除以下 :count 个表：:tables',
