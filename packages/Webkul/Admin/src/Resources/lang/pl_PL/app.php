@@ -2138,6 +2138,7 @@ return [
             'delete-failed'                   => 'Usuwanie roli nie powiodło się',
             'delete-success'                  => 'Rola została usunięta pomyślnie',
             'last-delete-error'               => 'Ostatnia rola nie może zostać usunięta',
+            'last-full-access'                => 'Co najmniej jeden aktywny użytkownik musi zachować pełny dostęp.',
             'update-success'                  => 'Rola została zaktualizowana pomyślnie',
         ],
     ],
@@ -2177,6 +2178,26 @@ return [
                     'info'  => '',
                     'title' => 'Ogólne',
                 ],
+                'platform' => [
+                    'info'  => 'Wybierz, które moduły platformy są włączone.',
+                    'title' => 'Platforma',
+
+                    'settings' => [
+                        'info'  => 'Uruchamiaj dowolny moduł samodzielnie lub kilka razem; moduł wymagający innego można włączyć tylko razem z nim.',
+                        'title' => 'Wybór modułów',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Wyłączenie modułu ukrywa jego menu, strony i trasy API; dane są zachowywane.',
+                        'title' => 'Moduły',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Dotyczy tylko sytuacji, gdy Informacje o produktach (PIM) są wyłączone. Wybrane sekcje są usuwane z menu, a ich strony administracyjne blokowane; dane są zachowywane, a trasy Admin API pozostają dostępne.',
+                        'title' => 'Ukryte sekcje',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -3122,6 +3143,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Panel nawigacyjny',
+        'home'      => 'Strona główna',
         'go-back'   => 'Wróć',
         'support'   => 'Jeśli problem nadal występuje, skontaktuj się z nami pod adresem <a href=":link" class=":class">:email</a> po pomoc.',
         '404'       => [

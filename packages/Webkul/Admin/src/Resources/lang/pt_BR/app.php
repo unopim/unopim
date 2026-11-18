@@ -2138,6 +2138,7 @@ return [
             'delete-failed'                   => 'Falha ao excluir a função',
             'delete-success'                  => 'Função excluída com sucesso',
             'last-delete-error'               => 'A última função não pode ser excluída',
+            'last-full-access'                => 'Pelo menos um usuário ativo deve manter acesso total.',
             'update-success'                  => 'Função atualizada com sucesso',
         ],
     ],
@@ -2177,6 +2178,26 @@ return [
                     'info'  => '',
                     'title' => 'Geral',
                 ],
+                'platform' => [
+                    'info'  => 'Escolha quais módulos da plataforma estão ativados.',
+                    'title' => 'Plataforma',
+
+                    'settings' => [
+                        'info'  => 'Execute qualquer módulo sozinho ou vários juntos; um módulo que depende de outro só pode ser ativado junto com ele.',
+                        'title' => 'Seleção de módulos',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Desativar um módulo oculta seus menus, páginas e rotas de API; seus dados são mantidos.',
+                        'title' => 'Módulos',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Aplica-se apenas enquanto Informações de produto (PIM) estiver desativado. As seções selecionadas são removidas do menu e suas páginas de administração bloqueadas; seus dados são mantidos e suas rotas da Admin API continuam disponíveis.',
+                        'title' => 'Seções ocultas',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -3122,6 +3143,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Painel',
+        'home'      => 'Início',
         'go-back'   => 'Voltar',
         'support'   => 'Se o problema persistir, entre em contato conosco através do <a href=":link" class=":class">:email</a> para assistência.',
         '404'       => [
