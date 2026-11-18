@@ -2,6 +2,7 @@
 
 namespace Webkul\Admin;
 
+use Webkul\Core\Platform\ModuleGate;
 use Webkul\Core\Tree;
 
 class SystemSettings
@@ -152,8 +153,26 @@ class SystemSettings
     }
 
     /**
-     * Registry rows the current admin may see. Rows carrying an `acl` the admin
-     * lacks are dropped; sections and acl-less rows always pass.
+     * Whether a registry row belongs to a switched-off platform module, by its own
+     * `module` tag or by the module owning its `acl` key.
+     *
+     * @param  array<string, mixed>  $item
+     */
+    public function isHidden(array $item): bool
+    {
+        $gate = app(ModuleGate::class);
+
+        if ($gate->filter([$item]) === []) {
+            return true;
+        }
+
+        return ! empty($item['acl']) && ! $gate->allowsKey((string) $item['acl']);
+    }
+
+    /**
+     * Registry rows the current admin may see. Rows of a switched-off module and
+     * rows carrying an `acl` the admin lacks are dropped; sections and acl-less
+     * rows always pass.
      *
      * @return array<int, array<string, mixed>>
      */
@@ -163,6 +182,10 @@ class SystemSettings
         $registry = config('system_settings', []);
 
         return array_values(array_filter($registry, function (array $item): bool {
+            if ($this->isHidden($item)) {
+                return false;
+            }
+
             if (empty($item['acl'])) {
                 return true;
             }

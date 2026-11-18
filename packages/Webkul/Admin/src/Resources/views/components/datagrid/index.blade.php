@@ -1519,6 +1519,10 @@
                 //================================================================
 
                 handleRowClick($event, record) {
+                    if ($event.target.closest('a, button')) {
+                        return;
+                    }
+
                     const selection = $event.view.getSelection();
 
                     if (selection && selection.toString().length > 0) {

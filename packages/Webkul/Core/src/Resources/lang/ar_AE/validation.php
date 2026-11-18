@@ -24,10 +24,16 @@ return [
     'file-outside-attribute-path'      => 'الملف :value لا ينتمي إلى هذا السجل. يرجى رفعه مرة أخرى لحقل :attribute.',
     'password-surrounding-whitespace'  => 'لا يمكن أن يبدأ :attribute أو ينتهي بمسافة.',
     'password-whitespace-only'         => 'لا يمكن أن يتكوّن :attribute من مسافات فقط.',
+    'hideable-sections'                => 'يحتوي :attribute على قسم لا يمكن إخفاؤه.',
     'active-content-detected'          => 'تعذر رفع :attribute لأنه يحتوي على محتوى نشط (:reason).',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'جافا سكريبت مضمّنة أو إجراء PDF يعمل تلقائيًا',
         'embedded_vba_macro'            => 'ماكرو VBA مضمّن',
         'auto_executing_ole_object'     => 'كائن مضمّن يعمل تلقائيًا',
+    ],
+    'platform-modules'                => [
+        'empty'    => 'اختر وحدة منصة واحدة على الأقل.',
+        'unknown'  => 'وحدة المنصة ":module" غير مثبتة.',
+        'requires' => 'لا يمكن تفعيل :module إلا مع :requires.',
     ],
 ];
