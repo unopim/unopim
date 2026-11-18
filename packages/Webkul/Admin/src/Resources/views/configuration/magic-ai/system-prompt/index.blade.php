@@ -5,12 +5,14 @@
     <v-create-system-prompt-form>
         <x-admin::page-header :title="trans('admin::app.configuration.system-prompt.index.title')">
             <x-slot:actions>
-                <button
-                    type="button"
-                    class="primary-button"
-                >
-                    @lang('admin::app.configuration.system-prompt.create.create-btn')
-                </button>
+                @if (bouncer()->hasPermission('ai-agent.system-prompt.create'))
+                    <button
+                        type="button"
+                        class="primary-button"
+                    >
+                        @lang('admin::app.configuration.system-prompt.create.create-btn')
+                    </button>
+                @endif
             </x-slot>
         </x-admin::page-header>
 
@@ -22,13 +24,15 @@
         <script type="text/x-template" id="v-create-system-prompt-form-template">
             <x-admin::page-header :title="trans('admin::app.configuration.system-prompt.index.title')">
                 <x-slot:actions>
-                    <button
-                        type="button"
-                        class="primary-button"
-                        @click="selectedPrompt=0;resetForm();$refs.promptUpdateOrCreateModal.toggle();"
-                    >
-                        @lang('admin::app.configuration.system-prompt.create.create-btn')
-                    </button>
+                    @if (bouncer()->hasPermission('ai-agent.system-prompt.create'))
+                        <button
+                            type="button"
+                            class="primary-button"
+                            @click="selectedPrompt=0;resetForm();$refs.promptUpdateOrCreateModal.toggle();"
+                        >
+                            @lang('admin::app.configuration.system-prompt.create.create-btn')
+                        </button>
+                    @endif
                 </x-slot>
             </x-admin::page-header>
 
