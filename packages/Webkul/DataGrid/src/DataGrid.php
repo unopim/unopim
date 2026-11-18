@@ -261,7 +261,9 @@ abstract class DataGrid
         request()->validate([
             'filters'         => ['sometimes', 'required', 'array'],
             'sort'            => ['sometimes', 'required', 'array'],
-            'pagination'      => ['sometimes', 'required', 'array'],
+            'pagination'          => ['sometimes', 'required', 'array'],
+            'pagination.per_page' => ['sometimes', 'integer', 'min:1', 'max:50'],
+            'pagination.page'     => ['sometimes', 'integer', 'min:1'],
             'export'          => ['sometimes', 'required', 'boolean'],
             'format'          => ['sometimes', 'required', 'in:csv,xls,xlsx'],
             'productIds'      => ['sometimes', 'array'],

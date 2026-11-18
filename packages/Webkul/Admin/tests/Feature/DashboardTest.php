@@ -131,7 +131,7 @@ it('should filter products by status when filters are passed', function () {
     $response = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest'])
         ->json('GET', route('admin.catalog.products.index'), [
             'pagination' => [
-                'per_page' => 100,
+                'per_page' => 50,
             ],
             'filters' => [
                 'status' => ['0'],
