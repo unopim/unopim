@@ -992,6 +992,12 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $sortOrder = strtolower($params['order'] ?? $this->sortOrder) === 'asc' ? 'asc' : 'desc';
 
+        if ($this->isMeasurementColumn($params['column'] ?? $this->elasticSearchSortColumn)) {
+            $this->prepareQuery->orderBy(['_script' => $this->numericScriptSort($sort, $sortOrder)]);
+
+            return;
+        }
+
         $this->prepareQuery->orderBy([
             $sort => [
                 'order'         => $sortOrder,
@@ -999,6 +1005,32 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'unmapped_type' => 'keyword',
             ],
         ]);
+    }
+
+    protected function isMeasurementColumn(?string $code): bool
+    {
+        return $code
+            && $this->attributeService->findAttributeByCode($code)?->type === AttributeModel::MEASUREMENT_FIELD_TYPE;
+    }
+
+    /**
+     * `base_data` is indexed as a keyword, so a plain sort is alphabetical ("18.5" before "2.1").
+     * Sort on its numeric value instead, keeping rows without a value last in both directions.
+     */
+    protected function numericScriptSort(string $field, string $order): array
+    {
+        return [
+            'type'   => 'number',
+            'order'  => $order,
+            'script' => [
+                'lang'   => 'painless',
+                'source' => 'doc[params.field].size() == 0 ? params.missing : Double.parseDouble(doc[params.field].value)',
+                'params' => [
+                    'field'   => $field,
+                    'missing' => $order === 'asc' ? PHP_FLOAT_MAX : -PHP_FLOAT_MAX,
+                ],
+            ],
+        ];
     }
 
     /**

@@ -66,3 +66,31 @@ it('casts decimal-validated attributes before sorting', function () {
 
     expect($sql)->toContain('decimal');
 });
+
+it('sorts measurement attributes numerically in Elasticsearch instead of alphabetically', function () {
+    $attribute = Attribute::factory()->create([
+        'code' => 'measurement_es_'.Str::random(8),
+        'type' => Attribute::MEASUREMENT_FIELD_TYPE,
+    ]);
+
+    $grid = app(ProductDataGrid::class);
+
+    $isMeasurement = new ReflectionMethod($grid, 'isMeasurementColumn');
+    $isMeasurement->setAccessible(true);
+
+    $script = new ReflectionMethod($grid, 'numericScriptSort');
+    $script->setAccessible(true);
+
+    expect($isMeasurement->invoke($grid, $attribute->code))->toBeTrue()
+        ->and($isMeasurement->invoke($grid, 'sku'))->toBeFalse();
+
+    $asc = $script->invoke($grid, 'values.common.w-measurement.base_data', 'asc');
+    $desc = $script->invoke($grid, 'values.common.w-measurement.base_data', 'desc');
+
+    expect($asc['type'])->toBe('number')
+        ->and($asc['script']['source'])->toContain('Double.parseDouble')
+        ->and($asc['script']['params']['field'])->toBe('values.common.w-measurement.base_data')
+        // rows without a value stay last in both directions
+        ->and($asc['script']['params']['missing'])->toBeGreaterThan(0)
+        ->and($desc['script']['params']['missing'])->toBeLessThan(0);
+});
