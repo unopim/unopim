@@ -3,7 +3,9 @@
 namespace Webkul\Admin\Http\Requests\MagicAI;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Webkul\Admin\Http\Requests\MagicAI\Concerns\GuardsManagedPlatform;
+use Webkul\MagicAI\Enums\AiProvider;
 use Webkul\MagicAI\Rules\SafeProviderExtras;
 
 class PlatformTestRequest extends FormRequest
@@ -26,9 +28,9 @@ class PlatformTestRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'provider' => 'required|string',
+            'provider' => ['required', Rule::enum(AiProvider::class)],
             'api_key'  => 'nullable|string',
-            'api_url'  => 'nullable',
+            'api_url'  => 'nullable|string',
             'models'   => 'required|string',
             'extras'   => ['nullable', new SafeProviderExtras],
         ];

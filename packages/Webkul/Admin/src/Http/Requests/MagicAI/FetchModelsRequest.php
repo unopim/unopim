@@ -29,7 +29,7 @@ class FetchModelsRequest extends FormRequest
         return [
             'provider' => ['required', Rule::enum(AiProvider::class)],
             'api_key'  => 'nullable|string',
-            'api_url'  => 'nullable',
+            'api_url'  => 'nullable|string',
         ];
     }
 }
