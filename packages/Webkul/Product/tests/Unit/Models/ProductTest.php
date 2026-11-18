@@ -177,6 +177,23 @@ describe('Product attribute casts', function () {
 
         expect($product->getRawOriginal('additional'))->toBeNull();
     });
+
+    it('treats an integer status matching the stored value as unchanged', function (): void {
+        $product = Product::factory()->create(['status' => 1])->fresh();
+
+        $product->status = 1;
+
+        expect($product->isDirty('status'))->toBeFalse();
+    });
+
+    it('treats an integer status differing from the stored value as changed', function (): void {
+        $product = Product::factory()->create(['status' => 1])->fresh();
+
+        $product->status = 0;
+
+        expect($product->isDirty('status'))->toBeTrue()
+            ->and($product->status)->toBeFalse();
+    });
 });
 
 describe('Product fillable attributes', function () {

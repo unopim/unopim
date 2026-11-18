@@ -61,12 +61,4 @@ describe('product status history', function (): void {
             ->and((bool) $audits[0]->new_values['status'])->toBeFalse()
             ->and($product->fresh()->status)->toBeFalse();
     });
-
-    it('treats an integer status matching the stored value as unchanged', function (): void {
-        $product = enabledProductForStatusHistory();
-
-        $product->status = 1;
-
-        expect($product->isDirty('status'))->toBeFalse();
-    });
 });
