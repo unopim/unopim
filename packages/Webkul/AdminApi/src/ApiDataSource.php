@@ -148,10 +148,14 @@ abstract class ApiDataSource
         return $this->queryBuilder->scopeQuery(function ($scopeQueryBuilder) use ($requestedFilters) {
             $this->setDefaultFilters($scopeQueryBuilder);
 
-            foreach ($requestedFilters as $requestedColumn => $requestedValues) {
-                foreach ($requestedValues as $value) {
-                    $scopeQueryBuilder = $this->operatorByFilter($scopeQueryBuilder, $requestedColumn, $value);
-                }
+            if ($requestedFilters !== []) {
+                $scopeQueryBuilder->where(function ($propertyQuery) use ($requestedFilters): void {
+                    foreach ($requestedFilters as $requestedColumn => $requestedValues) {
+                        foreach ($requestedValues as $value) {
+                            $this->operatorByFilter($propertyQuery, $requestedColumn, $value);
+                        }
+                    }
+                });
             }
 
             $scopeQueryBuilder = $this->applyAdditionalFilters($scopeQueryBuilder);
@@ -171,11 +175,8 @@ abstract class ApiDataSource
 
     /**
      * Apply filters that are not plain column filters, after the requested column filters.
-     *
-     * @param  mixed  $queryBuilder
-     * @return mixed
      */
-    protected function applyAdditionalFilters($queryBuilder)
+    protected function applyAdditionalFilters(mixed $queryBuilder): mixed
     {
         return $queryBuilder;
     }

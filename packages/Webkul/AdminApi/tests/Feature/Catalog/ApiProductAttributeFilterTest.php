@@ -1,8 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\DB;
+use Webkul\AdminApi\Services\ProductAttributeFilterService;
 use Webkul\Attribute\Models\Attribute;
+use Webkul\Attribute\Services\AttributeService;
 use Webkul\Core\Facades\ElasticSearch;
+use Webkul\Core\Repositories\ChannelRepository;
+use Webkul\Core\Repositories\CurrencyRepository;
+use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Product\Models\Product;
 
 beforeEach(function () {
@@ -402,4 +407,97 @@ it('does not query Elasticsearch for property-only filters', function () {
 
     expect(($this->listSkus)(['sku' => [['operator' => '=', 'value' => 'PROP-ONLY']]]))
         ->toBe(['PROP-ONLY']);
+});
+
+it('enforces the attribute filter when sku and status property filters are combined', function () {
+    $attribute = ($this->makeAttribute)('text');
+
+    ($this->makeProduct)('COMBO-HIT', ['common' => [$attribute->code => 'combo']], ['status' => 1]);
+    ($this->makeProduct)('COMBO-OFF', ['common' => [$attribute->code => 'combo']], ['status' => 0]);
+    ($this->makeProduct)('COMBO-OTHER', ['common' => [$attribute->code => 'different']], ['status' => 1]);
+    ($this->makeProduct)('COMBO-OTHER-OFF', ['common' => [$attribute->code => 'different']], ['status' => 0]);
+
+    expect(($this->listSkus)([
+        'sku'            => [['operator' => 'IN', 'value' => ['COMBO-HIT', 'COMBO-OTHER']]],
+        'status'         => [['operator' => '=', 'value' => true]],
+        $attribute->code => [['operator' => '=', 'value' => 'combo']],
+    ]))->toBe(['COMBO-HIT']);
+});
+
+it('enforces the attribute filter on the Elasticsearch path when sku and status are combined', function () {
+    $attribute = ($this->makeAttribute)('text');
+
+    $hit = ($this->makeProduct)('ESCOMBO-HIT', ['common' => [$attribute->code => 'combo']], ['status' => 1]);
+    $off = ($this->makeProduct)('ESCOMBO-OFF', ['common' => [$attribute->code => 'combo']], ['status' => 0]);
+    $other = ($this->makeProduct)('ESCOMBO-OTHER', ['common' => [$attribute->code => 'different']], ['status' => 1]);
+
+    ($this->enableElasticsearch)();
+
+    ElasticSearch::shouldReceive('search')
+        ->once()
+        ->andReturn(['hits' => ['hits' => [['_id' => (string) $hit->id, 'sort' => [$hit->id]], ['_id' => (string) $off->id, 'sort' => [$off->id]]]]]);
+
+    expect(($this->listSkus)([
+        'sku'            => [['operator' => 'IN', 'value' => [$hit->sku, $off->sku, $other->sku]]],
+        'status'         => [['operator' => '=', 'value' => true]],
+        $attribute->code => [['operator' => '=', 'value' => 'combo']],
+    ]))->toBe(['ESCOMBO-HIT']);
+});
+
+it('sends NOT IN to Elasticsearch as a negated terms clause', function () {
+    $attribute = ($this->makeAttribute)('select');
+
+    $match = ($this->makeProduct)('ESNOT-MATCH', ['common' => [$attribute->code => 'blue']]);
+    ($this->makeProduct)('ESNOT-MISS', ['common' => [$attribute->code => 'red']]);
+
+    ($this->enableElasticsearch)();
+
+    ElasticSearch::shouldReceive('search')
+        ->once()
+        ->withArgs(function (array $args) use ($attribute) {
+            expect($args['body']['query']['constant_score']['filter']['bool']['must_not'])->toBe([
+                ['terms' => ['values.common.'.$attribute->code.'-select' => ['red']]],
+            ]);
+
+            return true;
+        })
+        ->andReturn(['hits' => ['hits' => [['_id' => (string) $match->id, 'sort' => [$match->id]]]]]);
+
+    expect(($this->listSkus)([$attribute->code => [['operator' => 'NOT IN', 'value' => ['red']]]]))
+        ->toBe(['ESNOT-MATCH']);
+});
+
+it('falls back to the database engine when Elasticsearch matches more products than the cap', function () {
+    $attribute = ($this->makeAttribute)('text');
+
+    $first = ($this->makeProduct)('CAP-HIT', ['common' => [$attribute->code => 'cap']]);
+    $second = ($this->makeProduct)('CAP-HIT-TWO', ['common' => [$attribute->code => 'cap']]);
+    ($this->makeProduct)('CAP-MISS', ['common' => [$attribute->code => 'other']]);
+
+    app()->bind(ProductAttributeFilterService::class, fn ($app) => new class($app->make(AttributeService::class), $app->make(LocaleRepository::class), $app->make(ChannelRepository::class), $app->make(CurrencyRepository::class)) extends ProductAttributeFilterService
+    {
+        protected int $maxElasticsearchMatches = 1;
+    });
+
+    ($this->enableElasticsearch)();
+
+    ElasticSearch::shouldReceive('search')
+        ->once()
+        ->andReturn(['hits' => ['hits' => [
+            ['_id' => (string) $first->id, 'sort' => [$first->id]],
+            ['_id' => (string) $second->id, 'sort' => [$second->id]],
+        ]]]);
+
+    expect(($this->listSkus)([$attribute->code => [['operator' => '=', 'value' => 'cap']]]))
+        ->toBe(['CAP-HIT', 'CAP-HIT-TWO']);
+});
+
+it('treats percent and underscore in a CONTAINS value as literal characters', function () {
+    $attribute = ($this->makeAttribute)('text');
+
+    ($this->makeProduct)('LIKE-LITERAL', ['common' => [$attribute->code => '50% off_sale']]);
+    ($this->makeProduct)('LIKE-OTHER', ['common' => [$attribute->code => '50 cents offxsale']]);
+
+    expect(($this->listSkus)([$attribute->code => [['operator' => 'CONTAINS', 'value' => '% off_']]]))
+        ->toBe(['LIKE-LITERAL']);
 });

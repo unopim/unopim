@@ -120,7 +120,7 @@ class ProductDataSource extends ApiDataSource
     /**
      * {@inheritdoc}
      */
-    protected function applyAdditionalFilters($queryBuilder)
+    protected function applyAdditionalFilters(mixed $queryBuilder): mixed
     {
         $this->attributeFilterService()->apply($queryBuilder, $this->attributeFilters);
 

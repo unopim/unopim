@@ -5,7 +5,6 @@ namespace Webkul\Product\Filter\Database;
 use Illuminate\Support\Facades\DB;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\ElasticSearch\Enums\FilterOperators;
-use Webkul\ElasticSearch\QueryString;
 
 /**
  * Text filter for an Database query
@@ -53,7 +52,7 @@ class TextFilter extends AbstractDatabaseAttributeFilter
             ),
             FilterOperators::CONTAINS => $this->queryBuilder->where(function ($query) use ($searchPath, $value): void {
                 foreach ($value as $val) {
-                    $escapedValue = strtolower(QueryString::escapeValue($val));
+                    $escapedValue = addcslashes(strtolower((string) $val), '%_\\');
 
                     $query->orWhereRaw(
                         "LOWER($searchPath) LIKE ?",
