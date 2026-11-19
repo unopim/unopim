@@ -2,6 +2,8 @@
     $logo = core()->getConfigData('general.design.admin_logo.logo_image');
 
     $favicon = core()->getConfigData('general.design.admin_logo.favicon');
+
+    $customCss = app(\Webkul\Admin\Helpers\CustomCss::class)->get();
 @endphp
 
 <x-admin::page
@@ -68,5 +70,31 @@
                 @lang('admin::app.settings.appearance.favicon-size')
             </p>
         </div>
+    </div>
+
+    <div class="mt-6 p-4 bg-white dark:bg-cherry-900 box-shadow rounded">
+        <x-admin::form.control-group class="!mb-0">
+            <x-admin::form.control-group.label for="custom_css">
+                @lang('admin::app.settings.appearance.custom-css')
+            </x-admin::form.control-group.label>
+
+            <x-admin::form.control-group.control
+                type="textarea"
+                id="custom_css"
+                name="custom_css"
+                rows="12"
+                class="font-mono"
+                spellcheck="false"
+                :value="$customCss"
+                :label="trans('admin::app.settings.appearance.custom-css')"
+                :rules="'max:'.\Webkul\Admin\Helpers\CustomCss::MAX_LENGTH"
+            />
+
+            <x-admin::form.control-group.error control-name="custom_css" />
+        </x-admin::form.control-group>
+
+        <p class="mt-2 text-xs text-gray-600 dark:text-gray-300 leading-[140%]">
+            @lang('admin::app.settings.appearance.custom-css-info')
+        </p>
     </div>
 </x-admin::page>
