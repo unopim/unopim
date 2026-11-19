@@ -71,7 +71,7 @@ class ExportProducts implements PimTool
 
             public function handle(Request $request): string
             {
-                if ($denied = $this->denyUnlessAllowed($this->context, 'data_transfer.export')) {
+                if ($denied = $this->denyUnlessAllowed($this->context, 'data_transfer.export.execute')) {
                     return $denied;
                 }
 

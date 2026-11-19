@@ -378,7 +378,7 @@ class MagicAIController extends Controller
 
     public function isTranslatable(): JsonResponse
     {
-        if (! bouncer()->hasPermission('ai-agent')) {
+        if (! bouncer()->hasPermission('ai-agent') || ! bouncer()->hasPermission('catalog.products')) {
             return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
         }
 
@@ -401,7 +401,7 @@ class MagicAIController extends Controller
 
     public function translateToManyLocale(): JsonResponse
     {
-        if (! bouncer()->hasPermission('ai-agent')) {
+        if (! bouncer()->hasPermission('ai-agent') || ! bouncer()->hasPermission('catalog.products')) {
             return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
         }
 
@@ -453,7 +453,7 @@ class MagicAIController extends Controller
 
     public function isAllAttributeTranslatable(): array|JsonResponse
     {
-        if (! bouncer()->hasPermission('ai-agent')) {
+        if (! bouncer()->hasPermission('ai-agent') || ! bouncer()->hasPermission('catalog.products')) {
             return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
         }
 
@@ -491,7 +491,7 @@ class MagicAIController extends Controller
 
     public function translateAllAttribute(): JsonResponse
     {
-        if (! bouncer()->hasPermission('ai-agent')) {
+        if (! bouncer()->hasPermission('ai-agent') || ! bouncer()->hasPermission('catalog.products')) {
             return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
         }
 
