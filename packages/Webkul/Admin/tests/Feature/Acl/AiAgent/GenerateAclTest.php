@@ -13,7 +13,7 @@ it('should restrict generate process route when user lacks permission', function
     $response->assertStatus(403);
 });
 
-it('should restrict generate process route when user lacks the product create permission', function () {
+it('should restrict generate process route when user lacks the product create permission', function (): void {
     $this->loginWithPermissions('custom', ['ai-agent', 'ai-agent.generate']);
 
     $productCount = DB::table('products')->count();
@@ -27,7 +27,7 @@ it('should restrict generate process route when user lacks the product create pe
     expect(DB::table('products')->count())->toBe($productCount);
 });
 
-it('should allow generate process route when user has permission', function () {
+it('should allow generate process route when user has permission', function (): void {
     $this->loginWithPermissions('custom', ['ai-agent', 'ai-agent.generate', 'catalog', 'catalog.products', 'catalog.products.create']);
 
     $response = $this->postJson(route('ai-agent.generate.process'), [
