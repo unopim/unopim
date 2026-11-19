@@ -6,6 +6,7 @@ use Webkul\Completeness\Validators\ScoreThresholdsValidator;
 return [
     [
         'key'       => 'system.completeness',
+        'module'    => 'pim',
         'name'      => 'completeness::app.configuration.score-thresholds.title',
         'info'      => 'completeness::app.configuration.score-thresholds.info',
         'icon'      => 'icon-activity',
