@@ -1,5 +1,6 @@
 <?php
 
+use OpenSpout\Common\Entity\Cell;
 use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer;
 
 function bufferProp(object $buffer, string $property, mixed $value): void
@@ -21,7 +22,7 @@ function recordingWriter(): object
 
         public function addRow($row): void
         {
-            $this->rows[] = array_map(fn ($cell) => $cell->getValue(), $row->getCells());
+            $this->rows[] = array_map(fn (Cell $cell): mixed => $cell->getValue(), $row->cells);
         }
     };
 }
