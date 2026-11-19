@@ -33,6 +33,7 @@ x-app-environment: &app-environment
   APP_TIMEZONE: "${APP_TIMEZONE:-UTC}"
   APP_LOCALE: "${APP_LOCALE:-en_US}"
   APP_CURRENCY: "${APP_CURRENCY:-USD}"
+  APP_CHANNEL: "${APP_CHANNEL:-default}"
   APP_KEY: "${APP_KEY:-}"
   DB_CONNECTION: pgsql
   DB_HOST: unopim-pgsql

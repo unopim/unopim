@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect, fillLocalizedField } = require('../../utils/helpers');
+const { navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect, fillLocalizedField, closeDropdown } = require('../../utils/helpers');
 
 /**
  * Channel-derived locale activation.
@@ -44,7 +44,7 @@ async function selectOption(adminPage, controlId, optionName) {
   await option.click();
 
   await expect(control.locator('.multiselect__tag').filter({ hasText: optionName })).toHaveCount(1);
-  await adminPage.keyboard.press('Escape');
+  await closeDropdown(adminPage);
 }
 
 /**

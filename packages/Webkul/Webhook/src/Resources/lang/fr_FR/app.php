@@ -137,6 +137,14 @@ return [
                     'delete-success' => 'Journaux du Webhook supprimés avec succès',
                     'delete-failed'  => 'La suppression des journaux du Webhook a échoué de manière inattendue',
                     'unauthorized'   => 'Cette action n\'est pas autorisée',
+                    'select-all'     => [
+                        'delete' => [
+                            'queued'    => 'Suppression en file d\'attente pour tous les journaux correspondants. Vous serez averti à la fin.',
+                            'title'     => 'Suppression des journaux de webhook',
+                            'completed' => ':count journaux de webhook supprimés.',
+                            'failed'    => 'La suppression de :count journaux de webhook s\'est terminée avec des erreurs. Certains journaux n\'ont pas été supprimés.',
+                        ],
+                    ],
                 ],
             ],
         ],

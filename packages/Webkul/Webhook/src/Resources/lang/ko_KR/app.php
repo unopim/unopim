@@ -137,6 +137,14 @@ return [
                     'delete-success' => 'Webhook 로그가 성공적으로 삭제되었습니다',
                     'delete-failed'  => 'Webhook 로그 삭제가 예기치 않게 실패했습니다',
                     'unauthorized'   => '이 작업은 권한이 없습니다',
+                    'select-all'     => [
+                        'delete' => [
+                            'queued'    => '일치하는 모든 로그의 삭제가 대기열에 추가되었습니다. 완료되면 알려 드립니다.',
+                            'title'     => '웹훅 로그 삭제',
+                            'completed' => ':count개의 웹훅 로그가 삭제되었습니다.',
+                            'failed'    => ':count개의 웹훅 로그 삭제가 오류와 함께 완료되었습니다. 일부 로그는 삭제되지 않았습니다.',
+                        ],
+                    ],
                 ],
             ],
         ],

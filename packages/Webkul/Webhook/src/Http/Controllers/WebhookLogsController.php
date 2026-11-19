@@ -4,8 +4,10 @@ namespace Webkul\Webhook\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
-use Webkul\Admin\Http\Requests\MassDestroyRequest;
+use Webkul\Admin\Jobs\ProcessMassActionSelection;
 use Webkul\Webhook\DataGrids\LogsDataGrid;
+use Webkul\Webhook\Http\Requests\LogsMassDestroyRequest;
+use Webkul\Webhook\Jobs\MassDeleteWebhookLogs;
 use Webkul\Webhook\Models\Webhook;
 use Webkul\Webhook\Repositories\LogsRepository;
 
@@ -92,30 +94,35 @@ class WebhookLogsController
     }
 
     /**
-     * Mass delete locales from the locale datagrid
+     * Mass delete webhook logs, either the listed ids or every log matching the grid filters.
      */
-    public function massDestroy(MassDestroyRequest $massDestroyRequest): JsonResponse
+    public function massDestroy(LogsMassDestroyRequest $massDestroyRequest): JsonResponse
     {
         abort_unless(bouncer()->hasPermission('configuration.webhook.logs.mass_delete'), 403, trans('webhook::app.configuration.webhook.logs.index.unauthorized'));
 
-        $logIds = $massDestroyRequest->input('indices');
+        if ($massDestroyRequest->selectsAllMatching()) {
+            ProcessMassActionSelection::queue(
+                LogsDataGrid::class,
+                $massDestroyRequest->selectionParams(),
+                MassDeleteWebhookLogs::class,
+                [],
+                auth()->guard('admin')->id(),
+                'webhook::app.configuration.webhook.logs.index.select-all.delete',
+            );
 
-        foreach ($logIds as $logId) {
-            $log = $this->logsRepository->find($logId);
+            return new JsonResponse([
+                'message' => trans('webhook::app.configuration.webhook.logs.index.select-all.delete.queued'),
+            ]);
+        }
 
-            if (! $log) {
-                continue;
-            }
+        try {
+            $this->logsRepository->massDelete(array_map('intval', $massDestroyRequest->input('indices')));
+        } catch (\Exception $e) {
+            report($e);
 
-            try {
-                $this->logsRepository->delete($logId);
-            } catch (\Exception $e) {
-                report($e);
-
-                return new JsonResponse([
-                    'message' => $e->getMessage(),
-                ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
-            }
+            return new JsonResponse([
+                'message' => $e->getMessage(),
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return new JsonResponse([

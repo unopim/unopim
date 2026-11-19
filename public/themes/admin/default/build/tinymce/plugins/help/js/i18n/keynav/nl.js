@@ -24,7 +24,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.nl',
   '\n' +
   '<p>Druk op <strong>Shift+Tab</strong> om naar de vorige UI-sectie te gaan.</p>\n' +
   '\n' +
-  '<p>De <strong>Tab</strong>-volgorde van deze UI-secties is:\n' +
+  '<p>De <strong>Tab</strong>-volgorde van deze UI-secties is:</p>\n' +
   '\n' +
   '<ol>\n' +
   '  <li>Menubalk</li>\n' +
@@ -39,7 +39,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.nl',
   '<p>Als een UI-sectie niet aanwezig is, wordt deze overgeslagen.</p>\n' +
   '\n' +
   '<p>Als de focus van de toetsenbordnavigatie is ingesteld op de voettekst en er geen zichtbare zijbalk is, kun je op <strong>Shift+Tab</strong> drukken\n' +
-  '  om de focus naar de eerste werkbalkgroep in plaats van de laatste te verplaatsen.\n' +
+  '  om de focus naar de eerste werkbalkgroep in plaats van de laatste te verplaatsen.</p>\n' +
   '\n' +
   '<h1>Navigeren binnen UI-secties</h1>\n' +
   '\n' +
@@ -54,7 +54,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.nl',
   '  <li>wissel je tussen items in het elementenpad in de voettekst.</li>\n' +
   '</ul>\n' +
   '\n' +
-  '<p>Met de pijltjestoetsen <strong>Omlaag</strong> en <strong>Omhoog</strong>\n' +
+  '<p>Met de pijltjestoetsen <strong>Omlaag</strong> en <strong>Omhoog</strong></p>\n' +
   '\n' +
   '<ul>\n' +
   '  <li>wissel je tussen menu-items in een menu.</li>\n' +
@@ -63,7 +63,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.nl',
   '\n' +
   '<p>Met de <strong>pijltjestoetsen</strong> wissel je binnen de UI-sectie waarop de focus is ingesteld.</p>\n' +
   '\n' +
-  '<p>Druk op de toets <strong>Esc</strong> om een geopend menu, submenu of pop-upmenu te sluiten.\n' +
+  '<p>Druk op de toets <strong>Esc</strong> om een geopend menu, submenu of pop-upmenu te sluiten.</p>\n' +
   '\n' +
   "<p>Als de huidige focus is ingesteld 'bovenaan' een bepaalde UI-sectie, kun je op de toets <strong>Esc</strong> drukken\n" +
   '  om de toetsenbordnavigatie af te sluiten.</p>\n' +
@@ -71,7 +71,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.nl',
   '<h1>Een menu-item of werkbalkknop uitvoeren</h1>\n' +
   '\n' +
   '<p>Als het gewenste menu-item of de gewenste werkbalkknop is gemarkeerd, kun je op <strong>Return</strong>, <strong>Enter</strong>\n' +
-  '  of de <strong>spatiebalk</strong> drukken om het item uit te voeren.\n' +
+  '  of de <strong>spatiebalk</strong> drukken om het item uit te voeren.</p>\n' +
   '\n' +
   '<h1>Navigeren in dialoogvensters zonder tabblad</h1>\n' +
   '\n' +

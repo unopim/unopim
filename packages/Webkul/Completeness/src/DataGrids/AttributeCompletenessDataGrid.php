@@ -26,7 +26,9 @@ class AttributeCompletenessDataGrid extends DataGrid
     {
         $locale = core()->getRequestedLocaleCode();
         $familyId = $this->familyId;
-        $tablePrefix = DB::getTablePrefix();
+        $grammar = DB::getQueryGrammar();
+        $nameColumn = $grammar->wrap('attribute_translations.name');
+        $channelCodeColumn = $grammar->wrap('channels.code');
 
         $queryBuilder = DB::table('attributes')
             ->join('attribute_group_mappings', 'attributes.id', '=', 'attribute_group_mappings.attribute_id')
@@ -49,12 +51,12 @@ class AttributeCompletenessDataGrid extends DataGrid
                 'attributes.code',
                 DB::raw("
                     CASE
-                        WHEN {$tablePrefix}attribute_translations.name IS NULL OR CHAR_LENGTH(TRIM({$tablePrefix}attribute_translations.name)) < 1
-                        THEN CONCAT('[', {$tablePrefix}attributes.code, ']')
-                        ELSE {$tablePrefix}attribute_translations.name
+                        WHEN {$nameColumn} IS NULL OR CHAR_LENGTH(TRIM({$nameColumn})) < 1
+                        THEN CONCAT('[', {$grammar->wrap('attributes.code')}, ']')
+                        ELSE {$nameColumn}
                     END AS name
                 "),
-                DB::raw(DB::rawQueryGrammar()->groupConcat("{$tablePrefix}channels.code", 'channel_required', "{$tablePrefix}channels.code", true)),
+                DB::raw(DB::rawQueryGrammar()->groupConcat($channelCodeColumn, 'channel_required', $channelCodeColumn, true)),
             )
             ->groupBy(
                 'attributes.id',
@@ -104,6 +106,14 @@ class AttributeCompletenessDataGrid extends DataGrid
     }
 
     /**
+     * The grid has no id column, and the joined tables all carry one, so the bare key would be ambiguous.
+     */
+    protected function getPrimaryDatabaseColumn(): string
+    {
+        return 'attributes.id';
+    }
+
+    /**
      * Prepare actions.
      *
      * @return void
@@ -116,11 +126,12 @@ class AttributeCompletenessDataGrid extends DataGrid
     public function prepareMassActions(): void
     {
         $this->addMassAction([
-            'type'    => 'edit',
-            'title'   => trans('completeness::app.catalog.families.edit.completeness.datagrid.actions.change-requirement'),
-            'url'     => route('admin.catalog.families.completeness.mass_update'),
-            'method'  => 'POST',
-            'options' => [
+            'type'                => 'edit',
+            'title'               => trans('completeness::app.catalog.families.edit.completeness.datagrid.actions.change-requirement'),
+            'url'                 => route('admin.catalog.families.completeness.mass_update'),
+            'method'              => 'POST',
+            'supports_select_all' => true,
+            'options'             => [
                 'modal' => 'open-completeness-required-modal',
             ],
         ]);

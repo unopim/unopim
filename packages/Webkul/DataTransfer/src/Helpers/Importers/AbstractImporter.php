@@ -18,6 +18,8 @@ use Webkul\DataTransfer\Jobs\Import\Indexing as IndexingJob;
 use Webkul\DataTransfer\Jobs\Import\LinkBatch as LinkBatchJob;
 use Webkul\DataTransfer\Jobs\Import\Linking as LinkingJob;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository as ImportJobBatchRepository;
+use Webkul\User\Contracts\Admin;
+use Webkul\User\Services\RoleAccessGuard;
 
 abstract class AbstractImporter
 {
@@ -55,6 +57,11 @@ abstract class AbstractImporter
      * Error code for wrong columns number.
      */
     public const ERROR_CODE_COLUMNS_NUMBER = 'wrong_columns_number';
+
+    /**
+     * Error code for a boolean column holding an unrecognised value.
+     */
+    public const ERROR_CODE_INVALID_BOOLEAN = 'invalid_boolean';
 
     /**
      * Error message templates.
@@ -97,6 +104,13 @@ abstract class AbstractImporter
      * Import instance.
      */
     protected ImportJobTrackContract $import;
+
+    /**
+     * Admins whose access the import is checked against, false until resolved.
+     *
+     * @var list<Admin|null>|false
+     */
+    protected array|false $importActors = false;
 
     /**
      * Source instance.
@@ -439,6 +453,35 @@ abstract class AbstractImporter
     }
 
     /**
+     * Skip the row for each boolean column holding a value that is not recognised as true or false
+     */
+    protected function skipRowWithInvalidBooleans(array $rowData, int $rowNumber, array $columns): bool
+    {
+        $hasInvalidBoolean = false;
+
+        foreach ($columns as $column) {
+            if (! isset($rowData[$column]) || $rowData[$column] === '') {
+                continue;
+            }
+
+            if (filter_var($rowData[$column], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) !== null) {
+                continue;
+            }
+
+            $message = trans('data_transfer::app.validation.errors.invalid-boolean', [
+                'column' => $column,
+                'value'  => $rowData[$column],
+            ]);
+
+            $this->skipRow($rowNumber, self::ERROR_CODE_INVALID_BOOLEAN, $column, str_replace('%', '%%', $message));
+
+            $hasInvalidBoolean = true;
+        }
+
+        return $hasInvalidBoolean;
+    }
+
+    /**
      * Add errors to error aggregator
      */
     protected function addErrors(string $code, mixed $errors): void
@@ -529,5 +572,80 @@ abstract class AbstractImporter
         }
 
         return $this->indexingRequired;
+    }
+
+    /**
+     * The admin running the job, then the admins who last saved the profile and uploaded its file as recorded when the job started.
+     *
+     * A profile saved before these were recorded has no editor or uploader and is checked against its runner alone; a recorded admin who
+     * no longer exists resolves to null, which holds no permissions.
+     *
+     * @return list<Admin|null>
+     */
+    protected function importActors(): array
+    {
+        if ($this->importActors === false) {
+            $guard = resolve(RoleAccessGuard::class);
+
+            $this->importActors = [$guard->actor($this->import->user_id)];
+
+            foreach (['updated_by', 'file_uploaded_by'] as $key) {
+                if (($adminId = $this->import->meta[$key] ?? null) !== null) {
+                    $this->importActors[] = $guard->actor((int) $adminId);
+                }
+            }
+        }
+
+        return $this->importActors;
+    }
+
+    /**
+     * Drop the cached import admins so the next access check reads their current roles.
+     */
+    protected function forgetImportActors(): void
+    {
+        $this->importActors = false;
+    }
+
+    /**
+     * First access error the check reports for any admin the import acts for.
+     *
+     * @param  callable(?Admin): ?string  $check
+     */
+    protected function importAccessError(callable $check): ?string
+    {
+        foreach ($this->importActors() as $admin) {
+            if (($error = $check($admin)) !== null) {
+                return $error;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Reject the row unless the admin running the job and the admin who uploaded its file both hold the permission.
+     */
+    protected function holdsImportPermission(string $permission, int $rowNumber, string $errorCode, string $columnName): bool
+    {
+        $error = $this->importPermissionError($permission);
+
+        if ($error) {
+            $this->skipRow($rowNumber, $errorCode, $columnName, trans($error));
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Translation key explaining why the admin running the job or the admin who uploaded its file lacks the permission, or null when both hold it.
+     */
+    protected function importPermissionError(string $permission): ?string
+    {
+        $guard = resolve(RoleAccessGuard::class);
+
+        return $this->importAccessError(fn ($admin): ?string => $guard->permissionError($admin, $permission));
     }
 }

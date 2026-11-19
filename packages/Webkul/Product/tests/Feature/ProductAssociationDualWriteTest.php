@@ -29,7 +29,7 @@ it('dual-writes associations to the link table on product update, mirroring the 
         ->and($updated->values['associations']['related_products'] ?? null)->toBe([$related->sku]);
 
     // (b) the link table mirrors it.
-    $this->assertDatabaseCount('product_associations', 3);
+    expect(DB::table('product_associations')->where('product_id', $source->id)->count())->toBe(3);
 
     expect(
         DB::table('product_associations')
@@ -54,7 +54,7 @@ it('dual-writes associations to the link table on product update, mirroring the 
 
     expect($reUpdated->values['associations']['up_sells'] ?? null)->toBe([$upSellA->sku]);
 
-    $this->assertDatabaseCount('product_associations', 2);
+    expect(DB::table('product_associations')->where('product_id', $source->id)->count())->toBe(2);
 
     expect(
         DB::table('product_associations')

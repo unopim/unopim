@@ -24,7 +24,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.de',
   '\n' +
   '<p>Um von einem Abschnitt der Benutzeroberfläche zum vorherigen zu wechseln, drücken Sie <strong>UMSCHALT+TAB</strong>.</p>\n' +
   '\n' +
-  '<p>Die Abschnitte der Benutzeroberfläche haben folgende <strong>TAB</strong>-Reihenfolge:\n' +
+  '<p>Die Abschnitte der Benutzeroberfläche haben folgende <strong>TAB</strong>-Reihenfolge:</p>\n' +
   '\n' +
   '<ol>\n' +
   '  <li>Menüleiste</li>\n' +
@@ -39,7 +39,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.de',
   '<p>Falls ein Abschnitt der Benutzeroberflächen nicht vorhanden ist, wird er übersprungen.</p>\n' +
   '\n' +
   '<p>Wenn in der Fußzeile die Tastaturnavigation fokussiert ist und keine Randleiste angezeigt wird, wechselt der Fokus durch Drücken von <strong>UMSCHALT+TAB</strong>\n' +
-  '  zur ersten Gruppe der Symbolleiste, nicht zur letzten.\n' +
+  '  zur ersten Gruppe der Symbolleiste, nicht zur letzten.</p>\n' +
   '\n' +
   '<h1>Innerhalb von Abschnitten der Benutzeroberfläche navigieren</h1>\n' +
   '\n' +
@@ -54,7 +54,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.de',
   '  <li>wechseln zwischen Elementen im Elementpfad der Fußzeile.</li>\n' +
   '</ul>\n' +
   '\n' +
-  '<p>Die Pfeiltasten <strong>Abwärts</strong> und <strong>Aufwärts</strong>\n' +
+  '<p>Die Pfeiltasten <strong>Abwärts</strong> und <strong>Aufwärts</strong></p>\n' +
   '\n' +
   '<ul>\n' +
   '  <li>wechseln zwischen Menüelementen in einem Menü.</li>\n' +
@@ -63,7 +63,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.de',
   '\n' +
   '<p>Die <strong>Pfeiltasten</strong> rotieren innerhalb des fokussierten Abschnitts der Benutzeroberfläche.</p>\n' +
   '\n' +
-  '<p>Um ein geöffnetes Menü, ein geöffnetes Untermenü oder ein geöffnetes Popupmenü zu schließen, drücken Sie die <strong>ESC</strong>-Taste.\n' +
+  '<p>Um ein geöffnetes Menü, ein geöffnetes Untermenü oder ein geöffnetes Popupmenü zu schließen, drücken Sie die <strong>ESC</strong>-Taste.</p>\n' +
   '\n' +
   '<p>Wenn sich der aktuelle Fokus ganz oben in einem bestimmten Abschnitt der Benutzeroberfläche befindet, wird durch Drücken der <strong>ESC</strong>-Taste auch\n' +
   '  die Tastaturnavigation beendet.</p>\n' +
@@ -71,7 +71,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.de',
   '<h1>Ein Menüelement oder eine Symbolleistenschaltfläche ausführen</h1>\n' +
   '\n' +
   '<p>Wenn das gewünschte Menüelement oder die gewünschte Symbolleistenschaltfläche hervorgehoben ist, drücken Sie <strong>Zurück</strong>, <strong>Eingabe</strong>\n' +
-  '  oder die <strong>Leertaste</strong>, um das Element auszuführen.\n' +
+  '  oder die <strong>Leertaste</strong>, um das Element auszuführen.</p>\n' +
   '\n' +
   '<h1>In Dialogfeldern ohne Registerkarten navigieren</h1>\n' +
   '\n' +

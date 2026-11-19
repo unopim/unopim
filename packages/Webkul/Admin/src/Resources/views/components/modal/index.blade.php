@@ -282,6 +282,13 @@
                 },
 
                 handleKeydown(event) {
+                    if (event.key === 'Escape' && this.isOpen) {
+                        event.preventDefault();
+                        this.close();
+
+                        return;
+                    }
+
                     if (event.key === 'Enter' && this.isOpen && this.preventSubmit) {
                         event.preventDefault();
                     }

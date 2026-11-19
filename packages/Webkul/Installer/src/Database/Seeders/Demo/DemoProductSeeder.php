@@ -13,6 +13,8 @@ use Webkul\Core\Helpers\Database\DatabaseSequenceHelper;
 use Webkul\Core\Rules\FileOrImageValidValue;
 use Webkul\Installer\Database\Seeders\Demo\Concerns\LoadsDemoData;
 use Webkul\Measurement\Helpers\MeasurementHelper;
+use Webkul\Product\Enums\ProductType;
+use Webkul\Product\Enums\VariantLevel;
 use Webkul\Product\Services\VariantStructurePlanner;
 
 /**
@@ -119,6 +121,7 @@ class DemoProductSeeder extends Seeder
             DB::table('publication_version_documents')->whereIn('publication_version_id', $versionIds)->delete();
             DB::table('publication_view_stats')->whereIn('publication_id', $publicationIds)->delete();
             DB::table('publication_versions')->whereIn('publication_id', $publicationIds)->delete();
+            DB::table('publication_releases')->whereIn('publication_id', $publicationIds)->delete();
             DB::table('publications')->whereIn('id', $publicationIds)->delete();
         }
 
@@ -170,11 +173,11 @@ class DemoProductSeeder extends Seeder
             return;
         }
 
-        $placements = $product['type'] === 'configurable'
+        $placements = $product['type'] === ProductType::Configurable->value
             ? $this->placementMap($product, $this->familyUniqueCodes[$familyId] ?? [])
             : [];
 
-        $structureId = $product['type'] === 'configurable'
+        $structureId = $product['type'] === ProductType::Configurable->value
             ? $this->seedStructure($product, $familyId, $placements)
             : null;
 
@@ -189,7 +192,7 @@ class DemoProductSeeder extends Seeder
             'updated_at'            => $now,
         ]);
 
-        if ($product['type'] !== 'configurable') {
+        if ($product['type'] !== ProductType::Configurable->value) {
             return;
         }
 
@@ -233,16 +236,16 @@ class DemoProductSeeder extends Seeder
         $map = [];
 
         foreach ($axes as $index => $code) {
-            $map[$code] = $levels === 2 && $index === 0 ? 'sub_parent' : 'variant';
+            $map[$code] = $levels === 2 && $index === 0 ? VariantLevel::SubParent->value : VariantLevel::Variant->value;
         }
 
         foreach ($uniqueCodes as $code) {
-            $map[$code] ??= 'variant';
+            $map[$code] ??= VariantLevel::Variant->value;
         }
 
-        $map['price'] = 'variant';
-        $map['image'] = 'common';
-        $map['gallery'] = $levels === 2 ? 'sub_parent' : 'variant';
+        $map['price'] = VariantLevel::Variant->value;
+        $map['image'] = VariantLevel::Common->value;
+        $map['gallery'] = $levels === 2 ? VariantLevel::SubParent->value : VariantLevel::Variant->value;
 
         return $map;
     }
@@ -264,7 +267,7 @@ class DemoProductSeeder extends Seeder
 
         return array_filter(
             $values,
-            static fn (string $code): bool => $code === 'sku' || ($placements[$code] ?? 'common') === $level,
+            static fn (string $code): bool => $code === 'sku' || ($placements[$code] ?? VariantLevel::Common->value) === $level,
             ARRAY_FILTER_USE_KEY,
         );
     }
@@ -401,7 +404,7 @@ class DemoProductSeeder extends Seeder
 
         if (count($axes) === 1) {
             foreach ($variants as $index => $variant) {
-                $this->insertVariantRow($product, $variant, $parentId, $familyId, 'simple', $index, $channels, $channelLocales, $placements);
+                $this->insertVariantRow($product, $variant, $parentId, $familyId, ProductType::Simple->value, $index, $channels, $channelLocales, $placements);
             }
 
             return;
@@ -429,7 +432,7 @@ class DemoProductSeeder extends Seeder
                 ],
                 $parentId,
                 $familyId,
-                'variant_group',
+                ProductType::VariantGroup->value,
                 $groupIndex++,
                 $channels,
                 $channelLocales,
@@ -446,7 +449,7 @@ class DemoProductSeeder extends Seeder
                     ],
                     $groupId,
                     $familyId,
-                    'simple',
+                    ProductType::Simple->value,
                     $childIndex,
                     $channels,
                     $channelLocales,
@@ -482,14 +485,14 @@ class DemoProductSeeder extends Seeder
 
         $sku = $variant['sku'] ?? $product['sku'].'-'.$variant['suffix'];
 
-        $level = $type === 'variant_group' ? 'sub_parent' : 'variant';
+        $level = ProductType::from($type)->variantLevel()->value;
 
         $values = [
             'common' => $this->ownedValues(
                 array_merge(
                     ['sku' => $sku, 'url_key' => $sku],
                     $variant['axis'],
-                    $type === 'simple' ? [
+                    $type === ProductType::Simple->value ? [
                         'ean'            => $this->variantEan($product, $index),
                         'product_number' => $this->variantProductNumber($product, $sku),
                     ] : [],
@@ -598,7 +601,7 @@ class DemoProductSeeder extends Seeder
         $media = $this->mediaValues($product);
 
         $values = [
-            'common'     => $this->ownedValues(array_merge($common, $media), $placements, 'common'),
+            'common'     => $this->ownedValues(array_merge($common, $media), $placements, VariantLevel::Common->value),
             'categories' => $product['categories'] ?? [],
         ];
 
@@ -625,7 +628,7 @@ class DemoProductSeeder extends Seeder
                 $values['channel_locale_specific'][$channel][$locale] = $this->ownedValues(
                     $this->channelLocaleValues($copy, $product),
                     $placements,
-                    'common',
+                    VariantLevel::Common->value,
                 );
             }
         }

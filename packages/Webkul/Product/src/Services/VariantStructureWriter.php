@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace Webkul\Product\Services;
 
 use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
+use Webkul\Product\Enums\VariantLevel;
 use Webkul\Product\Models\ProductProxy;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAttribute;
@@ -25,7 +28,7 @@ class VariantStructureWriter
 {
     public const AXIS_LEVELS = ['level_1', 'level_2'];
 
-    public const PLACEMENT_LEVELS = ['common', 'sub_parent', 'variant'];
+    public const PLACEMENT_LEVELS = VariantLevel::VALUES;
 
     /**
      * Whether any product at all points at the structure.
@@ -102,11 +105,30 @@ class VariantStructureWriter
 
             $structure->save();
 
+            $this->writeRows($structure, $levels, $axes, $placements, $familyAttributes);
+
+            return $structure->refresh()->load(['axes.attribute', 'placements.attribute']);
+        });
+    }
+
+    /**
+     * Replace the axis and placement rows of a saved structure.
+     *
+     * Rows are written as given; validating the shape is the caller's job. An attribute
+     * placed on more than one level keeps only its first placement.
+     *
+     * @param  array{level_1?: array<int, string>, level_2?: array<int, string>}  $axes
+     * @param  array<string, array<int, string>>  $placements
+     * @param  Collection<string, Attribute>  $familyAttributes  The family's attributes keyed by code.
+     */
+    public function writeRows(VariantStructure $structure, int $levels, array $axes, array $placements, Collection $familyAttributes): void
+    {
+        DB::transaction(function () use ($structure, $levels, $axes, $placements, $familyAttributes): void {
             VariantStructureAxis::query()->where('variant_structure_id', $structure->id)->delete();
             VariantStructureAttribute::query()->where('variant_structure_id', $structure->id)->delete();
 
             foreach ($this->activeAxisLevels($levels) as $level) {
-                foreach ($axes[$level] as $position => $attributeCode) {
+                foreach ($axes[$level] ?? [] as $position => $attributeCode) {
                     VariantStructureAxis::create([
                         'variant_structure_id' => $structure->id,
                         'attribute_id'         => $familyAttributes[$attributeCode]->id,
@@ -116,8 +138,16 @@ class VariantStructureWriter
                 }
             }
 
-            foreach (self::PLACEMENT_LEVELS as $level) {
-                foreach ($placements[$level] as $attributeCode) {
+            $storedAttributes = [];
+
+            foreach ($placements as $level => $attributeCodes) {
+                foreach ($attributeCodes as $attributeCode) {
+                    if (isset($storedAttributes[$attributeCode])) {
+                        continue;
+                    }
+
+                    $storedAttributes[$attributeCode] = true;
+
                     VariantStructureAttribute::create([
                         'variant_structure_id' => $structure->id,
                         'attribute_id'         => $familyAttributes[$attributeCode]->id,
@@ -125,8 +155,6 @@ class VariantStructureWriter
                     ]);
                 }
             }
-
-            return $structure->refresh()->load(['axes.attribute', 'placements.attribute']);
         });
     }
 
@@ -137,18 +165,60 @@ class VariantStructureWriter
      */
     public function delete(VariantStructure $structure): void
     {
-        if ($this->isReferenced($structure)) {
-            throw ValidationException::withMessages([
-                'code' => [trans('admin::app.catalog.families.edit.variant-structure-in-use')],
-            ]);
+        $this->deleteMany([$structure]);
+    }
+
+    /**
+     * Remove the structures together with their axis and placement rows, all or none.
+     *
+     * Every structure row is locked before any reference check, so a product written
+     * concurrently against one waits on its foreign key check instead of being orphaned,
+     * and each check is a locking read, so it sees products committed while it waited.
+     *
+     * @param  iterable<int|string, VariantStructure>  $structures
+     *
+     * @throws ValidationException When a product still references any of the structures.
+     */
+    public function deleteMany(iterable $structures): void
+    {
+        $structures = collect($structures)->values();
+
+        if ($structures->isEmpty()) {
+            return;
         }
 
-        DB::transaction(function () use ($structure): void {
-            VariantStructureAxis::query()->where('variant_structure_id', $structure->id)->delete();
-            VariantStructureAttribute::query()->where('variant_structure_id', $structure->id)->delete();
+        DB::transaction(function () use ($structures): void {
+            VariantStructureProxy::modelClass()::query()
+                ->whereKey($structures->pluck('id')->all())
+                ->orderBy('id')
+                ->lockForUpdate()
+                ->get();
 
-            $structure->delete();
+            foreach ($structures as $structure) {
+                if ($this->isReferencedForUpdate($structure)) {
+                    throw $this->inUseException();
+                }
+            }
+
+            foreach ($structures as $structure) {
+                VariantStructureAxis::query()->where('variant_structure_id', $structure->id)->delete();
+                VariantStructureAttribute::query()->where('variant_structure_id', $structure->id)->delete();
+
+                $structure->delete();
+            }
         });
+    }
+
+    /**
+     * Whether any product points at the structure, read with a row lock so the answer
+     * reflects the latest committed rows rather than the transaction's snapshot.
+     */
+    protected function isReferencedForUpdate(VariantStructure $structure): bool
+    {
+        return ProductProxy::modelClass()::query()
+            ->where('variant_structure_id', $structure->id)
+            ->lockForUpdate()
+            ->exists();
     }
 
     /**
@@ -190,7 +260,7 @@ class VariantStructureWriter
     public function currentState(VariantStructure $structure): array
     {
         $axes = array_fill_keys(self::AXIS_LEVELS, []);
-        $placements = array_fill_keys(self::PLACEMENT_LEVELS, []);
+        $placements = array_fill_keys(VariantLevel::VALUES, []);
 
         foreach ($structure->axes as $axis) {
             if ($axis->attribute?->code !== null && isset($axes[$axis->level])) {
@@ -250,9 +320,9 @@ class VariantStructureWriter
      */
     protected function normalizePlacements(array $placements): array
     {
-        $normalized = array_fill_keys(self::PLACEMENT_LEVELS, []);
+        $normalized = array_fill_keys(VariantLevel::VALUES, []);
 
-        foreach (self::PLACEMENT_LEVELS as $level) {
+        foreach (VariantLevel::VALUES as $level) {
             $normalized[$level] = array_values(array_filter(
                 array_map(fn ($code): string => is_string($code) ? trim($code) : '', (array) ($placements[$level] ?? [])),
                 fn (string $code): bool => $code !== ''
@@ -290,7 +360,7 @@ class VariantStructureWriter
             $errors['axes.level_2'][] = trans('validation.in', ['attribute' => 'axes.level_2']);
         }
 
-        if ($levels === 1 && $placements['sub_parent'] !== []) {
+        if ($levels === 1 && $placements[VariantLevel::SubParent->value] !== []) {
             $errors['placements.sub_parent'][] = trans('validation.in', ['attribute' => 'placements.sub_parent']);
         }
 
@@ -315,7 +385,7 @@ class VariantStructureWriter
 
         $placedAttributes = [];
 
-        foreach (self::PLACEMENT_LEVELS as $level) {
+        foreach (VariantLevel::VALUES as $level) {
             foreach ($placements[$level] as $attributeCode) {
                 if (! $familyAttributes->has($attributeCode)) {
                     $errors['placements.'.$level][] = trans('validation.exists', ['attribute' => $attributeCode]);
@@ -371,6 +441,16 @@ class VariantStructureWriter
     {
         return ValidationException::withMessages([
             'code' => [trans('validation.unique', ['attribute' => 'code'])],
+        ]);
+    }
+
+    /**
+     * The rejection for deleting a structure that products still point at.
+     */
+    protected function inUseException(): ValidationException
+    {
+        return ValidationException::withMessages([
+            'code' => [trans('admin::app.catalog.families.edit.variant-structure-in-use')],
         ]);
     }
 }

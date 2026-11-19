@@ -612,7 +612,7 @@ abstract class ApiDataSource
 
         $payload = $structureCache->remember(
             $this->structureCacheGroup,
-            sha1(json_encode(request()->only(['filters', 'sort', 'limit', 'page', 'pagination_type', 'search_after']))),
+            hash('xxh128', json_encode(request()->only(['filters', 'sort', 'limit', 'page', 'pagination_type', 'search_after']))),
             function (): array {
                 $this->prepare();
 

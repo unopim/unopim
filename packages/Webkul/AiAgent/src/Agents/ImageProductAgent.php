@@ -178,11 +178,11 @@ class ImageProductAgent
     }
 
     /**
-     * Check if source is a file path.
+     * Check if source is a file path. Base64 is excluded because a JPEG payload starts with "/9j/".
      */
     protected function isFilePath(string $source): bool
     {
-        return file_exists($source) || preg_match('~^/|^~', $source);
+        return file_exists($source) || (str_starts_with($source, '/') && ! $this->isBase64($source));
     }
 
     /**

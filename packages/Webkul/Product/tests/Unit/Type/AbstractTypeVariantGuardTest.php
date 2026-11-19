@@ -4,6 +4,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Validation\ValidationException;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAxis;
@@ -30,12 +31,12 @@ it('rejects a change to a non-axis attribute the simple does not own at its own 
 
     $configurable = $repository->create([
         'sku'                  => 'ag-config-'.uniqid(),
-        'type'                 => 'configurable',
+        'type'                 => ProductType::Configurable->value,
         'attribute_family_id'  => $family->id,
         'variant_structure_id' => $structure->id,
     ]);
 
-    $simple = Product::factory()->create(['parent_id' => $configurable->id, 'type' => 'simple', 'sku' => 'ag-simple']);
+    $simple = Product::factory()->create(['parent_id' => $configurable->id, 'type' => ProductType::Simple->value, 'sku' => 'ag-simple']);
     $simple->values = ['common' => ['sku' => 'ag-simple']];
     $simple->save();
 
@@ -63,12 +64,12 @@ it('allows and persists an own-axis rename through AbstractType::update()', func
 
     $configurable = $repository->create([
         'sku'                  => 'ag2-config-'.uniqid(),
-        'type'                 => 'configurable',
+        'type'                 => ProductType::Configurable->value,
         'attribute_family_id'  => $family->id,
         'variant_structure_id' => $structure->id,
     ]);
 
-    $simple = Product::factory()->create(['parent_id' => $configurable->id, 'type' => 'simple', 'sku' => 'ag2-simple']);
+    $simple = Product::factory()->create(['parent_id' => $configurable->id, 'type' => ProductType::Simple->value, 'sku' => 'ag2-simple']);
     $simple->values = ['common' => [$color->code => 'red', 'sku' => 'ag2-simple']];
     $simple->save();
 
@@ -100,7 +101,7 @@ it("does not guard a root configurable's own update() call via AbstractType::upd
 
     $configurable = $repository->create([
         'sku'                  => 'ag3-config-'.uniqid(),
-        'type'                 => 'configurable',
+        'type'                 => ProductType::Configurable->value,
         'attribute_family_id'  => $family->id,
         'variant_structure_id' => $structure->id,
     ]);

@@ -1,7 +1,6 @@
 <?php
 
 use Webkul\Attribute\Models\AttributeFamilyProxy;
-use Webkul\Attribute\Models\AttributeProxy;
 use Webkul\ProductPassport\Models\PassportTemplate;
 
 beforeEach(function (): void {
@@ -45,7 +44,7 @@ it('creates a template from the create modal', function (): void {
 it('renders the editor with the saved sections and fields', function (): void {
     $this->loginWithPermissions('all');
 
-    $attribute = AttributeProxy::factory()->create(['code' => 'carbon_footprint', 'type' => 'text']);
+    $attribute = $this->passportSourceAttribute();
 
     $template = PassportTemplate::create(['code' => 'tpl_under_test', 'is_enabled' => true]);
 
@@ -92,7 +91,7 @@ it('saves families, sections and fields as one payload', function (): void {
 
     $family = AttributeFamilyProxy::factory()->withMinimalAttributesForProductTypes()->create();
 
-    $attribute = AttributeProxy::factory()->create(['code' => 'carbon_footprint', 'type' => 'text']);
+    $attribute = $this->passportSourceAttribute();
 
     $template = PassportTemplate::create(['code' => 'tpl_under_test', 'is_enabled' => true]);
 
@@ -149,7 +148,7 @@ it('saves families, sections and fields as one payload', function (): void {
 it('drops rows that the editor removed from the payload', function (): void {
     $this->loginWithPermissions('all');
 
-    $attribute = AttributeProxy::factory()->create(['code' => 'carbon_footprint', 'type' => 'text']);
+    $attribute = $this->passportSourceAttribute();
 
     $template = PassportTemplate::create(['code' => 'tpl_under_test', 'is_enabled' => true]);
 
@@ -207,7 +206,7 @@ it('keeps an unsourced field as a draft the readiness count reports', function (
 it('rejects two fields claiming the same identifier role', function (): void {
     $this->loginWithPermissions('all');
 
-    $attribute = AttributeProxy::factory()->create(['code' => 'ean', 'type' => 'text']);
+    $attribute = $this->passportSourceAttribute();
 
     $template = PassportTemplate::create(['code' => 'tpl_under_test', 'is_enabled' => true]);
 
@@ -279,7 +278,7 @@ it('offers only attributes of the bound families as sources', function (): void 
 
     $family = AttributeFamilyProxy::factory()->withMinimalAttributesForProductTypes()->create();
 
-    $outsider = AttributeProxy::factory()->create(['code' => 'not_in_family', 'type' => 'text']);
+    $outsider = $this->passportSourceAttribute();
 
     $inFamily = $family->attributeFamilyGroupMappings()->first()?->customAttributes()->first();
 

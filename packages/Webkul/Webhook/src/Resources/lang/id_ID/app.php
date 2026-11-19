@@ -137,6 +137,14 @@ return [
                     'delete-success' => 'Log Webhook berhasil dihapus',
                     'delete-failed'  => 'Penghapusan log Webhook gagal secara tidak terduga',
                     'unauthorized'   => 'Tindakan ini tidak diizinkan',
+                    'select-all'     => [
+                        'delete' => [
+                            'queued'    => 'Penghapusan diantrekan untuk semua log yang cocok. Anda akan diberi tahu saat selesai.',
+                            'title'     => 'Penghapusan log webhook',
+                            'completed' => ':count log webhook dihapus.',
+                            'failed'    => 'Penghapusan :count log webhook selesai dengan kesalahan. Beberapa log tidak dihapus.',
+                        ],
+                    ],
                 ],
             ],
         ],

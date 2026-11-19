@@ -28,6 +28,10 @@ final readonly class ChatContext
      * @param  array<string>  $uploadedFilePaths  Stored paths of uploaded CSV/XLSX files
      * @param  string|null  $currentPage  The URL path the user is on
      * @param  Admin|null  $user  The authenticated admin user (for ACL checks)
+     * @param  string|null  $conversationId  Stable browser conversation identity, not the database row ID
+     * @param  string|null  $requestId  Identity of one logical send; preserved across transport retries
+     * @param  bool  $hasNewImages  Distinguishes a new upload from images retained from earlier turns
+     * @param  array  $extensions  Bounded client selections; extensions must resolve and authorize them
      */
     public function __construct(
         public string $message,
@@ -43,6 +47,10 @@ final readonly class ChatContext
         public array $uploadedFilePaths = [],
         public ?string $currentPage = null,
         public ?Admin $user = null,
+        public ?string $conversationId = null,
+        public ?string $requestId = null,
+        public bool $hasNewImages = false,
+        public array $extensions = [],
     ) {
         // Validate locale and channel to prevent SQL injection in JSON_EXTRACT paths.
         if (! preg_match('/^[a-zA-Z0-9_-]+$/', $locale)) {

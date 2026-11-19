@@ -137,6 +137,14 @@ return [
                     'delete-success' => 'Webhook logs deleted successfully',
                     'delete-failed'  => 'Webhook logs deletion failed unexpectedly',
                     'unauthorized'   => 'This action is unauthorized',
+                    'select-all'     => [
+                        'delete' => [
+                            'queued'    => 'Deletion queued for every matching log. You will be notified when it finishes.',
+                            'title'     => 'Webhook log deletion',
+                            'completed' => ':count webhook logs deleted.',
+                            'failed'    => 'Deletion of :count webhook logs finished with errors. Some logs were not deleted.',
+                        ],
+                    ],
                 ],
             ],
         ],

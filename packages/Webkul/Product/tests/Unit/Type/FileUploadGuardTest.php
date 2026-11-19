@@ -56,10 +56,18 @@ it('file-size-exceeds translation key exists in every admin language file', func
     expect($missing)->toBeEmpty();
 });
 
-it('public/.user.ini sets upload_max_filesize to 50M for PHP-FPM deployments', function () {
+it('public/.user.ini sets upload_max_filesize to 100M for PHP-FPM deployments', function () {
     $ini = file_get_contents(base_path('public/.user.ini'));
 
     expect($ini)
-        ->toContain('upload_max_filesize = 50M')
-        ->toContain('post_max_size = 55M');
+        ->toContain('upload_max_filesize = 100M')
+        ->toContain('post_max_size = 110M');
+});
+
+it('development PHP configuration leaves upload sizes unrestricted', function () {
+    $ini = file_get_contents(base_path('dockerfiles/php-dev.ini'));
+
+    expect($ini)
+        ->toContain('upload_max_filesize = 0')
+        ->toContain('post_max_size = 0');
 });

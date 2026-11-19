@@ -1,5 +1,6 @@
 const { test, expect } = require('../../utils/fixtures');
 const { navigateTo, clickSave } = require('../../utils/helpers');
+const { ensureAiPlatform } = require('../../utils/magic-ai-helpers');
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 
@@ -227,26 +228,32 @@ test('4.5 - Chat input has Attach image button', async ({ adminPageWithWidget })
 });
 
 test('4.6 - Chat input has AI Platform dropdown with configured platforms', async ({ adminPageWithWidget }) => {
+  test.skip(!OPENAI_API_KEY, 'OPENAI_API_KEY not set — no platform can be configured');
+  await ensureAiPlatform(adminPageWithWidget, OPENAI_API_KEY);
+  await adminPageWithWidget.reload({ waitUntil: 'domcontentloaded' });
+
   await adminPageWithWidget.getByRole('button', { name: 'Open Agenting PIM' }).click();
   await adminPageWithWidget.getByRole('button', { name: /Chat/ }).click();
 
   // Platform dropdown only renders when AI platforms are configured
   const platformSelect = adminPageWithWidget.locator('select[title="Select AI Platform"]');
-  const isVisible = await platformSelect.isVisible().catch(() => false);
-  test.skip(!isVisible, 'No AI platforms configured in current environment');
+  await expect(platformSelect).toBeVisible();
 
   const options = await platformSelect.locator('option').allTextContents();
   expect(options.length).toBeGreaterThanOrEqual(1);
 });
 
 test('4.7 - Chat input has Model dropdown with available models', async ({ adminPageWithWidget }) => {
+  test.skip(!OPENAI_API_KEY, 'OPENAI_API_KEY not set — no platform can be configured');
+  await ensureAiPlatform(adminPageWithWidget, OPENAI_API_KEY);
+  await adminPageWithWidget.reload({ waitUntil: 'domcontentloaded' });
+
   await adminPageWithWidget.getByRole('button', { name: 'Open Agenting PIM' }).click();
   await adminPageWithWidget.getByRole('button', { name: /Chat/ }).click();
 
   // Model dropdown only renders when AI platforms are configured
   const modelSelect = adminPageWithWidget.locator('select[title="Select Model"]');
-  const isVisible = await modelSelect.isVisible().catch(() => false);
-  test.skip(!isVisible, 'No AI platforms configured in current environment');
+  await expect(modelSelect).toBeVisible();
 
   const options = await modelSelect.locator('option').allTextContents();
   expect(options.length).toBeGreaterThanOrEqual(1);
@@ -362,7 +369,8 @@ test('5.4 - Message counter badge appears after sending', async ({ adminPageWith
 
   await expect(adminPageWithWidget.getByText(/channel/i).last()).toBeVisible({ timeout: 45000 });
 
-  await expect(adminPageWithWidget.getByText(/message\(s\)/)).toBeVisible();
+  // Scope to the header badge: session cards carry their own message count.
+  await expect(adminPageWithWidget.locator('.ap-chat-meta').filter({ hasText: /message\(s\)/ })).toBeVisible();
 });
 
 // Tests 5.5 and 5.6 removed — they depend on real-time OpenAI API responses

@@ -31,7 +31,7 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            'code'            => fake()->regexify('/^[a-zA-Z]+\w+$/'),
+            'code'            => fake()->unique()->regexify('/^[a-z][a-z0-9_]{9,19}$/'),
             'parent_id'       => Category::whereIsRoot()->first()->id,
             'additional_data' => [
                 'locale_specific' => [

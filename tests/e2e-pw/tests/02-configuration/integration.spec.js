@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { clickSave, navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect, openFilterDrawer } = require('../../utils/helpers');
 
 // Open the index create modal (a header button, not a link) and wait for it to render.
 async function openCreateModal(adminPage) {
@@ -78,7 +78,7 @@ test.describe('UnoPim Integration API Keys', () => {
 
   test('Filter menu opens when clicked', async ({ adminPage }) => {
     await navigateTo(adminPage, 'integrations');
-    await adminPage.getByText('Filter', { exact: true }).click();
+    await openFilterDrawer(adminPage);
     await expect(adminPage.getByText('Apply Filters')).toBeVisible();
   });
 
@@ -86,7 +86,7 @@ test.describe('UnoPim Integration API Keys', () => {
     await navigateTo(adminPage, 'integrations');
     const perPageBtn = adminPage.getByRole('button', { name: 'Per Page' });
     await perPageBtn.click();
-    await adminPage.locator('#app').getByText('20', { exact: true }).click();
+    await adminPage.getByRole('list').getByText('20', { exact: true }).click();
     await expect(perPageBtn).toContainText('20');
   });
 

@@ -6,6 +6,7 @@ use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Webkul\Completeness\Jobs\ProductCompletenessJob;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\ProductProxy;
 
 #[Description('Rebuild derived data (completeness scores, search index) for variant subtrees. A safety net when a queued propagation job was dropped; the source tree is always authoritative.')]
@@ -26,7 +27,7 @@ class ResyncVariantsCommand extends Command
         }
 
         $roots = ProductProxy::modelClass()::query()
-            ->where('type', 'configurable')
+            ->where('type', ProductType::Configurable->value)
             ->with('variants.variants');
 
         if ($id = $this->option('product')) {
@@ -57,8 +58,6 @@ class ResyncVariantsCommand extends Command
             return self::SUCCESS;
         }
 
-        // Recompute completeness for the whole subtree. Re-saving would also fire
-        // the Elasticsearch observer; completeness is the derived data we own here.
         dispatch(new ProductCompletenessJob($ids));
 
         $this->info(sprintf('Queued resync for %d product(s) across the matched variant tree(s).', count($ids)));

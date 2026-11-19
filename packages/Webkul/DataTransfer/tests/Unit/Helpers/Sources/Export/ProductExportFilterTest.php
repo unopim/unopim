@@ -7,6 +7,7 @@ use Webkul\Completeness\Models\ProductCompletenessScore;
 use Webkul\Core\Models\Channel;
 use Webkul\Core\Models\Locale;
 use Webkul\DataTransfer\Helpers\Sources\Export\Filters\ProductExportFilter;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\ProductRepository;
 
@@ -14,7 +15,7 @@ function makeProduct(string $sku, int $familyId, array $values, int $status = 1)
 {
     $product = Product::create([
         'sku'                 => $sku,
-        'type'                => 'simple',
+        'type'                => ProductType::Simple->value,
         'status'              => $status,
         'attribute_family_id' => $familyId,
     ]);

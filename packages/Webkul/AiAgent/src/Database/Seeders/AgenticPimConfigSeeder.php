@@ -5,17 +5,13 @@ namespace Webkul\AiAgent\Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-/**
- * Seeds default Agentic PIM configuration values so the feature
- * is enabled out of the box after installation.
- */
 class AgenticPimConfigSeeder extends Seeder
 {
     public function run(): void
     {
         $defaults = [
-            'general.magic_ai.agentic_pim.enabled'              => '1',
-            'general.magic_ai.agentic_pim.open_by_default'      => '1',
+            'general.magic_ai.agentic_pim.enabled'              => '0',
+            'general.magic_ai.agentic_pim.open_by_default'      => '0',
             'general.magic_ai.agentic_pim.max_steps'            => '5',
             'general.magic_ai.agentic_pim.daily_token_budget'   => '500000',
             'general.magic_ai.agentic_pim.auto_enrichment'      => '0',

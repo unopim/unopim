@@ -1,5 +1,21 @@
 const { test, expect } = require('../../utils/fixtures');
-const { clickSave, navigateTo, generateUid, clickSaveAndExpect, fillLocalizedField } = require('../../utils/helpers');
+const {
+  clickSave,
+  navigateTo,
+  gotoPage,
+  generateUid,
+  clickSaveAndExpect,
+  fillLocalizedField,
+  openFilterDrawer,
+  visiblePaginationSymbols,
+  submitDataGridSearch,
+  clickAndWaitForPage,
+  confirmDelete,
+  waitForShimmerGone,
+} = require('../../utils/helpers');
+
+/* Every test creates and removes its own uniquely coded attribute, so they can spread over workers. */
+test.describe.configure({ mode: 'parallel' });
 
 /**
  * Helper: Create an attribute via UI and land on the edit page.
@@ -11,7 +27,7 @@ const { clickSave, navigateTo, generateUid, clickSaveAndExpect, fillLocalizedFie
 async function createAttribute(adminPage, code, name, type = 'Text') {
   await navigateTo(adminPage, 'attributes');
   await adminPage.getByRole('button', { name: 'Create Attribute' }).click();
-  await adminPage.waitForLoadState('networkidle');
+  await adminPage.getByRole('textbox', { name: 'Code' }).waitFor();
   await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
   await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.locator('input[name="type"][type="text"]').fill(type);
@@ -33,8 +49,7 @@ async function createAttribute(adminPage, code, name, type = 'Text') {
  */
 async function createSelectSwatchAttribute(adminPage, code, name, swatchType = 'Text Swatch') {
   // Swatch type is only selectable on the full create page; the quick-create modal locks it to text swatch.
-  await adminPage.goto('/admin/catalog/attributes/create');
-  await adminPage.waitForLoadState('networkidle');
+  await gotoPage(adminPage, '/admin/catalog/attributes/create');
   await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
   await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.locator('input[name="type"][type="text"]').fill('Select');
@@ -56,9 +71,7 @@ async function createSelectSwatchAttribute(adminPage, code, name, swatchType = '
  * Helper: Search for an attribute by code on the attributes listing page.
  */
 async function searchAttribute(adminPage, code) {
-  await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
-  await adminPage.keyboard.press('Enter');
-  await adminPage.waitForLoadState('networkidle');
+  await submitDataGridSearch(adminPage, adminPage.getByRole('textbox', { name: 'Search', exact: true }), code);
 }
 
 /**
@@ -68,8 +81,7 @@ async function searchAndEditAttribute(adminPage, code) {
   await navigateTo(adminPage, 'attributes');
   await searchAttribute(adminPage, code);
   const row = adminPage.locator('div', { hasText: code });
-  await row.locator('span[title="Edit"]').first().click();
-  await adminPage.waitForLoadState('networkidle');
+  await clickAndWaitForPage(adminPage, row.locator('span[title="Edit"]').first());
 }
 
 /**
@@ -82,8 +94,7 @@ async function deleteAttribute(adminPage, code) {
   const deleteBtn = adminPage.locator('div', { hasText: code }).locator('span[title="Delete"]').first();
   if (await deleteBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
     await deleteBtn.click();
-    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
-    await adminPage.waitForLoadState('networkidle');
+    await confirmDelete(adminPage);
   }
 }
 
@@ -93,6 +104,17 @@ async function deleteAttribute(adminPage, code) {
  * @param {string} optionCode
  * @param {string} optionLabel
  */
+async function assertPaginationControls(adminPage) {
+  for (const symbol of await visiblePaginationSymbols(adminPage)) {
+    const button = adminPage.getByText(symbol, { exact: true });
+
+    await expect(button).toBeVisible();
+    await expect(button).toBeEnabled();
+    await button.click();
+    await waitForShimmerGone(adminPage);
+  }
+}
+
 async function addOption(adminPage, optionCode, optionLabel) {
   await adminPage.getByText('Add Row').click();
   await expect(adminPage.locator('#app').getByText('Add Option')).toBeVisible();
@@ -146,7 +168,7 @@ test.describe('UnoPim Attribute', () => {
   test('Create attribute with empty code field', async ({ adminPage }) => {
     await navigateTo(adminPage, 'attributes');
     await adminPage.getByRole('button', { name: 'Create Attribute' }).click();
-    await adminPage.waitForLoadState('networkidle');
+    await adminPage.getByRole('textbox', { name: 'Code' }).waitFor();
     await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
     await adminPage.getByRole('option', { name: 'Text' }).first().click();
     await adminPage.locator('input[name$="[name]"]').first().fill('Product Name');
@@ -161,7 +183,7 @@ test.describe('UnoPim Attribute', () => {
     const code = `attr_${uid}`;
     await navigateTo(adminPage, 'attributes');
     await adminPage.getByRole('button', { name: 'Create Attribute' }).click();
-    await adminPage.waitForLoadState('networkidle');
+    await adminPage.getByRole('textbox', { name: 'Code' }).waitFor();
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
     await adminPage.locator('input[name$="[name]"]').first().fill('Product Name');
     await clickSave(adminPage, 'Save Attribute');
@@ -171,7 +193,7 @@ test.describe('UnoPim Attribute', () => {
   test('Create attribute with empty Code and Type field', async ({ adminPage }) => {
     await navigateTo(adminPage, 'attributes');
     await adminPage.getByRole('button', { name: 'Create Attribute' }).click();
-    await adminPage.waitForLoadState('networkidle');
+    await adminPage.getByRole('textbox', { name: 'Code' }).waitFor();
     await adminPage.locator('input[name$="[name]"]').first().fill('Product Name');
     // v-code derives the code from the name, so clear it to submit an empty code.
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
@@ -196,7 +218,7 @@ test.describe('UnoPim Attribute', () => {
 
   test('should open the filter menu when clicked', async ({ adminPage }) => {
     await navigateTo(adminPage, 'attributes');
-    await adminPage.getByText('Filter', { exact: true }).click();
+    await openFilterDrawer(adminPage);
     await expect(adminPage.locator('#app').getByText('Apply Filters')).toBeVisible();
   });
 
@@ -205,7 +227,7 @@ test.describe('UnoPim Attribute', () => {
     const perPageBtn = adminPage.getByRole('button', { name: 'Per Page' });
     await expect(perPageBtn).toBeVisible({ timeout: 20000 });
     await perPageBtn.click();
-    await adminPage.locator('#app').getByText('20', { exact: true }).click();
+    await adminPage.getByRole('list').getByText('20', { exact: true }).click();
     await expect(perPageBtn).toContainText('20');
   });
 
@@ -274,7 +296,7 @@ test.describe('Checkbox Type Attribute Option Grid', () => {
     const code = `chk_${uid}`;
     await navigateTo(adminPage, 'attributes');
     await adminPage.getByRole('button', { name: 'Create Attribute' }).click();
-    await adminPage.waitForLoadState('networkidle');
+    await adminPage.getByRole('textbox', { name: 'Code' }).waitFor();
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
     await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
     await adminPage.locator('input[name="type"][type="text"]').fill('checkbox');
@@ -310,9 +332,7 @@ test.describe('Checkbox Type Attribute Option Grid', () => {
     const optCode = `cable_${uid}`;
     await createAttribute(adminPage, code, 'In the Box', 'Checkbox');
     await addOption(adminPage, optCode, 'Cable');
-    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(optCode);
-    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).press('Enter');
-    await adminPage.waitForLoadState('networkidle');
+    await submitDataGridSearch(adminPage, adminPage.getByRole('textbox', { name: 'Search', exact: true }), optCode);
     await expect(adminPage.locator('#app').getByText(optCode, { exact: true })).toBeVisible();
     await expect(adminPage.locator('#app').getByText('Cable', { exact: true })).toBeVisible();
     await deleteAttribute(adminPage, code);
@@ -325,7 +345,7 @@ test.describe('Checkbox Type Attribute Option Grid', () => {
     const perPageBtn = adminPage.getByRole('button', { name: 'Per Page' });
     await expect(perPageBtn).toBeVisible({ timeout: 20000 });
     await perPageBtn.click();
-    await adminPage.locator('#app').getByText('20', { exact: true }).click();
+    await adminPage.getByRole('list').getByText('20', { exact: true }).click();
     await expect(perPageBtn).toContainText('20');
     await deleteAttribute(adminPage, code);
   });
@@ -342,8 +362,7 @@ test.describe('Checkbox Type Attribute Option Grid', () => {
     await adminPage.locator('span.icon-cancel.cursor-pointer').click();
     await itemRow1.locator('span[title="Delete"]').first().click();
     await expect(adminPage.getByText('Are you sure you want to delete?')).toBeVisible();
-    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
-    await adminPage.waitForLoadState('networkidle');
+    await confirmDelete(adminPage);
     await deleteAttribute(adminPage, code);
   });
 
@@ -355,14 +374,7 @@ test.describe('Checkbox Type Attribute Option Grid', () => {
     await addOption(adminPage, `opt2_${uid}`, 'Option 2');
     await addOption(adminPage, `opt3_${uid}`, 'Option 3');
     await addOption(adminPage, `opt4_${uid}`, 'Option 4');
-    const paginationSymbols = ['«', '‹', '›', '»'];
-    for (const symbol of paginationSymbols) {
-      const button = adminPage.getByText(symbol, { exact: true });
-      await expect(button).toBeVisible();
-      await expect(button).toBeEnabled();
-      await button.click();
-      await adminPage.waitForLoadState('networkidle');
-    }
+    await assertPaginationControls(adminPage);
     await deleteAttribute(adminPage, code);
   });
 
@@ -387,7 +399,7 @@ test.describe('Multiselect Type Attribute Options Grid', () => {
     const code = `msel_${uid}`;
     await navigateTo(adminPage, 'attributes');
     await adminPage.getByRole('button', { name: 'Create Attribute' }).click();
-    await adminPage.waitForLoadState('networkidle');
+    await adminPage.getByRole('textbox', { name: 'Code' }).waitFor();
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
     await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
     await adminPage.locator('input[name="type"][type="text"]').fill('Multiselect');
@@ -423,9 +435,7 @@ test.describe('Multiselect Type Attribute Options Grid', () => {
     const optCode = `charger_${uid}`;
     await createAttribute(adminPage, code, 'Features', 'Multiselect');
     await addOption(adminPage, optCode, 'Charger');
-    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(optCode);
-    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).press('Enter');
-    await adminPage.waitForLoadState('networkidle');
+    await submitDataGridSearch(adminPage, adminPage.getByRole('textbox', { name: 'Search', exact: true }), optCode);
     await expect(adminPage.locator('#app').getByText(optCode, { exact: true })).toBeVisible();
     await expect(adminPage.locator('#app').getByText('Charger', { exact: true })).toBeVisible();
     await deleteAttribute(adminPage, code);
@@ -438,7 +448,7 @@ test.describe('Multiselect Type Attribute Options Grid', () => {
     const perPageBtn = adminPage.getByRole('button', { name: 'Per Page' });
     await expect(perPageBtn).toBeVisible({ timeout: 20000 });
     await perPageBtn.click();
-    await adminPage.locator('#app').getByText('20', { exact: true }).click();
+    await adminPage.getByRole('list').getByText('20', { exact: true }).click();
     await expect(perPageBtn).toContainText('20');
     await deleteAttribute(adminPage, code);
   });
@@ -455,8 +465,7 @@ test.describe('Multiselect Type Attribute Options Grid', () => {
     await adminPage.locator('span.icon-cancel.cursor-pointer').click();
     await itemRow1.locator('span[title="Delete"]').first().click();
     await expect(adminPage.getByText('Are you sure you want to delete?')).toBeVisible();
-    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
-    await adminPage.waitForLoadState('networkidle');
+    await confirmDelete(adminPage);
     await deleteAttribute(adminPage, code);
   });
 
@@ -468,14 +477,7 @@ test.describe('Multiselect Type Attribute Options Grid', () => {
     await addOption(adminPage, `opt2_${uid}`, 'Option 2');
     await addOption(adminPage, `opt3_${uid}`, 'Option 3');
     await addOption(adminPage, `opt4_${uid}`, 'Option 4');
-    const paginationSymbols = ['«', '‹', '›', '»'];
-    for (const symbol of paginationSymbols) {
-      const button = adminPage.getByText(symbol, { exact: true });
-      await expect(button).toBeVisible();
-      await expect(button).toBeEnabled();
-      await button.click();
-      await adminPage.waitForLoadState('networkidle');
-    }
+    await assertPaginationControls(adminPage);
     await deleteAttribute(adminPage, code);
   });
 
@@ -500,7 +502,7 @@ test.describe('Select Type Attribute', () => {
     const code = `sel_${uid}`;
     await navigateTo(adminPage, 'attributes');
     await adminPage.getByRole('button', { name: 'Create Attribute' }).click();
-    await adminPage.waitForLoadState('networkidle');
+    await adminPage.getByRole('textbox', { name: 'Code' }).waitFor();
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
     await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
     await adminPage.locator('input[name="type"][type="text"]').fill('Select');
@@ -536,9 +538,7 @@ test.describe('Select Type Attribute', () => {
     const optCode = `cotton_${uid}`;
     await createAttribute(adminPage, code, 'Material', 'Select');
     await addOption(adminPage, optCode, 'Cotton');
-    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(optCode);
-    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).press('Enter');
-    await adminPage.waitForLoadState('networkidle');
+    await submitDataGridSearch(adminPage, adminPage.getByRole('textbox', { name: 'Search', exact: true }), optCode);
     await expect(adminPage.locator('#app').getByText(optCode, { exact: true })).toBeVisible();
     await expect(adminPage.locator('#app').getByText('Cotton', { exact: true })).toBeVisible();
     await deleteAttribute(adminPage, code);
@@ -551,7 +551,7 @@ test.describe('Select Type Attribute', () => {
     const perPageBtn = adminPage.getByRole('button', { name: 'Per Page' });
     await expect(perPageBtn).toBeVisible({ timeout: 20000 });
     await perPageBtn.click();
-    await adminPage.locator('#app').getByText('20', { exact: true }).click();
+    await adminPage.getByRole('list').getByText('20', { exact: true }).click();
     await expect(perPageBtn).toContainText('20');
     await deleteAttribute(adminPage, code);
   });
@@ -568,8 +568,31 @@ test.describe('Select Type Attribute', () => {
     await adminPage.locator('span.icon-cancel.cursor-pointer').click();
     await itemRow1.locator('span[title="Delete"]').first().click();
     await expect(adminPage.getByText('Are you sure you want to delete?')).toBeVisible();
-    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
-    await adminPage.waitForLoadState('networkidle');
+    await confirmDelete(adminPage);
+    await deleteAttribute(adminPage, code);
+  });
+
+  test('Label edits generate a code for new options but never change an existing option code', { timeout: 90000 }, async ({ adminPage }) => {
+    const uid = generateUid();
+    const code = `sel_${uid}`;
+    const optCode = `cotton_${uid}`;
+    await createAttribute(adminPage, code, 'Material', 'Select');
+
+    await adminPage.getByText('Add Row').click();
+    const optionForm = adminPage.locator('form').filter({ hasText: 'Add Option' });
+    const codeInput = optionForm.getByPlaceholder('Code');
+    await adminPage.locator('input[name="locales.en_US"]').fill(`Cotton ${uid}`);
+    await expect(codeInput).toHaveValue(optCode);
+    await clickSave(adminPage, 'Save Option');
+    await expect(adminPage.locator('#app').getByText('Attribute Option Created Successfully').last()).toBeVisible();
+
+    const itemRow = adminPage.locator('div', { hasText: optCode }).filter({ hasText: `Cotton ${uid}` });
+    await itemRow.locator('span[title="Edit"]').first().click();
+    await expect(codeInput).toBeDisabled();
+    await expect(codeInput).toHaveValue(optCode);
+    await adminPage.locator('input[name="locales.en_US"]').fill(`Organic Cotton ${uid}`);
+    await expect(codeInput).toHaveValue(optCode);
+    await adminPage.locator('span.icon-cancel.cursor-pointer').click();
     await deleteAttribute(adminPage, code);
   });
 
@@ -581,14 +604,7 @@ test.describe('Select Type Attribute', () => {
     await addOption(adminPage, `opt2_${uid}`, 'Option 2');
     await addOption(adminPage, `opt3_${uid}`, 'Option 3');
     await addOption(adminPage, `opt4_${uid}`, 'Option 4');
-    const paginationSymbols = ['«', '‹', '›', '»'];
-    for (const symbol of paginationSymbols) {
-      const button = adminPage.getByText(symbol, { exact: true });
-      await expect(button).toBeVisible();
-      await expect(button).toBeEnabled();
-      await button.click();
-      await adminPage.waitForLoadState('networkidle');
-    }
+    await assertPaginationControls(adminPage);
     await deleteAttribute(adminPage, code);
   });
 
@@ -681,8 +697,7 @@ test.describe('Swatch Type Attribute Option', () => {
   test('Create the select type attribute with swatch type as color swatch', { timeout: 60000 }, async ({ adminPage }) => {
     const uid = generateUid();
     const code = `csw_${uid}`;
-    await adminPage.goto('/admin/catalog/attributes/create');
-    await adminPage.waitForLoadState('networkidle');
+    await gotoPage(adminPage, '/admin/catalog/attributes/create');
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
     await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
     await adminPage.locator('input[name="type"][type="text"]').fill('Select');
@@ -741,8 +756,7 @@ test.describe('Swatch Type Attribute Option', () => {
   test('Create the select type attribute with swatch type as image swatch', { timeout: 60000 }, async ({ adminPage }) => {
     const uid = generateUid();
     const code = `isw_${uid}`;
-    await adminPage.goto('/admin/catalog/attributes/create');
-    await adminPage.waitForLoadState('networkidle');
+    await gotoPage(adminPage, '/admin/catalog/attributes/create');
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
     await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
     await adminPage.locator('input[name="type"][type="text"]').fill('Select');
@@ -794,9 +808,7 @@ test.describe('Swatch Type Attribute Option', () => {
     await searchAndEditAttribute(adminPage, code);
     await addImageSwatchOption(adminPage, optCode, 'Dots Pattern', 'assets/dotted.png');
     const searchBox = adminPage.getByRole('textbox', { name: 'Search', exact: true });
-    await searchBox.fill(optCode);
-    await searchBox.press('Enter');
-    await adminPage.waitForLoadState('networkidle');
+    await submitDataGridSearch(adminPage, searchBox, optCode);
     const itemRow1 = adminPage.locator('div', { hasText: optCode }).filter({ hasText: 'Dots Pattern' });
     await itemRow1.locator('span[title="Delete"]').first().click();
     await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
@@ -811,9 +823,7 @@ test.describe('Swatch Type Attribute Option', () => {
     await createSelectSwatchAttribute(adminPage, code, 'Image Swatch', 'Image Swatch');
     await searchAndEditAttribute(adminPage, code);
     await addImageSwatchOption(adminPage, optCode, 'Floral Pattern', 'assets/floral.jpg');
-    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(optCode);
-    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).press('Enter');
-    await adminPage.waitForLoadState('networkidle');
+    await submitDataGridSearch(adminPage, adminPage.getByRole('textbox', { name: 'Search', exact: true }), optCode);
     await expect(adminPage.locator('#app').getByText(optCode, { exact: true })).toBeVisible();
     await expect(adminPage.locator('#app').getByText('Floral Pattern', { exact: true })).toBeVisible();
     await deleteAttribute(adminPage, code);

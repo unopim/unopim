@@ -118,7 +118,7 @@ class CreateProductDraftStep implements PipelineStageContract
             return $model->id;
         }
 
-        return 'draft_'.md5($draft['sku'].($draft['aiMeta']['createdAt'] ?? ''));
+        return 'draft_'.hash('xxh128', $draft['sku'].($draft['aiMeta']['createdAt'] ?? ''));
     }
 
     /**

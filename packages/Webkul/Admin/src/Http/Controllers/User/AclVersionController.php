@@ -25,6 +25,6 @@ class AclVersionController extends Controller
 
         sort($permissions);
 
-        return sha1($role->permission_type.'|'.implode(',', $permissions));
+        return hash('xxh128', $role->permission_type.'|'.implode(',', $permissions));
     }
 }

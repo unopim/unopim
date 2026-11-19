@@ -157,6 +157,8 @@
                     @include('admin::catalog.products.edit.attribute-group-loader', [
                         'productId'   => $product->id,
                         'nextGroupId' => $nextGroupId,
+                        'channelCode' => $currentChannel->code,
+                        'localeCode'  => $currentLocale->code,
                     ])
                 @endif
             </div>

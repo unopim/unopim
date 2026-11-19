@@ -1,0 +1,98 @@
+name: UnoPim E2E setup
+description: Install dependencies, install UnoPim with demo data and start the app server and queue worker for Playwright.
+
+inputs:
+  admin-email:
+    description: Email of the seeded admin the specs sign in as.
+    required: true
+  admin-password:
+    description: Password of the seeded admin the specs sign in as.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Node.js
+      uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+      with:
+        node-version: '22'
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+      with:
+        php-version: '8.4'
+        extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
+        ini-values: error_reporting=E_ALL
+        tools: composer:v2
+        coverage: none
+
+    - name: Install Composer dependencies
+      uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
+      with:
+        composer-options: "--optimize-autoloader"
+
+    - name: Cache npm dependencies
+      uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+      with:
+        path: tests/e2e-pw/node_modules
+        key: ${{ runner.os }}-npm-${{ hashFiles('tests/e2e-pw/package-lock.json') }}
+        restore-keys: ${{ runner.os }}-npm-
+
+    - name: Cache Playwright browsers
+      uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+      with:
+        path: ~/.cache/ms-playwright
+        key: ${{ runner.os }}-playwright-${{ hashFiles('tests/e2e-pw/package-lock.json') }}
+
+    - name: Install npm & Playwright browsers
+      shell: bash
+      run: |
+        cd tests/e2e-pw
+        npm ci --no-progress --prefer-offline
+        npx playwright install --with-deps chromium
+
+    - name: Setting Environment
+      shell: bash
+      run: |
+        cp .env.example .env
+        sed -i "s|^\(APP_ENV=\s*\).*$|\1testing|" .env
+        sed -i "s|^\(APP_DEBUG=\s*\).*$|\1false|" .env
+        sed -i "s|^\(APP_URL=\s*\).*$|\1http://127.0.0.1:8000|" .env
+        sed -i "s|^\(DB_HOST=\s*\).*$|\1127.0.0.1|" .env
+        sed -i "s|^\(DB_PORT=\s*\).*$|\13306|" .env
+        sed -i "s|^\(DB_DATABASE=\s*\).*$|\1unopim|" .env
+        sed -i "s|^\(DB_USERNAME=\s*\).*$|\1root|" .env
+        sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
+        # The API E2E specs fire many requests back-to-back; lift the REST rate
+        # limit for the test server so they don't trip the 120/min throttle (429).
+        echo "REST_API_RATE_LIMIT=100000" >> .env
+        # Login-heavy shards (loginpage, notifications re-auth, ajax-nav, security)
+        # sign in as the same admin many times within a minute; raise the admin
+        # login throttle so those legitimate logins don't cascade into 429s. The
+        # rate-limit security spec reads this same value to still assert throttling.
+        echo "ADMIN_LOGIN_RATE_LIMIT=20" >> .env
+        # The oauth spec requests well over a dozen tokens as the same admin from
+        # the same address, and that limiter keys on `username|ip`, so the 10/min
+        # production default throttles the suite against itself.
+        echo "OAUTH_TOKEN_RATE_LIMIT=100000" >> .env
+
+        # The webhook-delivery spec's catcher listens on the runner's loopback;
+        # SafeWebhookUrl blocks loopback unless this opt-in is set.
+        echo "WEBHOOK_ALLOW_LOOPBACK=true" >> .env
+
+    - name: Running UnoPim Installer & Start Server
+      shell: bash
+      env:
+        INSTALLER_ADMIN_EMAIL: ${{ inputs.admin-email }}
+        INSTALLER_ADMIN_PASSWORD: ${{ inputs.admin-password }}
+      run: |
+        php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
+        php artisan unopim:passport:install-preset
+        php artisan db:seed --class=DiscardQaFixtureSeeder
+        php artisan tinker tests/e2e-pw/scripts/seed-dpp-e2e.php
+        php artisan tinker tests/e2e-pw/scripts/seed-legacy-export-job.php
+        # Several PHP workers so parallel Playwright workers are not queued behind one request.
+        PHP_CLI_SERVER_WORKERS=6 php artisan serve --no-reload --host=0.0.0.0 --port=8000 > /tmp/server.log 2>&1 &
+        php artisan queue:work --queue=webhooks,default,system,completeness,publication > /tmp/queue.log 2>&1 &
+        echo "Waiting for server..."
+        timeout 30 bash -c 'until curl -s http://127.0.0.1:8000 > /dev/null; do sleep 1; done' || (cat /tmp/server.log && exit 1)

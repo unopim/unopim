@@ -14,7 +14,6 @@ tests/e2e-pw/dbg.mjs
 /ignorables/*
 /node_modules
 npm-debug.log
-package-lock.json
 /public/css
 /public/fonts
 /public/js
@@ -76,3 +75,6 @@ tests/e2e-pw/.secrets.local
 # staging area for the separate unopim/agent-skills project — never commit here
 /agent-skills/
 .agents
+
+# local verification stamp written by unopim-verify; never committed
+/.verify-stamp

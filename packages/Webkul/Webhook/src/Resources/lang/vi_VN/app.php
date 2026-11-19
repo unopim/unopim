@@ -137,6 +137,14 @@ return [
                     'delete-success' => 'Nhật ký Webhook đã được xóa thành công',
                     'delete-failed'  => 'Xóa nhật ký Webhook thất bại một cách bất ngờ',
                     'unauthorized'   => 'Hành động này không được phép',
+                    'select-all'     => [
+                        'delete' => [
+                            'queued'    => 'Đã đưa việc xóa tất cả nhật ký khớp vào hàng đợi. Bạn sẽ được thông báo khi hoàn tất.',
+                            'title'     => 'Xóa nhật ký webhook',
+                            'completed' => 'Đã xóa :count nhật ký webhook.',
+                            'failed'    => 'Việc xóa :count nhật ký webhook đã kết thúc với lỗi. Một số nhật ký chưa được xóa.',
+                        ],
+                    ],
                 ],
             ],
         ],

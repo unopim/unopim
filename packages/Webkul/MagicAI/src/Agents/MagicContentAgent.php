@@ -4,6 +4,7 @@ namespace Webkul\MagicAI\Agents;
 
 use Laravel\Ai\Contracts\Agent;
 use Laravel\Ai\Promptable;
+use Webkul\MagicAI\MagicAI;
 
 /**
  * Dynamic AI agent for Magic AI content generation.
@@ -19,7 +20,7 @@ class MagicContentAgent implements Agent
     public function __construct(
         protected string $systemPrompt = '',
         protected ?float $temperature = 0.7,
-        protected ?int $maxTokens = 1054,
+        protected ?int $maxTokens = MagicAI::DEFAULT_MAX_TOKENS,
     ) {}
 
     public function instructions(): string

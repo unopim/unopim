@@ -1,9 +1,10 @@
 const { test, expect } = require('../../utils/fixtures');
 const { navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
+const { ensureMagicAITranslationDisabled } = require('../../utils/magic-ai-helpers');
 const path = require('path');
 
 
-test.describe('Magic AI settings — save with Magic AI permission only', () => {
+test.describe('Magic AI settings — save with Magic AI permission only', { tag: '@global-state' }, () => {
   test.setTimeout(180000);
 
   const ADMIN_STATE = path.resolve(__dirname, '../..', process.env.PW_STATE_DIR || '.state', 'admin-auth.json');
@@ -121,6 +122,8 @@ test.describe('Magic AI settings — save with Magic AI permission only', () => 
     const adminContext = await browser.newContext({ storageState: ADMIN_STATE });
     await adminContext.addInitScript(HIDE_OVERLAYS);
     const adminPage = await adminContext.newPage();
+
+    await ensureMagicAITranslationDisabled(adminPage);
 
     await createRole(adminPage, roleName);
     const roleId = await setRolePermissions(adminPage, roleName, [

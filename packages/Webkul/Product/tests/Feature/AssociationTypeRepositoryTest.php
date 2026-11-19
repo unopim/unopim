@@ -5,8 +5,10 @@ use Webkul\Product\Repositories\AssociationTypeRepository;
 it('creates a type with translations and a field via the repository', function () {
     $repo = app(AssociationTypeRepository::class);
 
+    $code = 'spare_parts_'.uniqid();
+
     $type = $repo->create([
-        'code'            => 'spare_parts',
+        'code'            => $code,
         'status'          => 1,
         'position'        => 1,
         'is_user_defined' => 1,
@@ -16,14 +18,14 @@ it('creates a type with translations and a field via the repository', function (
         ],
     ]);
 
-    expect($type->code)->toBe('spare_parts')
+    expect($type->code)->toBe($code)
         ->and($type->name)->toBe('Spare Parts')
         ->and($type->fields)->toHaveCount(1)
         ->and($type->fields->first()->code)->toBe('position')
         ->and($type->fields->first()->name)->toBe('Position')
         ->and($type->fields->first()->association_type_id)->toBe($type->id);
 
-    expect($repo->getActiveTypes()->pluck('code')->all())->toContain('spare_parts');
+    expect($repo->getActiveTypes()->pluck('code')->all())->toContain($code);
 });
 
 it('loads only the requested active types via getActiveTypesByIds', function () {

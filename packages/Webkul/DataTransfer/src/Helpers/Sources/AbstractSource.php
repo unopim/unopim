@@ -2,10 +2,31 @@
 
 namespace Webkul\DataTransfer\Helpers\Sources;
 
+use Illuminate\Support\Facades\Storage;
 use Webkul\DataTransfer\Helpers\Importers\AbstractImporter;
 
 abstract class AbstractSource
 {
+    /**
+     * Resolve a source path on the private disk, refusing one that no longer exists.
+     *
+     * A profile stores a relative path, so the file it points at can disappear
+     * between runs. Opening it unchecked lets PHP raise a warning carrying the
+     * resolved absolute path, which then reaches whoever ran the job.
+     *
+     * @throws \LogicException when the file is missing or unreadable
+     */
+    protected static function resolveReadablePath(string $filePath): string
+    {
+        $path = Storage::disk('private')->path($filePath);
+
+        if (! is_file($path) || ! is_readable($path)) {
+            throw new \LogicException(trans('data_transfer::app.validation.errors.file-missing'));
+        }
+
+        return $path;
+    }
+
     /**
      * Column names
      */

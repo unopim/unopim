@@ -1,5 +1,6 @@
 <?php
 
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 
 /**
@@ -11,7 +12,7 @@ function associationTabMarkup(): string
 {
     test()->loginAsAdmin();
 
-    $product = Product::factory()->create(['type' => 'simple']);
+    $product = Product::factory()->create(['type' => ProductType::Simple->value]);
 
     return test()->get(route('admin.catalog.products.edit', $product->id))
         ->assertOk()

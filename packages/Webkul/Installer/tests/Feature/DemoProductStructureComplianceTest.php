@@ -6,8 +6,15 @@ use Webkul\Installer\Database\Seeders\Demo\DemoCoreSeeder;
 use Webkul\Installer\Database\Seeders\Demo\DemoFamilySeeder;
 use Webkul\Installer\Database\Seeders\Demo\DemoProductSeeder;
 use Webkul\Product\Contracts\VariantStructurePlanner;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Publication\Database\Factories\PublicationFactory;
+use Webkul\Publication\Database\Factories\PublicationReleaseFactory;
+use Webkul\Publication\Database\Factories\PublicationVersionFactory;
+use Webkul\Publication\Models\Publication;
+use Webkul\Publication\Models\PublicationRelease;
+use Webkul\Publication\Models\PublicationVersion;
 
 /**
  * The seeded catalog has to obey the rule the product form enforces: a row may
@@ -80,11 +87,11 @@ it('never writes a value onto a row the variant structure does not let own it', 
 it('gives every configurable a name and every simple variant its own price', function () {
     seedDemoCatalog();
 
-    $configurable = Product::query()->where('type', 'configurable')->firstOrFail();
+    $configurable = Product::query()->where('type', ProductType::Configurable->value)->firstOrFail();
 
     expect($configurable->values['channel_locale_specific']['default']['en_US']['name'] ?? null)->not->toBeNull();
 
-    $simple = $configurable->variants()->where('type', 'simple')->first()
+    $simple = $configurable->variants()->where('type', ProductType::Simple->value)->first()
         ?? $configurable->variants()->firstOrFail()->variants()->firstOrFail();
 
     expect($simple->values['channel_locale_specific']['default']['en_US']['price'] ?? null)->not->toBeNull()
@@ -94,7 +101,7 @@ it('gives every configurable a name and every simple variant its own price', fun
 it('gives every row below a configurable a unique url_key and product number', function () {
     seedDemoCatalog();
 
-    $simples = Product::query()->where('type', 'simple')->whereNotNull('parent_id')->get();
+    $simples = Product::query()->where('type', ProductType::Simple->value)->whereNotNull('parent_id')->get();
 
     $urlKeys = $simples->pluck('values.common.url_key')->filter()->all();
     $numbers = $simples->pluck('values.common.product_number')->filter()->all();
@@ -103,4 +110,23 @@ it('gives every row below a configurable a unique url_key and product number', f
         ->and(array_unique($urlKeys))->toHaveCount(count($urlKeys))
         ->and($numbers)->toHaveCount($simples->count())
         ->and(array_unique($numbers))->toHaveCount(count($numbers));
+});
+
+it('re-seeds over publications that already carry releases', function () {
+    seedDemoCatalog();
+
+    $publication = Publication::query()->first()
+        ?? PublicationFactory::new()->create();
+
+    $release = PublicationReleaseFactory::new()->create(['publication_id' => $publication->id]);
+
+    PublicationVersionFactory::new()->create([
+        'publication_id' => $publication->id,
+        'release_id'     => $release->id,
+    ]);
+
+    seedDemoCatalog();
+
+    expect(PublicationRelease::query()->where('publication_id', $publication->id)->exists())->toBeFalse()
+        ->and(PublicationVersion::query()->where('publication_id', $publication->id)->exists())->toBeFalse();
 });

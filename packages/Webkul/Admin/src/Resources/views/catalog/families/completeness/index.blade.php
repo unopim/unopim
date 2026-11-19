@@ -145,6 +145,7 @@
                                 <x-admin::form.control-group.control
                                     type="multiselect"
                                     name="channel_requirements"
+                                    :label="trans('completeness::app.catalog.families.edit.completeness.channel-required')"
                                     v-model="selectedChannels"
                                     :options="$allChannels"
                                     track-by="code"
@@ -225,9 +226,8 @@
                             .catch(console.error)
                             .finally(() => this.isSaving = false);
                     } else {
-                        params.indices = this.$refs.completenessAttributeDatagrid.applied.massActions.indices;
-
-                        this.$axios.post("{{ route('admin.catalog.families.completeness.mass_update') }}", params)
+                        this.$refs.completenessAttributeDatagrid.resolveSelection({ supportsSelectAll: true })
+                            .then(selection => this.$axios.post("{{ route('admin.catalog.families.completeness.mass_update') }}", { ...params, ...selection }))
                             .then(response => {
                                 this.$refs.completenessModal.toggle();
 

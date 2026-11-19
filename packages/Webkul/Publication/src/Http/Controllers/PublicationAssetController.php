@@ -28,7 +28,7 @@ class PublicationAssetController extends Controller
     public function __construct(private readonly PublicationResolver $resolver) {}
 
     /**
-     * Serves a private-disk document, but only a path the current Published version's payload references.
+     * Serves a private-disk document, but only a path a current, unredacted version's payload references.
      *
      * `type` is read via the Request, not a parameter: route defaults are appended after URI captures, so a
      * `string $type` parameter would receive `{uuid}`'s value.
@@ -101,13 +101,20 @@ class PublicationAssetController extends Controller
     }
 
     /**
-     * Whether any current Published version for this publication references $path.
+     * Whether a current, unredacted version of this publication references $path.
+     *
+     * The index keeps rows for superseded versions (their documents remain attested
+     * content), so servability is decided here against the referencing version's
+     * state rather than by row existence alone.
      */
     private function isReferenced(int $publicationId, string $path): bool
     {
         return PublicationVersionDocumentProxy::modelClass()::query()
             ->where('publication_id', $publicationId)
             ->where('path', $path)
+            ->whereHas('version', fn ($version) => $version
+                ->where('is_current', true)
+                ->whereNull('redacted_at'))
             ->exists();
     }
 }

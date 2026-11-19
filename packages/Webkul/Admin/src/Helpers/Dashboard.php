@@ -13,6 +13,7 @@ use Webkul\Admin\Helpers\Reporting\Channel;
 use Webkul\Admin\Helpers\Reporting\Currency;
 use Webkul\Admin\Helpers\Reporting\Locale;
 use Webkul\Admin\Helpers\Reporting\Product;
+use Webkul\Product\Enums\ProductType;
 
 class Dashboard
 {
@@ -31,6 +32,18 @@ class Dashboard
         'dashboard.product_stats',
         'dashboard.needs_attention',
         'dashboard.channel_readiness',
+    ];
+
+    /**
+     * Stat types of the widgets that only render while the PIM module is switched on,
+     * mapped to the cache key that holds each one.
+     */
+    public const PIM_WIDGETS = [
+        'total-catalogs'       => 'dashboard.total_catalogs',
+        'total-configurations' => 'dashboard.total_configurations',
+        'product-stats'        => 'dashboard.product_stats',
+        'needs-attention'      => 'dashboard.needs_attention',
+        'channel-readiness'    => 'dashboard.channel_readiness',
     ];
 
     /**
@@ -118,9 +131,6 @@ class Dashboard
     public function getProductStats()
     {
         return Cache::remember('dashboard.product_stats', self::CACHE_TTL, function () {
-            // Single query for type + status using conditional aggregation.
-            // Note: `status` may be stored as tinyint (MySQL) or boolean (PostgreSQL).
-            // Use CAST to SIGNED/INTEGER for cross-database compatibility.
             $castType = DB::getDriverName() === 'pgsql' ? 'INTEGER' : 'SIGNED';
             $stats = DB::table('products')
                 ->select(
@@ -160,7 +170,6 @@ class Dashboard
                 ->groupBy(DB::raw('DATE(created_at)'))
                 ->pluck('count', 'date');
 
-            // Fill missing days with 0
             $created = [];
             $updated = [];
 
@@ -170,17 +179,12 @@ class Dashboard
                 $updated[$date] = (int) ($updateTrends[$date] ?? 0);
             }
 
-            // Quick insights
             $newThisWeek = DB::table('products')
                 ->where('created_at', '>=', $startDate)
                 ->count();
 
-            // Variants live on `products.parent_id` (a child product row
-            // pointing at its configurable parent), NOT in `product_relations`
-            // — that table is reserved for related/up-sell links. Counting
-            // via product_relations always returned 0 (Internal-679).
             $withVariants = DB::table('products as parents')
-                ->where('parents.type', 'configurable')
+                ->where('parents.type', ProductType::Configurable->value)
                 ->whereExists(function ($query) {
                     $query->select(DB::raw(1))
                         ->from('products as variants')
@@ -196,7 +200,6 @@ class Dashboard
                     ->avg('avg_completeness_score');
             }
 
-            // Enrichment velocity
             $enrichedThisWeek = 0;
             $enrichedLastWeek = 0;
 
@@ -271,19 +274,20 @@ class Dashboard
      */
     public function getChannelReadiness()
     {
-        return Cache::remember('dashboard.channel_readiness', self::CACHE_TTL, function () {
+        $readiness = Cache::remember('dashboard.channel_readiness', self::CACHE_TTL, function () {
             if (! Schema::hasTable('product_completeness')) {
                 return [];
             }
 
-            $completenessTable = DB::getTablePrefix().'product_completeness';
+            $productIdColumn = DB::getQueryGrammar()->wrap('product_completeness.product_id');
+            $scoreColumn = DB::getQueryGrammar()->wrap('product_completeness.score');
 
             $readiness = DB::table('product_completeness')
                 ->join('channels', 'channels.id', '=', 'product_completeness.channel_id')
                 ->select(
                     'channels.code as channel',
-                    DB::raw("COUNT(DISTINCT {$completenessTable}.product_id) as total"),
-                    DB::raw("COUNT(DISTINCT CASE WHEN {$completenessTable}.score >= 80 THEN {$completenessTable}.product_id END) as ready")
+                    DB::raw("COUNT(DISTINCT {$productIdColumn}) as total"),
+                    DB::raw("COUNT(DISTINCT CASE WHEN {$scoreColumn} >= 80 THEN {$productIdColumn} END) as ready")
                 )
                 ->groupBy('channels.code')
                 ->get();
@@ -295,6 +299,13 @@ class Dashboard
                 'percentage' => $row->total > 0 ? round(($row->ready / $row->total) * 100) : 0,
             ])->toArray();
         });
+
+        $labelsByCode = $this->channel->getLabelsByCode();
+
+        return array_map(fn (array $row) => [
+            ...$row,
+            'label' => $labelsByCode[$row['channel']] ?? "[{$row['channel']}]",
+        ], $readiness);
     }
 
     /**
