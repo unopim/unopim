@@ -20,7 +20,7 @@ use Webkul\User\Models\Role;
  * values land: the explicit `locale` argument, the conversation locale as
  * fallback, and locale maps, each checked against the active locales.
  */
-beforeEach(function () {
+beforeEach(function (): void {
     Queue::fake();
 
     Locale::whereIn('code', ['en_US', 'de_DE'])->update(['status' => 1]);
@@ -88,7 +88,7 @@ function updateProductLocaleChatContext(string $locale = 'en_US'): ChatContext
     );
 }
 
-function runUpdateProduct(ChatContext $context, array $arguments): array
+function runUpdateProductLocaleTool(ChatContext $context, array $arguments): array
 {
     return json_decode(
         app(UpdateProduct::class)->register($context)->handle(new Request($arguments)),
@@ -98,12 +98,12 @@ function runUpdateProduct(ChatContext $context, array $arguments): array
     );
 }
 
-it('writes a per-locale value to the explicitly requested locale and leaves en_US alone', function () {
+it('writes a per-locale value to the explicitly requested locale and leaves en_US alone', function (): void {
     $code = $this->localeAttribute->code;
 
     $this->product->forceFill(['values' => ['locale_specific' => ['en_US' => [$code => 'English copy']]]])->save();
 
-    $result = runUpdateProduct(updateProductLocaleChatContext(), [
+    $result = runUpdateProductLocaleTool(updateProductLocaleChatContext(), [
         'sku'          => $this->product->sku,
         'changes_json' => json_encode([$code => 'Deutscher Text']),
         'locale'       => 'de_DE',
@@ -116,10 +116,10 @@ it('writes a per-locale value to the explicitly requested locale and leaves en_U
         ->and($values['locale_specific']['en_US'][$code])->toBe('English copy');
 });
 
-it('falls back to the conversation locale and queues translation when no locale is given', function () {
+it('falls back to the conversation locale and queues translation when no locale is given', function (): void {
     $code = $this->localeAttribute->code;
 
-    runUpdateProduct(updateProductLocaleChatContext('de_DE'), [
+    runUpdateProductLocaleTool(updateProductLocaleChatContext('de_DE'), [
         'sku'          => $this->product->sku,
         'changes_json' => json_encode([$code => 'Deutscher Text']),
     ]);
@@ -129,8 +129,8 @@ it('falls back to the conversation locale and queues translation when no locale 
     Queue::assertPushed(TranslateProductValuesJob::class);
 });
 
-it('does not queue translation when a locale is named explicitly', function () {
-    runUpdateProduct(updateProductLocaleChatContext(), [
+it('does not queue translation when a locale is named explicitly', function (): void {
+    runUpdateProductLocaleTool(updateProductLocaleChatContext(), [
         'sku'          => $this->product->sku,
         'changes_json' => json_encode([$this->localeAttribute->code => 'Deutscher Text']),
         'locale'       => 'de_DE',
@@ -139,10 +139,10 @@ it('does not queue translation when a locale is named explicitly', function () {
     Queue::assertNotPushed(TranslateProductValuesJob::class);
 });
 
-it('rejects an inactive explicit locale and leaves the product unchanged', function () {
+it('rejects an inactive explicit locale and leaves the product unchanged', function (): void {
     $before = $this->product->fresh()->values;
 
-    $result = runUpdateProduct(updateProductLocaleChatContext(), [
+    $result = runUpdateProductLocaleTool(updateProductLocaleChatContext(), [
         'sku'          => $this->product->sku,
         'changes_json' => json_encode([$this->localeAttribute->code => 'Text']),
         'locale'       => $this->inactiveLocale,
@@ -153,10 +153,10 @@ it('rejects an inactive explicit locale and leaves the product unchanged', funct
         ->and($this->product->fresh()->values)->toEqual($before);
 });
 
-it('rejects an inactive conversation locale from the page instead of writing to it', function () {
+it('rejects an inactive conversation locale from the page instead of writing to it', function (): void {
     $before = $this->product->fresh()->values;
 
-    $result = runUpdateProduct(updateProductLocaleChatContext($this->inactiveLocale), [
+    $result = runUpdateProductLocaleTool(updateProductLocaleChatContext($this->inactiveLocale), [
         'sku'          => $this->product->sku,
         'changes_json' => json_encode([$this->localeAttribute->code => 'Text']),
     ]);
@@ -166,10 +166,40 @@ it('rejects an inactive conversation locale from the page instead of writing to 
         ->and($this->product->fresh()->values)->toEqual($before);
 });
 
-it('writes every entry of a locale map whose keys are all active locales', function () {
+it('updates price and status when the conversation locale is inactive', function (): void {
+    $priceAttribute = Attribute::factory()->create([
+        'type'              => 'price',
+        'value_per_locale'  => false,
+        'value_per_channel' => false,
+    ]);
+
+    DB::table('attribute_group_mappings')->insert([
+        'attribute_id'              => $priceAttribute->id,
+        'attribute_family_group_id' => DB::table('attribute_family_group_mappings')
+            ->where('attribute_family_id', $this->product->attribute_family_id)
+            ->value('id'),
+        'position'                  => 1001,
+    ]);
+
+    $this->product->forceFill(['status' => 0])->save();
+
+    $result = runUpdateProductLocaleTool(updateProductLocaleChatContext($this->inactiveLocale), [
+        'sku'          => $this->product->sku,
+        'changes_json' => json_encode([$priceAttribute->code => 29.99, 'status' => 'active']),
+    ]);
+
+    $product = $this->product->fresh();
+
+    expect($result['result']['updated'])->toBe(1)
+        ->and($result['result']['errors'])->toBeNull()
+        ->and($product->status)->toBe(1)
+        ->and($product->values['common'][$priceAttribute->code])->toContain('29.99');
+});
+
+it('writes every entry of a locale map whose keys are all active locales', function (): void {
     $code = $this->localeAttribute->code;
 
-    runUpdateProduct(updateProductLocaleChatContext(), [
+    runUpdateProductLocaleTool(updateProductLocaleChatContext(), [
         'sku'          => $this->product->sku,
         'changes_json' => json_encode([$code => ['en_US' => 'English', 'de_DE' => 'Deutsch']]),
     ]);
@@ -180,10 +210,10 @@ it('writes every entry of a locale map whose keys are all active locales', funct
         ->and($values['locale_specific']['de_DE'][$code])->toBe('Deutsch');
 });
 
-it('rejects a locale map with an unknown key, names the key and writes nothing', function () {
+it('rejects a locale map with an unknown key, names the key and writes nothing', function (): void {
     $code = $this->localeAttribute->code;
 
-    $result = runUpdateProduct(updateProductLocaleChatContext(), [
+    $result = runUpdateProductLocaleTool(updateProductLocaleChatContext(), [
         'sku'          => $this->product->sku,
         'changes_json' => json_encode([$code => ['de_DE' => 'x', 'typo' => 'y']]),
     ]);
@@ -194,10 +224,10 @@ it('rejects a locale map with an unknown key, names the key and writes nothing',
         ->and(data_get($this->product->fresh()->values, "locale_specific.de_DE.{$code}"))->toBeNull();
 });
 
-it('writes a channel and locale attribute under the requested locale of every channel', function () {
+it('writes a channel and locale attribute under the requested locale of every channel', function (): void {
     $code = $this->channelLocaleAttribute->code;
 
-    runUpdateProduct(updateProductLocaleChatContext(), [
+    runUpdateProductLocaleTool(updateProductLocaleChatContext(), [
         'sku'          => $this->product->sku,
         'changes_json' => json_encode([$code => 'Deutscher Text']),
         'locale'       => 'de_DE',

@@ -1716,11 +1716,7 @@ app.component('v-agenting-pim', {
         },
 
         /**
-         * Sends the message with the catalog scope of the page the user is looking at
-         * (locale/channel query parameters, else the inputs marked data-catalog-scope,
-         * so an unrelated locale field on a settings form is never sent as scope). The
-         * backend prefers these codes and otherwise falls back to the default locale, so
-         * without them a locale-scoped edit lands on the wrong translation.
+         * Send the message with the locale and channel of the page being viewed.
          */
         async send(retryRequestId = null) {
             const text = this.inputText.trim();
