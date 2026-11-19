@@ -39,7 +39,7 @@ it('samples a bounded number of products and extrapolates for a large selection'
 
     $estimate = app(BulkEnrichmentEstimator::class)->estimate(estimatorSelection(BulkEnrichmentEstimator::SAMPLE_SIZE + 10), 1000, 'default', 'en_US');
 
-    $sampleQueries = collect(DB::getQueryLog())->filter(fn (array $query): bool => str_contains($query['query'], 'limit '.BulkEnrichmentEstimator::SAMPLE_SIZE));
+    $sampleQueries = collect(DB::getQueryLog())->filter(fn (array $query): bool => str_contains($query['query'], ' in (') && count($query['bindings']) >= BulkEnrichmentEstimator::SAMPLE_SIZE);
 
     expect($estimate['products'])->toBe(BulkEnrichmentEstimator::SAMPLE_SIZE + 10)
         ->and($estimate['sampled'])->toBe(BulkEnrichmentEstimator::SAMPLE_SIZE)

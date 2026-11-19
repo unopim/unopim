@@ -24,6 +24,9 @@ beforeEach(function () {
     Event::fake();
 });
 
+/**
+ * Build a chat context for the estimate tool.
+ */
 function estimateChatContext(?Admin $user = null): ChatContext
 {
     return new ChatContext(
@@ -40,6 +43,9 @@ function estimateChatContext(?Admin $user = null): ChatContext
     );
 }
 
+/**
+ * @return array<string, mixed>
+ */
 function runEstimateTool(int $limit, ?Admin $user = null): array
 {
     $tool = resolve(EstimateTokens::class)->register(estimateChatContext($user));
@@ -47,11 +53,17 @@ function runEstimateTool(int $limit, ?Admin $user = null): array
     return json_decode((string) $tool->handle(new Request(['filter_by' => 'all', 'limit' => $limit])), true);
 }
 
+/**
+ * @param  array<string, mixed>  $payload
+ */
 function estimateToolResult(array $payload): ToolResult
 {
     return new ToolResult(id: 'call_1', name: 'estimate_tokens', arguments: [], result: json_encode($payload));
 }
 
+/**
+ * @return array<string, mixed>
+ */
 function validEstimate(): array
 {
     return ['products' => 40, 'sampled' => 20, 'sampled_estimate' => true, 'estimated_input_tokens' => 18000, 'max_output_tokens' => 81920];
@@ -88,6 +100,18 @@ it('denies the estimate without catalog access', function () {
     $payload = runEstimateTool(50, $user);
 
     expect($payload['error'])->toContain('Permission denied')
+        ->and($payload)->not->toHaveKey('token_estimate');
+});
+
+it('omits the confirmation estimate when the user cannot edit products', function () {
+    Product::factory()->count(BulkEnrichmentEstimator::BULK_THRESHOLD + 5)->create();
+
+    $role = Role::factory()->create(['permission_type' => 'custom', 'permissions' => ['catalog', 'catalog.products']]);
+    $user = Admin::factory()->create(['role_id' => $role->id]);
+
+    $payload = runEstimateTool(BulkEnrichmentEstimator::BULK_THRESHOLD + 5, $user);
+
+    expect($payload)->toHaveKey('products')
         ->and($payload)->not->toHaveKey('token_estimate');
 });
 
@@ -143,7 +167,7 @@ it('renders the estimate card above the confirmation buttons in the chat widget'
         ->and($buttons)->not->toBeFalse()
         ->and($card)->toBeLessThan($buttons)
         ->and($template)->toContain("tokenEstimateTitle: `@lang('ai-agent::app.widget.token-estimate.title')`")
-        ->and($template)->toContain('if (msg.token_estimate) return true;');
+        ->and($template)->toContain("if (msg.token_estimate && text.includes('?')) return true;");
 
     foreach (['title', 'products', 'input-tokens', 'output-budget', 'approximate', 'sampled', 'no-cost'] as $key) {
         expect(trans('ai-agent::app.widget.token-estimate.'.$key))->not->toBe('ai-agent::app.widget.token-estimate.'.$key);
