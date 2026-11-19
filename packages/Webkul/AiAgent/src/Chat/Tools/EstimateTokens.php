@@ -40,7 +40,7 @@ class EstimateTokens implements PimTool
 
             public function description(): string
             {
-                return 'Estimate the AI token cost of a bulk content operation BEFORE running it. Pass the same filter you would give bulk_edit / the products you plan to enrich; returns product count, estimated input tokens and the maximum output budget of one generate_content call per product. Always call this before confirming bulk AI content generation over many products; the estimate is shown to the user next to your confirmation question.';
+                return 'Estimate the AI token cost of a bulk content operation BEFORE running it. Pass the same filter you would give bulk_edit / the products you plan to enrich; returns product count, estimated input tokens and the maximum output budget of one generate_content call per product. Always call this before confirming bulk AI content generation over many products; the estimate is shown to the user as a card, and Yes/No buttons appear only when your reply ends with "Shall I proceed?", so use that phrase when asking for confirmation and not when only answering a cost question.';
             }
 
             public function schema(JsonSchema $schema): array

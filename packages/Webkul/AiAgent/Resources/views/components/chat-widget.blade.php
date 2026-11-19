@@ -360,7 +360,7 @@
                                         </button>
                                     </div>
 
-                                    <div v-if="msg.token_estimate && needsConfirmation(msg, idx)" class="rounded-xl border border-primary-200 dark:border-cherry-700 overflow-hidden mt-1" role="note">
+                                    <div v-if="msg.token_estimate" class="rounded-xl border border-primary-200 dark:border-cherry-700 overflow-hidden mt-1" role="note">
                                         <div class="px-4 py-2 border-b border-primary-100 dark:border-cherry-700 bg-primary-50 dark:bg-cherry-900">
                                             <p class="text-[10px] font-bold text-primary-500 dark:text-primary-400 uppercase tracking-wider" v-text="trans.tokenEstimateTitle"></p>
                                         </div>
@@ -2220,7 +2220,6 @@ app.component('v-agenting-pim', {
             if (msg.role !== 'assistant' || msg._confirmed || this.isLoading || msg.isStreaming || msg.isRedirect) return false;
             if (idx !== this.messages.length - 1) return false;
             const text = (msg.content || '').toLowerCase();
-            if (msg.token_estimate && text.includes('?')) return true;
             return /shall i proceed|do you want me to|should i (go ahead|proceed|create|update|delete|continue)|confirm.*(yes|no)|proceed\?|want me to (create|update|apply|execute)/i.test(text);
         },
 

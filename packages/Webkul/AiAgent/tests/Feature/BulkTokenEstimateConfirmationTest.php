@@ -44,7 +44,9 @@ function estimateChatContext(?Admin $user = null): ChatContext
 }
 
 /**
- * @return array<string, mixed>
+ * Run the estimate tool over every product and decode its JSON result.
+ *
+ * @return array{products?: int, sampled?: int, sampled_estimate?: bool, estimated_input_tokens?: int, max_output_tokens?: int, estimated_output_tokens?: int, estimated_total_tokens?: int, note?: string, token_estimate?: array<string, int|bool>, error?: string}
  */
 function runEstimateTool(int $limit, ?Admin $user = null): array
 {
@@ -54,6 +56,8 @@ function runEstimateTool(int $limit, ?Admin $user = null): array
 }
 
 /**
+ * Wrap a payload as an estimate_tokens tool result.
+ *
  * @param  array<string, mixed>  $payload
  */
 function estimateToolResult(array $payload): ToolResult
@@ -62,7 +66,9 @@ function estimateToolResult(array $payload): ToolResult
 }
 
 /**
- * @return array<string, mixed>
+ * A well-formed estimate as the tool attaches it to the confirmation payload.
+ *
+ * @return array{products: int, sampled: int, sampled_estimate: bool, estimated_input_tokens: int, max_output_tokens: int}
  */
 function validEstimate(): array
 {
@@ -160,14 +166,14 @@ it('rejects a malformed estimate when a conversation message is saved', function
 it('renders the estimate card above the confirmation buttons in the chat widget', function () {
     $template = (string) file_get_contents(base_path('packages/Webkul/AiAgent/Resources/views/components/chat-widget.blade.php'));
 
-    $card = strpos($template, 'v-if="msg.token_estimate && needsConfirmation(msg, idx)"');
+    $card = strpos($template, 'v-if="msg.token_estimate" class="rounded-xl');
     $buttons = strpos($template, 'v-if="needsConfirmation(msg, idx)" class="flex gap-2 mt-1"');
 
     expect($card)->not->toBeFalse()
         ->and($buttons)->not->toBeFalse()
         ->and($card)->toBeLessThan($buttons)
         ->and($template)->toContain("tokenEstimateTitle: `@lang('ai-agent::app.widget.token-estimate.title')`")
-        ->and($template)->toContain("if (msg.token_estimate && text.includes('?')) return true;");
+        ->and($template)->not->toContain('if (msg.token_estimate');
 
     foreach (['title', 'products', 'input-tokens', 'output-budget', 'approximate', 'sampled', 'no-cost'] as $key) {
         expect(trans('ai-agent::app.widget.token-estimate.'.$key))->not->toBe('ai-agent::app.widget.token-estimate.'.$key);
