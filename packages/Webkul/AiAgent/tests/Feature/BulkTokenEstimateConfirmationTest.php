@@ -19,7 +19,7 @@ use Webkul\Product\Models\Product;
 use Webkul\User\Models\Admin;
 use Webkul\User\Models\Role;
 
-beforeEach(function () {
+beforeEach(function (): void {
     Http::preventStrayRequests();
     Event::fake();
 });
@@ -27,7 +27,7 @@ beforeEach(function () {
 /**
  * Build a chat context for the estimate tool.
  */
-function estimateChatContext(?Admin $user = null): ChatContext
+function bulkEstimateChatContext(?Admin $user = null): ChatContext
 {
     return new ChatContext(
         message: 'Write descriptions for all products',
@@ -48,9 +48,9 @@ function estimateChatContext(?Admin $user = null): ChatContext
  *
  * @return array{products?: int, sampled?: int, sampled_estimate?: bool, estimated_input_tokens?: int, max_output_tokens?: int, estimated_output_tokens?: int, estimated_total_tokens?: int, note?: string, token_estimate?: array<string, int|bool>, error?: string}
  */
-function runEstimateTool(int $limit, ?Admin $user = null): array
+function runBulkEstimateTool(int $limit, ?Admin $user = null): array
 {
-    $tool = resolve(EstimateTokens::class)->register(estimateChatContext($user));
+    $tool = resolve(EstimateTokens::class)->register(bulkEstimateChatContext($user));
 
     return json_decode((string) $tool->handle(new Request(['filter_by' => 'all', 'limit' => $limit])), true);
 }
@@ -60,7 +60,7 @@ function runEstimateTool(int $limit, ?Admin $user = null): array
  *
  * @param  array<string, mixed>  $payload
  */
-function estimateToolResult(array $payload): ToolResult
+function bulkEstimateToolResult(array $payload): ToolResult
 {
     return new ToolResult(id: 'call_1', name: 'estimate_tokens', arguments: [], result: json_encode($payload));
 }
@@ -70,15 +70,15 @@ function estimateToolResult(array $payload): ToolResult
  *
  * @return array{products: int, sampled: int, sampled_estimate: bool, estimated_input_tokens: int, max_output_tokens: int}
  */
-function validEstimate(): array
+function validBulkTokenEstimate(): array
 {
     return ['products' => 40, 'sampled' => 20, 'sampled_estimate' => true, 'estimated_input_tokens' => 18000, 'max_output_tokens' => 81920];
 }
 
-it('attaches a confirmation estimate when the bulk request covers more than the threshold', function () {
+it('attaches a confirmation estimate when the bulk request covers more than the threshold', function (): void {
     Product::factory()->count(BulkEnrichmentEstimator::BULK_THRESHOLD + 5)->create();
 
-    $payload = runEstimateTool(BulkEnrichmentEstimator::BULK_THRESHOLD + 5);
+    $payload = runBulkEstimateTool(BulkEnrichmentEstimator::BULK_THRESHOLD + 5);
 
     expect($payload['token_estimate'] ?? null)->toBeArray()
         ->and($payload['token_estimate']['products'])->toBe(BulkEnrichmentEstimator::BULK_THRESHOLD + 5)
@@ -88,10 +88,10 @@ it('attaches a confirmation estimate when the bulk request covers more than the 
     Http::assertNothingSent();
 });
 
-it('does not attach a confirmation estimate for a small request', function () {
+it('does not attach a confirmation estimate for a small request', function (): void {
     Product::factory()->count(3)->create();
 
-    $payload = runEstimateTool(3);
+    $payload = runBulkEstimateTool(3);
 
     expect($payload)->toHaveKeys(['products', 'sampled', 'estimated_input_tokens', 'estimated_output_tokens', 'estimated_total_tokens', 'note'])
         ->and($payload['estimated_output_tokens'])->toBe($payload['max_output_tokens'])
@@ -99,52 +99,52 @@ it('does not attach a confirmation estimate for a small request', function () {
         ->and($payload)->not->toHaveKey('token_estimate');
 });
 
-it('denies the estimate without catalog access', function () {
+it('denies the estimate without catalog access', function (): void {
     $role = Role::factory()->create(['permission_type' => 'custom', 'permissions' => ['dashboard']]);
     $user = Admin::factory()->create(['role_id' => $role->id]);
 
-    $payload = runEstimateTool(50, $user);
+    $payload = runBulkEstimateTool(50, $user);
 
     expect($payload['error'])->toContain('Permission denied')
         ->and($payload)->not->toHaveKey('token_estimate');
 });
 
-it('omits the confirmation estimate when the user cannot edit products', function () {
+it('omits the confirmation estimate when the user cannot edit products', function (): void {
     Product::factory()->count(BulkEnrichmentEstimator::BULK_THRESHOLD + 5)->create();
 
     $role = Role::factory()->create(['permission_type' => 'custom', 'permissions' => ['catalog', 'catalog.products']]);
     $user = Admin::factory()->create(['role_id' => $role->id]);
 
-    $payload = runEstimateTool(BulkEnrichmentEstimator::BULK_THRESHOLD + 5, $user);
+    $payload = runBulkEstimateTool(BulkEnrichmentEstimator::BULK_THRESHOLD + 5, $user);
 
     expect($payload)->toHaveKey('products')
         ->and($payload)->not->toHaveKey('token_estimate');
 });
 
-it('carries the estimate into the blocking chat reply payload', function () {
+it('carries the estimate into the blocking chat reply payload', function (): void {
     $response = (new AgentResponse('invocation', 'Shall I proceed?', new TextUsage, new Meta))
-        ->withToolCallsAndResults(collect(), collect([estimateToolResult(['token_estimate' => validEstimate()])]));
+        ->withToolCallsAndResults(collect(), collect([bulkEstimateToolResult(['token_estimate' => validBulkTokenEstimate()])]));
 
     $runner = new AgentRunner(app(ToolRegistry::class));
     $result = [];
 
     (new ReflectionMethod($runner, 'extractActionResults'))->invokeArgs($runner, [$response, &$result]);
 
-    expect($result['token_estimate'])->toBe(validEstimate());
+    expect($result['token_estimate'])->toBe(validBulkTokenEstimate());
 });
 
-it('carries the estimate into the streamed chat reply payload', function () {
-    $stream = (object) ['events' => [(object) ['toolResult' => estimateToolResult(['token_estimate' => validEstimate()])]]];
+it('carries the estimate into the streamed chat reply payload', function (): void {
+    $stream = (object) ['events' => [(object) ['toolResult' => bulkEstimateToolResult(['token_estimate' => validBulkTokenEstimate()])]]];
 
     $runner = new AgentRunner(app(ToolRegistry::class));
     $result = [];
 
     (new ReflectionMethod($runner, 'extractStreamActionResults'))->invokeArgs($runner, [$stream, &$result]);
 
-    expect($result['token_estimate'])->toBe(validEstimate());
+    expect($result['token_estimate'])->toBe(validBulkTokenEstimate());
 });
 
-it('ignores a malformed estimate in a tool payload', function () {
+it('ignores a malformed estimate in a tool payload', function (): void {
     $runner = new AgentRunner(app(ToolRegistry::class));
     $result = [];
 
@@ -153,17 +153,17 @@ it('ignores a malformed estimate in a tool payload', function () {
     expect($result)->not->toHaveKey('token_estimate');
 });
 
-it('keeps a valid estimate when a conversation message is saved', function () {
-    $display = app(MessageDisplay::class)->normalize(['role' => 'assistant', 'content' => 'Shall I proceed?', 'token_estimate' => validEstimate()]);
+it('keeps a valid estimate when a conversation message is saved', function (): void {
+    $display = app(MessageDisplay::class)->normalize(['role' => 'assistant', 'content' => 'Shall I proceed?', 'token_estimate' => validBulkTokenEstimate()]);
 
-    expect($display['token_estimate'])->toBe(validEstimate());
+    expect($display['token_estimate'])->toBe(validBulkTokenEstimate());
 });
 
-it('rejects a malformed estimate when a conversation message is saved', function () {
+it('rejects a malformed estimate when a conversation message is saved', function (): void {
     app(MessageDisplay::class)->normalize(['role' => 'assistant', 'content' => 'Shall I proceed?', 'token_estimate' => ['products' => '<b>']]);
 })->throws(ValidationException::class);
 
-it('renders the estimate card above the confirmation buttons in the chat widget', function () {
+it('renders the estimate card above the confirmation buttons in the chat widget', function (): void {
     $template = (string) file_get_contents(base_path('packages/Webkul/AiAgent/Resources/views/components/chat-widget.blade.php'));
 
     $card = strpos($template, 'v-if="msg.token_estimate" class="rounded-xl');

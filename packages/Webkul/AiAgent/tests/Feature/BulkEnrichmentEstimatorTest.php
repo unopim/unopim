@@ -8,15 +8,15 @@ use Webkul\AiAgent\Services\EnrichmentService;
 use Webkul\AiAgent\Services\TokenEstimator;
 use Webkul\Product\Models\Product;
 
-function estimatorSelection(int $count): Builder
+function bulkEstimatorSelection(int $count): Builder
 {
     $ids = Product::factory()->count($count)->create()->pluck('id');
 
     return DB::table('products')->whereIn('id', $ids)->orderBy('id');
 }
 
-it('estimates the input tokens and output budget of every product in a small selection', function () {
-    $selection = estimatorSelection(12);
+it('estimates the input tokens and output budget of every product in a small selection', function (): void {
+    $selection = bulkEstimatorSelection(12);
 
     $expectedInput = (clone $selection)->get()->sum(function (object $row): int {
         [$ctx, $options] = app(EnrichmentService::class)->productContext(json_decode((string) $row->values, true) ?? [], 'default', 'en_US');
@@ -34,10 +34,10 @@ it('estimates the input tokens and output budget of every product in a small sel
         ->and($estimate['max_output_tokens'])->toBe(12 * EnrichmentService::MAX_OUTPUT_TOKENS);
 });
 
-it('samples a bounded number of products and extrapolates for a large selection', function () {
+it('samples a bounded number of products and extrapolates for a large selection', function (): void {
     DB::enableQueryLog();
 
-    $estimate = app(BulkEnrichmentEstimator::class)->estimate(estimatorSelection(BulkEnrichmentEstimator::SAMPLE_SIZE + 10), 1000, 'default', 'en_US');
+    $estimate = app(BulkEnrichmentEstimator::class)->estimate(bulkEstimatorSelection(BulkEnrichmentEstimator::SAMPLE_SIZE + 10), 1000, 'default', 'en_US');
 
     $sampleQueries = collect(DB::getQueryLog())->filter(fn (array $query): bool => str_contains($query['query'], ' in (') && count($query['bindings']) >= BulkEnrichmentEstimator::SAMPLE_SIZE);
 
@@ -48,13 +48,13 @@ it('samples a bounded number of products and extrapolates for a large selection'
         ->and($estimate['max_output_tokens'])->toBe((BulkEnrichmentEstimator::SAMPLE_SIZE + 10) * EnrichmentService::MAX_OUTPUT_TOKENS);
 });
 
-it('caps the counted selection at the requested limit', function () {
-    $estimate = app(BulkEnrichmentEstimator::class)->estimate(estimatorSelection(15), 11, 'default', 'en_US');
+it('caps the counted selection at the requested limit', function (): void {
+    $estimate = app(BulkEnrichmentEstimator::class)->estimate(bulkEstimatorSelection(15), 11, 'default', 'en_US');
 
     expect($estimate['products'])->toBe(11);
 });
 
-it('counts no calls for products whose content is already filled', function () {
+it('counts no calls for products whose content is already filled', function (): void {
     $product = Product::factory()->create();
     $values = $product->values ?? [];
 
@@ -70,10 +70,10 @@ it('counts no calls for products whose content is already filled', function () {
         ->and($estimate['max_output_tokens'])->toBe(0);
 });
 
-it('logs the pre-flight estimate when one is produced', function () {
+it('logs the pre-flight estimate when one is produced', function (): void {
     Log::spy();
 
-    $estimate = app(BulkEnrichmentEstimator::class)->estimate(estimatorSelection(3), 100, 'default', 'en_US');
+    $estimate = app(BulkEnrichmentEstimator::class)->estimate(bulkEstimatorSelection(3), 100, 'default', 'en_US');
 
     Log::shouldHaveReceived('info')->once()->withArgs(fn (string $message, array $context): bool => $message === 'AI Agent bulk enrichment token estimate'
         && $context['products'] === 3
@@ -81,7 +81,7 @@ it('logs the pre-flight estimate when one is produced', function () {
         && $context['max_output_tokens'] === $estimate['max_output_tokens']);
 });
 
-it('normalizes only a well formed estimate payload', function (mixed $payload, bool $valid) {
+it('normalizes only a well formed estimate payload', function (mixed $payload, bool $valid): void {
     $normalized = BulkEnrichmentEstimator::normalize($payload);
 
     expect($normalized !== null)->toBe($valid);
@@ -93,7 +93,7 @@ it('normalizes only a well formed estimate payload', function (mixed $payload, b
     'not an array'   => ['20 products', false],
 ]);
 
-it('drops unknown keys from a normalized estimate', function () {
+it('drops unknown keys from a normalized estimate', function (): void {
     $normalized = BulkEnrichmentEstimator::normalize([
         'products' => 20, 'sampled' => 20, 'sampled_estimate' => false, 'estimated_input_tokens' => 9000, 'max_output_tokens' => 40960, 'html' => '<script>',
     ]);

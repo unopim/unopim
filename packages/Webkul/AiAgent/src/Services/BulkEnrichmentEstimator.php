@@ -28,6 +28,9 @@ class BulkEnrichmentEstimator
      */
     public const BULK_THRESHOLD = 10;
 
+    /**
+     * Create a new estimator instance.
+     */
     public function __construct(
         protected EnrichmentService $enrichmentService,
         protected TokenEstimator $tokenEstimator,
