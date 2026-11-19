@@ -3,10 +3,13 @@
 namespace Webkul\AdminApi\Http\Requests\Catalog;
 
 use Webkul\AdminApi\Http\Requests\ApiFormRequest;
+use Webkul\AdminApi\Http\Requests\Concerns\ValidatesCategoryAdditionalData;
 use Webkul\Core\Rules\Code;
 
 class StoreCategoryRequest extends ApiFormRequest
 {
+    use ValidatesCategoryAdditionalData;
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -15,12 +18,9 @@ class StoreCategoryRequest extends ApiFormRequest
     public function rules(): array
     {
         return [
-            'code'                              => ['required', 'string', 'unique:categories,code', new Code],
-            'additional_data'                   => ['sometimes', 'array'],
-            'additional_data.common'            => ['sometimes', 'array'],
-            'additional_data.locale_specific'   => ['sometimes', 'array'],
-            'additional_data.locale_specific.*' => ['array'],
-            'parent'                            => ['sometimes', 'nullable', 'string'],
+            'code'   => ['required', 'string', 'unique:categories,code', new Code],
+            ...$this->additionalDataRules(),
+            'parent' => ['sometimes', 'nullable', 'string'],
         ];
     }
 }
