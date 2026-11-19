@@ -83,6 +83,7 @@ most often bite:
 | Platform module tags on Magic AI tools | Tools registered in `ai-agent.tools` without a `module` key are always offered. Product, category and family tools in core are tagged `'module' => 'pim'` and are hidden while PIM is switched off; tag your own product tools the same way. |
 | Platform module route gating | `platform_modules.<module>.route_prefixes` and ACL routes only gate named routes. Name every route your package wants hidden with its module. |
 | Dropdown alignment in RTL | `x-admin::dropdown` now mirrors `position` itself when the admin page is right-to-left, for both inline and teleported panels. A plugin that picks `bottom-left` or `bottom-right` (or `top-*`) from the locale direction gets flipped twice and opens outward. Pass the LTR position and drop the direction check. |
+| Config uploads at undeclared fields | Saving configuration or System Settings now answers 422 when a file arrives at a config code not declared `'type' => 'file'` or `'type' => 'image'`, and nothing is stored. A package whose `blade` or custom field uploads a file must declare that field as `file` or `image`. |
 
 ### Take a backup you have restored before
 

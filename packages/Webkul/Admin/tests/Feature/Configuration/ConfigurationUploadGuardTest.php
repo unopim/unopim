@@ -17,11 +17,15 @@ beforeEach(function () {
             'name'   => 'Test Group',
             'fields' => [
                 ['name' => 'text_field', 'title' => 'Text', 'type' => 'text'],
+                ['name' => 'logo', 'title' => 'Logo', 'type' => 'image'],
             ],
         ],
     ]]);
 });
 
+/**
+ * Post the test configuration group with real uploaded files attached.
+ */
 function postConfigurationWithFiles(array $input, array $files): TestResponse
 {
     $request = Request::create(
@@ -46,4 +50,19 @@ it('rejects a file posted at a text field alongside its text value and stores no
 
     $this->assertDatabaseMissing('core_config', ['code' => 'general.testgroup.text_field']);
     expect(Storage::allFiles('configuration'))->toBeEmpty();
+});
+
+it('stores a file posted at a declared image field', function () {
+    $this->post(route('admin.configuration.store', ['slug' => 'general', 'slug2' => 'testgroup']), [
+        'general' => ['testgroup' => [
+            'text_field' => 'ok',
+            'logo'       => UploadedFile::fake()->image('logo.png'),
+        ]],
+    ])->assertRedirect();
+
+    $stored = Storage::allFiles('configuration');
+
+    expect($stored)->toHaveCount(1);
+    $this->assertDatabaseHas('core_config', ['code' => 'general.testgroup.logo', 'value' => $stored[0]]);
+    $this->assertDatabaseHas('core_config', ['code' => 'general.testgroup.text_field', 'value' => 'ok']);
 });

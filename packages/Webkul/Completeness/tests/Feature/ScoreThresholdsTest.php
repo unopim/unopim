@@ -9,11 +9,17 @@ use Webkul\Admin\DataGrids\Catalog\ProductDataGrid;
 use Webkul\Completeness\Enums\ScoreLevel;
 use Webkul\Completeness\Services\ScoreThresholds;
 use Webkul\Core\Repositories\CoreConfigRepository;
+use Webkul\Core\Tests\Concerns\InteractsWithPlatformModules;
+
+uses(InteractsWithPlatformModules::class);
 
 beforeEach(function () {
     $this->loginAsAdmin();
 });
 
+/**
+ * Store the score thresholds through the config repository, bypassing the settings form.
+ */
 function storeScoreThresholds(mixed $greenFrom, mixed $redBelow): void
 {
     app(CoreConfigRepository::class)->create([
@@ -71,6 +77,19 @@ it('lists the score thresholds section in the system settings hub', function () 
         ->assertOk()
         ->assertSee(trans('completeness::app.configuration.score-thresholds.green-from'), false)
         ->assertSee(trans('completeness::app.configuration.score-thresholds.red-below'), false);
+});
+
+it('hides the score thresholds section while pim is switched off', function () {
+    config(['platform_modules.records' => ['name' => 'records', 'requires' => []]]);
+
+    $this->setPlatformModules('records');
+
+    $this->get(route('admin.settings.system.index'))
+        ->assertOk()
+        ->assertDontSee(trans('completeness::app.configuration.score-thresholds.title'), false);
+
+    $this->get(route('admin.settings.system.edit', ['key' => 'system.completeness']))
+        ->assertNotFound();
 });
 
 it('persists valid thresholds saved from the system settings hub', function () {
