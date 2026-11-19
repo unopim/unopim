@@ -3207,7 +3207,7 @@ return [
         'disable'           => 'Deshabilitado',
         'no-match-found'    => '¡No se encontraron coincidencias!',
         'unauthorized'      => 'You do not have permission to perform this action.',
-        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
+        'file-size-exceeds' => 'El archivo subido supera el tamaño máximo permitido de :max.',
     ],
     'default-prompt' => [
         'detailed' => [

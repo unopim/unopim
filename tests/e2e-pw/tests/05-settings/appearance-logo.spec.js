@@ -27,15 +27,23 @@ test.describe('Appearance — admin logo', { tag: '@global-state' }, () => {
   const logoImage = (page) => page.locator('img[src*="/storage/configuration/"]').first();
   const unsavedBar = (page) => page.getByText('You have unsaved changes');
 
-  /** Drop a file onto the first "Add Image" tile and wait for the preview to render. */
-  async function dropLogo(page) {
+  /**
+   * Drop a file onto the first "Add Image" tile and wait for the preview to render.
+   * Pass `size` to drop a blank file of that many bytes instead, without waiting for a preview.
+   */
+  async function dropLogo(page, size = null) {
     await expect(page.getByText('Add Image').first()).toBeVisible({ timeout: 15000 });
 
-    await page.evaluate((b64) => {
-      const bin = atob(b64);
-      const arr = new Uint8Array(bin.length);
-      for (let i = 0; i < bin.length; i++) {
-        arr[i] = bin.charCodeAt(i);
+    await page.evaluate(({ b64, size }) => {
+      let arr;
+      if (size) {
+        arr = new Uint8Array(size);
+      } else {
+        const bin = atob(b64);
+        arr = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) {
+          arr[i] = bin.charCodeAt(i);
+        }
       }
       const file = new File([arr], 'logo.png', { type: 'image/png' });
       const dt = new DataTransfer();
@@ -43,7 +51,11 @@ test.describe('Appearance — admin logo', { tag: '@global-state' }, () => {
       const tile = [...document.querySelectorAll('label')].find((l) => /Add Image/.test(l.textContent));
       tile.dispatchEvent(new DragEvent('dragover', { bubbles: true, cancelable: true, dataTransfer: dt }));
       tile.dispatchEvent(new DragEvent('drop', { bubbles: true, cancelable: true, dataTransfer: dt }));
-    }, FIXTURE_B64);
+    }, { b64: FIXTURE_B64, size });
+
+    if (size) {
+      return;
+    }
 
     // Preview tile (data URL) confirms the dropped file was accepted.
     await expect(page.locator('img[src^="data:"]').first()).toBeVisible({ timeout: 15000 });
@@ -142,6 +154,28 @@ test.describe('Appearance — admin logo', { tag: '@global-state' }, () => {
     expect(errorSeen).toBe(false);
 
     await adminPage.waitForURL(/configuration\/system/, { timeout: 20000 });
+  });
+
+  test('rejects an oversized logo in the browser before anything is uploaded', async ({ adminPage }) => {
+    await gotoSettings(adminPage);
+    await deleteLogoIfPresent(adminPage);
+
+    const scanRequests = [];
+    adminPage.on('request', (request) => {
+      if (request.url().includes('/admin/media/scan')) {
+        scanRequests.push(request.url());
+      }
+    });
+
+    await dropLogo(adminPage, 2048 * 1024 + 1);
+
+    await expect(adminPage.getByText('The uploaded file exceeds the maximum allowed size of 2 MB.')).toBeVisible({
+      timeout: 15000,
+    });
+
+    await expect(adminPage.locator('img[src^="data:"]')).toHaveCount(0);
+    await expect(unsavedBar(adminPage)).toHaveCount(0);
+    expect(scanRequests).toHaveLength(0);
   });
 
   test('deleting the logo falls back to the default and restores the upload tile', async ({ adminPage }) => {

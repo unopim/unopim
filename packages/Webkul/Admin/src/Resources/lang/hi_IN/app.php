@@ -3207,7 +3207,7 @@ return [
         'disable'           => 'अक्षम',
         'no-match-found'    => 'कोई मिलान नहीं मिला!',
         'unauthorized'      => 'You do not have permission to perform this action.',
-        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
+        'file-size-exceeds' => 'अपलोड की गई फ़ाइल अनुमत अधिकतम आकार :max से अधिक है।',
     ],
     'default-prompt' => [
         'detailed' => [

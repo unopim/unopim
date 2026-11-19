@@ -3211,7 +3211,7 @@ return [
         'disable'           => 'Walang Bisa',
         'no-match-found'    => 'Walang nahanap na tugma!',
         'unauthorized'      => 'You do not have permission to perform this action.',
-        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
+        'file-size-exceeds' => 'Ang na-upload na file ay lumampas sa pinakamataas na pinapayagang laki na :max.',
     ],
     'default-prompt' => [
         'detailed' => [

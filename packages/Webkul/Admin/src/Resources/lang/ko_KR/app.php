@@ -3211,7 +3211,7 @@ return [
         'disable'           => '사용 안함',
         'no-match-found'    => '일치하는 항목을 찾을 수 없습니다!',
         'unauthorized'      => 'You do not have permission to perform this action.',
-        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
+        'file-size-exceeds' => '업로드한 파일이 허용된 최대 크기(:max)를 초과합니다.',
     ],
     'default-prompt' => [
         'detailed' => [

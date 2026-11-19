@@ -3211,7 +3211,7 @@ return [
         'disable'           => 'Inaktiverad',
         'no-match-found'    => 'Ingen matchning hittades!',
         'unauthorized'      => 'You do not have permission to perform this action.',
-        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
+        'file-size-exceeds' => 'Den uppladdade filen överskrider den högsta tillåtna storleken på :max.',
     ],
     'default-prompt' => [
         'detailed' => [

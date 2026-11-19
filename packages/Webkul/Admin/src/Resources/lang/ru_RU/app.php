@@ -3211,7 +3211,7 @@ return [
         'disable'           => 'Неполноценный',
         'no-match-found'    => 'Совпадений не найдено!',
         'unauthorized'      => 'You do not have permission to perform this action.',
-        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
+        'file-size-exceeds' => 'Загруженный файл превышает максимально допустимый размер :max.',
     ],
     'default-prompt' => [
         'detailed' => [

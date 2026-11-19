@@ -2,12 +2,11 @@
 
 namespace Webkul\Admin\Http\Requests;
 
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\ValidationException;
+use Webkul\Admin\Http\Requests\Concerns\RemapsFileArrayErrors;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Core\Rules\AlphaNumericSpace;
 use Webkul\Core\Rules\FileMimeExtensionMatch;
@@ -15,6 +14,8 @@ use Webkul\Core\Rules\PasswordWithoutSurroundingWhitespace;
 
 class UserForm extends FormRequest
 {
+    use RemapsFileArrayErrors;
+
     /**
      * @var array<int, string>
      */
@@ -126,28 +127,10 @@ class UserForm extends FormRequest
     }
 
     /**
-     * Handle a failed validation attempt.
-     *
-     * @return void
-     *
-     * @throws ValidationException
+     * @return list<string>
      */
-    protected function failedValidation(Validator $validator)
+    protected function fileArrayFields(): array
     {
-        $errors = $validator->errors()->toArray();
-
-        if (! isset($errors['image.0'])) {
-            parent::failedValidation($validator);
-
-            return;
-        }
-
-        $errors['image'] = $errors['image.0'];
-
-        unset($errors['image.0']);
-
-        throw ValidationException::withMessages($errors)
-            ->errorBag($this->errorBag)
-            ->redirectTo($this->getRedirectUrl());
+        return ['image'];
     }
 }

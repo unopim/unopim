@@ -128,7 +128,7 @@ it('rejects a non-image logo upload', function () {
 
     $this->put(route('admin.settings.appearance.update'), [
         'logo_image' => [UploadedFile::fake()->create('malware.php', 10, 'application/x-php')],
-    ])->assertSessionHasErrors('logo_image.0');
+    ])->assertSessionHasErrors('logo_image');
 });
 
 it('rejects a scalar non-image logo upload before it can bypass wildcard validation', function () {
@@ -150,7 +150,7 @@ it('rejects image content carrying an active-content filename', function () {
 
     $this->put(route('admin.settings.appearance.update'), [
         'logo_image' => [UploadedFile::fake()->image('payload.html')],
-    ])->assertSessionHasErrors('logo_image.0');
+    ])->assertSessionHasErrors('logo_image');
 });
 
 it('stores appearance images with a generated filename and detected extension', function () {

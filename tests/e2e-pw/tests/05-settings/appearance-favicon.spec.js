@@ -17,15 +17,20 @@ test.describe('Appearance — favicon', () => {
   const faviconImage = (page) => faviconControl(page).locator('img[src*="/storage/configuration/"]').first();
   const unsavedBar = (page) => page.getByText('You have unsaved changes');
 
-  async function dropFavicon(page, fileName, mimeType) {
+  async function dropFavicon(page, fileName, mimeType, size = null) {
     await faviconControl(page).locator('label').first().waitFor({ state: 'visible', timeout: 15000 });
 
     await page.evaluate(
-      ({ b64, fileName, mimeType }) => {
-        const bin = atob(b64);
-        const arr = new Uint8Array(bin.length);
-        for (let i = 0; i < bin.length; i++) {
-          arr[i] = bin.charCodeAt(i);
+      ({ b64, fileName, mimeType, size }) => {
+        let arr;
+        if (size) {
+          arr = new Uint8Array(size);
+        } else {
+          const bin = atob(b64);
+          arr = new Uint8Array(bin.length);
+          for (let i = 0; i < bin.length; i++) {
+            arr[i] = bin.charCodeAt(i);
+          }
         }
         const file = new File([arr], fileName, { type: mimeType });
         const dt = new DataTransfer();
@@ -36,7 +41,7 @@ test.describe('Appearance — favicon', () => {
         target.dispatchEvent(new DragEvent('dragover', { bubbles: true, cancelable: true, dataTransfer: dt }));
         target.dispatchEvent(new DragEvent('drop', { bubbles: true, cancelable: true, dataTransfer: dt }));
       },
-      { b64: JPEG_B64, fileName, mimeType },
+      { b64: JPEG_B64, fileName, mimeType, size },
     );
   }
 
@@ -107,5 +112,27 @@ test.describe('Appearance — favicon', () => {
     await dropFavicon(adminPage, 'watch.svg', 'image/svg+xml');
 
     await expect(adminPage.locator('#app').getByText(/are allowed/i).first()).toBeVisible({ timeout: 10000 });
+  });
+
+  test('an oversized favicon is refused in the browser before anything is uploaded', async ({ adminPage }) => {
+    await gotoSettings(adminPage);
+    await deleteFaviconIfPresent(adminPage);
+
+    const scanRequests = [];
+    adminPage.on('request', (request) => {
+      if (request.url().includes('/admin/media/scan')) {
+        scanRequests.push(request.url());
+      }
+    });
+
+    await dropFavicon(adminPage, 'large-favicon.png', 'image/png', 1024 * 1024 + 1);
+
+    await expect(
+      faviconControl(adminPage).getByText('The uploaded file exceeds the maximum allowed size of 1 MB.'),
+    ).toBeVisible({ timeout: 10000 });
+
+    await expect(faviconControl(adminPage).locator('img[src^="data:"]')).toHaveCount(0);
+    await expect(unsavedBar(adminPage)).toHaveCount(0);
+    expect(scanRequests).toHaveLength(0);
   });
 });

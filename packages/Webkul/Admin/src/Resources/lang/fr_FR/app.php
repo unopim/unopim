@@ -3205,7 +3205,7 @@ return [
         'disable'           => 'Désactivé',
         'no-match-found'    => 'Aucun résultat trouvé !',
         'unauthorized'      => 'You do not have permission to perform this action.',
-        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
+        'file-size-exceeds' => 'Le fichier téléversé dépasse la taille maximale autorisée de :max.',
     ],
     'default-prompt' => [
         'detailed' => [

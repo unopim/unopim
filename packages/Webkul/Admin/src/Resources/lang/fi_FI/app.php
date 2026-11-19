@@ -3207,7 +3207,7 @@ return [
         'disable'           => 'Poista käytöstä',
         'no-match-found'    => 'Osumia ei löytynyt!',
         'unauthorized'      => 'You do not have permission to perform this action.',
-        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
+        'file-size-exceeds' => 'Ladattu tiedosto ylittää sallitun enimmäiskoon :max.',
     ],
     'default-prompt' => [
         'detailed' => [
