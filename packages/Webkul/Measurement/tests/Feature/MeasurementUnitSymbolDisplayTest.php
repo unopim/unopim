@@ -96,7 +96,7 @@ function exportTemperatureUnitColumn(Attribute $attribute, string $unit): string
     return $columns[$attribute->code.'(unit)'];
 }
 
-it('registers the display unit symbol setting switched on by default', function () {
+it('registers the display unit symbol setting switched on by default', function (): void {
     $fields = collect(config('system_settings'))->firstWhere('key', 'system.measurement')['fields'];
 
     $field = collect($fields)->firstWhere('name', 'display_unit_symbol');

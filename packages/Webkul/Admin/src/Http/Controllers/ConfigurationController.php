@@ -207,8 +207,6 @@ class ConfigurationController extends Controller
 
             return redirect()->back();
         } catch (ValidationException $exception) {
-            // Field-level validation (e.g. config save.before listeners) must
-            // reach the form, not the generic error flash below.
             throw $exception;
         } catch (\Throwable $th) {
             Log::error($th->getMessage(), ['exception' => $th]);

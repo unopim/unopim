@@ -7,6 +7,9 @@ use Illuminate\Validation\ValidationException;
 
 class ValidateThresholdSettings
 {
+    /**
+     * Reject a green threshold that is not above the red one before the settings are saved.
+     */
     public function handle(): void
     {
         $green = request('system.completeness.green_from');

@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Webkul\Measurement\Listeners\SaveAttributeMeasurementAfterCreate;
 use Webkul\Measurement\Listeners\SaveAttributeMeasurementAfterUpdate;
+use Webkul\Measurement\Listeners\ValidateAttributeMeasurementBeforeCreate;
 use Webkul\Measurement\Listeners\ValidateAttributeMeasurementBeforeUpdate;
 use Webkul\Measurement\Listeners\WarnMissingMeasurementConfigAfterCreate;
 
@@ -41,6 +42,11 @@ class MeasurementEventServiceProvider extends ServiceProvider
                     'measurement::catalog.attributes.create'
                 );
             }
+        );
+
+        Event::listen(
+            'catalog.attribute.create.before',
+            ValidateAttributeMeasurementBeforeCreate::class.'@handle'
         );
 
         Event::listen(

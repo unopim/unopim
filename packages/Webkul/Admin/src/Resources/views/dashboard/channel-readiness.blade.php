@@ -1,4 +1,3 @@
-
 <!-- Channel Readiness Vue Component -->
 <v-dashboard-channel-readiness>
     <x-admin::shimmer.dashboard.total-catalogs />

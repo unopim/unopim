@@ -71,7 +71,6 @@ it('clamps a configured threshold into the 0..100 range', function (): void {
 it('ignores a non-numeric configured threshold and uses the default for that bound', function (): void {
     setCompletenessThreshold('not-a-number', '40');
 
-    // green_from is non-numeric so it defaults to 90; 90 > 40 holds, so the pair stands.
     expect(app(Threshold::class)->bounds())->toBe([90, 40]);
 });
 

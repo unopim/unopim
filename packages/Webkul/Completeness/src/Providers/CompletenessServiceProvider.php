@@ -42,13 +42,11 @@ class CompletenessServiceProvider extends ServiceProvider
 
         Event::listen('core.configuration.save.before', ValidateThresholdSettings::class);
 
-        // Resolve the completeness colour bounds once and share them with every
-        // view that colours a score, instead of repeating the lookup per view.
         View::composer([
             'admin::components.graphs.radial-progress',
             'admin::dashboard.channel-readiness',
             'admin::dashboard.product-stats',
-        ], function ($view) {
+        ], function (\Illuminate\View\View $view): void {
             [$greenFrom, $redBelow] = app(Threshold::class)->bounds();
 
             $view->with('completenessGreenFrom', $greenFrom)

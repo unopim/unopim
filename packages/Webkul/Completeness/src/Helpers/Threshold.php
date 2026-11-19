@@ -25,6 +25,9 @@ class Threshold
         return [$greenFrom, $redBelow];
     }
 
+    /**
+     * Read a threshold clamped to 0..100, or the default when it is not numeric.
+     */
     protected function configValue(string $key, int $default): int
     {
         $value = core()->getConfigData($key);

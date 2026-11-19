@@ -76,16 +76,16 @@ it('does not persist a measurement configuration whose unit is not part of the f
 
     $code = 'meas_'.uniqid();
 
-    $this->post(route('admin.catalog.attributes.store'), [
+    $response = $this->post(route('admin.catalog.attributes.store'), [
         'code'               => $code,
         'type'               => 'measurement',
         'measurement_family' => $family->code,
-        'measurement_unit'   => 'kilometer', // not a unit of this family
+        'measurement_unit'   => 'kilometer',
     ]);
 
-    $attribute = Attribute::where('code', $code)->firstOrFail();
+    expect(Attribute::where('code', $code)->exists())->toBeFalse();
 
-    expect(AttributeMeasurement::where('attribute_id', $attribute->id)->exists())->toBeFalse();
+    $response->assertSessionHas('error', trans('measurement::app.messages.attribute.unit_not_in_family'));
 });
 
 it('ignores posted measurement fields for a non-measurement attribute', function (): void {

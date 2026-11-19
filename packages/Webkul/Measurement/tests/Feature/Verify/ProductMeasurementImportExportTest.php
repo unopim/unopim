@@ -162,7 +162,7 @@ it('persists an imported measurement structure on a product and reads it back af
         ->and($persisted['base_unit'] ?? null)->toBe('meter');
 });
 
-it('exports the amount column plus a (unit) companion column carrying the unit symbol', function () {
+it('exports the amount column plus a (unit) companion column carrying the unit symbol', function (): void {
     [, $measurement] = verifyImpExpSetup();
 
     $columns = verifyImpExpExportColumns(
