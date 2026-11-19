@@ -61,9 +61,7 @@ class SkuOrUniversalFilter extends AbstractElasticSearchAttributeFilter
             }
 
             /**
-             * For keyword fields (e.g., sku), use wildcard with
-             * rewrite: 'top_terms_1024' to cap internal clause expansion
-             * and avoid too_many_clauses error on large indexes.
+             * Keyword fields: wildcard with a capped rewrite to avoid too_many_clauses.
              */
             $clauses[] = [
                 'wildcard' => [
@@ -74,6 +72,12 @@ class SkuOrUniversalFilter extends AbstractElasticSearchAttributeFilter
                     ],
                 ],
             ];
+        }
+
+        if ($clauses === []) {
+            $this->queryBuilder->where(['match_none' => new \stdClass]);
+
+            return $this;
         }
 
         $this->queryBuilder->where([

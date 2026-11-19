@@ -2120,6 +2120,7 @@ return [
             'delete-failed'                   => 'Rolle sletting mislyktes',
             'delete-success'                  => 'Rolle slettet suksessfullt',
             'last-delete-error'               => 'Siste rolle kan ikke slettes',
+            'last-full-access'                => 'Minst én aktiv bruker må beholde full tilgang.',
             'update-success'                  => 'Rolle oppdatert suksessfullt',
         ],
     ],
@@ -2159,6 +2160,26 @@ return [
                     'info'  => '',
                     'title' => 'Generelt',
                 ],
+                'platform' => [
+                    'info'  => 'Velg hvilke plattformmoduler som er slått på.',
+                    'title' => 'Plattform',
+
+                    'settings' => [
+                        'info'  => 'Kjør hvilken som helst modul alene eller flere sammen; en modul som trenger en annen, kan bare slås på sammen med den.',
+                        'title' => 'Modulvalg',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Når en modul slås av, skjules menyene, sidene og API-rutene; dataene beholdes.',
+                        'title' => 'Moduler',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Gjelder bare mens Produktinformasjon (PIM) er slått av. Valgte seksjoner fjernes fra menyen, og administrasjonssidene deres blokkeres; dataene beholdes, og Admin API-rutene deres forblir tilgjengelige.',
+                        'title' => 'Skjulte seksjoner',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -2330,6 +2351,7 @@ return [
                 'title'               => 'Prompt',
                 'create-btn'          => 'Opprett Prompt',
                 'edit-title'          => 'Rediger Prompt',
+                'insert-attribute'    => 'Sett inn attributt',
                 'create-title'        => 'Opprett Ny Prompt',
                 'label-title'         => 'Tittel',
                 'purpose'             => 'Formål',
@@ -3103,6 +3125,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Instrumentbord',
+        'home'      => 'Hjem',
         'go-back'   => 'Gå tilbake',
         'support'   => 'Hvis problemet vedvarer, kan du kontakte oss på <a href=":link" class=":class">:email</a> for hjelp.',
         '404'       => [

@@ -52,7 +52,7 @@ async function writeMailSettings(adminPage, { host, port }) {
   await clickSaveAndExpect(adminPage, 'Save changes', /Settings saved successfully/i);
 }
 
-test.describe('Forget Password — broken SMTP', () => {
+test.describe('Forget Password — broken SMTP', { tag: '@global-state' }, () => {
   test.describe.configure({ mode: 'serial' });
 
   let originalSettings;

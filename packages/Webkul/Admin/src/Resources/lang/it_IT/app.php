@@ -2118,6 +2118,7 @@ return [
             'delete-failed'                   => 'Eliminazione del ruolo fallita',
             'delete-success'                  => 'Ruolo eliminato con successo',
             'last-delete-error'               => 'Non è possibile eliminare l\'ultimo ruolo',
+            'last-full-access'                => 'Almeno un utente attivo deve mantenere l\'accesso completo.',
             'update-success'                  => 'Ruolo aggiornato con successo',
         ],
     ],
@@ -2157,6 +2158,26 @@ return [
                     'info'  => '',
                     'title' => 'Generale',
                 ],
+                'platform' => [
+                    'info'  => 'Scegli quali moduli della piattaforma sono attivi.',
+                    'title' => 'Piattaforma',
+
+                    'settings' => [
+                        'info'  => 'Esegui qualsiasi modulo da solo o più moduli insieme; un modulo che ne richiede un altro può essere attivato solo insieme a esso.',
+                        'title' => 'Selezione dei moduli',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Disattivare un modulo ne nasconde menu, pagine e rotte API; i dati vengono conservati.',
+                        'title' => 'Moduli',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Si applica solo quando Informazioni prodotto (PIM) è disattivato. Le sezioni selezionate vengono rimosse dal menu e le relative pagine di amministrazione bloccate; i dati vengono conservati e le rotte Admin API restano disponibili.',
+                        'title' => 'Sezioni nascoste',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -2328,6 +2349,7 @@ return [
                 'title'               => 'Prompt',
                 'create-btn'          => 'Crea Prompt',
                 'edit-title'          => 'Modifica Prompt',
+                'insert-attribute'    => 'Inserisci attributo',
                 'create-title'        => 'Crea Nuovo Prompt',
                 'label-title'         => 'Titolo',
                 'purpose'             => 'Scopo',
@@ -3100,6 +3122,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Dashboard',
+        'home'      => 'Home',
         'go-back'   => 'Torna indietro',
         'support'   => 'Se il problema persiste, contattaci all\'indirizzo <a href=":link" class=":class">:email</a> per assistenza.',
         '404'       => [

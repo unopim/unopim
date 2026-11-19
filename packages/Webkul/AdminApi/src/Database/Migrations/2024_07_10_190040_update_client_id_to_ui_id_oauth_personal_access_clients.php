@@ -24,10 +24,10 @@ return new class extends Migration
                 break;
 
             case 'pgsql':
-                $tablePrefix = DB::getTablePrefix();
+                $table = DB::getQueryGrammar()->wrapTable('oauth_personal_access_clients');
 
-                DB::statement("ALTER TABLE {$tablePrefix}oauth_personal_access_clients ALTER COLUMN client_id DROP DEFAULT;");
-                DB::statement("ALTER TABLE {$tablePrefix}oauth_personal_access_clients ALTER COLUMN client_id TYPE uuid USING md5(client_id::text)::uuid;");
+                DB::statement("ALTER TABLE {$table} ALTER COLUMN client_id DROP DEFAULT;");
+                DB::statement("ALTER TABLE {$table} ALTER COLUMN client_id TYPE uuid USING md5(client_id::text)::uuid;");
 
                 break;
         }
@@ -49,9 +49,9 @@ return new class extends Migration
                 break;
 
             case 'pgsql':
-                $tablePrefix = DB::getTablePrefix();
-                DB::statement("ALTER TABLE {$tablePrefix}oauth_personal_access_clients ALTER COLUMN client_id DROP DEFAULT;");
-                DB::statement("ALTER TABLE {$tablePrefix}oauth_personal_access_clients ALTER COLUMN client_id TYPE bigint USING 1;");
+                $table = DB::getQueryGrammar()->wrapTable('oauth_personal_access_clients');
+                DB::statement("ALTER TABLE {$table} ALTER COLUMN client_id DROP DEFAULT;");
+                DB::statement("ALTER TABLE {$table} ALTER COLUMN client_id TYPE bigint USING 1;");
                 break;
         }
     }

@@ -2120,6 +2120,7 @@ return [
             'delete-failed'                   => 'Rol verwijderen mislukt.',
             'delete-success'                  => 'Rol succesvol verwijderd.',
             'last-delete-error'               => 'De laatste rol kan niet worden verwijderd.',
+            'last-full-access'                => 'Minstens één actieve gebruiker moet volledige toegang behouden.',
             'update-success'                  => 'Rol succesvol bijgewerkt.',
         ],
     ],
@@ -2159,6 +2160,26 @@ return [
                     'info'  => '',
                     'title' => 'Algemeen',
                 ],
+                'platform' => [
+                    'info'  => 'Kies welke platformmodules zijn ingeschakeld.',
+                    'title' => 'Platform',
+
+                    'settings' => [
+                        'info'  => 'Gebruik elke module afzonderlijk of meerdere samen; een module die een andere nodig heeft, kan alleen samen daarmee worden ingeschakeld.',
+                        'title' => 'Modulekeuze',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Een module uitschakelen verbergt de menu’s, pagina’s en API-routes ervan; de gegevens blijven bewaard.',
+                        'title' => 'Modules',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Geldt alleen zolang Productinformatie (PIM) is uitgeschakeld. Geselecteerde secties worden uit het menu verwijderd en hun beheerpagina’s geblokkeerd; de gegevens blijven bewaard en hun Admin API-routes blijven beschikbaar.',
+                        'title' => 'Verborgen secties',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -2330,6 +2351,7 @@ return [
                 'title'               => 'Prompt',
                 'create-btn'          => 'Prompt aanmaken',
                 'edit-title'          => 'Prompt bewerken',
+                'insert-attribute'    => 'Attribuut invoegen',
                 'create-title'        => 'Nieuwe prompt aanmaken',
                 'label-title'         => 'Titel',
                 'purpose'             => 'Doel',
@@ -3103,6 +3125,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Dashboard',
+        'home'      => 'Home',
         'go-back'   => 'Ga terug',
         'support'   => 'Als het probleem aanhoudt, neem dan contact met ons op via <a href=":link" class=":class">:email</a>.',
         '404'       => [

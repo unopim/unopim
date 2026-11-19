@@ -36,7 +36,7 @@ class AttributeOptionDataGrid extends DataGrid
      */
     public function prepareQueryBuilder()
     {
-        $tablePrefix = DB::getTablePrefix();
+        $queryGrammar = DB::getQueryGrammar();
 
         $this->attributeId ??= request()->id;
 
@@ -56,9 +56,9 @@ class AttributeOptionDataGrid extends DataGrid
         $locales = core()->getAllActiveLocales()->pluck('code');
 
         foreach ($locales as $locale) {
-            $labelColumn = $tablePrefix.'attribute_option_label.label';
-            $localeColumn = $tablePrefix.'attribute_option_label.locale';
-            $labelAliasColumn = DB::getQueryGrammar()->wrap('name_'.$locale);
+            $labelColumn = $queryGrammar->wrap('attribute_option_label.label');
+            $localeColumn = $queryGrammar->wrap('attribute_option_label.locale');
+            $labelAliasColumn = $queryGrammar->wrap('name_'.$locale);
 
             $queryBuilder->addSelect(DB::raw(
                 "MAX(CASE WHEN {$localeColumn} = '{$locale}' THEN $labelColumn END) as {$labelAliasColumn}"
@@ -69,8 +69,12 @@ class AttributeOptionDataGrid extends DataGrid
 
         $this->addFilter('id', 'attribute_options.id');
 
-        $concatExpr = $grammar->concat("{$tablePrefix}attribute_options.code", "' '", 'label');
-        $this->addFilter('code', DB::raw("(SELECT {$grammar->groupConcat($concatExpr, separator: ' ')} FROM {$tablePrefix}attribute_option_translations WHERE attribute_option_id = {$tablePrefix}attribute_options.id)"));
+        $optionCodeColumn = $queryGrammar->wrap('attribute_options.code');
+        $optionIdColumn = $queryGrammar->wrap('attribute_options.id');
+        $translationsTable = $queryGrammar->wrapTable('attribute_option_translations');
+
+        $concatExpr = $grammar->concat($optionCodeColumn, "' '", 'label');
+        $this->addFilter('code', DB::raw("(SELECT {$grammar->groupConcat($concatExpr, separator: ' ')} FROM {$translationsTable} WHERE attribute_option_id = {$optionIdColumn})"));
 
         return $queryBuilder;
     }

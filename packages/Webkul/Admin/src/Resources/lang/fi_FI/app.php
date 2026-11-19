@@ -2118,6 +2118,7 @@ return [
             'delete-failed'                   => 'Roolin poistaminen epäonnistui',
             'delete-success'                  => 'Rooli poistettu onnistuneesti',
             'last-delete-error'               => 'Viimeistä roolia ei voida poistaa',
+            'last-full-access'                => 'Vähintään yhdellä aktiivisella käyttäjällä on oltava täydet käyttöoikeudet.',
             'update-success'                  => 'Rooli päivitettiin onnistuneesti',
         ],
     ],
@@ -2157,6 +2158,26 @@ return [
                     'info'  => '',
                     'title' => 'Yleinen',
                 ],
+                'platform' => [
+                    'info'  => 'Valitse, mitkä alustan moduulit ovat käytössä.',
+                    'title' => 'Alusta',
+
+                    'settings' => [
+                        'info'  => 'Käytä mitä tahansa moduulia yksin tai useita yhdessä; toista moduulia tarvitsevan moduulin voi ottaa käyttöön vain sen kanssa.',
+                        'title' => 'Moduulien valinta',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Moduulin poistaminen käytöstä piilottaa sen valikot, sivut ja API-reitit; sen tiedot säilyvät.',
+                        'title' => 'Moduulit',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Koskee vain tilannetta, jossa tuotetieto (PIM) on poissa käytöstä. Valitut osiot poistetaan valikosta ja niiden hallintasivut estetään; tiedot säilyvät ja niiden Admin API -reitit pysyvät käytettävissä.',
+                        'title' => 'Piilotetut osiot',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -2328,6 +2349,7 @@ return [
                 'title'               => 'Kehotus',
                 'create-btn'          => 'Luo Kehotus',
                 'edit-title'          => 'Muokkaa Kehotusta',
+                'insert-attribute'    => 'Lisää attribuutti',
                 'create-title'        => 'Luo Uusi Kehotus',
                 'label-title'         => 'Otsikko',
                 'purpose'             => 'Käyttötarkoitus',
@@ -3100,6 +3122,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Ohjauspaneeli',
+        'home'      => 'Etusivu',
         'go-back'   => 'Palaa takaisin',
         'support'   => 'Jos ongelma jatkuu, ota yhteyttä sähköpostitse <a href=":link" class=":class">:email</a> avuksi.',
         '404'       => [

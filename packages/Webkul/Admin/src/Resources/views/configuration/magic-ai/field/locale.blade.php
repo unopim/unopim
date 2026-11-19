@@ -75,7 +75,7 @@
 
                             const channelId = parsedEvent && parsedEvent.id ? parsedEvent.id : '';
 
-                            this.$axios.get("{{ route('admin.catalog.product.get_locale') }}", {
+                            this.$axios.get("{{ route('admin.magic_ai.channel_locales') }}", {
                                     params: {
                                         channel: channelId
                                     }
@@ -116,7 +116,7 @@
 
                     const channelId = this.channel;
 
-                    this.$axios.get("{{ route('admin.catalog.product.get_locale') }}", {
+                    this.$axios.get("{{ route('admin.magic_ai.channel_locales') }}", {
                             params: {
                                 channel: channelId
                             }

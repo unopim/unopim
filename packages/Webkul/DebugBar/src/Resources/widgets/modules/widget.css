@@ -32,7 +32,7 @@ div.phpdebugbar-widgets-modules span.phpdebugbar-widgets-views:before,
 div.phpdebugbar-widgets-modules span.phpdebugbar-widgets-queries:before,
 div.phpdebugbar-widgets-modules span.phpdebugbar-widgets-duration:before,
 div.phpdebugbar-widgets-modules span.phpdebugbar-widgets-database:before {
-    font-family: PhpDebugbarFontAwesome;
+    font-family: PhpDebugbarFontAwesome, sans-serif;
     margin-right: 4px;
     font-size: 12px;
 }

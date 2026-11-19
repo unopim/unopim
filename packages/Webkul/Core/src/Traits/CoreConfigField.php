@@ -12,7 +12,9 @@ trait CoreConfigField
      * @var array
      */
     protected $veeValidateMappings = [
-        'min'=> 'min_value',
+        'min'    => 'min_value',
+        'in'     => 'one_of',
+        'not_in' => 'not_one_of',
     ];
 
     /**
@@ -35,7 +37,9 @@ trait CoreConfigField
      * Get validations for forms in configuration page.
      *
      * `nullable` is a Laravel-only modifier with no vee-validate rule registered
-     * for it, so it is dropped here rather than forwarded to the frontend.
+     * for it, so it is dropped here rather than forwarded to the frontend. Rule names
+     * are mapped one by one to their vee-validate names; `in` and `not_in` stay
+     * server-side on select fields, whose client value is the option object.
      *
      * @return string
      */
@@ -50,11 +54,18 @@ trait CoreConfigField
             ));
         }
 
-        foreach ($this->veeValidateMappings as $laravelRule => $veeValidateRule) {
-            $field['validation'] = str_replace($laravelRule, $veeValidateRule, $field['validation']);
-        }
+        $optionField = in_array($field['type'] ?? null, ['select', 'multiselect'], true);
 
-        return $field['validation'];
+        return collect(explode('|', (string) $field['validation']))
+            ->reject(fn (string $rule): bool => $optionField && in_array(explode(':', $rule, 2)[0], ['in', 'not_in'], true))
+            ->map(function (string $rule): string {
+                [$name, $parameters] = array_pad(explode(':', $rule, 2), 2, null);
+
+                $name = $this->veeValidateMappings[$name] ?? $name;
+
+                return $parameters === null ? $name : $name.':'.$parameters;
+            })
+            ->implode('|');
     }
 
     /**
@@ -71,6 +82,20 @@ trait CoreConfigField
         }
 
         return null;
+    }
+
+    /**
+     * The field's default value, resolved from its `default_repository` callback when it has one.
+     */
+    public function getDefaultValue(array $field): mixed
+    {
+        if (isset($field['default_repository'])) {
+            [$class, $method] = Str::parseCallback($field['default_repository']);
+
+            return resolve($class)->$method();
+        }
+
+        return $field['default_value'] ?? null;
     }
 
     /**

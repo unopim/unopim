@@ -4,11 +4,14 @@ namespace Webkul\Admin\DataGrids\Settings\DataTransfer;
 
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
+use Webkul\Admin\Traits\GatesJobTypes;
 use Webkul\DataGrid\DataGrid;
 use Webkul\DataTransfer\Helpers\Import;
 
 class JobTrackerGrid extends DataGrid
 {
+    use GatesJobTypes;
+
     protected $importers;
 
     /**
@@ -16,7 +19,7 @@ class JobTrackerGrid extends DataGrid
      */
     public function __construct()
     {
-        $this->importers = config('importers');
+        $this->importers = $this->visibleJobTypes('importers');
     }
 
     /**
@@ -45,6 +48,12 @@ class JobTrackerGrid extends DataGrid
                 'job_track.created_at',
                 'job_track.updated_at',
             );
+
+        $hidden = array_unique([...$this->hiddenJobTypes('importers'), ...$this->hiddenJobTypes('exporters')]);
+
+        if ($hidden !== []) {
+            $queryBuilder->where(fn (Builder $query): Builder => $query->whereNull('job.entity_type')->orWhereNotIn('job.entity_type', $hidden));
+        }
 
         $this->addFilter('id', 'job_track.id');
         $this->addFilter('job_code', 'job.code');

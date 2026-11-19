@@ -47,4 +47,15 @@ class EscapeFormulaOperators
 
         return $value;
     }
+
+    /**
+     * Unescape every value of an imported row, so it is validated as it will be stored.
+     *
+     * @param  array<string, mixed>  $row
+     * @return array<string, mixed>
+     */
+    public static function unescapeRow(array $row): array
+    {
+        return array_map(self::unescapeValue(...), $row);
+    }
 }

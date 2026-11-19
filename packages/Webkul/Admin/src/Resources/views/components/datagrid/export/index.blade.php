@@ -28,7 +28,7 @@
                 </x-slot>
 
                 @php
-                    $supportedType = config('quick_exporters');
+                    $supportedType = app(\Webkul\DataTransfer\Services\JobTypeGate::class)->visible('quick_exporters');
                     $options = [];
 
                     foreach ($supportedType as $type => $value) {
@@ -54,6 +54,7 @@
                                 type="select"
                                 id="format"
                                 name="format"
+                                :label="trans('admin::app.settings.data-transfer.exports.export.file-format')"
                                 :value="old('format')"
                                 v-model="format"
                                 :options="$optionsInJson"

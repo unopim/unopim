@@ -84,10 +84,11 @@ return [
 
     // ── Products ────────────────────────────────────────────
     [
-        'key'   => 'api.catalog.products',
-        'name'  => 'admin::app.acl.products',
-        'route' => 'admin.api.products.index',
-        'sort'  => 1,
+        'key'    => 'api.catalog.products',
+        'module' => 'pim',
+        'name'   => 'admin::app.acl.products',
+        'route'  => 'admin.api.products.index',
+        'sort'   => 1,
     ], [
         'key'   => 'api.catalog.products.create',
         'name'  => 'admin::app.acl.create',
@@ -188,10 +189,11 @@ return [
 
     // ── Categories ──────────────────────────────────────────
     [
-        'key'   => 'api.catalog.categories',
-        'name'  => 'admin::app.acl.categories',
-        'route' => 'admin.api.categories.index',
-        'sort'  => 2,
+        'key'    => 'api.catalog.categories',
+        'module' => 'pim',
+        'name'   => 'admin::app.acl.categories',
+        'route'  => 'admin.api.categories.index',
+        'sort'   => 2,
     ], [
         'key'   => 'api.catalog.categories.create',
         'name'  => 'admin::app.acl.create',
@@ -234,10 +236,11 @@ return [
 
     // ── Category Fields ─────────────────────────────────────
     [
-        'key'   => 'api.catalog.category_fields',
-        'name'  => 'admin::app.acl.category_fields',
-        'route' => 'admin.api.category-fields.index',
-        'sort'  => 3,
+        'key'    => 'api.catalog.category_fields',
+        'module' => 'pim',
+        'name'   => 'admin::app.acl.category_fields',
+        'route'  => 'admin.api.category-fields.index',
+        'sort'   => 3,
     ], [
         'key'   => 'api.catalog.category_fields.create',
         'name'  => 'admin::app.acl.create',
@@ -284,10 +287,11 @@ return [
     ],
 
     [
-        'key'   => 'api.catalog.association_types',
-        'name'  => 'admin::app.acl.association_types',
-        'route' => 'admin.api.association-types.index',
-        'sort'  => 3,
+        'key'    => 'api.catalog.association_types',
+        'module' => 'pim',
+        'name'   => 'admin::app.acl.association_types',
+        'route'  => 'admin.api.association-types.index',
+        'sort'   => 3,
     ], [
         'key'   => 'api.catalog.association_types.create',
         'name'  => 'admin::app.acl.create',
@@ -431,10 +435,11 @@ return [
 
     // ── Families ────────────────────────────────────────────
     [
-        'key'   => 'api.catalog.families',
-        'name'  => 'admin::app.acl.attribute-families',
-        'route' => 'admin.api.families.index',
-        'sort'  => 6,
+        'key'    => 'api.catalog.families',
+        'module' => 'pim',
+        'name'   => 'admin::app.acl.attribute-families',
+        'route'  => 'admin.api.families.index',
+        'sort'   => 6,
     ], [
         'key'   => 'api.catalog.families.create',
         'name'  => 'admin::app.acl.create',
@@ -490,10 +495,11 @@ return [
     ],
 
     [
-        'key'   => 'api.catalog.passports',
-        'name'  => 'admin::app.acl.passports',
-        'route' => 'admin.api.passports.index',
-        'sort'  => 7,
+        'key'    => 'api.catalog.passports',
+        'module' => 'pim',
+        'name'   => 'admin::app.acl.passports',
+        'route'  => 'admin.api.passports.index',
+        'sort'   => 7,
     ], [
         'key'   => 'api.catalog.passports',
         'name'  => 'admin::app.acl.passports',

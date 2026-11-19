@@ -237,6 +237,44 @@ it('should partially update the category and its parent', function () {
     );
 });
 
+it('should keep the existing parent when patching without the parent field', function () {
+    $parent = Category::factory()->create();
+    $category = Category::factory()->create(['parent_id' => $parent->id]);
+    $locale = Locale::where('status', 1)->first();
+
+    $this->withHeaders($this->headers)
+        ->json('PATCH', route('admin.api.categories.patch', ['code' => $category->code]), [
+            'additional_data' => [
+                'locale_specific' => [
+                    $locale->code => [
+                        'name' => 'Updated Category Name',
+                    ],
+                ],
+            ],
+        ])
+        ->assertOk()
+        ->assertJsonFragment(['success' => true]);
+
+    $category->refresh();
+
+    expect($category->parent_id)->toBe($parent->id)
+        ->and($category->additional_data['locale_specific'][$locale->code]['name'] ?? null)->toBe('Updated Category Name');
+});
+
+it('should detach the parent when patching with an explicit null parent', function () {
+    $parent = Category::factory()->create();
+    $category = Category::factory()->create(['parent_id' => $parent->id]);
+
+    $this->withHeaders($this->headers)
+        ->json('PATCH', route('admin.api.categories.patch', ['code' => $category->code]), [
+            'parent' => null,
+        ])
+        ->assertOk()
+        ->assertJsonFragment(['success' => true]);
+
+    expect($category->refresh()->parent_id)->toBeNull();
+});
+
 it('should return 404 if category not found for patch', function () {
     $nonExistingCode = 'non-existing-code';
     $response = $this->withHeaders($this->headers)

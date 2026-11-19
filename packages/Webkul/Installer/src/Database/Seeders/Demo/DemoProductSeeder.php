@@ -121,6 +121,7 @@ class DemoProductSeeder extends Seeder
             DB::table('publication_version_documents')->whereIn('publication_version_id', $versionIds)->delete();
             DB::table('publication_view_stats')->whereIn('publication_id', $publicationIds)->delete();
             DB::table('publication_versions')->whereIn('publication_id', $publicationIds)->delete();
+            DB::table('publication_releases')->whereIn('publication_id', $publicationIds)->delete();
             DB::table('publications')->whereIn('id', $publicationIds)->delete();
         }
 

@@ -2120,6 +2120,7 @@ return [
             'delete-failed'                   => 'Nabigo ang pagtanggal ng Tungkulin',
             'delete-success'                  => 'Tungkulin na tinanggal ng matagumpay',
             'last-delete-error'               => 'Ang huling Tungkulin ay hindi maaaring tanggalin',
+            'last-full-access'                => 'Kailangang manatili ang buong access ng hindi bababa sa isang aktibong user.',
             'update-success'                  => 'Tungkulin na na-update ng matagumpay',
         ],
     ],
@@ -2159,6 +2160,26 @@ return [
                     'info'  => '',
                     'title' => 'Pangkalahatan',
                 ],
+                'platform' => [
+                    'info'  => 'Piliin kung aling mga module ng platform ang naka-on.',
+                    'title' => 'Platform',
+
+                    'settings' => [
+                        'info'  => 'Patakbuhin ang anumang module nang mag-isa o ang ilan nang sabay; ang module na nangangailangan ng iba ay maaari lamang i-on kasama nito.',
+                        'title' => 'Pagpili ng module',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Kapag pinatay ang isang module, itinatago ang mga menu, pahina at API route nito; nananatili ang data nito.',
+                        'title' => 'Mga module',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Nalalapat lamang habang naka-off ang Impormasyon ng Produkto (PIM). Inaalis sa menu ang mga napiling seksyon at hinaharangan ang mga admin page nito; nananatili ang data nito at nananatiling available ang mga Admin API route nito.',
+                        'title' => 'Mga nakatagong seksyon',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -2330,6 +2351,7 @@ return [
                 'title'               => 'Prompt',
                 'create-btn'          => 'Lumikha ng Prompt',
                 'edit-title'          => 'I-edit ang Prompt',
+                'insert-attribute'    => 'Magsingit ng attribute',
                 'create-title'        => 'Lumikha ng Bagong Prompt',
                 'label-title'         => 'Pamagat',
                 'purpose'             => 'Layunin',
@@ -3103,6 +3125,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Dashboard',
+        'home'      => 'Home',
         'go-back'   => 'Bumalik',
         'support'   => 'Kung ang problema ay nagpapatuloy, makipag-ugnayan sa amin sa <a href=":link" class=":class">:email</a> para sa tulong.',
         '404'       => [

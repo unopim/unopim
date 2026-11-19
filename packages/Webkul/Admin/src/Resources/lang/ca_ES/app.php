@@ -2118,6 +2118,7 @@ return [
             'delete-failed'                   => 'No s\'ha pogut eliminar el rol',
             'delete-success'                  => 'Rol eliminat correctament',
             'last-delete-error'               => 'No es pot eliminar l\'últim rol',
+            'last-full-access'                => 'Almenys un usuari actiu ha de mantenir l\'accés complet.',
             'update-success'                  => 'Rol actualitzat correctament',
         ],
     ],
@@ -2157,6 +2158,26 @@ return [
                     'info'  => '',
                     'title' => 'Geral',
                 ],
+                'platform' => [
+                    'info'  => 'Trieu quins mòduls de la plataforma estan activats.',
+                    'title' => 'Plataforma',
+
+                    'settings' => [
+                        'info'  => 'Executeu qualsevol mòdul sol o diversos alhora; un mòdul que en necessita un altre només es pot activar amb aquest.',
+                        'title' => 'Selecció de mòduls',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Desactivar un mòdul n’amaga els menús, les pàgines i les rutes de l’API; les dades es conserven.',
+                        'title' => 'Mòduls',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Només s’aplica mentre la Informació de producte (PIM) està desactivada. Les seccions seleccionades s’eliminen del menú i se’n bloquegen les pàgines d’administració; les dades es conserven i les rutes de l’API d’administració (Admin API) continuen disponibles.',
+                        'title' => 'Seccions ocultes',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -2328,6 +2349,7 @@ return [
                 'title'               => 'Missatge',
                 'create-btn'          => 'Crear Missatge',
                 'edit-title'          => 'Editar Missatge',
+                'insert-attribute'    => 'Insereix un atribut',
                 'create-title'        => 'Crear un Nou Missatge',
                 'label-title'         => 'Títol',
                 'purpose'             => 'Propòsit',
@@ -3100,6 +3122,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Tauler de control',
+        'home'      => 'Inici',
         'go-back'   => 'Torna enrere',
         'support'   => 'Si el problema persisteix, contacta\'ns a través de <a href=":link" class=":class">:email</a> per obtenir assistència.',
         '404'       => [

@@ -55,7 +55,7 @@ test.describe.serial('DPP industry use cases', () => {
 
     const localeMap = await passportLocaleMap(page);
     const ids = locales.map((code) => localeMap[code]).filter(Boolean);
-    const rows = await publishAndWait(page, product.id, channelId, ids, { expected: ids.length });
+    const rows = await publishAndWait(page, product.id, channelId, ids, { expected: ids.length, codes: locales });
     expect(rows.length, `expected ${ids.length} live locale(s)`).toBe(ids.length);
 
     const row = await passportRowForSku(page, product.sku);
@@ -239,7 +239,7 @@ test.describe.serial('DPP industry use cases', () => {
     await saveProduct(page);
 
     const localeMap = await passportLocaleMap(page);
-    const rows = await publishAndWait(page, product.id, channelId, [localeMap.en_US], { expected: 1 });
+    const rows = await publishAndWait(page, product.id, channelId, [localeMap.en_US], { expected: 1, codes: ['en_US'] });
     expect(rows.length).toBe(1);
   });
 

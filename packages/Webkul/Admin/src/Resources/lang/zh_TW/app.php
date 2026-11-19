@@ -2120,6 +2120,7 @@ return [
             'delete-failed'                   => '無法刪除角色',
             'delete-success'                  => '角色刪除成功',
             'last-delete-error'               => '無法刪除最後一個角色',
+            'last-full-access'                => '至少必須有一位啟用中的使用者保有完整存取權限。',
             'update-success'                  => '角色更新成功',
         ],
     ],
@@ -2159,6 +2160,26 @@ return [
                     'info'  => '',
                     'title' => '常規',
                 ],
+                'platform' => [
+                    'info'  => '選擇要啟用的平台模組。',
+                    'title' => '平台',
+
+                    'settings' => [
+                        'info'  => '任一模組都可單獨執行，也可多個一起執行；依賴其他模組的模組只能與其一同啟用。',
+                        'title' => '模組選擇',
+                    ],
+
+                    'modules' => [
+                        'info'  => '關閉某個模組會隱藏其選單、頁面和 API 路由；其資料會保留。',
+                        'title' => '模組',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => '僅在產品資訊（PIM）關閉時生效。所選區段會從選單中移除，其管理頁面會被封鎖；其資料會保留，其 Admin API 路由仍可使用。',
+                        'title' => '隱藏的區段',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -2330,6 +2351,7 @@ return [
                 'title'               => '提示',
                 'create-btn'          => '建立提示',
                 'edit-title'          => '編輯提示',
+                'insert-attribute'    => '插入屬性',
                 'create-title'        => '建立新提示',
                 'label-title'         => '標題',
                 'purpose'             => '用途',
@@ -3103,6 +3125,7 @@ return [
     ],
     'errors' => [
         'dashboard' => '儀表板',
+        'home'      => '首頁',
         'go-back'   => '返回',
         'support'   => '如果問題仍然存在，請通過電子郵件<a href=":link" class=":class">:email</a>聯繫我們尋求幫助。',
         '404'       => [

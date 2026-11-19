@@ -143,6 +143,38 @@ if (! function_exists('unique_form_control_id')) {
     }
 }
 
+if (! function_exists('remember_form_label_id')) {
+    /**
+     * Reserve a DOM id for a visible form label and hold it for the next control
+     * in the same control group, which renders after the label and cannot be
+     * reached through Blade's component data.
+     */
+    function remember_form_label_id(): string
+    {
+        $id = unique_form_control_id('form_label');
+
+        request()->attributes->set('pending_form_label_id', $id);
+
+        return $id;
+    }
+}
+
+if (! function_exists('pull_form_label_id')) {
+    /**
+     * Take the label id held for the current control group, if any.
+     */
+    function pull_form_label_id(): ?string
+    {
+        $attributes = request()->attributes;
+
+        $id = $attributes->get('pending_form_label_id');
+
+        $attributes->remove('pending_form_label_id');
+
+        return $id;
+    }
+}
+
 if (! function_exists('image_manager')) {
     /**
      * Get the image manager instance.
