@@ -47,11 +47,11 @@ class SimpleProductController extends ProductController
         try {
             $product = $this->findProductOr404($code);
 
-            Event::dispatch('catalog.product.delete.before', $code);
+            Event::dispatch('catalog.product.delete.before', $product->id);
 
             $product->delete();
 
-            Event::dispatch('catalog.product.delete.after', $code);
+            Event::dispatch('catalog.product.delete.after', $product->id);
 
             return response()->json([
                 'success' => true,

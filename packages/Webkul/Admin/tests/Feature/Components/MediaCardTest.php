@@ -93,7 +93,7 @@ it('renders AI suggestion labels as text instead of untrusted HTML', function ()
         __DIR__.'/../../../src/Resources/views/components/media/image.blade.php',
         __DIR__.'/../../../src/Resources/views/components/media/gallery.blade.php',
         __DIR__.'/../../../src/Resources/views/components/tinymce/index.blade.php',
-        __DIR__.'/../../../src/Resources/views/configuration/magic-ai-prompt/index.blade.php',
+        __DIR__.'/../../../src/Resources/views/components/magic-ai/prompt-input.blade.php',
     ];
 
     foreach ($views as $view) {

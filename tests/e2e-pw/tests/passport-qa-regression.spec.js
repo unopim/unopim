@@ -23,6 +23,7 @@ const {
   withFamilyPage,
   adminPost,
 } = require('../fixtures/passport');
+const { submitDataGridSearch } = require('../utils/helpers');
 
 /**
  * The publications grid row for a SKU, read through the grid's own JSON branch.
@@ -43,24 +44,24 @@ async function gridRow(page, sku) {
 /** Click a row action by title, confirm the modal, and return the flash payloads emitted. */
 async function runRowAction(page, sku, title) {
   await page.goto('/admin/catalog/passports', { waitUntil: 'domcontentloaded' });
-  await page.getByRole('textbox', { name: 'Search', exact: true }).fill(sku);
-  await page.getByRole('textbox', { name: 'Search', exact: true }).press('Enter');
+  await submitDataGridSearch(page, page.getByRole('textbox', { name: 'Search', exact: true }), sku);
 
   const row = page.locator('.row', { hasText: sku }).first();
   await row.locator(`span[title='${title}']`).waitFor({ state: 'visible', timeout: 15000 });
 
-  const flashes = await page.evaluate(async ({ title }) => {
+  const flashes = await page.evaluate(async ({ sku, title }) => {
     const wait = (ms) => new Promise((r) => setTimeout(r, ms));
     const seen = [];
     window.app.config.globalProperties.$emitter.on('add-flash', (flash) => seen.push(flash));
 
-    document.querySelector(`span[title='${title}']`).click();
+    [...document.querySelectorAll('.row')].find((row) => row.textContent.includes(sku))
+      .querySelector(`span[title='${title}']`).click();
     await wait(500);
     [...document.querySelectorAll('button.primary-button')].find((b) => b.textContent.trim() === 'Agree').click();
     await wait(3000);
 
     return seen;
-  }, { title });
+  }, { sku, title });
 
   return flashes;
 }
@@ -99,9 +100,15 @@ test.describe.serial('Passport QA regressions', () => {
     const versioned = await publishAndWait(page, product.id, channelId, localeIds);
     expect(versioned.length).toBe(localeCodes.length);
 
-    const row = await passportRowForSku(page, product.sku);
-    uuid = row.uuid;
-    expect(row.publication_status).toMatch(/^published$/i);
+    // The grid status settles after the queued publish jobs, so poll it rather than read it once.
+    await expect
+      .poll(async () => String((await passportRowForSku(page, product.sku))?.publication_status ?? ''), {
+        message: 'grid publication status',
+        timeout: 30000,
+      })
+      .toMatch(/^published$/i);
+
+    uuid = (await passportRowForSku(page, product.sku)).uuid;
   });
 
   test('1+3. withdrawing flashes success, flips the row and zeroes Live Locales', async ({ adminPage }) => {

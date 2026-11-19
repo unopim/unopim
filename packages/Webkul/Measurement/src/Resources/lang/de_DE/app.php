@@ -125,6 +125,8 @@ return [
                     'base'           => 'Dezimalstellen für Basiswert',
                     'base-info'      => 'Anzahl der Dezimalstellen, die für den in die Standardeinheit umgerechneten Wert beibehalten werden.',
                 ],
+                'display-unit-symbol'      => 'Einheitensymbole anzeigen',
+                'display-unit-symbol-info' => 'Messwerte mit dem Einheitensymbol (zum Beispiel 100 °C) statt mit dem Einheitennamen anzeigen, im Adminbereich und in Exporten. Einheiten ohne Symbol behalten ihren Namen.',
             ],
         ],
     ],

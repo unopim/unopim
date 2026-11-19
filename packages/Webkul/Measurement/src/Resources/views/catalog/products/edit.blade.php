@@ -51,7 +51,9 @@
             :placeholder="trans('measurement::app.measurement.attribute.enter_value')"
             oninput="
                 this.value = this.value
-                    .replace(/[^0-9.]/g, '')
+                    .replace(/,/g, '.')
+                    .replace(/[^0-9.-]/g, '')
+                    .replace(/(?!^)-/g, '')
                     .replace(/(\..*?)\..*/g, '$1');
             "
         />
@@ -63,6 +65,7 @@
         <x-admin::form.control-group.control
             type="select"
             name="{{ $fieldName }}[unit]"
+            :label="trans('measurement::app.attribute_type.measurement_unit')"
             async="true"
             track-by="id"
             label-by="label"

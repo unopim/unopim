@@ -2128,6 +2128,7 @@ return [
             'delete-failed'                   => 'Rol silinemedi',
             'delete-success'                  => 'Rol başarıyla silindi',
             'last-delete-error'               => 'Son rol silinemedi',
+            'last-full-access'                => 'En az bir aktif kullanıcı tam erişimi korumalıdır.',
             'update-success'                  => 'Rol başarıyla güncellendi',
         ],
     ],
@@ -2167,6 +2168,26 @@ return [
                     'info'  => '',
                     'title' => 'Genel',
                 ],
+                'platform' => [
+                    'info'  => 'Hangi platform modüllerinin açık olacağını seçin.',
+                    'title' => 'Platform',
+
+                    'settings' => [
+                        'info'  => 'Herhangi bir modülü tek başına veya birkaçını birlikte çalıştırın; başka bir modüle ihtiyaç duyan bir modül yalnızca onunla birlikte açılabilir.',
+                        'title' => 'Modül seçimi',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Bir modülü kapatmak menülerini, sayfalarını ve API rotalarını gizler; verileri korunur.',
+                        'title' => 'Modüller',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Yalnızca Ürün Bilgisi (PIM) kapalıyken geçerlidir. Seçilen bölümler menüden kaldırılır ve yönetim sayfaları engellenir; verileri korunur ve Admin API rotaları kullanılabilir kalır.',
+                        'title' => 'Gizli bölümler',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -2338,6 +2359,7 @@ return [
                 'title'               => 'İstem',
                 'create-btn'          => 'İstem Oluştur',
                 'edit-title'          => 'İstemi Düzenle',
+                'insert-attribute'    => 'Özellik ekle',
                 'create-title'        => 'Yeni İstem Oluştur',
                 'label-title'         => 'Başlık',
                 'purpose'             => 'Amaç',
@@ -3111,6 +3133,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Gösterge Paneli',
+        'home'      => 'Ana Sayfa',
         'go-back'   => 'Geri Dön',
         'support'   => 'Sorun devam ederse, bizimle iletişime geçin: <a href=":link" class=":class">:email</a> için yardım.',
         '404'       => [

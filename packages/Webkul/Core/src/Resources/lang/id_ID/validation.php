@@ -24,10 +24,16 @@ return [
     'file-outside-attribute-path'      => 'Berkas :value bukan milik catatan ini. Unggah ulang untuk bidang :attribute.',
     'password-surrounding-whitespace'  => ':attribute tidak boleh diawali atau diakhiri dengan spasi.',
     'password-whitespace-only'         => ':attribute tidak boleh hanya berisi spasi.',
+    'hideable-sections'                => ':attribute berisi bagian yang tidak dapat disembunyikan.',
     'active-content-detected'          => ':attribute tidak dapat diunggah karena berisi konten aktif (:reason).',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'JavaScript tersemat atau tindakan PDF yang berjalan otomatis',
         'embedded_vba_macro'            => 'makro VBA tersemat',
         'auto_executing_ole_object'     => 'objek tersemat yang berjalan otomatis',
+    ],
+    'platform-modules'                => [
+        'empty'    => 'Pilih setidaknya satu modul platform.',
+        'unknown'  => 'Modul platform ":module" tidak terpasang.',
+        'requires' => ':module hanya dapat diaktifkan bersama :requires.',
     ],
 ];

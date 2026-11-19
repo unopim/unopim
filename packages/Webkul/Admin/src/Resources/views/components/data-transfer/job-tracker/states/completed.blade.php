@@ -1,3 +1,7 @@
+@php
+    $completedInfo = config(($jobType->isExport() ? 'exporters.' : 'importers.').($jobTrack->jobInstance?->entity_type ?? '').'.completed_info');
+@endphp
+
                 <div
                     class="p-5"
                     v-else-if="importResource.state == 'completed'"
@@ -51,7 +55,7 @@
                                             @{{ totalDuration() }}
                                         </span>
                                     </div>
-                                    <p class="text-sm text-green-600/80 dark:text-green-400/80 mt-0.5">@lang('admin::app.settings.data-transfer.tracker.completed-info-sub')</p>
+                                    <p class="text-sm text-green-600/80 dark:text-green-400/80 mt-0.5">{{ is_string($completedInfo) ? trans($completedInfo) : trans('admin::app.settings.data-transfer.tracker.completed-info-sub') }}</p>
                                 </div>
                             </div>
                             <a

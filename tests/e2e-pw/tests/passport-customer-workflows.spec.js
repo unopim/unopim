@@ -11,7 +11,6 @@ const {
   saveProduct,
   settingsIdByCode,
   fetchGridRows,
-  gridRecords,
   passportLocaleMap,
   publishAndWait,
   passportRowForSku,
@@ -92,7 +91,7 @@ async function waitForAutoPublish(page, productId, { timeout = 60000 } = {}) {
   return [];
 }
 
-test.describe.serial('DPP customer workflows', () => {
+test.describe.serial('DPP customer workflows', { tag: '@global-state' }, () => {
   let channelId;
 
   test.beforeAll(async ({ browser }) => {
@@ -147,7 +146,7 @@ test.describe.serial('DPP customer workflows', () => {
     await saveProduct(page);
 
     const localeMap = await passportLocaleMap(page);
-    const rows = await publishAndWait(page, product.id, channelId, [localeMap.en_US], { expected: 1 });
+    const rows = await publishAndWait(page, product.id, channelId, [localeMap.en_US], { expected: 1, codes: ['en_US'] });
     expect(rows.length, 'published locale').toBe(1);
 
     const gridRow = await passportRowForSku(page, sku);

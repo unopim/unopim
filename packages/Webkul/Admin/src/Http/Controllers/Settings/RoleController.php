@@ -4,13 +4,17 @@ namespace Webkul\Admin\Http\Controllers\Settings;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Settings\RolesDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\RoleForm;
+use Webkul\Core\Platform\ModuleGate;
+use Webkul\User\Contracts\Role;
 use Webkul\User\Repositories\AdminRepository;
 use Webkul\User\Repositories\RoleRepository;
+use Webkul\User\Services\RoleAccessGuard;
 
 class RoleController extends Controller
 {
@@ -53,12 +57,17 @@ class RoleController extends Controller
     {
         Event::dispatch('user.role.create.before');
 
-        $role = $this->roleRepository->create($request->only([
+        $data = $request->only([
             'name',
             'description',
             'permission_type',
-            'permissions',
-        ]));
+        ]);
+
+        if (is_array($request->input('permissions'))) {
+            $data['permissions'] = app(ModuleGate::class)->keepHiddenKeys($request->input('permissions'), []);
+        }
+
+        $role = $this->roleRepository->create($data);
 
         Event::dispatch('user.role.create.after', $role);
 
@@ -83,31 +92,40 @@ class RoleController extends Controller
      */
     public function update(RoleForm $request, int $id): JsonResponse|RedirectResponse
     {
-        $role = $this->roleRepository->findOrFail($id);
-
-        /**
-         * Check for other admins if the role has been changed from all to custom.
-         */
-        $isChangedFromAll = $request->permission_type == 'custom' && $role->permission_type == 'all';
-
-        if ($isChangedFromAll && $role->admins()->count() === 1 && $this->adminRepository->countAdminsWithAllAccess() === 1) {
-            return $this->respondError(
-                trans('admin::app.settings.roles.being-used'),
-                redirectUrl: route('admin.settings.roles.index')
-            );
-        }
-
-        $data = array_merge($request->only([
+        $data = $request->only([
             'name',
             'description',
             'permission_type',
-        ]), [
-            'permissions' => $request->has('permissions') ? $request->permissions : [],
         ]);
 
-        Event::dispatch('user.role.update.before', $id);
+        $submittedPermissions = $request->has('permissions') ? (array) $request->permissions : [];
 
-        $role = $this->roleRepository->update($data, $id);
+        $role = DB::transaction(function () use ($data, $submittedPermissions, $id): ?Role {
+            $role = $this->roleRepository->lockForFullAccessChange($id);
+
+            $data['permissions'] = app(ModuleGate::class)->keepHiddenKeys(
+                $submittedPermissions,
+                (array) ($role->permissions ?? []),
+            );
+
+            $losesFullAccess = $role->permission_type === RoleAccessGuard::FULL_ACCESS
+                && $data['permission_type'] !== RoleAccessGuard::FULL_ACCESS;
+
+            if ($losesFullAccess && ! $this->adminRepository->hasOtherActiveFullAccessAdmin([$role->id])) {
+                return null;
+            }
+
+            Event::dispatch('user.role.update.before', $id);
+
+            return $this->roleRepository->update($data, $id);
+        });
+
+        if (! $role) {
+            return $this->respondError(
+                trans('admin::app.settings.roles.last-full-access'),
+                redirectUrl: route('admin.settings.roles.index')
+            );
+        }
 
         Event::dispatch('user.role.update.after', $role);
 
@@ -121,9 +139,9 @@ class RoleController extends Controller
     {
         $role = $this->roleRepository->findOrFail($id);
 
-        if ($name = $role->admins()->value('name')) {
+        if ($role->admins()->exists()) {
             return new JsonResponse([
-                'message' => trans('admin::app.settings.roles.being-used-by', ['name' => $name]),
+                'message' => trans('admin::app.settings.roles.being-used-by', ['name' => $role->admins()->orderBy('id')->value('name')]),
             ], JsonResponse::HTTP_BAD_REQUEST);
         }
 

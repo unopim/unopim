@@ -1,16 +1,27 @@
 name: Playwright Tests
 
+# A pull request runs a short smoke pass over the core admin save flows so a
+# broken create/edit page shows up in review. The full suite gates the merge
+# queue and runs on every push to a release line. Specs that call a live AI
+# provider only get credentials on the nightly run, so a provider renaming or
+# retiring a model cannot block a merge.
+#
 # A branch push and its own pull request are the same commit, so pushes are
 # limited to the release lines and everything else arrives through the PR event.
 on:
   push:
     branches: [master, '3.x']
   pull_request:
+  merge_group:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
 
 # head_ref is the branch on a pull request and empty elsewhere, which keeps a
-# branch's runs in one group no matter which event opened them.
+# branch's runs in one group no matter which event opened them. The nightly run
+# gets its own group so a push to the release line does not cancel it.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  group: ${{ github.workflow }}-${{ github.event_name == 'schedule' && 'nightly' || github.head_ref || github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -21,6 +32,7 @@ env:
 
 jobs:
   playwright_tests:
+    if: github.repository == 'unopim/unopim' && github.event_name != 'pull_request'
     name: Playwright E2E | Shard ${{ matrix.shard-index }}/${{ matrix.shard-total }}
     runs-on: ubuntu-24.04
 
@@ -31,7 +43,7 @@ jobs:
         shard-total: [8]
 
     services:
-      mysql:
+      mysql: &mysql-service
         image: mysql:8.0
         env:
           MYSQL_ROOT_PASSWORD: root
@@ -47,9 +59,8 @@ jobs:
           --tmpfs /tmp:rw,noexec,nosuid,size=100m
 
     env:
-      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-      GROQ_INVALID_KEY: ${{ secrets.GROQ_INVALID_KEY }}
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      # Live-provider specs skip without a key, so only the nightly and manual runs get one.
+      OPENAI_API_KEY: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && secrets.OPENAI_API_KEY || '' }}
       UNOPIM_URL: ${{ secrets.UNOPIM_URL }}
       ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
       ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
@@ -63,107 +74,134 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v7
+      # Fall back to the same literal creds login.js defaults to, so the seeded
+      # admin always matches the test login even when these repo secrets are
+      # unset (e.g. fork PRs). Without a fallback the seeder generates a RANDOM
+      # password and every login — and thus every E2E test — fails.
+      - name: Set up UnoPim
+        uses: ./.github/actions/e2e-setup
         with:
-          node-version: '22'
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@2.40.0
-        with:
-          php-version: '8.4'
-          extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
-          ini-values: error_reporting=E_ALL
-          tools: composer:v2
-          coverage: none
-
-      - name: Install Composer dependencies
-        uses: ramsey/composer-install@v4
-        with:
-          composer-options: "--optimize-autoloader"
-
-      - name: Cache npm dependencies
-        uses: actions/cache@v5
-        with:
-          path: tests/e2e-pw/node_modules
-          key: ${{ runner.os }}-npm-${{ hashFiles('tests/e2e-pw/package-lock.json') }}
-          restore-keys: ${{ runner.os }}-npm-
-
-      - name: Cache Playwright browsers
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('tests/e2e-pw/package-lock.json') }}
-
-      - name: Install npm & Playwright browsers
-        run: |
-          cd tests/e2e-pw
-          npm install --no-progress --prefer-offline
-          npx playwright install --with-deps chromium
-
-      - name: Setting Environment
-        run: |
-          cp .env.example .env
-          sed -i "s|^\(APP_ENV=\s*\).*$|\1testing|" .env
-          sed -i "s|^\(APP_DEBUG=\s*\).*$|\1false|" .env
-          sed -i "s|^\(APP_URL=\s*\).*$|\1http://127.0.0.1:8000|" .env
-          sed -i "s|^\(DB_HOST=\s*\).*$|\1127.0.0.1|" .env
-          sed -i "s|^\(DB_PORT=\s*\).*$|\13306|" .env
-          sed -i "s|^\(DB_DATABASE=\s*\).*$|\1unopim|" .env
-          sed -i "s|^\(DB_USERNAME=\s*\).*$|\1root|" .env
-          sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
-          # The API E2E specs fire many requests back-to-back; lift the REST rate
-          # limit for the test server so they don't trip the 120/min throttle (429).
-          echo "REST_API_RATE_LIMIT=100000" >> .env
-          # Login-heavy shards (loginpage, notifications re-auth, ajax-nav, security)
-          # sign in as the same admin many times within a minute; raise the admin
-          # login throttle so those legitimate logins don't cascade into 429s. The
-          # rate-limit security spec reads this same value to still assert throttling.
-          echo "ADMIN_LOGIN_RATE_LIMIT=20" >> .env
-          # The oauth spec requests well over a dozen tokens as the same admin from
-          # the same address, and that limiter keys on `username|ip`, so the 10/min
-          # production default throttles the suite against itself.
-          echo "OAUTH_TOKEN_RATE_LIMIT=100000" >> .env
-
-          # The webhook-delivery spec's catcher listens on the runner's loopback;
-          # SafeWebhookUrl blocks loopback unless this opt-in is set.
-          echo "WEBHOOK_ALLOW_LOOPBACK=true" >> .env
-
-      - name: Running UnoPim Installer & Start Server
-        env:
-          # Fall back to the same literal creds login.js defaults to, so the
-          # seeded admin always matches the test login even when these repo
-          # secrets are unset (e.g. fork PRs, where secrets are unavailable).
-          # Without a fallback the seeder generates a RANDOM password and every
-          # login — and thus every E2E test — fails.
-          INSTALLER_ADMIN_EMAIL: ${{ secrets.INSTALLER_ADMIN_EMAIL || 'admin@example.com' }}
-          INSTALLER_ADMIN_PASSWORD: ${{ secrets.INSTALLER_ADMIN_PASSWORD || 'admin123' }}
-        run: |
-          php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
-          php artisan unopim:passport:install-preset
-          php artisan db:seed --class=DiscardQaFixtureSeeder
-          php artisan tinker tests/e2e-pw/scripts/seed-dpp-e2e.php
-          php artisan serve --host=0.0.0.0 --port=8000 > /tmp/server.log 2>&1 &
-          php artisan queue:work --queue=webhooks,default,system,completeness,publication > /tmp/queue.log 2>&1 &
-          echo "Waiting for server..."
-          timeout 30 bash -c 'until curl -s http://127.0.0.1:8000 > /dev/null; do sleep 1; done' || (cat /tmp/server.log && exit 1)
+          admin-email: ${{ secrets.INSTALLER_ADMIN_EMAIL || 'admin@example.com' }}
+          admin-password: ${{ secrets.INSTALLER_ADMIN_PASSWORD || 'admin123' }}
 
       - name: Run Playwright tests
         env:
           PASSPORT_E2E_LOCAL: '1'
+          PW_WORKERS: '3'
+          # Duration-balanced file sets instead of --shard's equal test counts (see shard-balance.js).
+          PW_SHARD: ${{ matrix.shard-index }}/${{ matrix.shard-total }}
+        # @global-state specs change store-wide settings, so they run after the
+        # rest on one worker. Both passes always run and either one fails the step.
         run: |
           cd tests/e2e-pw
-          npx playwright test --reporter=list,html --shard=${{ matrix.shard-index }}/${{ matrix.shard-total }}
+          status=0
+          PW_PASS=parallel npx playwright test --pass-with-no-tests || status=$?
+          PW_PASS=serial npx playwright test --pass-with-no-tests || status=$?
+          exit $status
 
       - name: Upload test results
         if: failure()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: playwright-report-shard-${{ matrix.shard-index }}-${{ github.run_id }}
           path: |
             tests/e2e-pw/playwright-report
+            tests/e2e-pw/playwright-report-serial
+            tests/e2e-pw/test-results
+            tests/e2e-pw/test-results-serial
+            storage/logs/*.log
+            /tmp/server.log
+            /tmp/queue.log
+            storage/logs/laravel.log
+          retention-days: 7
+
+  # A short pass over the admin flows every change can break: sign-in, ajax
+  # navigation, the shared ajax form save and the catalog create/edit pages.
+  playwright_smoke:
+    if: github.repository == 'unopim/unopim' && github.event_name == 'pull_request'
+    name: Playwright E2E | Smoke
+    runs-on: ubuntu-24.04
+
+    services:
+      mysql: *mysql-service
+
+    env:
+      WEBHOOK_ALLOW_LOOPBACK: 'true'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up UnoPim
+        uses: ./.github/actions/e2e-setup
+        with:
+          admin-email: ${{ secrets.INSTALLER_ADMIN_EMAIL || 'admin@example.com' }}
+          admin-password: ${{ secrets.INSTALLER_ADMIN_PASSWORD || 'admin123' }}
+
+      - name: Run Playwright smoke specs
+        env:
+          PASSPORT_E2E_LOCAL: '1'
+          PW_WORKERS: '3'
+        run: |
+          cd tests/e2e-pw
+          npx playwright test \
+            tests/07-ui-loginpage/loginpage.spec.js \
+            tests/10-navigation/ajax-nav.spec.js \
+            tests/form-save-feedback.spec.js \
+            tests/01-catalog/attribute.spec.js \
+            tests/01-catalog/attributefamily.spec.js \
+            tests/01-catalog/category.spec.js \
+            tests/01-catalog/products.spec.js
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: playwright-report-smoke-${{ github.run_id }}
+          path: |
+            tests/e2e-pw/playwright-report
             tests/e2e-pw/test-results
             storage/logs/laravel.log
-          retention-days: 1
+            /tmp/server.log
+            /tmp/queue.log
+          retention-days: 7
+
+  # A skipped matrix job reports its check under the unexpanded name, which can
+  # never satisfy a required check. This stand-in reports the expanded names on
+  # a pull request so it can enter the merge queue, where the real job runs.
+  playwright_tests_pull_request:
+    if: github.repository == 'unopim/unopim' && github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    name: Playwright E2E | Shard ${{ matrix.shard-index }}/${{ matrix.shard-total }}
+    strategy:
+      matrix:
+        shard-index: [1,2,3,4,5,6,7,8]
+        shard-total: [8]
+    steps:
+      - name: Defer to the merge queue
+        run: echo "::notice::Playwright E2E runs in the merge queue and on the release lines."
+
+  # The nightly run is the only one with live AI credentials and nobody watches
+  # it, so a failure opens (or comments on) a tracking issue.
+  report_nightly_failure:
+    needs: playwright_tests
+    if: failure() && github.event_name == 'schedule'
+    runs-on: ubuntu-24.04
+    permissions:
+      issues: write
+    steps:
+      - name: Open or update the tracking issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          title="Nightly Playwright E2E is failing"
+          number=$(gh issue list --state open --search "\"$title\" in:title" --json number --jq '.[0].number')
+          if [ -n "$number" ]; then
+            gh issue comment "$number" --body "Still failing: $RUN_URL"
+          else
+            gh issue create --title "$title" --body "The nightly Playwright run failed: $RUN_URL"
+          fi

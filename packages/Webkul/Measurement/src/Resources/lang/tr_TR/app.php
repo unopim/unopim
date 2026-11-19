@@ -124,6 +124,8 @@ return [
                     'base'           => 'Temel değer ondalıkları',
                     'base-info'      => 'Standart birime dönüştürülen değer için korunan ondalık basamak sayısı.',
                 ],
+                'display-unit-symbol'      => 'Birim sembollerini göster',
+                'display-unit-symbol-info' => 'Ölçüm değerlerini yönetim panelinde ve dışa aktarımlarda birim adı yerine birim sembolüyle (örneğin 100 °C) gösterir. Sembolü olmayan birimler adlarıyla gösterilir.',
             ],
         ],
     ],

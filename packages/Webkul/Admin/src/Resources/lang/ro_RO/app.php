@@ -2128,6 +2128,7 @@ return [
             'delete-failed'                   => 'Ștergerea rolului a eșuat',
             'delete-success'                  => 'Rolul a fost șters cu succes',
             'last-delete-error'               => 'Ultimul rol nu poate fi șters',
+            'last-full-access'                => 'Cel puțin un utilizator activ trebuie să păstreze accesul complet.',
             'update-success'                  => 'Rolul a fost actualizat cu succes',
         ],
     ],
@@ -2167,6 +2168,26 @@ return [
                     'info'  => '',
                     'title' => 'General',
                 ],
+                'platform' => [
+                    'info'  => 'Alegeți ce module ale platformei sunt activate.',
+                    'title' => 'Platformă',
+
+                    'settings' => [
+                        'info'  => 'Rulați orice modul singur sau mai multe împreună; un modul care necesită altul poate fi activat doar împreună cu acesta.',
+                        'title' => 'Selectarea modulelor',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Dezactivarea unui modul ascunde meniurile, paginile și rutele API ale acestuia; datele sunt păstrate.',
+                        'title' => 'Module',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Se aplică doar cât timp Informații despre produse (PIM) este dezactivat. Secțiunile selectate sunt eliminate din meniu, iar paginile lor de administrare sunt blocate; datele sunt păstrate, iar rutele Admin API rămân disponibile.',
+                        'title' => 'Secțiuni ascunse',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -2338,6 +2359,7 @@ return [
                 'title'               => 'Prompt',
                 'create-btn'          => 'Creează Prompt',
                 'edit-title'          => 'Editează Prompt',
+                'insert-attribute'    => 'Inserează atribut',
                 'create-title'        => 'Creează un Nou Prompt',
                 'label-title'         => 'Titlu',
                 'purpose'             => 'Scop',
@@ -3111,6 +3133,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Tablou de Bord',
+        'home'      => 'Acasă',
         'go-back'   => 'Înapoi',
         'support'   => 'Dacă problema persistă, contactați-ne la <a href=":link" class=":class">:email</a> pentru asistență.',
         '404'       => [

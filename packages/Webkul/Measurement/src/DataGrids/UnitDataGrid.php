@@ -31,12 +31,12 @@ class UnitDataGrid extends DataGrid
         $standardUnit = $family->standard_unit ?? null;
 
         $driver = DB::connection()->getDriverName();
-        $tablePrefix = DB::getTablePrefix();
+        $grammar = DB::getQueryGrammar();
         $locale = app()->getLocale();
 
-        $labelExpression = $this->getUnitLabelExpression($driver, $tablePrefix);
+        $labelExpression = $this->getUnitLabelExpression($driver);
 
-        $isStandardExpression = "CASE WHEN {$tablePrefix}measurement_units.code = ? THEN 1 ELSE 0 END";
+        $isStandardExpression = "CASE WHEN {$grammar->wrap('measurement_units.code')} = ? THEN 1 ELSE 0 END";
 
         $inner = DB::table('measurement_units')
             ->leftJoin('measurement_unit_translations as u_loc', function ($join) use ($locale): void {
@@ -49,9 +49,9 @@ class UnitDataGrid extends DataGrid
             })
             ->where('measurement_units.measurement_family_id', $this->familyId)
             ->selectRaw(
-                "{$tablePrefix}measurement_units.code as code, "
+                "{$grammar->wrap('measurement_units.code')} as code, "
                 ."{$labelExpression} as label, "
-                ."{$tablePrefix}measurement_units.symbol as symbol, "
+                ."{$grammar->wrap('measurement_units.symbol')} as symbol, "
                 ."{$isStandardExpression} as is_standard",
                 [$standardUnit]
             );
@@ -69,20 +69,22 @@ class UnitDataGrid extends DataGrid
      * Build the localized unit-label SQL expression, falling back to the
      * en_US translation and finally to the bracketed unit code.
      */
-    protected function getUnitLabelExpression(string $driver, string $tablePrefix = ''): string
+    protected function getUnitLabelExpression(string $driver): string
     {
+        $grammar = DB::getQueryGrammar();
+
         if ($driver === 'pgsql') {
             return "COALESCE(
-                NULLIF(TRIM({$tablePrefix}u_loc.label), ''),
-                NULLIF(TRIM({$tablePrefix}u_en.label), ''),
-                '[' || {$tablePrefix}measurement_units.code || ']'
+                NULLIF(TRIM({$grammar->wrap('u_loc.label')}), ''),
+                NULLIF(TRIM({$grammar->wrap('u_en.label')}), ''),
+                '[' || {$grammar->wrap('measurement_units.code')} || ']'
             )";
         }
 
         return "COALESCE(
-            NULLIF(TRIM({$tablePrefix}u_loc.label), ''),
-            NULLIF(TRIM({$tablePrefix}u_en.label), ''),
-            CONCAT('[', {$tablePrefix}measurement_units.code, ']')
+            NULLIF(TRIM({$grammar->wrap('u_loc.label')}), ''),
+            NULLIF(TRIM({$grammar->wrap('u_en.label')}), ''),
+            CONCAT('[', {$grammar->wrap('measurement_units.code')}, ']')
         )";
     }
 
@@ -131,7 +133,7 @@ class UnitDataGrid extends DataGrid
                     ],
                 ],
             ],
-            'closure' => fn ($row) => $row->is_standard
+            'closure' => fn ($row): string => $row->is_standard
                 ? "<span class='label-active'>STANDARD UNIT</span>"
                 : '',
         ]);
@@ -187,7 +189,7 @@ class UnitDataGrid extends DataGrid
                 'icon'   => 'icon-edit',
                 'title'  => trans('measurement::app.datagrid.edit'),
                 'method' => 'GET',
-                'url'    => fn ($row) => route('admin.measurement.families.units.edit', [
+                'url'    => fn ($row): string => route('admin.measurement.families.units.edit', [
                     'familyId' => $this->familyId,
                     'code'     => $row->code,
                 ]),

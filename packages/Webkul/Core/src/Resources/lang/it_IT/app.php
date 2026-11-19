@@ -5,4 +5,8 @@ return [
         'template' => 'Modello',
         'parents'  => 'Genitori',
     ],
+
+    'platform-modules' => [
+        'pim' => 'Informazioni prodotto (PIM)',
+    ],
 ];

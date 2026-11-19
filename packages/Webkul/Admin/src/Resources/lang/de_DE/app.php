@@ -2126,6 +2126,7 @@ return [
             'delete-failed'                   => 'Löschen der Rollen fehlgeschlagen',
             'delete-success'                  => 'Rollen erfolgreich gelöscht',
             'last-delete-error'               => 'Letzte Rollen können nicht gelöscht werden',
+            'last-full-access'                => 'Mindestens ein aktiver Benutzer muss vollen Zugriff behalten.',
             'update-success'                  => 'Rollen erfolgreich aktualisiert',
         ],
     ],
@@ -2165,6 +2166,26 @@ return [
                     'info'  => '',
                     'title' => 'Allgemein',
                 ],
+                'platform' => [
+                    'info'  => 'Wählen Sie, welche Plattformmodule eingeschaltet sind.',
+                    'title' => 'Plattform',
+
+                    'settings' => [
+                        'info'  => 'Betreiben Sie jedes Modul allein oder mehrere zusammen; ein Modul, das ein anderes benötigt, lässt sich nur gemeinsam damit einschalten.',
+                        'title' => 'Modulauswahl',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Das Ausschalten eines Moduls blendet seine Menüs, Seiten und API-Routen aus; die Daten bleiben erhalten.',
+                        'title' => 'Module',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Gilt nur, solange Produktinformationen (PIM) ausgeschaltet sind. Ausgewählte Bereiche werden aus dem Menü entfernt und ihre Admin-Seiten gesperrt; die Daten bleiben erhalten, und ihre Admin-API-Routen bleiben verfügbar.',
+                        'title' => 'Ausgeblendete Bereiche',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -2336,6 +2357,7 @@ return [
                 'title'               => 'Aufforderung',
                 'create-btn'          => 'Aufforderung erstellen',
                 'edit-title'          => 'Aufforderung bearbeiten',
+                'insert-attribute'    => 'Attribut einfügen',
                 'create-title'        => 'Neue Aufforderung erstellen',
                 'label-title'         => 'Titel',
                 'purpose'             => 'Zweck',
@@ -3108,6 +3130,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Dashboard',
+        'home'      => 'Startseite',
         'go-back'   => 'Zurück',
         'support'   => 'Wenn das Problem weiterhin besteht, wenden Sie sich für Hilfe an uns unter <a href=":link" class=":class">:email</a>.',
         '404'       => [

@@ -7,6 +7,17 @@ import path from 'path';
 const STORAGE_PATH = path.resolve(process.env.PW_STATE_DIR || '.state', 'admin-auth.json');
 
 export default async function globalSetup() {
+  // Per-worker sessions (utils/fixtures.js) are minted fresh for every run.
+  const stateDir = path.dirname(STORAGE_PATH);
+
+  if (fs.existsSync(stateDir)) {
+    for (const file of fs.readdirSync(stateDir)) {
+      if (/^admin-auth-worker-\d+\.json$/.test(file)) {
+        fs.rmSync(path.join(stateDir, file));
+      }
+    }
+  }
+
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
   await login(page);

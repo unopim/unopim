@@ -68,3 +68,7 @@ it('rejects a file larger than the configured scan limit', function () {
         'file' => UploadedFile::fake()->create('large.pdf', 2, 'application/pdf'),
     ])->assertUnprocessable()->assertJsonValidationErrors('file');
 });
+
+it('defaults the scan size limit to 100MB', function () {
+    expect((int) config('media.scan.max_file_size_kilobytes'))->toBe(102400);
+});

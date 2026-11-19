@@ -6,11 +6,16 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Webkul\Attribute\Repositories\AttributeRepository;
+use Webkul\Measurement\Helpers\MeasurementHelper;
 use Webkul\Measurement\Repositories\MeasurementFamilyRepository;
 
 class ValidateAttributeMeasurementBeforeUpdate
 {
-    public function __construct(protected AttributeRepository $attributeRepository, protected MeasurementFamilyRepository $measurementFamilyRepository) {}
+    public function __construct(
+        protected AttributeRepository $attributeRepository,
+        protected MeasurementFamilyRepository $measurementFamilyRepository,
+        protected MeasurementHelper $measurementHelper
+    ) {}
 
     /**
      * Validate the measurement configuration before the attribute is updated.
@@ -24,7 +29,7 @@ class ValidateAttributeMeasurementBeforeUpdate
     {
         $attribute = $this->attributeRepository->find($attributeId);
 
-        if (! $attribute || $attribute->type !== 'measurement') {
+        if (! $attribute || ! $this->measurementHelper->isMeasurementBacked($attribute->type)) {
             return;
         }
 

@@ -11,6 +11,7 @@ use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\ExportDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Traits\GatesJobTypes;
 use Webkul\DataTransfer\Contracts\Validator\JobInstances\JobValidator;
 use Webkul\DataTransfer\Helpers\Export;
 use Webkul\DataTransfer\Jobs\Export\ExportTrackBatch;
@@ -22,6 +23,7 @@ use Webkul\DataTransfer\Services\JobHealth;
 class ExportController extends Controller
 {
     use Concerns\DownloadsSampleFile;
+    use GatesJobTypes;
 
     const TYPE = 'export';
 
@@ -58,7 +60,7 @@ class ExportController extends Controller
      */
     public function create(): View
     {
-        $exporterConfig = config('exporters');
+        $exporterConfig = $this->visibleJobTypes('exporters');
 
         return view('admin::settings.data-transfer.exports.create', compact('exporterConfig'));
     }
@@ -68,7 +70,7 @@ class ExportController extends Controller
      */
     public function store(): RedirectResponse
     {
-        $exporterConfig = config('exporters');
+        $exporterConfig = $this->visibleJobTypes('exporters');
 
         $exporters = array_keys($exporterConfig);
 
@@ -121,9 +123,9 @@ class ExportController extends Controller
      */
     public function edit(int $id): View
     {
-        $exporterConfig = config('exporters');
+        $exporterConfig = $this->visibleJobTypes('exporters');
 
-        $export = $this->jobInstancesRepository->findOrFail($id);
+        $export = $this->findVisibleJobInstance($id);
 
         return view('admin::settings.data-transfer.exports.edit', compact('export', 'exporterConfig'));
     }
@@ -133,11 +135,11 @@ class ExportController extends Controller
      */
     public function update(int $id): RedirectResponse
     {
-        $exporterConfig = config('exporters');
+        $exporterConfig = $this->visibleJobTypes('exporters');
 
         $exporters = array_keys($exporterConfig);
 
-        $export = $this->jobInstancesRepository->findOrFail($id);
+        $export = $this->findVisibleJobInstance($id);
 
         $this->validate(request(), [
             'code'                => ['required'],
@@ -199,7 +201,7 @@ class ExportController extends Controller
      */
     public function destroy($id): JsonResponse
     {
-        $export = $this->jobInstancesRepository->findOrFail($id);
+        $export = $this->findVisibleJobInstance($id);
 
         try {
             if (! empty($export->file_path)) {
@@ -237,7 +239,7 @@ class ExportController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $export = $jobInstance = $this->jobInstancesRepository->findOrFail($id);
+        $export = $jobInstance = $this->findVisibleJobInstance($id);
 
         $export->unsetRelations();
 
@@ -249,10 +251,9 @@ class ExportController extends Controller
      */
     public function exportNow(int $id): RedirectResponse
     {
-        try {
-            // Retrieve the export instance or fail with a 404
-            $jobInstance = $this->jobInstancesRepository->findOrFail($id);
+        $jobInstance = $this->findVisibleJobInstance($id);
 
+        try {
             // Get the authenticated user's ID
             $userId = auth()->guard('admin')->user()->id;
 
@@ -295,7 +296,7 @@ class ExportController extends Controller
      */
     public function validateExport(int $id): JsonResponse
     {
-        $export = $this->jobInstancesRepository->findOrFail($id);
+        $export = $this->findVisibleJobInstance($id);
 
         $isValid = $this->jobHelper
             ->setExport($export)
@@ -312,7 +313,7 @@ class ExportController extends Controller
      */
     public function start(int $id): JsonResponse
     {
-        $export = $this->jobInstancesRepository->findOrFail($id);
+        $export = $this->findVisibleJobInstance($id);
 
         if (! $export->processed_rows_count) {
             return new JsonResponse([
@@ -372,7 +373,7 @@ class ExportController extends Controller
      */
     public function link(int $id): JsonResponse
     {
-        $export = $this->jobInstancesRepository->findOrFail($id);
+        $export = $this->findVisibleJobInstance($id);
 
         if (! $export->processed_rows_count) {
             return new JsonResponse([
@@ -433,7 +434,7 @@ class ExportController extends Controller
      */
     public function indexData(int $id): JsonResponse
     {
-        $export = $this->jobInstancesRepository->findOrFail($id);
+        $export = $this->findVisibleJobInstance($id);
 
         if (! $export->processed_rows_count) {
             return new JsonResponse([
@@ -500,7 +501,7 @@ class ExportController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $export = $this->jobTrackRepository->findOrFail($id);
+        $export = $this->findVisibleJobTrack($id);
 
         if ($this->jobHealth->isStalled($export)) {
             $this->jobHealth->fail($export);
@@ -539,7 +540,7 @@ class ExportController extends Controller
      */
     public function download(int $id)
     {
-        $export = $this->jobInstancesRepository->findOrFail($id);
+        $export = $this->findVisibleJobInstance($id);
 
         return Storage::disk('private')->download($export->file_path);
     }
@@ -549,7 +550,7 @@ class ExportController extends Controller
      */
     public function downloadErrorReport(int $id)
     {
-        $export = $this->jobInstancesRepository->findOrFail($id);
+        $export = $this->findVisibleJobInstance($id);
 
         return Storage::disk('private')->download($export->error_file_path);
     }

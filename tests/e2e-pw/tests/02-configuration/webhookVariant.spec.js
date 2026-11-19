@@ -1,5 +1,6 @@
 const { test, expect } = require('../../utils/fixtures');
 const { clickSave, navigateTo, generateUid, searchInDataGrid, closeDropdown } = require('../../utils/helpers');
+const { deleteProductBySku } = require('../../utils/product-helpers');
 
 /**
  * Select a value from a Vue-multiselect dropdown by field name.
@@ -103,22 +104,6 @@ async function addVariant(page, variantSku, attributeLabel) {
 
   // Wait for the modal to close
   await page.locator('input[name="sku"]').last().waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
-}
-
-/**
- * Delete a product by SKU.
- */
-async function deleteProductBySku(page, sku) {
-  await navigateTo(page, 'products');
-  await searchInDataGrid(page, sku);
-  const deleteIcon = page.locator('span[title="Delete"]').first();
-  const visible = await deleteIcon.isVisible({ timeout: 3000 }).catch(() => false);
-  if (!visible) return;
-  await deleteIcon.click();
-  await page.getByRole('button', { name: 'Delete' }).click();
-  await page.locator('#app').getByText(/Product deleted successfully/i)
-    .waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
-  await page.waitForLoadState('networkidle');
 }
 
 // ─── Webhook Variant Creation Tests ────────────────────────────────

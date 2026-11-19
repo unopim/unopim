@@ -5,6 +5,7 @@ namespace Webkul\Webhook\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
 use Illuminate\View\View;
 use Webkul\Admin\Http\Requests\SelectableMassDestroyRequest;
@@ -48,7 +49,11 @@ class WebhookController
     {
         abort_unless(bouncer()->hasPermission('configuration.webhook.create'), 403);
 
+        Event::dispatch('webhook.create.before');
+
         $webhook = $this->webhookRepository->create($this->normalize($request, defaultActive: true));
+
+        Event::dispatch('webhook.create.after', $webhook);
 
         session()->flash('success', trans('webhook::app.webhooks.create-success'));
 
@@ -87,7 +92,11 @@ class WebhookController
             unset($data['secret']);
         }
 
-        $this->webhookRepository->update($data, $id);
+        Event::dispatch('webhook.update.before', $id);
+
+        $webhook = $this->webhookRepository->update($data, $id);
+
+        Event::dispatch('webhook.update.after', $webhook);
 
         session()->flash('success', trans('webhook::app.webhooks.update-success'));
 

@@ -5,11 +5,15 @@ namespace Webkul\Measurement\Listeners;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Webkul\Attribute\Models\Attribute;
+use Webkul\Measurement\Helpers\MeasurementHelper;
 use Webkul\Measurement\Repositories\AttributeMeasurementRepository;
 
 class SaveAttributeMeasurementAfterUpdate
 {
-    public function __construct(protected AttributeMeasurementRepository $attributeMeasurementRepository) {}
+    public function __construct(
+        protected AttributeMeasurementRepository $attributeMeasurementRepository,
+        protected MeasurementHelper $measurementHelper
+    ) {}
 
     /**
      * Save the measurement configuration after the attribute has been updated.
@@ -22,7 +26,7 @@ class SaveAttributeMeasurementAfterUpdate
      */
     public function handle($attribute): void
     {
-        if (! $attribute || $attribute->type !== 'measurement') {
+        if (! $attribute || ! $this->measurementHelper->isMeasurementBacked($attribute->type)) {
             return;
         }
 

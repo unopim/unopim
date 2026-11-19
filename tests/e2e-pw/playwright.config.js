@@ -4,6 +4,7 @@ const os = require('os');
 const fs = require('fs');
 
 const { loadEnv } = require('./utils/load-env');
+const { filesForShard } = require('./shard-balance');
 
 loadEnv();
 
@@ -14,19 +15,28 @@ const STORAGE_STATE = path.resolve(__dirname, process.env.PW_STATE_DIR || '.stat
 
 /**
  * Worker count strategy:
- * - CI: half the available CPUs (nginx + PHP-FPM handles concurrency)
+ * - CI: PW_WORKERS per shard (default 1); the workflow raises it together with
+ *   PHP_CLI_SERVER_WORKERS so `artisan serve` can answer workers concurrently
  * - Local: all CPUs minus 1 (leave one for the dev server)
- * - Minimum 2 workers to parallelize across test files
  */
 const workerCount = isCI
-  ? 1  // artisan serve is single-threaded — 1 worker per shard (shards run in parallel; count set in CI workflow)
+  ? Math.max(1, Number(process.env.PW_WORKERS) || 1)
   : Math.max(2, os.cpus().length - 1);
+
+const serialPass = process.env.PW_PASS === 'serial';
+const htmlReport = serialPass ? 'playwright-report-serial' : 'playwright-report';
 
 module.exports = defineConfig({
   testDir: './tests',
 
   /* Scratch specs under 99-debug are for local diagnosis only, never CI. */
   testIgnore: '**/99-debug/**',
+
+  /* PW_SHARD="2/8" runs one duration-balanced slice of the files, PW_PASS one pass of it (see shard-balance.js). */
+  ...(process.env.PW_SHARD ? { testMatch: filesForShard(process.env.PW_SHARD, workerCount, process.env.PW_PASS) } : {}),
+
+  /* The serial pass keeps its own results so it does not overwrite the parallel pass's. */
+  outputDir: serialPass ? 'test-results-serial' : 'test-results',
 
   /* Run tests within each file sequentially, but files in parallel across workers */
   fullyParallel: false,
@@ -37,8 +47,8 @@ module.exports = defineConfig({
   /* Retry once in CI to handle transient network/rendering flakes */
   retries: isCI ? 1 : 0,
 
-  /* Parallel workers across test files */
-  workers: workerCount,
+  /* Parallel workers across test files; @global-state specs run one at a time */
+  workers: serialPass ? 1 : workerCount,
 
   /**
    * Reporters:
@@ -46,8 +56,8 @@ module.exports = defineConfig({
    * - Local: html with auto-open on failure
    */
   reporter: isCI
-    ? [['list'], ['html', { outputFolder: 'playwright-report', open: 'never' }]]
-    : [['html', { outputFolder: 'playwright-report', open: 'on-failure' }]],
+    ? [['list'], ['html', { outputFolder: htmlReport, open: 'never' }]]
+    : [['html', { outputFolder: htmlReport, open: 'on-failure' }]],
 
   /* Per-test timeout: 60s is enough with nginx serving requests concurrently */
   timeout: 60_000,
@@ -57,6 +67,9 @@ module.exports = defineConfig({
 
   /* Pre-authenticate admin session before all tests */
   globalSetup: require.resolve('./global-setup.js'),
+
+  /* Remove fixtures that must outlive every worker (see global-teardown.js) */
+  globalTeardown: require.resolve('./global-teardown.js'),
 
   use: {
     /* Base URL — must point at THIS project's server and match its APP_URL so the

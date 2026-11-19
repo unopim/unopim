@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Webkul\Core\Database\Schema\PrefixedIndexNameBlueprint;
 
 return new class extends Migration
 {
@@ -23,7 +24,7 @@ return new class extends Migration
     {
         foreach ($this->redundant as $table => $definitions) {
             foreach ($definitions as $definition) {
-                $index = $this->plainIndex($table, $definition['columns']);
+                $index = $this->plainIndex($table, $definition['columns'], $definition['name']);
 
                 if ($index === null) {
                     continue;
@@ -54,7 +55,7 @@ return new class extends Migration
     /**
      * @param  array<int, string>  $columns
      */
-    private function plainIndex(string $table, array $columns): ?string
+    private function plainIndex(string $table, array $columns, ?string $name = null): ?string
     {
         if (! Schema::hasTable($table)) {
             return null;
@@ -62,7 +63,7 @@ return new class extends Migration
 
         foreach (Schema::getIndexes($table) as $index) {
             if ($index['columns'] === $columns && ! $index['unique'] && ! $index['primary']) {
-                return $index['name'];
+                return PrefixedIndexNameBlueprint::realCaseName($index['name'], $name);
             }
         }
 
