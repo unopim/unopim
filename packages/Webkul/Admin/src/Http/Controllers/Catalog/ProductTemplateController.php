@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\ProductTemplatePreviewForm;
+use Webkul\Admin\Http\Requests\ProductTemplateSuggestionsForm;
 use Webkul\Attribute\Contracts\Attribute;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Product\Contracts\TemplateRenderer;
@@ -40,13 +41,13 @@ class ProductTemplateController extends Controller
     /**
      * Return the product family attributes usable as template variables, filtered by the query.
      */
-    public function suggestions(int $id): JsonResponse
+    public function suggestions(ProductTemplateSuggestionsForm $request, int $id): JsonResponse
     {
         $product = $this->productRepository->findOrFail($id);
 
-        $search = trim((string) request()->query('query', ''));
+        $search = trim((string) $request->validated('query'));
 
-        $code = trim((string) request()->query('code', ''));
+        $code = trim((string) $request->validated('code'));
 
         $locale = core()->getRequestedLocaleCode();
 
@@ -54,7 +55,7 @@ class ProductTemplateController extends Controller
             ->with('translations')
             ->whereIn('id', $product->attribute_family->customAttributes()->select('attributes.id'))
             ->whereIn('type', TemplateValueFormatter::SUPPORTED_TYPES)
-            ->where('code', '!=', (string) request()->query('attribute', ''))
+            ->where('code', '!=', (string) $request->validated('attribute'))
             ->when($code !== '', fn (Builder $query): Builder => $query->where('code', $code))
             ->when($search !== '', fn (Builder $query): Builder => $query->where(fn (Builder $query): Builder => $query
                 ->whereLike('code', "%{$search}%")

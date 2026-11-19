@@ -148,6 +148,19 @@ it('searches suggestions by code and by translated name', function (string $sear
     'lower name' => 'product name',
 ]);
 
+it('validates the suggestions request', function (array $query, string $error) {
+    getJson(templateSuggestionsUrl($this->product, $query))
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors([$error]);
+})->with([
+    'query array'        => [['query' => ['tpl']], 'query'],
+    'code array'         => [['code' => ['tpl_name']], 'code'],
+    'attribute array'    => [['attribute' => ['tpl_description']], 'attribute'],
+    'query too long'     => [['query' => str_repeat('a', 256)], 'query'],
+    'code too long'      => [['code' => str_repeat('a', 256)], 'code'],
+    'attribute too long' => [['attribute' => str_repeat('a', 256)], 'attribute'],
+]);
+
 it('returns not found for suggestions of an unknown product', function () {
     getJson(route('admin.catalog.products.template_suggestions', ['id' => 999999]))
         ->assertNotFound();
@@ -320,10 +333,24 @@ it('validates the preview request', function (array $payload, string $error) {
         ->assertUnprocessable()
         ->assertJsonValidationErrors([$error]);
 })->with([
-    'missing attribute' => [[], 'attribute'],
-    'unknown attribute' => [['attribute' => 'tpl_missing'], 'attribute'],
-    'invalid values'    => [['attribute' => 'tpl_description', 'values' => 'text'], 'values'],
-    'invalid section'   => [['attribute' => 'tpl_description', 'values' => ['common' => 'text']], 'values.common'],
+    'missing attribute'  => [[], 'attribute'],
+    'unknown attribute'  => [['attribute' => 'tpl_missing'], 'attribute'],
+    'invalid values'     => [['attribute' => 'tpl_description', 'values' => 'text'], 'values'],
+    'invalid section'    => [['attribute' => 'tpl_description', 'values' => ['common' => 'text']], 'values.common'],
+    'too long attribute' => [['attribute' => str_repeat('a', 256)], 'attribute'],
+]);
+
+it('rejects previews of attributes that cannot hold a template in the product family', function (string $attribute) {
+    $this->templateAttribute('tpl_foreign_description');
+
+    postJson(templatePreviewUrl($this->product, ['channel' => $this->channel->code, 'locale' => 'en_US']), [
+        'attribute' => $attribute,
+    ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['attribute' => trans('validation.exists', ['attribute' => 'attribute'])]);
+})->with([
+    'templated attribute outside the family' => 'tpl_foreign_description',
+    'family attribute without templates'     => 'tpl_name',
 ]);
 
 it('returns not found for the preview of an unknown product', function () {
