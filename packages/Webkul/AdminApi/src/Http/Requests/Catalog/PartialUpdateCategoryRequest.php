@@ -2,6 +2,7 @@
 
 namespace Webkul\AdminApi\Http\Requests\Catalog;
 
+use Illuminate\Validation\Rule;
 use Webkul\AdminApi\Http\Requests\ApiFormRequest;
 
 class PartialUpdateCategoryRequest extends ApiFormRequest
@@ -15,7 +16,7 @@ class PartialUpdateCategoryRequest extends ApiFormRequest
     {
         return [
             'additional_data' => ['sometimes', 'array'],
-            'parent'          => ['sometimes', 'nullable', 'string'],
+            'parent'          => ['sometimes', 'nullable', 'string', Rule::exists('categories', 'code')],
         ];
     }
 }
