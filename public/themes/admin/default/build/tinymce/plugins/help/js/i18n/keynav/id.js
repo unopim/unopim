@@ -24,7 +24,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.id',
   '\n' +
   '<p>Untuk berpindah dari satu bagian UI ke bagian sebelumnya, tekan <strong>Shift+Tab</strong>.</p>\n' +
   '\n' +
-  '<p>Urutan <strong>Tab</strong> bagian-bagian UI ini adalah:\n' +
+  '<p>Urutan <strong>Tab</strong> bagian-bagian UI ini adalah:</p>\n' +
   '\n' +
   '<ol>\n' +
   '  <li>Bilah menu</li>\n' +
@@ -39,7 +39,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.id',
   '<p>Jika suatu bagian UI tidak ada, bagian tersebut dilewati.</p>\n' +
   '\n' +
   '<p>Jika fokus navigasi keyboard ada pada footer, tetapi tidak ada bilah sisi yang terlihat, menekan <strong>Shift+Tab</strong>\n' +
-  '  akan memindahkan fokus ke grup bilah alat pertama, bukan yang terakhir.\n' +
+  '  akan memindahkan fokus ke grup bilah alat pertama, bukan yang terakhir.</p>\n' +
   '\n' +
   '<h1>Berpindah di dalam bagian-bagian UI</h1>\n' +
   '\n' +
@@ -54,7 +54,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.id',
   '  <li>berpindah-pindah antar-item di dalam alur elemen footer.</li>\n' +
   '</ul>\n' +
   '\n' +
-  '<p>Tombol panah <strong>Bawah</strong> dan <strong>Atas</strong> untuk\n' +
+  '<p>Tombol panah <strong>Bawah</strong> dan <strong>Atas</strong> untuk</p>\n' +
   '\n' +
   '<ul>\n' +
   '  <li>berpindah-pindah antar-item menu di dalam menu.</li>\n' +
@@ -63,7 +63,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.id',
   '\n' +
   '<p>Tombol <strong>Panah</strong> hanya bergerak di dalam bagian UI yang difokuskan.</p>\n' +
   '\n' +
-  '<p>Untuk menutup menu, sub-menu, atau menu pop-up yang terbuka, tekan tombol <strong>Esc</strong>.\n' +
+  '<p>Untuk menutup menu, sub-menu, atau menu pop-up yang terbuka, tekan tombol <strong>Esc</strong>.</p>\n' +
   '\n' +
   '<p>Jika fokus sedang berada di ‘atas’ bagian UI tertentu, menekan tombol <strong>Esc</strong> juga dapat mengeluarkan fokus\n' +
   '  dari seluruh navigasi keyboard.</p>\n' +
@@ -71,7 +71,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.id',
   '<h1>Menjalankan item menu atau tombol bilah alat</h1>\n' +
   '\n' +
   '<p>Jika item menu atau tombol bilah alat yang diinginkan tersorot, tekan <strong>Return</strong>, <strong>Enter</strong>,\n' +
-  '  atau <strong>Spasi</strong> untuk menjalankan item.\n' +
+  '  atau <strong>Spasi</strong> untuk menjalankan item.</p>\n' +
   '\n' +
   '<h1>Berpindah dalam dialog tanpa tab</h1>\n' +
   '\n' +

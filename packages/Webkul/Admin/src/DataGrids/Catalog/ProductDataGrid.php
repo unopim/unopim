@@ -7,8 +7,10 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\LazyCollection;
 use Webkul\Admin\Filters\ProductPropertyFilters;
 use Webkul\Admin\Traits\AttributeColumnTrait;
+use Webkul\Attribute\Models\Attribute as AttributeModel;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Services\AttributeService;
@@ -16,6 +18,7 @@ use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\DataGrid\Column;
 use Webkul\DataGrid\Contracts\ExportableInterface;
 use Webkul\DataGrid\DataGrid;
+use Webkul\ElasticSearch\Cursor\MatchingIdCursor;
 use Webkul\ElasticSearch\Enums\FilterOperators;
 use Webkul\Product\Contracts\VariantValueResolver;
 use Webkul\Product\Factories\ElasticSearch\Cursor\ResultCursorFactory;
@@ -29,6 +32,25 @@ use Webkul\Product\Type\AbstractType;
 class ProductDataGrid extends DataGrid implements ExportableInterface
 {
     use AttributeColumnTrait;
+
+    /**
+     * Fallback quick-search fields.
+     *
+     * @var array<int, string>
+     */
+    protected const DEFAULT_SEARCH_FIELDS = ['sku', 'name'];
+
+    /**
+     * Attribute types the quick search can match.
+     *
+     * @var array<int, string>
+     */
+    protected const SEARCHABLE_ATTRIBUTE_TYPES = [AttributeModel::TEXT_TYPE];
+
+    /**
+     * Maximum number of quick-search fields.
+     */
+    protected const MAX_SEARCH_FIELDS = 10;
 
     /**
      * Prepare query builder.
@@ -109,9 +131,11 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
     public function prepareQueryBuilder()
     {
-        $tablePrefix = DB::getTablePrefix();
-
         $grammar = DB::rawQueryGrammar();
+
+        $familyNameColumn = DB::getQueryGrammar()->wrap('attribute_family_name.name');
+
+        $familyCodeColumn = DB::getQueryGrammar()->wrap('af.code');
 
         $this->prepareQuery = ProductQueryBuilderFactory::make()->prepareQueryBuilder();
 
@@ -132,10 +156,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'parent_products.sku as parent',
                 DB::raw(
                     "(CASE
-                        WHEN {$tablePrefix}attribute_family_name.name IS NULL
-                            OR {$grammar->length("TRIM({$tablePrefix}attribute_family_name.name)")} < 1
-                        THEN {$grammar->concat("'['", "{$tablePrefix}af.code", "']'")}
-                        ELSE {$tablePrefix}attribute_family_name.name
+                        WHEN {$familyNameColumn} IS NULL
+                            OR {$grammar->length("TRIM({$familyNameColumn})")} < 1
+                        THEN {$grammar->concat("'['", $familyCodeColumn, "']'")}
+                        ELSE {$familyNameColumn}
                     END) as attribute_family"
                 ),
                 'products.values as raw_values',
@@ -462,19 +486,21 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     {
         if (bouncer()->hasPermission('catalog.products.bulk_edit')) {
             $this->addMassAction([
-                'title'   => trans('admin::app.catalog.products.bulk-edit.action'),
-                'url'     => route('admin.catalog.products.bulkedit.filters'),
-                'method'  => 'POST',
-                'options' => ['actionType' => 'redirect', 'modal' => 'open-bulk-edit-modal'],
+                'title'               => trans('admin::app.catalog.products.bulk-edit.action'),
+                'url'                 => route('admin.catalog.products.bulkedit.filters'),
+                'method'              => 'POST',
+                'supports_select_all' => true,
+                'options'             => ['actionType' => 'redirect', 'modal' => 'open-bulk-edit-modal'],
             ]);
         }
 
         if (bouncer()->hasPermission('catalog.products.mass_update')) {
             $this->addMassAction([
-                'title'   => trans('admin::app.catalog.products.index.datagrid.update-status'),
-                'url'     => route('admin.catalog.products.mass_update'),
-                'method'  => 'POST',
-                'options' => [
+                'title'               => trans('admin::app.catalog.products.index.datagrid.update-status'),
+                'url'                 => route('admin.catalog.products.mass_update'),
+                'method'              => 'POST',
+                'supports_select_all' => true,
+                'options'             => [
                     [
                         'label' => trans('admin::app.catalog.products.index.datagrid.active'),
                         'value' => true,
@@ -489,10 +515,11 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         if (bouncer()->hasPermission('catalog.products.mass_delete')) {
             $this->addMassAction([
-                'title'   => trans('admin::app.catalog.products.index.datagrid.delete'),
-                'url'     => route('admin.catalog.products.mass_delete'),
-                'method'  => 'POST',
-                'options' => ['actionType' => 'delete'],
+                'title'               => trans('admin::app.catalog.products.index.datagrid.delete'),
+                'url'                 => route('admin.catalog.products.mass_delete'),
+                'method'              => 'POST',
+                'supports_select_all' => true,
+                'options'             => ['actionType' => 'delete'],
             ]);
         }
     }
@@ -573,7 +600,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
             if (! empty($ids)) {
                 $this->queryBuilder->orderByRaw(
-                    DB::rawQueryGrammar()->orderByField(DB::getTablePrefix().'products.id', $ids)
+                    DB::rawQueryGrammar()->orderByField(DB::getQueryGrammar()->wrap('products.id'), $ids)
                 );
             }
 
@@ -599,6 +626,39 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
             return;
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * Unlike the listing, there is no database fallback when Elasticsearch fails: the fallback
+     * query ignores Elasticsearch-built filters, and a mass action must never widen to every product.
+     */
+    public function getMatchingIds(): LazyCollection
+    {
+        if (! config('elasticsearch.enabled')) {
+            return parent::getMatchingIds();
+        }
+
+        $this->prepareColumns();
+
+        $this->setQueryBuilder();
+
+        $this->setElasticFilters($this->validatedRequest()['filters'] ?? []);
+
+        return MatchingIdCursor::lazy(
+            strtolower(config('elasticsearch.prefix').'_products'),
+            $this->prepareQuery->build()['query'] ?? [],
+            static::MATCHING_IDS_BATCH_SIZE,
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getPrimaryDatabaseColumn(): string
+    {
+        return 'products.id';
     }
 
     /**
@@ -678,7 +738,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             }
 
             if ($attribute === 'all') {
-                $queryBuilder->applySkuOrUnfilteredFilter(['sku', 'name'], FilterOperators::WILDCARD, $value, $context);
+                $queryBuilder->applySkuOrUnfilteredFilter($this->getSearchFields(), FilterOperators::WILDCARD, $value, $context);
 
                 continue;
             }
@@ -698,6 +758,46 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 $this->applyFilterValue($queryBuilder, $attribute, $value, $operator, $context);
             }
         }
+    }
+
+    /**
+     * Resolve the configured quick-search fields to searchable attribute codes.
+     *
+     * @return array<int, string>
+     */
+    protected function getSearchFields(): array
+    {
+        $configured = array_values(array_unique(array_filter(
+            (array) config('products.search_fields', static::DEFAULT_SEARCH_FIELDS),
+            fn ($code): bool => is_string($code) && $code !== '',
+        )));
+
+        if ($configured === []) {
+            return static::DEFAULT_SEARCH_FIELDS;
+        }
+
+        $attributes = $this->attributeService->findByCodes($configured) ?? [];
+
+        $fields = [];
+
+        foreach ($configured as $code) {
+            $attribute = $attributes[$code] ?? null;
+
+            if ($attribute && in_array($attribute->type, static::SEARCHABLE_ATTRIBUTE_TYPES, true)) {
+                $fields[] = $code;
+            }
+        }
+
+        if ($fields === []) {
+            return static::DEFAULT_SEARCH_FIELDS;
+        }
+
+        $fields = array_values(array_unique(array_merge(
+            array_intersect(static::DEFAULT_SEARCH_FIELDS, $fields),
+            $fields,
+        )));
+
+        return array_slice($fields, 0, static::MAX_SEARCH_FIELDS);
     }
 
     protected function getOperatorAndValue($attribute, $value)
@@ -1085,6 +1185,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $mergedValuesByProductId = $this->resolveMergedValuesForPage($paginator['data']);
 
         foreach ($paginator['data'] as $record) {
+            $values = $mergedValuesByProductId[$record->product_id] ?? $this->decodeRawValues($record);
+
             $record = $this->sanitizeRow($record);
 
             foreach ($this->columns as $column) {
@@ -1099,7 +1201,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 }
             }
 
-            $this->processRawValues($record, $mergedValuesByProductId[$record->product_id] ?? null);
+            $this->processRawValues($record, $values);
 
             unset($record->parent_id);
 
@@ -1127,18 +1229,19 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'search_placeholder' => __($this->searchPlaceholder),
             'records'            => $paginator['data'],
             'meta'               => [
-                'primary_column'     => $this->primaryColumn,
-                'select_all_enabled' => $this->enableSelectAll,
-                'default_order'      => $this->sortColumn,
-                'from'               => $paginator['from'],
-                'to'                 => $paginator['to'],
-                'total'              => $paginator['total'],
-                'per_page_options'   => [10, 20, 30, 40, 50],
-                'per_page'           => $paginator['per_page'],
-                'current_page'       => $paginator['current_page'],
-                'last_page'          => $paginator['last_page'],
-                'default_filters'    => $this->defaultFilters,
-                'managedColumn'      => [
+                'primary_column'       => $this->primaryColumn,
+                'select_all_enabled'   => $this->enableSelectAll,
+                'mass_action_id_limit' => static::MASS_ACTION_ID_LIMIT,
+                'default_order'        => $this->sortColumn,
+                'from'                 => $paginator['from'],
+                'to'                   => $paginator['to'],
+                'total'                => $paginator['total'],
+                'per_page_options'     => [10, 20, 30, 40, 50],
+                'per_page'             => $paginator['per_page'],
+                'current_page'         => $paginator['current_page'],
+                'last_page'            => $paginator['last_page'],
+                'default_filters'      => $this->defaultFilters,
+                'managedColumn'        => [
                     'enabled' => $this->manageableColumn,
                     'columns' => $this->managedColumns,
                     'route'   => route('admin.datagrid.available_columns'),
@@ -1165,6 +1268,23 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         ]);
 
         return $this->variantValueResolver->resolveBatch($rows);
+    }
+
+    /**
+     * Decode the row's stored values before the row is sanitized, since stripping
+     * tags from the encoded JSON corrupts it whenever a value contains "<".
+     */
+    protected function decodeRawValues(object $record): ?array
+    {
+        $rawValues = $record->raw_values ?? null;
+
+        if (! is_string($rawValues) || $rawValues === '') {
+            return null;
+        }
+
+        $decoded = json_decode($rawValues, true);
+
+        return is_array($decoded) ? $decoded : null;
     }
 
     /**
@@ -1213,7 +1333,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 continue;
             }
 
-            $record->{$code} = $value;
+            $record->{$code} = $this->stripHtmlTags($value);
         }
     }
 

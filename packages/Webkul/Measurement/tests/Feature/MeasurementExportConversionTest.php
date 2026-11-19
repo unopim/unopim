@@ -16,6 +16,7 @@ use Webkul\DataTransfer\Models\JobTrackBatch;
 use Webkul\Measurement\Helpers\MeasurementHelper;
 use Webkul\Measurement\Models\AttributeMeasurement;
 use Webkul\Measurement\Models\MeasurementFamily;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 
 beforeEach(function () {
@@ -251,7 +252,7 @@ describe('Issue #1196 - measurement conversion during product export', function 
 
         $product = Product::create([
             'sku'                 => $sku,
-            'type'                => 'simple',
+            'type'                => ProductType::Simple->value,
             'status'              => 1,
             'attribute_family_id' => $family->id,
         ]);
@@ -301,7 +302,7 @@ describe('Issue #1196 - measurement conversion during product export', function 
 
         $product = Product::create([
             'sku'                 => $sku,
-            'type'                => 'simple',
+            'type'                => ProductType::Simple->value,
             'status'              => 1,
             'attribute_family_id' => $family->id,
         ]);
@@ -351,7 +352,7 @@ describe('Issue #1196 - measurement conversion during product export', function 
 
         $product = Product::create([
             'sku'                 => $sku,
-            'type'                => 'simple',
+            'type'                => ProductType::Simple->value,
             'status'              => 1,
             'attribute_family_id' => $family->id,
         ]);
@@ -405,7 +406,7 @@ describe('Issue #1196 - measurement conversion during product export', function 
 
         $product = Product::create([
             'sku'                 => $sku,
-            'type'                => 'simple',
+            'type'                => ProductType::Simple->value,
             'status'              => 1,
             'attribute_family_id' => $family->id,
         ]);
@@ -458,7 +459,7 @@ describe('Issue #1196 - measurement conversion during product export', function 
 
         $product = Product::create([
             'sku'                 => $sku,
-            'type'                => 'simple',
+            'type'                => ProductType::Simple->value,
             'status'              => 1,
             'attribute_family_id' => $family->id,
         ]);
@@ -494,10 +495,10 @@ describe('Issue #1196 - measurement conversion during product export', function 
             ->and($byLocale['fr_FR'][$measurement->code.'(unit)'])->toBe('Metre');
     });
 
-    it('resolves the product exporter to the core class, which reads amount and unit verbatim', function () {
+    it('resolves the product exporter to the core class or a subclass, which reads amount and unit verbatim', function () {
         $exporter = app(Exporter::class);
 
-        expect($exporter::class)->toBe(Exporter::class);
+        expect($exporter)->toBeInstanceOf(Exporter::class);
 
         $method = new ReflectionMethod($exporter, 'extractMeasurement');
         $method->setAccessible(true);

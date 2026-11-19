@@ -7,6 +7,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\LazyCollection;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -23,6 +24,13 @@ abstract class DataGrid
     const MASS_ACTION_ID_LIMIT = 10000;
 
     /**
+     * Rows fetched per round trip while streaming the ids behind a "select all matching" mass action.
+     */
+    const MATCHING_IDS_BATCH_SIZE = 1000;
+
+    protected const HTML_TAG_PATTERN = '/<!--.*?-->|<\/?[a-z][a-z0-9-]*(?:\s[^<>]*)?\/?>/is';
+
+    /**
      * Primary column.
      *
      * @var string
@@ -34,6 +42,13 @@ abstract class DataGrid
      * Grids where a whole-result-set mass action is unsafe or meaningless can disable it.
      */
     protected bool $enableSelectAll = true;
+
+    /**
+     * Whether non-closure columns render as escaped text (the shared datagrid table's v-text cells).
+     * Such grids show a stored "<" (e.g. "Washer <5mm thick") and drop only real HTML tags; keep it
+     * false for a grid whose view prints plain columns with v-html.
+     */
+    protected bool $plainTextColumns = false;
 
     /**
      * Default sort column of datagrid.
@@ -210,6 +225,7 @@ abstract class DataGrid
             method: $massAction['method'],
             url: $massAction['url'],
             options: $massAction['options'] ?? [],
+            supportsSelectAll: (bool) ($massAction['supports_select_all'] ?? false),
         );
     }
 
@@ -448,6 +464,89 @@ abstract class DataGrid
     }
 
     /**
+     * Stream the primary key of every record matching the requested filters.
+     *
+     * Backs "select all matching" mass actions, which carry the grid's filters instead of an
+     * id list, so the selection is not bounded by what a single response can hold.
+     *
+     * @return LazyCollection<int, mixed>
+     */
+    public function getMatchingIds(): LazyCollection
+    {
+        $this->prepareColumns();
+
+        $this->setQueryBuilder();
+
+        $this->queryBuilder = $this->processRequestedFilters($this->validatedRequest()['filters'] ?? []);
+
+        return $this->queryBuilder
+            ->reorder()
+            ->lazyById(static::MATCHING_IDS_BATCH_SIZE, $this->getPrimaryDatabaseColumn(), $this->primaryColumn)
+            ->pluck($this->primaryColumn);
+    }
+
+    /**
+     * @return LazyCollection<int, mixed>
+     */
+    public function getSelectedIds(): LazyCollection
+    {
+        $matchingIds = $this->getMatchingIds();
+
+        $excludedIds = array_flip(array_map(strval(...), array_filter((array) request()->input('excluded_indices', []), is_scalar(...))));
+
+        if ($excludedIds === []) {
+            return $matchingIds;
+        }
+
+        return $matchingIds->reject(fn ($id): bool => isset($excludedIds[(string) $id]));
+    }
+
+    /**
+     * Build the export rows for the given records, one slice of a queued "select all matching" export.
+     *
+     * @param  array<int, int|string>  $ids
+     * @return array{columns: array<int, string>, records: array<int, array<string, mixed>>}
+     */
+    public function getExportableRows(array $ids): array
+    {
+        $this->prepareColumns();
+
+        $this->setQueryBuilder();
+
+        $this->queryBuilder->whereIn($this->getPrimaryDatabaseColumn(), $ids);
+
+        $gridData = $this instanceof ExportableInterface
+            ? $this->getExportableData(['productIds' => $ids])
+            : $this->queryBuilder->get();
+
+        if (isset($gridData['columns'], $gridData['records']) && is_array($gridData['columns'])) {
+            return [
+                'columns' => array_values($gridData['columns']),
+                'records' => array_map(fn ($record): array => (array) $record, [...$gridData['records']]),
+            ];
+        }
+
+        $records = collect($gridData)->map(fn ($record): array => (array) $record)->values()->all();
+
+        return [
+            'columns' => array_keys($records[0] ?? []),
+            'records' => $records,
+        ];
+    }
+
+    /**
+     * Qualified database column behind the primary column, used to page through matching records.
+     */
+    protected function getPrimaryDatabaseColumn(): string
+    {
+        $name = collect($this->columns)
+            ->first(fn ($column): bool => $column->index === $this->primaryColumn)
+            ?->getDatabaseColumnName();
+
+        return is_string($name) ? $name : $this->primaryColumn;
+    }
+
+    /**
      * Set export file.
      *
      * @param  Collection  $records
@@ -485,6 +584,8 @@ abstract class DataGrid
         }
 
         foreach ($paginator['data'] as $record) {
+            $storedRecord = clone $record;
+
             $record = $this->sanitizeRow($record);
 
             foreach ($this->columns as $column) {
@@ -494,6 +595,8 @@ abstract class DataGrid
                     $record->is_closure = true;
                 }
             }
+
+            $this->restorePlainTextColumns($record, $storedRecord);
 
             $record->actions = [];
 
@@ -523,15 +626,16 @@ abstract class DataGrid
             'search_placeholder' => __($this->searchPlaceholder),
             'records'            => $paginator['data'],
             'meta'               => [
-                'primary_column'     => $this->primaryColumn,
-                'select_all_enabled' => $this->enableSelectAll,
-                'from'               => $paginator['from'],
-                'to'                 => $paginator['to'],
-                'total'              => $paginator['total'],
-                'per_page_options'   => [10, 20, 30, 40, 50],
-                'per_page'           => $paginator['per_page'],
-                'current_page'       => $paginator['current_page'],
-                'last_page'          => $paginator['last_page'],
+                'primary_column'       => $this->primaryColumn,
+                'select_all_enabled'   => $this->enableSelectAll,
+                'mass_action_id_limit' => static::MASS_ACTION_ID_LIMIT,
+                'from'                 => $paginator['from'],
+                'to'                   => $paginator['to'],
+                'total'                => $paginator['total'],
+                'per_page_options'     => [10, 20, 30, 40, 50],
+                'per_page'             => $paginator['per_page'],
+                'current_page'         => $paginator['current_page'],
+                'last_page'            => $paginator['last_page'],
             ],
         ];
     }
@@ -550,6 +654,34 @@ abstract class DataGrid
         $this->setQueryBuilder();
 
         $this->processRequest();
+    }
+
+    /**
+     * Show plain-text columns as stored minus real HTML tags; closure columns keep the fully sanitized row.
+     */
+    protected function restorePlainTextColumns(object $record, object $storedRecord): void
+    {
+        if (! $this->plainTextColumns) {
+            return;
+        }
+
+        foreach ($this->columns as $column) {
+            $index = $column->index;
+
+            if ($column->closure || ! is_string($storedRecord->{$index} ?? null)) {
+                continue;
+            }
+
+            $record->{$index} = $this->stripHtmlTags($storedRecord->{$index});
+        }
+    }
+
+    /**
+     * Remove only well-formed HTML tags and comments, so a stray "<" such as "<5mm" stays visible.
+     */
+    protected function stripHtmlTags(mixed $value): mixed
+    {
+        return is_string($value) ? (preg_replace(self::HTML_TAG_PATTERN, '', $value) ?? $value) : $value;
     }
 
     /**

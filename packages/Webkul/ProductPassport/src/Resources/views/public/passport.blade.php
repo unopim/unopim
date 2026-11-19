@@ -15,8 +15,8 @@
              as machine-readable JSON-LD — matching the controller's Published
              gate on the content-negotiated branch.
              JSON-LD is data, not executable JS, so CSP script-src does not gate
-             it and no nonce is required. JSON_HEX_TAG neutralises any </script>
-             breakout from field values, so raw @json output stays XSS-safe. --}}
+             it and no nonce is required. JSON_HEX_TAG neutralises any closing script
+             tag breakout from field values, so raw @json output stays XSS-safe. --}}
         <script type="application/ld+json">@json((new \Webkul\ProductPassport\Http\Resources\PassportJsonLdResource($payload))->toArray(request()), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP)</script>
     @endif
     <style>

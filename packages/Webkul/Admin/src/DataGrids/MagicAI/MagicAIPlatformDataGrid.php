@@ -14,7 +14,7 @@ class MagicAIPlatformDataGrid extends DataGrid
     public function prepareQueryBuilder(): Builder
     {
         return DB::table('magic_ai_platforms')
-            ->select('id', 'label', 'provider', 'models', 'is_default', DB::raw('is_default as is_default_raw'), 'status', 'created_at');
+            ->select('id', 'label', 'provider', 'models', 'is_default', DB::raw('is_default as is_default_raw'), 'is_managed', 'status', 'created_at');
     }
 
     public function prepareColumns(): void
@@ -122,11 +122,12 @@ class MagicAIPlatformDataGrid extends DataGrid
 
         if (bouncer()->hasPermission('ai-agent.platform.delete')) {
             $this->addAction([
-                'index'  => 'delete',
-                'icon'   => 'icon-delete',
-                'title'  => trans('admin::app.configuration.platform.datagrid.delete'),
-                'method' => 'DELETE',
-                'url'    => fn ($row) => route('admin.magic_ai.platform.delete', $row->id),
+                'index'     => 'delete',
+                'icon'      => 'icon-delete',
+                'title'     => trans('admin::app.configuration.platform.datagrid.delete'),
+                'method'    => 'DELETE',
+                'url'       => fn ($row) => route('admin.magic_ai.platform.delete', $row->id),
+                'condition' => fn ($row): bool => ! $row->is_managed,
             ]);
         }
     }

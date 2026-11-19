@@ -6,12 +6,16 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\LazyCollection;
 use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Core\Facades\ElasticSearch;
 use Webkul\DataGrid\DataGrid;
+use Webkul\ElasticSearch\Cursor\MatchingIdCursor;
 
 class CategoryDataGrid extends DataGrid
 {
+    protected bool $plainTextColumns = true;
+
     /**
      * Create a new datagrid instance.
      */
@@ -54,9 +58,7 @@ class CategoryDataGrid extends DataGrid
      */
     public function prepareQueryBuilder()
     {
-        $tablePrefix = DB::getTablePrefix();
-
-        $categoryNameExpr = $this->categoryNameExpression("{$tablePrefix}cat");
+        $categoryNameExpr = $this->categoryNameExpression('cat');
 
         $queryBuilder = DB::table('categories as cat')
             ->select(
@@ -146,12 +148,39 @@ class CategoryDataGrid extends DataGrid
     {
         if (bouncer()->hasPermission('catalog.categories.mass_delete')) {
             $this->addMassAction([
-                'title'   => trans('admin::app.catalog.categories.index.datagrid.delete'),
-                'method'  => 'POST',
-                'url'     => route('admin.catalog.categories.mass_delete'),
-                'options' => ['actionType' => 'delete'],
+                'title'               => trans('admin::app.catalog.categories.index.datagrid.delete'),
+                'method'              => 'POST',
+                'url'                 => route('admin.catalog.categories.mass_delete'),
+                'options'             => ['actionType' => 'delete'],
+                'supports_select_all' => true,
             ]);
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMatchingIds(): LazyCollection
+    {
+        if (! config('elasticsearch.enabled')) {
+            return parent::getMatchingIds();
+        }
+
+        $this->prepareColumns();
+
+        return MatchingIdCursor::lazy(
+            strtolower(config('elasticsearch.prefix').'_categories'),
+            ['bool' => $this->getElasticFilters($this->validatedRequest()['filters'] ?? []) ?: new \stdClass],
+            static::MATCHING_IDS_BATCH_SIZE,
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getPrimaryDatabaseColumn(): string
+    {
+        return 'cat.id';
     }
 
     /**
@@ -216,7 +245,7 @@ class CategoryDataGrid extends DataGrid
 
             if (! empty($ids)) {
                 $this->queryBuilder->whereIn('cat.id', $ids)
-                    ->orderByRaw(DB::rawQueryGrammar()->orderByField(DB::getTablePrefix().'cat.id', $ids));
+                    ->orderByRaw(DB::rawQueryGrammar()->orderByField(DB::getQueryGrammar()->wrap('cat.id'), $ids));
             }
 
             $total = $results['hits']['total']['value'];
@@ -391,9 +420,9 @@ class CategoryDataGrid extends DataGrid
 
         $localeCode = core()->getRequestedLocaleCode();
 
-        $jsonExpr = $grammar->jsonExtract("{$tableAlias}.additional_data", 'locale_specific', $localeCode, 'name');
+        $jsonExpr = $grammar->jsonExtract(DB::getTablePrefix()."{$tableAlias}.additional_data", 'locale_specific', $localeCode, 'name');
 
-        $codeFallback = $grammar->concat("'['", "{$tableAlias}.code", "']'");
+        $codeFallback = $grammar->concat("'['", DB::getQueryGrammar()->wrap("{$tableAlias}.code"), "']'");
 
         return "(CASE WHEN {$jsonExpr} IS NOT NULL THEN REPLACE({$jsonExpr}, '\"', '') ELSE {$codeFallback} END)";
     }

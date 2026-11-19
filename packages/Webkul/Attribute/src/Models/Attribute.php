@@ -12,6 +12,7 @@ use Webkul\Attribute\Database\Factories\AttributeFactory;
 use Webkul\Attribute\Presenters\AttributeHistoryPresenter;
 use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Core\Eloquent\TranslatableModel;
+use Webkul\Core\Helpers\MediaContent;
 use Webkul\Core\Rules\BooleanString;
 use Webkul\Core\Rules\Decimal;
 use Webkul\Core\Rules\FileOrImageValidValue;
@@ -97,14 +98,44 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
     }
 
     /**
-     * Per-attribute allowed extensions, or an empty array to fall back to the
+     * Resolve gallery limits, where a non-positive value disables the limit.
+     */
+    public function resolvedGalleryMaxKilobytes(int $fallbackKilobytes): ?int
+    {
+        if ($this->max_file_size !== null && $this->max_file_size <= 0) {
+            return null;
+        }
+
+        $limit = $this->resolvedMaxKilobytes($fallbackKilobytes);
+
+        return $limit > 0 ? $limit : null;
+    }
+
+    protected function positiveGalleryLimit(mixed $limit): ?int
+    {
+        $limit = (int) $limit;
+
+        return $limit > 0 ? $limit : null;
+    }
+
+    /**
+     * Per-attribute allowed extensions, normalised and stripped of anything
+     * MediaContent blocks, or an empty array to fall back to the
      * FileOrImageValidValue defaults.
      *
      * @return array<int, string>
      */
     public function resolvedAllowedExtensions(): array
     {
-        return empty($this->allowed_extensions) ? [] : array_values($this->allowed_extensions);
+        $extensions = array_map(
+            fn (mixed $extension): string => strtolower(ltrim(trim((string) $extension), '.')),
+            (array) ($this->allowed_extensions ?? []),
+        );
+
+        return array_values(array_unique(array_filter(
+            $extensions,
+            fn (string $extension): bool => $extension !== '' && ! MediaContent::isBlockedExtension($extension),
+        )));
     }
 
     const NON_DELETABLE_ATTRIBUTE_CODE = 'sku';
@@ -140,7 +171,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
         }
 
         if ($this->type == 'file') {
-            $retVal = core()->getConfigData('catalog.products.attribute.file_attribute_upload_size') ?? '2048';
+            $retVal = $this->resolvedMaxKilobytes((int) (core()->getConfigData('catalog.products.attribute.file_attribute_upload_size') ?? 2048));
 
             if ($retVal) {
                 $validations[] = 'size:'.$retVal;
@@ -148,7 +179,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
         }
 
         if ($this->type == 'image') {
-            $retVal = core()->getConfigData('catalog.products.attribute.image_attribute_upload_size') ?? '2048';
+            $retVal = $this->resolvedMaxKilobytes((int) (core()->getConfigData('catalog.products.attribute.image_attribute_upload_size') ?? 2048));
 
             if ($retVal) {
                 $validations[] = 'size:'.$retVal.', mimes: ["image/bmp", "image/jpeg", "image/jpg", "image/png", "image/webp"]';
@@ -258,17 +289,18 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
                 isImage: true,
                 allowedExtensions: $this->resolvedAllowedExtensions(),
                 isMultiple: true,
-                maxKilobytes: $this->resolvedMaxKilobytes((int) config('media.gallery.max_file_size_kilobytes', 15360)),
+                maxKilobytes: $this->resolvedGalleryMaxKilobytes((int) config('media.gallery.max_file_size_kilobytes', 15360)),
                 minFiles: (int) config('media.gallery.min_files', 0),
                 maxFiles: (int) config('media.gallery.max_files', 50),
-                maxTotalKilobytes: (int) config('media.gallery.max_total_size_kilobytes', 51200),
+                maxTotalKilobytes: $this->positiveGalleryLimit(config('media.gallery.max_total_size_kilobytes', 51200)),
                 allowedPathPrefixes: $id ? ['product/'.$id.'/'.$this->code] : [],
             );
 
-            if (empty($this->allowed_extensions)) {
-                $galleryValue->mergeAllowedExtensions(FileOrImageValidValue::VIDEO_ALLOWED_EXTENSIONS)
-                    ->mergeAllowedMimes(FileOrImageValidValue::VIDEO_ALLOWED_EXTENSIONS);
+            if ($this->resolvedAllowedExtensions() === []) {
+                $galleryValue->mergeAllowedExtensions(FileOrImageValidValue::VIDEO_ALLOWED_EXTENSIONS);
             }
+
+            $galleryValue->mergeAllowedMimes(FileOrImageValidValue::VIDEO_ALLOWED_EXTENSIONS);
 
             $validations[] = $galleryValue;
         }
@@ -498,17 +530,18 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
                     isImage: true,
                     allowedExtensions: $this->resolvedAllowedExtensions(),
                     isMultiple: true,
-                    maxKilobytes: $this->resolvedMaxKilobytes((int) config('media.gallery.max_file_size_kilobytes', 15360)),
+                    maxKilobytes: $this->resolvedGalleryMaxKilobytes((int) config('media.gallery.max_file_size_kilobytes', 15360)),
                     minFiles: (int) config('media.gallery.min_files', 0),
                     maxFiles: (int) config('media.gallery.max_files', 50),
-                    maxTotalKilobytes: (int) config('media.gallery.max_total_size_kilobytes', 51200),
+                    maxTotalKilobytes: $this->positiveGalleryLimit(config('media.gallery.max_total_size_kilobytes', 51200)),
                     allowedPathPrefixes: $mediaPathPrefixes,
                 );
 
-                if (empty($this->allowed_extensions)) {
-                    $galleryRule->mergeAllowedExtensions(FileOrImageValidValue::VIDEO_ALLOWED_EXTENSIONS)
-                        ->mergeAllowedMimes(FileOrImageValidValue::VIDEO_ALLOWED_EXTENSIONS);
+                if ($this->resolvedAllowedExtensions() === []) {
+                    $galleryRule->mergeAllowedExtensions(FileOrImageValidValue::VIDEO_ALLOWED_EXTENSIONS);
                 }
+
+                $galleryRule->mergeAllowedMimes(FileOrImageValidValue::VIDEO_ALLOWED_EXTENSIONS);
 
                 $rules[] = $galleryRule;
 

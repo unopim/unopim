@@ -8,8 +8,8 @@ use Webkul\Admin\DataGrids\Settings\CurrencyDataGrid;
 use Webkul\Admin\Helpers\MassActionCounter;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\CurrencyForm;
-use Webkul\Admin\Http\Requests\MassDestroyRequest;
-use Webkul\Admin\Http\Requests\MassUpdateRequest;
+use Webkul\Admin\Http\Requests\SelectableMassDestroyRequest;
+use Webkul\Admin\Http\Requests\SelectableMassUpdateRequest;
 use Webkul\Core\Repositories\CurrencyRepository;
 
 class CurrencyController extends Controller
@@ -130,9 +130,9 @@ class CurrencyController extends Controller
     /**
      * Mass Delete currencies
      */
-    public function massDestroy(MassDestroyRequest $massDestroyRequest): JsonResponse
+    public function massDestroy(SelectableMassDestroyRequest $massDestroyRequest): JsonResponse
     {
-        $currencyIds = $massDestroyRequest->input('indices');
+        $currencyIds = $massDestroyRequest->selectedIds(CurrencyDataGrid::class);
         $delete = false;
 
         foreach ($currencyIds as $currencyId) {
@@ -179,9 +179,9 @@ class CurrencyController extends Controller
     /**
      * Mass update currencies status through datagrid
      */
-    public function massUpdate(MassUpdateRequest $massUpdateRequest): JsonResponse
+    public function massUpdate(SelectableMassUpdateRequest $massUpdateRequest): JsonResponse
     {
-        $currencyIds = $massUpdateRequest->input('indices');
+        $currencyIds = $massUpdateRequest->selectedIds(CurrencyDataGrid::class);
 
         $value = (int) $massUpdateRequest->input('value');
 

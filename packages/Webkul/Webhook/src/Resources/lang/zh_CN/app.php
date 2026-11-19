@@ -137,6 +137,14 @@ return [
                     'delete-success' => 'Webhook 日志已成功删除',
                     'delete-failed'  => 'Webhook 日志删除意外失败',
                     'unauthorized'   => '此操作未经授权',
+                    'select-all'     => [
+                        'delete' => [
+                            'queued'    => '已将所有匹配日志的删除任务加入队列，完成后会通知您。',
+                            'title'     => 'Webhook 日志删除',
+                            'completed' => '已删除 :count 条 Webhook 日志。',
+                            'failed'    => '删除 :count 条 Webhook 日志时出现错误，部分日志未被删除。',
+                        ],
+                    ],
                 ],
             ],
         ],

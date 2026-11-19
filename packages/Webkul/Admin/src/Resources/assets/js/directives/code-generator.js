@@ -49,7 +49,7 @@ export default {
         });
 
         el.addEventListener('input', function (event) {
-            if (state.manuallyChanged) {
+            if (state.manuallyChanged || target.disabled || target.readOnly) {
                 return;
             }
 

@@ -3,6 +3,7 @@
 return [
     [
         'key'    => 'system.measurement',
+        'module' => 'pim',
         'name'   => 'measurement::app.config.catalog.measurement.title',
         'info'   => 'measurement::app.config.catalog.measurement.info',
         'icon'   => 'icon-attribute',
@@ -32,6 +33,13 @@ return [
                 'info'          => 'measurement::app.config.catalog.measurement.precision.base-info',
                 'default_value' => '6',
                 'validation'    => 'numeric|min:0|max_value:10',
+            ],
+            [
+                'name'          => 'display_unit_symbol',
+                'title'         => 'measurement::app.config.catalog.measurement.display-unit-symbol',
+                'type'          => 'boolean',
+                'info'          => 'measurement::app.config.catalog.measurement.display-unit-symbol-info',
+                'default_value' => '0',
             ],
         ],
     ],

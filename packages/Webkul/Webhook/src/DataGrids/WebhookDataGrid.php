@@ -145,10 +145,11 @@ class WebhookDataGrid extends DataGrid
     {
         if (bouncer()->hasPermission('configuration.webhook.delete')) {
             $this->addMassAction([
-                'title'   => trans('webhook::app.webhooks.index.datagrid.delete'),
-                'url'     => route('webhook.mass_delete'),
-                'method'  => 'POST',
-                'options' => ['actionType' => 'delete'],
+                'title'               => trans('webhook::app.webhooks.index.datagrid.delete'),
+                'url'                 => route('webhook.mass_delete'),
+                'method'              => 'POST',
+                'supports_select_all' => true,
+                'options'             => ['actionType' => 'delete'],
             ]);
         }
     }

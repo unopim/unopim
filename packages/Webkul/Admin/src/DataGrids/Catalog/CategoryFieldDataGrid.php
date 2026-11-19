@@ -35,8 +35,8 @@ class CategoryFieldDataGrid extends DataGrid
      */
     public function prepareQueryBuilder()
     {
-        $tablePrefix = DB::getTablePrefix();
         $grammar = DB::rawQueryGrammar();
+        $nameColumn = DB::getQueryGrammar()->wrap('requested_category_field_translation.name');
 
         $queryBuilder = DB::table('category_fields')
             ->leftJoin('category_field_translations as requested_category_field_translation', function ($leftJoin) {
@@ -55,9 +55,9 @@ class CategoryFieldDataGrid extends DataGrid
                 'created_at',
                 DB::raw("
                 (CASE 
-                    WHEN {$grammar->length("TRIM({$tablePrefix}requested_category_field_translation.name)")} < 1 
+                    WHEN {$grammar->length("TRIM({$nameColumn})")} < 1 
                     THEN {$grammar->concat("'['", 'code', "']'")} 
-                    ELSE {$tablePrefix}requested_category_field_translation.name 
+                    ELSE {$nameColumn} 
                 END) as name")
             );
 
@@ -178,21 +178,23 @@ class CategoryFieldDataGrid extends DataGrid
     {
         if (bouncer()->hasPermission('catalog.category_fields.mass_delete')) {
             $this->addMassAction([
-                'icon'    => 'icon-delete',
-                'title'   => trans('admin::app.catalog.category_fields.index.datagrid.delete'),
-                'method'  => 'POST',
-                'url'     => route('admin.catalog.category_fields.mass_delete'),
-                'options' => ['actionType' => 'delete'],
+                'icon'                => 'icon-delete',
+                'title'               => trans('admin::app.catalog.category_fields.index.datagrid.delete'),
+                'method'              => 'POST',
+                'supports_select_all' => true,
+                'url'                 => route('admin.catalog.category_fields.mass_delete'),
+                'options'             => ['actionType' => 'delete'],
             ]);
         }
 
         if (bouncer()->hasPermission('catalog.category_fields.mass_update')) {
             $this->addMassAction([
-                'icon'    => 'icon-edit',
-                'title'   => trans('admin::app.catalog.category_fields.index.datagrid.update-status'),
-                'url'     => route('admin.catalog.category_fields.mass_update'),
-                'method'  => 'POST',
-                'options' => [
+                'icon'                => 'icon-edit',
+                'title'               => trans('admin::app.catalog.category_fields.index.datagrid.update-status'),
+                'url'                 => route('admin.catalog.category_fields.mass_update'),
+                'method'              => 'POST',
+                'supports_select_all' => true,
+                'options'             => [
                     [
                         'label' => trans('admin::app.catalog.category_fields.index.datagrid.active'),
                         'value' => 1,
@@ -203,5 +205,13 @@ class CategoryFieldDataGrid extends DataGrid
                 ],
             ]);
         }
+    }
+
+    /**
+     * The grid has no id column and its translation join carries one, so the bare key would be ambiguous.
+     */
+    protected function getPrimaryDatabaseColumn(): string
+    {
+        return 'category_fields.id';
     }
 }

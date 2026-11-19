@@ -4,10 +4,13 @@ namespace Webkul\Admin\DataGrids\Settings\DataTransfer;
 
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
+use Webkul\Admin\Traits\GatesJobTypes;
 use Webkul\DataGrid\DataGrid;
 
 class ImportDataGrid extends DataGrid
 {
+    use GatesJobTypes;
+
     protected $importers;
 
     /**
@@ -15,7 +18,7 @@ class ImportDataGrid extends DataGrid
      */
     public function __construct()
     {
-        $this->importers = config('importers');
+        $this->importers = $this->visibleJobTypes('importers');
     }
 
     /**
@@ -34,7 +37,8 @@ class ImportDataGrid extends DataGrid
                 'file_path',
                 'images_directory_path',
 
-            )->where('type', 'import');
+            )->where('type', 'import')
+            ->whereNotIn('entity_type', $this->hiddenJobTypes('importers'));
 
         return $queryBuilder;
     }

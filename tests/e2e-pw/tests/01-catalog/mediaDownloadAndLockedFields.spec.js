@@ -1,6 +1,7 @@
 const path = require('path');
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, clickSave, generateUid, searchInDataGrid } = require('../../utils/helpers');
+const { navigateTo, clickSave, generateUid, closeDropdown } = require('../../utils/helpers');
+const { deleteProductBySku } = require('../../utils/product-helpers');
 
 /**
  * Media download button and read-only locked media fields on product edit.
@@ -45,7 +46,7 @@ async function selectMultiselect(page, fieldName, optionLabel) {
       .first()
       .click();
   }
-  await page.keyboard.press('Escape');
+  await closeDropdown(page);
 }
 
 /**
@@ -93,17 +94,6 @@ async function ensureColorVariantStructure(adminPage) {
   if (result.status >= 300) {
     throw new Error(`variant structure setup failed: ${result.body}`);
   }
-}
-
-async function deleteProductBySku(adminPage, sku) {
-  await navigateTo(adminPage, 'products');
-  await searchInDataGrid(adminPage, sku);
-  const deleteIcon = adminPage.locator('span[title="Delete"]').first();
-  const visible = await deleteIcon.isVisible({ timeout: 3000 }).catch(() => false);
-  if (!visible) return;
-  await deleteIcon.click();
-  await adminPage.getByRole('button', { name: 'Delete' }).click();
-  await adminPage.locator('#app').getByText(/Product deleted successfully/i).waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
 }
 
 /** The `media` attribute-group accordion panel. */
@@ -179,7 +169,15 @@ test.describe('Media download button and read-only locked media fields', () => {
       await expect(createButton).toBeEnabled({ timeout: 5000 });
       await createButton.click();
 
-      await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\/(\d+)/, { waitUntil: 'domcontentloaded', timeout: 30000 });
+      // The page is already on the parent's edit URL, so a plain pattern resolves before the child exists.
+      await adminPage.waitForURL(
+        (url) => {
+          const match = url.pathname.match(/\/admin\/catalog\/products\/edit\/(\d+)/);
+
+          return !!match && Number(match[1]) !== parentId;
+        },
+        { waitUntil: 'domcontentloaded', timeout: 30000 }
+      );
       await adminPage.waitForLoadState('networkidle').catch(() => {});
       childId = Number(adminPage.url().match(/\/edit\/(\d+)/)[1]);
       expect(childId).not.toBe(parentId);

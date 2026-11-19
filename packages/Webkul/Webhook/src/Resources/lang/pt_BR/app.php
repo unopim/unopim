@@ -137,6 +137,14 @@ return [
                     'delete-success' => 'Registros do Webhook excluídos com sucesso',
                     'delete-failed'  => 'A exclusão dos registros do Webhook falhou inesperadamente',
                     'unauthorized'   => 'Esta ação não está autorizada',
+                    'select-all'     => [
+                        'delete' => [
+                            'queued'    => 'Exclusão enfileirada para todos os logs correspondentes. Você será notificado quando terminar.',
+                            'title'     => 'Exclusão de logs de webhook',
+                            'completed' => ':count logs de webhook excluídos.',
+                            'failed'    => 'A exclusão de :count logs de webhook terminou com erros. Alguns logs não foram excluídos.',
+                        ],
+                    ],
                 ],
             ],
         ],

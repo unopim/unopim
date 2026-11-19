@@ -124,6 +124,8 @@
 
             <v-webhook-test></v-webhook-test>
         </div>
+
+        {!! view_render_event('unopim.admin.webhook.form.settings.after', ['webhook' => $webhook ?? null]) !!}
     </div>
 </div>
 
@@ -160,6 +162,7 @@
                     <x-admin::form.control-group.control
                         type="text"
                         ::name="`headers[${index}][key]`"
+                        :label="trans('webhook::app.webhooks.form.header-key')"
                         ::value="row.key"
                         @input="row.key = $event.target.value"
                         :placeholder="trans('webhook::app.webhooks.form.header-key')"
@@ -170,6 +173,7 @@
                     <x-admin::form.control-group.control
                         type="text"
                         ::name="`headers[${index}][value]`"
+                        :label="trans('webhook::app.webhooks.form.header-value')"
                         ::value="row.value"
                         @input="row.value = $event.target.value"
                         :placeholder="trans('webhook::app.webhooks.form.header-value')"

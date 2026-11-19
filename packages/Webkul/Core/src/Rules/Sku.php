@@ -12,8 +12,22 @@ class Sku implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (! preg_match('/^[a-zA-Z0-9]+(?:[-_][a-zA-Z0-9]+)*$/', (string) $value)) {
+        $value = (string) $value;
+
+        if (mb_strlen($value) > 255) {
+            $fail('validation.max.string')->translate(['max' => 255]);
+
+            return;
+        }
+
+        if ($value !== trim($value)) {
             $fail('core::validation.sku')->translate();
+
+            return;
+        }
+
+        if (str_contains($value, ',') || str_contains($value, ';')) {
+            $fail('core::validation.sku_delimiter')->translate();
         }
     }
 }

@@ -1,5 +1,6 @@
 const { test, expect } = require('../../utils/fixtures');
-const { clickSave, navigateTo, generateUid } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, closeDropdown } = require('../../utils/helpers');
+const { deleteProductBySku } = require('../../utils/product-helpers');
 
 /**
  * Create a simple product and return to the product listing.
@@ -14,7 +15,7 @@ async function createSimpleProduct(adminPage, sku) {
   await typeWrapper.locator('.multiselect__tags').click();
   await typeWrapper.locator('.multiselect__content-wrapper').first().waitFor({ state: 'visible', timeout: 5000 });
   await adminPage.getByRole('option', { name: 'Simple' }).first().click();
-  await adminPage.keyboard.press('Escape');
+  await closeDropdown(adminPage);
 
   // Select attribute family (pick first available)
   const familyWrapper = adminPage.locator('input[name="attribute_family_id"]').locator('..');
@@ -24,33 +25,13 @@ async function createSimpleProduct(adminPage, sku) {
     .locator('.multiselect__element:not(.multiselect__element--disabled) .multiselect__option:not(.multiselect__option--disabled)')
     .first()
     .click();
-  await adminPage.keyboard.press('Escape');
+  await closeDropdown(adminPage);
 
   await adminPage.locator('input[name="sku"]').fill(sku);
   await clickSave(adminPage, 'Save Product');
   await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { waitUntil: 'domcontentloaded', timeout: 30000 });
   await adminPage.waitForLoadState('networkidle').catch(() => {});
   return sku;
-}
-
-/**
- * Delete a product by SKU.
- */
-async function deleteProductBySku(adminPage, sku) {
-  await navigateTo(adminPage, 'products');
-  const searchInput = adminPage.getByPlaceholder('Search').first();
-  await searchInput.waitFor({ state: 'visible', timeout: 30000 });
-  await searchInput.fill(sku);
-  await adminPage.keyboard.press('Enter');
-  await adminPage.waitForLoadState('load');
-  await adminPage.waitForTimeout(500);
-
-  const deleteIcon = adminPage.locator('span[title="Delete"]').first();
-  const visible = await deleteIcon.isVisible({ timeout: 3000 }).catch(() => false);
-  if (!visible) return;
-  await deleteIcon.click();
-  await adminPage.getByRole('button', { name: 'Delete' }).click();
-  await adminPage.waitForLoadState('networkidle').catch(() => {});
 }
 
 /**

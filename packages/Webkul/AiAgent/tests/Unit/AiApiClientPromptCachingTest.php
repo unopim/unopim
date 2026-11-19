@@ -62,6 +62,65 @@ describe('AiApiClient prompt caching (Issue #421)', function () {
         ])->and(array_column($client->capturedBody['messages'], 'role'))->toBe(['user']);
     });
 
+    it('places the anthropic cache breakpoint after the static system prompt, before dynamic context', function () {
+        $client = makeCachingTestClient('anthropic', 'claude-3-5-sonnet');
+        $client->fakeResponse = ['content' => [['text' => 'ok']], 'usage' => []];
+
+        $client->chat([
+            ['role' => 'system', 'content' => 'You are a PIM assistant.'],
+            ['role' => 'system', 'content' => "Context data:\n{\"sku\":\"ABC-123\"}"],
+            ['role' => 'user', 'content' => 'Enrich it'],
+        ]);
+
+        expect($client->capturedBody['system'])->toBe([
+            [
+                'type'          => 'text',
+                'text'          => 'You are a PIM assistant.',
+                'cache_control' => ['type' => 'ephemeral'],
+            ],
+            [
+                'type' => 'text',
+                'text' => "Context data:\n{\"sku\":\"ABC-123\"}",
+            ],
+        ]);
+    });
+
+    it('keeps an identical cached anthropic prefix when only the dynamic context changes', function () {
+        $client = makeCachingTestClient('anthropic', 'claude-3-5-sonnet');
+        $client->fakeResponse = ['content' => [['text' => 'ok']], 'usage' => []];
+
+        $send = function (string $sku) use ($client): array {
+            $client->chat([
+                ['role' => 'system', 'content' => 'You are a PIM assistant.'],
+                ['role' => 'system', 'content' => "Context data:\n{\"sku\":\"{$sku}\"}"],
+                ['role' => 'user', 'content' => 'Enrich it'],
+            ]);
+
+            return $client->capturedBody['system'];
+        };
+
+        $first = $send('ABC-123');
+        $second = $send('XYZ-999');
+
+        expect($first[0])->toBe($second[0])
+            ->and($first[1])->not->toBe($second[1]);
+    });
+
+    it('keeps openai system messages separate with the static prompt first', function () {
+        $client = makeCachingTestClient('openai', 'gpt-4o');
+        $client->fakeResponse = ['choices' => [['message' => ['content' => 'ok']]], 'usage' => []];
+
+        $client->chat([
+            ['role' => 'system', 'content' => 'You are a PIM assistant.'],
+            ['role' => 'system', 'content' => 'Context data: {}'],
+            ['role' => 'user', 'content' => 'Enrich it'],
+        ]);
+
+        expect($client->capturedBody['messages'][0])->toBe(['role' => 'system', 'content' => 'You are a PIM assistant.'])
+            ->and($client->capturedBody['messages'][1]['content'])->toBe('Context data: {}')
+            ->and(json_encode($client->capturedBody))->not->toContain('cache_control');
+    });
+
     it('omits the anthropic system field when no system message exists', function () {
         $client = makeCachingTestClient('anthropic', 'claude-3-5-sonnet');
         $client->fakeResponse = ['content' => [['text' => 'ok']], 'usage' => []];

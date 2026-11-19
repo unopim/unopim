@@ -23,6 +23,7 @@ use Webkul\DataTransfer\Jobs\Import\ImportTrackBatch;
 use Webkul\DataTransfer\Queue\Worker;
 use Webkul\DataTransfer\Repositories\JobInstancesRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
+use Webkul\DataTransfer\Services\JobTypeGate;
 use Webkul\User\Repositories\AdminRepository;
 
 use function Termwind\terminal;
@@ -80,6 +81,12 @@ class JobExecuteCommand extends Command
         $jobInstance = $this->jobInstancesRepository->find($jobId);
         if (! $jobInstance) {
             $this->error('Job not found given jobId.');
+
+            return 1;
+        }
+
+        if (app(JobTypeGate::class)->hides($jobInstance->entity_type)) {
+            $this->error(trans('data_transfer::app.job.module-disabled', ['type' => $jobInstance->entity_type]));
 
             return 1;
         }

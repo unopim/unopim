@@ -71,6 +71,8 @@ class ProductIndexer extends Command
 
                 if (! $this->hasIndex($productIndex)) {
                     $this->elasticConfiguration($productIndex);
+                } else {
+                    $this->ensureFieldLimit($productIndex);
                 }
 
                 return;
@@ -78,6 +80,8 @@ class ProductIndexer extends Command
 
             if (! $this->hasIndex($productIndex)) {
                 $this->elasticConfiguration($productIndex);
+            } else {
+                $this->ensureFieldLimit($productIndex);
             }
 
             $fresh = (bool) $this->option('fresh');
@@ -511,6 +515,41 @@ class ProductIndexer extends Command
     }
 
     /**
+     * Configured ceiling for mapped fields on a product index.
+     */
+    private function fieldLimit(): int
+    {
+        return max(1000, (int) config('elasticsearch.total_fields_limit', 1000));
+    }
+
+    /**
+     * Raise the field limit on an index created before the limit was configurable.
+     *
+     * Elasticsearch treats the limit as a dynamic setting, so this needs no reindex.
+     */
+    public function ensureFieldLimit(string $productIndex): void
+    {
+        try {
+            ElasticSearch::indices()->putSettings([
+                'index' => $productIndex,
+                'body'  => [
+                    'index' => [
+                        'mapping' => [
+                            'total_fields' => [
+                                'limit' => $this->fieldLimit(),
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
+        } catch (\Exception $e) {
+            Log::channel('elasticsearch')->warning('Unable to apply the field limit to '.$productIndex.' index: ', [
+                'warning' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    /**
      * Create Elasticsearch index with settings and mappings
      */
     public function elasticConfiguration($productIndex): void
@@ -715,6 +754,11 @@ class ProductIndexer extends Command
     private function getUnopimProductSetting(): array
     {
         return [
+            'mapping' => [
+                'total_fields' => [
+                    'limit' => $this->fieldLimit(),
+                ],
+            ],
             'analysis' => [
                 'char_filter' => [
                     'newline_remover' => [

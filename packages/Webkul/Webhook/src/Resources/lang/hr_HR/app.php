@@ -137,6 +137,14 @@ return [
                     'delete-success' => 'Zapisi Webhooka uspješno obrisani',
                     'delete-failed'  => 'Brisanje zapisa Webhooka neočekivano nije uspjelo',
                     'unauthorized'   => 'Ova radnja nije ovlaštena',
+                    'select-all'     => [
+                        'delete' => [
+                            'queued'    => 'Brisanje je stavljeno u red za sve odgovarajuće zapise. Bit ćete obaviješteni kada završi.',
+                            'title'     => 'Brisanje zapisa webhooka',
+                            'completed' => ':count zapisa webhooka izbrisano.',
+                            'failed'    => 'Brisanje :count zapisa webhooka završilo je s pogreškama. Neki zapisi nisu izbrisani.',
+                        ],
+                    ],
                 ],
             ],
         ],

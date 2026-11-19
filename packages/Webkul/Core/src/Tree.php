@@ -118,13 +118,21 @@ class Tree
      * path-segment boundaries so a shorter url (e.g. `configuration/system`)
      * does not match a sibling that merely shares its prefix
      * (e.g. `configuration/system-information`).
+     *
+     * Only paths are compared: behind a proxy or tunnel the request host and
+     * scheme differ from APP_URL, which `route()` is pinned to.
      */
     private function isCurrentUrl(string $url): bool
     {
-        $current = rtrim($this->current, '/');
-        $url = rtrim($url, '/');
+        $current = $this->pathOf($this->current);
+        $url = $this->pathOf($url);
 
         return $current === $url || str_starts_with($current, $url.'/');
+    }
+
+    private function pathOf(string $url): string
+    {
+        return rtrim((string) parse_url($url, PHP_URL_PATH), '/');
     }
 
     /**

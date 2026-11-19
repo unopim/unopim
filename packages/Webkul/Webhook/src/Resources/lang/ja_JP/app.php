@@ -137,6 +137,14 @@ return [
                     'delete-success' => 'Webhookログが正常に削除されました',
                     'delete-failed'  => 'Webhookログの削除が予期せず失敗しました',
                     'unauthorized'   => 'この操作は許可されていません',
+                    'select-all'     => [
+                        'delete' => [
+                            'queued'    => '一致するすべてのログの削除をキューに追加しました。完了時に通知されます。',
+                            'title'     => 'Webhookログの削除',
+                            'completed' => ':count 件のWebhookログを削除しました。',
+                            'failed'    => ':count 件のWebhookログの削除がエラーで終了しました。一部のログは削除されませんでした。',
+                        ],
+                    ],
                 ],
             ],
         ],
