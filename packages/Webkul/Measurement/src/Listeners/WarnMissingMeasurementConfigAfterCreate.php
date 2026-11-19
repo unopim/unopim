@@ -17,6 +17,9 @@ class WarnMissingMeasurementConfigAfterCreate
      * Remind the admin to set the measurement family and default unit, which
      * the create form does not collect, so products can store a value.
      *
+     * Flashed as `info` because the ajax form treats a flashed `warning` as a
+     * rejected save and would keep the admin on the create page.
+     *
      * @param  Attribute|null  $attribute
      */
     public function handle($attribute): void
@@ -30,6 +33,6 @@ class WarnMissingMeasurementConfigAfterCreate
             return;
         }
 
-        request()->session()->flash('warning', trans('measurement::app.messages.attribute.family_unit_required'));
+        request()->session()->flash('info', trans('measurement::app.messages.attribute.family_unit_required'));
     }
 }
