@@ -3,6 +3,9 @@
 use Webkul\AiAgent\DTOs\CredentialConfig;
 use Webkul\AiAgent\Http\Client\AiApiClient;
 
+/**
+ * Test double: captures the request body instead of performing a cURL call.
+ */
 class AiApiClientTemperatureDouble extends AiApiClient
 {
     public array $capturedBody = [];
@@ -15,6 +18,11 @@ class AiApiClientTemperatureDouble extends AiApiClient
     }
 }
 
+/**
+ * Send a chat for the given model and return the captured request body.
+ *
+ * @return array<string, mixed>
+ */
 function sendTemperatureTestChat(string $model): array
 {
     $client = new AiApiClientTemperatureDouble;
