@@ -72,7 +72,7 @@ class AttributeController extends Controller
     {
         $this->validate(request(), [
             'code'        => ['required', 'unique:attributes,code', new Code, new NotSupportedAttributes],
-            'type'        => ['required', new AttributeTypes],
+            'type'        => ['required', 'string', new AttributeTypes],
             'swatch_type' => [
                 'required_if:type,select,multiselect',
                 'prohibited_unless:type,select,multiselect',

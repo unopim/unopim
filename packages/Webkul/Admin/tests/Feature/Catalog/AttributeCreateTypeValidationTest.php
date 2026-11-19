@@ -21,6 +21,8 @@ it('rejects an unsupported or non-string type and creates no attribute', functio
     'empty string'   => '',
     'array'          => [['text']],
     'wrong case'     => 'TEXT',
+    'boolean true'   => true,
+    'integer'        => 1,
 ]);
 
 it('still creates an attribute for every supported type', function (): void {
