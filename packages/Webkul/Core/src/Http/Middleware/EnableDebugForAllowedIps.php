@@ -2,8 +2,8 @@
 
 namespace Webkul\Core\Http\Middleware;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Closure;
+use Fruitcake\LaravelDebugbar\Facades\Debugbar;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
