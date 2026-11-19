@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\File;
 use OpenSpout\Common\Entity\Row;
 use OpenSpout\Writer\XLSX\Writer as XlsxWriter;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -12,6 +13,9 @@ use Webkul\DataTransfer\Jobs\Export\File\XlsFileConverter;
 use Webkul\DataTransfer\Models\JobInstances;
 use Webkul\DataTransfer\Models\JobTrack;
 
+/**
+ * Create a product export job track for the given file format.
+ */
 function xlsExportJobTrack(string $fileFormat): JobTrack
 {
     $jobInstance = JobInstances::create([
@@ -33,16 +37,45 @@ function xlsExportJobTrack(string $fileFormat): JobTrack
     ]);
 }
 
-function xlsExportFileBuffer(string $fileFormat): FlatItemBuffer
+/**
+ * Create a product exporter for an export job in the given file format.
+ */
+function xlsProductExporter(string $fileFormat): Exporter
 {
     $exporter = app(Exporter::class);
     $exporter->setExport(xlsExportJobTrack($fileFormat));
     $exporter->getFilters();
 
-    return $exporter->initializeFileBuffer();
+    return $exporter;
 }
 
-afterEach(function () {
+/**
+ * Initialize the product exporter's file buffer for the given file format.
+ */
+function xlsExportFileBuffer(string $fileFormat): FlatItemBuffer
+{
+    return xlsProductExporter($fileFormat)->initializeFileBuffer();
+}
+
+/**
+ * Write a one-row XLSX workbook at a fresh temporary path ending in .xls and return the path.
+ */
+function xlsxWorkbookNamedXls(array $values): string
+{
+    $temporaryFile = tempnam(sys_get_temp_dir(), 'xls-convert-');
+    unlink($temporaryFile);
+
+    $path = $temporaryFile.'.xls';
+
+    $writer = new XlsxWriter;
+    $writer->openToFile($path);
+    $writer->addRow(Row::fromValues($values));
+    $writer->close();
+
+    return $path;
+}
+
+afterEach(function (): void {
     if (isset($this->exportPath)) {
         @unlink($this->exportPath);
     }
@@ -86,7 +119,7 @@ it('stops an Xls export that has more columns than an XLS sheet can hold', funct
     $this->exportPath = $buffer->getFilePath()->getLocalPath();
 
     $row = array_fill_keys(
-        array_map(fn (int $index) => 'column_'.$index, range(1, XlsFileConverter::MAX_COLUMNS + 1)),
+        array_map(fn (int $index): string => 'column_'.$index, range(1, XlsFileConverter::MAX_COLUMNS + 1)),
         'value',
     );
 
@@ -101,7 +134,7 @@ it('stops an Xls export that has more rows than an XLS sheet can hold', function
 
     $this->exportPath = $buffer->getFilePath()->getLocalPath();
 
-    $rows = (function () {
+    $rows = (function (): Generator {
         for ($index = 1; $index <= XlsFileConverter::MAX_ROWS; $index++) {
             yield ['sku' => 'XLS-'.$index];
         }
@@ -116,20 +149,69 @@ it('stops an Xls export that has more rows than an XLS sheet can hold', function
 });
 
 it('removes the partial xls file when the conversion fails', function () {
-    $temporaryFile = tempnam(sys_get_temp_dir(), 'xls-convert-');
-    unlink($temporaryFile);
-
-    $this->exportPath = $temporaryFile.'.xls';
-
-    $writer = new XlsxWriter;
-    $writer->openToFile($this->exportPath);
-    $writer->addRow(Row::fromValues(array_fill(0, XlsFileConverter::MAX_COLUMNS + 1, 'value')));
-    $writer->close();
+    $this->exportPath = xlsxWorkbookNamedXls(array_fill(0, XlsFileConverter::MAX_COLUMNS + 1, 'value'));
 
     expect(fn () => (new XlsFileConverter)->convert($this->exportPath))
         ->toThrow(SpreadsheetWriterException::class);
 
     expect(file_exists($this->exportPath.'.converting'))->toBeFalse();
+});
+
+it('fails loudly when the converted file cannot replace the export file', function () {
+    $this->exportPath = xlsxWorkbookNamedXls(['sku', 'name']);
+
+    File::partialMock()->shouldReceive('move')->once()->andReturnFalse();
+
+    expect(fn () => (new XlsFileConverter)->convert($this->exportPath))->toThrow(
+        RuntimeException::class,
+        trans('data_transfer::app.exporters.xls-conversion-failed'),
+    );
+
+    expect(file_exists($this->exportPath.'.converting'))->toBeFalse();
+});
+
+it('rejects an Xls export over the row limit before any batch is dispatched', function () {
+    $guard = new ReflectionMethod(Exporter::class, 'guardAgainstOversizedExport');
+
+    expect(fn () => $guard->invoke(xlsProductExporter('Xls'), XlsFileConverter::MAX_ROWS, 2))->toThrow(
+        RuntimeException::class,
+        trans('data_transfer::app.exporters.xls-too-many-rows', ['limit' => number_format(XlsFileConverter::MAX_ROWS)]),
+    );
+
+    $guard->invoke(xlsProductExporter('Csv'), XlsFileConverter::MAX_ROWS, 2);
+});
+
+it('rejects an Xls export with more cells than can be converted', function () {
+    $memoryLimit = ini_get('memory_limit');
+    ini_set('memory_limit', '-1');
+
+    try {
+        expect(fn () => (new XlsFileConverter)->assertFits(10_000, 100))->toThrow(
+            RuntimeException::class,
+            trans('data_transfer::app.exporters.xls-too-large', [
+                'rows'    => number_format(10_000),
+                'columns' => number_format(100),
+                'limit'   => number_format(XlsFileConverter::MAX_CELLS),
+            ]),
+        );
+
+        (new XlsFileConverter)->assertFits(5_000, 100);
+    } finally {
+        ini_set('memory_limit', $memoryLimit);
+    }
+});
+
+it('lowers the cell limit to the memory left under memory_limit', function () {
+    $memoryLimit = ini_get('memory_limit');
+    ini_set('memory_limit', (string) (memory_get_usage(true) + 64 * 1024 * 1024));
+
+    try {
+        expect((new XlsFileConverter)->cellLimit())
+            ->toBeGreaterThan(0)
+            ->toBeLessThanOrEqual(intdiv(64 * 1024 * 1024, XlsFileConverter::BYTES_PER_CELL));
+    } finally {
+        ini_set('memory_limit', $memoryLimit);
+    }
 });
 
 it('marks the export as failed with the reason when writing the file fails', function () {

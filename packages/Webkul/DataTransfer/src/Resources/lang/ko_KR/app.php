@@ -176,10 +176,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large'     => '이 내보내기는 너무 커서 실행할 수 없습니다: 예상 :rows 행 × :columns 열(~:estimated)이 사용 가능한 공간(~:available)을 초과합니다. 채널/로케일(및 속성)을 줄여 범위를 좁힌 후 다시 시도하세요.',
-        'xls-too-many-columns' => '이 내보내기에는 XLS 파일이 담을 수 있는 최대치인 :limit열을 초과하는 열이 있습니다. XLSX 또는 CSV를 선택하거나 속성을 줄인 후 다시 시도하세요.',
-        'xls-too-many-rows'    => '이 내보내기에는 XLS 파일이 담을 수 있는 최대치인 :limit행을 초과하는 행이 있습니다. XLSX 또는 CSV를 선택하거나 내보내기 범위를 좁힌 후 다시 시도하세요.',
-        'fields'               => [
+        'export-too-large'      => '이 내보내기는 너무 커서 실행할 수 없습니다: 예상 :rows 행 × :columns 열(~:estimated)이 사용 가능한 공간(~:available)을 초과합니다. 채널/로케일(및 속성)을 줄여 범위를 좁힌 후 다시 시도하세요.',
+        'xls-too-many-columns'  => '이 내보내기에는 XLS 파일이 담을 수 있는 최대치인 :limit열을 초과하는 열이 있습니다. XLSX 또는 CSV를 선택하거나 속성을 줄인 후 다시 시도하세요.',
+        'xls-too-many-rows'     => '이 내보내기에는 XLS 파일이 담을 수 있는 최대치인 :limit행을 초과하는 행이 있습니다. XLSX 또는 CSV를 선택하거나 내보내기 범위를 좁힌 후 다시 시도하세요.',
+        'xls-too-large'         => '이 내보내기는 너무 커서 XLS로 변환할 수 없습니다: :rows행 × :columns열은 이 서버가 변환할 수 있는 :limit개 셀을 초과합니다. XLSX 또는 CSV를 선택하거나 내보내기 범위를 좁힌 후 다시 시도하세요.',
+        'xls-conversion-failed' => '내보내기 파일을 XLS 버전으로 교체하지 못했습니다. 다시 시도하거나 XLSX 또는 CSV를 선택하세요.',
+        'fields'                => [
             'file-format'            => '파일 형식',
             'with-media'             => '미디어 포함',
             'with-associations'      => '연관 관계 포함',

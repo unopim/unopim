@@ -176,10 +176,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large'     => 'このエクスポートは大きすぎて実行できません：推定 :rows 行 × :columns 列（~:estimated）が利用可能な容量（~:available）を超えています。チャネル／ロケール（および属性）を絞り込んでから再試行してください。',
-        'xls-too-many-columns' => 'このエクスポートには :limit 列を超える列があり、XLS ファイルで扱える上限を超えています。XLSX または CSV を選択するか、属性を減らしてから再試行してください。',
-        'xls-too-many-rows'    => 'このエクスポートには :limit 行を超える行があり、XLS ファイルで扱える上限を超えています。XLSX または CSV を選択するか、エクスポートを絞り込んでから再試行してください。',
-        'fields'               => [
+        'export-too-large'      => 'このエクスポートは大きすぎて実行できません：推定 :rows 行 × :columns 列（~:estimated）が利用可能な容量（~:available）を超えています。チャネル／ロケール（および属性）を絞り込んでから再試行してください。',
+        'xls-too-many-columns'  => 'このエクスポートには :limit 列を超える列があり、XLS ファイルで扱える上限を超えています。XLSX または CSV を選択するか、属性を減らしてから再試行してください。',
+        'xls-too-many-rows'     => 'このエクスポートには :limit 行を超える行があり、XLS ファイルで扱える上限を超えています。XLSX または CSV を選択するか、エクスポートを絞り込んでから再試行してください。',
+        'xls-too-large'         => 'このエクスポートは大きすぎるため XLS に変換できません: :rows 行 × :columns 列は、このサーバーで変換できる :limit セルを超えています。XLSX または CSV を選択するか、エクスポートを絞り込んでから再試行してください。',
+        'xls-conversion-failed' => 'エクスポートファイルを XLS 版に置き換えられませんでした。再試行するか、XLSX または CSV を選択してください。',
+        'fields'                => [
             'file-format'            => 'ファイル形式',
             'with-media'             => 'メディアを含む',
             'with-associations'      => '関連付けを含む',

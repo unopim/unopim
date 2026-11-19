@@ -28,9 +28,13 @@ class FlatItemBuffer extends FileBuffer implements BufferInterface
 
     protected bool $writesXls = false;
 
+    protected int $xlsColumns = 0;
+
     public function initialize($directory, ?string $fileName, array $options = []): static
     {
         $this->count = 0;
+
+        $this->xlsColumns = 0;
 
         $this->headerWritten = false;
 
@@ -89,7 +93,7 @@ class FlatItemBuffer extends FileBuffer implements BufferInterface
     }
 
     /**
-     * Stop an XLS export before it outgrows what an Excel 97-2003 sheet can hold.
+     * Stop an XLS export before it outgrows what an Excel 97-2003 sheet can hold or what can be converted.
      */
     protected function guardXlsLimits(int $columns): void
     {
@@ -97,17 +101,12 @@ class FlatItemBuffer extends FileBuffer implements BufferInterface
             return;
         }
 
-        if ($columns > XlsFileConverter::MAX_COLUMNS) {
-            throw new \RuntimeException(trans('data_transfer::app.exporters.xls-too-many-columns', [
-                'limit' => XlsFileConverter::MAX_COLUMNS,
-            ]));
-        }
+        $this->xlsColumns = max($this->xlsColumns, $columns);
 
-        if ($this->count + 1 + ($this->writeHeaders ? 1 : 0) > XlsFileConverter::MAX_ROWS) {
-            throw new \RuntimeException(trans('data_transfer::app.exporters.xls-too-many-rows', [
-                'limit' => number_format(XlsFileConverter::MAX_ROWS),
-            ]));
-        }
+        resolve(XlsFileConverter::class)->assertFits(
+            $this->count + 1 + ($this->writeHeaders ? 1 : 0),
+            $this->xlsColumns,
+        );
     }
 
     public function getFilePath()

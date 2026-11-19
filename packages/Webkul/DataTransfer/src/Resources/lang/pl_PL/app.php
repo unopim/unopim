@@ -176,10 +176,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large'     => 'Ten eksport jest zbyt duży, aby go uruchomić: szacunkowo :rows wierszy × :columns kolumn (~:estimated) przekracza dostępne miejsce (~:available). Zawęź eksport, wybierając mniej kanałów/lokalizacji (i atrybutów), i spróbuj ponownie.',
-        'xls-too-many-columns' => 'Ten eksport ma więcej niż :limit kolumn, czyli maksimum, jakie może pomieścić plik XLS. Wybierz XLSX lub CSV albo mniej atrybutów i spróbuj ponownie.',
-        'xls-too-many-rows'    => 'Ten eksport ma więcej niż :limit wierszy, czyli maksimum, jakie może pomieścić plik XLS. Wybierz XLSX lub CSV albo zawęź eksport i spróbuj ponownie.',
-        'fields'               => [
+        'export-too-large'      => 'Ten eksport jest zbyt duży, aby go uruchomić: szacunkowo :rows wierszy × :columns kolumn (~:estimated) przekracza dostępne miejsce (~:available). Zawęź eksport, wybierając mniej kanałów/lokalizacji (i atrybutów), i spróbuj ponownie.',
+        'xls-too-many-columns'  => 'Ten eksport ma więcej niż :limit kolumn, czyli maksimum, jakie może pomieścić plik XLS. Wybierz XLSX lub CSV albo mniej atrybutów i spróbuj ponownie.',
+        'xls-too-many-rows'     => 'Ten eksport ma więcej niż :limit wierszy, czyli maksimum, jakie może pomieścić plik XLS. Wybierz XLSX lub CSV albo zawęź eksport i spróbuj ponownie.',
+        'xls-too-large'         => 'Ten eksport jest zbyt duży, aby przekonwertować go do XLS: :rows wierszy × :columns kolumn przekracza :limit komórek, które ten serwer może przekonwertować. Wybierz XLSX lub CSV albo zawęź eksport i spróbuj ponownie.',
+        'xls-conversion-failed' => 'Nie udało się zastąpić pliku eksportu jego wersją XLS. Spróbuj ponownie albo wybierz XLSX lub CSV.',
+        'fields'                => [
             'file-format'            => 'Format pliku',
             'with-media'             => 'Z multimediami',
             'with-associations'      => 'Z powiązaniami',

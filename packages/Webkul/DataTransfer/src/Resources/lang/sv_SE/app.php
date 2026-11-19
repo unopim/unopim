@@ -176,10 +176,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large'     => 'Den här exporten är för stor för att köras: uppskattade :rows rader × :columns kolumner (~:estimated) överskrider det tillgängliga utrymmet (~:available). Begränsa exporten genom att välja färre kanaler/språk (och attribut) och försök igen.',
-        'xls-too-many-columns' => 'Den här exporten har fler än :limit kolumner, vilket är det maximala en XLS-fil kan innehålla. Välj XLSX eller CSV, eller välj färre attribut, och försök igen.',
-        'xls-too-many-rows'    => 'Den här exporten har fler än :limit rader, vilket är det maximala en XLS-fil kan innehålla. Välj XLSX eller CSV, eller begränsa exporten, och försök igen.',
-        'fields'               => [
+        'export-too-large'      => 'Den här exporten är för stor för att köras: uppskattade :rows rader × :columns kolumner (~:estimated) överskrider det tillgängliga utrymmet (~:available). Begränsa exporten genom att välja färre kanaler/språk (och attribut) och försök igen.',
+        'xls-too-many-columns'  => 'Den här exporten har fler än :limit kolumner, vilket är det maximala en XLS-fil kan innehålla. Välj XLSX eller CSV, eller välj färre attribut, och försök igen.',
+        'xls-too-many-rows'     => 'Den här exporten har fler än :limit rader, vilket är det maximala en XLS-fil kan innehålla. Välj XLSX eller CSV, eller begränsa exporten, och försök igen.',
+        'xls-too-large'         => 'Den här exporten är för stor för att konverteras till XLS: :rows rader × :columns kolumner är fler än de :limit celler som den här servern kan konvertera. Välj XLSX eller CSV, eller begränsa exporten, och försök igen.',
+        'xls-conversion-failed' => 'Exportfilen kunde inte ersättas med sin XLS-version. Försök igen, eller välj XLSX eller CSV.',
+        'fields'                => [
             'file-format'            => 'Filformat',
             'with-media'             => 'Med media',
             'with-associations'      => 'Med kopplingar',

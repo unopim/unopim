@@ -176,10 +176,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large'     => 'Esta exportação é demasiado grande para ser executada: cerca de :rows linhas × :columns colunas (~:estimated) excedem o espaço disponível (~:available). Reduza a exportação selecionando menos canais/locais (e atributos) e tente novamente.',
-        'xls-too-many-columns' => 'Esta exportação tem mais de :limit colunas, o máximo que um ficheiro XLS suporta. Escolha XLSX ou CSV, ou selecione menos atributos, e tente novamente.',
-        'xls-too-many-rows'    => 'Esta exportação tem mais de :limit linhas, o máximo que um ficheiro XLS suporta. Escolha XLSX ou CSV, ou reduza a exportação, e tente novamente.',
-        'fields'               => [
+        'export-too-large'      => 'Esta exportação é demasiado grande para ser executada: cerca de :rows linhas × :columns colunas (~:estimated) excedem o espaço disponível (~:available). Reduza a exportação selecionando menos canais/locais (e atributos) e tente novamente.',
+        'xls-too-many-columns'  => 'Esta exportação tem mais de :limit colunas, o máximo que um ficheiro XLS suporta. Escolha XLSX ou CSV, ou selecione menos atributos, e tente novamente.',
+        'xls-too-many-rows'     => 'Esta exportação tem mais de :limit linhas, o máximo que um ficheiro XLS suporta. Escolha XLSX ou CSV, ou reduza a exportação, e tente novamente.',
+        'xls-too-large'         => 'Esta exportação é demasiado grande para ser convertida em XLS: :rows linhas × :columns colunas excedem as :limit células que este servidor consegue converter. Escolha XLSX ou CSV, ou restrinja a exportação, e tente novamente.',
+        'xls-conversion-failed' => 'Não foi possível substituir o ficheiro de exportação pela versão XLS. Tente novamente ou escolha XLSX ou CSV.',
+        'fields'                => [
             'file-format'            => 'Formato de ficheiro',
             'with-media'             => 'Com multimédia',
             'with-associations'      => 'Com associações',

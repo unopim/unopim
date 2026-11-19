@@ -176,10 +176,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large'     => 'Esta exportación es demasiado grande para ejecutarse: se estiman :rows filas × :columns columnas (~:estimated), que superan el espacio disponible (~:available). Reduzca la exportación seleccionando menos canales/idiomas (y atributos) e inténtelo de nuevo.',
-        'xls-too-many-columns' => 'Esta exportación tiene más de :limit columnas, el máximo que admite un archivo XLS. Elija XLSX o CSV, o seleccione menos atributos, e inténtelo de nuevo.',
-        'xls-too-many-rows'    => 'Esta exportación tiene más de :limit filas, el máximo que admite un archivo XLS. Elija XLSX o CSV, o reduzca la exportación, e inténtelo de nuevo.',
-        'fields'               => [
+        'export-too-large'      => 'Esta exportación es demasiado grande para ejecutarse: se estiman :rows filas × :columns columnas (~:estimated), que superan el espacio disponible (~:available). Reduzca la exportación seleccionando menos canales/idiomas (y atributos) e inténtelo de nuevo.',
+        'xls-too-many-columns'  => 'Esta exportación tiene más de :limit columnas, el máximo que admite un archivo XLS. Elija XLSX o CSV, o seleccione menos atributos, e inténtelo de nuevo.',
+        'xls-too-many-rows'     => 'Esta exportación tiene más de :limit filas, el máximo que admite un archivo XLS. Elija XLSX o CSV, o reduzca la exportación, e inténtelo de nuevo.',
+        'xls-too-large'         => 'Esta exportación es demasiado grande para convertirla a XLS: :rows filas × :columns columnas supera las :limit celdas que este servidor puede convertir. Elija XLSX o CSV, o reduzca la exportación, e inténtelo de nuevo.',
+        'xls-conversion-failed' => 'No se pudo reemplazar el archivo de exportación por su versión XLS. Inténtelo de nuevo o elija XLSX o CSV.',
+        'fields'                => [
             'file-format'            => 'Formato de archivo',
             'with-media'             => 'Con medios',
             'with-associations'      => 'Con asociaciones',
