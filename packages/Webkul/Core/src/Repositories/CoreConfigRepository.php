@@ -147,17 +147,13 @@ class CoreConfigRepository extends Repository
     /**
      * Flatten submitted form data into config codes and their values.
      *
-     * Holds no state between calls, so a long-lived worker never writes the values
-     * of an earlier save again.
-     *
-     * @param  string  $method
      * @return array
      */
-    public function recursiveArray(array $formData, $method)
+    public function recursiveArray(array $formData, string $method)
     {
         $data = [];
 
-        $this->collectFieldGroups($formData, (string) $method, $data);
+        $this->collectFieldGroups($formData, $method, $data);
 
         $recursiveArrayData = [];
 
