@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "astrotomic/laravel-translatable",
-            "version": "v11.17.1",
+            "version": "v11.17.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Astrotomic/laravel-translatable.git",
-                "reference": "b7896348eeaf1038417b32131109515675a84432"
+                "reference": "1320ef9a2118bfdd40d7f37b880fef63806ce152"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Astrotomic/laravel-translatable/zipball/b7896348eeaf1038417b32131109515675a84432",
-                "reference": "b7896348eeaf1038417b32131109515675a84432",
+                "url": "https://api.github.com/repos/Astrotomic/laravel-translatable/zipball/1320ef9a2118bfdd40d7f37b880fef63806ce152",
+                "reference": "1320ef9a2118bfdd40d7f37b880fef63806ce152",
                 "shasum": ""
             },
             "require": {
@@ -89,7 +89,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-08-14T20:39:45+00:00"
+            "time": "2026-10-28T13:16:57+00:00"
         },
         {
             "name": "bacon/bacon-qr-code",
