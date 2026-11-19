@@ -32,15 +32,15 @@ class ProductAssociationRepository extends Repository
 
     /**
      * Retrieve all association links for a source product with the
-     * association type and related product (plus its attribute family, so
-     * `Product::normalizeWithImage()` doesn't trigger a lazy-load per link)
-     * eager loaded (no N+1).
+     * association type and related product (plus its attribute family and
+     * ancestor chain, so `Product::normalizeWithImage()` doesn't trigger a
+     * lazy-load per link) eager loaded (no N+1).
      */
     public function getLinksForProduct(int $productId): Collection
     {
         return $this->model
             ->where('product_id', $productId)
-            ->with(['associationType', 'relatedProduct', 'relatedProduct.attribute_family'])
+            ->with(['associationType', 'relatedProduct', 'relatedProduct.attribute_family', 'relatedProduct.parent.parent'])
             ->get();
     }
 

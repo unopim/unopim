@@ -426,6 +426,13 @@ class ProductController extends Controller
 
         $paginator = $childrenQuery->orderBy('id')->paginate($perPage, ['*'], 'page', $page);
 
+        // Every child's own parent is already in hand as `$parent`; set it directly
+        // instead of letting each child's `getProductDisplayImage()` lazy-load it
+        // when walking up to a configurable ancestor for an inherited image.
+        $parent->loadMissing('parent');
+
+        $paginator->getCollection()->each(fn (Product $child) => $child->setRelation('parent', $parent));
+
         $optionCodes = $paginator->getCollection()
             ->flatMap(fn (Product $child) => array_map(
                 fn (string $axisCode) => $child->values['common'][$axisCode] ?? null,
