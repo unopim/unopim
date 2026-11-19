@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Webkul\Attribute\Enums\SwatchTypeEnum;
 use Webkul\Attribute\Models\Attribute;
+use Webkul\Attribute\Models\AttributeOption;
 use Webkul\Attribute\Rules\NotSupportedAttributes;
 use Webkul\Core\Models\Locale;
 use Webkul\Product\Models\Product;
@@ -396,6 +397,49 @@ it('should keep new options on the created attribute when the request names anot
 
     expect($created->options()->pluck('code')->all())->toBe(['owned_option'])
         ->and($other->options()->count())->toBe($otherOptionCount);
+});
+
+it('should not delete or update options of another attribute through the attribute update', function () {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create(['type' => 'select']);
+    $other = Attribute::factory()->create(['type' => 'select']);
+
+    $foreignDelete = AttributeOption::create(['code' => 'foreign_delete', 'sort_order' => 10, 'attribute_id' => $other->id]);
+    $foreignUpdate = AttributeOption::create(['code' => 'foreign_update', 'sort_order' => 11, 'attribute_id' => $other->id]);
+
+    putJson(route('admin.catalog.attributes.update', $attribute->id), [
+        'code'        => $attribute->code,
+        'type'        => $attribute->type,
+        'swatch_type' => SwatchTypeEnum::TEXT->value,
+        'options'     => [
+            $foreignDelete->id => ['isNew' => false, 'isDelete' => true],
+            $foreignUpdate->id => ['isNew' => false, 'isDelete' => false, 'code' => 'hijacked', 'attribute_id' => $attribute->id],
+        ],
+    ])->assertStatus(302);
+
+    expect(AttributeOption::whereKey($foreignDelete->id)->exists())->toBeTrue()
+        ->and($foreignUpdate->fresh()->code)->toBe('foreign_update')
+        ->and((int) $foreignUpdate->fresh()->attribute_id)->toBe($other->id);
+});
+
+it('should keep an updated option on its attribute when the request names another attribute', function () {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create(['type' => 'select']);
+    $other = Attribute::factory()->create(['type' => 'select']);
+    $option = $attribute->options()->first();
+
+    putJson(route('admin.catalog.attributes.update', $attribute->id), [
+        'code'        => $attribute->code,
+        'type'        => $attribute->type,
+        'swatch_type' => SwatchTypeEnum::TEXT->value,
+        'options'     => [
+            $option->id => ['isNew' => false, 'isDelete' => false, 'code' => $option->code, 'attribute_id' => $other->id],
+        ],
+    ])->assertStatus(302);
+
+    expect((int) $option->fresh()->attribute_id)->toBe($attribute->id);
 });
 
 it('should delete an attribute option', function () {

@@ -100,10 +100,14 @@ class AttributeRepository extends Repository
                     $this->attributeOptionRepository->create(array_merge($optionInputs, [
                         'attribute_id' => $attribute->id,
                     ]));
+                } elseif (! $this->attributeOptionRepository->findOneWhere(['id' => $optionId, 'attribute_id' => $attribute->id])) {
+                    continue;
                 } elseif ($optionInputs['isDelete'] == 'true') {
                     $this->attributeOptionRepository->delete($optionId);
                 } else {
-                    $this->attributeOptionRepository->update($optionInputs, $optionId);
+                    $this->attributeOptionRepository->update(array_merge($optionInputs, [
+                        'attribute_id' => $attribute->id,
+                    ]), $optionId);
                 }
             }
         }
