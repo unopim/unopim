@@ -1,18 +1,6 @@
 <?php
 
 return [
-    'config' => [
-        'completeness' => [
-            'title'           => 'Kabuuan',
-            'info'            => 'Mga threshold ng kulay ng completeness score.',
-            'green-from'      => 'Berde mula (%)',
-            'green-from-info' => 'Ang mga iskor na katumbas o higit sa porsyentong ito ay ipinapakita sa berde.',
-            'red-below'       => 'Pula sa ibaba ng (%)',
-            'red-below-info'  => 'Ang mga iskor na mas mababa sa porsyentong ito ay ipinapakita sa pula. Ang nasa pagitan ay ipinapakita sa amber.',
-            'green-gt-red'    => 'Ang berdeng threshold ay dapat mas malaki kaysa sa pulang threshold.',
-        ],
-    ],
-
     'components' => [
         'layouts' => [
             'sidebar' => [
@@ -79,6 +67,18 @@ return [
                     'perfect' => 'Ganap na kumpleto ang impormasyon ng produkto.',
                 ],
             ],
+        ],
+    ],
+
+    'configuration' => [
+        'score-thresholds' => [
+            'title'           => 'Mga Kulay ng Iskor ng Pagkakumpleto',
+            'info'            => 'Itakda ang mga iskor kung kailan nagiging berde o pula ang mga indicator ng pagkakumpleto.',
+            'green-from'      => 'Berde Mula (%)',
+            'green-from-info' => 'Ang mga iskor na katumbas o mas mataas sa halagang ito ay ipinapakita nang berde.',
+            'red-below'       => 'Pula Kapag Mas Mababa sa (%)',
+            'red-below-info'  => 'Ang mga iskor na mas mababa sa halagang ito ay ipinapakita nang pula. Ang mga nasa pagitan ay ipinapakita nang dilaw.',
+            'order-error'     => 'Dapat mas mataas ang hangganan ng berde kaysa sa hangganan ng pula.',
         ],
     ],
 ];

@@ -1,18 +1,6 @@
 <?php
 
 return [
-    'config' => [
-        'completeness' => [
-            'title'           => '完整度',
-            'info'            => '完整度评分的颜色阈值。',
-            'green-from'      => '绿色起始 (%)',
-            'green-from-info' => '等于或高于此百分比的评分以绿色显示。',
-            'red-below'       => '红色低于 (%)',
-            'red-below-info'  => '低于此百分比的评分以红色显示。介于两者之间的以琥珀色显示。',
-            'green-gt-red'    => '绿色阈值必须大于红色阈值。',
-        ],
-    ],
-
     'components' => [
         'layouts' => [
             'sidebar' => [
@@ -79,6 +67,18 @@ return [
                     'perfect' => '产品信息已完全完整。',
                 ],
             ],
+        ],
+    ],
+
+    'configuration' => [
+        'score-thresholds' => [
+            'title'           => '完整度分数颜色',
+            'info'            => '设置完整度指示器变为绿色或红色的分数。',
+            'green-from'      => '绿色起始值 (%)',
+            'green-from-info' => '等于或高于此值的分数显示为绿色。',
+            'red-below'       => '红色上限 (%)',
+            'red-below-info'  => '低于此值的分数显示为红色，介于两者之间的分数显示为黄色。',
+            'order-error'     => '绿色阈值必须高于红色阈值。',
         ],
     ],
 ];

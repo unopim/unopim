@@ -1,18 +1,6 @@
 <?php
 
 return [
-    'config' => [
-        'completeness' => [
-            'title'           => 'Completitudine',
-            'info'            => 'Praguri de culoare pentru scorul de completitudine.',
-            'green-from'      => 'Verde de la (%)',
-            'green-from-info' => 'Scorurile egale sau peste acest procent sunt afișate cu verde.',
-            'red-below'       => 'Roșu sub (%)',
-            'red-below-info'  => 'Scorurile sub acest procent sunt afișate cu roșu. Cele intermediare sunt afișate cu chihlimbar.',
-            'green-gt-red'    => 'Pragul verde trebuie să fie mai mare decât pragul roșu.',
-        ],
-    ],
-
     'components' => [
         'layouts' => [
             'sidebar' => [
@@ -79,6 +67,18 @@ return [
                     'perfect' => 'Informațiile despre produs sunt complet finalizate.',
                 ],
             ],
+        ],
+    ],
+
+    'configuration' => [
+        'score-thresholds' => [
+            'title'           => 'Culorile scorului de completitudine',
+            'info'            => 'Setați scorurile la care indicatorii de completitudine devin verzi sau roșii.',
+            'green-from'      => 'Verde de la (%)',
+            'green-from-info' => 'Scorurile egale cu această valoare sau mai mari sunt afișate cu verde.',
+            'red-below'       => 'Roșu sub (%)',
+            'red-below-info'  => 'Scorurile sub această valoare sunt afișate cu roșu. Cele intermediare sunt afișate cu galben.',
+            'order-error'     => 'Pragul pentru verde trebuie să fie mai mare decât pragul pentru roșu.',
         ],
     ],
 ];

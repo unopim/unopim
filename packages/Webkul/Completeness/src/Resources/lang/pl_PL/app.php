@@ -1,18 +1,6 @@
 <?php
 
 return [
-    'config' => [
-        'completeness' => [
-            'title'           => 'Kompletność',
-            'info'            => 'Progi kolorów wyniku kompletności.',
-            'green-from'      => 'Zielony od (%)',
-            'green-from-info' => 'Wyniki równe lub wyższe od tego procentu są wyświetlane na zielono.',
-            'red-below'       => 'Czerwony poniżej (%)',
-            'red-below-info'  => 'Wyniki poniżej tego procentu są wyświetlane na czerwono. Pośrednie są wyświetlane na bursztynowo.',
-            'green-gt-red'    => 'Próg zielony musi być większy niż próg czerwony.',
-        ],
-    ],
-
     'components' => [
         'layouts' => [
             'sidebar' => [
@@ -79,6 +67,18 @@ return [
                     'perfect' => 'Informacje o produkcie są w pełni kompletne.',
                 ],
             ],
+        ],
+    ],
+
+    'configuration' => [
+        'score-thresholds' => [
+            'title'           => 'Kolory wyniku kompletności',
+            'info'            => 'Ustaw wyniki, przy których wskaźniki kompletności zmieniają kolor na zielony lub czerwony.',
+            'green-from'      => 'Zielony od (%)',
+            'green-from-info' => 'Wyniki równe tej wartości lub wyższe są wyświetlane na zielono.',
+            'red-below'       => 'Czerwony poniżej (%)',
+            'red-below-info'  => 'Wyniki poniżej tej wartości są wyświetlane na czerwono. Wyniki pomiędzy są wyświetlane na żółto.',
+            'order-error'     => 'Próg koloru zielonego musi być wyższy niż próg koloru czerwonego.',
         ],
     ],
 ];

@@ -1,18 +1,6 @@
 <?php
 
 return [
-    'config' => [
-        'completeness' => [
-            'title'           => 'Fullstendighet',
-            'info'            => 'Fargeterskler for fullstendighetsscore.',
-            'green-from'      => 'Grønn fra (%)',
-            'green-from-info' => 'Poeng på eller over denne prosentandelen vises i grønt.',
-            'red-below'       => 'Rød under (%)',
-            'red-below-info'  => 'Poeng under denne prosentandelen vises i rødt. De imellom vises i ravgult.',
-            'green-gt-red'    => 'Den grønne terskelen må være større enn den røde terskelen.',
-        ],
-    ],
-
     'components' => [
         'layouts' => [
             'sidebar' => [
@@ -79,6 +67,18 @@ return [
                     'perfect' => 'Produktinformasjonen er fullstendig.',
                 ],
             ],
+        ],
+    ],
+
+    'configuration' => [
+        'score-thresholds' => [
+            'title'           => 'Farger for fullstendighetspoeng',
+            'info'            => 'Angi poengsummene der fullstendighetsindikatorer blir grønne eller røde.',
+            'green-from'      => 'Grønn fra (%)',
+            'green-from-info' => 'Poengsummer lik eller over denne verdien vises i grønt.',
+            'red-below'       => 'Rød under (%)',
+            'red-below-info'  => 'Poengsummer under denne verdien vises i rødt. Poengsummer imellom vises i gult.',
+            'order-error'     => 'Grensen for grønn må være høyere enn grensen for rød.',
         ],
     ],
 ];

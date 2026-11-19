@@ -1,18 +1,6 @@
 <?php
 
 return [
-    'config' => [
-        'completeness' => [
-            'title'           => 'Kelengkapan',
-            'info'            => 'Ambang warna skor kelengkapan.',
-            'green-from'      => 'Hijau dari (%)',
-            'green-from-info' => 'Skor pada atau di atas persentase ini ditampilkan dengan warna hijau.',
-            'red-below'       => 'Merah di bawah (%)',
-            'red-below-info'  => 'Skor di bawah persentase ini ditampilkan dengan warna merah. Yang di antaranya ditampilkan dengan warna amber.',
-            'green-gt-red'    => 'Ambang hijau harus lebih besar daripada ambang merah.',
-        ],
-    ],
-
     'components' => [
         'layouts' => [
             'sidebar' => [
@@ -79,6 +67,18 @@ return [
                     'perfect' => 'Informasi produk sudah sepenuhnya lengkap.',
                 ],
             ],
+        ],
+    ],
+
+    'configuration' => [
+        'score-thresholds' => [
+            'title'           => 'Warna Skor Kelengkapan',
+            'info'            => 'Tetapkan skor saat indikator kelengkapan berubah menjadi hijau atau merah.',
+            'green-from'      => 'Hijau Mulai (%)',
+            'green-from-info' => 'Skor yang sama dengan atau di atas nilai ini ditampilkan dengan warna hijau.',
+            'red-below'       => 'Merah Di Bawah (%)',
+            'red-below-info'  => 'Skor di bawah nilai ini ditampilkan dengan warna merah. Skor di antaranya ditampilkan dengan warna kuning.',
+            'order-error'     => 'Ambang hijau harus lebih tinggi daripada ambang merah.',
         ],
     ],
 ];

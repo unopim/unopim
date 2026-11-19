@@ -1,18 +1,6 @@
 <?php
 
 return [
-    'config' => [
-        'completeness' => [
-            'title'           => 'Vollständigkeit',
-            'info'            => 'Farbschwellen für den Vollständigkeitswert.',
-            'green-from'      => 'Grün ab (%)',
-            'green-from-info' => 'Werte ab diesem Prozentsatz werden grün angezeigt.',
-            'red-below'       => 'Rot unter (%)',
-            'red-below-info'  => 'Werte unter diesem Prozentsatz werden rot angezeigt. Werte dazwischen werden bernsteinfarben angezeigt.',
-            'green-gt-red'    => 'Der grüne Schwellenwert muss größer als der rote Schwellenwert sein.',
-        ],
-    ],
-
     'components' => [
         'layouts' => [
             'sidebar' => [
@@ -79,6 +67,18 @@ return [
                     'perfect' => 'Produktinformationen sind vollständig.',
                 ],
             ],
+        ],
+    ],
+
+    'configuration' => [
+        'score-thresholds' => [
+            'title'           => 'Farben der Vollständigkeitsbewertung',
+            'info'            => 'Legen Sie fest, ab welchen Werten Vollständigkeitsanzeigen grün oder rot dargestellt werden.',
+            'green-from'      => 'Grün ab (%)',
+            'green-from-info' => 'Werte ab diesem Wert werden grün angezeigt.',
+            'red-below'       => 'Rot unter (%)',
+            'red-below-info'  => 'Werte unter diesem Wert werden rot angezeigt. Werte dazwischen erscheinen gelb.',
+            'order-error'     => 'Der Schwellenwert für Grün muss höher sein als der Schwellenwert für Rot.',
         ],
     ],
 ];

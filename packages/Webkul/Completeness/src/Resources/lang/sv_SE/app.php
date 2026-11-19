@@ -1,18 +1,6 @@
 <?php
 
 return [
-    'config' => [
-        'completeness' => [
-            'title'           => 'Fullständighet',
-            'info'            => 'Färgtrösklar för fullständighetspoäng.',
-            'green-from'      => 'Grön från (%)',
-            'green-from-info' => 'Poäng på eller över denna procentandel visas i grönt.',
-            'red-below'       => 'Röd under (%)',
-            'red-below-info'  => 'Poäng under denna procentandel visas i rött. De däremellan visas i bärnsten.',
-            'green-gt-red'    => 'Den gröna tröskeln måste vara större än den röda tröskeln.',
-        ],
-    ],
-
     'components' => [
         'layouts' => [
             'sidebar' => [
@@ -79,6 +67,18 @@ return [
                     'perfect' => 'Produktinformationen är helt fullständig.',
                 ],
             ],
+        ],
+    ],
+
+    'configuration' => [
+        'score-thresholds' => [
+            'title'           => 'Färger för fullständighetspoäng',
+            'info'            => 'Ange de poäng där fullständighetsindikatorer blir gröna eller röda.',
+            'green-from'      => 'Grön från (%)',
+            'green-from-info' => 'Poäng som är lika med eller över detta värde visas i grönt.',
+            'red-below'       => 'Röd under (%)',
+            'red-below-info'  => 'Poäng under detta värde visas i rött. Poäng däremellan visas i gult.',
+            'order-error'     => 'Gränsen för grönt måste vara högre än gränsen för rött.',
         ],
     ],
 ];

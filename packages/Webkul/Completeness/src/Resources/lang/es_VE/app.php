@@ -1,18 +1,6 @@
 <?php
 
 return [
-    'config' => [
-        'completeness' => [
-            'title'           => 'Completitud',
-            'info'            => 'Umbrales de color de la puntuación de completitud.',
-            'green-from'      => 'Verde desde (%)',
-            'green-from-info' => 'Las puntuaciones iguales o superiores a este porcentaje se muestran en verde.',
-            'red-below'       => 'Rojo por debajo de (%)',
-            'red-below-info'  => 'Las puntuaciones por debajo de este porcentaje se muestran en rojo. Las intermedias se muestran en ámbar.',
-            'green-gt-red'    => 'El umbral verde debe ser mayor que el umbral rojo.',
-        ],
-    ],
-
     'components' => [
         'layouts' => [
             'sidebar' => [
@@ -79,6 +67,18 @@ return [
                     'perfect' => 'La información del producto está completamente completa.',
                 ],
             ],
+        ],
+    ],
+
+    'configuration' => [
+        'score-thresholds' => [
+            'title'           => 'Colores del puntaje de completitud',
+            'info'            => 'Define los puntajes a partir de los cuales los indicadores de completitud se muestran en verde o en rojo.',
+            'green-from'      => 'Verde desde (%)',
+            'green-from-info' => 'Los puntajes iguales o superiores a este valor se muestran en verde.',
+            'red-below'       => 'Rojo por debajo de (%)',
+            'red-below-info'  => 'Los puntajes inferiores a este valor se muestran en rojo. Los intermedios se muestran en ámbar.',
+            'order-error'     => 'El umbral del verde debe ser mayor que el umbral del rojo.',
         ],
     ],
 ];

@@ -1,18 +1,6 @@
 <?php
 
 return [
-    'config' => [
-        'completeness' => [
-            'title'           => 'Tamlık',
-            'info'            => 'Tamlık puanı renk eşikleri.',
-            'green-from'      => 'Yeşil başlangıcı (%)',
-            'green-from-info' => 'Bu yüzdeye eşit veya üzerindeki puanlar yeşil gösterilir.',
-            'red-below'       => 'Kırmızı altı (%)',
-            'red-below-info'  => 'Bu yüzdenin altındaki puanlar kırmızı gösterilir. Aradakiler kehribar renginde gösterilir.',
-            'green-gt-red'    => 'Yeşil eşik, kırmızı eşikten büyük olmalıdır.',
-        ],
-    ],
-
     'components' => [
         'layouts' => [
             'sidebar' => [
@@ -79,6 +67,18 @@ return [
                     'perfect' => 'Ürün bilgileri tamamen eksiksiz.',
                 ],
             ],
+        ],
+    ],
+
+    'configuration' => [
+        'score-thresholds' => [
+            'title'           => 'Tamlık Puanı Renkleri',
+            'info'            => 'Tamlık göstergelerinin yeşil veya kırmızıya döndüğü puanları belirleyin.',
+            'green-from'      => 'Yeşil Başlangıcı (%)',
+            'green-from-info' => 'Bu değere eşit veya bundan yüksek puanlar yeşil gösterilir.',
+            'red-below'       => 'Kırmızı Sınırı (%)',
+            'red-below-info'  => 'Bu değerin altındaki puanlar kırmızı gösterilir. Aradaki puanlar sarı gösterilir.',
+            'order-error'     => 'Yeşil eşiği kırmızı eşiğinden yüksek olmalıdır.',
         ],
     ],
 ];

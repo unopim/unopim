@@ -1,18 +1,6 @@
 <?php
 
 return [
-    'config' => [
-        'completeness' => [
-            'title'           => 'Potpunost',
-            'info'            => 'Pragovi boja za ocjenu potpunosti.',
-            'green-from'      => 'Zeleno od (%)',
-            'green-from-info' => 'Rezultati jednaki ili veći od ovog postotka prikazuju se zeleno.',
-            'red-below'       => 'Crveno ispod (%)',
-            'red-below-info'  => 'Rezultati ispod ovog postotka prikazuju se crveno. Oni između prikazuju se jantarno.',
-            'green-gt-red'    => 'Zeleni prag mora biti veći od crvenog praga.',
-        ],
-    ],
-
     'components' => [
         'layouts' => [
             'sidebar' => [
@@ -79,6 +67,18 @@ return [
                     'perfect' => 'Informacije o proizvodu su potpuno kompletne.',
                 ],
             ],
+        ],
+    ],
+
+    'configuration' => [
+        'score-thresholds' => [
+            'title'           => 'Boje ocjene potpunosti',
+            'info'            => 'Postavite ocjene pri kojima pokazatelji potpunosti postaju zeleni ili crveni.',
+            'green-from'      => 'Zeleno od (%)',
+            'green-from-info' => 'Ocjene jednake ili veće od ove vrijednosti prikazuju se zeleno.',
+            'red-below'       => 'Crveno ispod (%)',
+            'red-below-info'  => 'Ocjene ispod ove vrijednosti prikazuju se crveno. Ocjene između prikazuju se žuto.',
+            'order-error'     => 'Prag za zelenu mora biti viši od praga za crvenu.',
         ],
     ],
 ];

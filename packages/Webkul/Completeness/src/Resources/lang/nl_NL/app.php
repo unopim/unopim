@@ -1,18 +1,6 @@
 <?php
 
 return [
-    'config' => [
-        'completeness' => [
-            'title'           => 'Volledigheid',
-            'info'            => 'Kleurdrempels voor de volledigheidsscore.',
-            'green-from'      => 'Groen vanaf (%)',
-            'green-from-info' => 'Scores op of boven dit percentage worden groen weergegeven.',
-            'red-below'       => 'Rood onder (%)',
-            'red-below-info'  => 'Scores onder dit percentage worden rood weergegeven. Scores daartussen worden amberkleurig weergegeven.',
-            'green-gt-red'    => 'De groene drempel moet groter zijn dan de rode drempel.',
-        ],
-    ],
-
     'components' => [
         'layouts' => [
             'sidebar' => [
@@ -79,6 +67,18 @@ return [
                     'perfect' => 'Productinformatie is volledig ingevuld.',
                 ],
             ],
+        ],
+    ],
+
+    'configuration' => [
+        'score-thresholds' => [
+            'title'           => 'Kleuren voor volledigheidsscore',
+            'info'            => 'Stel de scores in waarbij volledigheidsindicatoren groen of rood worden.',
+            'green-from'      => 'Groen vanaf (%)',
+            'green-from-info' => 'Scores gelijk aan of hoger dan deze waarde worden groen weergegeven.',
+            'red-below'       => 'Rood onder (%)',
+            'red-below-info'  => 'Scores onder deze waarde worden rood weergegeven. Scores daartussen worden oranje weergegeven.',
+            'order-error'     => 'De drempel voor groen moet hoger zijn dan de drempel voor rood.',
         ],
     ],
 ];

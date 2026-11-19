@@ -1,18 +1,6 @@
 <?php
 
 return [
-    'config' => [
-        'completeness' => [
-            'title'           => 'Complétude',
-            'info'            => 'Seuils de couleur du score de complétude.',
-            'green-from'      => 'Vert à partir de (%)',
-            'green-from-info' => 'Les scores égaux ou supérieurs à ce pourcentage s\'affichent en vert.',
-            'red-below'       => 'Rouge en dessous de (%)',
-            'red-below-info'  => 'Les scores inférieurs à ce pourcentage s\'affichent en rouge. Les scores intermédiaires s\'affichent en ambre.',
-            'green-gt-red'    => 'Le seuil vert doit être supérieur au seuil rouge.',
-        ],
-    ],
-
     'components' => [
         'layouts' => [
             'sidebar' => [
@@ -79,6 +67,18 @@ return [
                     'perfect' => 'Les informations du produit sont entièrement complètes.',
                 ],
             ],
+        ],
+    ],
+
+    'configuration' => [
+        'score-thresholds' => [
+            'title'           => 'Couleurs du score de complétude',
+            'info'            => 'Définissez les scores à partir desquels les indicateurs de complétude passent au vert ou au rouge.',
+            'green-from'      => 'Vert à partir de (%)',
+            'green-from-info' => 'Les scores supérieurs ou égaux à cette valeur s\'affichent en vert.',
+            'red-below'       => 'Rouge en dessous de (%)',
+            'red-below-info'  => 'Les scores inférieurs à cette valeur s\'affichent en rouge. Les scores intermédiaires s\'affichent en orange.',
+            'order-error'     => 'Le seuil du vert doit être supérieur au seuil du rouge.',
         ],
     ],
 ];

@@ -1,18 +1,6 @@
 <?php
 
 return [
-    'config' => [
-        'completeness' => [
-            'title'           => 'Completezza',
-            'info'            => 'Soglie di colore del punteggio di completezza.',
-            'green-from'      => 'Verde da (%)',
-            'green-from-info' => 'I punteggi pari o superiori a questa percentuale vengono mostrati in verde.',
-            'red-below'       => 'Rosso sotto (%)',
-            'red-below-info'  => 'I punteggi inferiori a questa percentuale vengono mostrati in rosso. Quelli intermedi vengono mostrati in ambra.',
-            'green-gt-red'    => 'La soglia verde deve essere maggiore della soglia rossa.',
-        ],
-    ],
-
     'components' => [
         'layouts' => [
             'sidebar' => [
@@ -79,6 +67,18 @@ return [
                     'perfect' => 'Le informazioni del prodotto sono completamente complete.',
                 ],
             ],
+        ],
+    ],
+
+    'configuration' => [
+        'score-thresholds' => [
+            'title'           => 'Colori del punteggio di completezza',
+            'info'            => 'Imposta i punteggi oltre i quali gli indicatori di completezza diventano verdi o rossi.',
+            'green-from'      => 'Verde da (%)',
+            'green-from-info' => 'I punteggi pari o superiori a questo valore sono mostrati in verde.',
+            'red-below'       => 'Rosso sotto (%)',
+            'red-below-info'  => 'I punteggi inferiori a questo valore sono mostrati in rosso. Quelli intermedi sono mostrati in giallo ambra.',
+            'order-error'     => 'La soglia del verde deve essere superiore alla soglia del rosso.',
         ],
     ],
 ];

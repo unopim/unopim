@@ -4,12 +4,9 @@ namespace Webkul\Completeness\Providers;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Webkul\Completeness\Console\RecalculateCompletenessCommand;
-use Webkul\Completeness\Helpers\Threshold;
 use Webkul\Completeness\Listeners\HandleFamilyAttributeChanges;
-use Webkul\Completeness\Listeners\ValidateThresholdSettings;
 use Webkul\Completeness\Observers\Product as CompletenessProductObserver;
 use Webkul\Product\Models\ProductProxy;
 
@@ -23,8 +20,6 @@ class CompletenessServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../Config/completeness.php', 'completeness');
 
         $this->mergeConfigFrom(__DIR__.'/../Config/system_settings.php', 'system_settings');
-
-        $this->mergeConfigFrom(__DIR__.'/../Config/acl.php', 'acl');
 
         Route::middleware('web')->group(__DIR__.'/../Routes/web.php');
 
@@ -40,23 +35,18 @@ class CompletenessServiceProvider extends ServiceProvider
 
         Event::listen('catalog.attribute_family.attributes.changed', HandleFamilyAttributeChanges::class);
 
-        Event::listen('core.configuration.save.before', ValidateThresholdSettings::class);
-
-        View::composer([
-            'admin::components.graphs.radial-progress',
-            'admin::dashboard.channel-readiness',
-            'admin::dashboard.product-stats',
-        ], function (\Illuminate\View\View $view): void {
-            [$greenFrom, $redBelow] = app(Threshold::class)->bounds();
-
-            $view->with('completenessGreenFrom', $greenFrom)
-                ->with('completenessRedBelow', $redBelow);
-        });
-
         if ($this->app->runningInConsole()) {
             $this->commands([
                 RecalculateCompletenessCommand::class,
             ]);
         }
+    }
+
+    /**
+     * Register services.
+     */
+    public function register(): void
+    {
+        $this->mergeConfigFrom(__DIR__.'/../Config/acl.php', 'acl');
     }
 }

@@ -1,18 +1,6 @@
 <?php
 
 return [
-    'config' => [
-        'completeness' => [
-            'title'           => 'Completesa',
-            'info'            => 'Llindars de color de la puntuació de completesa.',
-            'green-from'      => 'Verd a partir de (%)',
-            'green-from-info' => 'Les puntuacions iguals o superiors a aquest percentatge es mostren en verd.',
-            'red-below'       => 'Vermell per sota de (%)',
-            'red-below-info'  => 'Les puntuacions per sota d\'aquest percentatge es mostren en vermell. Les intermèdies es mostren en ambre.',
-            'green-gt-red'    => 'El llindar verd ha de ser més gran que el llindar vermell.',
-        ],
-    ],
-
     'components' => [
         'layouts' => [
             'sidebar' => [
@@ -79,6 +67,18 @@ return [
                     'perfect' => 'La informació del producte està totalment completa.',
                 ],
             ],
+        ],
+    ],
+
+    'configuration' => [
+        'score-thresholds' => [
+            'title'           => 'Colors de la puntuació de completesa',
+            'info'            => 'Defineix les puntuacions a partir de les quals els indicadors de completesa es mostren en verd o en vermell.',
+            'green-from'      => 'Verd a partir de (%)',
+            'green-from-info' => 'Les puntuacions iguals o superiors a aquest valor es mostren en verd.',
+            'red-below'       => 'Vermell per sota de (%)',
+            'red-below-info'  => 'Les puntuacions per sota d\'aquest valor es mostren en vermell. Les intermèdies es mostren en ambre.',
+            'order-error'     => 'El llindar del verd ha de ser més alt que el llindar del vermell.',
         ],
     ],
 ];

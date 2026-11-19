@@ -14,7 +14,8 @@ use Webkul\Attribute\Models\Attribute as AttributeModel;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Services\AttributeService;
-use Webkul\Completeness\Helpers\Threshold;
+use Webkul\Completeness\Enums\ScoreLevel;
+use Webkul\Completeness\Services\ScoreThresholds;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\DataGrid\Column;
 use Webkul\DataGrid\Contracts\ExportableInterface;
@@ -177,7 +178,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
      */
     public function getPropertyColumns()
     {
-        [$greenFrom, $redBelow] = app(Threshold::class)->bounds();
+        $scoreThresholds = app(ScoreThresholds::class);
 
         return [
             'sku' => [
@@ -283,20 +284,20 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'categories' => ProductPropertyFilters::get(ProductPropertyFilters::CATEGORIES),
 
             'completeness' => ProductPropertyFilters::get(ProductPropertyFilters::COMPLETENESS) + [
-                'closure' => function ($row) use ($greenFrom, $redBelow) {
+                'closure' => function (object $row) use ($scoreThresholds): string {
                     if (is_null($row->completeness)) {
                         return '<span class="label-info break-words">'.trans('completeness::app.catalog.products.index.datagrid.missing-completeness-setting').'</span>';
                     }
 
-                    $score = number_format((float) $row->completeness);
+                    $rounded = round((float) $row->completeness);
 
-                    if ($score < $redBelow) {
-                        $bgClass = 'pill-low';
-                    } elseif ($score < $greenFrom) {
-                        $bgClass = 'pill-medium';
-                    } else {
-                        $bgClass = 'pill-high';
-                    }
+                    $score = number_format($rounded);
+
+                    $bgClass = match ($scoreThresholds->level($rounded)) {
+                        ScoreLevel::Success => 'pill-high',
+                        ScoreLevel::Warning => 'pill-medium',
+                        ScoreLevel::Danger  => 'pill-low',
+                    };
 
                     return '<span class="inline-flex items-center justify-center text-center px-2 py-1 w-10 rounded-md text-xs fon-base text-white '.$bgClass.'">'
                         .$score.'%</span>';
@@ -691,15 +692,19 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         if ($attributePath = $this->getAttributePathForSort($sortColumn)) {
             $attribute = $this->attributeService->findAttributeByCode($sortColumn);
 
-            $castType = $attribute && ($attribute->type === 'price' || $attribute->validation === 'numeric')
-                ? 'DECIMAL'
+            $castType = $attribute && (
+                $attribute->type === 'price'
+                || $attribute->type === AttributeModel::MEASUREMENT_FIELD_TYPE
+                || in_array($attribute->validation, ['numeric', 'number', 'decimal'], true)
+            )
+                ? 'DECIMAL(30,10)'
                 : null;
 
-            $jsonCondition = DB::rawQueryGrammar()->jsonExtract(DB::getTablePrefix().'products.values', ...$attributePath);
+            $jsonCondition = $this->inheritedJsonExtract($attributePath);
 
             if ($castType) {
                 return $this->queryBuilder->orderByRaw(
-                    "CAST($jsonCondition AS $castType) $sortOrder",
+                    $this->numericSortExpression($jsonCondition, $castType)." $sortOrder",
                 );
             }
 
@@ -709,6 +714,64 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         }
 
         return $this->queryBuilder->orderBy($sortColumn, $sortOrder);
+    }
+
+    /**
+     * Build the SQL expression that reads an attribute for sorting the way the grid displays it.
+     *
+     * Variants do not store values they inherit, so the product's own JSON is NULL for them and
+     * ordering by it alone leaves those rows in arbitrary order. The nearest non-null value up
+     * the parent chain (own, parent, grandparent) is used instead, matching VariantValueResolver.
+     */
+    protected function inheritedJsonExtract(array $attributePath): string
+    {
+        $grammar = DB::rawQueryGrammar();
+        $prefix = DB::getTablePrefix();
+
+        $this->joinGrandparentForSort();
+
+        $extracts = array_map(
+            fn (string $table): string => $grammar->jsonExtract($prefix.$table.'.values', ...$attributePath),
+            ['products', 'parent_products', 'grandparent_products']
+        );
+
+        return 'COALESCE('.implode(', ', $extracts).')';
+    }
+
+    /**
+     * Cast a JSON-extracted value to a number for ordering.
+     *
+     * MySQL turns a non-numeric or empty string into 0 with a warning, but PostgreSQL raises an
+     * error that would break the whole grid, so there only numeric-looking values are cast and
+     * the rest sort as NULL.
+     */
+    protected function numericSortExpression(string $expression, string $castType): string
+    {
+        if (DB::getDriverName() === 'pgsql') {
+            return "CASE WHEN CAST($expression AS TEXT) ~ '^-?[0-9]+(\\.[0-9]+)?$' "
+                ."THEN CAST($expression AS $castType) END";
+        }
+
+        return "CAST($expression AS $castType)";
+    }
+
+    /**
+     * Join the grandparent product once so sub-variants can inherit through two levels.
+     */
+    protected function joinGrandparentForSort(): void
+    {
+        foreach ($this->queryBuilder->joins ?? [] as $join) {
+            if (str_contains((string) $join->table, 'grandparent_products')) {
+                return;
+            }
+        }
+
+        $this->queryBuilder->leftJoin(
+            'products as grandparent_products',
+            'parent_products.parent_id',
+            '=',
+            'grandparent_products.id'
+        );
     }
 
     /**
@@ -933,6 +996,12 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $sortOrder = strtolower($params['order'] ?? $this->sortOrder) === 'asc' ? 'asc' : 'desc';
 
+        if ($this->isMeasurementColumn($params['column'] ?? $this->elasticSearchSortColumn)) {
+            $this->prepareQuery->orderBy(['_script' => $this->numericScriptSort($sort, $sortOrder)]);
+
+            return;
+        }
+
         $this->prepareQuery->orderBy([
             $sort => [
                 'order'         => $sortOrder,
@@ -940,6 +1009,32 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'unmapped_type' => 'keyword',
             ],
         ]);
+    }
+
+    protected function isMeasurementColumn(?string $code): bool
+    {
+        return $code
+            && $this->attributeService->findAttributeByCode($code)?->type === AttributeModel::MEASUREMENT_FIELD_TYPE;
+    }
+
+    /**
+     * `base_data` is indexed as a keyword, so a plain sort is alphabetical ("18.5" before "2.1").
+     * Sort on its numeric value instead, keeping rows without a value last in both directions.
+     */
+    protected function numericScriptSort(string $field, string $order): array
+    {
+        return [
+            'type'   => 'number',
+            'order'  => $order,
+            'script' => [
+                'lang'   => 'painless',
+                'source' => 'doc[params.field].size() == 0 ? params.missing : Double.parseDouble(doc[params.field].value)',
+                'params' => [
+                    'field'   => $field,
+                    'missing' => $order === 'asc' ? PHP_FLOAT_MAX : -PHP_FLOAT_MAX,
+                ],
+            ],
+        ];
     }
 
     /**
@@ -975,6 +1070,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 $path .= '.'.$currencyCode;
             }
 
+            if ($attributeType === AttributeModel::MEASUREMENT_FIELD_TYPE) {
+                $path .= '.base_data';
+            }
+
             return $path;
         }
 
@@ -986,6 +1085,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         if ($attributeType === 'price' && $currencyCode) {
             $path[] = $currencyCode;
+        }
+
+        if ($attributeType === AttributeModel::MEASUREMENT_FIELD_TYPE) {
+            $path[] = 'base_data';
         }
 
         return $path;

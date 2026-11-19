@@ -1,18 +1,6 @@
 <?php
 
 return [
-    'config' => [
-        'completeness' => [
-            'title'           => 'Mức độ hoàn thiện',
-            'info'            => 'Ngưỡng màu của điểm hoàn thiện.',
-            'green-from'      => 'Xanh lá từ (%)',
-            'green-from-info' => 'Điểm bằng hoặc trên tỷ lệ phần trăm này được hiển thị màu xanh lá.',
-            'red-below'       => 'Đỏ dưới (%)',
-            'red-below-info'  => 'Điểm dưới tỷ lệ phần trăm này được hiển thị màu đỏ. Các điểm ở giữa được hiển thị màu hổ phách.',
-            'green-gt-red'    => 'Ngưỡng xanh lá phải lớn hơn ngưỡng đỏ.',
-        ],
-    ],
-
     'components' => [
         'layouts' => [
             'sidebar' => [
@@ -79,6 +67,18 @@ return [
                     'perfect' => 'Thông tin sản phẩm đã hoàn toàn đầy đủ.',
                 ],
             ],
+        ],
+    ],
+
+    'configuration' => [
+        'score-thresholds' => [
+            'title'           => 'Màu điểm mức độ hoàn thiện',
+            'info'            => 'Đặt mức điểm mà tại đó chỉ báo mức độ hoàn thiện chuyển sang xanh lá hoặc đỏ.',
+            'green-from'      => 'Xanh lá từ (%)',
+            'green-from-info' => 'Điểm bằng hoặc cao hơn giá trị này được hiển thị màu xanh lá.',
+            'red-below'       => 'Đỏ khi dưới (%)',
+            'red-below-info'  => 'Điểm thấp hơn giá trị này được hiển thị màu đỏ. Điểm ở giữa được hiển thị màu vàng.',
+            'order-error'     => 'Ngưỡng xanh lá phải cao hơn ngưỡng đỏ.',
         ],
     ],
 ];

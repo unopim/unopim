@@ -1,3 +1,5 @@
+@include('completeness::score-thresholds')
+
 <!-- Channel Readiness Vue Component -->
 <v-dashboard-channel-readiness>
     <x-admin::shimmer.dashboard.total-catalogs />
@@ -105,10 +107,7 @@
                 },
 
                 getColor(percentage) {
-                    if (percentage >= {{ $completenessGreenFrom }}) return this.cssVar('--chart-success');
-                    if (percentage >= {{ $completenessRedBelow }}) return this.cssVar('--chart-warning');
-
-                    return this.cssVar('--chart-danger');
+                    return this.cssVar('--chart-' + this.$completeness.level(percentage));
                 }
             }
         });

@@ -1,18 +1,6 @@
 <?php
 
 return [
-    'config' => [
-        'completeness' => [
-            'title'           => '완성도',
-            'info'            => '완성도 점수 색상 임계값.',
-            'green-from'      => '녹색 시작 (%)',
-            'green-from-info' => '이 백분율 이상인 점수는 녹색으로 표시됩니다.',
-            'red-below'       => '빨강 미만 (%)',
-            'red-below-info'  => '이 백분율 미만인 점수는 빨간색으로 표시됩니다. 그 사이의 점수는 호박색으로 표시됩니다.',
-            'green-gt-red'    => '녹색 임계값은 빨간색 임계값보다 커야 합니다.',
-        ],
-    ],
-
     'components' => [
         'layouts' => [
             'sidebar' => [
@@ -79,6 +67,18 @@ return [
                     'perfect' => '제품 정보가 완전히 완성되었습니다.',
                 ],
             ],
+        ],
+    ],
+
+    'configuration' => [
+        'score-thresholds' => [
+            'title'           => '완성도 점수 색상',
+            'info'            => '완성도 표시가 초록색 또는 빨간색으로 바뀌는 점수를 설정합니다.',
+            'green-from'      => '초록색 시작 (%)',
+            'green-from-info' => '이 값 이상인 점수는 초록색으로 표시됩니다.',
+            'red-below'       => '빨간색 기준 미만 (%)',
+            'red-below-info'  => '이 값 미만인 점수는 빨간색으로 표시됩니다. 그 사이의 점수는 주황색으로 표시됩니다.',
+            'order-error'     => '초록색 기준값은 빨간색 기준값보다 커야 합니다.',
         ],
     ],
 ];

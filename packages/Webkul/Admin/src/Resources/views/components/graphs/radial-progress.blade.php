@@ -1,3 +1,5 @@
+@include('completeness::score-thresholds')
+
 @pushOnce('scripts')
     <script type="text/x-template" id="v-radial-progress-template">
         <div class="relative">
@@ -77,10 +79,11 @@
 
             computed: {
                 strokeColor() {
-                    if (this.score >= {{ $completenessGreenFrom }}) return 'text-green-600';
-                    if (this.score >= {{ $completenessRedBelow }}) return 'text-yellow-500';
-
-                    return 'text-red-600';
+                    return {
+                        success: 'text-success',
+                        warning: 'text-warning',
+                        danger: 'text-danger',
+                    }[this.$completeness.level(this.score)];
                 },
 
                 containerSize() {
