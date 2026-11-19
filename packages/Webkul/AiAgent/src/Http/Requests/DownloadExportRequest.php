@@ -25,6 +25,11 @@ class DownloadExportRequest extends FormRequest
         return [];
     }
 
+    /**
+     * Answer a denied download with the AI agent's unauthorized message.
+     *
+     * @throws AuthorizationException
+     */
     protected function failedAuthorization(): void
     {
         throw new AuthorizationException(trans('ai-agent::app.common.unauthorized'));
