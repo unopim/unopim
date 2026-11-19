@@ -189,7 +189,7 @@ class ConfigurationController extends Controller
         );
 
         $this->rejectUndeclaredUploads($request, collect((array) config('core'))
-            ->flatMap(fn ($section): array => isset($section['key']) ? $this->fileFieldCodes($section) : [])
+            ->flatMap(fn (array $section): array => isset($section['key']) ? $this->fileFieldCodes($section) : [])
             ->all());
 
         try {

@@ -42,8 +42,8 @@ trait RejectsUndeclaredUploads
     protected function fileFieldCodes(array $group): array
     {
         return collect((array) ($group['fields'] ?? []))
-            ->filter(fn ($field): bool => in_array($field['type'] ?? null, ['file', 'image'], true))
-            ->map(fn ($field): string => ((string) $group['key']).'.'.((string) $field['name']))
+            ->filter(fn (array $field): bool => in_array($field['type'] ?? null, ['file', 'image'], true))
+            ->map(fn (array $field): string => ((string) $group['key']).'.'.((string) $field['name']))
             ->values()
             ->all();
     }
