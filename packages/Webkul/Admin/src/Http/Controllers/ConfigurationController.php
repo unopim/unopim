@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Webkul\Admin\Http\Controllers\Concerns\RejectsUndeclaredUploads;
 use Webkul\Admin\Http\Requests\ConfigurationForm;
 use Webkul\Admin\Http\Requests\ConfigurationSearchForm;
 use Webkul\Admin\SystemSettings;
@@ -19,6 +20,8 @@ use Webkul\Core\Tree;
 
 class ConfigurationController extends Controller
 {
+    use RejectsUndeclaredUploads;
+
     /**
      * Tree instance.
      *
@@ -184,6 +187,10 @@ class ConfigurationController extends Controller
         $this->enforceSectionAccess(
             $this->systemSettings->aclKeysForConfigCodes(array_keys(Arr::dot($payload)))
         );
+
+        $this->rejectUndeclaredUploads($request, collect((array) config('core'))
+            ->flatMap(fn (array $section): array => isset($section['key']) ? $this->fileFieldCodes($section) : [])
+            ->all());
 
         try {
             $data = $request->all();

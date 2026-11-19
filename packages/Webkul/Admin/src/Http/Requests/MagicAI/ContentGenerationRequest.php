@@ -23,8 +23,8 @@ class ContentGenerationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'model'              => 'required',
-            'prompt'             => 'required',
+            'model'              => ['required', 'string', 'max:100'],
+            'prompt'             => ['required', 'string', 'max:10000'],
             'system_prompt_text' => ['nullable', 'string', 'max:4000'],
             'temperature'        => ['nullable', 'numeric', 'between:0,2'],
             'max_tokens'         => ['nullable', 'integer', 'min:1', 'max:'.MagicAI::MAX_TOKENS_CEILING],
