@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Str;
+use Webkul\Core\Models\CoreConfig;
 use Webkul\Publication\Enums\PublicationStatus;
 use Webkul\Publication\Services\Publisher;
 
@@ -219,4 +220,45 @@ it('resolves a release strictly per locale: a locale first published later is ab
     $this->get('/p/'.$publication->uuid.'/r/1/'.$other->code)->assertNotFound();
     $this->get('/p/'.$publication->uuid.'/r/2/'.$other->code)->assertOk()->assertSee('aluminium');
     $this->get('/p/'.$publication->uuid.'/r/2/'.$first->locale->code)->assertOk();
+});
+
+it('serves a withdrawn release as an uncacheable tombstone without its payload', function (): void {
+    $first = $this->publishedPassportFixture();
+    $this->republishWithMaterial($first, 'recycled steel');
+
+    $first->publication->update(['status' => PublicationStatus::Withdrawn]);
+
+    $uuid = $first->publication->uuid;
+    $locale = $first->locale->code;
+
+    foreach ([1, 2] as $sequence) {
+        $response = $this->get('/p/'.$uuid.'/r/'.$sequence.'/'.$locale)
+            ->assertOk()
+            ->assertHeader('X-Robots-Tag', 'noindex, noarchive, nofollow')
+            ->assertSee(trans('publication::app.public.withdrawn.heading'))
+            ->assertDontSee('recycled steel')
+            ->assertDontSee(e(json_encode($first->fresh()->payload)), false);
+
+        expect($response->headers->getCacheControlDirective('no-store'))->toBeTrue()
+            ->and($response->headers->getCacheControlDirective('private'))->toBeTrue()
+            ->and($response->headers->hasCacheControlDirective('s-maxage'))->toBeFalse();
+    }
+});
+
+it('404s a release when the channel public tier is disabled', function (): void {
+    $first = $this->publishedPassportFixture();
+    $this->republishWithMaterial($first, 'recycled steel');
+
+    CoreConfig::query()
+        ->where('code', 'general.publication.settings.enabled')
+        ->update(['value' => '0']);
+
+    $uuid = $first->publication->uuid;
+    $locale = $first->locale->code;
+
+    foreach ([1, 2] as $sequence) {
+        $response = $this->get('/p/'.$uuid.'/r/'.$sequence.'/'.$locale)->assertNotFound();
+
+        expect($response->headers->getCacheControlDirective('no-store'))->toBeTrue();
+    }
 });

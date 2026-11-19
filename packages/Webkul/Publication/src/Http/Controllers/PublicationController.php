@@ -256,7 +256,6 @@ class PublicationController extends Controller
             'release'   => $release === null ? null : [
                 'sequence'     => (int) $release->sequence,
                 'is_current'   => (bool) $version->is_current,
-                'published_at' => $release->published_at,
                 'current_url'  => $liveUrl,
             ],
         ]);
