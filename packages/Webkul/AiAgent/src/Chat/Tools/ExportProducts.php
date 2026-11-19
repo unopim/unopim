@@ -115,7 +115,7 @@ class ExportProducts implements PimTool
                     $extension = $format === 'xlsx' ? 'xlsx' : 'csv';
                     $filename = sprintf('export-%s.%s', now()->format('Y-m-d-His'), $extension);
                     $storedFile = Str::uuid()->toString().'.'.$extension;
-                    $relativePath = $this->outer->exportPath((int) $this->context->user?->getKey(), $storedFile);
+                    $relativePath = $this->outer->exportPath($this->context->user->id, $storedFile);
 
                     $this->outer->markTrackAsProcessing($jobTrack->id);
 

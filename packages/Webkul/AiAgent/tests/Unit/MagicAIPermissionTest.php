@@ -86,8 +86,14 @@ describe('Magic AI permission guard (Issue #647)', function () {
 
         $guardCount = substr_count($source, "bouncer()->hasPermission('ai-agent')");
 
-        // content, platforms, suggestionValues, defaultPrompt + the 6 translation methods = at least 10 guards
-        expect($guardCount)->toBeGreaterThanOrEqual(10);
+        $translateRequest = file_get_contents(
+            base_path('packages/Webkul/Admin/src/Http/Requests/MagicAI/TranslateResourceRequest.php')
+        );
+
+        expect($guardCount)->toBeGreaterThanOrEqual(8)
+            ->and($source)->toContain('translateToManyLocale(TranslateResourceRequest $request)')
+            ->and($source)->toContain('translateAllAttribute(TranslateAllAttributesRequest $request)')
+            ->and($translateRequest)->toContain("bouncer()->hasPermission('ai-agent')");
     });
 
     it('guards platform administration in the controller', function () {
