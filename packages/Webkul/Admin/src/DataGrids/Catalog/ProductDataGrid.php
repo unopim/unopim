@@ -284,7 +284,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'categories' => ProductPropertyFilters::get(ProductPropertyFilters::CATEGORIES),
 
             'completeness' => ProductPropertyFilters::get(ProductPropertyFilters::COMPLETENESS) + [
-                'closure' => function ($row) use ($scoreThresholds) {
+                'closure' => function (object $row) use ($scoreThresholds): string {
                     if (is_null($row->completeness)) {
                         return '<span class="label-info break-words">'.trans('completeness::app.catalog.products.index.datagrid.missing-completeness-setting').'</span>';
                     }

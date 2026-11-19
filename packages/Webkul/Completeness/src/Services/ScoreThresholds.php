@@ -78,6 +78,9 @@ class ScoreThresholds
         ];
     }
 
+    /**
+     * Stored threshold for a config code, or null when unset, non-numeric or outside 0-100.
+     */
     protected function read(string $code): ?float
     {
         $value = core()->getConfigData($code);
