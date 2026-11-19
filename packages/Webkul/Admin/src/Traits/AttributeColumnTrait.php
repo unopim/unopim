@@ -5,6 +5,7 @@ namespace Webkul\Admin\Traits;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Admin\Filters\ProductFilterOperators;
 use Webkul\Attribute\Models\Attribute;
+use Webkul\Measurement\Helpers\MeasurementHelper;
 use Webkul\Measurement\Repositories\AttributeMeasurementRepository;
 
 trait AttributeColumnTrait
@@ -113,8 +114,12 @@ trait AttributeColumnTrait
 
         $locale = core()->getRequestedLocaleCode();
 
+        $measurementHelper = resolve(MeasurementHelper::class);
+
+        $displayUnitSymbol = $measurementHelper->displaysUnitSymbol();
+
         return collect($measurement->family->units ?? [])
-            ->map(function ($unit) use ($locale): array {
+            ->map(function ($unit) use ($locale, $measurementHelper, $displayUnitSymbol): array {
                 $label = $unit['labels'][$locale] ?? null;
 
                 if (empty($label)) {
@@ -122,7 +127,7 @@ trait AttributeColumnTrait
                 }
 
                 return [
-                    'label' => $label,
+                    'label' => $measurementHelper->formatUnitLabel($unit, $label, $displayUnitSymbol),
                     'value' => $unit['code'] ?? '',
                 ];
             })

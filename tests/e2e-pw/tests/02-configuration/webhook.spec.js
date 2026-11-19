@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo } = require('../../utils/helpers');
+const { navigateTo, submitDataGridSearch } = require('../../utils/helpers');
 
 /**
  * Multiple-webhooks admin CRUD coverage: list, quick-create modal (+validation),
@@ -101,12 +101,9 @@ test.describe('UnoPim Webhooks (multiple) CRUD', () => {
     await createWebhook(adminPage, name);
 
     await navigateTo(adminPage, 'webhook');
-    const search = adminPage.getByPlaceholder('Search').first();
-    await search.fill(name);
-    await search.press('Enter');
-    await adminPage.waitForTimeout(1500);
+    await submitDataGridSearch(adminPage, adminPage.getByPlaceholder('Search').first(), name);
 
-    await adminPage.locator('.icon-delete').first().click();
+    await adminPage.locator('div.row.grid').filter({ hasText: name }).locator('.icon-delete').first().click();
     await adminPage.getByRole('button', { name: /Agree|Yes|Ok|Delete/i }).first().click().catch(() => {});
     await expect(adminPage.locator('#app').getByText(/deleted successfully/i)).toBeVisible({ timeout: 20000 });
   });

@@ -5,17 +5,28 @@ namespace Webkul\AdminApi\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Webkul\Core\Platform\ModuleGate;
 
 class ScopeMiddleware
 {
     /**
      * Handle an incoming request.
      *
+     * Routes of a switched-off module 404 for every key, `all` included. Routes resolved
+     * through the `.get` → `.index` fallback have no ACL entry of their own, so the
+     * resolved ACL key is gated too.
+     *
      * @return mixed
      */
     public function handle(Request $request, Closure $next)
     {
+        $gate = app(ModuleGate::class);
+
+        abort_unless($gate->allowsRoute(Route::currentRouteName()), 404);
+
         $acl = $this->getAclForCurrentRoute();
+
+        abort_if(is_string($acl) && ! $gate->allowsKey($acl), 404);
 
         if (! $acl || ! $this->hasPermission($acl)) {
             return response()->json(['error' => 'This action is unauthorized'], 403);

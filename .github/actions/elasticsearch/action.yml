@@ -1,0 +1,43 @@
+name: Elasticsearch for tests
+description: Start a single-node Elasticsearch in the background, then block until it answers.
+
+inputs:
+  step:
+    description: start (returns immediately) or wait (blocks until the cluster is yellow)
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Start Elasticsearch
+      if: inputs.step == 'start'
+      shell: bash
+      # A service container is awaited before the first step runs, which puts
+      # the node's whole boot in front of checkout and composer. Started here it
+      # boots while those run. Data sits on tmpfs because the suite writes and
+      # discards documents constantly and never needs them to survive.
+      run: |
+        docker run -d --name elasticsearch \
+          -p 127.0.0.1:9200:9200 \
+          -e discovery.type=single-node \
+          -e xpack.security.enabled=false \
+          -e xpack.ml.enabled=false \
+          -e ingest.geoip.downloader.enabled=false \
+          -e cluster.routing.allocation.disk.threshold_enabled=false \
+          -e ES_JAVA_OPTS='-Xms512m -Xmx512m' \
+          --tmpfs /usr/share/elasticsearch/data:rw,uid=1000,gid=0,size=512m \
+          elasticsearch:8.17.0
+
+    - name: Wait for Elasticsearch
+      if: inputs.step == 'wait'
+      shell: bash
+      run: |
+        for _ in $(seq 1 120); do
+          if curl -sf 'http://127.0.0.1:9200/_cluster/health?wait_for_status=yellow&timeout=1s' > /dev/null; then
+            curl -s 'http://127.0.0.1:9200/_cluster/health?pretty'
+            exit 0
+          fi
+          sleep 1
+        done
+        docker logs elasticsearch | tail -50
+        exit 1

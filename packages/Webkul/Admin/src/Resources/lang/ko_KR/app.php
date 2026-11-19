@@ -2118,6 +2118,7 @@ return [
             'delete-failed'                   => '역할 삭제 실패.',
             'delete-success'                  => '역할 삭제 성공.',
             'last-delete-error'               => '마지막 역할을 삭제할 수 없습니다.',
+            'last-full-access'                => '최소 한 명의 활성 사용자는 전체 액세스 권한을 유지해야 합니다.',
             'update-success'                  => '역할이 성공적으로 업데이트되었습니다.',
         ],
     ],
@@ -2157,6 +2158,26 @@ return [
                     'info'  => '',
                     'title' => '일반',
                 ],
+                'platform' => [
+                    'info'  => '사용할 플랫폼 모듈을 선택하세요.',
+                    'title' => '플랫폼',
+
+                    'settings' => [
+                        'info'  => '각 모듈을 단독으로 또는 여러 개를 함께 실행할 수 있습니다. 다른 모듈이 필요한 모듈은 해당 모듈과 함께만 켤 수 있습니다.',
+                        'title' => '모듈 선택',
+                    ],
+
+                    'modules' => [
+                        'info'  => '모듈을 끄면 해당 메뉴, 페이지, API 경로가 숨겨지며 데이터는 유지됩니다.',
+                        'title' => '모듈',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => '제품 정보(PIM)가 꺼져 있을 때만 적용됩니다. 선택한 섹션은 메뉴에서 제거되고 관리자 페이지가 차단되며, 데이터는 유지되고 Admin API 경로는 계속 사용할 수 있습니다.',
+                        'title' => '숨긴 섹션',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -2328,6 +2349,7 @@ return [
                 'title'               => '프롬프트',
                 'create-btn'          => '프롬프트 생성',
                 'edit-title'          => '프롬프트 편집',
+                'insert-attribute'    => '속성 삽입',
                 'create-title'        => '새 프롬프트 생성',
                 'label-title'         => '제목',
                 'purpose'             => '용도',
@@ -3101,6 +3123,7 @@ return [
     ],
     'errors' => [
         'dashboard' => '대시보드',
+        'home'      => '홈',
         'go-back'   => '뒤로 가기',
         'support'   => '문제가 해결되지 않으면, <a href=":link" class=":class">:email</a>으로 문의하십시오.',
         '404'       => [

@@ -338,7 +338,7 @@ abstract class AbstractExporter
 
         $filters = $this->getFilters();
 
-        $timezone = AdminProxy::find($this->export->user_id)?->timezone ?? config('app.timezone', 'UTC');
+        $timezone = core()->resolveTimezone(AdminProxy::find($this->export->user_id)?->timezone);
 
         $now = Date::now()->setTimezone($timezone);
 

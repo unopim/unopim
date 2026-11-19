@@ -24,10 +24,16 @@ return [
     'file-outside-attribute-path'      => 'Ang file na :value ay hindi kabilang sa talaang ito. I-upload itong muli para sa field na :attribute.',
     'password-surrounding-whitespace'  => 'Ang :attribute ay hindi maaaring magsimula o magtapos sa espasyo.',
     'password-whitespace-only'         => 'Ang :attribute ay hindi maaaring puro espasyo lamang.',
+    'hideable-sections'                => 'Ang :attribute ay may seksyong hindi maaaring itago.',
     'active-content-detected'          => 'Hindi ma-upload ang :attribute dahil naglalaman ito ng aktibong nilalaman (:reason).',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'naka-embed na JavaScript o isang PDF na aksyon na awtomatikong tumatakbo',
         'embedded_vba_macro'            => 'isang naka-embed na VBA macro',
         'auto_executing_ole_object'     => 'isang naka-embed na object na awtomatikong tumatakbo',
+    ],
+    'platform-modules'                => [
+        'empty'    => 'Pumili ng kahit isang module ng platform.',
+        'unknown'  => 'Hindi naka-install ang module ng platform na ":module".',
+        'requires' => 'Maaari lamang i-on ang :module kasama ang :requires.',
     ],
 ];

@@ -124,7 +124,13 @@ class Importer extends AbstractImporter
 
     const ERROR_VARIANT_STRUCTURE_NOT_FOUND = 'variant_structure_not_found';
 
+    const ERROR_VARIANT_STRUCTURE_LEVELS_MISMATCH = 'variant_structure_levels_mismatch';
+
+    const ERROR_VARIANT_STRUCTURE_TWO_LEVELS_MISMATCH = 'variant_structure_two_levels_mismatch';
+
     const ATTRIBUTE_FAMILY_CODE = 'attribute_family';
+
+    const VARIANT_STRUCTURE_CODE = 'variant_structure';
 
     /**
      * Error message templates
@@ -145,12 +151,15 @@ class Importer extends AbstractImporter
         self::ERROR_PARENT_DOES_NOT_EXIST                    => 'data_transfer::app.importers.products.validation.errors.parent-not-exist',
         self::ERROR_WRONG_FAMILY_FOR_VARIANT                 => 'data_transfer::app.importers.products.validation.errors.incorrect-family-for-variant',
         self::ERROR_VARIANT_STRUCTURE_NOT_FOUND              => 'data_transfer::app.importers.products.validation.errors.variant-structure-not-found',
+        self::ERROR_VARIANT_STRUCTURE_LEVELS_MISMATCH        => 'data_transfer::app.importers.products.validation.errors.variant-structure-levels-mismatch',
+        self::ERROR_VARIANT_STRUCTURE_TWO_LEVELS_MISMATCH    => 'data_transfer::app.importers.products.validation.errors.variant-structure-two-levels-mismatch',
     ];
 
     /**
-     * Permanent entity columns
+     * Permanent entity columns. variant_structure is optional because legacy files
+     * select axes through configurable_attributes.
      */
-    protected array $permanentAttributes = ['sku', 'locale', 'channel', 'type', 'parent', 'variant_structure', self::ATTRIBUTE_FAMILY_CODE];
+    protected array $permanentAttributes = ['sku', 'locale', 'channel', 'type', 'parent', self::ATTRIBUTE_FAMILY_CODE];
 
     /**
      * Permanent entity column
@@ -300,6 +309,13 @@ class Importer extends AbstractImporter
     protected array $variantStructures = [];
 
     /**
+     * Resolved variant structures of existing products, keyed by id.
+     *
+     * @var array<int, VariantStructure|null>
+     */
+    protected array $variantStructuresById = [];
+
+    /**
      * Attribute codes ancestors supply, keyed by parent sku.
      *
      * @var array<string, array<int, string>>
@@ -321,7 +337,7 @@ class Importer extends AbstractImporter
         'cross_sells',
         'up_sells',
         'configurable_attributes',
-        'variant_structure',
+        self::VARIANT_STRUCTURE_CODE,
         'associated_skus',
     ];
 
@@ -547,9 +563,9 @@ class Importer extends AbstractImporter
                     'type'       => $rowData['type'],
                     'family'     => $rowData[self::ATTRIBUTE_FAMILY_CODE] ?? null,
                     'parent'     => $rowData['parent'] ?? null,
-                    'structure'  => $rowData['variant_structure'] ?? null,
+                    'structure'  => $rowData[self::VARIANT_STRUCTURE_CODE] ?? null,
                     'attributes' => array_keys(array_filter(
-                        array_diff_key($rowData, array_flip($this->permanentAttributes)),
+                        array_diff_key($rowData, array_flip([...$this->permanentAttributes, self::VARIANT_STRUCTURE_CODE])),
                         fn ($value): bool => $value !== null && $value !== ''
                     )),
                 ];
@@ -1000,8 +1016,12 @@ class Importer extends AbstractImporter
              * (for family code checks) and super_attributes (for variant uniqueness checks).
              */
             $products = ProductModel::query()
-                ->select('id', 'sku', 'type', 'attribute_family_id')
-                ->with(['attribute_family:id,code', 'super_attributes:id,code'])
+                ->select('id', 'sku', 'type', 'attribute_family_id', 'parent_id', 'variant_structure_id')
+                ->with([
+                    'attribute_family:id,code',
+                    'super_attributes:id,code',
+                    'parent:id,sku',
+                ])
                 ->whereIn('sku', $chunk)
                 ->get();
 
@@ -1186,11 +1206,13 @@ class Importer extends AbstractImporter
             return false;
         }
 
-        if (! empty($rowData['variant_structure'])) {
+        if (! empty($rowData[self::VARIANT_STRUCTURE_CODE])) {
             $familyId = $this->attributeFamiliesByCode[$rowData[self::ATTRIBUTE_FAMILY_CODE]]->id;
 
-            if (! $this->getVariantStructure($rowData['variant_structure'], $familyId) instanceof VariantStructure) {
-                $this->skipRow($rowNumber, self::ERROR_VARIANT_STRUCTURE_NOT_FOUND, 'variant_structure');
+            if (! $this->getVariantStructure($rowData[self::VARIANT_STRUCTURE_CODE], $familyId) instanceof VariantStructure) {
+                $message = trans($this->messages[self::ERROR_VARIANT_STRUCTURE_NOT_FOUND], ['code' => $rowData[self::VARIANT_STRUCTURE_CODE]]);
+
+                $this->skipRow($rowNumber, self::ERROR_VARIANT_STRUCTURE_NOT_FOUND, self::VARIANT_STRUCTURE_CODE, str_replace('%', '%%', $message));
 
                 return false;
             }
@@ -1207,6 +1229,17 @@ class Importer extends AbstractImporter
 
             if ($parentFamily && $rowData[self::ATTRIBUTE_FAMILY_CODE] != $parentFamily) {
                 $this->skipRow($rowNumber, self::ERROR_WRONG_FAMILY_FOR_VARIANT, self::ATTRIBUTE_FAMILY_CODE);
+
+                return false;
+            }
+
+            $structure = $parentType === ProductType::Configurable->value ? $this->getRowVariantStructure($rowData) : null;
+            $levelsError = $this->variantStructureLevelsError($rowData['type'], $structure);
+
+            if ($levelsError !== null) {
+                $message = trans($this->messages[$levelsError], ['code' => $structure->code]);
+
+                $this->skipRow($rowNumber, $levelsError, 'type', str_replace('%', '%%', $message));
 
                 return false;
             }
@@ -1237,7 +1270,9 @@ class Importer extends AbstractImporter
         }
 
         $validator = $this->cachedValidators[$cacheKey];
-        $validator->setData($rowData);
+        $validatableRow = EscapeFormulaOperators::unescapeRow($rowData);
+
+        $validator->setData($validatableRow);
 
         if ($validator->fails()) {
             $failedAttributes = $validator->failed();
@@ -1249,9 +1284,9 @@ class Importer extends AbstractImporter
             }
         }
 
-        $this->validatUniqueAttributeValues($rowData, $rowNumber);
+        $this->validatUniqueAttributeValues([...$validatableRow, 'sku' => $rowData['sku']], $rowNumber);
 
-        if ($rowData['type'] == ProductType::Configurable->value && empty($rowData['variant_structure'])) {
+        if ($rowData['type'] == ProductType::Configurable->value && empty($rowData[self::VARIANT_STRUCTURE_CODE])) {
             if (empty($rowData['configurable_attributes'])) {
                 $this->skipRow(
                     $rowNumber,
@@ -1400,21 +1435,55 @@ class Importer extends AbstractImporter
      */
     protected function valueCodes(array $values): array
     {
-        $codes = array_keys($values[AbstractType::COMMON_VALUES_KEY] ?? []);
+        $codes = [];
 
-        foreach ([AbstractType::LOCALE_VALUES_KEY, AbstractType::CHANNEL_VALUES_KEY] as $scope) {
-            foreach ($values[$scope] ?? [] as $scopeValues) {
-                $codes = array_merge($codes, array_keys($scopeValues));
-            }
-        }
+        foreach ($values as $scope => $scoped) {
+            $depth = is_array($scoped) ? $this->scopeDepth($scope) : null;
 
-        foreach ($values[AbstractType::CHANNEL_LOCALE_VALUES_KEY] ?? [] as $localeValues) {
-            foreach ($localeValues as $scopeValues) {
-                $codes = array_merge($codes, array_keys($scopeValues));
+            if ($depth !== null) {
+                $codes = array_merge($codes, $this->valueCodesAt($scoped, $depth));
             }
         }
 
         return $codes;
+    }
+
+    /**
+     * Attribute codes held by the bags nested `$depth` levels below a scope.
+     *
+     * @param  array<string, mixed>  $node
+     * @return array<int, string>
+     */
+    protected function valueCodesAt(array $node, int $depth): array
+    {
+        if ($depth === 0) {
+            return array_keys($node);
+        }
+
+        $codes = [];
+
+        foreach ($node as $child) {
+            if (is_array($child)) {
+                $codes = array_merge($codes, $this->valueCodesAt($child, $depth - 1));
+            }
+        }
+
+        return $codes;
+    }
+
+    /**
+     * Levels of channel and locale keys between a values scope and its attribute codes.
+     *
+     * Returns null for keys that hold no attribute values, such as categories and associations.
+     */
+    protected function scopeDepth(int|string $scope): ?int
+    {
+        return match ($scope) {
+            AbstractType::COMMON_VALUES_KEY                                   => 0,
+            AbstractType::LOCALE_VALUES_KEY, AbstractType::CHANNEL_VALUES_KEY => 1,
+            AbstractType::CHANNEL_LOCALE_VALUES_KEY                           => 2,
+            default                                                           => null,
+        };
     }
 
     /**
@@ -1429,8 +1498,8 @@ class Importer extends AbstractImporter
             return null;
         }
 
-        if (! empty($rowData['variant_structure'])) {
-            return $this->getVariantStructure($rowData['variant_structure'], $familyId);
+        if (! empty($rowData[self::VARIANT_STRUCTURE_CODE])) {
+            return $this->getVariantStructure($rowData[self::VARIANT_STRUCTURE_CODE], $familyId);
         }
 
         $parentSku = $rowData['parent'] ?? null;
@@ -1444,7 +1513,7 @@ class Importer extends AbstractImporter
             $parentProduct = $this->getExistingProduct($parentSku);
 
             if ($parentProduct?->variant_structure_id) {
-                return $parentProduct->variantStructure;
+                return $this->getVariantStructureById((int) $parentProduct->variant_structure_id);
             }
 
             $parentSku = $this->fileParentRows[$parentSku]['parent'] ?? $parentProduct?->parent?->sku;
@@ -1468,6 +1537,20 @@ class Importer extends AbstractImporter
     }
 
     /**
+     * Variant structure of an existing product, resolved by id and cached for the run.
+     */
+    protected function getVariantStructureById(int $id): ?VariantStructure
+    {
+        if (! array_key_exists($id, $this->variantStructuresById)) {
+            $this->variantStructuresById[$id] = VariantStructure::query()
+                ->with(['axes.attribute:id,code', 'placements.attribute:id,code'])
+                ->find($id);
+        }
+
+        return $this->variantStructuresById[$id];
+    }
+
+    /**
      * Type and family code of a parent sku, from the database or from the file being imported.
      *
      * @return array{0: string|null, 1: string|null}
@@ -1483,6 +1566,23 @@ class Importer extends AbstractImporter
         $fileRow = $this->fileParentRows[$parentSku] ?? null;
 
         return [$fileRow['type'] ?? null, $fileRow['family'] ?? null];
+    }
+
+    /**
+     * Error for a row whose type does not match the level its structure expects directly
+     * under the configurable: a variant_group needs two levels, a simple needs one.
+     */
+    protected function variantStructureLevelsError(string $type, ?VariantStructure $structure): ?string
+    {
+        if (! $structure instanceof VariantStructure) {
+            return null;
+        }
+
+        return match (true) {
+            $type === ProductType::VariantGroup->value && (int) $structure->levels === 1 => self::ERROR_VARIANT_STRUCTURE_LEVELS_MISMATCH,
+            $type === ProductType::Simple->value && (int) $structure->levels === 2       => self::ERROR_VARIANT_STRUCTURE_TWO_LEVELS_MISMATCH,
+            default                                                                      => null,
+        };
     }
 
     /**
@@ -1875,8 +1975,8 @@ class Importer extends AbstractImporter
             'status'              => $this->getProductStatus($rowData, $isExisting, $product),
         ];
 
-        if (! empty($rowData['variant_structure']) && $attributeFamilyId) {
-            $data['variant_structure_id'] = $this->getVariantStructure($rowData['variant_structure'], $attributeFamilyId)?->id;
+        if (! empty($rowData[self::VARIANT_STRUCTURE_CODE]) && $attributeFamilyId) {
+            $data['variant_structure_id'] = $this->getVariantStructure($rowData[self::VARIANT_STRUCTURE_CODE], $attributeFamilyId)?->id;
         }
 
         /**
@@ -2047,35 +2147,47 @@ class Importer extends AbstractImporter
     }
 
     /**
+     * Strip the attribute values the product's variant level does not own, in every scope.
+     *
      * @param  array<string, mixed>  $values
      */
-    protected function stripUnownedScopes(array &$values, Product $product, $planner): bool
+    protected function stripUnownedScopes(array &$values, Product $product, VariantStructurePlannerContract $planner): bool
     {
         $changed = false;
 
         foreach ($values as $scope => &$scoped) {
-            if (! is_array($scoped) || $scope === 'categories' || $scope === 'associations') {
+            $depth = is_array($scoped) ? $this->scopeDepth($scope) : null;
+
+            if ($depth === null) {
                 continue;
             }
 
-            if ($scope === 'common') {
-                $changed = $this->stripUnownedBag($scoped, $product, $planner) || $changed;
+            $changed = $this->stripUnownedBagsAt($scoped, $depth, $product, $planner) || $changed;
+        }
 
-                continue;
-            }
+        return $changed;
+    }
 
-            foreach ($scoped as &$inner) {
-                if (! is_array($inner)) {
-                    continue;
-                }
+    /**
+     * Strip unowned attribute codes from the bags nested `$depth` levels below a scope.
+     *
+     * Channel, locale and currency codes sit above or below that depth, so only
+     * keys at the depth are attribute codes; checking any other level deletes
+     * whole locale bags or the currency keys of a price.
+     *
+     * @param  array<string, mixed>  $node
+     */
+    protected function stripUnownedBagsAt(array &$node, int $depth, Product $product, VariantStructurePlannerContract $planner): bool
+    {
+        if ($depth === 0) {
+            return $this->stripUnownedBag($node, $product, $planner);
+        }
 
-                $changed = $this->stripUnownedBag($inner, $product, $planner) || $changed;
+        $changed = false;
 
-                foreach ($inner as &$deeper) {
-                    if (is_array($deeper) && ! array_is_list($deeper)) {
-                        $changed = $this->stripUnownedBag($deeper, $product, $planner) || $changed;
-                    }
-                }
+        foreach ($node as &$child) {
+            if (is_array($child)) {
+                $changed = $this->stripUnownedBagsAt($child, $depth - 1, $product, $planner) || $changed;
             }
         }
 
@@ -2083,9 +2195,11 @@ class Importer extends AbstractImporter
     }
 
     /**
+     * Drop the codes in one attribute bag that the product's variant level does not own.
+     *
      * @param  array<string, mixed>  $bag
      */
-    protected function stripUnownedBag(array &$bag, Product $product, $planner): bool
+    protected function stripUnownedBag(array &$bag, Product $product, VariantStructurePlannerContract $planner): bool
     {
         $changed = false;
 
@@ -2860,8 +2974,8 @@ class Importer extends AbstractImporter
     {
         $familyId = $this->attributeFamiliesByCode[$rowData[self::ATTRIBUTE_FAMILY_CODE]]?->id;
 
-        if (! empty($rowData['variant_structure']) && $familyId) {
-            $structure = $this->getVariantStructure($rowData['variant_structure'], $familyId);
+        if (! empty($rowData[self::VARIANT_STRUCTURE_CODE]) && $familyId) {
+            $structure = $this->getVariantStructure($rowData[self::VARIANT_STRUCTURE_CODE], $familyId);
 
             if ($structure instanceof VariantStructure) {
                 return $structure->axes
@@ -3055,22 +3169,26 @@ class Importer extends AbstractImporter
 
         if (! empty($oldValues[AbstractType::COMMON_VALUES_KEY])) {
             $newValues[AbstractType::COMMON_VALUES_KEY] = array_filter(
-                array_merge($oldValues[AbstractType::COMMON_VALUES_KEY] ?? [], $newValues[AbstractType::COMMON_VALUES_KEY])
+                array_merge($oldValues[AbstractType::COMMON_VALUES_KEY] ?? [], $newValues[AbstractType::COMMON_VALUES_KEY]),
+                is_filled_value(...)
             );
         }
 
         foreach ($this->channelsAndLocales as $channelCode => $locales) {
             $newValues[AbstractType::CHANNEL_VALUES_KEY][$channelCode] = array_filter(
-                array_merge($oldValues[AbstractType::CHANNEL_VALUES_KEY][$channelCode] ?? [], $newValues[AbstractType::CHANNEL_VALUES_KEY][$channelCode] ?? [])
+                array_merge($oldValues[AbstractType::CHANNEL_VALUES_KEY][$channelCode] ?? [], $newValues[AbstractType::CHANNEL_VALUES_KEY][$channelCode] ?? []),
+                is_filled_value(...)
             );
 
             foreach ($locales as $localeCode) {
                 $newValues[AbstractType::LOCALE_VALUES_KEY][$localeCode] = array_filter(
-                    array_merge($oldValues[AbstractType::LOCALE_VALUES_KEY][$localeCode] ?? [], $newValues[AbstractType::LOCALE_VALUES_KEY][$localeCode] ?? [])
+                    array_merge($oldValues[AbstractType::LOCALE_VALUES_KEY][$localeCode] ?? [], $newValues[AbstractType::LOCALE_VALUES_KEY][$localeCode] ?? []),
+                    is_filled_value(...)
                 );
 
                 $newValues[AbstractType::CHANNEL_LOCALE_VALUES_KEY][$channelCode][$localeCode] = array_filter(
-                    array_merge($oldValues[AbstractType::CHANNEL_LOCALE_VALUES_KEY][$channelCode][$localeCode] ?? [], $newValues[AbstractType::CHANNEL_LOCALE_VALUES_KEY][$channelCode][$localeCode] ?? [])
+                    array_merge($oldValues[AbstractType::CHANNEL_LOCALE_VALUES_KEY][$channelCode][$localeCode] ?? [], $newValues[AbstractType::CHANNEL_LOCALE_VALUES_KEY][$channelCode][$localeCode] ?? []),
+                    is_filled_value(...)
                 );
 
                 if (empty($newValues[AbstractType::LOCALE_VALUES_KEY][$localeCode])) {

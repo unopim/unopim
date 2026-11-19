@@ -29,6 +29,8 @@ class ProductAttributeValuesNormalizer
 
         $measurementHelper = null;
 
+        $displayUnitSymbol = null;
+
         if (empty($options['locale'])) {
             $options['locale'] = core()->getRequestedLocaleCode();
         }
@@ -45,9 +47,11 @@ class ProductAttributeValuesNormalizer
 
                 $measurementHelper ??= resolve(MeasurementHelper::class);
 
+                $displayUnitSymbol ??= $measurementHelper->displaysUnitSymbol();
+
                 $values[$attributeCode] = EscapeFormulaOperators::escapeValue($amount);
                 $values["{$attributeCode}(unit)"] = EscapeFormulaOperators::escapeValue(
-                    $measurementHelper->getUnitLabel($unit, $attribute, $options['locale'] ?? null)
+                    $measurementHelper->getUnitDisplayLabel($unit, $attribute, $options['locale'] ?? null, $displayUnitSymbol)
                 );
 
                 continue;

@@ -24,10 +24,16 @@ return [
     'file-outside-attribute-path'      => 'Fișierul :value nu aparține acestei înregistrări. Încarcă-l din nou pentru câmpul :attribute.',
     'password-surrounding-whitespace'  => 'Câmpul :attribute nu poate începe sau se termina cu un spațiu.',
     'password-whitespace-only'         => 'Câmpul :attribute nu poate conține doar spații.',
+    'hideable-sections'                => 'Câmpul :attribute conține o secțiune care nu poate fi ascunsă.',
     'active-content-detected'          => 'Fișierul :attribute nu a putut fi încărcat deoarece conține conținut activ (:reason).',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'JavaScript încorporat sau o acțiune PDF cu executare automată',
         'embedded_vba_macro'            => 'o macro VBA încorporată',
         'auto_executing_ole_object'     => 'un obiect încorporat cu executare automată',
+    ],
+    'platform-modules'                => [
+        'empty'    => 'Selectați cel puțin un modul al platformei.',
+        'unknown'  => 'Modulul de platformă „:module” nu este instalat.',
+        'requires' => ':module poate fi activat doar împreună cu :requires.',
     ],
 ];

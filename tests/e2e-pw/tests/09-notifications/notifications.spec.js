@@ -1,29 +1,10 @@
 const { test, expect } = require('../../utils/fixtures');
-const path = require('path');
-
-const STORAGE_STATE = path.resolve(__dirname, '../../.state/admin-auth.json');
 
 /**
  * Navigate to the notifications page and wait for Vue component to render.
- * If the stored session has been invalidated by prior tests (e.g. loginpage
- * logout tests), re-authenticate first and persist the fresh session back
- * to admin-auth.json so subsequent tests reuse it.
  */
 async function navigateToNotifications(page) {
   await page.goto('/admin/notifications', { waitUntil: 'networkidle' });
-
-  // If redirected to login, re-auth and save fresh state for other tests.
-  // Use the field names and submit button class directly — the "Sign In" role
-  // name also substring-matches the "Sign in with Microsoft" SSO button, which
-  // makes getByRole('button', { name: 'Sign In' }) ambiguous.
-  if (page.url().includes('/admin/login')) {
-    await page.locator('input[name="email"]').fill('admin@example.com');
-    await page.locator('input[name="password"]').fill('admin123');
-    await page.locator('.primary-button').click();
-    await page.waitForURL(/\/admin\/(?!login)/, { timeout: 15000 });
-    await page.context().storageState({ path: STORAGE_STATE });
-    await page.goto('/admin/notifications', { waitUntil: 'networkidle' });
-  }
 
   // Wait for Vue component to mount — either notifications list or empty state will appear
   await page.waitForSelector('.icon-notification, a[href*="viewed-notifications"]', { timeout: 15000 });

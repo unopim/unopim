@@ -134,8 +134,8 @@ test.describe('UnoPim Association Type Tests', () => {
 				.filter({ has: adminPage.getByRole('button', { name: 'Save Association Type' }) })
 				.last();
 
-			await createModal.getByRole('textbox', { name: 'Enter Name' }).fill('Bundle / Kit');
-			await createModal.getByRole('textbox', { name: 'Enter Code' }).fill('bundle_kit');
+			await createModal.getByPlaceholder('Enter Name').fill('Bundle / Kit');
+			await createModal.getByPlaceholder('Enter Code').fill('bundle_kit');
 			await createModal.getByRole('button', { name: 'Save Association Type' }).click();
 
 			await expect(adminPage).toHaveURL(/\/admin\/catalog\/association-types\/edit\//);

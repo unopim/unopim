@@ -136,8 +136,9 @@ class PassportPayloadBuilder implements PayloadBuilder
     }
 
     /**
-     * Only sections that actually published a field reach the payload, so an empty
-     * group never renders as a heading with nothing under it.
+     * Every section that published a field at any tier is listed, so an elevated
+     * view can place its fields under their own heading; `fields` holds only the
+     * base tier, and a section left empty there is not rendered.
      *
      * @param  array<string, array{key: string, label: string}>  $sections
      * @param  list<array{code: string, label: string, value: string, section: string}>  $fields
@@ -154,14 +155,10 @@ class PassportPayloadBuilder implements PayloadBuilder
         $payload = [];
 
         foreach ($sections as $key => $section) {
-            if (! isset($grouped[$key])) {
-                continue;
-            }
-
             $payload[] = [
                 'key'    => $key,
                 'label'  => $section['label'] ?: trans('passport::app.public.sections.passport', [], $localeCode),
-                'fields' => $grouped[$key],
+                'fields' => $grouped[$key] ?? [],
             ];
         }
 

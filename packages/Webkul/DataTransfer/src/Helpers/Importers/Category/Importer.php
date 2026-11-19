@@ -226,7 +226,9 @@ class Importer extends AbstractImporter
          * with all existing codes via init()) and the current batch's new codes, avoiding
          * a DB query per row (which costs O(N) queries for large imports).
          */
-        $validator = Validator::make($rowData, [
+        $validatableRow = EscapeFormulaOperators::unescapeRow($rowData);
+
+        $validator = Validator::make($validatableRow, [
             'code'   => ['string', 'required', new Code],
             'parent' => [
                 'nullable',
@@ -253,7 +255,7 @@ class Importer extends AbstractImporter
             }
         }
 
-        $this->validateUniqueValues($rowData, $rowNumber);
+        $this->validateUniqueValues($validatableRow, $rowNumber);
 
         $isValidRow = ! $this->errorHelper->isRowInvalid($rowNumber);
 
@@ -518,13 +520,15 @@ class Importer extends AbstractImporter
     {
         if (! empty($oldValues[CategoryRepository::COMMON_VALUES_KEY])) {
             $newValues[CategoryRepository::COMMON_VALUES_KEY] = array_filter(
-                array_merge($oldValues[CategoryRepository::COMMON_VALUES_KEY] ?? [], $newValues[CategoryRepository::COMMON_VALUES_KEY])
+                array_merge($oldValues[CategoryRepository::COMMON_VALUES_KEY] ?? [], $newValues[CategoryRepository::COMMON_VALUES_KEY]),
+                is_filled_value(...)
             );
         }
 
         foreach ($this->locales as $localeCode) {
             $newValues[CategoryRepository::LOCALE_VALUES_KEY][$localeCode] = array_filter(
-                array_merge($oldValues[CategoryRepository::LOCALE_VALUES_KEY][$localeCode] ?? [], $newValues[CategoryRepository::LOCALE_VALUES_KEY][$localeCode] ?? [])
+                array_merge($oldValues[CategoryRepository::LOCALE_VALUES_KEY][$localeCode] ?? [], $newValues[CategoryRepository::LOCALE_VALUES_KEY][$localeCode] ?? []),
+                is_filled_value(...)
             );
 
             if (empty($newValues[CategoryRepository::LOCALE_VALUES_KEY][$localeCode])) {

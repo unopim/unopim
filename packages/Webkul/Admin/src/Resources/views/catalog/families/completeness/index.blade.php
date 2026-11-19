@@ -145,6 +145,7 @@
                                 <x-admin::form.control-group.control
                                     type="multiselect"
                                     name="channel_requirements"
+                                    :label="trans('completeness::app.catalog.families.edit.completeness.channel-required')"
                                     v-model="selectedChannels"
                                     :options="$allChannels"
                                     track-by="code"

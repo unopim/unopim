@@ -110,6 +110,23 @@ describe('file_path token expansion', function () {
         Carbon::setTestNow();
     });
 
+    it('renders the [time] token in the app timezone when the exporting user timezone is unusable', function (string $timezone): void {
+        config(['app.timezone' => 'UTC']);
+
+        Carbon::setTestNow(Carbon::parse('2026-06-16 18:30:00', 'UTC'));
+
+        $admin = Admin::factory()->create(['timezone' => $timezone]);
+
+        $exporter = makeProductExporter([
+            'file_format' => 'Csv',
+            'file_path'   => '[code]_[time]',
+        ], $admin->id);
+
+        expect(exporterFileName($exporter))->toBe('demo_export_183000.csv');
+
+        Carbon::setTestNow();
+    })->with(['blank' => '', 'invalid' => 'Mars/Phobos']);
+
     it('ignores a trailing export extension typed in the pattern instead of mangling it', function () {
         $exporter = makeProductExporter(['file_format' => 'Csv', 'file_path' => '{code}.csv']);
 

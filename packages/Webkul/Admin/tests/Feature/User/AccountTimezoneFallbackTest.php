@@ -71,14 +71,18 @@ describe('server behaviour when only the timezone is missing', function () {
 });
 
 describe('why the timezone can no longer fail on its own', function () {
-    it('back-fills the account form before the required rule ever sees it', function () {
-        $accountForm = file_get_contents(
-            base_path('packages/Webkul/Admin/src/Http/Requests/AccountForm.php')
-        );
+    it('rejects an invalid timezone and back-fills a blank one over a stored unusable timezone', function (): void {
+        $this->admin->update(['timezone' => 'Mars/Phobos']);
 
-        expect($accountForm)->toContain("'timezone'           => 'required'")
-            ->and($accountForm)->toContain('protected function prepareForValidation(): void')
-            ->and($accountForm)->toContain("\$this->input('timezone') ?: (\$user?->timezone ?: config('app.timezone', 'UTC'))");
+        $this->putJson(route('admin.account.update'), accountPayload($this->admin, 'Mars/Phobos'))
+            ->assertUnprocessable()
+            ->assertOnlyJsonValidationErrors('timezone');
+
+        $this->withHeader('X-Ajax-Form', 'true')
+            ->put(route('admin.account.update'), accountPayload($this->admin, ''))
+            ->assertSuccessful();
+
+        expect($this->admin->fresh()->timezone)->toBe(config('app.timezone'));
 
         $column = collect(Schema::getColumns('admins'))->firstWhere('name', 'timezone');
 

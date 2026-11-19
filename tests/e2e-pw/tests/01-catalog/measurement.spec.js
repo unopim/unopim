@@ -1,5 +1,13 @@
 const { test, expect } = require('../../utils/fixtures');
-const { openFilterDrawer } = require('../../utils/helpers');
+const {
+    openFilterDrawer,
+    waitForAppReady,
+    submitDataGridSearch,
+    clickAndWaitForPage,
+    submitAndSettle,
+} = require('../../utils/helpers');
+
+const FAMILY_EDIT_URL = /\/measurement\/families\/\d+\/edit/;
 
 test.describe('UnoPim Measurement Feature', () => {
 
@@ -7,13 +15,12 @@ test.describe('UnoPim Measurement Feature', () => {
     
     async function selectOption(page, triggerLocator, value) {
         await triggerLocator.click();
-        await page.waitForTimeout(400);
         const option = page.locator('.multiselect__option, .multiselect__element span')
             .filter({ hasText: value })
             .first();
         await option.waitFor({ timeout: 5000 });
         await option.click();
-        await page.waitForTimeout(400);
+        await option.waitFor({ state: 'hidden', timeout: 5000 });
     }
 
     async function dismissModal(page) {
@@ -24,7 +31,7 @@ test.describe('UnoPim Measurement Feature', () => {
             const btn = closeButtons.nth(i);
             if (await btn.isVisible().catch(() => false)) {
                 await btn.click();
-                await page.waitForTimeout(500);
+                await btn.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
                 return true;
             }
         }
@@ -33,7 +40,7 @@ test.describe('UnoPim Measurement Feature', () => {
         const modalBackdrop = page.locator('.modal-backdrop, [class*="backdrop"], .overlay');
         if (await modalBackdrop.isVisible().catch(() => false)) {
             await modalBackdrop.click({ position: { x: 10, y: 10 } });
-            await page.waitForTimeout(500);
+            await modalBackdrop.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
             return true;
         }
         
@@ -41,15 +48,14 @@ test.describe('UnoPim Measurement Feature', () => {
     }
 
     async function goToFamilies(page) {
-        await page.goto('/admin/measurement/families', { waitUntil: 'domcontentloaded' });
-        await page.waitForSelector('text=Measurement Families', { timeout: 10000 }).catch(() => {});
-        await page.waitForTimeout(1000);
+        await page.goto('/admin/measurement/families', { waitUntil: 'load' });
+        await waitForAppReady(page);
     }
 
     async function goToAttributeCreate(page) {
-        await page.goto('/admin/catalog/attributes/create', { waitUntil: 'domcontentloaded' });
-        await page.waitForSelector('text=Add Attribute', { timeout: 10000 }).catch(() => {});
-        await page.waitForTimeout(1000);
+        await page.goto('/admin/catalog/attributes/create', { waitUntil: 'load' });
+        await waitForAppReady(page);
+        await page.locator('input[name="code"]').first().waitFor({ state: 'visible', timeout: 10000 });
     }
 
     async function openFirstFamilyForEdit(page) {
@@ -64,7 +70,7 @@ test.describe('UnoPim Measurement Feature', () => {
                 const candidate = locator.nth(i);
                 if (await candidate.isVisible().catch(() => false)) {
                     await candidate.scrollIntoViewIfNeeded();
-                    await candidate.click();
+                    await clickAndWaitForPage(page, candidate, FAMILY_EDIT_URL);
                     return;
                 }
             }
@@ -72,7 +78,7 @@ test.describe('UnoPim Measurement Feature', () => {
 
         const firstRow = page.locator('.row').nth(1);
         if (await firstRow.isVisible().catch(() => false)) {
-            await firstRow.click();
+            await clickAndWaitForPage(page, firstRow, FAMILY_EDIT_URL);
             return;
         }
 
@@ -86,9 +92,8 @@ test.describe('UnoPim Measurement Feature', () => {
         await createButton.waitFor({ state: 'visible', timeout: 10000 });
         await createButton.click();
 
-        await page.waitForTimeout(1000);
-
         const familyCodeInput = page.locator('input[name="code"]').first();
+        await familyCodeInput.waitFor({ state: 'visible', timeout: 10000 });
         await familyCodeInput.fill(code);
 
         const standardUnitInput = page.locator('input[name="standard_unit_code"]').first();
@@ -108,9 +113,7 @@ test.describe('UnoPim Measurement Feature', () => {
         }
 
         const saveButton = page.getByRole('button', { name: /Save/i }).first();
-        await saveButton.click();
-
-        await page.waitForTimeout(3000);
+        await submitFamily(page, saveButton);
 
         // Dismiss any modals that might appear
         await dismissModal(page);
@@ -133,6 +136,50 @@ test.describe('UnoPim Measurement Feature', () => {
         return codeText?.trim() || null;
     }
 
+    /**
+     * Submit the create-family modal and wait for its outcome: the redirect to the
+     * new family's edit page, the server's validation answer, or a client-side field error.
+     */
+    async function submitFamily(page, saveButton) {
+        const response = await submitAndSettle(page, saveButton, (request) =>
+            request.method() === 'POST' && /\/measurement\/families\/?$/.test(new URL(request.url()).pathname));
+
+        if (response?.ok()) {
+            await page.waitForURL(FAMILY_EDIT_URL, { timeout: 30000 });
+            await waitForAppReady(page);
+        }
+    }
+
+    /**
+     * Submit the create-attribute page form and wait for the page it lands on,
+     * or for the client-side field error that blocked it.
+     */
+    async function submitAttribute(page, saveButton) {
+        const from = page.url();
+        const fieldError = page.locator('p.text-red-600:visible').filter({ hasText: /\S/ }).first();
+        await saveButton.click();
+
+        const landed = await Promise.race([
+            page.waitForURL((url) => url.toString() !== from, { timeout: 30000 }).then(() => true),
+            fieldError.waitFor({ state: 'visible', timeout: 30000 }).then(() => false),
+        ]);
+
+        if (landed) {
+            await waitForAppReady(page);
+        }
+    }
+
+    /** Submit the unit modal on a family edit page and wait for its outcome. */
+    async function submitUnit(page, saveButton) {
+        await submitAndSettle(page, saveButton, (request) =>
+            request.method() !== 'GET' && new URL(request.url()).pathname.includes('/units'));
+    }
+
+    /** Wait for the create/edit unit modal to be open. */
+    async function waitForUnitModal(page) {
+        await page.locator('input[name="symbol"]').first().waitFor({ state: 'visible', timeout: 10000 });
+    }
+
     function getTypeDropdownTrigger(page) {
         return page.locator('#type').locator('..').locator('.multiselect__placeholder, .multiselect__single').first();
     }
@@ -140,13 +187,14 @@ test.describe('UnoPim Measurement Feature', () => {
     async function addConversionOperation(page, value, operator) {
         // Look for the "Add New Operation" button
         const addOpBtn = page.locator('button:has-text("Add New Operation"), button:has-text("add_new_operation"), [data-action="add-operation"]').first();
+        const conversionValueInputs = page.locator('input[name*="convert_value"], input[placeholder*="conversion value" i]');
         if (await addOpBtn.isVisible().catch(() => false)) {
+            const rowsBefore = await conversionValueInputs.count();
             await addOpBtn.click();
-            await page.waitForTimeout(500);
+            await expect(conversionValueInputs).toHaveCount(rowsBefore + 1, { timeout: 5000 });
         }
 
         // Fill the conversion value field
-        const conversionValueInputs = page.locator('input[name*="convert_value"], input[placeholder*="conversion value" i]');
         const valueInputCount = await conversionValueInputs.count();
         if (valueInputCount > 0) {
             const lastValueInput = conversionValueInputs.nth(valueInputCount - 1);
@@ -165,12 +213,13 @@ test.describe('UnoPim Measurement Feature', () => {
                 const multiSelectTrigger = lastOperatorSelect.locator('..').locator('.multiselect__placeholder, .multiselect__single').first();
                 if (await multiSelectTrigger.isVisible().catch(() => false)) {
                     await multiSelectTrigger.click();
-                    await page.waitForTimeout(300);
                     const operatorOption = page.locator('.multiselect__option, .multiselect__element span')
                         .filter({ hasText: operator })
                         .first();
+                    await operatorOption.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
                     if (await operatorOption.isVisible().catch(() => false)) {
                         await operatorOption.click();
+                        await operatorOption.waitFor({ state: 'hidden', timeout: 5000 });
                     }
                 } else {
                     // Fallback: fill directly
@@ -178,8 +227,6 @@ test.describe('UnoPim Measurement Feature', () => {
                 }
             }
         }
-
-        await page.waitForTimeout(500);
     }
 
     async function fillAttributeLabel(page, label) {
@@ -219,8 +266,7 @@ test.describe('UnoPim Measurement Feature', () => {
         await fillAttributeLabel(page, label);
 
         const saveButton = page.getByRole('button', { name: /save/i }).first();
-        await saveButton.click();
-        await page.waitForTimeout(3000);
+        await submitAttribute(page, saveButton);
 
         return page.url().includes('/admin/catalog/attributes') || page.url().includes('/edit');
     }
@@ -229,19 +275,18 @@ test.describe('UnoPim Measurement Feature', () => {
         await goToFamilies(page);
         const search = page.locator('input[placeholder*="Search" i], input[name="search"], input[aria-label*="Search" i]').first();
         if (await search.isVisible({ timeout: 5000 })) {
-            await search.fill(familyCode);
-            await search.press('Enter');
-            await page.waitForTimeout(1000);
+            await submitDataGridSearch(page, search, familyCode);
         }
         
         const deleteIcon = page.locator('.icon-delete, [class*="delete"], button:has-text("Delete")').first();
         if (await deleteIcon.isVisible()) {
             await deleteIcon.click();
-            await page.waitForTimeout(500);
             const confirmBtn = page.getByRole('button', { name: /agree|confirm|yes|delete/i }).first();
+            await confirmBtn.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
             if (await confirmBtn.isVisible()) {
+                const deleted = page.waitForResponse((response) => response.request().method() === 'DELETE', { timeout: 30000 });
                 await confirmBtn.click();
-                await page.waitForTimeout(1500);
+                await deleted;
                 return true;
             }
         }
@@ -263,9 +308,7 @@ test.describe('UnoPim Measurement Feature', () => {
             await goToFamilies(adminPage);
             const search = adminPage.locator('input[placeholder*="Search" i], input[type="search"]').first();
             if (await search.isVisible()) {
-                await search.fill('Weight');
-                await search.press('Enter');
-                await adminPage.waitForTimeout(2000);
+                await submitDataGridSearch(adminPage, search, 'Weight');
             }
         });
 
@@ -285,7 +328,6 @@ test.describe('UnoPim Measurement Feature', () => {
             await goToFamilies(adminPage);
             try {
                 await openFirstFamilyForEdit(adminPage);
-                await adminPage.waitForTimeout(2000);
                 expect(adminPage.url()).toContain('edit');
             } catch (e) {
                 console.log('Edit test skipped:', e.message);
@@ -301,9 +343,7 @@ test.describe('UnoPim Measurement Feature', () => {
             await goToFamilies(adminPage);
             const search = adminPage.locator('input[placeholder*="Search" i], input[type="search"]').first();
             if (await search.isVisible()) {
-                await search.fill(familyCode);
-                await search.press('Enter');
-                await adminPage.waitForTimeout(2000);
+                await submitDataGridSearch(adminPage, search, familyCode);
             }
 
             // Dismiss any modals first
@@ -313,8 +353,7 @@ test.describe('UnoPim Measurement Feature', () => {
             const editBtn = adminPage.locator('[title="Edit"], .icon-edit, button:has-text("Edit")').first();
             if (await editBtn.isVisible()) {
                 await editBtn.scrollIntoViewIfNeeded();
-                await editBtn.click();
-                await adminPage.waitForTimeout(2000);
+                await clickAndWaitForPage(adminPage, editBtn, FAMILY_EDIT_URL);
 
                 // Dismiss any modals that appeared
                 await dismissModal(adminPage);
@@ -324,7 +363,7 @@ test.describe('UnoPim Measurement Feature', () => {
                 if (await addUnitBtn.isVisible()) {
                     await addUnitBtn.scrollIntoViewIfNeeded();
                     await addUnitBtn.click();
-                    await adminPage.waitForTimeout(1000);
+                    await waitForUnitModal(adminPage);
 
                     // Dismiss any modals
                     await dismissModal(adminPage);
@@ -345,8 +384,7 @@ test.describe('UnoPim Measurement Feature', () => {
 
                     const saveBtn = adminPage.getByRole('button', { name: /save|create/i }).last();
                     if (await saveBtn.isVisible()) {
-                        await saveBtn.click();
-                        await adminPage.waitForTimeout(2000);
+                        await submitUnit(adminPage, saveBtn);
                     }
                 }
             }
@@ -361,8 +399,8 @@ test.describe('UnoPim Measurement Feature', () => {
         test('TC08 - Verify measurement attribute in attributes list', async ({ adminPage }) => {
             const attrCode = `mlist_${Date.now()}`;
             await createMeasurementAttribute(adminPage, attrCode, 'List Test Measurement');
-            await adminPage.goto('/admin/catalog/attributes', { waitUntil: 'domcontentloaded' });
-            await adminPage.waitForTimeout(1000);
+            await adminPage.goto('/admin/catalog/attributes', { waitUntil: 'load' });
+            await waitForAppReady(adminPage);
             const search = adminPage.locator('input[placeholder*="Search" i]').first();
             if (await search.isVisible()) {
                 await search.fill(attrCode);
@@ -380,7 +418,7 @@ test.describe('UnoPim Measurement Feature', () => {
         test('TC10 - Filter functionality loads', async ({ adminPage }) => {
             await goToFamilies(adminPage);
             await openFilterDrawer(adminPage);
-            await adminPage.waitForTimeout(500);
+            await expect(adminPage.locator('[data-datagrid-filter]').first()).toBeVisible();
         });
     });
 
@@ -393,14 +431,13 @@ test.describe('UnoPim Measurement Feature', () => {
             const createBtn = adminPage.getByRole('button', { name: /Create Measurements/i }).first();
             if (await createBtn.isVisible()) {
                 await createBtn.click();
-                await adminPage.waitForTimeout(500);
+                await adminPage.locator('input[name=\"code\"]').first().waitFor({ state: 'visible', timeout: 10000 });
 
                 await adminPage.locator('input[name="code"]').first().fill('');
                 await adminPage.locator('input[name="standard_unit_code"]').first().fill('std_unit');
                 await adminPage.locator('input[name="symbol"]').first().fill('EM');
 
-                await adminPage.getByRole('button', { name: 'Save', exact: true }).click();
-                await adminPage.waitForTimeout(1000);
+                await submitFamily(adminPage, adminPage.getByRole('button', { name: 'Save', exact: true }));
             }
         });
 
@@ -409,14 +446,13 @@ test.describe('UnoPim Measurement Feature', () => {
             const createBtn = adminPage.getByRole('button', { name: /Create Measurements/i }).first();
             if (await createBtn.isVisible()) {
                 await createBtn.click();
-                await adminPage.waitForTimeout(500);
+                await adminPage.locator('input[name=\"code\"]').first().waitFor({ state: 'visible', timeout: 10000 });
 
                 await adminPage.locator('input[name="code"]').first().fill(`fam_${Date.now()}`);
                 await adminPage.locator('input[name="standard_unit_code"]').first().fill('');
                 await adminPage.locator('input[name="symbol"]').first().fill('EM');
 
-                await adminPage.getByRole('button', { name: 'Save', exact: true }).click();
-                await adminPage.waitForTimeout(1000);
+                await submitFamily(adminPage, adminPage.getByRole('button', { name: 'Save', exact: true }));
             }
         });
 
@@ -425,14 +461,13 @@ test.describe('UnoPim Measurement Feature', () => {
             const createBtn = adminPage.getByRole('button', { name: /Create Measurements/i }).first();
             if (await createBtn.isVisible()) {
                 await createBtn.click();
-                await adminPage.waitForTimeout(500);
+                await adminPage.locator('input[name=\"code\"]').first().waitFor({ state: 'visible', timeout: 10000 });
 
                 await adminPage.locator('input[name="code"]').first().fill(`fam_${Date.now()}`);
                 await adminPage.locator('input[name="standard_unit_code"]').first().fill('std_unit');
                 await adminPage.locator('input[name="symbol"]').first().fill('');
 
-                await adminPage.getByRole('button', { name: 'Save', exact: true }).click();
-                await adminPage.waitForTimeout(1000);
+                await submitFamily(adminPage, adminPage.getByRole('button', { name: 'Save', exact: true }));
             }
         });
 
@@ -441,14 +476,13 @@ test.describe('UnoPim Measurement Feature', () => {
             const createBtn = adminPage.getByRole('button', { name: /Create Measurements/i }).first();
             if (await createBtn.isVisible()) {
                 await createBtn.click();
-                await adminPage.waitForTimeout(500);
+                await adminPage.locator('input[name=\"code\"]').first().waitFor({ state: 'visible', timeout: 10000 });
 
                 await adminPage.locator('input[name="code"]').first().fill('');
                 await adminPage.locator('input[name="standard_unit_code"]').first().fill('');
                 await adminPage.locator('input[name="symbol"]').first().fill('');
 
-                await adminPage.getByRole('button', { name: 'Save', exact: true }).click();
-                await adminPage.waitForTimeout(1000);
+                await submitFamily(adminPage, adminPage.getByRole('button', { name: 'Save', exact: true }));
             }
         });
 
@@ -457,21 +491,19 @@ test.describe('UnoPim Measurement Feature', () => {
             
             // Create first family
             await createMeasurementFamily(adminPage, familyCode, 'unit1', 'U1');
-            await adminPage.waitForTimeout(1000);
 
             // Try to create duplicate
             await goToFamilies(adminPage);
             const createBtn = adminPage.getByRole('button', { name: /Create Measurements/i }).first();
             if (await createBtn.isVisible()) {
                 await createBtn.click();
-                await adminPage.waitForTimeout(500);
+                await adminPage.locator('input[name=\"code\"]').first().waitFor({ state: 'visible', timeout: 10000 });
 
                 await adminPage.locator('input[name="code"]').first().fill(familyCode);
                 await adminPage.locator('input[name="standard_unit_code"]').first().fill('unit2');
                 await adminPage.locator('input[name="symbol"]').first().fill('U2');
 
-                await adminPage.getByRole('button', { name: 'Save', exact: true }).click();
-                await adminPage.waitForTimeout(1500);
+                await submitFamily(adminPage, adminPage.getByRole('button', { name: 'Save', exact: true }));
             }
         });
 
@@ -480,14 +512,13 @@ test.describe('UnoPim Measurement Feature', () => {
             const createBtn = adminPage.getByRole('button', { name: /Create Measurements/i }).first();
             if (await createBtn.isVisible()) {
                 await createBtn.click();
-                await adminPage.waitForTimeout(500);
+                await adminPage.locator('input[name=\"code\"]').first().waitFor({ state: 'visible', timeout: 10000 });
 
                 await adminPage.locator('input[name="code"]').first().fill('fam@#$%^&');
                 await adminPage.locator('input[name="standard_unit_code"]').first().fill('std_unit');
                 await adminPage.locator('input[name="symbol"]').first().fill('EM');
 
-                await adminPage.getByRole('button', { name: 'Save', exact: true }).click();
-                await adminPage.waitForTimeout(1000);
+                await submitFamily(adminPage, adminPage.getByRole('button', { name: 'Save', exact: true }));
             }
         });
 
@@ -501,8 +532,7 @@ test.describe('UnoPim Measurement Feature', () => {
             }
             await fillAttributeLabel(adminPage, 'Test Label');
             
-            await adminPage.getByRole('button', { name: /save|Save/ }).click();
-            await adminPage.waitForTimeout(1000);
+            await submitAttribute(adminPage, adminPage.getByRole('button', { name: /save|Save/ }));
         });
 
         test('TC18 - Create measurement attribute with empty label', async ({ adminPage }) => {
@@ -515,8 +545,7 @@ test.describe('UnoPim Measurement Feature', () => {
                 console.log('Skip type selection');
             }
             
-            await adminPage.getByRole('button', { name: /save|Save/ }).click();
-            await adminPage.waitForTimeout(1000);
+            await submitAttribute(adminPage, adminPage.getByRole('button', { name: /save|Save/ }));
         });
 
         test('TC19 - Create measurement attribute without selecting type', async ({ adminPage }) => {
@@ -525,8 +554,7 @@ test.describe('UnoPim Measurement Feature', () => {
             await adminPage.locator('input[name="code"]').fill(code);
             await fillAttributeLabel(adminPage, 'Test Label');
             
-            await adminPage.getByRole('button', { name: /save|Save/ }).click();
-            await adminPage.waitForTimeout(1000);
+            await submitAttribute(adminPage, adminPage.getByRole('button', { name: /save|Save/ }));
         });
 
         test('TC20 - Search with non-existent measurement family', async ({ adminPage }) => {
@@ -534,9 +562,7 @@ test.describe('UnoPim Measurement Feature', () => {
             const search = adminPage.locator('input[placeholder*="Search" i]').first();
             if (await search.isVisible()) {
                 const randomCode = `nonexistent_${Date.now()}`;
-                await search.fill(randomCode);
-                await search.press('Enter');
-                await adminPage.waitForTimeout(1500);
+                await submitDataGridSearch(adminPage, search, randomCode);
             }
         });
 
@@ -550,7 +576,6 @@ test.describe('UnoPim Measurement Feature', () => {
         test('TC22 - Delete measurement family successfully', async ({ adminPage }) => {
             const familyCode = `del_fam_${Date.now()}`;
             await createMeasurementFamily(adminPage, familyCode, 'del_unit', 'DU');
-            await adminPage.waitForTimeout(1000);
             
             await deleteMeasurementFamily(adminPage, familyCode);
         });
@@ -579,14 +604,13 @@ test.describe('UnoPim Measurement Feature', () => {
             const createBtn = adminPage.getByRole('button', { name: /Create Measurements/i }).first();
             if (await createBtn.isVisible()) {
                 await createBtn.click();
-                await adminPage.waitForTimeout(500);
+                await adminPage.locator('input[name=\"code\"]').first().waitFor({ state: 'visible', timeout: 10000 });
 
                 await adminPage.locator('input[name="code"]').first().fill(longCode);
                 await adminPage.locator('input[name="standard_unit_code"]').first().fill('std_unit');
                 await adminPage.locator('input[name="symbol"]').first().fill('EM');
 
-                await adminPage.getByRole('button', { name: 'Save', exact: true }).click();
-                await adminPage.waitForTimeout(1500);
+                await submitFamily(adminPage, adminPage.getByRole('button', { name: 'Save', exact: true }));
             }
         });
 
@@ -594,13 +618,11 @@ test.describe('UnoPim Measurement Feature', () => {
             const numCode = `123_${Date.now()}`;
             const created = await createMeasurementFamily(adminPage, numCode, 'std_unit', 'NU');
             // Should either succeed or show validation
-            await adminPage.waitForTimeout(500);
         });
 
         test('TC27 - Update measurement family attributes after creation', async ({ adminPage }) => {
             const familyCode = `update_fam_${Date.now()}`;
             await createMeasurementFamily(adminPage, familyCode, 'std_unit', 'UF');
-            await adminPage.waitForTimeout(1000);
 
             const codeInput = adminPage.locator('input[name="code"], input[name*="code"]').first();
             if (await codeInput.isVisible()) {
@@ -614,12 +636,12 @@ test.describe('UnoPim Measurement Feature', () => {
             const createBtn = adminPage.getByRole('button', { name: /Create Measurements/i }).first();
             if (await createBtn.isVisible()) {
                 await createBtn.click();
-                await adminPage.waitForTimeout(500);
+                await adminPage.locator('input[name=\"code\"]').first().waitFor({ state: 'visible', timeout: 10000 });
 
                 const cancelBtn = adminPage.getByRole('button', { name: /cancel|close|Cancel|Close/i }).first();
                 if (await cancelBtn.isVisible()) {
                     await cancelBtn.click();
-                    await adminPage.waitForTimeout(1000);
+                    await expect(cancelBtn).toBeHidden();
                 }
             }
         });
@@ -646,7 +668,6 @@ test.describe('UnoPim Measurement Feature', () => {
         test('TC31 - Verify no duplicate attribute codes allowed', async ({ adminPage }) => {
             const attrCode = `unique_attr_${Date.now()}`;
             await createMeasurementAttribute(adminPage, attrCode, 'First Attribute');
-            await adminPage.waitForTimeout(1000);
 
             // Try to create duplicate
             await goToAttributeCreate(adminPage);
@@ -658,15 +679,13 @@ test.describe('UnoPim Measurement Feature', () => {
             }
             await fillAttributeLabel(adminPage, 'Duplicate Attribute');
 
-            await adminPage.getByRole('button', { name: /save|Save/ }).click();
-            await adminPage.waitForTimeout(1500);
+            await submitAttribute(adminPage, adminPage.getByRole('button', { name: /save|Save/ }));
         });
 
         test('TC32 - Navigate back from measurement family edit page', async ({ adminPage }) => {
             await goToFamilies(adminPage);
             try {
                 await openFirstFamilyForEdit(adminPage);
-                await adminPage.waitForTimeout(1000);
 
                 const backBtn = adminPage.getByRole('button', { name: /back|close/i }).first();
                 const breadcrumb = adminPage.locator('[class*="breadcrumb"] a').first();
@@ -678,8 +697,9 @@ test.describe('UnoPim Measurement Feature', () => {
                 } else {
                     await adminPage.goto('/admin/measurement/families', { waitUntil: 'domcontentloaded' });
                 }
-                
-                await adminPage.waitForTimeout(1000);
+
+                await adminPage.waitForURL(/\/measurement\/families\/?(\?.*)?$/, { timeout: 30000 });
+                await waitForAppReady(adminPage);
             } catch (e) {
                 console.log('Navigation test skipped');
             }
@@ -703,7 +723,7 @@ test.describe('UnoPim Measurement Feature', () => {
                 const createUnitsBtn = adminPage.getByRole('button', { name: /Units|units/ });
                 if (await createUnitsBtn.isVisible({ timeout: 2000 })) {
                     await createUnitsBtn.click();
-                    await adminPage.waitForTimeout(500);
+                    await waitForUnitModal(adminPage);
                 }
             } catch (e) {
                 // Expected: can't create unit without proper context
@@ -719,20 +739,17 @@ test.describe('UnoPim Measurement Feature', () => {
             await goToFamilies(adminPage);
             const search = adminPage.locator('input[placeholder*="Search" i], input[type="search"]').first();
             if (await search.isVisible()) {
-                await search.fill(familyCode);
-                await search.press('Enter');
-                await adminPage.waitForTimeout(2000);
+                await submitDataGridSearch(adminPage, search, familyCode);
             }
 
             const editBtn = adminPage.locator('[title="Edit"], .icon-edit').first();
             if (await editBtn.isVisible()) {
-                await editBtn.click();
-                await adminPage.waitForTimeout(2000);
+                await clickAndWaitForPage(adminPage, editBtn, FAMILY_EDIT_URL);
 
                 const addUnitBtn = adminPage.locator('button:has-text("Add Unit"), button:has-text("Create Unit")').first();
                 if (await addUnitBtn.isVisible()) {
                     await addUnitBtn.click();
-                    await adminPage.waitForTimeout(1000);
+                    await waitForUnitModal(adminPage);
 
                     const codeInput = adminPage.locator('input[name*="code"], input[placeholder*="code" i]').last();
                     if (await codeInput.isVisible()) {
@@ -749,8 +766,7 @@ test.describe('UnoPim Measurement Feature', () => {
 
                     const saveBtn = adminPage.getByRole('button', { name: /save/i }).last();
                     if (await saveBtn.isVisible()) {
-                        await saveBtn.click();
-                        await adminPage.waitForTimeout(2000);
+                        await submitUnit(adminPage, saveBtn);
                     }
                 }
             }
@@ -764,20 +780,17 @@ test.describe('UnoPim Measurement Feature', () => {
             await goToFamilies(adminPage);
             const search = adminPage.locator('input[placeholder*="Search" i]').first();
             if (await search.isVisible()) {
-                await search.fill(familyCode);
-                await search.press('Enter');
-                await adminPage.waitForTimeout(2000);
+                await submitDataGridSearch(adminPage, search, familyCode);
             }
 
             const editBtn = adminPage.locator('[title="Edit"], .icon-edit').first();
             if (await editBtn.isVisible()) {
-                await editBtn.click();
-                await adminPage.waitForTimeout(2000);
+                await clickAndWaitForPage(adminPage, editBtn, FAMILY_EDIT_URL);
 
                 const addUnitBtn = adminPage.locator('button:has-text("Add Unit"), button:has-text("Create Unit")').first();
                 if (await addUnitBtn.isVisible()) {
                     await addUnitBtn.click();
-                    await adminPage.waitForTimeout(1000);
+                    await waitForUnitModal(adminPage);
 
                     const codeInput = adminPage.locator('input[name*="code"]').last();
                     if (await codeInput.isVisible()) {
@@ -794,8 +807,7 @@ test.describe('UnoPim Measurement Feature', () => {
 
                     const saveBtn = adminPage.getByRole('button', { name: /save/i }).last();
                     if (await saveBtn.isVisible()) {
-                        await saveBtn.click();
-                        await adminPage.waitForTimeout(2000);
+                        await submitUnit(adminPage, saveBtn);
                     }
                 }
             }
@@ -809,20 +821,17 @@ test.describe('UnoPim Measurement Feature', () => {
             await goToFamilies(adminPage);
             const search = adminPage.locator('input[placeholder*="Search" i]').first();
             if (await search.isVisible()) {
-                await search.fill(familyCode);
-                await search.press('Enter');
-                await adminPage.waitForTimeout(2000);
+                await submitDataGridSearch(adminPage, search, familyCode);
             }
 
             const editBtn = adminPage.locator('[title="Edit"], .icon-edit').first();
             if (await editBtn.isVisible()) {
-                await editBtn.click();
-                await adminPage.waitForTimeout(2000);
+                await clickAndWaitForPage(adminPage, editBtn, FAMILY_EDIT_URL);
 
                 const addUnitBtn = adminPage.locator('button:has-text("Add Unit"), button:has-text("Create Unit")').first();
                 if (await addUnitBtn.isVisible()) {
                     await addUnitBtn.click();
-                    await adminPage.waitForTimeout(1000);
+                    await waitForUnitModal(adminPage);
 
                     const codeInput = adminPage.locator('input[name*="code"]').last();
                     if (await codeInput.isVisible()) {
@@ -839,8 +848,7 @@ test.describe('UnoPim Measurement Feature', () => {
 
                     const saveBtn = adminPage.getByRole('button', { name: /save/i }).last();
                     if (await saveBtn.isVisible()) {
-                        await saveBtn.click();
-                        await adminPage.waitForTimeout(2000);
+                        await submitUnit(adminPage, saveBtn);
                     }
                 }
             }
@@ -854,20 +862,17 @@ test.describe('UnoPim Measurement Feature', () => {
             await goToFamilies(adminPage);
             const search = adminPage.locator('input[placeholder*="Search" i]').first();
             if (await search.isVisible()) {
-                await search.fill(familyCode);
-                await search.press('Enter');
-                await adminPage.waitForTimeout(2000);
+                await submitDataGridSearch(adminPage, search, familyCode);
             }
 
             const editBtn = adminPage.locator('[title="Edit"], .icon-edit').first();
             if (await editBtn.isVisible()) {
-                await editBtn.click();
-                await adminPage.waitForTimeout(2000);
+                await clickAndWaitForPage(adminPage, editBtn, FAMILY_EDIT_URL);
 
                 const addUnitBtn = adminPage.locator('button:has-text("Add Unit"), button:has-text("Create Unit")').first();
                 if (await addUnitBtn.isVisible()) {
                     await addUnitBtn.click();
-                    await adminPage.waitForTimeout(1000);
+                    await waitForUnitModal(adminPage);
 
                     const codeInput = adminPage.locator('input[name*="code"]').last();
                     if (await codeInput.isVisible()) {
@@ -884,8 +889,7 @@ test.describe('UnoPim Measurement Feature', () => {
 
                     const saveBtn = adminPage.getByRole('button', { name: /save/i }).last();
                     if (await saveBtn.isVisible()) {
-                        await saveBtn.click();
-                        await adminPage.waitForTimeout(2000);
+                        await submitUnit(adminPage, saveBtn);
                     }
                 }
             }
@@ -899,20 +903,17 @@ test.describe('UnoPim Measurement Feature', () => {
             await goToFamilies(adminPage);
             const search = adminPage.locator('input[placeholder*="Search" i]').first();
             if (await search.isVisible()) {
-                await search.fill(familyCode);
-                await search.press('Enter');
-                await adminPage.waitForTimeout(2000);
+                await submitDataGridSearch(adminPage, search, familyCode);
             }
 
             const editBtn = adminPage.locator('[title="Edit"], .icon-edit').first();
             if (await editBtn.isVisible()) {
-                await editBtn.click();
-                await adminPage.waitForTimeout(2000);
+                await clickAndWaitForPage(adminPage, editBtn, FAMILY_EDIT_URL);
 
                 const addUnitBtn = adminPage.locator('button:has-text("Add Unit"), button:has-text("Create Unit")').first();
                 if (await addUnitBtn.isVisible()) {
                     await addUnitBtn.click();
-                    await adminPage.waitForTimeout(1000);
+                    await waitForUnitModal(adminPage);
 
                     const codeInput = adminPage.locator('input[name*="code"]').last();
                     if (await codeInput.isVisible()) {
@@ -926,15 +927,13 @@ test.describe('UnoPim Measurement Feature', () => {
 
                     // Add first operation: multiply by 2
                     await addConversionOperation(adminPage, '2', 'mul');
-                    await adminPage.waitForTimeout(500);
 
                     // Add second operation: add 10
                     await addConversionOperation(adminPage, '10', 'add');
 
                     const saveBtn = adminPage.getByRole('button', { name: /save/i }).last();
                     if (await saveBtn.isVisible()) {
-                        await saveBtn.click();
-                        await adminPage.waitForTimeout(2000);
+                        await submitUnit(adminPage, saveBtn);
                     }
                 }
             }
@@ -948,20 +947,17 @@ test.describe('UnoPim Measurement Feature', () => {
             await goToFamilies(adminPage);
             const search = adminPage.locator('input[placeholder*="Search" i]').first();
             if (await search.isVisible()) {
-                await search.fill(familyCode);
-                await search.press('Enter');
-                await adminPage.waitForTimeout(2000);
+                await submitDataGridSearch(adminPage, search, familyCode);
             }
 
             const editBtn = adminPage.locator('[title="Edit"], .icon-edit').first();
             if (await editBtn.isVisible()) {
-                await editBtn.click();
-                await adminPage.waitForTimeout(2000);
+                await clickAndWaitForPage(adminPage, editBtn, FAMILY_EDIT_URL);
 
                 const addUnitBtn = adminPage.locator('button:has-text("Add Unit"), button:has-text("Create Unit")').first();
                 if (await addUnitBtn.isVisible()) {
                     await addUnitBtn.click();
-                    await adminPage.waitForTimeout(1000);
+                    await waitForUnitModal(adminPage);
 
                     const codeInput = adminPage.locator('input[name*="code"]').last();
                     if (await codeInput.isVisible()) {
@@ -978,8 +974,7 @@ test.describe('UnoPim Measurement Feature', () => {
 
                     const saveBtn = adminPage.getByRole('button', { name: /save/i }).last();
                     if (await saveBtn.isVisible()) {
-                        await saveBtn.click();
-                        await adminPage.waitForTimeout(2000);
+                        await submitUnit(adminPage, saveBtn);
                     }
                 }
             }
@@ -993,20 +988,17 @@ test.describe('UnoPim Measurement Feature', () => {
             await goToFamilies(adminPage);
             const search = adminPage.locator('input[placeholder*="Search" i]').first();
             if (await search.isVisible()) {
-                await search.fill(familyCode);
-                await search.press('Enter');
-                await adminPage.waitForTimeout(2000);
+                await submitDataGridSearch(adminPage, search, familyCode);
             }
 
             const editBtn = adminPage.locator('[title="Edit"], .icon-edit').first();
             if (await editBtn.isVisible()) {
-                await editBtn.click();
-                await adminPage.waitForTimeout(2000);
+                await clickAndWaitForPage(adminPage, editBtn, FAMILY_EDIT_URL);
 
                 const addUnitBtn = adminPage.locator('button:has-text("Add Unit"), button:has-text("Create Unit")').first();
                 if (await addUnitBtn.isVisible()) {
                     await addUnitBtn.click();
-                    await adminPage.waitForTimeout(1000);
+                    await waitForUnitModal(adminPage);
 
                     const codeInput = adminPage.locator('input[name*="code"]').last();
                     if (await codeInput.isVisible()) {
@@ -1023,8 +1015,7 @@ test.describe('UnoPim Measurement Feature', () => {
 
                     const saveBtn = adminPage.getByRole('button', { name: /save/i }).last();
                     if (await saveBtn.isVisible()) {
-                        await saveBtn.click();
-                        await adminPage.waitForTimeout(2000);
+                        await submitUnit(adminPage, saveBtn);
                     }
                 }
             }
@@ -1038,21 +1029,18 @@ test.describe('UnoPim Measurement Feature', () => {
             await goToFamilies(adminPage);
             const search = adminPage.locator('input[placeholder*="Search" i]').first();
             if (await search.isVisible()) {
-                await search.fill(familyCode);
-                await search.press('Enter');
-                await adminPage.waitForTimeout(2000);
+                await submitDataGridSearch(adminPage, search, familyCode);
             }
 
             const editBtn = adminPage.locator('[title="Edit"], .icon-edit').first();
             if (await editBtn.isVisible()) {
-                await editBtn.click();
-                await adminPage.waitForTimeout(2000);
+                await clickAndWaitForPage(adminPage, editBtn, FAMILY_EDIT_URL);
 
                 // Edit the standard unit's conversion
                 const editUnitBtn = adminPage.locator('[title="Edit Unit"], button:has-text("Edit")').nth(1);
                 if (await editUnitBtn.isVisible()) {
                     await editUnitBtn.click();
-                    await adminPage.waitForTimeout(1000);
+                    await waitForUnitModal(adminPage);
 
                     // Update conversion value
                     const conversionValueInputs = adminPage.locator('input[name*="convert_value"], input[placeholder*="conversion value" i]');
@@ -1066,8 +1054,7 @@ test.describe('UnoPim Measurement Feature', () => {
 
                     const saveBtn = adminPage.getByRole('button', { name: /save/i }).last();
                     if (await saveBtn.isVisible()) {
-                        await saveBtn.click();
-                        await adminPage.waitForTimeout(2000);
+                        await submitUnit(adminPage, saveBtn);
                     }
                 }
             }
@@ -1081,23 +1068,20 @@ test.describe('UnoPim Measurement Feature', () => {
             await goToFamilies(adminPage);
             const search = adminPage.locator('input[placeholder*="Search" i]').first();
             if (await search.isVisible()) {
-                await search.fill(familyCode);
-                await search.press('Enter');
-                await adminPage.waitForTimeout(2000);
+                await submitDataGridSearch(adminPage, search, familyCode);
             }
 
             const editBtn = adminPage.locator('[title="Edit"], .icon-edit').first();
             if (await editBtn.isVisible()) {
-                await editBtn.click();
-                await adminPage.waitForTimeout(2000);
+                await clickAndWaitForPage(adminPage, editBtn, FAMILY_EDIT_URL);
 
                 // Check if units are displayed
                 const unitsList = adminPage.locator('[class*="unit"], tr:has-text("persist_unit")');
                 expect(await unitsList.count()).toBeGreaterThanOrEqual(0);
 
                 // Reload and verify persistence
-                await adminPage.reload();
-                await adminPage.waitForTimeout(2000);
+                await adminPage.reload({ waitUntil: 'load' });
+                await waitForAppReady(adminPage);
                 expect(adminPage.url()).toContain('edit');
             }
         });
@@ -1110,15 +1094,12 @@ test.describe('UnoPim Measurement Feature', () => {
             await goToFamilies(adminPage);
             const search = adminPage.locator('input[placeholder*="Search" i]').first();
             if (await search.isVisible()) {
-                await search.fill(familyCode);
-                await search.press('Enter');
-                await adminPage.waitForTimeout(2000);
+                await submitDataGridSearch(adminPage, search, familyCode);
             }
 
             const editBtn = adminPage.locator('[title="Edit"], .icon-edit').first();
             if (await editBtn.isVisible()) {
-                await editBtn.click();
-                await adminPage.waitForTimeout(2000);
+                await clickAndWaitForPage(adminPage, editBtn, FAMILY_EDIT_URL);
 
                 // Look for conversion operation elements
                 const conversionElements = adminPage.locator('[class*="conversion"], [name*="convert"], input[placeholder*="conversion" i]');
@@ -1134,15 +1115,14 @@ test.describe('UnoPim Measurement Feature', () => {
         
         test('TC36 - Verify measurement families persisted', async ({ adminPage }) => {
             await goToFamilies(adminPage);
-            await adminPage.waitForTimeout(1500);
             const families = adminPage.locator('[class*="row"], tr, li').filter({ hasText: /[a-zA-Z0-9]/ });
             const count = await families.count();
             expect(count).toBeGreaterThanOrEqual(0);
         });
 
         test('TC37 - Verify measurement attributes persisted', async ({ adminPage }) => {
-            await adminPage.goto('/admin/catalog/attributes', { waitUntil: 'domcontentloaded' });
-            await adminPage.waitForTimeout(1500);
+            await adminPage.goto('/admin/catalog/attributes', { waitUntil: 'load' });
+            await waitForAppReady(adminPage);
             const attributes = adminPage.locator('[class*="row"], tr, li').filter({ hasText: /[a-zA-Z0-9]/ });
             const count = await attributes.count();
             expect(count).toBeGreaterThanOrEqual(0);
@@ -1158,8 +1138,8 @@ test.describe('UnoPim Measurement Feature', () => {
         test('TC39 - Verify page refresh maintains state', async ({ adminPage }) => {
             await goToFamilies(adminPage);
             const urlBefore = adminPage.url();
-            await adminPage.reload();
-            await adminPage.waitForTimeout(1000);
+            await adminPage.reload({ waitUntil: 'load' });
+            await waitForAppReady(adminPage);
             expect(adminPage.url()).toContain('/admin/measurement/families');
         });
 
@@ -1168,7 +1148,7 @@ test.describe('UnoPim Measurement Feature', () => {
             const createBtn = adminPage.getByRole('button', { name: /Create Measurements/i }).first();
             if (await createBtn.isVisible()) {
                 await createBtn.click();
-                await adminPage.waitForTimeout(500);
+                await adminPage.locator('input[name=\"code\"]').first().waitFor({ state: 'visible', timeout: 10000 });
                 
                 const labels = adminPage.locator('label, [class*="label"]');
                 const labelCount = await labels.count();

@@ -124,6 +124,8 @@ return [
                     'base'           => 'Decimalen van basiswaarde',
                     'base-info'      => 'Aantal decimalen dat wordt behouden voor de waarde die is omgerekend naar de standaardeenheid.',
                 ],
+                'display-unit-symbol'      => 'Eenheidssymbolen weergeven',
+                'display-unit-symbol-info' => 'Toon meetwaarden met het eenheidssymbool (bijvoorbeeld 100 °C) in plaats van de eenheidsnaam, in de beheeromgeving en in exports. Eenheden zonder symbool behouden hun naam.',
             ],
         ],
     ],
