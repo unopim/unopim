@@ -2,8 +2,11 @@
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
+use Monolog\Handler\TestHandler;
+use Monolog\Logger;
 use OpenSpout\Reader\CSV\Reader as CsvReader;
 use OpenSpout\Reader\XLSX\Reader as XlsxReader;
+use Psr\Log\LoggerInterface;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\DataTransfer\Helpers\Error;
@@ -56,7 +59,7 @@ beforeEach(function () {
     ];
 });
 
-function templateExportRows(array $products, array $filters): array
+function templateExportRows(array $products, array $filters, ?LoggerInterface $logger = null): array
 {
     $jobInstance = JobInstances::create([
         'code'                => 'tpl_export_'.uniqid(),
@@ -78,6 +81,11 @@ function templateExportRows(array $products, array $filters): array
 
     $exporter = app(Exporter::class);
     $exporter->setExport($jobTrack);
+
+    if ($logger !== null) {
+        $exporter->setLogger($logger);
+    }
+
     $exporter->initilize();
 
     $buffer = JSONFileBuffer::initialize($jobTrack);
@@ -267,6 +275,46 @@ it('empties missing or unknown references and keeps the source of a broken templ
 
     expect($row['tpl_exp_title'])->toBe('Tag: .')
         ->and($row['tpl_exp_headline'])->toBe('Hi {{ tpl_exp_name + 1 }}');
+});
+
+it('logs the render errors and warnings of each template to the export job', function () {
+    $product = Product::factory()->create(['values' => [
+        'common'                  => ['tpl_exp_title' => 'Tag: {{ tpl_exp_unknown }}.'],
+        'channel_locale_specific' => [$this->channel->code => [
+            'en_US' => ['tpl_exp_headline' => 'Hi {{ tpl_exp_name + 1 }}'],
+        ]],
+    ]]);
+
+    $handler = new TestHandler;
+
+    templateExportRows([$product], $this->filters, new Logger('export', [$handler]));
+
+    $context = fn (string $attribute): array => ['sku' => $product->sku, 'attribute' => $attribute, 'channel' => $this->channel->code, 'locale' => 'en_US'];
+
+    expect($handler->hasWarning([
+        'message' => trans('product::app.templates.messages.unknown-attribute', ['attribute' => 'tpl_exp_unknown']),
+        'context' => $context('tpl_exp_title'),
+    ]))->toBeTrue()
+        ->and($handler->hasError([
+            'message' => trans('product::app.templates.messages.invalid-syntax', ['expression' => 'tpl_exp_name + 1']),
+            'context' => $context('tpl_exp_headline'),
+        ]))->toBeTrue();
+});
+
+it('reloads the template attributes for every export job', function () {
+    $product = Product::factory()->create(['values' => [
+        'common'          => ['tpl_exp_title' => 'Hi {{ tpl_exp_name }}'],
+        'locale_specific' => $this->names,
+    ]]);
+
+    $before = templateRowsBySku(templateExportRows([$product], $this->filters))[$product->sku]['en_US'];
+
+    Attribute::query()->where('code', 'tpl_exp_title')->update(['enable_templates' => false]);
+
+    $after = templateRowsBySku(templateExportRows([$product], $this->filters))[$product->sku]['en_US'];
+
+    expect($before['tpl_exp_title'])->toBe('Hi Sunglasses')
+        ->and($after['tpl_exp_title'])->toBe('Hi {{ tpl_exp_name }}');
 });
 
 it('resolves referenced attributes that the profile does not export', function () {

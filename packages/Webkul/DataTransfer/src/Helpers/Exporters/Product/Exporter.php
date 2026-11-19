@@ -27,6 +27,7 @@ use Webkul\Product\Contracts\TemplateRenderer;
 use Webkul\Product\Contracts\VariantValueResolver;
 use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Templates\Results\RenderResult;
 
 class Exporter extends AbstractExporter
 {
@@ -34,10 +35,12 @@ class Exporter extends AbstractExporter
 
     /**
      * Static cache for channels/locales/currencies/attributes.
-     * Shared across all ExportBatch jobs within the same worker process,
+     * Shared across the ExportBatch jobs of one export within the same worker process,
      * avoiding redundant DB queries on every batch.
      */
     protected static ?array $staticInitCache = null;
+
+    protected static ?string $staticInitCacheJobId = null;
 
     /**
      * @var array
@@ -130,10 +133,15 @@ class Exporter extends AbstractExporter
     /**
      * Initializes the channels and locales for the export process.
      * Uses a static in-process cache so that the DB queries run only once
-     * per worker process regardless of how many ExportBatch jobs are handled.
+     * per export, while the next export reloads them and sees attribute changes.
      */
     public function initilize(): void
     {
+        if (self::$staticInitCacheJobId !== (string) $this->export?->id) {
+            self::$staticInitCache = null;
+            self::$staticInitCacheJobId = (string) $this->export?->id;
+        }
+
         if (self::$staticInitCache === null) {
             $channels = $this->channelRepository->with(['locales', 'currencies'])->all();
             $channelsAndLocales = [];
@@ -183,7 +191,7 @@ class Exporter extends AbstractExporter
         return (string) ($this->getFilters()['render_templates'] ?? '0') === '1';
     }
 
-    protected function renderTemplateValues(array $fields, array $values, string $channel, string $locale): array
+    protected function renderTemplateValues(array $fields, array $values, string $sku, string $channel, string $locale): array
     {
         foreach ($this->templateAttributes as $code => $attribute) {
             $source = $fields[$code] ?? null;
@@ -192,10 +200,25 @@ class Exporter extends AbstractExporter
                 continue;
             }
 
-            $fields[$code] = $this->templateRenderer()->render($source, $attribute, $values, $channel, $locale)->output;
+            $result = $this->templateRenderer()->render($source, $attribute, $values, $channel, $locale);
+
+            $this->logTemplateProblems($result, ['sku' => $sku, 'attribute' => $code, 'channel' => $channel, 'locale' => $locale]);
+
+            $fields[$code] = $result->output;
         }
 
         return $fields;
+    }
+
+    private function logTemplateProblems(RenderResult $result, array $context): void
+    {
+        foreach ($result->errorMessages() as $message) {
+            $this->jobLogger?->error($message, $context);
+        }
+
+        foreach ($result->warningMessages() as $message) {
+            $this->jobLogger?->warning($message, $context);
+        }
     }
 
     protected function buildAttributeMeta($attributes): array
@@ -604,7 +627,7 @@ class Exporter extends AbstractExporter
                     );
 
                     if ($renderTemplates) {
-                        $mergedFields = $this->renderTemplateValues($mergedFields, $productValues, $channel, $locale);
+                        $mergedFields = $this->renderTemplateValues($mergedFields, $productValues, $product->sku, $channel, $locale);
                     }
 
                     $values = $this->setAttributesValues($mergedFields, $filePath, $locale);
