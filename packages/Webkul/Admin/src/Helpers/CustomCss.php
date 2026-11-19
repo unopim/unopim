@@ -62,9 +62,15 @@ class CustomCss
 
     /**
      * Resolve CSS backslash escapes so obfuscated names can be detected.
+     *
+     * Line breaks are normalised first, as the CSS tokenizer does, so a CRLF
+     * after a hex escape is consumed as one terminator instead of leaving a
+     * stray LF that splits the decoded name.
      */
     protected function decodeEscapes(string $css): string
     {
+        $css = str_replace(["\r\n", "\r", "\f"], "\n", $css);
+
         $css = preg_replace_callback(
             '/\\\\([0-9a-f]{1,6})\s?/i',
             fn (array $m): string => mb_chr((int) hexdec($m[1]), 'UTF-8') ?: '',

@@ -195,3 +195,22 @@ it('keeps unrelated css and escapes intact when blocking external resources', fu
 
     expect(storedCustomCss())->toBe('.a::before { content: "\\2022"; } .b { color: red; }');
 });
+
+it('blocks escaped resource loaders terminated by any line break', function (string $css) {
+    $this->loginAsAdmin();
+
+    put(route('admin.settings.appearance.update'), ['custom_css' => $css])->assertRedirect();
+
+    expect((string) storedCustomCss())->not->toContain('\\');
+
+    get(route('admin.dashboard.index'))
+        ->assertOk()
+        ->assertDontSee('\\75', false)
+        ->assertDontSee('\\69', false);
+})->with([
+    'url crlf'    => ["a{background:\\75\r\nrl(https://evil.test/x.png)}"],
+    'url cr'      => ["a{background:\\75\rrl(https://evil.test/x.png)}"],
+    'url lf'      => ["a{background:\\75\nrl(https://evil.test/x.png)}"],
+    'url ff'      => ["a{background:\\75\frl(https://evil.test/x.png)}"],
+    'import crlf' => ["@\\69\r\nmport \"https://evil.test/a.css\";"],
+]);
