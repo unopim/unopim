@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Webkul\MagicAI\Contracts\MagicAIPlatform as MagicAIPlatformContract;
 use Webkul\MagicAI\Database\Factories\MagicAIPlatformFactory;
+use Webkul\MagicAI\Enums\AiProvider;
 use Webkul\MagicAI\Services\ProviderOverrides;
 
 #[Fillable([
@@ -77,6 +78,20 @@ class MagicAIPlatform extends Model implements MagicAIPlatformContract
         } catch (DecryptException) {
             return null;
         }
+    }
+
+    /**
+     * Whether the platform calls an endpoint other than its provider's stock API, such as a proxy or gateway.
+     */
+    public function usesCustomApiUrl(): bool
+    {
+        $apiUrl = rtrim(trim((string) $this->api_url), '/');
+
+        if ($apiUrl === '') {
+            return false;
+        }
+
+        return $apiUrl !== rtrim((string) AiProvider::tryFrom((string) $this->provider)?->defaultUrl(), '/');
     }
 
     /**
