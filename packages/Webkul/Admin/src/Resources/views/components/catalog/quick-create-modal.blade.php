@@ -162,6 +162,8 @@
                 @endif
             @endif
 
+            {{ $afterTypeFields ?? '' }}
+
             @if ($validationOptions)
                 <x-admin::form.control-group>
                     <x-admin::form.control-group.label class="required">

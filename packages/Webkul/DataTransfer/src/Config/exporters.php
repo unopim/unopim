@@ -340,7 +340,6 @@ return [
     ],
 
     'attributes' => [
-        'module'      => 'pim',
         'title'       => 'data_transfer::app.exporters.attributes.title',
         'exporter'    => Webkul\DataTransfer\Helpers\Exporters\Attribute\Exporter::class,
         'source'      => AttributeRepository::class,
@@ -404,7 +403,6 @@ return [
     ],
 
     'attribute-groups' => [
-        'module'      => 'pim',
         'title'       => 'data_transfer::app.exporters.attribute-groups.title',
         'exporter'    => Webkul\DataTransfer\Helpers\Exporters\AttributeGroup\Exporter::class,
         'source'      => AttributeGroupRepository::class,
@@ -468,7 +466,6 @@ return [
     ],
 
     'attribute-options' => [
-        'module'      => 'pim',
         'title'       => 'data_transfer::app.exporters.attribute-options.title',
         'exporter'    => Webkul\DataTransfer\Helpers\Exporters\AttributeOption\Exporter::class,
         'source'      => AttributeOptionRepository::class,
@@ -500,7 +497,6 @@ return [
     ],
 
     'locales' => [
-        'module'      => 'pim',
         'title'       => 'data_transfer::app.exporters.locales.title',
         'exporter'    => Webkul\DataTransfer\Helpers\Exporters\Locale\Exporter::class,
         'source'      => LocaleRepository::class,
@@ -546,7 +542,6 @@ return [
     ],
 
     'channels' => [
-        'module'      => 'pim',
         'title'       => 'data_transfer::app.exporters.channels.title',
         'exporter'    => Webkul\DataTransfer\Helpers\Exporters\Channel\Exporter::class,
         'source'      => ChannelRepository::class,
@@ -578,7 +573,6 @@ return [
     ],
 
     'currencies' => [
-        'module'      => 'pim',
         'title'       => 'data_transfer::app.exporters.currencies.title',
         'exporter'    => Webkul\DataTransfer\Helpers\Exporters\Currency\Exporter::class,
         'source'      => CurrencyRepository::class,
@@ -624,7 +618,6 @@ return [
     ],
 
     'roles' => [
-        'module'      => 'pim',
         'title'       => 'data_transfer::app.exporters.roles.title',
         'exporter'    => Webkul\DataTransfer\Helpers\Exporters\Role\Exporter::class,
         'source'      => RoleRepository::class,
@@ -656,7 +649,6 @@ return [
     ],
 
     'users' => [
-        'module'      => 'pim',
         'title'       => 'data_transfer::app.exporters.users.title',
         'exporter'    => Webkul\DataTransfer\Helpers\Exporters\User\Exporter::class,
         'source'      => AdminRepository::class,

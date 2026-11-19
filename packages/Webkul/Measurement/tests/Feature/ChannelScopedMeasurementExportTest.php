@@ -1,9 +1,11 @@
 <?php
 
+use Illuminate\Support\Facades\Cache;
 use OpenSpout\Reader\CSV\Reader as CsvReader;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Core\Models\Channel;
+use Webkul\Core\Models\CoreConfig;
 use Webkul\Core\Models\Locale;
 use Webkul\DataTransfer\Helpers\Export;
 use Webkul\DataTransfer\Helpers\Exporters\Product\Exporter;
@@ -20,6 +22,12 @@ use Webkul\Product\Models\Product;
 
 beforeEach(function () {
     $this->loginAsAdmin();
+
+    CoreConfig::updateOrCreate(
+        ['code' => 'system.measurement.display_unit_symbol'],
+        ['value' => '1']
+    );
+    Cache::flush();
 
     $cache = new ReflectionProperty(Exporter::class, 'staticInitCache');
     $cache->setAccessible(true);
@@ -285,9 +293,9 @@ describe('Issue #1196 - channel scoped measurement values during product export'
         $cells = channelScopeExportedCells($product, $measurement, [$this->channelA->code, $this->channelB->code]);
 
         expect($cells[$this->channelA->code]['en_US']['amount'])->toBe('2.5000')
-            ->and($cells[$this->channelA->code]['en_US']['unit'])->toBe('Meter')
+            ->and($cells[$this->channelA->code]['en_US']['unit'])->toBe('m')
             ->and($cells[$this->channelB->code]['en_US']['amount'])->toBe('250.0000')
-            ->and($cells[$this->channelB->code]['en_US']['unit'])->toBe('Centimeter');
+            ->and($cells[$this->channelB->code]['en_US']['unit'])->toBe('cm');
     });
 
     it('A2: writes empty amount and unit cells for a channel holding no value', function () {
@@ -305,7 +313,7 @@ describe('Issue #1196 - channel scoped measurement values during product export'
         $cells = channelScopeExportedCells($product, $measurement, [$this->channelA->code, $this->channelB->code]);
 
         expect($cells[$this->channelA->code]['en_US']['amount'])->toBe('2.5000')
-            ->and($cells[$this->channelA->code]['en_US']['unit'])->toBe('Meter')
+            ->and($cells[$this->channelA->code]['en_US']['unit'])->toBe('m')
             ->and($cells[$this->channelB->code]['en_US']['amount'])->toBe('')
             ->and($cells[$this->channelB->code]['en_US']['unit'])->toBe('');
     });
@@ -332,9 +340,9 @@ describe('Issue #1196 - channel scoped measurement values during product export'
         $cells = channelScopeExportedCells($product, $measurement, [$this->channelA->code, $this->channelB->code]);
 
         expect($cells[$this->channelA->code]['en_US']['amount'])->toBe('2.5000')
-            ->and($cells[$this->channelA->code]['en_US']['unit'])->toBe('Meter')
+            ->and($cells[$this->channelA->code]['en_US']['unit'])->toBe('m')
             ->and($cells[$this->channelB->code]['en_US']['amount'])->toBe('250.0000')
-            ->and($cells[$this->channelB->code]['en_US']['unit'])->toBe('Centimeter');
+            ->and($cells[$this->channelB->code]['en_US']['unit'])->toBe('cm');
     });
 
     it('B2: writes empty cells for a channel and locale pair holding no value', function () {
@@ -354,7 +362,7 @@ describe('Issue #1196 - channel scoped measurement values during product export'
         $cells = channelScopeExportedCells($product, $measurement, [$this->channelA->code, $this->channelB->code]);
 
         expect($cells[$this->channelA->code]['en_US']['amount'])->toBe('2.5000')
-            ->and($cells[$this->channelA->code]['en_US']['unit'])->toBe('Meter')
+            ->and($cells[$this->channelA->code]['en_US']['unit'])->toBe('m')
             ->and($cells[$this->channelB->code]['en_US']['amount'])->toBe('')
             ->and($cells[$this->channelB->code]['en_US']['unit'])->toBe('');
     });
@@ -372,9 +380,9 @@ describe('Issue #1196 - channel scoped measurement values during product export'
         $cells = channelScopeExportedCells($product, $measurement, [$this->channelA->code, $this->channelB->code]);
 
         expect($cells[$this->channelA->code]['en_US']['amount'])->toBe('250.0000')
-            ->and($cells[$this->channelA->code]['en_US']['unit'])->toBe('Centimeter')
+            ->and($cells[$this->channelA->code]['en_US']['unit'])->toBe('cm')
             ->and($cells[$this->channelB->code]['en_US']['amount'])->toBe('250.0000')
-            ->and($cells[$this->channelB->code]['en_US']['unit'])->toBe('Centimeter');
+            ->and($cells[$this->channelB->code]['en_US']['unit'])->toBe('cm');
     });
 
     it('D: exports the stored amount in the stored unit and never the base data or the attribute standard unit', function () {

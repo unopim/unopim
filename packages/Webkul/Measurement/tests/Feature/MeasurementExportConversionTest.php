@@ -1,10 +1,12 @@
 <?php
 
+use Illuminate\Support\Facades\Cache;
 use OpenSpout\Reader\CSV\Reader as CsvReader;
 use OpenSpout\Reader\XLSX\Reader as XlsxReader;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Core\Models\Channel;
+use Webkul\Core\Models\CoreConfig;
 use Webkul\Core\Models\Locale;
 use Webkul\DataTransfer\Helpers\Export;
 use Webkul\DataTransfer\Helpers\Exporters\Product\Exporter;
@@ -21,6 +23,12 @@ use Webkul\Product\Models\Product;
 
 beforeEach(function () {
     $this->loginAsAdmin();
+
+    CoreConfig::updateOrCreate(
+        ['code' => 'system.measurement.display_unit_symbol'],
+        ['value' => '1']
+    );
+    Cache::flush();
 
     $cache = new ReflectionProperty(Exporter::class, 'staticInitCache');
     $cache->setAccessible(true);
@@ -289,9 +297,9 @@ describe('Issue #1196 - measurement conversion during product export', function 
         $extraRow = $byChannel[$this->extraChannel->code];
 
         expect($defaultRow[$measurement->code])->toBe('2.5000')
-            ->and($defaultRow[$measurement->code.'(unit)'])->toBe('Meter')
+            ->and($defaultRow[$measurement->code.'(unit)'])->toBe('m')
             ->and($extraRow[$measurement->code])->toBe('2.5000')
-            ->and($extraRow[$measurement->code.'(unit)'])->toBe('Meter');
+            ->and($extraRow[$measurement->code.'(unit)'])->toBe('m');
     });
 
     it('produces the same unconverted amount in both the CSV and the XLSX file for every channel', function () {
@@ -336,9 +344,9 @@ describe('Issue #1196 - measurement conversion during product export', function 
             $fileRows = measurementReadExportFile($path, $format);
 
             expect(measurementCellFor($fileRows, $this->defaultChannel->code, $measurement->code))->toBe('2.5000')
-                ->and(measurementCellFor($fileRows, $this->defaultChannel->code, $measurement->code.'(unit)'))->toBe('Meter')
+                ->and(measurementCellFor($fileRows, $this->defaultChannel->code, $measurement->code.'(unit)'))->toBe('m')
                 ->and(measurementCellFor($fileRows, $this->extraChannel->code, $measurement->code))->toBe('2.5000')
-                ->and(measurementCellFor($fileRows, $this->extraChannel->code, $measurement->code.'(unit)'))->toBe('Meter');
+                ->and(measurementCellFor($fileRows, $this->extraChannel->code, $measurement->code.'(unit)'))->toBe('m');
 
             @unlink($path);
         }
@@ -393,9 +401,9 @@ describe('Issue #1196 - measurement conversion during product export', function 
         $byChannel = collect($rows)->keyBy('channel');
 
         expect($byChannel[$this->defaultChannel->code][$measurement->code])->toBe('2.5000')
-            ->and($byChannel[$this->defaultChannel->code][$measurement->code.'(unit)'])->toBe('Meter')
+            ->and($byChannel[$this->defaultChannel->code][$measurement->code.'(unit)'])->toBe('m')
             ->and($byChannel[$this->extraChannel->code][$measurement->code])->toBe('250.0000')
-            ->and($byChannel[$this->extraChannel->code][$measurement->code.'(unit)'])->toBe('Centimeter');
+            ->and($byChannel[$this->extraChannel->code][$measurement->code.'(unit)'])->toBe('cm');
     });
 
     it('leaves the second channel column empty when a channel-scoped value exists only for the first channel', function () {
@@ -490,9 +498,9 @@ describe('Issue #1196 - measurement conversion during product export', function 
         expect($byLocale)->toHaveKey('en_US')
             ->and($byLocale)->toHaveKey('fr_FR')
             ->and($byLocale['en_US'][$measurement->code])->toBe('2.5000')
-            ->and($byLocale['en_US'][$measurement->code.'(unit)'])->toBe('Meter')
+            ->and($byLocale['en_US'][$measurement->code.'(unit)'])->toBe('m')
             ->and($byLocale['fr_FR'][$measurement->code])->toBe('2.5000')
-            ->and($byLocale['fr_FR'][$measurement->code.'(unit)'])->toBe('Metre');
+            ->and($byLocale['fr_FR'][$measurement->code.'(unit)'])->toBe('m');
     });
 
     it('resolves the product exporter to the core class or a subclass, which reads amount and unit verbatim', function () {

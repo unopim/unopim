@@ -841,6 +841,14 @@ body .tox .tox-dialog__footer .tox-button--secondary:hover:not(:disabled) {
     @apply text-unopim-primary text-primary-600 dark:bg-cherry-600 dark:text-slate-50;
 }
 
+.multiselect__tag-icon:hover {
+    @apply bg-transparent;
+}
+
+.multiselect__tag-icon:hover:after {
+    @apply text-unopim-primary text-primary-600 dark:text-slate-50;
+}
+
 .multiselect--active .multiselect__content-wrapper {
     z-index: 1001;
 }

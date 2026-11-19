@@ -16,7 +16,7 @@
 - The product grid's quick search reads the attribute codes it looks in from `products.search_fields`, so an EAN, a GTIN or a supplier article number can be searched from the one search box. An attribute marked `is_filterable` could already be filtered by substring on its own grid column with the `contains` operator; this saves adding the column and picking the operator, and covers identifier attributes that are not filterable, such as the seeded `product_number`. The SKU and the name are still searched by default, codes that do not resolve to a text attribute are skipped, and at most ten are searched.
 - Platform modules let packages run alongside PIM or without it. Packages register modules under `platform_modules`; switched-off modules are hidden from menus, ACL, the dashboard, data transfer job types and API scopes, and their named routes return 404. Modules are chosen in the general platform settings or with `unopim:install --modules`.
 - Packages can deliver their own events through the webhook pipeline with `WebhookService::deliverEvent()` and `deliverEvents()`, signed, SSRF-guarded and logged like product deliveries. The webhook form gains create/update events and a settings render event.
-- Added a "Display unit symbols" switch to the measurement settings. When on, product unit dropdowns, bulk edit, the product grid and its unit filter, and product exports show the unit symbol, falling back to the unit name. It is off by default, so existing exports are unchanged.
+- Measurement units show as their symbol by default (for example `°C`), falling back to the unit name when a unit has none. Toggle under Settings → Measurement. Upgrade note: the default is now on, so grids and exports show symbols instead of names unless you turn it off.
 - A package can mark its own attribute type as measurement-backed with `measurement_backed` on its `attribute_types` entry, and it is then treated like the core `measurement` type in the attribute form, validation and API.
 - Added view events to the dashboard sections, so packages can render their own widgets.
 - Publications gain releases, a cross-locale identifier for one publish moment.
@@ -26,6 +26,8 @@
 - The AI chat caches its instructions and tool definitions and tracks cached tokens in analytics.
 - The AI category tree tool can be scoped to a family and ranks categories by relevance at any depth.
 - AI agent extensions can register result cards, composer controls and tool decorators.
+- Completeness score colour thresholds are configurable under Settings → Completeness: a green-from and a red-below percentage (default 90 and 60), applied to the product grid, the radial progress and the dashboard. Upgrade note: the new defaults replace the old hard-coded cutoffs, so scores recolour on upgrade unless you set your own.
+- The Add Attribute modal now collects the measurement family and unit for a measurement type and saves them on create, so the attribute is ready to use without a follow-up edit and no longer flashes the "family and unit required" warning.
 
 ## Improvements
 

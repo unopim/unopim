@@ -32,7 +32,22 @@ class AttributeMeasurementService
 
         $savedFamily = $measurement->family_code ?? '';
 
-        $familyOptions = $this->familyRepository
+        return [
+            'familyOptions' => $this->familyOptions(),
+            'oldFamily'     => $savedFamily,
+            'oldUnit'       => $measurement->unit_code ?? '',
+            'units'         => $savedFamily === '' ? [] : $this->unitsForFamily($savedFamily),
+        ];
+    }
+
+    /**
+     * All measurement families as select options (code as both id and label).
+     *
+     * @return array<int, array{id: string, label: string}>
+     */
+    public function familyOptions(): array
+    {
+        return $this->familyRepository
             ->getModel()
             ->newQuery()
             ->orderBy('id')
@@ -43,13 +58,6 @@ class AttributeMeasurementService
             ])
             ->values()
             ->toArray();
-
-        return [
-            'familyOptions' => $familyOptions,
-            'oldFamily'     => $savedFamily,
-            'oldUnit'       => $measurement->unit_code ?? '',
-            'units'         => $savedFamily === '' ? [] : $this->unitsForFamily($savedFamily),
-        ];
     }
 
     /**

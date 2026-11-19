@@ -1,7 +1,9 @@
 <?php
 
+use Illuminate\Support\Facades\Cache;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
+use Webkul\Core\Models\CoreConfig;
 use Webkul\DataTransfer\Helpers\Exporters\Product\Exporter as CoreExporter;
 use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
 use Webkul\DataTransfer\Helpers\Importers\Product\Importer as CoreImporter;
@@ -13,6 +15,12 @@ use Webkul\Product\Models\Product;
 
 beforeEach(function () {
     $this->loginAsAdmin();
+
+    CoreConfig::updateOrCreate(
+        ['code' => 'system.measurement.display_unit_symbol'],
+        ['value' => '1']
+    );
+    Cache::flush();
 
     foreach ([CoreImporter::class, CoreExporter::class] as $class) {
         $cache = new ReflectionProperty($class, 'staticInitCache');
@@ -154,7 +162,7 @@ it('persists an imported measurement structure on a product and reads it back af
         ->and($persisted['base_unit'] ?? null)->toBe('meter');
 });
 
-it('exports the amount column plus a (unit) companion column carrying the localized unit label', function () {
+it('exports the amount column plus a (unit) companion column carrying the unit symbol', function (): void {
     [, $measurement] = verifyImpExpSetup();
 
     $columns = verifyImpExpExportColumns(
@@ -166,7 +174,7 @@ it('exports the amount column plus a (unit) companion column carrying the locali
     expect($columns)->toHaveKey($measurement->code)
         ->and($columns)->toHaveKey($measurement->code.'(unit)')
         ->and($columns[$measurement->code])->toBe('250')
-        ->and($columns[$measurement->code.'(unit)'])->toBe('सेंटीमीटर');
+        ->and($columns[$measurement->code.'(unit)'])->toBe('cm');
 });
 
 it('round-trips a measurement value through export then re-import without drift', function () {
@@ -185,7 +193,7 @@ it('round-trips a measurement value through export then re-import without drift'
     );
 
     expect((float) $columns[$measurement->code])->toBe(250.0)
-        ->and($columns[$measurement->code.'(unit)'])->toBe('Centimeter');
+        ->and($columns[$measurement->code.'(unit)'])->toBe('cm');
 
     $reimported = verifyImpExpImport($family, [
         $measurement->code          => $columns[$measurement->code],
@@ -246,14 +254,13 @@ it('unwraps a channel/locale scoped measurement value when exporting', function 
     );
 
     expect($columns[$measurement->code])->toBe('42')
-        ->and($columns[$measurement->code.'(unit)'])->toBe('Meter');
+        ->and($columns[$measurement->code.'(unit)'])->toBe('m');
 });
 
 it('escapes a unit label that begins with a formula operator on export', function () {
     [, $measurement] = verifyImpExpSetup([
         [
             'code'                  => 'meter',
-            'symbol'                => 'm',
             'labels'                => ['en_US' => '=Meter'],
             'convert_from_standard' => [['value' => '1', 'operator' => 'mul']],
         ],

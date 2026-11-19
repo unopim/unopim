@@ -40,8 +40,10 @@ it('falls back to pim when nothing usable is stored', function (string $stored) 
 })->with(['', 'unknown', 'shopify']);
 
 it('lists registered modules as setting options with pim first', function () {
-    expect(array_column(app(ModuleGate::class)->moduleOptions(), 'value'))
-        ->toBe(['pim', 'records', 'dam', 'shopify']);
+    $values = array_column(app(ModuleGate::class)->moduleOptions(), 'value');
+
+    expect($values[0])->toBe('pim')
+        ->and($values)->toEqualCanonicalizing(['pim', 'dam', 'records', 'shopify']);
 });
 
 it('rejects a dependent module selected without its requirement', function () {

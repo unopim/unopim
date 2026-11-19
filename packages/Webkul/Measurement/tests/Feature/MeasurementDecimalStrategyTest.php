@@ -13,6 +13,11 @@ use Webkul\Product\Repositories\ProductRepository;
 beforeEach(function () {
     $this->loginAsAdmin();
 
+    CoreConfig::updateOrCreate(
+        ['code' => 'system.measurement.display_unit_symbol'],
+        ['value' => '1']
+    );
+
     Cache::flush();
 });
 
@@ -201,7 +206,7 @@ it('shows fewer decimals than it stores because display formatting is hardcoded 
     dump(['stored_amount' => $stored['amount'], 'datagrid_display' => $displayed]);
 
     expect($stored['amount'])->toBe('1.234568')
-        ->and($displayed)->toBe('1.2346 Meter');
+        ->and($displayed)->toBe('1.2346 m');
 });
 
 it('renders the info tooltip for every precision field including the strategy field', function () {
