@@ -94,7 +94,7 @@
                                     input-type="checkbox"
                                     value-field="key"
                                     id-field="key"
-                                    :items="json_encode($acl->items)"
+                                    :items="json_encode(app(\Webkul\Core\Platform\ModuleGate::class)->pruneTree($acl->items))"
                                     :value="json_encode($role->permissions)"
                                     :fallback-locale="config('app.fallback_locale')"
                                 />

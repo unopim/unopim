@@ -24,10 +24,16 @@ return [
     'file-outside-attribute-path'      => 'Il file :value non appartiene a questo record. Caricalo di nuovo per il campo :attribute.',
     'password-surrounding-whitespace'  => 'Il campo :attribute non può iniziare né terminare con uno spazio.',
     'password-whitespace-only'         => 'Il campo :attribute non può essere composto solo da spazi.',
+    'hideable-sections'                => 'Il campo :attribute contiene una sezione che non può essere nascosta.',
     'active-content-detected'          => 'Impossibile caricare :attribute perché contiene contenuto attivo (:reason).',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'JavaScript incorporato o un\'azione PDF a esecuzione automatica',
         'embedded_vba_macro'            => 'una macro VBA incorporata',
         'auto_executing_ole_object'     => 'un oggetto incorporato a esecuzione automatica',
+    ],
+    'platform-modules'                => [
+        'empty'    => 'Seleziona almeno un modulo della piattaforma.',
+        'unknown'  => 'Il modulo della piattaforma ":module" non è installato.',
+        'requires' => ':module può essere attivato solo insieme a :requires.',
     ],
 ];

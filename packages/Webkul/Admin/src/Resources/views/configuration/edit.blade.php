@@ -27,6 +27,8 @@
     >
         <x-admin::layouts.edit-page-header
             :title="$title"
+            :back-url="route('admin.configuration.edit')"
+            :back-label="trans('admin::app.account.edit.back-btn')"
             form="configuration-edit-form"
             :save-label="trans('admin::app.configuration.index.save-btn')"
         />

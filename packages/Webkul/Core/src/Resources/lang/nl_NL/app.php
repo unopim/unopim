@@ -5,4 +5,8 @@ return [
         'template' => 'Sjabloon',
         'parents'  => 'Ouders',
     ],
+
+    'platform-modules' => [
+        'pim' => 'Productinformatie (PIM)',
+    ],
 ];

@@ -5,8 +5,11 @@ namespace Webkul\DataTransfer\Jobs\Import;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Psr\Log\LoggerInterface;
+use Webkul\DataTransfer\Contracts\JobTrack;
 use Webkul\DataTransfer\Helpers\Import as ImportHelper;
 use Webkul\DataTransfer\Services\JobLogger;
+use Webkul\DataTransfer\Services\JobTypeGate;
 use Webkul\User\Models\AdminProxy;
 
 class ImportTrackBatch implements ShouldQueue
@@ -69,6 +72,12 @@ class ImportTrackBatch implements ShouldQueue
 
         $importHelper->setLogger($logger);
 
+        if ($this->importBatch instanceof JobTrack && app(JobTypeGate::class)->hidesTrack($this->importBatch)) {
+            $this->refuseHiddenType($logger);
+
+            return;
+        }
+
         $logger->info(trans('data_transfer::app.job.started'));
 
         // Set started_at now so the tracker timer begins from the validation phase.
@@ -122,6 +131,20 @@ class ImportTrackBatch implements ShouldQueue
         };
 
         $importHelper->stats($state);
+    }
+
+    /**
+     * Fail a track whose job type was switched off after it was queued.
+     */
+    protected function refuseHiddenType(LoggerInterface $logger): void
+    {
+        $message = trans('data_transfer::app.job.module-disabled', ['type' => $this->importBatch->jobInstance?->entity_type]);
+
+        $logger->error($message);
+
+        $this->importBatch->state = ImportHelper::STATE_FAILED;
+        $this->importBatch->errors = [$message];
+        $this->importBatch->save();
     }
 
     public function failed(\Throwable $exception): void
