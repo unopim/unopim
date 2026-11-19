@@ -137,6 +137,14 @@ return [
                     'delete-success' => 'Registros del Webhook eliminados exitosamente',
                     'delete-failed'  => 'La eliminación de los registros del Webhook falló inesperadamente',
                     'unauthorized'   => 'Esta acción no está autorizada',
+                    'select-all'     => [
+                        'delete' => [
+                            'queued'    => 'Eliminación en cola para todos los registros coincidentes. Se le notificará cuando termine.',
+                            'title'     => 'Eliminación de registros de webhook',
+                            'completed' => ':count registros de webhook eliminados.',
+                            'failed'    => 'La eliminación de :count registros de webhook finalizó con errores. Algunos registros no se eliminaron.',
+                        ],
+                    ],
                 ],
             ],
         ],

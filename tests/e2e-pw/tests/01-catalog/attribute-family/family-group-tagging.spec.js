@@ -1,5 +1,5 @@
 const { test, expect } = require('../../../utils/family-fixtures');
-const { generateUid } = require('../../../utils/helpers');
+const { generateUid, closeDropdown } = require('../../../utils/helpers');
 const { createFamily, deleteFamilyByCode, selectMultiselect } = require('../../../utils/family-helpers');
 
 /**
@@ -38,7 +38,7 @@ test.describe('Attribute Family — assign-group modal tagging', () => {
     await expect(tags.filter({ hasText: newName })).toHaveCount(1);
     await expect(page.locator('.multiselect__tags-wrap').getByText(/^\[.*\]$/)).toHaveCount(0);
 
-    await page.keyboard.press('Escape').catch(() => {});
+    await closeDropdown(page);
     await deleteFamilyByCode(page, code);
   });
 });

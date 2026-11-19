@@ -24,7 +24,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.es',
   '\n' +
   '<p>Para pasar de una sección de la IU a la anterior, pulse <strong>Mayús+Tab</strong>.</p>\n' +
   '\n' +
-  '<p>El orden de <strong>tabulación</strong> de estas secciones de la IU es:\n' +
+  '<p>El orden de <strong>tabulación</strong> de estas secciones de la IU es:</p>\n' +
   '\n' +
   '<ol>\n' +
   '  <li>Barra de menús</li>\n' +
@@ -39,7 +39,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.es',
   '<p>Si una sección de la IU no está presente, esta se omite.</p>\n' +
   '\n' +
   '<p>Si el pie de página tiene un enfoque de navegación con el teclado y no hay ninguna barra lateral visible, al pulsar <strong>Mayús+Tab</strong>,\n' +
-  '  el enfoque se moverá al primer grupo de barra de herramientas, en lugar de al último.\n' +
+  '  el enfoque se moverá al primer grupo de barra de herramientas, en lugar de al último.</p>\n' +
   '\n' +
   '<h1>Navegar dentro de las secciones de la IU</h1>\n' +
   '\n' +
@@ -54,7 +54,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.es',
   '  <li>desplazarse entre los elementos de la ruta de elemento del pie de página.</li>\n' +
   '</ul>\n' +
   '\n' +
-  '<p>Las teclas de flecha <strong>abajo</strong> y <strong>arriba</strong> permiten\n' +
+  '<p>Las teclas de flecha <strong>abajo</strong> y <strong>arriba</strong> permiten</p>\n' +
   '\n' +
   '<ul>\n' +
   '  <li>desplazarse entre los elementos de menú de un menú.</li>\n' +
@@ -63,7 +63,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.es',
   '\n' +
   '<p>Las teclas de <strong>flecha</strong> van cambiando dentro de la sección de la IU enfocada.</p>\n' +
   '\n' +
-  '<p>Para cerrar un menú, un submenú o un menú emergente que estén abiertos, pulse la tecla <strong>Esc</strong>.\n' +
+  '<p>Para cerrar un menú, un submenú o un menú emergente que estén abiertos, pulse la tecla <strong>Esc</strong>.</p>\n' +
   '\n' +
   '<p>Si el enfoque actual se encuentra en la parte superior de una sección de la IU determinada, al pulsar la tecla <strong>Esc</strong> saldrá\n' +
   '  de la navegación con el teclado por completo.</p>\n' +
@@ -71,7 +71,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.es',
   '<h1>Ejecutar un elemento de menú o un botón de barra de herramientas</h1>\n' +
   '\n' +
   '<p>Si el elemento de menú o el botón de barra de herramientas deseado está resaltado, pulse la tecla <strong>Retorno</strong> o <strong>Entrar</strong>,\n' +
-  '  o la <strong>barra espaciadora</strong> para ejecutar el elemento.\n' +
+  '  o la <strong>barra espaciadora</strong> para ejecutar el elemento.</p>\n' +
   '\n' +
   '<h1>Navegar por cuadros de diálogo sin pestañas</h1>\n' +
   '\n' +

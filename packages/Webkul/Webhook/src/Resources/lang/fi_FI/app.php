@@ -137,6 +137,14 @@ return [
                     'delete-success' => 'Webhook-lokit poistettu onnistuneesti',
                     'delete-failed'  => 'Webhook-lokien poisto epäonnistui odottamattomasti',
                     'unauthorized'   => 'Tätä toimintoa ei ole valtuutettu',
+                    'select-all'     => [
+                        'delete' => [
+                            'queued'    => 'Poisto on jonossa kaikille hakua vastaaville lokeille. Saat ilmoituksen, kun se on valmis.',
+                            'title'     => 'Webhook-lokien poisto',
+                            'completed' => ':count webhook-lokia poistettu.',
+                            'failed'    => ':count webhook-lokin poisto päättyi virheisiin. Joitakin lokeja ei poistettu.',
+                        ],
+                    ],
                 ],
             ],
         ],

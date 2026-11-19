@@ -636,3 +636,47 @@ it('updates an association type with untranslated locale labels and never leaks 
         expect($attributes[$locale->code.'.name'])->toContain($locale->code);
     }
 });
+
+it('mass updates only the association types matching the filters when all matching are selected', function () {
+    $this->loginAsAdmin();
+
+    $matching = collect(range(1, 3))->map(fn (int $i) => createAssociationType(['code' => 'selall_match_'.$i, 'status' => 0])->id)->all();
+    $other = createAssociationType(['code' => 'selall_other', 'status' => 0])->id;
+
+    $this->postJson(route('admin.catalog.association_types.mass_update'), [
+        'select_all' => 1,
+        'filters'    => ['code' => ['selall_match_']],
+        'value'      => 1,
+    ])->assertOk();
+
+    expect(AssociationType::whereIn('id', $matching)->where('status', 1)->count())->toBe(3)
+        ->and((int) AssociationType::find($other)->status)->toBe(0);
+});
+
+it('mass deletes only the user defined association types matching the filters when all matching are selected', function () {
+    $this->loginAsAdmin();
+
+    $matching = collect(range(1, 3))->map(fn (int $i) => createAssociationType(['code' => 'seldel_match_'.$i])->id)->all();
+    $system = createAssociationType(['code' => 'seldel_match_system', 'is_user_defined' => 0])->id;
+    $other = createAssociationType(['code' => 'seldel_other'])->id;
+
+    $this->postJson(route('admin.catalog.association_types.mass_delete'), [
+        'select_all' => 1,
+        'filters'    => ['code' => ['seldel_match_']],
+    ])->assertOk();
+
+    expect(AssociationType::whereIn('id', $matching)->count())->toBe(0)
+        ->and(AssociationType::whereIn('id', [$system, $other])->count())->toBe(2);
+});
+
+it('still requires an id list on association type mass actions when all matching are not selected', function () {
+    $this->loginAsAdmin();
+
+    $this->postJson(route('admin.catalog.association_types.mass_delete'), [])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors('indices');
+
+    $this->postJson(route('admin.catalog.association_types.mass_update'), ['value' => 1])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors('indices');
+});

@@ -4,6 +4,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Str;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAxis;
 use Webkul\Product\Repositories\ProductRepository;
@@ -11,8 +12,6 @@ use Webkul\Product\Repositories\ProductRepository;
 uses(DatabaseTransactions::class);
 
 it('persists the structure id and axis super_attributes on create', function () {
-    // Codes are suffixed with a random string because this suite runs against a
-    // seeded database that already has attributes named "color", "size", etc.
     $colorCode = 'color_'.Str::random(8);
     $sizeCode = 'size_'.Str::random(8);
 
@@ -33,7 +32,7 @@ it('persists the structure id and axis super_attributes on create', function () 
     ]);
 
     $product = app(ProductRepository::class)->create([
-        'type'                 => 'configurable',
+        'type'                 => ProductType::Configurable->value,
         'attribute_family_id'  => $family->id,
         'sku'                  => 'CFG-STRUCT-'.Str::random(8),
         'variant_structure_id' => $structure->id,

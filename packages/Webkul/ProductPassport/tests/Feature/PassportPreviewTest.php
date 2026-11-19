@@ -31,9 +31,6 @@ it('renders the current product data behind a not-published banner with zero sid
 });
 
 it('lists document fields as pending without writing to the asset disk', function (): void {
-    Storage::fake(config('filesystems.default'));
-    Storage::fake(config('publication.asset_disk'));
-
     [$product, $context] = $this->productWithSecretAndDppAttributes(withDocument: true);
 
     $this->enablePassportPublishing($context->channel->code);

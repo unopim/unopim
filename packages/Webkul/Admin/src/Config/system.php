@@ -1,6 +1,10 @@
 <?php
 
+use Webkul\Core\Platform\ModuleGate;
+use Webkul\Core\Rules\HideableSections;
 use Webkul\Core\Rules\IpPatternRule;
+use Webkul\Core\Rules\PlatformModuleSelection;
+use Webkul\MagicAI\MagicAI;
 
 return [
     /**
@@ -16,6 +20,7 @@ return [
         'name'      => 'admin::app.configuration.index.general.magic-ai.title',
         'info'      => 'admin::app.configuration.index.general.magic-ai.info',
         'icon'      => 'settings/magic-ai.svg',
+        'acl'       => 'ai-agent.general',
         'sort'      => 3,
     ], [
         'key'    => 'general.magic_ai.settings',
@@ -37,6 +42,13 @@ return [
                 'title' => 'admin::app.configuration.index.general.magic-ai.settings.ai-model',
                 'type'  => 'blade',
                 'path'  => 'admin::configuration.magic-ai.field.text-generation-model',
+            ], [
+                'name'          => 'max_tokens',
+                'title'         => 'admin::app.configuration.index.general.magic-ai.settings.max-tokens',
+                'type'          => 'number',
+                'info'          => 'admin::app.configuration.index.general.magic-ai.settings.max-tokens-info',
+                'default_value' => (string) MagicAI::DEFAULT_MAX_TOKENS,
+                'validation'    => ['nullable', 'integer', 'min:1', 'max:'.MagicAI::MAX_TOKENS_CEILING],
             ],
         ],
     ], [
@@ -250,6 +262,35 @@ return [
                 'title'       => 'admin::app.configuration.index.general.microsoft-sso.settings.client-secret',
                 'type'        => 'password',
                 'placeholder' => '••••••••',
+            ],
+        ],
+    ], [
+        'key'  => 'general.platform',
+        'name' => 'admin::app.configuration.index.general.platform.title',
+        'info' => 'admin::app.configuration.index.general.platform.info',
+        'sort' => 6,
+    ], [
+        'key'    => 'general.platform.settings',
+        'name'   => 'admin::app.configuration.index.general.platform.settings.title',
+        'info'   => 'admin::app.configuration.index.general.platform.settings.info',
+        'sort'   => 1,
+        'fields' => [
+            [
+                'name'          => 'modules',
+                'title'         => 'admin::app.configuration.index.general.platform.modules.title',
+                'info'          => 'admin::app.configuration.index.general.platform.modules.info',
+                'type'          => 'multiselect',
+                'repository'    => ModuleGate::class.'@moduleOptions',
+                'default_value' => 'pim',
+                'validation'    => ['required', PlatformModuleSelection::class],
+            ], [
+                'name'               => 'hidden_sections',
+                'title'              => 'admin::app.configuration.index.general.platform.hidden-sections.title',
+                'info'               => 'admin::app.configuration.index.general.platform.hidden-sections.info',
+                'type'               => 'multiselect',
+                'repository'         => ModuleGate::class.'@hideableSectionOptions',
+                'default_repository' => ModuleGate::class.'@defaultHiddenSections',
+                'validation'         => ['nullable', HideableSections::class],
             ],
         ],
     ], [

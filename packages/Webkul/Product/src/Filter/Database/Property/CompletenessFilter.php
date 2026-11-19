@@ -58,7 +58,7 @@ class CompletenessFilter extends AbstractPropertyFilter
         }
 
         /** raw statements bypass the builder, so the prefix is applied here */
-        $column = sprintf('%s%s.%s', DB::getTablePrefix(), $this->getSearchTablePath($options), self::COLUMN);
+        $column = DB::getQueryGrammar()->wrap(sprintf('%s.%s', $this->getSearchTablePath($options), self::COLUMN));
 
         if ($comparison = self::COMPARISONS[$operator->value] ?? null) {
             $this->queryBuilder->whereRaw("$column $comparison ?", [(float) $this->scalarValue($value)]);

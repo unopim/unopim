@@ -7,6 +7,7 @@
  *
  * Fixture: scripts/seed-passport-template-e2e.php (idempotent).
  */
+const { closeDropdown } = require('../../utils/helpers');
 const { execFileSync } = require('child_process');
 
 const { test, expect } = require('@playwright/test');
@@ -15,9 +16,13 @@ const CONTAINER = process.env.PASSPORT_E2E_CONTAINER || 'unopim-assoc-unopim-fpm
 
 const TEMPLATE_CODE = `battery_e2e_${Date.now().toString(36)}`;
 
-const CONSUMER_FIELD = { label: 'Rated Capacity', attribute: 'Rated Capacity', value: '78 kWh' };
-const OPERATOR_FIELD = { label: 'Dismantling Instructions', attribute: 'Dismantling Instructions' };
-const AUTHORITY_FIELD = { label: 'EU Declaration of Conformity', attribute: 'EU Declaration of Conformity' };
+const MAIN_SECTION = 'Battery Data';
+const CHEMISTRY_SECTION = 'Cell Chemistry';
+
+const CONSUMER_FIELD = { label: 'Rated Capacity', attribute: 'Rated Capacity', value: '78 kWh', section: MAIN_SECTION };
+const CHEMISTRY_FIELD = { label: 'Battery Chemistry', attribute: 'Battery Chemistry', value: 'Li-ion NMC 811', section: CHEMISTRY_SECTION };
+const OPERATOR_FIELD = { label: 'Dismantling Instructions', attribute: 'Dismantling Instructions', section: MAIN_SECTION };
+const AUTHORITY_FIELD = { label: 'EU Declaration of Conformity', attribute: 'EU Declaration of Conformity', section: MAIN_SECTION };
 
 let fixture;
 let templateUrl;
@@ -124,7 +129,7 @@ async function pickInMultiselect(scope, hiddenName, optionLabel) {
     await option.click({ timeout: 8_000 }).catch(() => {});
 
     if (await hidden.inputValue().catch(() => '')) {
-      await (scope.keyboard ?? scope.page().keyboard).press('Escape');
+      await closeDropdown(scope.page?.() ?? scope);
 
       return;
     }
@@ -137,6 +142,42 @@ async function selectByLabel(modal, name, optionLabel) {
   await pickInMultiselect(modal, name, optionLabel);
 }
 
+/**
+ * Both saves in this suite raise the same "updated successfully" flash, so
+ * asserting on that text can match the previous save's flash and let the test
+ * move on while the current update is still in flight. The response is the only
+ * signal tied to the save being asserted, and the admin form posts with a
+ * spoofed `_method=PUT`, so match the route rather than the verb. A
+ * `redirect_url` in the payload then swaps `#app` through the SPA navigation
+ * layer, which fires no load event — wait for its own success event instead.
+ */
+async function saveTemplate(page) {
+  await page.evaluate(() => {
+    window.__navigated = false;
+
+    document.addEventListener('unopim:navigate:success', () => {
+      window.__navigated = true;
+    }, { once: true });
+  });
+
+  const [response] = await Promise.all([
+    page.waitForResponse((res) => res.request().method() === 'POST'
+      && /\/admin\/catalog\/passports\/templates\/\d+$/.test(new URL(res.url()).pathname)),
+    page.getByRole('button', { name: /^Save changes$/ }).click(),
+  ]);
+
+  expect(response.ok()).toBeTruthy();
+
+  const payload = await response.json().catch(() => ({}));
+
+  if (payload.redirect_url) {
+    await expect.poll(
+      () => page.evaluate(() => window.__navigated === true),
+      { timeout: 15_000 },
+    ).toBe(true);
+  }
+}
+
 async function openFieldModal(page) {
   await page.getByRole('button', { name: 'Add Field' }).click();
 
@@ -147,7 +188,7 @@ async function openFieldModal(page) {
   return modal;
 }
 
-test.describe.serial('EU battery Digital Product Passport', () => {
+test.describe.serial('EU battery Digital Product Passport', { tag: '@global-state' }, () => {
   test.beforeAll(() => {
     fixture = seed();
 
@@ -221,34 +262,37 @@ test.describe.serial('EU battery Digital Product Passport', () => {
     await expect(page.getByRole('heading', { name: 'Edit Passport Template' })).toBeVisible();
   });
 
-  test('the family, a section and three tiered fields are configured', async ({ page }) => {
+  test('the family, two sections and four tiered fields are configured', async ({ page }) => {
     await page.goto(templateUrl);
     await closeAgentShell(page);
 
     await pickInMultiselect(page, 'families', fixture.family_name);
     await page.locator('label[for="is_enabled"]').click();
-    await page.getByRole('button', { name: /^Save changes$/ }).click();
-    await expect(page.getByText(/updated successfully/i)).toBeVisible();
-    await page.waitForLoadState('load');
-    await page.waitForTimeout(1500);
+
+    await saveTemplate(page);
+
     await closeAgentShell(page);
 
-    await page.getByRole('button', { name: 'Add Section' }).click();
-    await closeAgentShell(page);
+    await expect(page.getByRole('button', { name: 'Add Section' })).toBeEnabled();
 
-    await page.locator('input[name="draft_section_name"]').fill('Battery Data');
+    for (const section of [MAIN_SECTION, CHEMISTRY_SECTION]) {
+      await page.getByRole('button', { name: 'Add Section' }).click();
+      await closeAgentShell(page);
 
-    await page.getByRole('button', { name: 'Done' }).click();
+      await page.locator('input[name="draft_section_name"]').fill(section);
 
-    await expect(page.getByRole('cell', { name: 'Battery Data' })).toBeVisible();
+      await page.getByRole('button', { name: 'Done' }).click();
 
-    for (const field of [CONSUMER_FIELD, OPERATOR_FIELD, AUTHORITY_FIELD]) {
+      await expect(page.getByRole('cell', { name: section })).toBeVisible();
+    }
+
+    for (const field of [CONSUMER_FIELD, CHEMISTRY_FIELD, OPERATOR_FIELD, AUTHORITY_FIELD]) {
       await closeAgentShell(page);
       const modal = await openFieldModal(page);
 
       await page.locator('input[name="draft_field_name"]').fill(field.label);
 
-      await selectByLabel(modal, 'draft_field_section', 'Battery Data');
+      await selectByLabel(modal, 'draft_field_section', field.section);
 
       await selectByLabel(modal, 'draft_field_attribute', field.attribute);
 
@@ -271,9 +315,8 @@ test.describe.serial('EU battery Digital Product Passport', () => {
     }
 
     await closeAgentShell(page);
-    await page.getByRole('button', { name: /^Save changes$/ }).click();
 
-    await expect(page.getByText(/updated successfully/i)).toBeVisible();
+    await saveTemplate(page);
   });
 
   test('the saved template reports every required field as sourced', async ({ page }) => {
@@ -305,11 +348,7 @@ test.describe.serial('EU battery Digital Product Passport', () => {
 
     const previewUrl = await preview.getAttribute('href');
 
-    /**
-     * The template save in the previous test and this fetch are two separate
-     * requests; retrying the read absorbs any commit-visibility lag between
-     * them instead of asserting against a single, possibly-early snapshot.
-     */
+    /** The rendered page is a separate request, so retry the read rather than trust one snapshot. */
     await expect(async () => {
       const rendered = await page.request.get(previewUrl);
 
@@ -486,5 +525,13 @@ test.describe.serial('EU battery Digital Product Passport', () => {
     expect(body).toContain(CONSUMER_FIELD.value);
     expect(body).not.toContain(OPERATOR_FIELD.label);
     expect(body).not.toContain(AUTHORITY_FIELD.label);
+
+    await page.goto(url);
+
+    const card = (heading) => page.locator('section.card').filter({ has: page.getByRole('heading', { name: heading, exact: true }) });
+
+    await expect(card(MAIN_SECTION).locator('dt')).toHaveText([CONSUMER_FIELD.label]);
+    await expect(card(CHEMISTRY_SECTION).locator('dt')).toHaveText([CHEMISTRY_FIELD.label]);
+    await expect(page.locator('dt', { hasText: CHEMISTRY_FIELD.label })).toHaveCount(1);
   });
 });

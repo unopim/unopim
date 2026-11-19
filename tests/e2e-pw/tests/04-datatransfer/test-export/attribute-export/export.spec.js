@@ -1,5 +1,5 @@
 const { test, expect } = require('../../../../utils/fixtures');
-const { navigateTo } = require('../../../../utils/helpers');
+const { navigateTo, clickDeleteOnRow } = require('../../../../utils/helpers');
 
 test.describe('UnoPim Export Jobs', () => {
 
@@ -86,9 +86,7 @@ test.describe('UnoPim Export Jobs', () => {
 
     await navigateTo(adminPage, 'exports');
 
-    const itemRow = await adminPage.locator('div', { hasText: uniqueCode });
-
-    await itemRow.locator('span[title="Delete"]').first().click();
+    await clickDeleteOnRow(adminPage, uniqueCode);
 
     await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
 

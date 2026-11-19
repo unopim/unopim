@@ -137,10 +137,11 @@ class LocalesDataGrid extends DataGrid
     {
         if (bouncer()->hasPermission('settings.locales.mass_update')) {
             $this->addMassAction([
-                'title'   => trans('admin::app.settings.locales.index.datagrid.mass-update'),
-                'url'     => route('admin.settings.locales.mass_update'),
-                'method'  => 'POST',
-                'options' => [
+                'title'               => trans('admin::app.settings.locales.index.datagrid.mass-update'),
+                'url'                 => route('admin.settings.locales.mass_update'),
+                'method'              => 'POST',
+                'supports_select_all' => true,
+                'options'             => [
                     [
                         'label' => trans('admin::app.settings.locales.index.datagrid.status.active'),
                         'value' => 1,
@@ -154,10 +155,11 @@ class LocalesDataGrid extends DataGrid
 
         if (bouncer()->hasPermission('settings.locales.mass_delete')) {
             $this->addMassAction([
-                'title'   => trans('admin::app.settings.locales.index.datagrid.delete'),
-                'url'     => route('admin.settings.locales.mass_delete'),
-                'method'  => 'POST',
-                'options' => ['actionType' => 'delete'],
+                'title'               => trans('admin::app.settings.locales.index.datagrid.delete'),
+                'url'                 => route('admin.settings.locales.mass_delete'),
+                'method'              => 'POST',
+                'supports_select_all' => true,
+                'options'             => ['actionType' => 'delete'],
             ]);
         }
     }

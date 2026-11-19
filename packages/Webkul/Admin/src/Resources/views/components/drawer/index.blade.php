@@ -91,7 +91,7 @@
             >
                 <div
                     data-drawer-panel
-                    class="fixed z-[10001] bg-white dark:bg-cherry-800 max-sm:!w-full"
+                    class="fixed z-[10002] bg-white dark:bg-cherry-800 max-sm:!w-full"
                     :class="{
                         'inset-x-0 top-0': position == 'top',
                         'inset-x-0 bottom-0': position == 'bottom',

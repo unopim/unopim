@@ -18,6 +18,8 @@ class SkuOrUniversalFilter extends AbstractDatabaseAttributeFilter
 
     /**
      * {@inheritdoc}
+     *
+     * Matches nothing when no field resolves.
      */
     public function applyUnfilteredFilter(
         $fields,
@@ -29,7 +31,11 @@ class SkuOrUniversalFilter extends AbstractDatabaseAttributeFilter
 
         $escapedValue = QueryString::escapeValue(current((array) $value));
 
-        $this->queryBuilder->where(function ($query) use ($fields, $options, $escapedValue): void {
+        $likeSafeValue = addcslashes($escapedValue, '%_');
+
+        $this->queryBuilder->where(function ($query) use ($fields, $options, $likeSafeValue): void {
+            $searched = false;
+
             foreach ($fields as $attribute) {
                 $attribute = $this->attributeService->findAttributeByCode($attribute);
                 if (! $attribute instanceof Attribute) {
@@ -45,8 +51,14 @@ class SkuOrUniversalFilter extends AbstractDatabaseAttributeFilter
 
                 $query->orWhereRaw(
                     "LOWER($searchPath) LIKE ?",
-                    '%'.strtolower($escapedValue).'%'
+                    '%'.strtolower($likeSafeValue).'%'
                 );
+
+                $searched = true;
+            }
+
+            if (! $searched) {
+                $query->whereRaw('1 = 0');
             }
         });
 

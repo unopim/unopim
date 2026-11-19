@@ -5,6 +5,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Webkul\Attribute\Models\AttributeFamily;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 
 uses(DatabaseTransactions::class);
@@ -14,14 +15,14 @@ describe('Product creation via factory', function () {
         $product = Product::factory()->create();
 
         expect($product)->toBeInstanceOf(Product::class)
-            ->and($product->type)->toBe('simple')
+            ->and($product->type)->toBe(ProductType::Simple->value)
             ->and($product->status)->toBe(1)
             ->and($product->sku)->not->toBeEmpty()
             ->and($product->id)->toBeGreaterThan(0);
 
         $this->assertDatabaseHas('products', [
             'id'   => $product->id,
-            'type' => 'simple',
+            'type' => ProductType::Simple->value,
             'sku'  => $product->sku,
         ]);
     });
@@ -29,18 +30,18 @@ describe('Product creation via factory', function () {
     it('creates a simple product using the simple state', function () {
         $product = Product::factory()->simple()->create();
 
-        expect($product->type)->toBe('simple');
+        expect($product->type)->toBe(ProductType::Simple->value);
     });
 
     it('creates a configurable product using the configurable state', function () {
         $product = Product::factory()->configurable()->create();
 
-        expect($product->type)->toBe('configurable')
+        expect($product->type)->toBe(ProductType::Configurable->value)
             ->and($product->id)->toBeGreaterThan(0);
 
         $this->assertDatabaseHas('products', [
             'id'   => $product->id,
-            'type' => 'configurable',
+            'type' => ProductType::Configurable->value,
         ]);
     });
 

@@ -137,6 +137,14 @@ return [
                     'delete-success' => 'Webhook günlükleri başarıyla silindi',
                     'delete-failed'  => 'Webhook günlüklerinin silinmesi beklenmedik şekilde başarısız oldu',
                     'unauthorized'   => 'Bu işlem yetkilendirilmemiş',
+                    'select-all'     => [
+                        'delete' => [
+                            'queued'    => 'Eşleşen tüm günlükler için silme işlemi kuyruğa alındı. Tamamlandığında bilgilendirileceksiniz.',
+                            'title'     => 'Webhook günlüğü silme',
+                            'completed' => ':count webhook günlüğü silindi.',
+                            'failed'    => ':count webhook günlüğünün silinmesi hatalarla tamamlandı. Bazı günlükler silinmedi.',
+                        ],
+                    ],
                 ],
             ],
         ],

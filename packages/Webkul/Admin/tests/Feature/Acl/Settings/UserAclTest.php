@@ -84,7 +84,9 @@ it('should not be able to delete user if does not have permission', function () 
 
 it('should be able to delete user if has permission', function () {
     $this->loginWithPermissions(permissions: ['dashboard', 'settings.users.users.delete']);
-    $user = Admin::factory()->create();
+    $user = Admin::factory()->create([
+        'role_id' => Role::factory()->create(['permission_type' => 'custom', 'permissions' => ['dashboard']])->id,
+    ]);
 
     $response = $this->delete(route('admin.settings.users.delete', ['id' => $user->id]));
     $response->assertOk();

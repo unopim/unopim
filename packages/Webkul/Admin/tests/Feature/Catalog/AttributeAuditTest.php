@@ -5,12 +5,13 @@ use Illuminate\Support\Facades\Schema;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeTranslation;
 use Webkul\Attribute\Repositories\AttributeRepository;
+use Webkul\Core\Database\Schema\PrefixedIndexNameBlueprint;
 use Webkul\Core\Models\Locale;
 
 describe('audits composite index', function () {
     it('exists on the audits table covering (tags, history_id)', function () {
         $index = collect(Schema::getIndexes('audits'))
-            ->firstWhere('name', 'audits_tags_history_id_index');
+            ->firstWhere('name', strtolower(PrefixedIndexNameBlueprint::nameFor(PrefixedIndexNameBlueprint::indexPrefix(), 'audits_tags_history_id_index')));
 
         expect($index)->not->toBeNull();
         expect($index['columns'])->toBe(['tags', 'history_id']);
@@ -36,8 +37,8 @@ describe('HistoryTrait::readyForAuditing for translatable models', function () {
 describe('attribute creation audit records', function () {
     beforeEach(function () {
         $this->repository = app(AttributeRepository::class);
-        $this->attributeType = (new Attribute)->getMorphClass();
-        $this->translationType = (new AttributeTranslation)->getMorphClass();
+        $this->attributeType = app(Attribute::class)->getMorphClass();
+        $this->translationType = app(AttributeTranslation::class)->getMorphClass();
 
         if (Locale::where('status', 1)->count() < 2) {
             Locale::where('status', 0)->orderBy('id')->take(2)->get()

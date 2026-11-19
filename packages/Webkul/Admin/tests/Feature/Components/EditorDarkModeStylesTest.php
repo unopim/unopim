@@ -30,7 +30,10 @@ function compiledRule(string $selector): string
 
 function darkVariantOf(string $selector): string
 {
-    return $selector.':is(.dark *)';
+    // Tailwind applies the variant to every selector in a group, not once to the whole list.
+    return collect(explode(',', $selector))
+        ->map(fn (string $part): string => trim(preg_replace('/\s+/', ' ', $part)).':is(.dark *)')
+        ->implode(',');
 }
 
 it('does not leave the toolbar buttons on a light surface in dark mode', function () {

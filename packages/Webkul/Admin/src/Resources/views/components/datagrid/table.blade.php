@@ -82,11 +82,11 @@
                                         </x-admin::dropdown.menu.item>
 
                                         <x-admin::dropdown.menu.item
-                                            v-if="$parent.applied.massActions.indices.length"
+                                            v-if="$parent.selectedCount"
                                             @click="$parent.clearMassSelection()"
                                         >
                                             <span class="flex items-center gap-2">
-                                                <span class="icon-cross-large text-lg text-gray-500 dark:text-gray-400"></span>
+                                                <span class="icon-cancel text-lg text-gray-500 dark:text-gray-400"></span>
 
                                                 @lang('admin::app.components.datagrid.toolbar.clear-selection')
                                             </span>

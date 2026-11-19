@@ -14,11 +14,13 @@ use Webkul\Publication\DataTransferObjects\PublicationContext;
 use Webkul\Publication\DataTransferObjects\PublicationType;
 use Webkul\Publication\Enums\PublicationStatus;
 use Webkul\Publication\Events\PublicationPublished;
+use Webkul\Publication\Events\PublicationPublishRefused;
 use Webkul\Publication\Events\PublicationRedacted;
 use Webkul\Publication\Events\PublicationReinstated;
 use Webkul\Publication\Events\PublicationWithdrawn;
 use Webkul\Publication\Exceptions\InvalidPublicationTransitionException;
 use Webkul\Publication\Models\Publication;
+use Webkul\Publication\Models\PublicationRelease;
 use Webkul\Publication\Models\PublicationVersion;
 use Webkul\Publication\Registry\PublicationTypeRegistry;
 use Webkul\Publication\Repositories\PublicationRepository;
@@ -32,6 +34,11 @@ class Publisher
 
     /**
      * Mints a new version when the payload checksum changed; returns null on gate failure or unchanged payload.
+     *
+     * A Withdrawn or Redacted publication is refused before the payload is built, so a refused publish never
+     * runs the builder's side effects (such as copying documents back onto the asset disk after an erasure).
+     * The same check runs again under the row lock; when that one refuses, the payload has already been
+     * built, so PublicationPublishRefused is dispatched for the builder's side effects to be undone.
      */
     public function publish(
         Product $product,
@@ -59,6 +66,8 @@ class Publisher
         // Publication must exist before build(): the payload stamps its own uuid/url from it.
         $publication = $this->publications->findOrCreateFor($product->id, $channel->id, $type);
 
+        $this->ensureAcceptsNewVersions($publication);
+
         $context = new PublicationContext(
             uuid: $publication->uuid,
             channel: $channel,
@@ -72,15 +81,32 @@ class Publisher
         $canonical = $this->canonicalize(Arr::except($payload, 'meta'));
         $checksum = hash('sha256', json_encode($canonical, JSON_THROW_ON_ERROR));
 
+        try {
+            return $this->mintVersion($publication, $locale, $payload, $checksum, $publishedById);
+        } catch (InvalidPublicationTransitionException $exception) {
+            PublicationPublishRefused::dispatch($publication->refresh());
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * Stores $payload as the new current version for $locale unless its checksum matches the current one.
+     *
+     * @param  array<string, mixed>  $payload
+     */
+    private function mintVersion(
+        Publication $publication,
+        Locale $locale,
+        array $payload,
+        string $checksum,
+        ?int $publishedById,
+    ): ?PublicationVersion {
         return DB::transaction(function () use ($publication, $locale, $payload, $checksum, $publishedById): ?PublicationVersion {
             // Lock the row so concurrent workers on the same (publication, locale) can't race the unique index.
             $publication = Publication::query()->whereKey($publication->id)->lockForUpdate()->firstOrFail();
 
-            if (! $publication->status->acceptsNewVersions()) {
-                throw new InvalidPublicationTransitionException(
-                    'Publication '.$publication->id.' is '.$publication->status->value.'; reinstate it before publishing a locale.'
-                );
-            }
+            $this->ensureAcceptsNewVersions($publication);
 
             $current = $publication->currentVersion($locale->id);
 
@@ -95,13 +121,16 @@ class Publisher
 
             $current?->markSuperseded();
 
+            $release = $this->mintRelease($publication, $publishedById);
+
             $version = $publication->versions()->create([
                 'locale_id'       => $locale->id,
                 'version'         => $nextVersion,
+                'release_id'      => $release->id,
                 'payload'         => $payload,
                 'checksum'        => $checksum,
                 'is_current'      => true,
-                'published_at'    => now(),
+                'published_at'    => $release->published_at,
                 'published_by_id' => $publishedById,
             ]);
 
@@ -161,13 +190,16 @@ class Publisher
 
             $current?->markSuperseded();
 
+            $release = $this->mintRelease($publication, $publishedById);
+
             $version = $publication->versions()->create([
                 'locale_id'       => $localeId,
                 'version'         => $nextVersion,
+                'release_id'      => $release->id,
                 'payload'         => $payload,
                 'checksum'        => $source->checksum,
                 'is_current'      => true,
-                'published_at'    => now(),
+                'published_at'    => $release->published_at,
                 'published_by_id' => $publishedById,
             ]);
 
@@ -217,7 +249,11 @@ class Publisher
     }
 
     /**
-     * GDPR Art. 17 erasure: redacts every current version and flips the publication to Redacted (sticky).
+     * GDPR Art. 17 erasure: redacts every not-yet-redacted version of the publication, superseded ones
+     * included, and flips the publication to Redacted (sticky).
+     *
+     * Versions redacted individually earlier are left as they are. The versions are walked by id in
+     * batches, so a long version history never sits in memory at once.
      */
     public function redactAll(Publication $publication, int $redactedById, string $reason): void
     {
@@ -231,22 +267,39 @@ class Publisher
                 );
             }
 
-            $currentVersions = $publication->versions()->where('is_current', true)->get();
+            $redactedAny = false;
 
-            if ($currentVersions->isEmpty()) {
-                throw new InvalidPublicationTransitionException(
-                    'Publication '.$publication->id.' has no current versions to redact.'
-                );
+            foreach ($publication->versions()->whereNull('redacted_at')->lazyById(200) as $version) {
+                $version->redact($redactedById, $reason);
+
+                $redactedAny = true;
             }
 
-            foreach ($currentVersions as $version) {
-                $version->redact($redactedById, $reason);
+            if (! $redactedAny) {
+                throw new InvalidPublicationTransitionException(
+                    'Publication '.$publication->id.' has no versions left to redact.'
+                );
             }
 
             $publication->update(['status' => PublicationStatus::Redacted]);
 
             DB::afterCommit(fn () => PublicationRedacted::dispatch($publication, $reason));
         });
+    }
+
+    /**
+     * Withdrawn and Redacted are sticky: publishing into either needs an explicit transition first.
+     * A row created a moment ago has no status loaded yet; the column defaults to Draft.
+     */
+    private function ensureAcceptsNewVersions(Publication $publication): void
+    {
+        $status = $publication->status ?? PublicationStatus::Draft;
+
+        if (! $status->acceptsNewVersions()) {
+            throw new InvalidPublicationTransitionException(
+                'Publication '.$publication->id.' is '.$status->value.'; reinstate it before publishing a locale.'
+            );
+        }
     }
 
     /**
@@ -317,5 +370,20 @@ class Publisher
         usort($items, fn (mixed $a, mixed $b): int => $sortKey($a) <=> $sortKey($b));
 
         return $items;
+    }
+
+    /**
+     * Mints the release a newly minted version belongs to. Callers hold the publication row lock,
+     * so MAX(sequence)+1 cannot race, for the same reason version numbers cannot.
+     */
+    private function mintRelease(Publication $publication, ?int $publishedById): PublicationRelease
+    {
+        $sequence = (int) $publication->releases()->max('sequence') + 1;
+
+        return $publication->releases()->create([
+            'sequence'        => $sequence,
+            'published_at'    => now(),
+            'published_by_id' => $publishedById,
+        ]);
     }
 }

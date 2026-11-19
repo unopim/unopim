@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Event;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Completeness\DataGrids\AttributeCompletenessDataGrid;
+use Webkul\Completeness\Http\Requests\MassUpdateCompletenessRequest;
 use Webkul\Completeness\Jobs\BulkProductCompletenessJob;
 use Webkul\Completeness\Repositories\CompletenessSettingsRepository;
 use Webkul\Core\Repositories\ChannelRepository;
@@ -137,12 +138,12 @@ class CompletenessSettingsController extends Controller
         ]);
     }
 
-    public function massUpdate()
+    public function massUpdate(MassUpdateCompletenessRequest $request)
     {
-        $data = request()->only(['channel_requirements', 'indices', 'familyId']);
+        $data = $request->only(['channel_requirements', 'familyId']);
 
         $familyId = (int) $data['familyId'];
-        $attributeIds = $data['indices'] ?? [];
+        $attributeIds = $request->selectedAttributeIds();
 
         $newCodes = array_filter(explode(',', $data['channel_requirements'] ?? ''));
 

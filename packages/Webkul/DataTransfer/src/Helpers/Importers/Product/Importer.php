@@ -38,6 +38,8 @@ use Webkul\ElasticSearch\Indexing\Normalizer\ProductNormalizer;
 use Webkul\ElasticSearch\Observers\Product as ElasticProductObserver;
 use Webkul\Measurement\Helpers\MeasurementHelper;
 use Webkul\Product\Contracts\VariantStructurePlanner as VariantStructurePlannerContract;
+use Webkul\Product\Enums\ProductType;
+use Webkul\Product\Enums\VariantLevel;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\Product as ProductModel;
 use Webkul\Product\Models\VariantStructure;
@@ -50,7 +52,7 @@ class Importer extends AbstractImporter
     /**
      * Product type simple
      */
-    public const PRODUCT_TYPE_SIMPLE = 'simple';
+    public const PRODUCT_TYPE_SIMPLE = ProductType::Simple->value;
 
     /**
      * Product type virtual
@@ -65,12 +67,12 @@ class Importer extends AbstractImporter
     /**
      * Product type configurable
      */
-    public const PRODUCT_TYPE_CONFIGURABLE = 'configurable';
+    public const PRODUCT_TYPE_CONFIGURABLE = ProductType::Configurable->value;
 
     /**
      * Product type variant group
      */
-    public const PRODUCT_TYPE_VARIANT_GROUP = 'variant_group';
+    public const PRODUCT_TYPE_VARIANT_GROUP = ProductType::VariantGroup->value;
 
     /**
      * Product type grouped
@@ -122,7 +124,13 @@ class Importer extends AbstractImporter
 
     const ERROR_VARIANT_STRUCTURE_NOT_FOUND = 'variant_structure_not_found';
 
+    const ERROR_VARIANT_STRUCTURE_LEVELS_MISMATCH = 'variant_structure_levels_mismatch';
+
+    const ERROR_VARIANT_STRUCTURE_TWO_LEVELS_MISMATCH = 'variant_structure_two_levels_mismatch';
+
     const ATTRIBUTE_FAMILY_CODE = 'attribute_family';
+
+    const VARIANT_STRUCTURE_CODE = 'variant_structure';
 
     /**
      * Error message templates
@@ -143,12 +151,15 @@ class Importer extends AbstractImporter
         self::ERROR_PARENT_DOES_NOT_EXIST                    => 'data_transfer::app.importers.products.validation.errors.parent-not-exist',
         self::ERROR_WRONG_FAMILY_FOR_VARIANT                 => 'data_transfer::app.importers.products.validation.errors.incorrect-family-for-variant',
         self::ERROR_VARIANT_STRUCTURE_NOT_FOUND              => 'data_transfer::app.importers.products.validation.errors.variant-structure-not-found',
+        self::ERROR_VARIANT_STRUCTURE_LEVELS_MISMATCH        => 'data_transfer::app.importers.products.validation.errors.variant-structure-levels-mismatch',
+        self::ERROR_VARIANT_STRUCTURE_TWO_LEVELS_MISMATCH    => 'data_transfer::app.importers.products.validation.errors.variant-structure-two-levels-mismatch',
     ];
 
     /**
-     * Permanent entity columns
+     * Permanent entity columns. variant_structure is optional because legacy files
+     * select axes through configurable_attributes.
      */
-    protected array $permanentAttributes = ['sku', 'locale', 'channel', 'type', 'parent', 'variant_structure', self::ATTRIBUTE_FAMILY_CODE];
+    protected array $permanentAttributes = ['sku', 'locale', 'channel', 'type', 'parent', self::ATTRIBUTE_FAMILY_CODE];
 
     /**
      * Permanent entity column
@@ -298,6 +309,13 @@ class Importer extends AbstractImporter
     protected array $variantStructures = [];
 
     /**
+     * Resolved variant structures of existing products, keyed by id.
+     *
+     * @var array<int, VariantStructure|null>
+     */
+    protected array $variantStructuresById = [];
+
+    /**
      * Attribute codes ancestors supply, keyed by parent sku.
      *
      * @var array<string, array<int, string>>
@@ -319,7 +337,7 @@ class Importer extends AbstractImporter
         'cross_sells',
         'up_sells',
         'configurable_attributes',
-        'variant_structure',
+        self::VARIANT_STRUCTURE_CODE,
         'associated_skus',
     ];
 
@@ -540,14 +558,14 @@ class Importer extends AbstractImporter
                 $skuChunk[] = $rowData['parent'];
             }
 
-            if (in_array($rowData['type'] ?? null, [self::PRODUCT_TYPE_CONFIGURABLE, self::PRODUCT_TYPE_VARIANT_GROUP], true)) {
+            if (in_array($rowData['type'] ?? null, ProductType::VARIANT_PARENT_VALUES, true)) {
                 $this->fileParentRows[$rowData['sku']] = [
                     'type'       => $rowData['type'],
                     'family'     => $rowData[self::ATTRIBUTE_FAMILY_CODE] ?? null,
                     'parent'     => $rowData['parent'] ?? null,
-                    'structure'  => $rowData['variant_structure'] ?? null,
+                    'structure'  => $rowData[self::VARIANT_STRUCTURE_CODE] ?? null,
                     'attributes' => array_keys(array_filter(
-                        array_diff_key($rowData, array_flip($this->permanentAttributes)),
+                        array_diff_key($rowData, array_flip([...$this->permanentAttributes, self::VARIANT_STRUCTURE_CODE])),
                         fn ($value): bool => $value !== null && $value !== ''
                     )),
                 ];
@@ -853,7 +871,6 @@ class Importer extends AbstractImporter
                     $this->validatedRows[$rowNumber] = true;
                 }
             } catch (\InvalidArgumentException) {
-                // Skip malformed rows
             }
 
             $source->next();
@@ -885,7 +902,7 @@ class Importer extends AbstractImporter
          * always batched before its children, so children never reference a row that
          * has not been inserted yet — whatever order the file itself uses.
          */
-        foreach ([[self::PRODUCT_TYPE_CONFIGURABLE], [self::PRODUCT_TYPE_VARIANT_GROUP], []] as $types) {
+        foreach ([[ProductType::Configurable->value], [ProductType::VariantGroup->value], []] as $types) {
             $source->rewind();
 
             while ($source->valid()) {
@@ -901,7 +918,7 @@ class Importer extends AbstractImporter
                 $rowType = $rowData['type'] ?? null;
 
                 $belongsToPass = $types === []
-                    ? ! in_array($rowType, [self::PRODUCT_TYPE_CONFIGURABLE, self::PRODUCT_TYPE_VARIANT_GROUP], true)
+                    ? ! in_array($rowType, ProductType::VARIANT_PARENT_VALUES, true)
                     : in_array($rowType, $types, true);
 
                 if ($belongsToPass && isset($this->validatedRows[$rowNumber]) && ! $this->errorHelper->isRowInvalid($rowNumber)) {
@@ -999,8 +1016,12 @@ class Importer extends AbstractImporter
              * (for family code checks) and super_attributes (for variant uniqueness checks).
              */
             $products = ProductModel::query()
-                ->select('id', 'sku', 'type', 'attribute_family_id')
-                ->with(['attribute_family:id,code', 'super_attributes:id,code'])
+                ->select('id', 'sku', 'type', 'attribute_family_id', 'parent_id', 'variant_structure_id')
+                ->with([
+                    'attribute_family:id,code',
+                    'super_attributes:id,code',
+                    'parent:id,sku',
+                ])
                 ->whereIn('sku', $chunk)
                 ->get();
 
@@ -1028,7 +1049,6 @@ class Importer extends AbstractImporter
                 ->get();
 
             foreach ($products as $product) {
-                // Decode values JSON so downstream code can access it as array
                 if (is_string($product->values)) {
                     $product->values = json_decode($product->values, true) ?? [];
                 }
@@ -1096,7 +1116,6 @@ class Importer extends AbstractImporter
      */
     protected function loadUniqueValuesForPath(string $attributeCode, string $scopeKey, string $jsonPath): void
     {
-        // Convert "$.common.url_key" → ['common', 'url_key'] for cross-DB grammar
         $pathSegments = explode('.', ltrim($jsonPath, '$.'));
         $grammar = GrammarQueryManager::getGrammar();
         $jsonExpr = $grammar->jsonExtract('values', ...$pathSegments);
@@ -1187,11 +1206,13 @@ class Importer extends AbstractImporter
             return false;
         }
 
-        if (! empty($rowData['variant_structure'])) {
+        if (! empty($rowData[self::VARIANT_STRUCTURE_CODE])) {
             $familyId = $this->attributeFamiliesByCode[$rowData[self::ATTRIBUTE_FAMILY_CODE]]->id;
 
-            if (! $this->getVariantStructure($rowData['variant_structure'], $familyId) instanceof VariantStructure) {
-                $this->skipRow($rowNumber, self::ERROR_VARIANT_STRUCTURE_NOT_FOUND, 'variant_structure');
+            if (! $this->getVariantStructure($rowData[self::VARIANT_STRUCTURE_CODE], $familyId) instanceof VariantStructure) {
+                $message = trans($this->messages[self::ERROR_VARIANT_STRUCTURE_NOT_FOUND], ['code' => $rowData[self::VARIANT_STRUCTURE_CODE]]);
+
+                $this->skipRow($rowNumber, self::ERROR_VARIANT_STRUCTURE_NOT_FOUND, self::VARIANT_STRUCTURE_CODE, str_replace('%', '%%', $message));
 
                 return false;
             }
@@ -1208,6 +1229,17 @@ class Importer extends AbstractImporter
 
             if ($parentFamily && $rowData[self::ATTRIBUTE_FAMILY_CODE] != $parentFamily) {
                 $this->skipRow($rowNumber, self::ERROR_WRONG_FAMILY_FOR_VARIANT, self::ATTRIBUTE_FAMILY_CODE);
+
+                return false;
+            }
+
+            $structure = $parentType === ProductType::Configurable->value ? $this->getRowVariantStructure($rowData) : null;
+            $levelsError = $this->variantStructureLevelsError($rowData['type'], $structure);
+
+            if ($levelsError !== null) {
+                $message = trans($this->messages[$levelsError], ['code' => $structure->code]);
+
+                $this->skipRow($rowNumber, $levelsError, 'type', str_replace('%', '%%', $message));
 
                 return false;
             }
@@ -1252,7 +1284,7 @@ class Importer extends AbstractImporter
 
         $this->validatUniqueAttributeValues($rowData, $rowNumber);
 
-        if ($rowData['type'] == self::PRODUCT_TYPE_CONFIGURABLE && empty($rowData['variant_structure'])) {
+        if ($rowData['type'] == ProductType::Configurable->value && empty($rowData[self::VARIANT_STRUCTURE_CODE])) {
             if (empty($rowData['configurable_attributes'])) {
                 $this->skipRow(
                     $rowNumber,
@@ -1320,11 +1352,7 @@ class Importer extends AbstractImporter
             return $this->attributesOwnedByAncestors($rowData);
         }
 
-        $rowLevel = match ($rowData['type']) {
-            self::PRODUCT_TYPE_CONFIGURABLE  => 'common',
-            self::PRODUCT_TYPE_VARIANT_GROUP => 'sub_parent',
-            default                          => 'variant',
-        };
+        $rowLevel = ProductType::VARIANT_LEVEL_BY_TYPE[(string) $rowData['type']] ?? VariantLevel::Variant->value;
 
         $levelByCode = [];
 
@@ -1334,18 +1362,20 @@ class Importer extends AbstractImporter
             }
         }
 
-        $axisLevel = (int) $structure->levels === 2 ? ['level_1' => 'sub_parent', 'level_2' => 'variant'] : ['level_1' => 'variant', 'level_2' => 'variant'];
+        $axisLevel = (int) $structure->levels === 2
+            ? ['level_1' => VariantLevel::SubParent->value, 'level_2' => VariantLevel::Variant->value]
+            : ['level_1' => VariantLevel::Variant->value, 'level_2' => VariantLevel::Variant->value];
 
         foreach ($structure->axes as $axis) {
             if ($code = $axis->attribute?->code) {
-                $levelByCode[$code] = $axisLevel[$axis->level] ?? 'variant';
+                $levelByCode[$code] = $axisLevel[$axis->level] ?? VariantLevel::Variant->value;
             }
         }
 
         $codes = [];
 
         foreach ($this->getProductTypeFamilyAttributes($rowData['type'], $rowData[self::ATTRIBUTE_FAMILY_CODE]) as $attribute) {
-            if (($levelByCode[$attribute->code] ?? 'common') !== $rowLevel) {
+            if (($levelByCode[$attribute->code] ?? VariantLevel::Common->value) !== $rowLevel) {
                 $codes[] = $attribute->code;
             }
         }
@@ -1403,21 +1433,55 @@ class Importer extends AbstractImporter
      */
     protected function valueCodes(array $values): array
     {
-        $codes = array_keys($values[AbstractType::COMMON_VALUES_KEY] ?? []);
+        $codes = [];
 
-        foreach ([AbstractType::LOCALE_VALUES_KEY, AbstractType::CHANNEL_VALUES_KEY] as $scope) {
-            foreach ($values[$scope] ?? [] as $scopeValues) {
-                $codes = array_merge($codes, array_keys($scopeValues));
-            }
-        }
+        foreach ($values as $scope => $scoped) {
+            $depth = is_array($scoped) ? $this->scopeDepth($scope) : null;
 
-        foreach ($values[AbstractType::CHANNEL_LOCALE_VALUES_KEY] ?? [] as $localeValues) {
-            foreach ($localeValues as $scopeValues) {
-                $codes = array_merge($codes, array_keys($scopeValues));
+            if ($depth !== null) {
+                $codes = array_merge($codes, $this->valueCodesAt($scoped, $depth));
             }
         }
 
         return $codes;
+    }
+
+    /**
+     * Attribute codes held by the bags nested `$depth` levels below a scope.
+     *
+     * @param  array<string, mixed>  $node
+     * @return array<int, string>
+     */
+    protected function valueCodesAt(array $node, int $depth): array
+    {
+        if ($depth === 0) {
+            return array_keys($node);
+        }
+
+        $codes = [];
+
+        foreach ($node as $child) {
+            if (is_array($child)) {
+                $codes = array_merge($codes, $this->valueCodesAt($child, $depth - 1));
+            }
+        }
+
+        return $codes;
+    }
+
+    /**
+     * Levels of channel and locale keys between a values scope and its attribute codes.
+     *
+     * Returns null for keys that hold no attribute values, such as categories and associations.
+     */
+    protected function scopeDepth(int|string $scope): ?int
+    {
+        return match ($scope) {
+            AbstractType::COMMON_VALUES_KEY                                   => 0,
+            AbstractType::LOCALE_VALUES_KEY, AbstractType::CHANNEL_VALUES_KEY => 1,
+            AbstractType::CHANNEL_LOCALE_VALUES_KEY                           => 2,
+            default                                                           => null,
+        };
     }
 
     /**
@@ -1432,8 +1496,8 @@ class Importer extends AbstractImporter
             return null;
         }
 
-        if (! empty($rowData['variant_structure'])) {
-            return $this->getVariantStructure($rowData['variant_structure'], $familyId);
+        if (! empty($rowData[self::VARIANT_STRUCTURE_CODE])) {
+            return $this->getVariantStructure($rowData[self::VARIANT_STRUCTURE_CODE], $familyId);
         }
 
         $parentSku = $rowData['parent'] ?? null;
@@ -1447,7 +1511,7 @@ class Importer extends AbstractImporter
             $parentProduct = $this->getExistingProduct($parentSku);
 
             if ($parentProduct?->variant_structure_id) {
-                return $parentProduct->variantStructure;
+                return $this->getVariantStructureById((int) $parentProduct->variant_structure_id);
             }
 
             $parentSku = $this->fileParentRows[$parentSku]['parent'] ?? $parentProduct?->parent?->sku;
@@ -1471,6 +1535,20 @@ class Importer extends AbstractImporter
     }
 
     /**
+     * Variant structure of an existing product, resolved by id and cached for the run.
+     */
+    protected function getVariantStructureById(int $id): ?VariantStructure
+    {
+        if (! array_key_exists($id, $this->variantStructuresById)) {
+            $this->variantStructuresById[$id] = VariantStructure::query()
+                ->with(['axes.attribute:id,code', 'placements.attribute:id,code'])
+                ->find($id);
+        }
+
+        return $this->variantStructuresById[$id];
+    }
+
+    /**
      * Type and family code of a parent sku, from the database or from the file being imported.
      *
      * @return array{0: string|null, 1: string|null}
@@ -1489,14 +1567,31 @@ class Importer extends AbstractImporter
     }
 
     /**
+     * Error for a row whose type does not match the level its structure expects directly
+     * under the configurable: a variant_group needs two levels, a simple needs one.
+     */
+    protected function variantStructureLevelsError(string $type, ?VariantStructure $structure): ?string
+    {
+        if (! $structure instanceof VariantStructure) {
+            return null;
+        }
+
+        return match (true) {
+            $type === ProductType::VariantGroup->value && (int) $structure->levels === 1 => self::ERROR_VARIANT_STRUCTURE_LEVELS_MISMATCH,
+            $type === ProductType::Simple->value && (int) $structure->levels === 2       => self::ERROR_VARIANT_STRUCTURE_TWO_LEVELS_MISMATCH,
+            default                                                                      => null,
+        };
+    }
+
+    /**
      * Whether a row of the given type may hang under a parent of the given type.
      */
     protected function isAllowedParentType(string $type, ?string $parentType): bool
     {
         return match ($parentType) {
-            self::PRODUCT_TYPE_CONFIGURABLE  => in_array($type, [self::PRODUCT_TYPE_VARIANT_GROUP, self::PRODUCT_TYPE_SIMPLE], true),
-            self::PRODUCT_TYPE_VARIANT_GROUP => $type === self::PRODUCT_TYPE_SIMPLE,
-            default                          => false,
+            ProductType::Configurable->value      => in_array($type, ProductType::VARIANT_CHILD_VALUES, true),
+            ProductType::VariantGroup->value      => $type === ProductType::Simple->value,
+            default                               => false,
         };
     }
 
@@ -1543,7 +1638,7 @@ class Importer extends AbstractImporter
 
         $attributes = $this->getProductTypeFamilyAttributes($rowData['type'], $rowData[self::ATTRIBUTE_FAMILY_CODE]);
 
-        $skipAttributes = $rowData['type'] == self::PRODUCT_TYPE_CONFIGURABLE ? (explode(',', $rowData['configurable_attributes'] ?? '') ?? []) : [];
+        $skipAttributes = $rowData['type'] == ProductType::Configurable->value ? (explode(',', $rowData['configurable_attributes'] ?? '') ?? []) : [];
 
         $skipAttributes = array_map(trim(...), $skipAttributes);
 
@@ -1596,7 +1691,7 @@ class Importer extends AbstractImporter
     {
         $attributes = $this->getProductTypeFamilyAttributes($rowData['type'], $rowData[self::ATTRIBUTE_FAMILY_CODE]);
 
-        $skipAttributes = $rowData['type'] == self::PRODUCT_TYPE_CONFIGURABLE ? (explode(',', $rowData['configurable_attributes'] ?? '') ?? []) : [];
+        $skipAttributes = $rowData['type'] == ProductType::Configurable->value ? (explode(',', $rowData['configurable_attributes'] ?? '') ?? []) : [];
         $skipAttributes = array_map(trim(...), $skipAttributes);
         $skipAttributes[] = 'sku';
 
@@ -1878,8 +1973,8 @@ class Importer extends AbstractImporter
             'status'              => $this->getProductStatus($rowData, $isExisting, $product),
         ];
 
-        if (! empty($rowData['variant_structure']) && $attributeFamilyId) {
-            $data['variant_structure_id'] = $this->getVariantStructure($rowData['variant_structure'], $attributeFamilyId)?->id;
+        if (! empty($rowData[self::VARIANT_STRUCTURE_CODE]) && $attributeFamilyId) {
+            $data['variant_structure_id'] = $this->getVariantStructure($rowData[self::VARIANT_STRUCTURE_CODE], $attributeFamilyId)?->id;
         }
 
         /**
@@ -2050,35 +2145,47 @@ class Importer extends AbstractImporter
     }
 
     /**
+     * Strip the attribute values the product's variant level does not own, in every scope.
+     *
      * @param  array<string, mixed>  $values
      */
-    protected function stripUnownedScopes(array &$values, Product $product, $planner): bool
+    protected function stripUnownedScopes(array &$values, Product $product, VariantStructurePlannerContract $planner): bool
     {
         $changed = false;
 
         foreach ($values as $scope => &$scoped) {
-            if (! is_array($scoped) || $scope === 'categories' || $scope === 'associations') {
+            $depth = is_array($scoped) ? $this->scopeDepth($scope) : null;
+
+            if ($depth === null) {
                 continue;
             }
 
-            if ($scope === 'common') {
-                $changed = $this->stripUnownedBag($scoped, $product, $planner) || $changed;
+            $changed = $this->stripUnownedBagsAt($scoped, $depth, $product, $planner) || $changed;
+        }
 
-                continue;
-            }
+        return $changed;
+    }
 
-            foreach ($scoped as &$inner) {
-                if (! is_array($inner)) {
-                    continue;
-                }
+    /**
+     * Strip unowned attribute codes from the bags nested `$depth` levels below a scope.
+     *
+     * Channel, locale and currency codes sit above or below that depth, so only
+     * keys at the depth are attribute codes; checking any other level deletes
+     * whole locale bags or the currency keys of a price.
+     *
+     * @param  array<string, mixed>  $node
+     */
+    protected function stripUnownedBagsAt(array &$node, int $depth, Product $product, VariantStructurePlannerContract $planner): bool
+    {
+        if ($depth === 0) {
+            return $this->stripUnownedBag($node, $product, $planner);
+        }
 
-                $changed = $this->stripUnownedBag($inner, $product, $planner) || $changed;
+        $changed = false;
 
-                foreach ($inner as &$deeper) {
-                    if (is_array($deeper) && ! array_is_list($deeper)) {
-                        $changed = $this->stripUnownedBag($deeper, $product, $planner) || $changed;
-                    }
-                }
+        foreach ($node as &$child) {
+            if (is_array($child)) {
+                $changed = $this->stripUnownedBagsAt($child, $depth - 1, $product, $planner) || $changed;
             }
         }
 
@@ -2086,9 +2193,11 @@ class Importer extends AbstractImporter
     }
 
     /**
+     * Drop the codes in one attribute bag that the product's variant level does not own.
+     *
      * @param  array<string, mixed>  $bag
      */
-    protected function stripUnownedBag(array &$bag, Product $product, $planner): bool
+    protected function stripUnownedBag(array &$bag, Product $product, VariantStructurePlannerContract $planner): bool
     {
         $changed = false;
 
@@ -2252,9 +2361,9 @@ class Importer extends AbstractImporter
 
         foreach ($insertProducts as $sku => $productData) {
             $tier = match ($productData['type'] ?? null) {
-                self::PRODUCT_TYPE_CONFIGURABLE  => 0,
-                self::PRODUCT_TYPE_VARIANT_GROUP => 1,
-                default                          => 2,
+                ProductType::Configurable->value      => 0,
+                ProductType::VariantGroup->value      => 1,
+                default                               => 2,
             };
 
             $tiers[$tier][$sku] = $productData;
@@ -2629,7 +2738,6 @@ class Importer extends AbstractImporter
                 };
             }
 
-            // Mark this family as fully computed
             $this->attributeScopeCache[$type.'|'.$familyCode] = true;
         }
 
@@ -2841,7 +2949,7 @@ class Importer extends AbstractImporter
      */
     public function prepareConfigurableAttributes(array $rowData, array &$products, bool $isExisting): void
     {
-        if ($rowData['type'] !== self::PRODUCT_TYPE_CONFIGURABLE) {
+        if ($rowData['type'] !== ProductType::Configurable->value) {
             return;
         }
 
@@ -2864,8 +2972,8 @@ class Importer extends AbstractImporter
     {
         $familyId = $this->attributeFamiliesByCode[$rowData[self::ATTRIBUTE_FAMILY_CODE]]?->id;
 
-        if (! empty($rowData['variant_structure']) && $familyId) {
-            $structure = $this->getVariantStructure($rowData['variant_structure'], $familyId);
+        if (! empty($rowData[self::VARIANT_STRUCTURE_CODE]) && $familyId) {
+            $structure = $this->getVariantStructure($rowData[self::VARIANT_STRUCTURE_CODE], $familyId);
 
             if ($structure instanceof VariantStructure) {
                 return $structure->axes
@@ -3059,22 +3167,26 @@ class Importer extends AbstractImporter
 
         if (! empty($oldValues[AbstractType::COMMON_VALUES_KEY])) {
             $newValues[AbstractType::COMMON_VALUES_KEY] = array_filter(
-                array_merge($oldValues[AbstractType::COMMON_VALUES_KEY] ?? [], $newValues[AbstractType::COMMON_VALUES_KEY])
+                array_merge($oldValues[AbstractType::COMMON_VALUES_KEY] ?? [], $newValues[AbstractType::COMMON_VALUES_KEY]),
+                is_filled_value(...)
             );
         }
 
         foreach ($this->channelsAndLocales as $channelCode => $locales) {
             $newValues[AbstractType::CHANNEL_VALUES_KEY][$channelCode] = array_filter(
-                array_merge($oldValues[AbstractType::CHANNEL_VALUES_KEY][$channelCode] ?? [], $newValues[AbstractType::CHANNEL_VALUES_KEY][$channelCode] ?? [])
+                array_merge($oldValues[AbstractType::CHANNEL_VALUES_KEY][$channelCode] ?? [], $newValues[AbstractType::CHANNEL_VALUES_KEY][$channelCode] ?? []),
+                is_filled_value(...)
             );
 
             foreach ($locales as $localeCode) {
                 $newValues[AbstractType::LOCALE_VALUES_KEY][$localeCode] = array_filter(
-                    array_merge($oldValues[AbstractType::LOCALE_VALUES_KEY][$localeCode] ?? [], $newValues[AbstractType::LOCALE_VALUES_KEY][$localeCode] ?? [])
+                    array_merge($oldValues[AbstractType::LOCALE_VALUES_KEY][$localeCode] ?? [], $newValues[AbstractType::LOCALE_VALUES_KEY][$localeCode] ?? []),
+                    is_filled_value(...)
                 );
 
                 $newValues[AbstractType::CHANNEL_LOCALE_VALUES_KEY][$channelCode][$localeCode] = array_filter(
-                    array_merge($oldValues[AbstractType::CHANNEL_LOCALE_VALUES_KEY][$channelCode][$localeCode] ?? [], $newValues[AbstractType::CHANNEL_LOCALE_VALUES_KEY][$channelCode][$localeCode] ?? [])
+                    array_merge($oldValues[AbstractType::CHANNEL_LOCALE_VALUES_KEY][$channelCode][$localeCode] ?? [], $newValues[AbstractType::CHANNEL_LOCALE_VALUES_KEY][$channelCode][$localeCode] ?? []),
+                    is_filled_value(...)
                 );
 
                 if (empty($newValues[AbstractType::LOCALE_VALUES_KEY][$localeCode])) {
@@ -3156,7 +3268,7 @@ class Importer extends AbstractImporter
      */
     protected function isUniqueVariation(array $productData, int $rowNumber): void
     {
-        if (empty($productData['parent']) || $productData['type'] !== self::PRODUCT_TYPE_SIMPLE) {
+        if (empty($productData['parent']) || $productData['type'] !== ProductType::Simple->value) {
             return;
         }
 
@@ -3200,7 +3312,7 @@ class Importer extends AbstractImporter
     {
         $configurableAttributes = [];
 
-        if ($rowData['type'] == self::PRODUCT_TYPE_CONFIGURABLE && ! empty($rowData['configurable_attributes'])) {
+        if ($rowData['type'] == ProductType::Configurable->value && ! empty($rowData['configurable_attributes'])) {
             $configurableAttributes = str_contains($rowData['configurable_attributes'], ',') ? explode(',', $rowData['configurable_attributes'] ?? '') : [$rowData['configurable_attributes']];
 
             $configurableAttirbutes = array_filter($configurableAttributes, trim(...));

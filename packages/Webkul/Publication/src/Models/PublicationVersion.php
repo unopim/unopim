@@ -22,6 +22,7 @@ use Webkul\User\Models\AdminProxy;
     'publication_id',
     'locale_id',
     'version',
+    'release_id',
     'payload',
     'checksum',
     'is_current',
@@ -154,6 +155,11 @@ class PublicationVersion extends Model implements PublicationVersionContract
     public function publication(): BelongsTo
     {
         return $this->belongsTo(PublicationProxy::modelClass());
+    }
+
+    public function release(): BelongsTo
+    {
+        return $this->belongsTo(PublicationReleaseProxy::modelClass(), 'release_id');
     }
 
     public function locale(): BelongsTo

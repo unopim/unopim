@@ -16,3 +16,8 @@ it('constrains every {id} route param to numeric so non-numeric ids 404 instead 
     'ai-agent.dashboard.rollback',
     'ai-agent.dashboard.notifications.dismiss',
 ]);
+
+it('does not offer an approvals permission that guards no route', function () {
+    expect(collect(config('acl'))->pluck('key'))->not->toContain('ai-agent.approvals');
+    expect(Route::has('ai-agent.approvals.index'))->toBeFalse();
+});

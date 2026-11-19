@@ -5,6 +5,7 @@ use Illuminate\Support\Str;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Product\Contracts\VariantStructurePlanner as PlannerContract;
+use Webkul\Product\Enums\VariantLevel;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAttribute;
 use Webkul\Product\Models\VariantStructureAxis;
@@ -16,8 +17,6 @@ uses(DatabaseTransactions::class);
  */
 function makeStructure(): array
 {
-    // Codes are suffixed with a random string because this suite runs against a
-    // seeded database that already has attributes named "color", "size", etc.
     $colorCode = 'color_'.Str::random(8);
     $sizeCode = 'size_'.Str::random(8);
     $swatchCode = 'swatch_'.Str::random(8);
@@ -43,8 +42,8 @@ function makeStructure(): array
     ]);
 
     VariantStructureAttribute::insert([
-        ['variant_structure_id' => $structure->id, 'attribute_id' => $image->id, 'level' => 'sub_parent'],
-        ['variant_structure_id' => $structure->id, 'attribute_id' => $price->id, 'level' => 'variant'],
+        ['variant_structure_id' => $structure->id, 'attribute_id' => $image->id, 'level' => VariantLevel::SubParent->value],
+        ['variant_structure_id' => $structure->id, 'attribute_id' => $price->id, 'level' => VariantLevel::Variant->value],
     ]);
 
     return [
@@ -68,15 +67,15 @@ it('reads a placement, defaulting to common', function () {
     $planner = app(PlannerContract::class);
     ['structure' => $s, 'swatchCode' => $swatchCode, 'priceCode' => $priceCode] = makeStructure();
 
-    expect($planner->placementOf($s, $swatchCode))->toBe('sub_parent')
-        ->and($planner->placementOf($s, $priceCode))->toBe('variant')
-        ->and($planner->placementOf($s, 'brand'))->toBe('common');
+    expect($planner->placementOf($s, $swatchCode))->toBe(VariantLevel::SubParent->value)
+        ->and($planner->placementOf($s, $priceCode))->toBe(VariantLevel::Variant->value)
+        ->and($planner->placementOf($s, 'brand'))->toBe(VariantLevel::Common->value);
 });
 
 it('lists attribute codes at a level', function () {
     $planner = app(PlannerContract::class);
     ['structure' => $s, 'swatchCode' => $swatchCode, 'priceCode' => $priceCode] = makeStructure();
 
-    expect($planner->attributeCodesAtLevel($s, 'sub_parent'))->toBe([$swatchCode])
-        ->and($planner->attributeCodesAtLevel($s, 'variant'))->toBe([$priceCode]);
+    expect($planner->attributeCodesAtLevel($s, VariantLevel::SubParent->value))->toBe([$swatchCode])
+        ->and($planner->attributeCodesAtLevel($s, VariantLevel::Variant->value))->toBe([$priceCode]);
 });

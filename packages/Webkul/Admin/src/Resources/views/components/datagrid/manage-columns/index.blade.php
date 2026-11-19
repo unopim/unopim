@@ -6,10 +6,11 @@
     <div class="transparent-button">
         <div
             class="relative inline-flex w-full max-w-max ltr:pl-3 rtl:pr-3 ltr:pr-5 rtl:pl-5 cursor-pointer select-none appearance-none items-center justify-between gap-x-1 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-900 px-1 py-1.5 text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:border-gray-400 dark:hover:border-gray-400 focus:outline-none focus:ring-2"
+            title="@lang('admin::app.components.datagrid.toolbar.manage-columns.title')"
         >
             <span class="icon-manage-column text-2xl"></span>
 
-            <span>
+            <span class="group-[.is-condensed]/toolbar:sr-only">
                 @lang('admin::app.components.datagrid.toolbar.manage-columns.title')
             </span>
         </div>
@@ -42,10 +43,11 @@
                             <div>
                                 <div
                                     class="relative inline-flex w-full max-w-max ltr:pl-3 rtl:pr-3 ltr:pr-5 rtl:pl-5 cursor-pointer select-none appearance-none items-center justify-between gap-x-1 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-900 px-1 py-1.5 text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:border-gray-400 dark:hover:border-gray-400 focus:outline-none focus:ring-2"
+                                    title="@lang('admin::app.components.datagrid.toolbar.manage-columns.title')"
                                 >
                                     <span class="icon-manage-column text-2xl"></span>
 
-                                    <span>
+                                    <span class="group-[.is-condensed]/toolbar:sr-only">
                                         @lang('admin::app.components.datagrid.toolbar.manage-columns.title')
                                     </span>
                                 </div>
@@ -64,7 +66,7 @@
 
                         <!-- Modal Content -->
                         <x-slot:content>
-                            <div class="grid grid-cols-2 gap-4 p-2">
+                            <div class="grid grid-cols-2 max-sm:grid-cols-1 gap-4 p-2">
                                 <!-- Left Side -->
                                 <div class="flex flex-col gap-y-2">
                                     <div class="flex items-center justify-between">
@@ -75,8 +77,8 @@
                                     <template v-if="loading">
                                         <div class="shimmer h-10 rounded-md mb-1"></div>
 
-                                        <div class="grid gap-y-2.5 pt-3 !h-[calc(100vh-367px)] pb-1 pt-1 overflow-auto">
-                                            <div v-for="n in 20" :key="n" class="shimmer w-[302px] h-[38px] rounded-md"></div>
+                                        <div class="grid gap-y-2.5 pt-3 !h-[min(55vh,calc(100vh-367px))] pb-1 pt-1 overflow-auto">
+                                            <div v-for="n in 20" :key="n" class="shimmer w-full h-[38px] rounded-md"></div>
                                         </div>
                                         <div class="flex gap-x-2.5 pt-3">
                                             <div class="shimmer w-[38px] h-[38px] rounded-md"></div>
@@ -95,7 +97,7 @@
                                             />
                                         </div>
                                         <draggable
-                                            class="!h-[calc(100vh-367px)] pb-[16px] pt-1 overflow-auto ltr:border-r rtl:border-l border-gray-200"
+                                            class="!h-[min(55vh,calc(100vh-367px))] pb-[16px] pt-1 overflow-auto ltr:border-r rtl:border-l border-gray-200"
                                             ghost-class="draggable-ghost"
                                             handle=".icon-drag"
                                             v-bind="{animation: 200}"
@@ -199,7 +201,7 @@
                                     </div>
 
                                     <draggable
-                                        class="h-[calc(100vh-285px)] pb-[16px] pt-3 overflow-auto border-gray-200"
+                                        class="h-[min(55vh,calc(100vh-367px))] pb-[16px] pt-3 overflow-auto border-gray-200"
                                         ghost-class="draggable-ghost"
                                         handle=".icon-drag"
                                         v-bind="{animation: 200}"

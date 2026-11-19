@@ -8,7 +8,10 @@
             <x-slot:actions>
                 <!-- Export Modal -->
                 @if (bouncer()->hasPermission('catalog.products.quick_export'))
-                <x-admin::datagrid.export src="{{ route('admin.catalog.products.quick-export') }}" />
+                <x-admin::datagrid.export
+                    src="{{ route('admin.catalog.products.quick-export') }}"
+                    queue-src="{{ route('admin.catalog.products.quick-export.queue') }}"
+                />
                 @endif
 
                 {!! view_render_event('unopim.admin.catalog.products.create.before') !!}
@@ -154,7 +157,7 @@
                                         <x-admin::form.control-group.control
                                             type="text"
                                             name="sku"
-                                            ::rules="{ required: true, regex: /^[a-zA-Z0-9]+(?:[-_][a-zA-Z0-9]+)*$/ }"
+                                            ::rules="{ required: true, max: 255, regex: /^(?!.*[,;])\S(?:.*\S)?$/ }"
                                             :label="trans('admin::app.catalog.products.index.create.sku')"
                                         />
 

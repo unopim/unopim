@@ -5,22 +5,26 @@ namespace Webkul\Core\Providers;
 use Elastic\Elasticsearch\Client as ElasticSearchClient;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Mail\MailManager;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Intervention\Image\Drivers\Gd\Driver as GdDriver;
 use Intervention\Image\Drivers\Imagick\Driver as ImagickDriver;
 use Intervention\Image\ImageManager;
+use RuntimeException;
 use Webkul\Core\CatalogScope;
 use Webkul\Core\Console\Commands\TranslationsChecker;
 use Webkul\Core\Console\Commands\UnoPimPublish;
 use Webkul\Core\Console\Commands\UnoPimVersion;
 use Webkul\Core\Contracts\Database\Grammar;
 use Webkul\Core\Core;
+use Webkul\Core\Database\Schema\PrefixedIndexNameBlueprint;
 use Webkul\Core\ElasticSearch;
 use Webkul\Core\Exceptions\Handler;
 use Webkul\Core\Facades\Core as CoreFacade;
@@ -29,6 +33,7 @@ use Webkul\Core\Helpers\Database\GrammarQueryManager;
 use Webkul\Core\Helpers\Locales as LocalesHelper;
 use Webkul\Core\Http\Middleware\EnableDebugForAllowedIps;
 use Webkul\Core\Models\CoreConfig;
+use Webkul\Core\Platform\ModuleGate;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Core\RequestMemo;
@@ -55,20 +60,20 @@ class CoreServiceProvider extends ServiceProvider
 
         include __DIR__.'/../Http/helpers.php';
 
-        $purifierCachePath = storage_path('app/purifier');
-
-        if (! is_dir($purifierCachePath)) {
-            mkdir($purifierCachePath, 0755, true);
-        }
+        $this->ensurePurifierCacheDirectory(storage_path('app/purifier'));
 
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
 
         $this->app->beforeResolving(MailManager::class, function (): void {
+            if ($this->mailTransportIsPinnedByEnvironment()) {
+                return;
+            }
+
             $this->overrideMailConfiguration();
         });
 
         Event::listen('core.configuration.save.after', function (): void {
-            app(RequestMemo::class)->forget(self::MAIL_CONFIGURED_KEY);
+            resolve(RequestMemo::class)->forget(self::MAIL_CONFIGURED_KEY);
         });
 
         $this->app['router']->pushMiddlewareToGroup('web', EnableDebugForAllowedIps::class);
@@ -91,7 +96,7 @@ class CoreServiceProvider extends ServiceProvider
 
         // Redirect unauthenticated web requests to admin login (default `login` route 500s); let API fall through to JSON 401.
         Authenticate::redirectUsing(
-            fn ($request) => $request->is('api/*') ? null : route('admin.session.create')
+            fn ($request): ?string => $request->is('api/*') ? null : route('admin.session.create')
         );
 
         $this->loadViewsFrom(__DIR__.'/../Resources/views', 'core');
@@ -122,9 +127,20 @@ class CoreServiceProvider extends ServiceProvider
         DB::macro('rawQueryGrammar', fn (): Grammar => GrammarQueryManager::getGrammar());
 
         // Drop the request-scoped config memo on any config write so later reads in the same request see it.
-        $forgetConfigMemo = fn () => app(RequestMemo::class)->forget('core_config.');
+        $forgetConfigMemo = fn () => resolve(RequestMemo::class)->forget('core_config.');
         CoreConfig::saved($forgetConfigMemo);
         CoreConfig::deleted($forgetConfigMemo);
+    }
+
+    /**
+     * Whether the environment pinned a transport the stored settings must not replace.
+     *
+     * The array transport is the one the test environment forces, so overriding it
+     * would dial the admin's SMTP host and send real mail from the suite.
+     */
+    private function mailTransportIsPinnedByEnvironment(): bool
+    {
+        return config('mail.default') === 'array';
     }
 
     /**
@@ -139,7 +155,7 @@ class CoreServiceProvider extends ServiceProvider
      */
     protected function overrideMailConfiguration(): void
     {
-        $memo = app(RequestMemo::class);
+        $memo = resolve(RequestMemo::class);
 
         if ($memo->has(self::MAIL_CONFIGURED_KEY)) {
             return;
@@ -183,9 +199,53 @@ class CoreServiceProvider extends ServiceProvider
         }
     }
 
+    /**
+     * Create the HTMLPurifier serializer cache directory.
+     *
+     * Concurrent boots race here, so the directory is re-checked after the attempt rather than
+     * before it, which rules out `File::ensureDirectoryExists()`. The local error handler is
+     * needed because Laravel's handler swallows the warning, leaving error_get_last() empty.
+     *
+     * @throws RuntimeException
+     */
+    protected function ensurePurifierCacheDirectory(string $path): void
+    {
+        if (File::isDirectory($path)) {
+            return;
+        }
+
+        $failure = null;
+
+        set_error_handler(function (int $level, string $message) use (&$failure): bool {
+            $failure = $message;
+
+            return true;
+        });
+
+        try {
+            $created = mkdir($path, 0755, true);
+        } finally {
+            restore_error_handler();
+        }
+
+        if ($created || File::isDirectory($path)) {
+            return;
+        }
+
+        throw new RuntimeException(sprintf(
+            'Unable to create purifier cache directory [%s]: %s',
+            $path,
+            $failure ?? 'unknown error',
+        ));
+    }
+
     public function register(): void
     {
         $this->mergeConfigFrom(dirname(__DIR__).'/Config/media.php', 'media');
+
+        $this->mergeConfigFrom(dirname(__DIR__).'/Config/platform_modules.php', 'platform_modules');
+
+        $this->app->bind(Blueprint::class, PrefixedIndexNameBlueprint::class);
 
         $this->app->singleton('image_manager', function ($app): ImageManager {
             $driver = $app['config']->get('image.driver', 'gd');
@@ -223,6 +283,8 @@ class CoreServiceProvider extends ServiceProvider
         ));
 
         $this->app->scoped(RequestMemo::class);
+
+        $this->app->scoped(ModuleGate::class);
 
         // Scope this Locales subclass so it loads once per request; Astrotomic otherwise rebuilds it per translated attribute.
         $this->app->scoped(LocalesHelper::class);

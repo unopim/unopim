@@ -77,6 +77,12 @@ most often bite:
 | AJAX navigation and the global save bar | Browser tests and extensions that assume full-page reloads or old DOM IDs |
 | Variant value storage | Extensions reading `products.values` directly must use `Product::resolvedValues()` |
 | Removed classes and services | `Webkul\FPC`, `spatie/laravel-responsecache`, `ThemeCustomizationRepository`, old webhook settings classes |
+| Prefixed index names | With a `DB_PREFIX` set and `prefix_indexes` on, an explicit index, unique or foreign key name gets the table prefix on fresh installs (`products_type_status_idx` becomes `3X_products_type_status_idx`). Installs that ran a migration before keep the old name. Check names with `PrefixedIndexNameBlueprint::indexExists()` and drop them through the Blueprint `drop*` methods instead of `Schema::hasIndex()`, raw `DROP INDEX` or `information_schema` lookups on a literal name. Names that already start with the prefix are left as they are. |
+| Unattended reinstall without a table prefix | `unopim:install` with an empty `DB_PREFIX` lists every table no other install claims and, without a terminal, now stops instead of dropping them. Scripts that reinstall over an existing unprefixed database must pass `--force`. Installs into an empty database are not affected. |
+| Menu parents with no visible child | A parent menu item now disappears when the platform module gate removed all of its children, even if it has its own route. Parents whose children were only hidden by role permissions stay as before. |
+| Platform module tags on Magic AI tools | Tools registered in `ai-agent.tools` without a `module` key are always offered. Product, category and family tools in core are tagged `'module' => 'pim'` and are hidden while PIM is switched off; tag your own product tools the same way. |
+| Platform module route gating | `platform_modules.<module>.route_prefixes` and ACL routes only gate named routes. Name every route your package wants hidden with its module. |
+| Dropdown alignment in RTL | `x-admin::dropdown` now mirrors `position` itself when the admin page is right-to-left, for both inline and teleported panels. A plugin that picks `bottom-left` or `bottom-right` (or `top-*`) from the locale direction gets flipped twice and opens outward. Pass the LTR position and drop the direction check. |
 
 ### Take a backup you have restored before
 
@@ -94,8 +100,8 @@ The new release is installed **beside** the current one, not on top of it:
 ```
 /var/www/unopim/
 ├── releases/2.1.6/     ← keeps running while you prepare
-├── releases/3.1.0/     ← the new release
-└── current -> releases/3.1.0
+├── releases/3.1.3/     ← the new release
+└── current -> releases/3.1.3
 ```
 
 Your web server document root points at `current/public`. Cutover is a symlink
@@ -144,16 +150,16 @@ has changed yet — the same code is serving from a new path.
 ```bash
 cd /var/www/unopim/releases
 
-curl -fL -o unopim.zip https://github.com/unopim/unopim/archive/refs/tags/v3.1.0.zip
+curl -fL -o unopim.zip https://github.com/unopim/unopim/archive/refs/tags/v3.1.3.zip
 unzip -q unopim.zip
-mv unopim-3.1.0 3.1.0
+mv unopim-3.1.3 3.1.3
 rm unopim.zip
 ```
 
 ### 3. Bring over your environment and files
 
 ```bash
-cd /var/www/unopim/releases/3.1.0
+cd /var/www/unopim/releases/3.1.3
 
 cp ../2.1.6/.env .env
 cp -a ../2.1.6/storage/app/. storage/app/
@@ -191,7 +197,7 @@ command aborts on its own if a tracked import or export job is still running.
 
 ```bash
 cd /var/www/unopim
-ln -sfn releases/3.1.0 current
+ln -sfn releases/3.1.3 current
 
 sudo systemctl reload php8.4-fpm
 sudo systemctl reload nginx        # or: sudo systemctl reload apache2
@@ -210,7 +216,7 @@ commits.
 cd /var/www/unopim/releases/2.1.6
 
 git fetch --tags
-git worktree add ../3.1.0 v3.1.0
+git worktree add ../3.1.3 v3.1.3
 ```
 
 Then continue from **Track A step 3**. Your local commits stay on their branch;

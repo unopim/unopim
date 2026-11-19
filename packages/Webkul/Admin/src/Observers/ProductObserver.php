@@ -2,10 +2,11 @@
 
 namespace Webkul\Admin\Observers;
 
+use Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit;
 use Webkul\Admin\Helpers\Dashboard;
 use Webkul\Product\Contracts\Product;
 
-class ProductObserver
+class ProductObserver implements ShouldHandleEventsAfterCommit
 {
     /**
      * Handle the Product "created" event.

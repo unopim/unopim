@@ -8,6 +8,7 @@
  */
 
 use function Pest\Laravel\get;
+use function Pest\Laravel\post;
 
 it('blocks tracker file download without the job_tracker permission', function () {
     $this->loginWithPermissions();
@@ -30,13 +31,13 @@ it('blocks tracker log download without the job_tracker permission', function ()
 it('blocks starting an import without the imports.execute permission', function () {
     $this->loginWithPermissions();
 
-    get(route('admin.settings.data_transfer.imports.start', 1))->assertStatus(403);
+    post(route('admin.settings.data_transfer.imports.start', 1))->assertStatus(403);
 });
 
 it('blocks validating an import without the imports.execute permission', function () {
     $this->loginWithPermissions();
 
-    get(route('admin.settings.data_transfer.imports.validate', 1))->assertStatus(403);
+    post(route('admin.settings.data_transfer.imports.validate', 1))->assertStatus(403);
 });
 
 it('blocks import source download without the imports permission', function () {

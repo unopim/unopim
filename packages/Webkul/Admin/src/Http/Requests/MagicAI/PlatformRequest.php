@@ -3,11 +3,13 @@
 namespace Webkul\Admin\Http\Requests\MagicAI;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
-use Webkul\MagicAI\Enums\AiProvider;
+use Webkul\Admin\Http\Requests\MagicAI\Concerns\GuardsManagedPlatform;
+use Webkul\MagicAI\Validator\PlatformValidator;
 
 class PlatformRequest extends FormRequest
 {
+    use GuardsManagedPlatform;
+
     /**
      * Determine whether the user is authorized.
      */
@@ -23,14 +25,6 @@ class PlatformRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'label'      => 'required|string|max:255',
-            'provider'   => ['required', Rule::enum(AiProvider::class)],
-            'api_url'    => 'nullable|url|max:500',
-            'api_key'    => 'nullable|string',
-            'models'     => 'required|string',
-            'is_default' => 'sometimes|boolean',
-            'status'     => 'sometimes|boolean',
-        ];
+        return app(PlatformValidator::class)->rules();
     }
 }

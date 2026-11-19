@@ -23,6 +23,9 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
     Route::get('acl-version', [AclVersionController::class, 'show'])->name('admin.acl.version');
 
     Route::get('media/download', [MediaController::class, 'download'])->name('admin.media.download');
+    Route::get('media/preview', [MediaController::class, 'preview'])->name('admin.media.preview');
+
+    Route::post('media/scan', [MediaController::class, 'scan'])->name('admin.media.scan');
 
     /**
      * Dashboard routes.
@@ -64,6 +67,8 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
      */
     Route::controller(MagicAIController::class)->prefix('magic-ai')->group(function () {
         Route::get('model', 'model')->name('admin.magic_ai.model');
+
+        Route::get('channel-locales', 'channelLocales')->name('admin.magic_ai.channel_locales');
 
         Route::get('validate-credential', 'validateCredential')->name('admin.magic_ai.validate_credential');
 

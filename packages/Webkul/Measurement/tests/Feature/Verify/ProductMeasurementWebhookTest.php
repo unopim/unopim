@@ -5,6 +5,7 @@ use Webkul\Attribute\Models\Attribute;
 use Webkul\Measurement\Helpers\MeasurementHelper;
 use Webkul\Measurement\Models\AttributeMeasurement;
 use Webkul\Measurement\Models\MeasurementFamily;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 use Webkul\Webhook\Helpers\ProductComparer;
 use Webkul\Webhook\Models\Webhook;
@@ -67,7 +68,7 @@ it('carries the stored measurement structure in the product audit diff that beco
 
     $product = Product::factory()->create([
         'sku'    => $sku,
-        'type'   => 'simple',
+        'type'   => ProductType::Simple->value,
         'status' => 1,
         'values' => [
             'common' => [
@@ -104,7 +105,7 @@ it('delivers the full measurement value structure inside the webhook request pay
 
     $product = Product::factory()->create([
         'sku'    => $sku,
-        'type'   => 'simple',
+        'type'   => ProductType::Simple->value,
         'status' => 1,
         'values' => [
             'common' => [
@@ -149,7 +150,7 @@ it('persists the delivered measurement payload in the webhook log', function () 
 
     $product = Product::factory()->create([
         'sku'    => $sku,
-        'type'   => 'simple',
+        'type'   => ProductType::Simple->value,
         'status' => 1,
         'values' => [
             'common' => [
@@ -209,7 +210,7 @@ it('reports a measurement unit and amount change with the recomputed base_data a
 
     $product = Product::factory()->create([
         'sku'    => $sku,
-        'type'   => 'simple',
+        'type'   => ProductType::Simple->value,
         'status' => 1,
         'values' => [
             'common' => [
@@ -246,7 +247,7 @@ it('does not fan out a measurement payload to webhooks not subscribed to the fir
 
     $product = Product::factory()->create([
         'sku'    => $sku,
-        'type'   => 'simple',
+        'type'   => ProductType::Simple->value,
         'status' => 1,
         'values' => [
             'common' => [
