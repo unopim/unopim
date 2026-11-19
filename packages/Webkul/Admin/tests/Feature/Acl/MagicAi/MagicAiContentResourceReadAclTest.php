@@ -7,11 +7,14 @@ use Webkul\MagicAI\Services\Prompt\CategoryPrompt;
 use Webkul\MagicAI\Services\Prompt\ProductPrompt;
 use Webkul\Product\Models\Product;
 
-afterEach(function () {
+afterEach(function (): void {
     ProductPrompt::resetInstance();
     CategoryPrompt::resetInstance();
 });
 
+/**
+ * Bind a Magic AI double that returns fixed generated content.
+ */
 function fakeMagicAiContentPlatform(): void
 {
     $mock = Mockery::mock(MagicAI::class);
@@ -21,7 +24,7 @@ function fakeMagicAiContentPlatform(): void
     app()->instance('magic_ai', $mock);
 }
 
-it('denies expanding a product into the content prompt without the product view permission', function () {
+it('denies expanding a product into the content prompt without the product view permission', function (): void {
     fakeMagicAiContentPlatform();
 
     $product = Product::factory()->simple()->create();
@@ -36,7 +39,7 @@ it('denies expanding a product into the content prompt without the product view 
     ])->assertForbidden();
 });
 
-it('denies expanding a category into the content prompt without the category view permission', function () {
+it('denies expanding a category into the content prompt without the category view permission', function (): void {
     fakeMagicAiContentPlatform();
 
     $category = Category::factory()->create();
@@ -51,7 +54,7 @@ it('denies expanding a category into the content prompt without the category vie
     ])->assertForbidden();
 });
 
-it('expands a product into the content prompt with the product view permission', function () {
+it('expands a product into the content prompt with the product view permission', function (): void {
     fakeMagicAiContentPlatform();
 
     $product = Product::factory()->simple()->create();
@@ -66,7 +69,7 @@ it('expands a product into the content prompt with the product view permission',
     ])->assertOk()->assertJsonPath('content', 'Generated content.');
 });
 
-it('expands a category into the content prompt with the category view permission', function () {
+it('expands a category into the content prompt with the category view permission', function (): void {
     fakeMagicAiContentPlatform();
 
     $category = Category::factory()->create();
@@ -81,7 +84,7 @@ it('expands a category into the content prompt with the category view permission
     ])->assertOk()->assertJsonPath('content', 'Generated content.');
 });
 
-it('generates content without a resource using only the ai-agent permission', function () {
+it('generates content without a resource using only the ai-agent permission', function (): void {
     fakeMagicAiContentPlatform();
 
     $this->loginWithPermissions(permissions: ['dashboard', 'ai-agent']);
@@ -92,6 +95,9 @@ it('generates content without a resource using only the ai-agent permission', fu
     ])->assertOk();
 });
 
+/**
+ * Bind a Magic AI double that returns one fixed generated image.
+ */
 function fakeMagicAiImagePlatform(): void
 {
     $mock = Mockery::mock(MagicAI::class);
@@ -101,7 +107,7 @@ function fakeMagicAiImagePlatform(): void
     app()->instance('magic_ai', $mock);
 }
 
-it('denies expanding a product into the image prompt without the product view permission', function () {
+it('denies expanding a product into the image prompt without the product view permission', function (): void {
     fakeMagicAiImagePlatform();
 
     $product = Product::factory()->simple()->create();
@@ -117,7 +123,7 @@ it('denies expanding a product into the image prompt without the product view pe
     ])->assertForbidden();
 });
 
-it('denies expanding a category into the image prompt without the category view permission', function () {
+it('denies expanding a category into the image prompt without the category view permission', function (): void {
     fakeMagicAiImagePlatform();
 
     $category = Category::factory()->create();
@@ -133,7 +139,7 @@ it('denies expanding a category into the image prompt without the category view 
     ])->assertForbidden();
 });
 
-it('expands a product into the image prompt with the product view permission', function () {
+it('expands a product into the image prompt with the product view permission', function (): void {
     fakeMagicAiImagePlatform();
 
     $product = Product::factory()->simple()->create();
@@ -149,7 +155,7 @@ it('expands a product into the image prompt with the product view permission', f
     ])->assertOk()->assertJsonCount(1, 'images');
 });
 
-it('generates an image without a resource using only the ai-agent permission', function () {
+it('generates an image without a resource using only the ai-agent permission', function (): void {
     fakeMagicAiImagePlatform();
 
     $this->loginWithPermissions(permissions: ['dashboard', 'ai-agent']);

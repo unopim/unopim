@@ -27,7 +27,7 @@ it('sanitizes content set into or pasted into the editor', function () {
         ->toContain('ALLOW_DATA_ATTR: false');
 });
 
-it('sanitizes generated content before rendering it in the rich preview', function () {
+it('sanitizes generated content before rendering it in the rich preview', function (): void {
     preg_match_all('/v-html="([^"]*)"/', tinymceComponent(), $matches);
 
     expect($matches[1])->not->toBeEmpty()
