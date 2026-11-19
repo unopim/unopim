@@ -44,3 +44,18 @@ it('adds the module collector once the debugbar is enabled at runtime', function
 
     $debugbar->disable();
 });
+
+it('records queries once the debugbar is enabled', function () {
+    $debugbar = app(LaravelDebugbar::class);
+
+    $debugbar->enable();
+
+    DB::select('select 1');
+
+    $query = collect($debugbar->getCollector('modules')->queries)->last();
+
+    expect($query['sql'])->toBe('select 1')
+        ->and($query['duration_str'])->toBeString()->not->toBeEmpty();
+
+    $debugbar->disable();
+});
