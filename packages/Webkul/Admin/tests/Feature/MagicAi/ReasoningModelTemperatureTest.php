@@ -8,8 +8,8 @@ use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Services\LaravelAiAdapter;
 
 /**
- * Reasoning models (o-series, gpt-5*) reject `temperature` — only the default
- * is allowed. Sending temperature triggers a 400 invalid_request_error.
+ * Reasoning models (o-series, gpt-5 and later) reject `temperature` — only the
+ * default is allowed. Sending temperature triggers a 400 invalid_request_error.
  * This test pins the LaravelAiAdapter behaviour so a regression breaks loudly.
  */
 beforeEach(function () {
@@ -87,7 +87,7 @@ it('does NOT send temperature for gpt-5* reasoning models', function () {
     });
 });
 
-it('does NOT send temperature for gpt-6 and later reasoning models', function (string $model) {
+it('does NOT send temperature for gpt-6 and later reasoning models', function (string $model): void {
     (new LaravelAiAdapter(
         platform: $this->platform,
         model: $model,
@@ -95,7 +95,7 @@ it('does NOT send temperature for gpt-6 and later reasoning models', function (s
         temperature: 0.42,
     ))->ask();
 
-    Http::assertSent(function (Request $request) use ($model) {
+    Http::assertSent(function (Request $request) use ($model): bool {
         $body = json_decode($request->body(), true);
 
         return $body['model'] === $model
@@ -112,7 +112,7 @@ it('does NOT send temperature for gpt-6 and later reasoning models', function (s
     'gpt-21-mini',
 ]);
 
-it('sends temperature for chat and pre-reasoning OpenAI models', function (string $model) {
+it('sends temperature for chat and pre-reasoning OpenAI models', function (string $model): void {
     (new LaravelAiAdapter(
         platform: $this->platform,
         model: $model,
@@ -120,7 +120,7 @@ it('sends temperature for chat and pre-reasoning OpenAI models', function (strin
         temperature: 0.42,
     ))->ask();
 
-    Http::assertSent(function (Request $request) use ($model) {
+    Http::assertSent(function (Request $request) use ($model): bool {
         $body = json_decode($request->body(), true);
 
         return $body['model'] === $model

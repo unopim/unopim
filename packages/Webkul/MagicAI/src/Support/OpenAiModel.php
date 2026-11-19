@@ -2,6 +2,9 @@
 
 namespace Webkul\MagicAI\Support;
 
+/**
+ * Classifies OpenAI model names by the request parameters they accept.
+ */
 class OpenAiModel
 {
     /**

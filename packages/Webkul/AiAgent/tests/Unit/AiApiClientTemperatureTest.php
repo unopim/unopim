@@ -8,8 +8,12 @@ use Webkul\AiAgent\Http\Client\AiApiClient;
  */
 class AiApiClientTemperatureDouble extends AiApiClient
 {
+    /** @var array<string, mixed> */
     public array $capturedBody = [];
 
+    /**
+     * Capture the request body and return a canned chat completion.
+     */
     protected function execute(string $method, string $url, ?array $data = null): array
     {
         $this->capturedBody = $data ?? [];
@@ -41,9 +45,9 @@ function sendTemperatureTestChat(string $model): array
     return $client->capturedBody;
 }
 
-describe('AiApiClient temperature for OpenAI models', function () {
+describe('AiApiClient temperature for OpenAI models', function (): void {
 
-    it('omits temperature for reasoning models', function (string $model) {
+    it('omits temperature for reasoning models', function (string $model): void {
         expect(sendTemperatureTestChat($model))->not->toHaveKey('temperature');
     })->with([
         'o1-mini',
@@ -58,7 +62,7 @@ describe('AiApiClient temperature for OpenAI models', function () {
         'gpt-21-mini',
     ]);
 
-    it('sends temperature for models that accept it', function (string $model) {
+    it('sends temperature for models that accept it', function (string $model): void {
         expect(sendTemperatureTestChat($model))->toHaveKey('temperature', 0.42);
     })->with([
         'gpt-4o',
