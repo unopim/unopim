@@ -285,6 +285,24 @@ return [
                     'root-not-allowed' => 'ルートカテゴリを製品に割り当てることはできません。',
                 ],
 
+                'templates' => [
+                    'help'     => 'テンプレートのヘルプ',
+                    'title'    => '動的テンプレート',
+                    'info'     => '@ を入力すると、この商品の別の属性を挿入できます。変数はエクスポート時に商品の値に置き換えられます。',
+                    'example'  => '例',
+                    'filters'  => 'フィルター',
+                    'currency' => '単一通貨での価格',
+
+                    'preview'  => [
+                        'button'       => 'テンプレートをプレビュー',
+                        'title'        => 'テンプレートのプレビュー',
+                        'refresh'      => '更新',
+                        'empty'        => 'テンプレートの出力は空です。',
+                        'failed'       => 'プレビューを読み込めませんでした。もう一度お試しください。',
+                        'saved-values' => 'このページで読み込まれたセクションの未保存の値を使用します。その他の値は最後に保存された内容から取得されます。',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => '属性グループ:',
                     'title'              => '属性グループ',
@@ -675,6 +693,8 @@ return [
                 'usable-in-grid'         => 'グリッドで使用可能',
                 'is-filterable'          => 'フィルタリング可能',
                 'ai-translate'           => 'AI翻訳',
+                'enable-templates'       => 'テンプレートを有効にする',
+                'templates-unsupported'  => 'テンプレートは、入力検証がなく、一意ではないテキストおよびテキストエリア属性でのみ有効にできます。',
                 'invalid-swatch-type'    => ':attribute は、スウォッチタイプ :swatch_type の属性タイプ :type には許可されていません。',
                 'single-object-only'     => '属性の作成リクエストには属性オブジェクトを1つだけ送信してください。',
                 'option'                 => [

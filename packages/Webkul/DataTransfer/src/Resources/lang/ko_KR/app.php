@@ -61,6 +61,7 @@ return [
                     'duplicate-code'                       => '속성 코드 :code는 이미 사용 중입니다.',
                     'code_not_found_to_delete'             => '삭제할 속성 코드를 찾을 수 없습니다.',
                     'code_is_system_and_cannot_be_deleted' => '시스템 속성은 삭제할 수 없습니다.',
+                    'templates-unsupported'                => '템플릿은 입력 유효성 검사가 없고 고유하지 않은 텍스트 및 텍스트 영역 속성에서만 활성화할 수 있습니다.',
                 ],
             ],
         ],
@@ -186,6 +187,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => '템플릿 렌더링',
+            'render-templates-info'  => '원본 템플릿 소스 대신 렌더링된 템플릿 값을 내보냅니다. 렌더링된 파일을 다시 가져오면 저장된 템플릿 소스가 일반 텍스트로 바뀝니다.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

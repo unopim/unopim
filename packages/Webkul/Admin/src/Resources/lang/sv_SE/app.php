@@ -285,6 +285,24 @@ return [
                     'root-not-allowed' => 'Rotkategorin kan inte tilldelas en produkt.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Hjälp för mallar',
+                    'title'    => 'Dynamiska mallar',
+                    'info'     => 'Skriv @ för att infoga ett annat attribut från den här produkten. Variabler ersätts med produktens värden vid export.',
+                    'example'  => 'Exempel',
+                    'filters'  => 'Filter',
+                    'currency' => 'Pris i en valuta',
+
+                    'preview'  => [
+                        'button'       => 'Förhandsgranska mall',
+                        'title'        => 'Förhandsgranskning av mall',
+                        'refresh'      => 'Uppdatera',
+                        'empty'        => 'Mallen ger ett tomt värde.',
+                        'failed'       => 'Förhandsgranskningen kunde inte läsas in. Försök igen.',
+                        'saved-values' => 'Använder de osparade värdena från avsnitten som har lästs in på den här sidan. Övriga värden kommer från den senaste sparningen.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Attributgrupp:',
                     'title'              => 'Attributgrupper',
@@ -675,6 +693,8 @@ return [
                 'usable-in-grid'         => 'Kan användas i rutnät',
                 'is-filterable'          => 'Är filtrerbar',
                 'ai-translate'           => 'AI Översättning',
+                'enable-templates'       => 'Aktivera mallar',
+                'templates-unsupported'  => 'Mallar kan endast aktiveras för text- och textområdesattribut som saknar inmatningsvalidering och inte är unika.',
                 'invalid-swatch-type'    => 'Attributet :attribute är inte tillåtet för attributtyp :type med swatchtyp :swatch_type.',
                 'single-object-only'     => 'Varje skapandeförfrågan får endast innehålla ett attributobjekt.',
                 'option'                 => [

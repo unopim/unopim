@@ -285,6 +285,24 @@ return [
                     'root-not-allowed' => 'Korijensku kategoriju nije moguće dodijeliti proizvodu.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Pomoć za predloške',
+                    'title'    => 'Dinamički predlošci',
+                    'info'     => 'Upišite @ za umetanje drugog atributa ovog proizvoda. Varijable se pri izvozu zamjenjuju vrijednostima proizvoda.',
+                    'example'  => 'Primjer',
+                    'filters'  => 'Filtri',
+                    'currency' => 'Cijena u jednoj valuti',
+
+                    'preview'  => [
+                        'button'       => 'Pregledaj predložak',
+                        'title'        => 'Pregled predloška',
+                        'refresh'      => 'Osvježi',
+                        'empty'        => 'Predložak daje praznu vrijednost.',
+                        'failed'       => 'Pregled nije moguće učitati. Pokušajte ponovno.',
+                        'saved-values' => 'Koristi nespremljene vrijednosti odjeljaka učitanih na ovoj stranici. Ostale vrijednosti dolaze iz posljednjeg spremanja.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Grupa atributa:',
                     'title'              => 'Grupe atributa',
@@ -675,6 +693,8 @@ return [
                 'usable-in-grid'         => 'Upotrebljivo u mreži',
                 'is-filterable'          => 'Je filtrabilno',
                 'ai-translate'           => 'AI Prevod',
+                'enable-templates'       => 'Omogući predloške',
+                'templates-unsupported'  => 'Predlošci se mogu omogućiti samo za tekstualne atribute i atribute tekstualnog polja koji nemaju validaciju unosa i nisu jedinstveni.',
                 'invalid-swatch-type'    => ':attribute nije dozvoljen za tip atributa :type s tipom uzorka :swatch_type.',
                 'single-object-only'     => 'Svaki zahtjev za stvaranje mora sadržavati samo jedan objekt atributa.',
                 'option'                 => [

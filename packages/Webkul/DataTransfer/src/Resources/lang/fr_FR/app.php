@@ -61,6 +61,7 @@ return [
                     'duplicate-code'                       => 'Le code d\'attribut :code est déjà utilisé.',
                     'code_not_found_to_delete'             => 'Code d\'attribut introuvable pour la suppression.',
                     'code_is_system_and_cannot_be_deleted' => 'L\'attribut système ne peut pas être supprimé.',
+                    'templates-unsupported'                => 'Les modèles ne peuvent être activés que sur les attributs de type texte et zone de texte qui n\'ont pas de validation du champ et qui ne sont pas uniques.',
                 ],
             ],
         ],
@@ -186,6 +187,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'Générer les modèles',
+            'render-templates-info'  => 'Exporter les valeurs générées des modèles au lieu de la source brute du modèle. Réimporter un fichier généré remplace la source enregistrée du modèle par du texte brut.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

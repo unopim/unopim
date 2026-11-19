@@ -61,6 +61,7 @@ return [
                     'duplicate-code'                       => 'Код атрибута :code вже використовується.',
                     'code_not_found_to_delete'             => 'Код атрибута для видалення не знайдено.',
                     'code_is_system_and_cannot_be_deleted' => 'Системний атрибут не може бути видалено.',
+                    'templates-unsupported'                => 'Шаблони можна ввімкнути лише для атрибутів типу "Текст" і "Текстове поле", які не мають валідації введення та не є унікальними.',
                 ],
             ],
         ],
@@ -186,6 +187,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'Обробляти шаблони',
+            'render-templates-info'  => 'Експортувати готові значення шаблонів замість вихідного тексту шаблону. Повторний імпорт готового файлу замінює збережений вихідний текст шаблону звичайним текстом.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

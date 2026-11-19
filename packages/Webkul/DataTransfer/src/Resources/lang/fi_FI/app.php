@@ -61,6 +61,7 @@ return [
                     'duplicate-code'                       => 'Attribuuttikoodi :code on jo käytössä.',
                     'code_not_found_to_delete'             => 'Attribuuttikoodia ei löytynyt poistettavaksi.',
                     'code_is_system_and_cannot_be_deleted' => 'Järjestelmäattribuuttia ei voi poistaa.',
+                    'templates-unsupported'                => 'Mallipohjat voidaan ottaa käyttöön vain teksti- ja tekstikenttäattribuuteille, joilla ei ole syötteen validointia ja jotka eivät ole ainutlaatuisia.',
                 ],
             ],
         ],
@@ -186,6 +187,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'Muodosta mallipohjat',
+            'render-templates-info'  => 'Vie muodostetut mallipohja-arvot alkuperäisen mallipohjalähteen sijaan. Muodostetun tiedoston tuominen uudelleen korvaa tallennetun mallipohjalähteen pelkällä tekstillä.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

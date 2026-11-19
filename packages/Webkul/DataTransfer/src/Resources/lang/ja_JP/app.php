@@ -61,6 +61,7 @@ return [
                     'duplicate-code'                       => '属性コード :code はすでに使用されています。',
                     'code_not_found_to_delete'             => '削除する属性コードが見つかりません。',
                     'code_is_system_and_cannot_be_deleted' => 'システム属性は削除できません。',
+                    'templates-unsupported'                => 'テンプレートは、入力検証がなく、一意ではないテキストおよびテキストエリア属性でのみ有効にできます。',
                 ],
             ],
         ],
@@ -186,6 +187,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'テンプレートをレンダリング',
+            'render-templates-info'  => '生のテンプレートソースではなく、レンダリング後のテンプレート値をエクスポートします。レンダリング済みのファイルを再インポートすると、保存されているテンプレートソースがプレーンテキストに置き換えられます。',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

@@ -286,6 +286,24 @@ return [
                     'root-not-allowed' => 'Kategorii głównej nie można przypisać do produktu.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Pomoc dotycząca szablonów',
+                    'title'    => 'Szablony dynamiczne',
+                    'info'     => 'Wpisz @, aby wstawić inny atrybut tego produktu. Zmienne są zastępowane wartościami produktu podczas eksportu.',
+                    'example'  => 'Przykład',
+                    'filters'  => 'Filtry',
+                    'currency' => 'Cena w jednej walucie',
+
+                    'preview'  => [
+                        'button'       => 'Podgląd szablonu',
+                        'title'        => 'Podgląd szablonu',
+                        'refresh'      => 'Odśwież',
+                        'empty'        => 'Szablon daje pustą wartość.',
+                        'failed'       => 'Nie udało się wczytać podglądu. Spróbuj ponownie.',
+                        'saved-values' => 'Używa niezapisanych wartości z sekcji wczytanych na tej stronie. Pozostałe wartości pochodzą z ostatniego zapisu.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Grupa atrybutów:',
                     'title'              => 'Grupy atrybutów',
@@ -676,6 +694,8 @@ return [
                 'usable-in-grid'         => 'Można używać w siatce',
                 'is-filterable'          => 'Jest filtrowalne',
                 'ai-translate'           => 'Tłumaczenie SI',
+                'enable-templates'       => 'Włącz szablony',
+                'templates-unsupported'  => 'Szablony można włączyć tylko dla atrybutów typu tekst i pole tekstowe, które nie mają weryfikacji danych wejściowych i nie są unikalne.',
                 'invalid-swatch-type'    => 'Atrybut :attribute nie jest dozwolony dla typu atrybutu :type z typem próbki :swatch_type.',
                 'single-object-only'     => 'Każde żądanie tworzenia musi zawierać tylko jeden obiekt atrybutu.',
                 'option'                 => [

@@ -286,6 +286,24 @@ return [
                     'root-not-allowed' => 'Rotkategorien kan ikke tildeles et produkt.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Hjelp for maler',
+                    'title'    => 'Dynamiske maler',
+                    'info'     => 'Skriv @ for å sette inn et annet attributt fra dette produktet. Variabler erstattes med produktverdiene ved eksport.',
+                    'example'  => 'Eksempel',
+                    'filters'  => 'Filtre',
+                    'currency' => 'Pris i én valuta',
+
+                    'preview'  => [
+                        'button'       => 'Forhåndsvis mal',
+                        'title'        => 'Forhåndsvisning av mal',
+                        'refresh'      => 'Oppdater',
+                        'empty'        => 'Malen gir en tom verdi.',
+                        'failed'       => 'Forhåndsvisningen kunne ikke lastes inn. Prøv igjen.',
+                        'saved-values' => 'Bruker de ulagrede verdiene fra seksjonene som er lastet inn på denne siden. Andre verdier kommer fra siste lagring.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Attributtgruppe:',
                     'title'              => 'Attributtgrupper',
@@ -676,6 +694,8 @@ return [
                 'usable-in-grid'         => 'Brukes i rutenett',
                 'is-filterable'          => 'Er filtrerbar',
                 'ai-translate'           => 'AI Oversettelse',
+                'enable-templates'       => 'Aktiver maler',
+                'templates-unsupported'  => 'Maler kan bare aktiveres for tekst- og tekstområdeattributter som ikke har inndatavalidering og ikke er unike.',
                 'invalid-swatch-type'    => ':attribute er ikke tillatt for attributttype :type med fargeprøvetype :swatch_type.',
                 'single-object-only'     => 'Hver opprettelsesforespørsel må inneholde kun ett attributtobjekt.',
                 'option'                 => [

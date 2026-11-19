@@ -286,6 +286,24 @@ return [
                     'root-not-allowed' => '루트 카테고리는 제품에 할당할 수 없습니다.',
                 ],
 
+                'templates' => [
+                    'help'     => '템플릿 도움말',
+                    'title'    => '동적 템플릿',
+                    'info'     => '@를 입력하여 이 상품의 다른 속성을 삽입하세요. 변수는 내보내기 시 상품 값으로 대체됩니다.',
+                    'example'  => '예시',
+                    'filters'  => '필터',
+                    'currency' => '단일 통화 가격',
+
+                    'preview'  => [
+                        'button'       => '템플릿 미리보기',
+                        'title'        => '템플릿 미리보기',
+                        'refresh'      => '새로고침',
+                        'empty'        => '템플릿 결과가 비어 있습니다.',
+                        'failed'       => '미리보기를 불러올 수 없습니다. 다시 시도해 주세요.',
+                        'saved-values' => '이 페이지에 로드된 섹션의 저장되지 않은 값을 사용합니다. 나머지 값은 마지막으로 저장된 내용에서 가져옵니다.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => '속성 그룹:',
                     'title'              => '속성 그룹',
@@ -676,6 +694,8 @@ return [
                 'usable-in-grid'         => '그리드에서 사용 가능',
                 'is-filterable'          => '필터링 가능',
                 'ai-translate'           => 'AI 번역',
+                'enable-templates'       => '템플릿 활성화',
+                'templates-unsupported'  => '템플릿은 입력 유효성 검사가 없고 고유하지 않은 텍스트 및 텍스트 영역 속성에서만 활성화할 수 있습니다.',
                 'invalid-swatch-type'    => ':attribute는 스와치 유형 :swatch_type의 속성 유형 :type에 대해 허용되지 않습니다.',
                 'single-object-only'     => '각 생성 요청은 속성 객체를 하나만 보내야 합니다.',
                 'option'                 => [

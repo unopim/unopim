@@ -286,6 +286,24 @@ return [
                     'root-not-allowed' => 'Categoria rădăcină nu poate fi atribuită unui produs.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Ajutor pentru șabloane',
+                    'title'    => 'Șabloane dinamice',
+                    'info'     => 'Tastați @ pentru a insera un alt atribut al acestui produs. Variabilele sunt înlocuite cu valorile produsului la export.',
+                    'example'  => 'Exemplu',
+                    'filters'  => 'Filtre',
+                    'currency' => 'Preț într-o singură monedă',
+
+                    'preview'  => [
+                        'button'       => 'Previzualizează șablonul',
+                        'title'        => 'Previzualizare șablon',
+                        'refresh'      => 'Reîmprospătează',
+                        'empty'        => 'Șablonul generează o valoare goală.',
+                        'failed'       => 'Previzualizarea nu a putut fi încărcată. Încercați din nou.',
+                        'saved-values' => 'Folosește valorile nesalvate ale secțiunilor încărcate pe această pagină. Celelalte valori provin din ultima salvare.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Grup de atribute:',
                     'title'              => 'Grupuri de atribute',
@@ -676,6 +694,8 @@ return [
                 'usable-in-grid'         => 'Utilizabil în grilă',
                 'is-filterable'          => 'Este filtrabil',
                 'ai-translate'           => 'Traducere IA',
+                'enable-templates'       => 'Activează șabloanele',
+                'templates-unsupported'  => 'Șabloanele pot fi activate doar pentru atributele de tip text și câmp text care nu au validare a intrării și nu sunt unice.',
                 'invalid-swatch-type'    => 'Atributul :attribute nu este permis pentru tipul de atribut :type cu tipul de eșantion :swatch_type.',
                 'single-object-only'     => 'Fiecare cerere de creare trebuie să trimită un singur obiect de atribut.',
                 'option'                 => [

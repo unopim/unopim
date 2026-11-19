@@ -298,6 +298,24 @@ return [
                     'root-not-allowed' => 'Root category cannot be assigned to a product.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Template help',
+                    'title'    => 'Dynamic templates',
+                    'info'     => 'Type @ to insert another attribute of this product. Variables are replaced with the product values on export.',
+                    'example'  => 'Example',
+                    'filters'  => 'Filters',
+                    'currency' => 'Price in one currency',
+
+                    'preview'  => [
+                        'button'       => 'Preview template',
+                        'title'        => 'Template preview',
+                        'refresh'      => 'Refresh',
+                        'empty'        => 'The template renders an empty value.',
+                        'failed'       => 'The preview could not be loaded. Please try again.',
+                        'saved-values' => 'Uses the unsaved values of the sections loaded on this page. Other values come from the last save.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Attribute group:',
                     'title'              => 'Attribute Groups',
@@ -718,6 +736,8 @@ return [
                 'usable-in-grid'         => 'Usable in grid',
                 'is-filterable'          => 'Is Filterable',
                 'ai-translate'           => 'AI Translate',
+                'enable-templates'       => 'Enable Templates',
+                'templates-unsupported'  => 'Templates can only be enabled on text and textarea attributes that have no input validation and are not unique.',
                 'invalid-swatch-type'    => 'The :attribute is not allowed for attribute type :type with swatch type :swatch_type.',
 
                 'single-object-only' => 'Each create request must send a single attribute object.',

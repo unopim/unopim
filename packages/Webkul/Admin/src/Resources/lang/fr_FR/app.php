@@ -285,6 +285,24 @@ return [
                     'root-not-allowed' => 'La catégorie racine ne peut pas être attribuée à un produit.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Aide sur les modèles',
+                    'title'    => 'Modèles dynamiques',
+                    'info'     => 'Saisissez @ pour insérer un autre attribut de ce produit. Les variables sont remplacées par les valeurs du produit lors de l\'export.',
+                    'example'  => 'Exemple',
+                    'filters'  => 'Filtres',
+                    'currency' => 'Prix dans une seule devise',
+
+                    'preview'  => [
+                        'button'       => 'Prévisualiser le modèle',
+                        'title'        => 'Aperçu du modèle',
+                        'refresh'      => 'Actualiser',
+                        'empty'        => 'Le modèle produit une valeur vide.',
+                        'failed'       => 'L\'aperçu n\'a pas pu être chargé. Veuillez réessayer.',
+                        'saved-values' => 'Utilise les valeurs non enregistrées des sections chargées sur cette page. Les autres valeurs proviennent du dernier enregistrement.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Groupe d\'attributs :',
                     'title'              => 'Groupes d\'attributs',
@@ -675,6 +693,8 @@ return [
                 'usable-in-grid'         => 'Disponible dans la liste des produits',
                 'is-filterable'          => 'Disponible dans la navigation par filtre',
                 'ai-translate'           => 'Traduction IA',
+                'enable-templates'       => 'Activer les modèles',
+                'templates-unsupported'  => 'Les modèles ne peuvent être activés que sur les attributs de type texte et zone de texte qui n\'ont pas de validation du champ et qui ne sont pas uniques.',
                 'invalid-swatch-type'    => 'Le :attribute n\'est pas autorisé pour le type d\'attribut :type avec le type d\'échantillon :swatch_type.',
                 'single-object-only'     => 'Chaque requête de création doit contenir un seul objet d\'attribut.',
                 'option'                 => [

@@ -285,6 +285,24 @@ return [
                     'root-not-allowed' => 'Juuriluokkaa ei voi liittää tuotteeseen.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Mallipohjien ohje',
+                    'title'    => 'Dynaamiset mallipohjat',
+                    'info'     => 'Kirjoita @ lisätäksesi toisen tämän tuotteen attribuutin. Muuttujat korvataan tuotteen arvoilla viennissä.',
+                    'example'  => 'Esimerkki',
+                    'filters'  => 'Suodattimet',
+                    'currency' => 'Hinta yhdessä valuutassa',
+
+                    'preview'  => [
+                        'button'       => 'Esikatsele mallipohjaa',
+                        'title'        => 'Mallipohjan esikatselu',
+                        'refresh'      => 'Päivitä',
+                        'empty'        => 'Mallipohja tuottaa tyhjän arvon.',
+                        'failed'       => 'Esikatselua ei voitu ladata. Yritä uudelleen.',
+                        'saved-values' => 'Käyttää tällä sivulla ladattujen osioiden tallentamattomia arvoja. Muut arvot tulevat viimeisimmästä tallennuksesta.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Attribuuttiryhmä:',
                     'title'              => 'Attribuuttiryhmät',
@@ -675,6 +693,8 @@ return [
                 'usable-in-grid'         => 'Käytettävissä ruudukossa',
                 'is-filterable'          => 'On suodatettavissa',
                 'ai-translate'           => 'AI Käännös',
+                'enable-templates'       => 'Ota mallipohjat käyttöön',
+                'templates-unsupported'  => 'Mallipohjat voidaan ottaa käyttöön vain teksti- ja tekstikenttäattribuuteille, joilla ei ole syötteen validointia ja jotka eivät ole ainutlaatuisia.',
                 'invalid-swatch-type'    => ':attribute ei ole sallittu attribuuttityypille :type, jossa on swatch-tyyppi :swatch_type.',
                 'single-object-only'     => 'Jokaisen luontipyynnön tulee sisältää vain yksi attribuuttiolio.',
                 'option'                 => [

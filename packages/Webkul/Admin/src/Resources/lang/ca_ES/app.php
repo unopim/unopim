@@ -285,6 +285,24 @@ return [
                     'root-not-allowed' => 'La categoria arrel no es pot assignar a un producte.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Ajuda de plantilles',
+                    'title'    => 'Plantilles dinàmiques',
+                    'info'     => 'Escriu @ per inserir un altre atribut d\'aquest producte. Les variables se substitueixen pels valors del producte en exportar.',
+                    'example'  => 'Exemple',
+                    'filters'  => 'Filtres',
+                    'currency' => 'Preu en una sola moneda',
+
+                    'preview'  => [
+                        'button'       => 'Previsualitza la plantilla',
+                        'title'        => 'Previsualització de la plantilla',
+                        'refresh'      => 'Actualitza',
+                        'empty'        => 'La plantilla genera un valor buit.',
+                        'failed'       => 'No s\'ha pogut carregar la previsualització. Torneu-ho a provar.',
+                        'saved-values' => 'Utilitza els valors no desats de les seccions carregades en aquesta pàgina. La resta de valors provenen de l\'últim desament.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Grup d\'atributs:',
                     'title'              => 'Grups d\'atributs',
@@ -675,6 +693,8 @@ return [
                 'usable-in-grid'         => 'Útil a la graella',
                 'is-filterable'          => 'És filtrable',
                 'ai-translate'           => 'Traducció IA',
+                'enable-templates'       => 'Habilitar plantilles',
+                'templates-unsupported'  => 'Les plantilles només es poden habilitar en atributs de text i àrea de text que no tinguin validació d\'entrada i no siguin únics.',
                 'invalid-swatch-type'    => 'L\':attribute no està permès per al tipus d\'atribut :type amb el tipus de mostra :swatch_type.',
                 'single-object-only'     => 'Cada sol·licitud de creació ha d\'enviar només un objecte d\'atribut.',
                 'option'                 => [

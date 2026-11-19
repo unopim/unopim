@@ -61,6 +61,7 @@ return [
                     'duplicate-code'                       => 'Kod atrybutu :code jest już w użyciu.',
                     'code_not_found_to_delete'             => 'Nie znaleziono kodu atrybutu do usunięcia.',
                     'code_is_system_and_cannot_be_deleted' => 'Nie można usunąć atrybutu systemowego.',
+                    'templates-unsupported'                => 'Szablony można włączyć tylko dla atrybutów typu tekst i pole tekstowe, które nie mają weryfikacji danych wejściowych i nie są unikalne.',
                 ],
             ],
         ],
@@ -186,6 +187,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'Renderuj szablony',
+            'render-templates-info'  => 'Eksportuj wyrenderowane wartości szablonów zamiast surowego źródła szablonu. Ponowny import wyrenderowanego pliku zastępuje zapisane źródło szablonu zwykłym tekstem.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

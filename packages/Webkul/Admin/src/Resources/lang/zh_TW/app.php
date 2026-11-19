@@ -285,6 +285,24 @@ return [
                     'root-not-allowed' => '根類別不能指派給產品。',
                 ],
 
+                'templates' => [
+                    'help'     => '範本說明',
+                    'title'    => '動態範本',
+                    'info'     => '輸入 @ 可插入此產品的其他屬性。匯出時變數會被替換為產品的值。',
+                    'example'  => '範例',
+                    'filters'  => '篩選器',
+                    'currency' => '單一貨幣價格',
+
+                    'preview'  => [
+                        'button'       => '預覽範本',
+                        'title'        => '範本預覽',
+                        'refresh'      => '重新整理',
+                        'empty'        => '範本轉譯結果為空。',
+                        'failed'       => '無法載入預覽，請再試一次。',
+                        'saved-values' => '使用本頁已載入區段中未儲存的值，其他值來自上次儲存。',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => '屬性群組：',
                     'title'              => '屬性群組',
@@ -675,6 +693,8 @@ return [
                 'usable-in-grid'         => '可在網格中使用',
                 'is-filterable'          => '可篩選',
                 'ai-translate'           => '人工智慧翻譯',
+                'enable-templates'       => '啟用範本',
+                'templates-unsupported'  => '只有沒有輸入驗證且非唯一的文本和文本區屬性才能啟用範本。',
                 'invalid-swatch-type'    => ':attribute 不允許用於屬性類型 :type，搭配色板類型 :swatch_type。',
                 'single-object-only'     => '每個建立請求只能傳送一個屬性物件。',
                 'option'                 => [

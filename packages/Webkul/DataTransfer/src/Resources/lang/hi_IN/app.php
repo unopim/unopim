@@ -61,6 +61,7 @@ return [
                     'duplicate-code'                       => 'विशेषता कोड :code पहले से ही उपयोग में है।',
                     'code_not_found_to_delete'             => 'हटाने के लिए विशेषता कोड नहीं मिला।',
                     'code_is_system_and_cannot_be_deleted' => 'सिस्टम विशेषता को हटाया नहीं जा सकता।',
+                    'templates-unsupported'                => 'टेम्पलेट केवल उन टेक्स्ट और टेक्स्टएरिया विशेषताओं पर सक्षम किए जा सकते हैं जिनमें कोई इनपुट सत्यापन नहीं है और जो अद्वितीय नहीं हैं।',
                 ],
             ],
         ],
@@ -186,6 +187,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'टेम्पलेट रेंडर करें',
+            'render-templates-info'  => 'कच्चे टेम्पलेट स्रोत के बजाय रेंडर किए गए टेम्पलेट मान निर्यात करें। रेंडर की गई फ़ाइल को दोबारा आयात करने पर सहेजा गया टेम्पलेट स्रोत सादे टेक्स्ट से बदल जाता है।',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

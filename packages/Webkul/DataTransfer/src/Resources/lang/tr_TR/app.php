@@ -61,6 +61,7 @@ return [
                     'duplicate-code'                       => 'Nitelik kodu :code zaten kullanımda.',
                     'code_not_found_to_delete'             => 'Silinecek nitelik kodu bulunamadı.',
                     'code_is_system_and_cannot_be_deleted' => 'Sistem niteliği silinemez.',
+                    'templates-unsupported'                => 'Şablonlar yalnızca girdi doğrulaması olmayan ve benzersiz olmayan metin ve metin alanı özniteliklerinde etkinleştirilebilir.',
                 ],
             ],
         ],
@@ -186,6 +187,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'Şablonları oluştur',
+            'render-templates-info'  => 'Ham şablon kaynağı yerine oluşturulmuş şablon değerlerini dışa aktar. Oluşturulmuş bir dosyanın yeniden içe aktarılması, kayıtlı şablon kaynağını düz metinle değiştirir.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

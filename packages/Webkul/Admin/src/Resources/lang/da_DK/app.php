@@ -285,6 +285,24 @@ return [
                     'root-not-allowed' => 'Rodkategorien kan ikke tildeles et produkt.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Hjælp til skabeloner',
+                    'title'    => 'Dynamiske skabeloner',
+                    'info'     => 'Skriv @ for at indsætte en anden egenskab fra dette produkt. Variabler erstattes med produktets værdier ved eksport.',
+                    'example'  => 'Eksempel',
+                    'filters'  => 'Filtre',
+                    'currency' => 'Pris i én valuta',
+
+                    'preview'  => [
+                        'button'       => 'Forhåndsvis skabelon',
+                        'title'        => 'Forhåndsvisning af skabelon',
+                        'refresh'      => 'Opdater',
+                        'empty'        => 'Skabelonen giver en tom værdi.',
+                        'failed'       => 'Forhåndsvisningen kunne ikke indlæses. Prøv igen.',
+                        'saved-values' => 'Bruger de ikke-gemte værdier fra de sektioner, der er indlæst på denne side. Andre værdier kommer fra den seneste gemning.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Attributgruppe:',
                     'title'              => 'Attributgrupper',
@@ -675,6 +693,8 @@ return [
                 'usable-in-grid'         => 'Brugbar i gitter',
                 'is-filterable'          => 'Er filtrerbar',
                 'ai-translate'           => 'AI Oversæt',
+                'enable-templates'       => 'Aktivér skabeloner',
+                'templates-unsupported'  => 'Skabeloner kan kun aktiveres på tekst- og tekstområdeattributter, der ikke har indtastningsvalidering og ikke er unikke.',
                 'invalid-swatch-type'    => 'Attributten :attribute er ikke tilladt for attributtype :type med swatchtype :swatch_type.',
                 'single-object-only'     => 'Hver oprettelsesanmodning må kun indeholde ét attributobjekt.',
                 'option'                 => [

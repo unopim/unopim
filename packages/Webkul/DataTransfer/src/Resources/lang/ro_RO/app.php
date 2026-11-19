@@ -61,6 +61,7 @@ return [
                     'duplicate-code'                       => 'Codul atributului :code este deja utilizat.',
                     'code_not_found_to_delete'             => 'Codul atributului nu a fost găsit pentru ștergere.',
                     'code_is_system_and_cannot_be_deleted' => 'Atributul de sistem nu poate fi șters.',
+                    'templates-unsupported'                => 'Șabloanele pot fi activate doar pentru atributele de tip text și câmp text care nu au validare a intrării și nu sunt unice.',
                 ],
             ],
         ],
@@ -186,6 +187,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'Randează șabloanele',
+            'render-templates-info'  => 'Exportă valorile randate ale șabloanelor în locul sursei brute a șablonului. Reimportarea unui fișier randat înlocuiește sursa salvată a șablonului cu text simplu.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

@@ -61,6 +61,7 @@ return [
                     'duplicate-code'                       => '屬性代碼 :code 已被使用。',
                     'code_not_found_to_delete'             => '未找到要刪除的屬性代碼。',
                     'code_is_system_and_cannot_be_deleted' => '無法刪除系統屬性。',
+                    'templates-unsupported'                => '只有沒有輸入驗證且非唯一的文本和文本區屬性才能啟用範本。',
                 ],
             ],
         ],
@@ -186,6 +187,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => '轉譯範本',
+            'render-templates-info'  => '匯出轉譯後的範本值，而非原始範本來源。重新匯入轉譯後的檔案會以純文字取代已儲存的範本來源。',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

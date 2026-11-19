@@ -285,6 +285,24 @@ return [
                     'root-not-allowed' => 'Danh mục gốc không thể được gán cho sản phẩm.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Trợ giúp mẫu',
+                    'title'    => 'Mẫu động',
+                    'info'     => 'Nhập @ để chèn một thuộc tính khác của sản phẩm này. Các biến được thay bằng giá trị của sản phẩm khi xuất.',
+                    'example'  => 'Ví dụ',
+                    'filters'  => 'Bộ lọc',
+                    'currency' => 'Giá theo một loại tiền tệ',
+
+                    'preview'  => [
+                        'button'       => 'Xem trước mẫu',
+                        'title'        => 'Xem trước mẫu',
+                        'refresh'      => 'Làm mới',
+                        'empty'        => 'Mẫu tạo ra giá trị trống.',
+                        'failed'       => 'Không thể tải bản xem trước. Vui lòng thử lại.',
+                        'saved-values' => 'Sử dụng các giá trị chưa lưu của những phần đã tải trên trang này. Các giá trị khác lấy từ lần lưu gần nhất.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Nhóm thuộc tính:',
                     'title'              => 'Nhóm thuộc tính',
@@ -675,6 +693,8 @@ return [
                 'usable-in-grid'         => 'Có thể sử dụng trong lưới',
                 'is-filterable'          => 'Có thể lọc',
                 'ai-translate'           => 'Dịch thuật AI',
+                'enable-templates'       => 'Bật mẫu',
+                'templates-unsupported'  => 'Chỉ có thể bật mẫu cho các thuộc tính văn bản và văn bản lớn không có xác thực nhập liệu và không phải là duy nhất.',
                 'invalid-swatch-type'    => ':attribute không được phép cho loại thuộc tính :type với loại mẫu :swatch_type.',
                 'single-object-only'     => 'Mỗi yêu cầu tạo chỉ được gửi một đối tượng thuộc tính.',
                 'option'                 => [

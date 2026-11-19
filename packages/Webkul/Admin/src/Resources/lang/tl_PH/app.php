@@ -285,6 +285,24 @@ return [
                     'root-not-allowed' => 'Ang kategoryang ugat ay hindi maaaring italaga sa isang produkto.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Tulong sa template',
+                    'title'    => 'Mga dynamic na template',
+                    'info'     => 'I-type ang @ para maglagay ng ibang attribute ng produktong ito. Papalitan ang mga variable ng mga value ng produkto sa pag-export.',
+                    'example'  => 'Halimbawa',
+                    'filters'  => 'Mga filter',
+                    'currency' => 'Presyo sa iisang currency',
+
+                    'preview'  => [
+                        'button'       => 'I-preview ang template',
+                        'title'        => 'Preview ng template',
+                        'refresh'      => 'I-refresh',
+                        'empty'        => 'Walang laman ang resulta ng template.',
+                        'failed'       => 'Hindi ma-load ang preview. Pakisubukang muli.',
+                        'saved-values' => 'Ginagamit ang mga hindi pa naka-save na value ng mga seksyong naka-load sa pahinang ito. Ang ibang value ay mula sa huling pag-save.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Pangkat ng katangian:',
                     'title'              => 'Mga Pangkat ng Katangian',
@@ -675,6 +693,8 @@ return [
                 'usable-in-grid'         => 'Magagamit sa grid',
                 'is-filterable'          => 'Nafifilter',
                 'ai-translate'           => 'AI Pagsasalin',
+                'enable-templates'       => 'I-enable ang mga Template',
+                'templates-unsupported'  => 'Maaari lamang i-enable ang mga template sa mga katangiang text at textarea na walang pag-validate ng input at hindi natatangi.',
                 'invalid-swatch-type'    => 'Ang :attribute ay hindi pinapayagan para sa uri ng katangian :type na may uri ng swatch :swatch_type.',
                 'single-object-only'     => 'Ang bawat create request ay dapat magpadala ng iisang attribute object.',
                 'option'                 => [

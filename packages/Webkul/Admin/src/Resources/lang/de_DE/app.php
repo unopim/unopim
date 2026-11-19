@@ -285,6 +285,24 @@ return [
                     'root-not-allowed' => 'Die Stammkategorie kann einem Produkt nicht zugewiesen werden.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Hilfe zu Vorlagen',
+                    'title'    => 'Dynamische Vorlagen',
+                    'info'     => 'Geben Sie @ ein, um ein anderes Attribut dieses Produkts einzufügen. Variablen werden beim Export durch die Produktwerte ersetzt.',
+                    'example'  => 'Beispiel',
+                    'filters'  => 'Filter',
+                    'currency' => 'Preis in einer Währung',
+
+                    'preview'  => [
+                        'button'       => 'Vorlagenvorschau anzeigen',
+                        'title'        => 'Vorlagenvorschau',
+                        'refresh'      => 'Aktualisieren',
+                        'empty'        => 'Die Vorlage ergibt einen leeren Wert.',
+                        'failed'       => 'Die Vorschau konnte nicht geladen werden. Bitte versuchen Sie es erneut.',
+                        'saved-values' => 'Verwendet die nicht gespeicherten Werte der auf dieser Seite geladenen Abschnitte. Andere Werte stammen aus der letzten Speicherung.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Attributgruppe:',
                     'title'              => 'Attributgruppen',
@@ -675,6 +693,8 @@ return [
                 'usable-in-grid'         => 'Verwendbar im Raster',
                 'is-filterable'          => 'Ist filterbar',
                 'ai-translate'           => 'KI Übersetzen',
+                'enable-templates'       => 'Vorlagen aktivieren',
+                'templates-unsupported'  => 'Vorlagen können nur für Text- und Textbereich-Attribute aktiviert werden, die keine Eingabevalidierung haben und nicht eindeutig sind.',
                 'invalid-swatch-type'    => 'Der :attribute ist für den Attributtyp :type mit dem Farbmuster :swatch_type nicht erlaubt.',
                 'single-object-only'     => 'Pro Erstellungsanfrage darf nur ein Attributobjekt gesendet werden.',
                 'option'                 => [

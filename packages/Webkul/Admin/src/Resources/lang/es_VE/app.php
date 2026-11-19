@@ -285,6 +285,24 @@ return [
                     'root-not-allowed' => 'La categoría raíz no se puede asignar a un producto.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Ayuda de plantillas',
+                    'title'    => 'Plantillas dinámicas',
+                    'info'     => 'Escribe @ para insertar otro atributo de este producto. Las variables se sustituyen por los valores del producto al exportar.',
+                    'example'  => 'Ejemplo',
+                    'filters'  => 'Filtros',
+                    'currency' => 'Precio en una sola moneda',
+
+                    'preview'  => [
+                        'button'       => 'Previsualizar plantilla',
+                        'title'        => 'Vista previa de la plantilla',
+                        'refresh'      => 'Actualizar',
+                        'empty'        => 'La plantilla genera un valor vacío.',
+                        'failed'       => 'No se pudo cargar la vista previa. Inténtelo de nuevo.',
+                        'saved-values' => 'Usa los valores no guardados de las secciones cargadas en esta página. Los demás valores provienen del último guardado.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Grupo de atributos:',
                     'title'              => 'Grupos de atributos',
@@ -675,6 +693,8 @@ return [
                 'usable-in-grid'         => 'Utilizable en cuadrícula',
                 'is-filterable'          => 'Es filtrable',
                 'ai-translate'           => 'Traducción IA',
+                'enable-templates'       => 'Habilitar plantillas',
+                'templates-unsupported'  => 'Las plantillas solo se pueden habilitar en atributos de texto y área de texto que no tengan validación de entrada y no sean únicos.',
                 'invalid-swatch-type'    => 'El :attribute no está permitido para el tipo de atributo :type con el tipo de muestra :swatch_type.',
                 'single-object-only'     => 'Cada solicitud de creación debe enviar un único objeto de atributo.',
                 'option'                 => [

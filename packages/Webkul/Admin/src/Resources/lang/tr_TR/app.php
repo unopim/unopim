@@ -285,6 +285,24 @@ return [
                     'root-not-allowed' => 'Kök kategori bir ürüne atanamaz.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Şablon yardımı',
+                    'title'    => 'Dinamik şablonlar',
+                    'info'     => 'Bu ürünün başka bir niteliğini eklemek için @ yazın. Değişkenler dışa aktarma sırasında ürün değerleriyle değiştirilir.',
+                    'example'  => 'Örnek',
+                    'filters'  => 'Filtreler',
+                    'currency' => 'Tek para biriminde fiyat',
+
+                    'preview'  => [
+                        'button'       => 'Şablonu önizle',
+                        'title'        => 'Şablon önizlemesi',
+                        'refresh'      => 'Yenile',
+                        'empty'        => 'Şablon boş bir değer üretiyor.',
+                        'failed'       => 'Önizleme yüklenemedi. Lütfen tekrar deneyin.',
+                        'saved-values' => 'Bu sayfada yüklenen bölümlerin kaydedilmemiş değerlerini kullanır. Diğer değerler son kayıttan gelir.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Öznitelik grubu:',
                     'title'              => 'Öznitelik Grupları',
@@ -675,6 +693,8 @@ return [
                 'usable-in-grid'         => 'Izgarada Kullanılabilir',
                 'is-filterable'          => 'Filtrelenebilir',
                 'ai-translate'           => 'AI Çeviri',
+                'enable-templates'       => 'Şablonları Etkinleştir',
+                'templates-unsupported'  => 'Şablonlar yalnızca girdi doğrulaması olmayan ve benzersiz olmayan metin ve metin alanı özniteliklerinde etkinleştirilebilir.',
                 'invalid-swatch-type'    => ':attribute, :type türü için :swatch_type swatch türü ile kullanılamaz.',
                 'single-object-only'     => 'Her oluşturma isteği yalnızca bir öznitelik nesnesi göndermelidir.',
                 'option'                 => [

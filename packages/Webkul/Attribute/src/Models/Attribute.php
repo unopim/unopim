@@ -22,6 +22,7 @@ use Webkul\HistoryControl\Interfaces\PresentableHistoryInterface;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\Product\Validator\Rule\AttributeOptionRule;
 use Webkul\Product\Validator\Rule\Elasticsearch\UniqueAttributeValue;
+use Webkul\Product\Validator\Rule\TemplateExpressionRule;
 
 #[Fillable([
     'code',
@@ -37,6 +38,7 @@ use Webkul\Product\Validator\Rule\Elasticsearch\UniqueAttributeValue;
     'value_per_channel',
     'is_filterable',
     'ai_translate',
+    'enable_templates',
     'usable_in_grid',
     'allowed_extensions',
     'max_file_size',
@@ -249,7 +251,30 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
             $validations[] = new Sku;
         }
 
+        if ($this->canHoldTemplate()) {
+            $validations[] = new TemplateExpressionRule($this);
+        }
+
         return $validations;
+    }
+
+    /**
+     * Determine if templates are enabled and allowed by the attribute's type, validation and uniqueness.
+     */
+    public function canHoldTemplate(): bool
+    {
+        return (bool) $this->enable_templates
+            && in_array($this->type, [self::TEXT_TYPE, self::TEXTAREA_TYPE], true)
+            && blank($this->validation)
+            && ! $this->is_unique;
+    }
+
+    /**
+     * Determine if the attribute is a textarea with the WYSIWYG editor enabled.
+     */
+    public function isRichText(): bool
+    {
+        return $this->type === self::TEXTAREA_TYPE && (bool) $this->enable_wysiwyg;
     }
 
     /**
@@ -440,6 +465,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
             'value_per_channel' => AttributeHistoryPresenter::class,
             'is_filterable'     => AttributeHistoryPresenter::class,
             'ai_translate'      => AttributeHistoryPresenter::class,
+            'enable_templates'  => AttributeHistoryPresenter::class,
         ];
     }
 

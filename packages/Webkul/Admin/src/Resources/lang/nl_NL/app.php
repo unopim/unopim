@@ -286,6 +286,24 @@ return [
                     'root-not-allowed' => 'De hoofdcategorie kan niet aan een product worden toegewezen.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Hulp bij sjablonen',
+                    'title'    => 'Dynamische sjablonen',
+                    'info'     => 'Typ @ om een ander attribuut van dit product in te voegen. Variabelen worden bij export vervangen door de productwaarden.',
+                    'example'  => 'Voorbeeld',
+                    'filters'  => 'Filters',
+                    'currency' => 'Prijs in één valuta',
+
+                    'preview'  => [
+                        'button'       => 'Sjabloon bekijken',
+                        'title'        => 'Sjabloonvoorbeeld',
+                        'refresh'      => 'Vernieuwen',
+                        'empty'        => 'Het sjabloon levert een lege waarde op.',
+                        'failed'       => 'Het voorbeeld kon niet worden geladen. Probeer het opnieuw.',
+                        'saved-values' => 'Gebruikt de niet-opgeslagen waarden van de secties die op deze pagina zijn geladen. Andere waarden komen uit de laatste opslag.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Attribuutgroep:',
                     'title'              => 'Attribuutgroepen',
@@ -676,6 +694,8 @@ return [
                 'usable-in-grid'         => 'Bruikbaar in het raster',
                 'is-filterable'          => 'Filterbaar',
                 'ai-translate'           => 'AI-vertaling',
+                'enable-templates'       => 'Sjablonen inschakelen',
+                'templates-unsupported'  => 'Sjablonen kunnen alleen worden ingeschakeld voor tekst- en textarea-attributen die geen invoervalidatie hebben en niet uniek zijn.',
                 'invalid-swatch-type'    => 'De :attribute is niet toegestaan voor attribuuttype :type met staaltype :swatch_type.',
                 'single-object-only'     => 'Per aanvraag mag slechts één attribuutobject worden aangemaakt.',
                 'option'                 => [
