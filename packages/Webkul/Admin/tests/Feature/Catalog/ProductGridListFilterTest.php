@@ -51,5 +51,5 @@ it('matches whole option codes only with IN in the product grid', function () {
 it('excludes only exact matches with NOT IN in the product grid', function () {
     $skus = ($this->gridSkus)(FilterOperators::NOT_IN, ['red']);
 
-    expect($skus)->toContain('GRID-RED-DARK', 'GRID-BLUE')->not->toContain('GRID-RED');
+    expect($skus)->toContain('GRID-RED-DARK', 'GRID-BLUE', 'GRID-NONE')->not->toContain('GRID-RED');
 });

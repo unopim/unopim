@@ -1,6 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Webkul\AdminApi\Services\ProductAttributeFilterService;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Services\AttributeService;
@@ -11,6 +13,8 @@ use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Product\Models\Product;
 
 beforeEach(function () {
+    $this->clusterConfigured = (bool) config('elasticsearch.enabled');
+
     config(['elasticsearch.enabled' => false]);
 
     $this->headers = $this->getAuthenticationHeaders();
@@ -87,6 +91,20 @@ it('filters products by a select attribute with IN and NOT IN', function () {
     expect(($this->listSkus)([$attribute->code => [['operator' => 'NOT IN', 'value' => ['alpha']]]]))
         ->toContain('SEL-BETA', 'SEL-GAMMA')
         ->not->toContain('SEL-ALPHA');
+});
+
+it('keeps products without a value in NOT IN results', function (): void {
+    $attribute = ($this->makeAttribute)('select');
+    $stamp = ['updated_at' => '2033-02-01 00:00:00'];
+
+    ($this->makeProduct)('NOTIN-RED', ['common' => [$attribute->code => 'red']], $stamp);
+    ($this->makeProduct)('NOTIN-BLUE', ['common' => [$attribute->code => 'blue']], $stamp);
+    ($this->makeProduct)('NOTIN-MISSING', [], $stamp);
+
+    expect(($this->listSkus)([
+        $attribute->code => [['operator' => 'NOT IN', 'value' => ['red']]],
+        'updated_at'     => [['operator' => 'BETWEEN', 'value' => ['2033-01-31 00:00:00', '2033-02-02 00:00:00']]],
+    ]))->toBe(['NOTIN-BLUE', 'NOTIN-MISSING']);
 });
 
 it('matches whole option codes only with IN and NOT IN', function () {
@@ -500,4 +518,52 @@ it('treats percent and underscore in a CONTAINS value as literal characters', fu
 
     expect(($this->listSkus)([$attribute->code => [['operator' => 'CONTAINS', 'value' => '% off_']]]))
         ->toBe(['LIKE-LITERAL']);
+});
+
+it('returns the same products from a real Elasticsearch index as from the database', function (): void {
+    if (! $this->clusterConfigured) {
+        $this->markTestSkipped('Needs a reachable Elasticsearch cluster (ELASTICSEARCH_ENABLED=true).');
+    }
+
+    $select = ($this->makeAttribute)('select');
+    $text = ($this->makeAttribute)('text');
+    $stamp = ['updated_at' => '2033-03-01 00:00:00'];
+
+    ($this->makeProduct)('PARITY-RED', ['common' => [$select->code => 'red', $text->code => 'filled']], $stamp);
+    ($this->makeProduct)('PARITY-BLUE', ['common' => [$select->code => 'blue', $text->code => 'filled']], $stamp);
+    ($this->makeProduct)('PARITY-MISSING', [], $stamp);
+
+    $window = ['updated_at' => [['operator' => 'BETWEEN', 'value' => ['2033-02-28 00:00:00', '2033-03-02 00:00:00']]]];
+
+    $criteria = [
+        [$select->code => [['operator' => 'IN', 'value' => ['red']]]],
+        [$select->code => [['operator' => 'NOT IN', 'value' => ['red']]]],
+        [$text->code   => [['operator' => 'EMPTY']]],
+        [$text->code   => [['operator' => 'NOT EMPTY']]],
+    ];
+
+    $listAll = fn (): array => array_map(fn (array $filters): array => ($this->listSkus)($filters + $window), $criteria);
+
+    $database = $listAll();
+
+    $prefix = 'parity_'.Str::lower(Str::random(10));
+
+    config(['elasticsearch.enabled' => true, 'elasticsearch.prefix' => $prefix]);
+
+    try {
+        Artisan::call('unopim:product:index', ['--fresh' => true]);
+
+        ElasticSearch::indices()->refresh(['index' => $prefix.'_products']);
+
+        $elasticsearch = $listAll();
+    } finally {
+        ElasticSearch::indices()->delete(['index' => $prefix.'_products']);
+    }
+
+    expect($database)->toBe([
+        ['PARITY-RED'],
+        ['PARITY-BLUE', 'PARITY-MISSING'],
+        ['PARITY-MISSING'],
+        ['PARITY-RED', 'PARITY-BLUE'],
+    ])->and($elasticsearch)->toBe($database);
 });

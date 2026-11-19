@@ -94,7 +94,7 @@ describe('TextFilter supports the operators offered by the product datagrid', fu
     it('negates the whole match for not in list so every dialect parses it', function () use ($text) {
         $queryBuilder = applyDatabaseFilter(new TextFilter, $text(), FilterOperators::NOT_IN, ['Black']);
 
-        expect($queryBuilder->toSql())->toContain('where NOT (')
+        expect($queryBuilder->toSql())->toContain('where NOT (COALESCE(')
             ->and($queryBuilder->toSql())->toEndWith(' ?)')
             ->and($queryBuilder->getBindings())->toContain('(^|,)(Black)(,|$)');
     });
