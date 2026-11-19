@@ -69,4 +69,16 @@ return [
             ],
         ],
     ],
+
+    'configuration' => [
+        'score-thresholds' => [
+            'title'           => 'Warna Skor Kelengkapan',
+            'info'            => 'Tetapkan skor saat indikator kelengkapan berubah menjadi hijau atau merah.',
+            'green-from'      => 'Hijau Mulai (%)',
+            'green-from-info' => 'Skor yang sama dengan atau di atas nilai ini ditampilkan dengan warna hijau.',
+            'red-below'       => 'Merah Di Bawah (%)',
+            'red-below-info'  => 'Skor di bawah nilai ini ditampilkan dengan warna merah. Skor di antaranya ditampilkan dengan warna kuning.',
+            'order-error'     => 'Ambang hijau harus lebih tinggi daripada ambang merah.',
+        ],
+    ],
 ];

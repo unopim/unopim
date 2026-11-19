@@ -17,6 +17,7 @@
 |   'acl'   => permission key; the row is hidden when the admin lacks it (optional)
 |   'route' => named route the row links to (mutually exclusive with 'fields')
 |   'fields'=> inline field definitions persisted to DB core-config (see Task 4)
+|   'validator' => ConfigValidator class run on save for cross-field rules (optional)
 |
 | Section entries (a bare `key` with no route/fields) group the rows beneath them.
 | Default entries are registered in Task 5.
