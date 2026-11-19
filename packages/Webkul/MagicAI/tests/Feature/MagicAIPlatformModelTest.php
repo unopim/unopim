@@ -81,8 +81,51 @@ it('offers no image models at all for a provider without an image endpoint', fun
     expect(AIModel::filterImageModels(['claude-sonnet-4-5'], $platform->id))->toBe([]);
 });
 
-it('keeps the full list when an image capable provider exposes no image-named model', function () {
-    $platform = MagicAIPlatform::factory()->provider(AiProvider::XAI)->create();
+it('offers no image models when an image capable provider exposes only chat models', function (AiProvider $provider, array $models): void {
+    $platform = MagicAIPlatform::factory()->provider($provider)->create();
 
-    expect(AIModel::filterImageModels(['grok-4'], $platform->id))->toBe(['grok-4']);
+    expect(AIModel::filterImageModels($models, $platform->id))->toBe([]);
+})->with([
+    'openai chat models' => [AiProvider::OpenAI, ['gpt-4o', 'gpt-5-mini']],
+    'xai chat model'     => [AiProvider::XAI, ['grok-4']],
+]);
+
+it('offers no image models for an unknown platform id', function (): void {
+    expect(AIModel::filterImageModels(['gpt-4o'], 999999))->toBe([]);
+});
+
+it('offers no image models when no platform id is given and no platform is active', function (): void {
+    MagicAIPlatform::query()->delete();
+
+    expect(AIModel::filterImageModels(['gpt-4o', 'dall-e-3']))->toBe([]);
+});
+
+it('keeps prefixed and chatgpt image models for an openai platform', function (): void {
+    $platform = MagicAIPlatform::factory()->provider(AiProvider::OpenAI)->create();
+
+    expect(AIModel::filterImageModels(['gpt-4o', 'chatgpt-image-latest', 'openai/gpt-image-1'], $platform->id))
+        ->toBe(['chatgpt-image-latest', 'openai/gpt-image-1']);
+});
+
+it('keeps the full model list for an image capable platform on a custom api url when no name matches', function (): void {
+    $platform = MagicAIPlatform::factory()->provider(AiProvider::OpenAI)->create(['api_url' => 'https://gateway.example.test/v1']);
+
+    expect(AIModel::filterImageModels(['gpt-4o', 'house-renderer'], $platform->id))
+        ->toBe(['gpt-4o', 'house-renderer']);
+});
+
+it('filters strictly for an image capable platform on its stock api url', function (?string $apiUrl): void {
+    $platform = MagicAIPlatform::factory()->provider(AiProvider::OpenAI)->create(['api_url' => $apiUrl]);
+
+    expect(AIModel::filterImageModels(['gpt-4o', 'house-renderer'], $platform->id))->toBe([]);
+})->with([
+    'no api url'          => [null],
+    'stock api url'       => ['https://api.openai.com/v1'],
+    'stock with trailing' => ['https://api.openai.com/v1/'],
+]);
+
+it('still filters by name for a platform on a custom api url when image models match', function (): void {
+    $platform = MagicAIPlatform::factory()->provider(AiProvider::OpenAI)->create(['api_url' => 'https://gateway.example.test/v1']);
+
+    expect(AIModel::filterImageModels(['gpt-4o', 'dall-e-3'], $platform->id))->toBe(['dall-e-3']);
 });
