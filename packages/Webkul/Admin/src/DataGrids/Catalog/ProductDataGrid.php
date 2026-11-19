@@ -1189,6 +1189,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $mergedValuesByProductId = $this->resolveMergedValuesForPage($paginator['data']);
 
         foreach ($paginator['data'] as $record) {
+            $values = $mergedValuesByProductId[$record->product_id] ?? $this->decodeRawValues($record);
+
             $record = $this->sanitizeRow($record);
 
             foreach ($this->columns as $column) {
@@ -1203,7 +1205,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 }
             }
 
-            $this->processRawValues($record, $mergedValuesByProductId[$record->product_id] ?? null);
+            $this->processRawValues($record, $values);
 
             unset($record->parent_id);
 
@@ -1273,6 +1275,23 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     }
 
     /**
+     * Decode the row's stored values before the row is sanitized, since stripping
+     * tags from the encoded JSON corrupts it whenever a value contains "<".
+     */
+    protected function decodeRawValues(object $record): ?array
+    {
+        $rawValues = $record->raw_values ?? null;
+
+        if (! is_string($rawValues) || $rawValues === '') {
+            return null;
+        }
+
+        $decoded = json_decode($rawValues, true);
+
+        return is_array($decoded) ? $decoded : null;
+    }
+
+    /**
      * Process raw values and update record.
      *
      * @param  array|null  $mergedValues  The row's `values`, already merged with its
@@ -1318,7 +1337,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 continue;
             }
 
-            $record->{$code} = $value;
+            $record->{$code} = $this->stripHtmlTags($value);
         }
     }
 

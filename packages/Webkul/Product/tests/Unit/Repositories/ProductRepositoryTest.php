@@ -66,7 +66,7 @@ describe('updateStatus', function () {
 
         $updated = $this->productRepository->updateStatus(false, $product->id);
 
-        expect($updated->status)->toBe(0);
+        expect($updated->status)->toBeFalse();
 
         $this->assertDatabaseHas('products', [
             'id'     => $product->id,
@@ -79,7 +79,7 @@ describe('updateStatus', function () {
 
         $updated = $this->productRepository->updateStatus(true, $product->id);
 
-        expect($updated->status)->toBe(1);
+        expect($updated->status)->toBeTrue();
 
         $this->assertDatabaseHas('products', [
             'id'     => $product->id,

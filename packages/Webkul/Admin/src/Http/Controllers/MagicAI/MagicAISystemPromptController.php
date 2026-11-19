@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\MagicAI\MagicAISystemPromptGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Http\Requests\MagicAI\SystemPromptRequest;
 use Webkul\MagicAI\Repository\MagicAISystemPromptRepository;
 use Webkul\MagicAI\Services\Prompt\Prompt;
 
@@ -34,17 +35,9 @@ class MagicAISystemPromptController extends Controller
         return view('admin::configuration.magic-ai.system-prompt.index');
     }
 
-    public function store(): JsonResponse
+    public function store(SystemPromptRequest $request): JsonResponse
     {
-        $this->validate(request(), [
-            'title'       => 'required',
-            'tone'        => 'required',
-            'is_enabled'  => 'required|boolean',
-            'max_tokens'  => 'required|integer|min:1|max:32768',
-            'temperature' => 'required|numeric|between:0,2',
-        ]);
-
-        $data = request()->only([
+        $data = $request->only([
             'title',
             'tone',
             'is_enabled',
@@ -76,19 +69,11 @@ class MagicAISystemPromptController extends Controller
         ]);
     }
 
-    public function update(): JsonResponse
+    public function update(SystemPromptRequest $request): JsonResponse
     {
-        $this->validate(request(), [
-            'title'       => 'required',
-            'tone'        => 'required',
-            'is_enabled'  => 'required|boolean',
-            'max_tokens'  => 'required|integer|min:1|max:32768',
-            'temperature' => 'required|numeric|between:0,2',
-        ]);
+        $data = $request->only(['title', 'tone', 'is_enabled', 'max_tokens', 'temperature']);
 
-        $data = request()->only(['title', 'tone', 'is_enabled', 'max_tokens', 'temperature']);
-
-        $id = request()->id;
+        $id = $request->id;
 
         $this->magicAiSystemPromptRepository->update($data, $id);
 

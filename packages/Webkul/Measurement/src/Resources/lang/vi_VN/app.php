@@ -124,6 +124,8 @@ return [
                     'base'           => 'Số thập phân của giá trị cơ sở',
                     'base-info'      => 'Số chữ số thập phân được giữ lại cho giá trị đã chuyển đổi sang đơn vị chuẩn.',
                 ],
+                'display-unit-symbol'      => 'Hiển thị ký hiệu đơn vị',
+                'display-unit-symbol-info' => 'Hiển thị giá trị đo lường bằng ký hiệu đơn vị (ví dụ 100 °C) thay vì tên đơn vị, trong trang quản trị và trong các tệp xuất. Các đơn vị không có ký hiệu vẫn giữ tên của chúng.',
             ],
         ],
     ],
