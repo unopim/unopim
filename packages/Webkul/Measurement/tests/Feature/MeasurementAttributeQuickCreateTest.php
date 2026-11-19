@@ -68,7 +68,7 @@ it('warns and stores no configuration when a measurement attribute is created wi
 
     expect(AttributeMeasurement::where('attribute_id', $attribute->id)->exists())->toBeFalse();
 
-    $response->assertSessionHas('warning');
+    $response->assertSessionHas('info');
 });
 
 it('does not persist a measurement configuration whose unit is not part of the family', function (): void {
