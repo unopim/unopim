@@ -142,6 +142,10 @@ abstract class AbstractType
             $productValues[self::CATEGORY_VALUES_KEY] = $data[self::CATEGORY_VALUES_KEY];
         }
 
+        if (! isset($productValues[self::ASSOCIATION_VALUES_KEY]) && isset($product->values[self::ASSOCIATION_VALUES_KEY])) {
+            $productValues[self::ASSOCIATION_VALUES_KEY] = $product->values[self::ASSOCIATION_VALUES_KEY];
+        }
+
         $unifiedAssociations = $data[self::ASSOCIATION_VALUES_KEY] ?? [];
 
         if (! is_array($unifiedAssociations)) {
