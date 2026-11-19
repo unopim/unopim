@@ -2,6 +2,7 @@
 
 use Illuminate\Console\Command;
 use Illuminate\Console\OutputStyle;
+use Illuminate\Contracts\Console\Kernel as KernelContract;
 use Illuminate\Foundation\Console\Kernel;
 use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -58,10 +59,11 @@ function runUpgradeStep(string $command): void
 
     /**
      * `runStep` delegates to Command::call, which resolves the child command
-     * through the console application rather than the container.
+     * through the console application rather than the container. The kernel
+     * must be the bound singleton that `Artisan::command()` registers on.
      */
     $upgrade->setApplication(
-        Closure::bind(fn () => $this->getArtisan(), app(Kernel::class), Kernel::class)()
+        Closure::bind(fn () => $this->getArtisan(), app(KernelContract::class), Kernel::class)()
     );
 
     $output = new OutputStyle(new ArrayInput([]), new BufferedOutput);

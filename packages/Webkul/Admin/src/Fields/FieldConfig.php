@@ -19,7 +19,7 @@ class FieldConfig
     {
         $config = $this->toArray($config);
 
-        $key = md5(app()->getLocale().serialize($config));
+        $key = hash('xxh128', app()->getLocale().serialize($config));
 
         if (isset($this->cache[$key])) {
             return $this->cache[$key];

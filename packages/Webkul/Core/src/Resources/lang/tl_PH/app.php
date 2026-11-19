@@ -5,4 +5,8 @@ return [
         'template' => 'Template',
         'parents'  => 'Mga Magulang',
     ],
+
+    'platform-modules' => [
+        'pim' => 'Impormasyon ng Produkto (PIM)',
+    ],
 ];

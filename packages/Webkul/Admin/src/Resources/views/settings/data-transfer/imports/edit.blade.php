@@ -79,7 +79,7 @@
 
                         @php
                             $options = [];
-                            foreach(config('importers') as $index => $importer) {
+                            foreach($importerConfig as $index => $importer) {
                                     $options[] = [
                                         'id'    => $index,
                                         'label' => trans($importer['title'])

@@ -1,5 +1,6 @@
 const { test, expect } = require('../../utils/fixtures');
 const { clickSave, navigateTo, generateUid, closeDropdown } = require('../../utils/helpers');
+const { deleteProductBySku } = require('../../utils/product-helpers');
 
 /**
  * Create a simple product and return to the product listing.
@@ -31,26 +32,6 @@ async function createSimpleProduct(adminPage, sku) {
   await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { waitUntil: 'domcontentloaded', timeout: 30000 });
   await adminPage.waitForLoadState('networkidle').catch(() => {});
   return sku;
-}
-
-/**
- * Delete a product by SKU.
- */
-async function deleteProductBySku(adminPage, sku) {
-  await navigateTo(adminPage, 'products');
-  const searchInput = adminPage.getByPlaceholder('Search').first();
-  await searchInput.waitFor({ state: 'visible', timeout: 30000 });
-  await searchInput.fill(sku);
-  await adminPage.keyboard.press('Enter');
-  await adminPage.waitForLoadState('load');
-  await adminPage.waitForTimeout(500);
-
-  const deleteIcon = adminPage.locator('span[title="Delete"]').first();
-  const visible = await deleteIcon.isVisible({ timeout: 3000 }).catch(() => false);
-  if (!visible) return;
-  await deleteIcon.click();
-  await adminPage.getByRole('button', { name: 'Delete' }).click();
-  await adminPage.waitForLoadState('networkidle').catch(() => {});
 }
 
 /**

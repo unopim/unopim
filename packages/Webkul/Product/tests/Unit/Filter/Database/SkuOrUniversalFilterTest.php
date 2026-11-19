@@ -66,3 +66,44 @@ describe('SkuOrUniversalFilter groups OR conditions correctly when combined with
         expect(strtolower($sql))->toContain('like ?');
     });
 });
+
+describe('SkuOrUniversalFilter refuses to answer a search it cannot evaluate', function () {
+
+    it('matches no products when not one field resolves, instead of returning every product', function () {
+        $filter = new SkuOrUniversalFilter(app(AttributeService::class));
+
+        $qb = DB::table('products');
+
+        $filter->setQueryManager($qb);
+
+        $filter->applyUnfilteredFilter(
+            ['no_such_attribute_code'],
+            FilterOperators::WILDCARD,
+            'test',
+            ['locale' => 'en_US', 'channel' => 'default']
+        );
+
+        // An empty nested group would be dropped and the term silently ignored.
+        expect($qb->toSql())->toContain('1 = 0');
+        expect(strtolower($qb->toSql()))->not->toContain('like ?');
+    });
+
+    it('still searches the fields that do resolve when another code does not', function () {
+        $filter = new SkuOrUniversalFilter(app(AttributeService::class));
+
+        $qb = DB::table('products');
+
+        $filter->setQueryManager($qb);
+
+        $filter->applyUnfilteredFilter(
+            ['sku', 'no_such_attribute_code'],
+            FilterOperators::WILDCARD,
+            'test',
+            ['locale' => 'en_US', 'channel' => 'default']
+        );
+
+        // One resolved field is enough; the refusal must not fire.
+        expect(substr_count(strtolower($qb->toSql()), 'like ?'))->toBe(1);
+        expect($qb->toSql())->not->toContain('1 = 0');
+    });
+});

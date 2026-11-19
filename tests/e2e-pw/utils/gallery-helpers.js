@@ -1,9 +1,8 @@
 const path = require('path');
 const { expect } = require('@playwright/test');
 const { clickSave, navigateTo, fillLocalizedField, closeDropdown } = require('./helpers');
-const { gotoTab, assignAttributesToGroup, saveFamilyEdit } = require('./family-helpers');
-
-const FAMILY_ID = 1;
+const { deleteProductBySku } = require('./product-helpers');
+const { gotoTab, assignAttributesToGroup, saveFamilyEdit, createFamily, deleteFamilyByCode } = require('./family-helpers');
 
 const IMAGE_1 = path.resolve(__dirname, 'berlin.jpeg');
 const IMAGE_2 = path.resolve(__dirname, 'bikes.jpeg');
@@ -64,9 +63,18 @@ async function createGalleryAttribute(adminPage, code, name) {
   await expect(adminPage.locator('#app').getByText('Edit Attribute').first()).toBeVisible();
 }
 
+/**
+ * Copy the Default family for one test. Workers saving family 1 at the same
+ * time collide on its translation rows, so each test edits a family it owns.
+ * @returns {Promise<{id:string, code:string}>}
+ */
+async function createGalleryFamily(adminPage, code) {
+  return createFamily(adminPage, code, { basedOn: 'Default' });
+}
+
 /** Assign an attribute into the family's Media group and persist it. */
-async function assignAttributeToMediaGroup(adminPage, code) {
-  await gotoTab(adminPage, FAMILY_ID);
+async function assignAttributeToMediaGroup(adminPage, code, familyId) {
+  await gotoTab(adminPage, familyId);
   await adminPage.locator('.group_node').first().waitFor({ state: 'visible', timeout: 30000 });
   await assignAttributesToGroup(adminPage, [code], 'Media');
   await saveFamilyEdit(adminPage);
@@ -86,27 +94,13 @@ async function deleteAttributeByCode(adminPage, code) {
   }
 }
 
-/** Delete a product by SKU, safe if already absent. */
-async function deleteProductBySku(adminPage, sku) {
-  await navigateTo(adminPage, 'products');
-  await adminPage.getByPlaceholder('Search').first().fill(sku);
-  await adminPage.keyboard.press('Enter');
-  await adminPage.waitForLoadState('load');
-  const deleteIcon = adminPage.locator('span[title="Delete"]').first();
-  const visible = await deleteIcon.isVisible({ timeout: 3000 }).catch(() => false);
-  if (!visible) return;
-  await deleteIcon.click();
-  await adminPage.getByRole('button', { name: 'Delete' }).click();
-  await adminPage.locator('#app').getByText(/Product deleted successfully/i).waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
-}
-
-/** Create a Simple product on the default family and land on its edit page. */
-async function createSimpleProduct(adminPage, sku) {
+/** Create a Simple product on the given family and land on its edit page. */
+async function createSimpleProduct(adminPage, sku, familyName = 'Default') {
   await navigateTo(adminPage, 'products');
   await adminPage.getByRole('button', { name: 'Create Product' }).click();
   await adminPage.waitForLoadState('networkidle');
   await selectMultiselect(adminPage, 'type', 'Simple');
-  await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
+  await selectMultiselect(adminPage, 'attribute_family_id', familyName);
   await adminPage.locator('input[name="sku"]').fill(sku);
   await clickSave(adminPage, 'Save Product');
   await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { waitUntil: 'domcontentloaded', timeout: 30000 });
@@ -148,7 +142,6 @@ function fieldGroup(page, label) {
 }
 
 module.exports = {
-  FAMILY_ID,
   IMAGE_1,
   IMAGE_2,
   PDF,
@@ -156,6 +149,8 @@ module.exports = {
   fillTinyMCE,
   selectMultiselect,
   createGalleryAttribute,
+  createGalleryFamily,
+  deleteFamilyByCode,
   assignAttributeToMediaGroup,
   deleteAttributeByCode,
   deleteProductBySku,

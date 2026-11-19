@@ -11,7 +11,7 @@
 # ---------------------------------------------------------------------------
 # Stage 1: Composer dependencies
 # ---------------------------------------------------------------------------
-FROM composer:2 AS composer
+FROM composer:2@sha256:c7f68260503e3c1f0ece10bdbe84519fd98d48ba091f2c02f16ea94a7faae337 AS composer
 
 WORKDIR /app
 COPY composer.json composer.lock ./
@@ -27,7 +27,7 @@ RUN composer install \
 # ---------------------------------------------------------------------------
 # Stage 2: Production image
 # ---------------------------------------------------------------------------
-FROM php:8.4-apache
+FROM php:8.4-apache@sha256:884f64b47174de2c0e813270fe7b24a18605729fcebe201302d98c38805530d0
 
 LABEL maintainer="Webkul <support@webkul.com>"
 LABEL org.opencontainers.image.title="UnoPim"
@@ -85,7 +85,7 @@ RUN a2enmod rewrite headers deflate \
     && echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 # Install Composer (for runtime use in entrypoint)
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2@sha256:c7f68260503e3c1f0ece10bdbe84519fd98d48ba091f2c02f16ea94a7faae337 /usr/bin/composer /usr/bin/composer
 
 # Application code + Composer vendor from stage 1
 WORKDIR /var/www/html

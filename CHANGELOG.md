@@ -1,3 +1,85 @@
+# Unreleased
+
+## Security
+
+- Hardened the TinyMCE 6.8 editor against CVE-2024-29881, CVE-2026-47759, CVE-2026-47760, CVE-2026-47761 and CVE-2026-47762 while staying on its last MIT-licensed release. The unused media plugin is removed, unsafe embeds are converted, and content is run through DOMPurify on load and paste, removing `svg`, `math`, `object` and `embed` elements, `data-*` attributes and comments. Saved WYSIWYG content is still sanitized server-side by HTMLPurifier.
+- Updated `symfony/http-foundation` to 8.1.9 for CVE-2026-108082, a ReDoS in `HeaderUtils::split()` reachable without authentication through the `Cache-Control` request header.
+- Updated the npm lockfiles to patched releases of vite, follow-redirects, source-map-js and fast-uri.
+- The Docker PHP image disables session upload progress as interim hardening for CVE-2026-109618 and CVE-2026-109619; UnoPim uses Laravel sessions and never read it.
+- Gravatar URLs no longer expose `md5(email)`. The avatar proxy, its cache keys and its route now use a SHA-256 hash; legacy 32-character URLs return 404 and the cache refills once. Cache keys, ETags, upload directories and draft ids that only need a fast digest use xxh128.
+- AI agent tools and Magic AI endpoints that write data now require the matching create or edit permission instead of the view permission of the area: creating attributes and families, adding attribute options, rolling back an AI changeset, saving Magic AI translations, the Magic AI settings, export links and memories stored for every user.
+- Editing roles and users, and importing them, can no longer leave the installation without an active user holding full access. An admin can only manage users whose current role they could assign, and role and user imports require role and user rights.
+- Fixed the job tracker archive download listing every file on the private disk when a job track had no file path; it now returns 404.
+
+## New features
+
+- The product grid's quick search reads the attribute codes it looks in from `products.search_fields`, so an EAN, a GTIN or a supplier article number can be searched from the one search box. An attribute marked `is_filterable` could already be filtered by substring on its own grid column with the `contains` operator; this saves adding the column and picking the operator, and covers identifier attributes that are not filterable, such as the seeded `product_number`. The SKU and the name are still searched by default, codes that do not resolve to a text attribute are skipped, and at most ten are searched.
+- Platform modules let packages run alongside PIM or without it. Packages register modules under `platform_modules`; switched-off modules are hidden from menus, ACL, the dashboard, data transfer job types and API scopes, and their named routes return 404. Modules are chosen in the general platform settings or with `unopim:install --modules`.
+- Packages can deliver their own events through the webhook pipeline with `WebhookService::deliverEvent()` and `deliverEvents()`, signed, SSRF-guarded and logged like product deliveries. The webhook form gains create/update events and a settings render event.
+- Added a "Display unit symbols" switch to the measurement settings. When on, product unit dropdowns, bulk edit, the product grid and its unit filter, and product exports show the unit symbol, falling back to the unit name. It is off by default, so existing exports are unchanged.
+- A package can mark its own attribute type as measurement-backed with `measurement_backed` on its `attribute_types` entry, and it is then treated like the core `measurement` type in the attribute form, validation and API.
+- Added view events to the dashboard sections, so packages can render their own widgets.
+- Publications gain releases, a cross-locale identifier for one publish moment.
+- AI chat replies now run on the queue and resume after navigating away, and images in replies render inline. The blocking endpoint stays as a fallback when the queue is down.
+- Saved AI chat history is now opt-in, bounded to the latest `ai-agent.history.max_messages` messages, and owners can delete stored conversations after turning history off.
+- Product embeddings are generated through the configured Magic AI platform. Platforms whose embeddings do not fit the vector index are skipped, and similar-product search falls back to keyword ranking with an explanation.
+- The AI chat caches its instructions and tool definitions and tracks cached tokens in analytics.
+- The AI category tree tool can be scoped to a family and ranks categories by relevance at any depth.
+- AI agent extensions can register result cards, composer controls and tool decorators.
+
+## Improvements
+
+- AI chat and media-scan upload limits are configurable through `AI_AGENT_CHAT_MAX_FILE_KB` and `MEDIA_SCAN_MAX_FILE_SIZE_KB`, keeping the 100 MB default.
+- Admin form labels are linked to their controls, and datagrid filter, toolbar, history and search inputs have accessible names.
+- Admin AJAX navigation replays page scripts through a `<script>` element instead of `new Function()`, so a nonce-based Content Security Policy can apply without `unsafe-eval`.
+- The Docker Elasticsearch readiness probe authenticates with the configured credentials, passes them on stdin rather than in the process arguments, and is time-boxed.
+- Compatible with `laravel/framework` 13.37 and `laravel/ai` 1.2.
+
+## Bug fixes
+
+- Fixed saving a product with an unchanged status recording a status change in its history on PostgreSQL. `status` is now cast to a boolean on every database, so code comparing it with `=== 1` or `=== 0` should use a truthy check instead.
+- Fixed the Magic AI system prompt form accepting a Max Tokens value outside the 100 to 5000 range its help text gives; the server allowed 1 to 32768. A saved prompt already outside the range keeps its value and is still used as is when generating content, but its Max Tokens must be brought within 100 to 5000 before the prompt can be saved again.
+- Fixed Magic AI offering chat models such as `gpt-4o` as image models, and image edits with `chatgpt-image-latest` or `openai/gpt-image-1` failing with "Unknown parameter: 'response_format'". The image model list now offers only models whose names match a known image model (`dall-e`, `gpt-image` or `image` for OpenAI, `imagen` or `image` for Gemini, `image` or `grok…vision` for xAI), and is empty when none match or the platform cannot be found. A platform on a custom API URL, such as a proxy or gateway, still offers its full model list when no name matches.
+- Fixed a product quick search none of whose fields resolves to an attribute returning the entire catalogue instead of no products. The database path dropped the empty condition group; the Elasticsearch path emitted an empty `should`, which Elasticsearch answers with a match_all because it applies `minimum_should_match` only once there are `should` clauses to count. Both now refuse the term, with `1 = 0` and with `match_none`.
+- Fixed zero values being dropped. A select option coded `0`, a number or text `0`, a zero price and a zero measurement amount are kept on product save, and `0`, `"0"` and `false` survive imports, including updates of existing products and categories.
+- Fixed false boolean values in imports; invalid boolean values are now reported.
+- Fixed imported attribute options being matched by code alone; options are now scoped to their attribute, and a code-only delete that matches several attributes asks for `attribute_code`.
+- Fixed queued import batches continuing after validation failed, and a cancelled or finished import being run again by a late job.
+- Fixed the `variant_structure` header being required in product imports.
+- Fixed scoped variant-level values being lost on import.
+- Fixed documents, audio and most image types in an import zip being skipped, so file attributes are imported.
+- Fixed a blank timezone in a user import row overwriting the stored one, and an invalid user timezone breaking dates; it now falls back to the app timezone.
+- Fixed per-attribute allowed file extensions being ignored on upload, so extensions such as zip were always rejected. A blocked-extension list still keeps executable and markup types out.
+- Fixed products and categories upgraded from 2.x failing to save because their stored media paths sat outside `product/<id>/`.
+- Fixed lazily loaded attribute groups on the product edit page rendering and saving under the default channel and locale instead of the selected one.
+- Fixed negative measurement values being rejected, and a comma decimal separator being dropped so `20,5` was saved as `205`.
+- Fixed measurement unit imports matching case-insensitively first, so `MW` became milliwatt and `B` became bit.
+- Fixed catalog grids dropping values that contain a less-than sign, such as `Washer <5mm thick`.
+- Fixed "Select all matching" being lost when a row was unticked or the page changed.
+- Fixed the applied date-range filter pill spanning only half the filter panel.
+- Fixed the REST product delete events receiving the SKU instead of the product id, which made the publication guard check the wrong product.
+- Fixed a REST category PATCH without a `parent` field moving the category to the root.
+- Fixed REST attribute option endpoints returning 500 on malformed payloads, and an option update changing another attribute's option with the same code.
+- Fixed unknown configuration download paths returning 500 instead of 404.
+- Fixed the code generator overwriting the disabled code of an existing attribute or category field option.
+- Fixed generated codes ending in an underscore when the label exceeded 191 characters.
+- Fixed the family form not being marked as changed when attribute groups were reordered.
+- Fixed the category image field tile not lining up with its label.
+- Fixed the dashboard channel readiness widget showing channel codes instead of names.
+- Fixed Magic AI prompt editing not showing attribute suggestions.
+- Fixed AI products created in strict confirm mode being silently lost.
+- Fixed product embeddings storing no attribute family, so similar-product search never found kNN matches. `php artisan ai-agent:embeddings:index` repairs existing documents without re-embedding them.
+- Fixed base64 JPEG images in the AI image agent being treated as missing file paths.
+- Fixed public passports listing every field in the first section and repeating fields in later ones.
+- Fixed replacing a passport document not sealing a new version, so the old file kept being served.
+- Fixed erasing a publication leaving superseded versions readable. A redacted passport now answers `410 Gone`, and tombstones are `private, no-store` and `noindex`.
+- Fixed republishing removing the document index of superseded publication versions.
+- Fixed the installer failing with "Unknown database" when the database did not exist yet.
+- Fixed table prefixes not being quoted, and let several installations share one database with different prefixes. An unattended install without a prefix now needs `--force` to drop tables.
+- Fixed quoted `.env` values breaking the Elasticsearch index prefix during install.
+- Fixed re-seeding the demo catalog failing once a publication release existed.
+- Fixed the install tracker always reporting the country as India; it is now derived from the admin timezone.
+
 # 3.1.3 — September 29th, 2026
 
 ## Improvements

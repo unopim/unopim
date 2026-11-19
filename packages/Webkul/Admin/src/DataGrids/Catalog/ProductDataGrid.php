@@ -11,6 +11,7 @@ use Illuminate\Support\LazyCollection;
 use Webkul\Admin\Filters\ProductFilterOperators;
 use Webkul\Admin\Filters\ProductPropertyFilters;
 use Webkul\Admin\Traits\AttributeColumnTrait;
+use Webkul\Attribute\Models\Attribute as AttributeModel;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Services\AttributeService;
@@ -32,6 +33,25 @@ use Webkul\Product\Type\AbstractType;
 class ProductDataGrid extends DataGrid implements ExportableInterface
 {
     use AttributeColumnTrait;
+
+    /**
+     * Fallback quick-search fields.
+     *
+     * @var array<int, string>
+     */
+    protected const DEFAULT_SEARCH_FIELDS = ['sku', 'name'];
+
+    /**
+     * Attribute types the quick search can match.
+     *
+     * @var array<int, string>
+     */
+    protected const SEARCHABLE_ATTRIBUTE_TYPES = [AttributeModel::TEXT_TYPE];
+
+    /**
+     * Maximum number of quick-search fields.
+     */
+    protected const MAX_SEARCH_FIELDS = 10;
 
     /**
      * Prepare query builder.
@@ -112,9 +132,11 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
     public function prepareQueryBuilder()
     {
-        $tablePrefix = DB::getTablePrefix();
-
         $grammar = DB::rawQueryGrammar();
+
+        $familyNameColumn = DB::getQueryGrammar()->wrap('attribute_family_name.name');
+
+        $familyCodeColumn = DB::getQueryGrammar()->wrap('af.code');
 
         $this->prepareQuery = ProductQueryBuilderFactory::make()->prepareQueryBuilder();
 
@@ -135,10 +157,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'parent_products.sku as parent',
                 DB::raw(
                     "(CASE
-                        WHEN {$tablePrefix}attribute_family_name.name IS NULL
-                            OR {$grammar->length("TRIM({$tablePrefix}attribute_family_name.name)")} < 1
-                        THEN {$grammar->concat("'['", "{$tablePrefix}af.code", "']'")}
-                        ELSE {$tablePrefix}attribute_family_name.name
+                        WHEN {$familyNameColumn} IS NULL
+                            OR {$grammar->length("TRIM({$familyNameColumn})")} < 1
+                        THEN {$grammar->concat("'['", $familyCodeColumn, "']'")}
+                        ELSE {$familyNameColumn}
                     END) as attribute_family"
                 ),
                 'products.values as raw_values',
@@ -579,7 +601,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
             if (! empty($ids)) {
                 $this->queryBuilder->orderByRaw(
-                    DB::rawQueryGrammar()->orderByField(DB::getTablePrefix().'products.id', $ids)
+                    DB::rawQueryGrammar()->orderByField(DB::getQueryGrammar()->wrap('products.id'), $ids)
                 );
             }
 
@@ -667,15 +689,19 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         if ($attributePath = $this->getAttributePathForSort($sortColumn)) {
             $attribute = $this->attributeService->findAttributeByCode($sortColumn);
 
-            $castType = $attribute && ($attribute->type === 'price' || $attribute->validation === 'numeric')
-                ? 'DECIMAL'
+            $castType = $attribute && (
+                $attribute->type === 'price'
+                || $attribute->type === AttributeModel::MEASUREMENT_FIELD_TYPE
+                || in_array($attribute->validation, ['numeric', 'number', 'decimal'], true)
+            )
+                ? 'DECIMAL(30,10)'
                 : null;
 
-            $jsonCondition = DB::rawQueryGrammar()->jsonExtract(DB::getTablePrefix().'products.values', ...$attributePath);
+            $jsonCondition = $this->inheritedJsonExtract($attributePath);
 
             if ($castType) {
                 return $this->queryBuilder->orderByRaw(
-                    "CAST($jsonCondition AS $castType) $sortOrder",
+                    $this->numericSortExpression($jsonCondition, $castType)." $sortOrder",
                 );
             }
 
@@ -685,6 +711,64 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         }
 
         return $this->queryBuilder->orderBy($sortColumn, $sortOrder);
+    }
+
+    /**
+     * Build the SQL expression that reads an attribute for sorting the way the grid displays it.
+     *
+     * Variants do not store values they inherit, so the product's own JSON is NULL for them and
+     * ordering by it alone leaves those rows in arbitrary order. The nearest non-null value up
+     * the parent chain (own, parent, grandparent) is used instead, matching VariantValueResolver.
+     */
+    protected function inheritedJsonExtract(array $attributePath): string
+    {
+        $grammar = DB::rawQueryGrammar();
+        $prefix = DB::getTablePrefix();
+
+        $this->joinGrandparentForSort();
+
+        $extracts = array_map(
+            fn (string $table): string => $grammar->jsonExtract($prefix.$table.'.values', ...$attributePath),
+            ['products', 'parent_products', 'grandparent_products']
+        );
+
+        return 'COALESCE('.implode(', ', $extracts).')';
+    }
+
+    /**
+     * Cast a JSON-extracted value to a number for ordering.
+     *
+     * MySQL turns a non-numeric or empty string into 0 with a warning, but PostgreSQL raises an
+     * error that would break the whole grid, so there only numeric-looking values are cast and
+     * the rest sort as NULL.
+     */
+    protected function numericSortExpression(string $expression, string $castType): string
+    {
+        if (DB::getDriverName() === 'pgsql') {
+            return "CASE WHEN CAST($expression AS TEXT) ~ '^-?[0-9]+(\\.[0-9]+)?$' "
+                ."THEN CAST($expression AS $castType) END";
+        }
+
+        return "CAST($expression AS $castType)";
+    }
+
+    /**
+     * Join the grandparent product once so sub-variants can inherit through two levels.
+     */
+    protected function joinGrandparentForSort(): void
+    {
+        foreach ($this->queryBuilder->joins ?? [] as $join) {
+            if (str_contains((string) $join->table, 'grandparent_products')) {
+                return;
+            }
+        }
+
+        $this->queryBuilder->leftJoin(
+            'products as grandparent_products',
+            'parent_products.parent_id',
+            '=',
+            'grandparent_products.id'
+        );
     }
 
     /**
@@ -717,7 +801,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             }
 
             if ($attribute === 'all') {
-                $queryBuilder->applySkuOrUnfilteredFilter(['sku', 'name'], FilterOperators::WILDCARD, $value, $context);
+                $queryBuilder->applySkuOrUnfilteredFilter($this->getSearchFields(), FilterOperators::WILDCARD, $value, $context);
 
                 continue;
             }
@@ -737,6 +821,46 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 $this->applyFilterValue($queryBuilder, $attribute, $value, $operator, $context);
             }
         }
+    }
+
+    /**
+     * Resolve the configured quick-search fields to searchable attribute codes.
+     *
+     * @return array<int, string>
+     */
+    protected function getSearchFields(): array
+    {
+        $configured = array_values(array_unique(array_filter(
+            (array) config('products.search_fields', static::DEFAULT_SEARCH_FIELDS),
+            fn ($code): bool => is_string($code) && $code !== '',
+        )));
+
+        if ($configured === []) {
+            return static::DEFAULT_SEARCH_FIELDS;
+        }
+
+        $attributes = $this->attributeService->findByCodes($configured) ?? [];
+
+        $fields = [];
+
+        foreach ($configured as $code) {
+            $attribute = $attributes[$code] ?? null;
+
+            if ($attribute && in_array($attribute->type, static::SEARCHABLE_ATTRIBUTE_TYPES, true)) {
+                $fields[] = $code;
+            }
+        }
+
+        if ($fields === []) {
+            return static::DEFAULT_SEARCH_FIELDS;
+        }
+
+        $fields = array_values(array_unique(array_merge(
+            array_intersect(static::DEFAULT_SEARCH_FIELDS, $fields),
+            $fields,
+        )));
+
+        return array_slice($fields, 0, static::MAX_SEARCH_FIELDS);
     }
 
     protected function getOperatorAndValue($attribute, $value)
@@ -853,6 +977,12 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $sortOrder = strtolower($params['order'] ?? $this->sortOrder) === 'asc' ? 'asc' : 'desc';
 
+        if ($this->isMeasurementColumn($params['column'] ?? $this->elasticSearchSortColumn)) {
+            $this->prepareQuery->orderBy(['_script' => $this->numericScriptSort($sort, $sortOrder)]);
+
+            return;
+        }
+
         $this->prepareQuery->orderBy([
             $sort => [
                 'order'         => $sortOrder,
@@ -860,6 +990,32 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'unmapped_type' => 'keyword',
             ],
         ]);
+    }
+
+    protected function isMeasurementColumn(?string $code): bool
+    {
+        return $code
+            && $this->attributeService->findAttributeByCode($code)?->type === AttributeModel::MEASUREMENT_FIELD_TYPE;
+    }
+
+    /**
+     * `base_data` is indexed as a keyword, so a plain sort is alphabetical ("18.5" before "2.1").
+     * Sort on its numeric value instead, keeping rows without a value last in both directions.
+     */
+    protected function numericScriptSort(string $field, string $order): array
+    {
+        return [
+            'type'   => 'number',
+            'order'  => $order,
+            'script' => [
+                'lang'   => 'painless',
+                'source' => 'doc[params.field].size() == 0 ? params.missing : Double.parseDouble(doc[params.field].value)',
+                'params' => [
+                    'field'   => $field,
+                    'missing' => $order === 'asc' ? PHP_FLOAT_MAX : -PHP_FLOAT_MAX,
+                ],
+            ],
+        ];
     }
 
     /**
@@ -895,6 +1051,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 $path .= '.'.$currencyCode;
             }
 
+            if ($attributeType === AttributeModel::MEASUREMENT_FIELD_TYPE) {
+                $path .= '.base_data';
+            }
+
             return $path;
         }
 
@@ -906,6 +1066,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         if ($attributeType === 'price' && $currencyCode) {
             $path[] = $currencyCode;
+        }
+
+        if ($attributeType === AttributeModel::MEASUREMENT_FIELD_TYPE) {
+            $path[] = 'base_data';
         }
 
         return $path;
@@ -1108,6 +1272,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $mergedValuesByProductId = $this->resolveMergedValuesForPage($paginator['data']);
 
         foreach ($paginator['data'] as $record) {
+            $values = $mergedValuesByProductId[$record->product_id] ?? $this->decodeRawValues($record);
+
             $record = $this->sanitizeRow($record);
 
             foreach ($this->columns as $column) {
@@ -1122,7 +1288,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 }
             }
 
-            $this->processRawValues($record, $mergedValuesByProductId[$record->product_id] ?? null);
+            $this->processRawValues($record, $values);
 
             unset($record->parent_id);
 
@@ -1192,6 +1358,23 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     }
 
     /**
+     * Decode the row's stored values before the row is sanitized, since stripping
+     * tags from the encoded JSON corrupts it whenever a value contains "<".
+     */
+    protected function decodeRawValues(object $record): ?array
+    {
+        $rawValues = $record->raw_values ?? null;
+
+        if (! is_string($rawValues) || $rawValues === '') {
+            return null;
+        }
+
+        $decoded = json_decode($rawValues, true);
+
+        return is_array($decoded) ? $decoded : null;
+    }
+
+    /**
      * Process raw values and update record.
      *
      * @param  array|null  $mergedValues  The row's `values`, already merged with its
@@ -1237,7 +1420,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 continue;
             }
 
-            $record->{$code} = $value;
+            $record->{$code} = $this->stripHtmlTags($value);
         }
     }
 

@@ -70,4 +70,14 @@ return [
         'acl'          => 'configuration.system_settings.microsoft_sso',
         'sort'         => 4,
     ],
+
+    [
+        'key'          => 'system.platform',
+        'name'         => 'admin::app.configuration.index.general.platform.title',
+        'info'         => 'admin::app.configuration.index.general.platform.info',
+        'icon'         => 'icon-setting',
+        'config_group' => 'general.platform.settings',
+        'acl'          => 'configuration.system_settings.platform',
+        'sort'         => 5,
+    ],
 ];

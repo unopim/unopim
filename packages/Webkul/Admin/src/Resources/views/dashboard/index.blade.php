@@ -1,3 +1,7 @@
+@php
+    $pimEnabled = app(\Webkul\Core\Platform\ModuleGate::class)->enabled(\Webkul\Core\Platform\Module::Pim);
+@endphp
+
 <x-admin::layouts>
     <x-slot:title>
         @lang('admin::app.dashboard.index.title')
@@ -10,9 +14,11 @@
         class="mb-5"
     >
         <x-slot:actions>
+            {!! view_render_event('unopim.admin.dashboard.index.quick-actions.before') !!}
+
             <!-- Quick Actions -->
             <div class="flex gap-2 max-sm:flex-wrap">
-                @if (bouncer()->hasPermission('catalog.products.create'))
+                @if ($pimEnabled && bouncer()->hasPermission('catalog.products.create'))
                     <a
                         href="{{ route('admin.catalog.products.index') }}"
                         class="primary-button text-xs no-underline"
@@ -42,84 +48,104 @@
                     </a>
                 @endif
             </div>
+
+            {!! view_render_event('unopim.admin.dashboard.index.quick-actions.after') !!}
         </x-slot>
     </x-admin::page-header>
 
     <!-- ═══ OVERVIEW ═══ -->
 
-    <!-- Catalog Overview -->
-    <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
-        <div class="flex flex-col gap-2 w-full">
-            <p class="text-base text-zinc-800 dark:text-slate-50 font-bold">
-                @lang('admin::app.dashboard.index.catalog-details')
-            </p>
+    {!! view_render_event('unopim.admin.dashboard.index.cards.before') !!}
 
-            @include('admin::dashboard.total-catalogs')
-        </div>
-    </div>
+    @if ($pimEnabled)
+        <!-- Catalog Overview -->
+        <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
+            <div class="flex flex-col gap-2 w-full">
+                <p class="text-base text-zinc-800 dark:text-slate-50 font-bold">
+                    @lang('admin::app.dashboard.index.catalog-details')
+                </p>
 
-    <!-- Catalog Structure -->
-    <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
-        <div class="flex flex-col gap-2 w-full">
-            <p class="text-base text-zinc-800 dark:text-slate-50 font-bold">
-                @lang('admin::app.dashboard.index.settings-details')
-            </p>
-
-            @include('admin::dashboard.total-catalog-structure')
-        </div>
-    </div>
-
-    <!-- Needs Attention -->
-    @include('admin::dashboard.needs-attention')
-
-    <!-- ═══ ANALYTICS ═══ -->
-    <div class="flex items-center gap-3 mt-8 mb-4">
-        <p class="text-xs font-semibold text-zinc-400 dark:text-slate-500 uppercase tracking-widest">
-            @lang('admin::app.dashboard.index.analytics-section')
-        </p>
-        <div class="flex-1 border-t border-zinc-200 dark:border-cherry-800"></div>
-    </div>
-
-    <!-- Product Statistics & Trend -->
-    <div class="flex items-stretch gap-4 max-xl:flex-wrap">
-        <div class="flex flex-col gap-2 flex-1 min-w-[300px]">
-            <p class="text-base text-zinc-800 dark:text-slate-50 font-bold">
-                @lang('admin::app.dashboard.index.product-stats')
-            </p>
-
-            @include('admin::dashboard.product-stats')
+                @include('admin::dashboard.total-catalogs')
+            </div>
         </div>
 
-        <div class="flex flex-col gap-2 flex-1 min-w-[300px]">
-            <p class="text-base text-zinc-800 dark:text-slate-50 font-bold">
-                @lang('admin::app.dashboard.index.products-over-time')
-            </p>
+        <!-- Catalog Structure -->
+        <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
+            <div class="flex flex-col gap-2 w-full">
+                <p class="text-base text-zinc-800 dark:text-slate-50 font-bold">
+                    @lang('admin::app.dashboard.index.settings-details')
+                </p>
 
-            @include('admin::dashboard.product-trend')
+                @include('admin::dashboard.total-catalog-structure')
+            </div>
         </div>
-    </div>
+    @endif
 
-    <!-- Completeness -->
-    <div class="flex gap-2.5 mt-5 max-xl:flex-wrap">
-        <div class="flex flex-col gap-2 w-full">
-            <p class="text-base text-zinc-800 dark:text-slate-50 font-bold">
-                @lang('admin::app.dashboard.index.completeness')
+    {!! view_render_event('unopim.admin.dashboard.index.cards.after') !!}
+
+    @if ($pimEnabled)
+        <!-- Needs Attention -->
+        @include('admin::dashboard.needs-attention')
+    @endif
+
+    {!! view_render_event('unopim.admin.dashboard.index.analytics.before') !!}
+
+    @if ($pimEnabled)
+        <!-- ═══ ANALYTICS ═══ -->
+        <div class="flex items-center gap-3 mt-8 mb-4">
+            <p class="text-xs font-semibold text-zinc-400 dark:text-slate-500 uppercase tracking-widest">
+                @lang('admin::app.dashboard.index.analytics-section')
             </p>
-
-            @includeIf('completeness::dashboard.index')
+            <div class="flex-1 border-t border-zinc-200 dark:border-cherry-800"></div>
         </div>
-    </div>
 
-    <!-- Channel Readiness -->
-    <div class="flex gap-2.5 mt-5 max-xl:flex-wrap">
-        <div class="flex flex-col gap-2 w-full">
-            <p class="text-base text-zinc-800 dark:text-slate-50 font-bold">
-                @lang('admin::app.dashboard.index.channel-readiness')
-            </p>
+        <!-- Product Statistics & Trend -->
+        {!! view_render_event('unopim.admin.dashboard.index.product-stats.before') !!}
 
-            @include('admin::dashboard.channel-readiness')
+        <div class="flex items-stretch gap-4 max-xl:flex-wrap">
+            <div class="flex flex-col gap-2 flex-1 min-w-[300px]">
+                <p class="text-base text-zinc-800 dark:text-slate-50 font-bold">
+                    @lang('admin::app.dashboard.index.product-stats')
+                </p>
+
+                @include('admin::dashboard.product-stats')
+            </div>
+
+            <div class="flex flex-col gap-2 flex-1 min-w-[300px]">
+                <p class="text-base text-zinc-800 dark:text-slate-50 font-bold">
+                    @lang('admin::app.dashboard.index.products-over-time')
+                </p>
+
+                @include('admin::dashboard.product-trend')
+            </div>
         </div>
-    </div>
+
+        {!! view_render_event('unopim.admin.dashboard.index.product-stats.after') !!}
+
+        <!-- Completeness -->
+        <div class="flex gap-2.5 mt-5 max-xl:flex-wrap">
+            <div class="flex flex-col gap-2 w-full">
+                <p class="text-base text-zinc-800 dark:text-slate-50 font-bold">
+                    @lang('admin::app.dashboard.index.completeness')
+                </p>
+
+                @includeIf('completeness::dashboard.index')
+            </div>
+        </div>
+
+        <!-- Channel Readiness -->
+        <div class="flex gap-2.5 mt-5 max-xl:flex-wrap">
+            <div class="flex flex-col gap-2 w-full">
+                <p class="text-base text-zinc-800 dark:text-slate-50 font-bold">
+                    @lang('admin::app.dashboard.index.channel-readiness')
+                </p>
+
+                @include('admin::dashboard.channel-readiness')
+            </div>
+        </div>
+    @endif
+
+    {!! view_render_event('unopim.admin.dashboard.index.analytics.after') !!}
 
     <!-- ═══ OPERATIONS ═══ -->
     <div class="flex items-center gap-3 mt-8 mb-4">
@@ -128,6 +154,8 @@
         </p>
         <div class="flex-1 border-t border-zinc-200 dark:border-cherry-800"></div>
     </div>
+
+    {!! view_render_event('unopim.admin.dashboard.index.operations.before') !!}
 
     <!-- Recent Activity & Data Transfer -->
     <div class="flex items-stretch gap-4 max-xl:flex-wrap">
@@ -147,4 +175,6 @@
             @include('admin::dashboard.data-transfer')
         </div>
     </div>
+
+    {!! view_render_event('unopim.admin.dashboard.index.operations.after') !!}
 </x-admin::layouts>

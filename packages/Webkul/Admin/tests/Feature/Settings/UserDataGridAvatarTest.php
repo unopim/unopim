@@ -64,7 +64,7 @@ it('uses the cached gravatar url once the lookup is known to have succeeded', fu
     $user = Admin::factory()->create(['image' => null]);
 
     Cache::put(
-        'admin.gravatar.'.md5(mb_strtolower(trim($user->email))),
+        'admin.gravatar.'.hash('sha256', mb_strtolower(trim($user->email))),
         ['found' => true, 'body' => '', 'content_type' => 'image/png'],
         86400
     );

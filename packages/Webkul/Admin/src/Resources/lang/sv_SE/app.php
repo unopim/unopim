@@ -2118,6 +2118,7 @@ return [
             'delete-failed'                   => 'Det gick inte att ta bort rollen',
             'delete-success'                  => 'Rollen togs bort framgångsrikt',
             'last-delete-error'               => 'Den sista rollen kan inte tas bort',
+            'last-full-access'                => 'Minst en aktiv användare måste behålla full åtkomst.',
             'update-success'                  => 'Rollen uppdaterades framgångsrikt',
         ],
     ],
@@ -2157,6 +2158,26 @@ return [
                     'info'  => '',
                     'title' => 'Allmänt',
                 ],
+                'platform' => [
+                    'info'  => 'Välj vilka plattformsmoduler som är påslagna.',
+                    'title' => 'Plattform',
+
+                    'settings' => [
+                        'info'  => 'Kör valfri modul ensam eller flera tillsammans; en modul som behöver en annan kan bara slås på tillsammans med den.',
+                        'title' => 'Val av moduler',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'När en modul stängs av döljs dess menyer, sidor och API-vägar; dess data behålls.',
+                        'title' => 'Moduler',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Gäller bara medan Produktinformation (PIM) är avstängd. Valda avsnitt tas bort från menyn och deras administrationssidor blockeras; data behålls och deras Admin API-rutter förblir tillgängliga.',
+                        'title' => 'Dolda avsnitt',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -2328,6 +2349,7 @@ return [
                 'title'               => 'Uppmaning',
                 'create-btn'          => 'Skapa Uppmaning',
                 'edit-title'          => 'Redigera Uppmaning',
+                'insert-attribute'    => 'Infoga attribut',
                 'create-title'        => 'Skapa Ny Uppmaning',
                 'label-title'         => 'Titel',
                 'purpose'             => 'Syfte',
@@ -3101,6 +3123,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Instrumentpanel',
+        'home'      => 'Hem',
         'go-back'   => 'Tillbaka',
         'support'   => 'Om problemet kvarstår, vänligen kontakta oss via <a href=":link" class=":class">:email</a> för hjälp.',
         '404'       => [

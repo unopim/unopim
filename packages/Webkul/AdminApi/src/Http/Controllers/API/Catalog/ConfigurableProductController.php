@@ -343,9 +343,9 @@ class ConfigurableProductController extends ProductController
                         return false;
                     }
 
-                    Event::dispatch('catalog.product.delete.before', $product->sku);
+                    Event::dispatch('catalog.product.delete.before', $product->id);
                     $product->delete();
-                    Event::dispatch('catalog.product.delete.after', $product->sku);
+                    Event::dispatch('catalog.product.delete.after', $product->id);
 
                     return true;
                 });
@@ -363,11 +363,11 @@ class ConfigurableProductController extends ProductController
                 ], JsonResponse::HTTP_OK);
             }
 
-            Event::dispatch('catalog.product.delete.before', $code);
+            Event::dispatch('catalog.product.delete.before', $product->id);
 
             $product->delete();
 
-            Event::dispatch('catalog.product.delete.after', $code);
+            Event::dispatch('catalog.product.delete.after', $product->id);
 
             return response()->json([
                 'success' => true,

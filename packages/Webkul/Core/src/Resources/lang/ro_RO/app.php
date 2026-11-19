@@ -5,4 +5,8 @@ return [
         'template' => 'Șablon',
         'parents'  => 'Părinți',
     ],
+
+    'platform-modules' => [
+        'pim' => 'Informații despre produse (PIM)',
+    ],
 ];

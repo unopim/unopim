@@ -124,6 +124,8 @@ return [
                     'base'           => 'Decimale osnovne vrijednosti',
                     'base-info'      => 'Broj decimalnih mjesta koji se zadržava za vrijednost pretvorenu u standardnu jedinicu.',
                 ],
+                'display-unit-symbol'      => 'Prikaži simbole jedinica',
+                'display-unit-symbol-info' => 'Prikazuje mjerne vrijednosti sa simbolom jedinice (na primjer 100 °C) umjesto naziva jedinice, u administraciji i u izvozima. Jedinice bez simbola zadržavaju svoj naziv.',
             ],
         ],
     ],

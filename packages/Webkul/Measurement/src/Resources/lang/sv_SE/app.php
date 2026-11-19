@@ -124,6 +124,8 @@ return [
                     'base'           => 'Decimaler för basvärde',
                     'base-info'      => 'Antal decimaler som behålls för värdet konverterat till standardenheten.',
                 ],
+                'display-unit-symbol'      => 'Visa enhetssymboler',
+                'display-unit-symbol-info' => 'Visa mätvärden med enhetens symbol (till exempel 100 °C) i stället för enhetens namn, i administrationen och i exporter. Enheter utan symbol behåller sitt namn.',
             ],
         ],
     ],
