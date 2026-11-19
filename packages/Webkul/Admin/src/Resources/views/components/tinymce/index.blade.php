@@ -162,7 +162,7 @@
                             <div
                                 v-if="contentHasHtml && showRichPreview"
                                 class="h-[180px] overflow-y-auto p-3 border rounded-md bg-white dark:bg-cherry-800 dark:border-cherry-800 text-sm text-gray-700 dark:text-gray-300 max-w-none rich-content-preview"
-                                v-html="ai.content"
+                                v-html="sanitizeEditorHtml(ai.content)"
                             ></div>
 
                             {{-- .rich-content-preview prose styles live in assets/css/app.css --}}
