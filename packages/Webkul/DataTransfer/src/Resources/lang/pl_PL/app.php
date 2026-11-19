@@ -32,6 +32,8 @@ return [
                     'incorrect-family-for-variant'             => 'Rodzina musi być taka sama jak rodzina główna',
                     'parent-not-exist'                         => 'Rodzic nie istnieje.',
                     'variant-structure-not-found'              => 'Struktura wariantów :code nie istnieje dla tej rodziny atrybutów.',
+                    'variant-structure-levels-mismatch'        => 'Struktura wariantów :code ma tylko jeden poziom, więc nie może zawierać wierszy variant_group. Ustaw jej poziomy na 2 lub zaimportuj warianty jako produkty proste w ramach produktu konfigurowalnego.',
+                    'variant-structure-two-levels-mismatch'    => 'Struktura wariantów :code ma dwa poziomy, więc wiersze produktów prostych muszą znajdować się pod wierszem variant_group, a nie bezpośrednio pod produktem konfigurowalnym.',
                 ],
             ],
         ],

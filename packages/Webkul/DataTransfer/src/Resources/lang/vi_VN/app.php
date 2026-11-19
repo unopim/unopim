@@ -32,6 +32,8 @@ return [
                     'incorrect-family-for-variant'             => 'Gia đình phải giống như gia đình chính',
                     'parent-not-exist'                         => 'Cha mẹ không tồn tại.',
                     'variant-structure-not-found'              => 'Cấu trúc biến thể :code không tồn tại cho họ thuộc tính này.',
+                    'variant-structure-levels-mismatch'        => 'Cấu trúc biến thể :code chỉ có một cấp nên không thể chứa các dòng variant_group. Hãy đặt số cấp thành 2 hoặc nhập các biến thể dưới dạng sản phẩm đơn giản thuộc sản phẩm có thể cấu hình.',
+                    'variant-structure-two-levels-mismatch'    => 'Cấu trúc biến thể :code có hai cấp, vì vậy các dòng sản phẩm đơn giản phải nằm dưới một dòng variant_group, không nằm trực tiếp dưới sản phẩm có thể cấu hình.',
                 ],
             ],
         ],
