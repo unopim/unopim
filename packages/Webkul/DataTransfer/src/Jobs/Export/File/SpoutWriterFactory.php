@@ -23,7 +23,7 @@ final class SpoutWriterFactory
      */
     public static function createWriter(string $type, array $normalizedOptions = []): WriterInterface
     {
-        $type = ucfirst(strtolower($type));
+        $type = self::normalizeType($type);
 
         switch ($type) {
             case self::CSV:
@@ -43,5 +43,13 @@ final class SpoutWriterFactory
             default:
                 throw new \InvalidArgumentException(sprintf('"%s" is not a valid writer type', $type));
         }
+    }
+
+    /**
+     * Normalize a file format such as "xls" or "XLS" to its writer type constant casing.
+     */
+    public static function normalizeType(string $type): string
+    {
+        return ucfirst(strtolower($type));
     }
 }

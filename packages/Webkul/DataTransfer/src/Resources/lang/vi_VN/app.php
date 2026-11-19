@@ -174,8 +174,10 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Bản xuất này quá lớn để chạy: ước tính :rows hàng × :columns cột (~:estimated) vượt quá dung lượng khả dụng (~:available). Hãy thu hẹp bản xuất bằng cách chọn ít kênh/ngôn ngữ (và thuộc tính) hơn rồi thử lại.',
-        'fields'           => [
+        'export-too-large'     => 'Bản xuất này quá lớn để chạy: ước tính :rows hàng × :columns cột (~:estimated) vượt quá dung lượng khả dụng (~:available). Hãy thu hẹp bản xuất bằng cách chọn ít kênh/ngôn ngữ (và thuộc tính) hơn rồi thử lại.',
+        'xls-too-many-columns' => 'Bản xuất này có hơn :limit cột, mức tối đa mà tệp XLS có thể chứa. Hãy chọn XLSX hoặc CSV, hoặc chọn ít thuộc tính hơn, rồi thử lại.',
+        'xls-too-many-rows'    => 'Bản xuất này có hơn :limit hàng, mức tối đa mà tệp XLS có thể chứa. Hãy chọn XLSX hoặc CSV, hoặc thu hẹp bản xuất, rồi thử lại.',
+        'fields'               => [
             'file-format'            => 'Định dạng tệp',
             'with-media'             => 'Kèm phương tiện',
             'with-associations'      => 'Kèm liên kết',

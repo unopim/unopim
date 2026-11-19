@@ -174,8 +174,10 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => '此匯出過大，無法執行：預計 :rows 列 × :columns 欄（~:estimated）超出可用空間（~:available）。請選擇較少的渠道/語系（與屬性）以縮小匯出範圍，然後重試。',
-        'fields'           => [
+        'export-too-large'     => '此匯出過大，無法執行：預計 :rows 列 × :columns 欄（~:estimated）超出可用空間（~:available）。請選擇較少的渠道/語系（與屬性）以縮小匯出範圍，然後重試。',
+        'xls-too-many-columns' => '此匯出超過 :limit 欄，這是 XLS 檔案可容納的上限。請選擇 XLSX 或 CSV，或減少所選屬性後重試。',
+        'xls-too-many-rows'    => '此匯出超過 :limit 列，這是 XLS 檔案可容納的上限。請選擇 XLSX 或 CSV，或縮小匯出範圍後重試。',
+        'fields'               => [
             'file-format'            => '檔案格式',
             'with-media'             => '包含媒體',
             'with-associations'      => '包含關聯',

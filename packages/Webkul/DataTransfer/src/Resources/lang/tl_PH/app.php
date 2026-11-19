@@ -174,8 +174,10 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Masyadong malaki ang export na ito para patakbuhin: tinatayang :rows na hilera × :columns na kolum (~:estimated) ay lumalampas sa magagamit na espasyo (~:available). Paliitin ang export sa pamamagitan ng pagpili ng mas kaunting channel/locale (at attribute) at subukang muli.',
-        'fields'           => [
+        'export-too-large'     => 'Masyadong malaki ang export na ito para patakbuhin: tinatayang :rows na hilera × :columns na kolum (~:estimated) ay lumalampas sa magagamit na espasyo (~:available). Paliitin ang export sa pamamagitan ng pagpili ng mas kaunting channel/locale (at attribute) at subukang muli.',
+        'xls-too-many-columns' => 'Ang export na ito ay may higit sa :limit na column, ang pinakamarami na kayang hawakan ng isang XLS file. Piliin ang XLSX o CSV, o pumili ng mas kaunting attribute, at subukang muli.',
+        'xls-too-many-rows'    => 'Ang export na ito ay may higit sa :limit na row, ang pinakamarami na kayang hawakan ng isang XLS file. Piliin ang XLSX o CSV, o paliitin ang export, at subukang muli.',
+        'fields'               => [
             'file-format'            => 'Format ng File',
             'with-media'             => 'May Media',
             'with-associations'      => 'May mga Asosasyon',

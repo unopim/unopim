@@ -174,8 +174,10 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Acest export este prea mare pentru a fi rulat: aproximativ :rows rânduri × :columns coloane (~:estimated) depășesc spațiul disponibil (~:available). Restrângeți exportul selectând mai puține canale/limbi (și atribute) și încercați din nou.',
-        'fields'           => [
+        'export-too-large'     => 'Acest export este prea mare pentru a fi rulat: aproximativ :rows rânduri × :columns coloane (~:estimated) depășesc spațiul disponibil (~:available). Restrângeți exportul selectând mai puține canale/limbi (și atribute) și încercați din nou.',
+        'xls-too-many-columns' => 'Acest export are mai mult de :limit coloane, maximul pe care îl poate conține un fișier XLS. Alegeți XLSX sau CSV ori selectați mai puține atribute și încercați din nou.',
+        'xls-too-many-rows'    => 'Acest export are mai mult de :limit rânduri, maximul pe care îl poate conține un fișier XLS. Alegeți XLSX sau CSV ori restrângeți exportul și încercați din nou.',
+        'fields'               => [
             'file-format'            => 'Format fișier',
             'with-media'             => 'Cu media',
             'with-associations'      => 'Cu asocieri',

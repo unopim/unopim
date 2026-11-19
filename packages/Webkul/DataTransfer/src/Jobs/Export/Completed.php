@@ -52,5 +52,11 @@ class Completed implements ShouldQueue
         JobLogger::make($this->jobTrackId)->error("Export Completed job failed: {$exception->getMessage()}", [
             'exception' => $exception->getTraceAsString(),
         ]);
+
+        $this->export->forceFill([
+            'state'        => ExportHelper::STATE_FAILED,
+            'errors'       => array_merge((array) $this->export->errors, [$exception->getMessage()]),
+            'completed_at' => now(),
+        ])->save();
     }
 }

@@ -174,8 +174,10 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Ten eksport jest zbyt duży, aby go uruchomić: szacunkowo :rows wierszy × :columns kolumn (~:estimated) przekracza dostępne miejsce (~:available). Zawęź eksport, wybierając mniej kanałów/lokalizacji (i atrybutów), i spróbuj ponownie.',
-        'fields'           => [
+        'export-too-large'     => 'Ten eksport jest zbyt duży, aby go uruchomić: szacunkowo :rows wierszy × :columns kolumn (~:estimated) przekracza dostępne miejsce (~:available). Zawęź eksport, wybierając mniej kanałów/lokalizacji (i atrybutów), i spróbuj ponownie.',
+        'xls-too-many-columns' => 'Ten eksport ma więcej niż :limit kolumn, czyli maksimum, jakie może pomieścić plik XLS. Wybierz XLSX lub CSV albo mniej atrybutów i spróbuj ponownie.',
+        'xls-too-many-rows'    => 'Ten eksport ma więcej niż :limit wierszy, czyli maksimum, jakie może pomieścić plik XLS. Wybierz XLSX lub CSV albo zawęź eksport i spróbuj ponownie.',
+        'fields'               => [
             'file-format'            => 'Format pliku',
             'with-media'             => 'Z multimediami',
             'with-associations'      => 'Z powiązaniami',

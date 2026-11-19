@@ -174,8 +174,10 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Ovaj izvoz je prevelik za pokretanje: procijenjeno :rows redaka × :columns stupaca (~:estimated) premašuje dostupan prostor (~:available). Suzite izvoz odabirom manje kanala/jezika (i atributa) i pokušajte ponovno.',
-        'fields'           => [
+        'export-too-large'     => 'Ovaj izvoz je prevelik za pokretanje: procijenjeno :rows redaka × :columns stupaca (~:estimated) premašuje dostupan prostor (~:available). Suzite izvoz odabirom manje kanala/jezika (i atributa) i pokušajte ponovno.',
+        'xls-too-many-columns' => 'Ovaj izvoz ima više od :limit stupaca, što je najviše što XLS datoteka može sadržavati. Odaberite XLSX ili CSV ili manje atributa i pokušajte ponovno.',
+        'xls-too-many-rows'    => 'Ovaj izvoz ima više od :limit redaka, što je najviše što XLS datoteka može sadržavati. Odaberite XLSX ili CSV ili suzite izvoz i pokušajte ponovno.',
+        'fields'               => [
             'file-format'            => 'Format datoteke',
             'with-media'             => 'S medijima',
             'with-associations'      => 'S povezivanjima',

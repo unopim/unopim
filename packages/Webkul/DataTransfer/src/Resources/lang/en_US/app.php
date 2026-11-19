@@ -174,8 +174,10 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'This export is too large to run: an estimated :rows rows × :columns columns (~:estimated) exceeds the available space (~:available). Narrow the export by selecting fewer channels/locales (and attributes) and try again.',
-        'fields'           => [
+        'export-too-large'     => 'This export is too large to run: an estimated :rows rows × :columns columns (~:estimated) exceeds the available space (~:available). Narrow the export by selecting fewer channels/locales (and attributes) and try again.',
+        'xls-too-many-columns' => 'This export has more than :limit columns, the most an XLS file can hold. Choose XLSX or CSV, or select fewer attributes, and try again.',
+        'xls-too-many-rows'    => 'This export has more than :limit rows, the most an XLS file can hold. Choose XLSX or CSV, or narrow the export, and try again.',
+        'fields'               => [
             'file-format'            => 'File Format',
             'with-media'             => 'With Media',
             'with-associations'      => 'With Associations',

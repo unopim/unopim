@@ -174,8 +174,10 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Cet export est trop volumineux pour être exécuté : environ :rows lignes × :columns colonnes (~:estimated) dépassent l\'espace disponible (~:available). Réduisez l\'export en sélectionnant moins de canaux/locales (et d\'attributs), puis réessayez.',
-        'fields'           => [
+        'export-too-large'     => 'Cet export est trop volumineux pour être exécuté : environ :rows lignes × :columns colonnes (~:estimated) dépassent l\'espace disponible (~:available). Réduisez l\'export en sélectionnant moins de canaux/locales (et d\'attributs), puis réessayez.',
+        'xls-too-many-columns' => 'Cet export contient plus de :limit colonnes, le maximum qu\'un fichier XLS peut contenir. Choisissez XLSX ou CSV, ou sélectionnez moins d\'attributs, puis réessayez.',
+        'xls-too-many-rows'    => 'Cet export contient plus de :limit lignes, le maximum qu\'un fichier XLS peut contenir. Choisissez XLSX ou CSV, ou réduisez l\'export, puis réessayez.',
+        'fields'               => [
             'file-format'            => 'Format de fichier',
             'with-media'             => 'Avec médias',
             'with-associations'      => 'Avec associations',
