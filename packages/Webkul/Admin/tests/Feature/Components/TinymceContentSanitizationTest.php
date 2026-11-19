@@ -26,3 +26,10 @@ it('sanitizes content set into or pasted into the editor', function () {
         ->toContain("FORBID_TAGS: ['svg', 'math', 'object', 'embed']")
         ->toContain('ALLOW_DATA_ATTR: false');
 });
+
+it('sanitizes generated content before rendering it in the rich preview', function () {
+    preg_match_all('/v-html="([^"]*)"/', tinymceComponent(), $matches);
+
+    expect($matches[1])->not->toBeEmpty()
+        ->each->toStartWith('sanitizeEditorHtml(');
+});
