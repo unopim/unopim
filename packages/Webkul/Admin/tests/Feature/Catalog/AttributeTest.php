@@ -399,11 +399,12 @@ it('should keep new options on the created attribute when the request names anot
         ->and($other->options()->count())->toBe($otherOptionCount);
 });
 
-it('should not delete or update options of another attribute through the attribute update', function () {
+it('should reject an attribute update that deletes or updates options of another attribute', function () {
     $this->loginAsAdmin();
 
-    $attribute = Attribute::factory()->create(['type' => 'select']);
+    $attribute = Attribute::factory()->create(['type' => 'select', 'position' => 1]);
     $other = Attribute::factory()->create(['type' => 'select']);
+    $ownOption = $attribute->options()->first();
 
     $foreignDelete = AttributeOption::create(['code' => 'foreign_delete', 'sort_order' => 10, 'attribute_id' => $other->id]);
     $foreignUpdate = AttributeOption::create(['code' => 'foreign_update', 'sort_order' => 11, 'attribute_id' => $other->id]);
@@ -411,16 +412,22 @@ it('should not delete or update options of another attribute through the attribu
     putJson(route('admin.catalog.attributes.update', $attribute->id), [
         'code'        => $attribute->code,
         'type'        => $attribute->type,
+        'position'    => 99,
         'swatch_type' => SwatchTypeEnum::TEXT->value,
         'options'     => [
+            $ownOption->id     => ['isNew' => false, 'isDelete' => false, 'code' => 'own_renamed'],
             $foreignDelete->id => ['isNew' => false, 'isDelete' => true],
             $foreignUpdate->id => ['isNew' => false, 'isDelete' => false, 'code' => 'hijacked', 'attribute_id' => $attribute->id],
         ],
-    ])->assertStatus(302);
+    ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors('options');
 
     expect(AttributeOption::whereKey($foreignDelete->id)->exists())->toBeTrue()
         ->and($foreignUpdate->fresh()->code)->toBe('foreign_update')
-        ->and((int) $foreignUpdate->fresh()->attribute_id)->toBe($other->id);
+        ->and((int) $foreignUpdate->fresh()->attribute_id)->toBe($other->id)
+        ->and($ownOption->fresh()->code)->toBe($ownOption->code)
+        ->and((int) $attribute->fresh()->position)->toBe(1);
 });
 
 it('should keep an updated option on its attribute when the request names another attribute', function () {

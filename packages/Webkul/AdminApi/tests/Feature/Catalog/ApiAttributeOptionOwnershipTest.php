@@ -39,7 +39,7 @@ it('keeps options updated or added through the REST API on the attribute in the 
         ->and(apiOptionOwner('api_owned_upsert'))->toBe([$this->attribute->id]);
 });
 
-it('ignores options of another attribute in a REST attribute update', function () {
+it('rejects options of another attribute in a REST attribute update', function () {
     $foreignDelete = AttributeOption::create(['code' => 'api_foreign_delete', 'sort_order' => 10, 'attribute_id' => $this->other->id]);
     $foreignUpdate = AttributeOption::create(['code' => 'api_foreign_update', 'sort_order' => 11, 'attribute_id' => $this->other->id]);
 
@@ -50,7 +50,8 @@ it('ignores options of another attribute in a REST attribute update', function (
                 $foreignUpdate->id => ['isNew' => false, 'isDelete' => false, 'code' => 'api_hijacked', 'attribute_id' => $this->attribute->id],
             ],
         ])
-        ->assertOk();
+        ->assertUnprocessable()
+        ->assertJsonPath('errors.options.0', trans('validation.exists', ['attribute' => 'options']));
 
     expect(AttributeOption::whereKey($foreignDelete->id)->exists())->toBeTrue()
         ->and(apiOptionOwner('api_foreign_update'))->toBe([$this->other->id])

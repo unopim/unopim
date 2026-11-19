@@ -85,13 +85,19 @@ class AttributeRepository extends Repository
 
         $this->ensureTemplatesAreSupported($validatedData, $attribute);
 
+        $hasOptions = in_array($attribute->type, ['select', 'multiselect', 'checkbox']) && isset($data['options']);
+
+        if ($hasOptions) {
+            $this->ensureOptionsBelongToAttribute($data['options'], $attribute);
+        }
+
         if ($attribute->code === 'sku' && isset($data['is_filterable']) && $data['is_filterable'] === 0) {
             $data['is_filterable'] = 1;
         }
 
         $attribute->update($this->withoutUnchangedFlags($validatedData, $attribute));
 
-        if (in_array($attribute->type, ['select', 'multiselect', 'checkbox']) && isset($data['options'])) {
+        if ($hasOptions) {
             foreach ($data['options'] as $optionId => $optionInputs) {
                 if ($optionInputs['isNew'] == 'true') {
                     if (empty($optionInputs['code'])) {
@@ -100,8 +106,6 @@ class AttributeRepository extends Repository
                     $this->attributeOptionRepository->create(array_merge($optionInputs, [
                         'attribute_id' => $attribute->id,
                     ]));
-                } elseif (! $this->attributeOptionRepository->findOneWhere(['id' => $optionId, 'attribute_id' => $attribute->id])) {
-                    continue;
                 } elseif ($optionInputs['isDelete'] == 'true') {
                     $this->attributeOptionRepository->delete($optionId);
                 } else {
@@ -146,6 +150,33 @@ class AttributeRepository extends Repository
             ->forceFill(Arr::only($data, self::TEMPLATE_SETTINGS));
 
         return ! $candidate->enable_templates || $candidate->canHoldTemplate();
+    }
+
+    /**
+     * Reject existing option ids that do not belong to the attribute, before anything is written.
+     */
+    private function ensureOptionsBelongToAttribute(array $options, Attribute $attribute): void
+    {
+        $optionIds = array_keys(array_filter(
+            $options,
+            fn (mixed $optionInputs): bool => ($optionInputs['isNew'] ?? null) != 'true',
+        ));
+
+        if ($optionIds === []) {
+            return;
+        }
+
+        $ownedIds = $attribute->options()
+            ->whereIn('id', $optionIds)
+            ->pluck('id')
+            ->map(fn (mixed $id): int => (int) $id)
+            ->all();
+
+        if (array_diff(array_map(intval(...), $optionIds), $ownedIds) !== []) {
+            throw ValidationException::withMessages([
+                'options' => trans('validation.exists', ['attribute' => 'options']),
+            ]);
+        }
     }
 
     private function ensureTemplatesAreSupported(array $data, ?Attribute $attribute = null): void
