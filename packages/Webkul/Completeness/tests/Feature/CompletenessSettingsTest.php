@@ -282,7 +282,7 @@ it('still requires an id list on completeness mass update when all matching are 
     ])->assertUnprocessable()->assertJsonValidationErrors('indices');
 });
 
-it('rejects a mass update that includes an attribute from another family', function () {
+it('rejects a mass update that includes an attribute from another family', function (): void {
     Queue::fake();
 
     [$familyA, [$ownAttribute]] = familyWithAttributes('own_', 1);
@@ -307,7 +307,7 @@ it('rejects a mass update that includes an attribute from another family', funct
     Queue::assertNotPushed(BulkProductCompletenessJob::class);
 });
 
-it('rejects a single update for an attribute that is not in the family', function () {
+it('rejects a single update for an attribute that is not in the family', function (): void {
     Queue::fake();
 
     [$family] = familyWithAttributes('single_own_', 1);
