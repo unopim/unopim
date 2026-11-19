@@ -87,7 +87,7 @@ class ImportTrackBatch implements ShouldQueue
 
         $this->importBatch = $import->getImport();
 
-        if ($import->isErrorLimitExceeded() || $this->importBatch->state === ImportHelper::STATE_FAILED) {
+        if ($import->isErrorLimitExceeded() || $this->importBatch->state === ImportHelper::STATE_FAILED || $this->rejectedEveryRow()) {
             $importHelper->stateUpdate(ImportHelper::STATE_FAILED, ['completed_at' => now()]);
 
             $logger->error(trans('data_transfer::app.job.stopped', [
@@ -120,6 +120,8 @@ class ImportTrackBatch implements ShouldQueue
             }
         } elseif ($importHelper->isLinkingRequired()) {
             $importHelper->linking();
+        } elseif ($this->importBatch->batches->isEmpty() && $this->importBatch->state !== ImportHelper::STATE_COMPLETED) {
+            $importHelper->completedWithoutBatches();
         } else {
             $importHelper->completed();
         }
@@ -131,6 +133,14 @@ class ImportTrackBatch implements ShouldQueue
         };
 
         $importHelper->stats($state);
+    }
+
+    /**
+     * Whether validation reported errors and left no row to import.
+     */
+    protected function rejectedEveryRow(): bool
+    {
+        return $this->importBatch->errors_count > 0 && $this->importBatch->batches->isEmpty();
     }
 
     /**
