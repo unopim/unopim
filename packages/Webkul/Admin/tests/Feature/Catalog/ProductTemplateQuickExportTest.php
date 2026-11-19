@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Storage;
+use Mockery\MockInterface;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Webkul\Admin\DataGrids\Catalog\ProductDataGrid;
 use Webkul\Admin\Jobs\ExportDataGridSelection;
@@ -63,7 +64,7 @@ function quickTemplateFileRows(string $path, string $format): array
     $rows = [];
 
     foreach ($lines as $line) {
-        $row = array_combine($header, array_pad(array_map(fn ($cell): string => (string) $cell, $line), count($header), ''));
+        $row = array_combine($header, array_pad(array_map(fn (mixed $cell): string => (string) $cell, $line), count($header), ''));
 
         $rows[$row['sku']][$row['channel']][$row['locale']] = $row;
     }
@@ -227,7 +228,7 @@ it('empties missing or unknown references and keeps the source of a broken templ
 });
 
 it('skips the template renderer when no exported product holds a template', function () {
-    $this->mock(TemplateRenderer::class, fn ($mock) => $mock->shouldNotReceive('render'));
+    $this->mock(TemplateRenderer::class, fn (MockInterface $mock): mixed => $mock->shouldNotReceive('render'));
 
     $product = Product::factory()->create(['values' => [
         'common'          => ['tpl_qexp_brand' => 'Acme'],

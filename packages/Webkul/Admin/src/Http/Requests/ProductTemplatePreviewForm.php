@@ -59,7 +59,7 @@ class ProductTemplatePreviewForm extends FormRequest
             $inFamily = (bool) $product->attribute_family?->customAttributes()->where('attributes.code', $code)->exists();
 
             if (! $inFamily || ! $attribute?->canHoldTemplate()) {
-                $validator->errors()->add('attribute', trans('validation.exists', ['attribute' => 'attribute']));
+                $validator->errors()->add('attribute', trans('validation.exists', ['attribute' => $validator->getDisplayableAttribute('attribute')]));
             }
         });
     }

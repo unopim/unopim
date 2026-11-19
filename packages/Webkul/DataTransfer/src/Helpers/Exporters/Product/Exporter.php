@@ -108,6 +108,8 @@ class Exporter extends AbstractExporter
 
     protected ?TemplateRenderer $templateRenderer = null;
 
+    protected array $templateProblems = [];
+
     /**
      * Create a new instance.
      */
@@ -202,7 +204,7 @@ class Exporter extends AbstractExporter
     }
 
     /**
-     * Replace the exported template sources with their rendered output and log render problems in the job.
+     * Replace the exported template sources with their rendered output and collect their render problems for the batch log.
      */
     protected function renderTemplateValues(array $fields, array $values, string $sku, string $channel, string $locale): array
     {
@@ -215,7 +217,7 @@ class Exporter extends AbstractExporter
 
             $result = $this->templateRenderer()->render($source, $attribute, $values, $channel, $locale);
 
-            $this->logTemplateProblems($result, ['sku' => $sku, 'attribute' => $code, 'channel' => $channel, 'locale' => $locale]);
+            $this->collectTemplateProblems($result, $code, $sku, $channel, $locale);
 
             $fields[$code] = $result->output;
         }
@@ -223,15 +225,34 @@ class Exporter extends AbstractExporter
         return $fields;
     }
 
-    private function logTemplateProblems(RenderResult $result, array $context): void
+    private function collectTemplateProblems(RenderResult $result, string $code, string $sku, string $channel, string $locale): void
     {
-        foreach ($result->errorMessages() as $message) {
-            $this->jobLogger?->error($message, $context);
+        foreach (['error' => $result->errorMessages(), 'warning' => $result->warningMessages()] as $level => $messages) {
+            foreach ($messages as $message) {
+                $this->templateProblems[$level][$code][$message] ??= [
+                    'attribute'      => $code,
+                    'count'          => 0,
+                    'sample_sku'     => $sku,
+                    'sample_channel' => $channel,
+                    'sample_locale'  => $locale,
+                ];
+
+                $this->templateProblems[$level][$code][$message]['count']++;
+            }
+        }
+    }
+
+    private function logTemplateProblems(): void
+    {
+        foreach ($this->templateProblems as $level => $attributes) {
+            foreach ($attributes as $messages) {
+                foreach ($messages as $message => $context) {
+                    $this->jobLogger?->log($level, (string) $message, $context);
+                }
+            }
         }
 
-        foreach ($result->warningMessages() as $message) {
-            $this->jobLogger?->warning($message, $context);
-        }
+        $this->templateProblems = [];
     }
 
     protected function buildAttributeMeta($attributes): array
@@ -658,6 +679,8 @@ class Exporter extends AbstractExporter
 
             $this->createdItemsCount++;
         }
+
+        $this->logTemplateProblems();
     }
 
     public function getSuperAttributes(array $data): ?string

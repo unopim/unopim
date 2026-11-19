@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Models\JobInstances;
@@ -41,7 +42,7 @@ beforeEach(function () {
     $this->family = AttributeFamily::factory()->create();
 
     AttributeFamily::factory()->linkAttributeGroupToFamily($this->family);
-    AttributeFamily::factory()->linkAttributesToFamily($this->family, array_map(fn ($attribute): int => $attribute->id, $attributes));
+    AttributeFamily::factory()->linkAttributesToFamily($this->family, array_map(fn (Attribute $attribute): int => $attribute->id, $attributes));
     AttributeFamily::factory()->linkStatusAndSkuToFamily($this->family);
 
     $this->channel = $this->templateChannel(['USD'], ['en_US', 'de_DE']);

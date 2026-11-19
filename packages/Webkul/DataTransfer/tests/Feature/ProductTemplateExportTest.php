@@ -1,9 +1,12 @@
 <?php
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
+use Monolog\LogRecord;
+use OpenSpout\Common\Entity\Cell;
 use OpenSpout\Reader\CSV\Reader as CsvReader;
 use OpenSpout\Reader\XLSX\Reader as XlsxReader;
 use Psr\Log\LoggerInterface;
@@ -131,7 +134,7 @@ function templateExportFile(array $rows, string $format): array
 
     foreach ($reader->getSheetIterator() as $sheet) {
         foreach ($sheet->getRowIterator() as $row) {
-            $lines[] = array_map(fn ($cell): string => (string) $cell->getValue(), $row->getCells());
+            $lines[] = array_map(fn (Cell $cell): string => (string) $cell->getValue(), $row->getCells());
         }
 
         break;
@@ -277,28 +280,48 @@ it('empties missing or unknown references and keeps the source of a broken templ
         ->and($row['tpl_exp_headline'])->toBe('Hi {{ tpl_exp_name + 1 }}');
 });
 
-it('logs the render errors and warnings of each template to the export job', function () {
-    $product = Product::factory()->create(['values' => [
-        'common'                  => ['tpl_exp_title' => 'Tag: {{ tpl_exp_unknown }}.'],
-        'channel_locale_specific' => [$this->channel->code => [
-            'en_US' => ['tpl_exp_headline' => 'Hi {{ tpl_exp_name + 1 }}'],
-        ]],
-    ]]);
+it('logs each template problem once per batch with a count and a sample row', function () {
+    $products = collect([
+        Product::factory()->create(['sku' => 'tpl-exp-log-first', 'values' => [
+            'common'                  => ['tpl_exp_title' => 'Tag: {{ tpl_exp_unknown }}.'],
+            'channel_locale_specific' => [$this->channel->code => [
+                'en_US' => ['tpl_exp_headline' => 'Hi {{ tpl_exp_name + 1 }}'],
+            ]],
+        ]]),
+        Product::factory()->create(['sku' => 'tpl-exp-log-second', 'values' => [
+            'common' => ['tpl_exp_title' => 'Tag: {{ tpl_exp_unknown }}.'],
+        ]]),
+    ]);
 
     $handler = new TestHandler;
 
-    templateExportRows([$product], $this->filters, new Logger('export', [$handler]));
+    templateExportRows($products->all(), $this->filters, new Logger('export', [$handler]));
 
-    $context = fn (string $attribute): array => ['sku' => $product->sku, 'attribute' => $attribute, 'channel' => $this->channel->code, 'locale' => 'en_US'];
+    $records = fn (string $message): Collection => collect($handler->getRecords())
+        ->filter(fn (LogRecord $record): bool => $record->message === $message)
+        ->values();
 
-    expect($handler->hasWarning([
-        'message' => trans('product::app.templates.messages.unknown-attribute', ['attribute' => 'tpl_exp_unknown']),
-        'context' => $context('tpl_exp_title'),
-    ]))->toBeTrue()
-        ->and($handler->hasError([
-            'message' => trans('product::app.templates.messages.invalid-syntax', ['expression' => 'tpl_exp_name + 1']),
-            'context' => $context('tpl_exp_headline'),
-        ]))->toBeTrue();
+    $warnings = $records(trans('product::app.templates.messages.unknown-attribute', ['attribute' => 'tpl_exp_unknown']));
+
+    $errors = $records(trans('product::app.templates.messages.invalid-syntax', ['expression' => 'tpl_exp_name + 1']));
+
+    expect($warnings)->toHaveCount(1)
+        ->and($warnings->first()->level->getName())->toBe('WARNING')
+        ->and(Arr::only($warnings->first()->context, ['attribute', 'count', 'sample_channel']))->toEqual([
+            'attribute'      => 'tpl_exp_title',
+            'count'          => 4,
+            'sample_channel' => $this->channel->code,
+        ])
+        ->and($warnings->first()->context['sample_sku'])->toBeIn($products->pluck('sku')->all())
+        ->and($errors)->toHaveCount(1)
+        ->and($errors->first()->level->getName())->toBe('ERROR')
+        ->and($errors->first()->context)->toEqual([
+            'attribute'      => 'tpl_exp_headline',
+            'count'          => 1,
+            'sample_sku'     => 'tpl-exp-log-first',
+            'sample_channel' => $this->channel->code,
+            'sample_locale'  => 'en_US',
+        ]);
 });
 
 it('reloads the template attributes for every export job', function () {
