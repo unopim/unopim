@@ -5,6 +5,7 @@ namespace Webkul\Product\Filter\Database\Property;
 use Illuminate\Support\Facades\DB;
 use Webkul\ElasticSearch\Enums\FilterOperators;
 use Webkul\Product\Filter\AbstractPropertyFilter;
+use Webkul\Product\Services\ChannelCompletenessColumn;
 
 /**
  * Completeness score filter for a database query
@@ -34,10 +35,12 @@ class CompletenessFilter extends AbstractPropertyFilter
             FilterOperators::RANGE,
             FilterOperators::IS_EMPTY,
             FilterOperators::IS_NOT_EMPTY,
-        ]
+        ],
+        protected ?ChannelCompletenessColumn $channelCompletenessColumn = null,
     ) {
         $this->allowedOperators = $allowedOperators;
         $this->supportedProperties = $supportedProperties;
+        $this->channelCompletenessColumn ??= app(ChannelCompletenessColumn::class);
     }
 
     /**
@@ -57,8 +60,7 @@ class CompletenessFilter extends AbstractPropertyFilter
             );
         }
 
-        /** raw statements bypass the builder, so the prefix is applied here */
-        $column = DB::getQueryGrammar()->wrap(sprintf('%s.%s', $this->getSearchTablePath($options), self::COLUMN));
+        $column = $this->resolveColumn($options);
 
         if ($comparison = self::COMPARISONS[$operator->value] ?? null) {
             $this->queryBuilder->whereRaw("$column $comparison ?", [(float) $this->scalarValue($value)]);
@@ -77,5 +79,18 @@ class CompletenessFilter extends AbstractPropertyFilter
         };
 
         return $this;
+    }
+
+    /**
+     * Column the comparison runs against, scoped to the requested channel when there is one.
+     */
+    protected function resolveColumn(array $options): string
+    {
+        if ($this->channelCompletenessColumn->resolve()) {
+            return DB::getQueryGrammar()->wrap('product_completeness.score');
+        }
+
+        /** raw statements bypass the builder, so quoting/prefixing is applied here */
+        return DB::getQueryGrammar()->wrap(sprintf('%s.%s', $this->getSearchTablePath($options), self::COLUMN));
     }
 }

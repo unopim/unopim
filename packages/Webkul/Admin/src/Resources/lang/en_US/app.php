@@ -168,6 +168,7 @@ return [
             'of'                    => 'of',
             'products-ready'        => 'products ready',
             'no-readiness-data'     => 'No completeness data available yet.',
+            'readiness-drilldown'   => 'View the remaining incomplete products for the :channel channel',
             'no-products'           => 'No products yet.',
             'last-7-days'           => 'Last 7 days',
 

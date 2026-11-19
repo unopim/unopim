@@ -162,6 +162,7 @@ return [
             'of'                   => 'of',
             'products-ready'       => 'mga produktong handa',
             'no-readiness-data'    => 'Walang magagamit na data ng kumpletong.',
+            'readiness-drilldown'  => 'Tingnan ang mga natitirang hindi kumpletong produkto para sa channel na :channel',
             'no-products'          => 'Wala pang produkto.',
             'last-7-days'          => 'Huling 7 araw',
             'days'                 => [

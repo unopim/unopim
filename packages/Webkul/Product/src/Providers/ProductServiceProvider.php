@@ -44,6 +44,7 @@ use Webkul\Product\Models\ProductProxy;
 use Webkul\Product\Observers\ProductObserver;
 use Webkul\Product\ProductImage;
 use Webkul\Product\ProductVideo;
+use Webkul\Product\Services\ChannelCompletenessColumn;
 use Webkul\Product\Services\ProductValueMapper;
 use Webkul\Product\Services\VariantStructurePlanner;
 use Webkul\Product\Services\VariantValueResolver;
@@ -96,6 +97,9 @@ class ProductServiceProvider extends ServiceProvider
         // Bound (fresh per resolve), not scoped: the per-product memo must not survive a same-request mutation.
         $this->app->bind(VariantValueResolverContract::class, VariantValueResolver::class);
         $this->app->bind(VariantStructurePlannerContract::class, VariantStructurePlanner::class);
+
+        // Scoped so the product grid and the completeness filter share one resolution per request.
+        $this->app->scoped(ChannelCompletenessColumn::class);
     }
 
     /**

@@ -2,6 +2,9 @@
 
 namespace Webkul\Admin\DataGrids\Catalog;
 
+use Illuminate\Contracts\Database\Query\Expression;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Crypt;
@@ -27,6 +30,7 @@ use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Normalizer\ProductAttributeValuesNormalizer;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Services\AttributeValueNormalizer;
+use Webkul\Product\Services\ChannelCompletenessColumn;
 use Webkul\Product\Type\AbstractType;
 
 class ProductDataGrid extends DataGrid implements ExportableInterface
@@ -127,7 +131,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         protected AttributeService $attributeService,
         protected AttributeValueNormalizer $attributeValueNormalizer,
         protected VariantValueResolver $variantValueResolver,
-    ) {}
+        protected ?ChannelCompletenessColumn $channelCompletenessColumn = null,
+    ) {
+        $this->channelCompletenessColumn ??= app(ChannelCompletenessColumn::class);
+    }
 
     public function prepareQueryBuilder()
     {
@@ -140,6 +147,12 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $this->prepareQuery = ProductQueryBuilderFactory::make()->prepareQueryBuilder();
 
         $queryBuilder = $this->prepareQuery->getQueryManager();
+
+        $completenessScope = $this->channelCompletenessColumn->resolve();
+
+        if ($completenessScope) {
+            $this->joinChannelCompleteness($queryBuilder, $completenessScope);
+        }
 
         $queryBuilder->leftJoin('attribute_family_translations as attribute_family_name', function ($join) {
             $join->on('attribute_family_name.attribute_family_id', '=', 'af.id')
@@ -163,10 +176,35 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                     END) as attribute_family"
                 ),
                 'products.values as raw_values',
-                'products.avg_completeness_score as completeness',
+                $this->completenessColumn($completenessScope),
             );
 
         return $queryBuilder;
+    }
+
+    /**
+     * Column selected as the grid's "completeness" value, filter and sort target.
+     */
+    protected function completenessColumn(?array $scope): string|Expression
+    {
+        if (! $scope) {
+            return 'products.avg_completeness_score as completeness';
+        }
+
+        /** raw statements bypass the builder, so quoting/prefixing is applied here */
+        return DB::raw(DB::getQueryGrammar()->wrap('product_completeness.score').' as completeness');
+    }
+
+    /**
+     * Narrows the completeness scores to one channel and locale.
+     */
+    protected function joinChannelCompleteness(Builder $queryBuilder, array $scope): void
+    {
+        $queryBuilder->leftJoin('product_completeness', function (JoinClause $join) use ($scope): void {
+            $join->on('product_completeness.product_id', '=', 'products.id')
+                ->where('product_completeness.channel_id', '=', $scope['channel']->id)
+                ->where('product_completeness.locale_id', '=', $scope['locale']->id);
+        });
     }
 
     /**

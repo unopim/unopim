@@ -162,6 +162,7 @@ return [
             'of'                   => 'van',
             'products-ready'       => 'Producten gereed',
             'no-readiness-data'    => 'Nog geen volledigheidsgegevens beschikbaar.',
+            'readiness-drilldown'  => 'Bekijk de resterende onvolledige producten voor kanaal :channel',
             'no-products'          => 'Nog geen producten.',
             'last-7-days'          => 'Laatste 7 dagen',
 
