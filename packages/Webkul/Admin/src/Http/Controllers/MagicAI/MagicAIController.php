@@ -11,6 +11,8 @@ use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\MagicAI\ContentGenerationRequest;
 use Webkul\Admin\Http\Requests\MagicAI\ImageGenerationRequest;
 use Webkul\Admin\Http\Requests\MagicAI\MagicPromptRequest;
+use Webkul\Admin\Http\Requests\MagicAI\TranslateAllAttributesRequest;
+use Webkul\Admin\Http\Requests\MagicAI\TranslateResourceRequest;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Category\Repositories\CategoryFieldRepository;
 use Webkul\Core\Contracts\Locale;
@@ -416,14 +418,10 @@ class MagicAIController extends Controller
         ]);
     }
 
-    public function translateToManyLocale(): JsonResponse
+    public function translateToManyLocale(TranslateResourceRequest $request): JsonResponse
     {
-        if (! bouncer()->hasPermission('ai-agent') || ! bouncer()->hasPermission('catalog.products')) {
-            return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
-        }
-
         $field = request()->input('field');
-        $targetLocales = explode(',', request()->input('targetLocale'));
+        $targetLocales = explode(',', $request->validated('targetLocale'));
         $translatedData = [];
 
         $magicAi = $this->resolveTranslationPlatform();
@@ -432,8 +430,8 @@ class MagicAIController extends Controller
             $p = $this->translationInstruction($field, $locale);
             $prompt = $this->promptService->getPrompt(
                 $p,
-                request()->input('resource_id'),
-                request()->input('resource_type')
+                $request->validated('resource_id'),
+                $request->validated('resource_type')
             );
 
             $response = $magicAi
@@ -506,12 +504,8 @@ class MagicAIController extends Controller
         return $result;
     }
 
-    public function translateAllAttribute(): JsonResponse
+    public function translateAllAttribute(TranslateAllAttributesRequest $request): JsonResponse
     {
-        if (! bouncer()->hasPermission('ai-agent') || ! bouncer()->hasPermission('catalog.products')) {
-            return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
-        }
-
         $attributes = $this->isAllAttributeTranslatable();
 
         if (empty($attributes)) {
@@ -524,7 +518,7 @@ class MagicAIController extends Controller
             'translated' => [],
         ];
 
-        $targetLocales = explode(',', request()->input('targetLocale'));
+        $targetLocales = explode(',', $request->validated('targetLocale'));
         $magicAi = $this->resolveTranslationPlatform();
 
         foreach ($targetLocales as $locale) {
@@ -537,8 +531,8 @@ class MagicAIController extends Controller
 
                 $prompt = $this->promptService->getPrompt(
                     $p,
-                    request()->input('resource_id'),
-                    request()->input('resource_type')
+                    $request->validated('resource_id'),
+                    $request->validated('resource_type')
                 );
 
                 $response = $magicAi

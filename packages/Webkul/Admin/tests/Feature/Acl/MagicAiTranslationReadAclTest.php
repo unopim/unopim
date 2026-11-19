@@ -1,10 +1,13 @@
 <?php
 
+use Webkul\Category\Models\Category;
+use Webkul\MagicAI\Services\Prompt\CategoryPrompt;
 use Webkul\MagicAI\Services\Prompt\ProductPrompt;
 use Webkul\Product\Models\Product;
 
 afterEach(function () {
     ProductPrompt::resetInstance();
+    CategoryPrompt::resetInstance();
 });
 
 dataset('magic ai product read routes', [
@@ -43,3 +46,51 @@ it('lets a user with the product view permission past the magic ai read guard', 
 
     expect($response->status())->not->toBe(403);
 })->with('magic ai product read routes');
+
+dataset('magic ai resource translate routes', [
+    'translate to many locales' => 'admin.magic_ai.translate',
+    'translate all attributes'  => 'admin.magic_ai.translate.all.attribute',
+]);
+
+it('denies translating a category through magic ai without the category view permission', function (string $route) {
+    $category = Category::factory()->create();
+
+    $this->loginWithPermissions(permissions: ['dashboard', 'ai-agent', 'catalog', 'catalog.products']);
+
+    $this->postJson(route($route), [
+        'resource_id'   => $category->id,
+        'resource_type' => 'category',
+        'field'         => 'description',
+        'attributes'    => 'description',
+        'targetLocale'  => 'fr_FR',
+    ])->assertForbidden();
+})->with('magic ai resource translate routes');
+
+it('lets a user with the category view permission translate a category through magic ai', function () {
+    $category = Category::factory()->create();
+
+    $this->loginWithPermissions(permissions: ['dashboard', 'ai-agent', 'catalog', 'catalog.categories']);
+
+    $response = $this->postJson(route('admin.magic_ai.translate'), [
+        'resource_id'   => $category->id,
+        'resource_type' => 'category',
+        'field'         => 'description',
+        'targetLocale'  => 'fr_FR',
+    ]);
+
+    expect($response->status())->not->toBe(403);
+});
+
+it('rejects a resource type magic ai cannot translate', function (string $route) {
+    $product = Product::factory()->simple()->create();
+
+    $this->loginWithPermissions(permissions: ['dashboard', 'ai-agent', 'catalog', 'catalog.products', 'catalog.categories']);
+
+    $this->postJson(route($route), [
+        'resource_id'   => $product->id,
+        'resource_type' => 'attribute',
+        'field'         => 'name',
+        'attributes'    => 'name',
+        'targetLocale'  => 'fr_FR',
+    ])->assertUnprocessable()->assertJsonValidationErrors('resource_type');
+})->with('magic ai resource translate routes');
