@@ -227,7 +227,7 @@
 
                                                     @if (! empty($row['operator_link']) || ! empty($row['authority_link']) || ! empty($row['carrier_link']))
                                                         <x-admin::dropdown
-                                                            position="bottom-{{ core()->getRequestedLocale()?->direction === 'rtl' ? 'left' : 'right' }}"
+                                                            position="bottom-right"
                                                             :teleport="true"
                                                         >
                                                             <x-slot:toggle>

@@ -61,7 +61,10 @@
         <x-admin::dropdown position="bottom-right">
             <x-slot:toggle>
                 @if ($admin->image_url || $admin->hasGravatar())
-                    <button class="flex w-9 h-9 overflow-hidden rounded-full cursor-pointer hover:opacity-80 focus:opacity-80">
+                    <button
+                        class="flex w-9 h-9 overflow-hidden rounded-full cursor-pointer hover:opacity-80 focus:opacity-80"
+                        data-testid="profile-toggle"
+                    >
                         <img
                             src="{{ $admin->avatar_url }}"
                             class="w-full h-full object-cover object-top"
@@ -69,14 +72,20 @@
                         />
                     </button>
                 @else
-                    <button class="flex justify-center items-center w-9 h-9 bg-unopim-avatar bg-primary-400 rounded-full text-sm text-white font-semibold cursor-pointer leading-6 transition-all hover:bg-unopim-primary-hover hover:bg-primary-500 focus:bg-unopim-primary-hover focus:bg-primary-500">
+                    <button
+                        class="flex justify-center items-center w-9 h-9 bg-unopim-avatar bg-primary-400 rounded-full text-sm text-white font-semibold cursor-pointer leading-6 transition-all hover:bg-unopim-primary-hover hover:bg-primary-500 focus:bg-unopim-primary-hover focus:bg-primary-500"
+                        data-testid="profile-toggle"
+                    >
                         {{ substr($admin->name, 0, 1) }}
                     </button>
                 @endif
 
             </x-slot>
 
-            <x-slot:content class="!p-0">
+            <x-slot:content
+                class="!p-0"
+                data-testid="profile-menu"
+            >
                 <div class="flex gap-1.5 items-center px-5 py-2.5 border border-b-gray-300 dark:border-gray-800">
                     <img
                         src="{{ url('cache/logo/unopim.png') }}"
