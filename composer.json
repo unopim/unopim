@@ -44,7 +44,7 @@
         "pusher/pusher-php-server": "^7.0",
         "shetabit/visitor": "^4.1",
         "symfony/filesystem": "^8.0",
-        "symfony/intl": "^7.0"
+        "symfony/intl": "^8.1"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^4.2",
