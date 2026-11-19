@@ -114,7 +114,7 @@ it('passes the request through with debug off when the configuration is unreadab
 
     expect($response->getContent())->toBe('ok')
         ->and(config('app.debug'))->toBeFalse()
-        ->and(config('debugbar.enabled'))->toBeFalse();
+        ->and(config('debugbar.enabled'))->toBeTrue();
 });
 
 it('does not enable debug when an untrusted client spoofs a forwarded header', function () {

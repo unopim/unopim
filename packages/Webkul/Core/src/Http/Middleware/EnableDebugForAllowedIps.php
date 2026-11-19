@@ -41,21 +41,19 @@ class EnableDebugForAllowedIps
         }
 
         /*
-         * Not enabling debug for this request. Force app.debug back off only when
-         * the feature is enabled — under Octane the worker is long-lived, so a
-         * previous allow-listed request on the same worker may have flipped it on,
-         * and leaving it on would leak stack traces to every later (including
-         * unauthenticated) request. When the feature is off the middleware stays
-         * inert and never touches app.debug.
+         * Not enabling debug for this request. Force app.debug and the debug bar
+         * back off only when the feature is enabled — under Octane the worker is
+         * long-lived, so a previous allow-listed request on the same worker may have
+         * flipped them on, and leaving them on would leak stack traces to every later
+         * (including unauthenticated) request. When the feature is off the middleware
+         * stays inert, so a debug bar enabled by the environment keeps working.
          */
         if ($featureEnabled) {
-            config(['app.debug' => false]);
-        }
+            config(['app.debug' => false, 'debugbar.enabled' => false]);
 
-        config(['debugbar.enabled' => false]);
-
-        if (class_exists(Debugbar::class)) {
-            Debugbar::disable();
+            if (class_exists(Debugbar::class)) {
+                Debugbar::disable();
+            }
         }
 
         return $next($request);

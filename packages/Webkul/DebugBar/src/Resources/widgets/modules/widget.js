@@ -1,6 +1,5 @@
-(function($) {
-
-    var csscls = PhpDebugBar.utils.makecsscls('phpdebugbar-widgets-');
+(function () {
+    const csscls = PhpDebugBar.utils.makecsscls('phpdebugbar-widgets-');
 
     /**
      * Widget for the displaying all modules
@@ -8,101 +7,95 @@
      * Options:
      *  - data
      */
-    var ModulesWidget = PhpDebugBar.Widgets.ModulesWidget = PhpDebugBar.Widget.extend({
-        className: csscls('modules'),
-        
-        render: function() {
-            this.$list = new PhpDebugBar.Widgets.ListWidget({ itemRenderer: function(li, module) {
-                $('<strong />').addClass(csscls('module')).addClass(csscls('name')).text(module.name).appendTo(li);
+    class ModulesWidget extends PhpDebugBar.Widget {
+        get className() {
+            return csscls('modules');
+        }
 
-                $('<span title="Queries" />').addClass('phpdebugbar-fa phpdebugbar-widgets-queries').text(module.queries.length).appendTo(li);
+        render() {
+            this.list = new PhpDebugBar.Widgets.ListWidget({ itemRenderer(li, module) {
+                const name = document.createElement('strong');
+                name.classList.add(csscls('name'));
+                name.textContent = module.name;
+                li.append(name);
 
-                $('<span title="Views" />').addClass('phpdebugbar-fa phpdebugbar-widgets-views').text(module.views.length).appendTo(li);
-
-                $('<span title="Models" />').addClass('phpdebugbar-fa phpdebugbar-widgets-models').text(module.models.length).appendTo(li);
-
-                var table = $('<table><tr><th colspan="2">Details</th></tr></table>').addClass(csscls('params')).appendTo(li);
-
-                if (module.models && module.models.length) {
-                    table.append(function () {
-                        var $name = $('<td />').addClass(csscls('name')).html('Models');
-                        var $value = $('<td />').addClass(csscls('value'));
-                        var $span = $('<span />').addClass('phpdebugbar-text-muted');
-
-                        var index = 0;
-                        var $models = new PhpDebugBar.Widgets.ListWidget({ itemRenderer: function(li, binding) {
-                            var $index = $span.clone().text(index++ + '.');
-                            li.append($index, '&nbsp;', binding).removeClass(csscls('list-item')).addClass(csscls('table-list-item'));
-                        }});
-
-                        $models.set('data', module.models);
-
-                        $models.$el
-                            .removeClass(csscls('list'))
-                            .addClass(csscls('table-list'))
-                            .appendTo($value);
-
-                        return $('<tr />').append($name, $value);
-                    });
+                for (const [key, title] of [['queries', 'Queries'], ['views', 'Views'], ['models', 'Models']]) {
+                    const count = document.createElement('span');
+                    count.setAttribute('title', title);
+                    count.classList.add(csscls(key));
+                    count.textContent = module[key].length;
+                    li.append(count);
                 }
 
-                if (module.views && module.views.length) {
-                    table.append(function () {
-                        var $name = $('<td />').addClass(csscls('name')).html('Views');
-                        var $value = $('<td />').addClass(csscls('value'));
+                const table = document.createElement('table');
+                table.classList.add(csscls('params'));
+                table.innerHTML = '<thead><tr><th colspan="2">Details</th></tr></thead>';
+                const tbody = document.createElement('tbody');
+                table.append(tbody);
 
-                        var $views = new PhpDebugBar.Widgets.ListWidget({ itemRenderer: function(li, view) {
-                            li.append(view).removeClass(csscls('list-item')).addClass(csscls('table-list-item'));
-                        }});
+                const addRow = (label, items, renderItem) => {
+                    if (!items || !items.length) {
+                        return;
+                    }
 
-                        $views.set('data', module.views);
-                        $views.$el
-                            .removeClass(csscls('list'))
-                            .addClass(csscls('table-list'))
-                            .appendTo($value);
+                    const row = document.createElement('tr');
+                    const nameTd = document.createElement('td');
+                    nameTd.className = csscls('name');
+                    nameTd.textContent = label;
 
-                        return $('<tr />').append($name, $value);
-                    });
-                }
+                    const valueTd = document.createElement('td');
+                    valueTd.className = csscls('value');
 
-                if (module.queries && module.queries.length) {
-                    table.append(function () {
-                        var $name = $('<td />').addClass(csscls('name')).html('Queries');
-                        var $value = $('<td />').addClass(csscls('value'));
+                    const list = new PhpDebugBar.Widgets.ListWidget({ itemRenderer: renderItem });
+                    list.set('data', items);
+                    valueTd.append(list.el);
 
-                        var $queries = new PhpDebugBar.Widgets.ListWidget({ itemRenderer: function(li, query) {
-                            $('<code />').addClass(csscls('sql')).html(PhpDebugBar.Widgets.highlight(query.sql, 'sql')).appendTo(li);
+                    row.append(nameTd, valueTd);
+                    tbody.append(row);
+                };
 
-                            $('<span title="Connection" />').addClass(csscls('database')).text(query.connection).appendTo(li);
+                addRow('Models', module.models, (item, model) => {
+                    item.textContent = model;
+                });
 
-                            $('<span title="Duration" />').addClass(csscls('duration')).text(query.duration_str).appendTo(li);
+                addRow('Views', module.views, (item, view) => {
+                    item.textContent = view;
+                });
 
-                        }});
+                addRow('Queries', module.queries, (item, query) => {
+                    const sql = document.createElement('code');
+                    sql.classList.add(csscls('sql'));
+                    sql.innerHTML = PhpDebugBar.Widgets.highlight(query.sql, 'sql');
+                    item.append(sql);
 
-                        $queries.set('data', module.queries);
-                        $queries.$el
-                            .removeClass(csscls('list'))
-                            .addClass(csscls('table-list'))
-                            .appendTo($value);
-
-                        return $('<tr />').append($name, $value);
-                    });
-                }
-
-                li.css('cursor', 'pointer').click(function() {
-                    if (table.is(':visible')) {
-                        table.hide();
-                    } else {
-                        table.show();
+                    for (const [key, title, value] of [['database', 'Connection', query.connection], ['duration', 'Duration', query.duration_str]]) {
+                        const meta = document.createElement('span');
+                        meta.setAttribute('title', title);
+                        meta.classList.add(csscls(key));
+                        meta.textContent = value;
+                        item.append(meta);
                     }
                 });
-            }});
 
-            this.$list.$el.appendTo(this.$el);
+                table.hidden = true;
+                li.append(table);
+                li.style.cursor = 'pointer';
+                li.addEventListener('click', (event) => {
+                    if (window.getSelection().type === 'Range' || table.contains(event.target)) {
+                        return;
+                    }
 
-            this.bindAttr('data', function(data) {
-                this.$list.set('data', data.modules);
+                    table.hidden = !table.hidden;
+                });
+            } });
+
+            this.el.append(this.list.el);
+
+            this.bindAttr('data', function (data) {
+                this.list.set('data', data.modules);
             });
         }
-    });
-})(PhpDebugBar.$);
+    }
+
+    PhpDebugBar.Widgets.ModulesWidget = ModulesWidget;
+})();
