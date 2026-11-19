@@ -16,8 +16,16 @@ it('rejects an unsupported provider on test-connection with a 422', function ():
         ->assertJsonValidationErrors('provider');
 });
 
-it('rejects a non-string api_url with a 422 instead of a server error', function (string $routeName): void {
-    $this->postJson(route($routeName), ['provider' => 'openai', 'models' => 'gpt-4o', 'api_url' => ['x']])
+it('rejects an invalid api_url with a 422 instead of a server error', function (string $routeName, mixed $apiUrl): void {
+    $this->postJson(route($routeName), ['provider' => 'openai', 'models' => 'gpt-4o', 'api_url' => $apiUrl])
         ->assertStatus(422)
-        ->assertJsonValidationErrors('api_url');
-})->with(['admin.magic_ai.platform.fetch_models', 'admin.magic_ai.platform.test']);
+        ->assertJsonValidationErrors('api_url')
+        ->assertJsonMissingValidationErrors('provider');
+})->with([
+    'admin.magic_ai.platform.fetch_models',
+    'admin.magic_ai.platform.test',
+])->with([
+    'non-string' => [['x']],
+    'not a url'  => ['not a url'],
+    'too long'   => ['https://example.com/'.str_repeat('a', 500)],
+]);

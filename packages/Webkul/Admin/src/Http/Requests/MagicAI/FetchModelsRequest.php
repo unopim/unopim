@@ -3,9 +3,9 @@
 namespace Webkul\Admin\Http\Requests\MagicAI;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
+use Illuminate\Support\Arr;
 use Webkul\Admin\Http\Requests\MagicAI\Concerns\GuardsManagedPlatform;
-use Webkul\MagicAI\Enums\AiProvider;
+use Webkul\MagicAI\Validator\PlatformValidator;
 
 class FetchModelsRequest extends FormRequest
 {
@@ -20,16 +20,13 @@ class FetchModelsRequest extends FormRequest
     }
 
     /**
-     * Get the validation rules.
+     * Get the validation rules, reusing the platform form's rules for the
+     * fields model discovery receives.
      *
      * @return array<string, mixed>
      */
     public function rules(): array
     {
-        return [
-            'provider' => ['required', Rule::enum(AiProvider::class)],
-            'api_key'  => 'nullable|string',
-            'api_url'  => 'nullable|string',
-        ];
+        return Arr::only(app(PlatformValidator::class)->rules(), ['provider', 'api_key', 'api_url']);
     }
 }
