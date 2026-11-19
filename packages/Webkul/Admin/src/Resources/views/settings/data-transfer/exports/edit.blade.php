@@ -184,15 +184,10 @@
                                 />
 
                                 @if ($supportsCategories)
-                                    <x-admin::form.control-group>
-                                        <x-admin::form.control-group.label>
-                                            @lang('data_transfer::app.exporters.products.filters.categories')
-                                        </x-admin::form.control-group.label>
-
-                                        <x-admin::data-transfer.category-tree
-                                            :value="$exportFilters['categories'] ?? []"
-                                        />
-                                    </x-admin::form.control-group>
+                                    <x-admin::data-transfer.category-tree
+                                        :label="trans('data_transfer::app.exporters.products.filters.categories')"
+                                        :value="$exportFilters['categories'] ?? []"
+                                    />
                                 @endif
 
                                 <x-admin::data-transfer.filter-fields
