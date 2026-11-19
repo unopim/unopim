@@ -3211,7 +3211,7 @@ return [
         'disable'           => 'Tắt',
         'no-match-found'    => 'Không tìm thấy kết quả!',
         'unauthorized'      => 'You do not have permission to perform this action.',
-        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
+        'file-size-exceeds' => 'Tệp đã tải lên vượt quá kích thước tối đa cho phép là :max.',
     ],
     'default-prompt' => [
         'detailed' => [

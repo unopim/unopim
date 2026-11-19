@@ -2,14 +2,15 @@
 
 namespace Webkul\Admin\Http\Requests;
 
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Validation\ValidationException;
+use Webkul\Admin\Http\Requests\Concerns\RemapsFileArrayErrors;
 use Webkul\Core\Rules\FileMimeExtensionMatch;
 
 class AppearanceForm extends FormRequest
 {
+    use RemapsFileArrayErrors;
+
     /**
      * Extensions accepted for the admin logo.
      *
@@ -72,25 +73,11 @@ class AppearanceForm extends FormRequest
     }
 
     /**
-     * Handle a failed validation attempt.
-     *
-     * The media component posts files as `field[]`, so errors are moved from `field.0` to `field` where the form renders them.
-     *
-     * @throws ValidationException
+     * @return list<string>
      */
-    protected function failedValidation(Validator $validator): void
+    protected function fileArrayFields(): array
     {
-        $errors = [];
-
-        foreach ($validator->errors()->toArray() as $key => $messages) {
-            $field = preg_replace('/\.\d+$/', '', $key);
-
-            $errors[$field] = array_merge($errors[$field] ?? [], $messages);
-        }
-
-        throw ValidationException::withMessages($errors)
-            ->errorBag($this->errorBag)
-            ->redirectTo($this->getRedirectUrl());
+        return ['logo_image', 'favicon'];
     }
 
     /**

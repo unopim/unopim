@@ -3211,7 +3211,7 @@ return [
         'disable'           => '残疾人',
         'no-match-found'    => '未找到匹配项！',
         'unauthorized'      => 'You do not have permission to perform this action.',
-        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
+        'file-size-exceeds' => '上传的文件超过了允许的最大大小 :max。',
     ],
     'default-prompt' => [
         'detailed' => [

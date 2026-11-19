@@ -1168,6 +1168,8 @@
                     this.$emit('size-exceeded', exceedsMaxSize);
 
                     if (exceedsMaxSize) {
+                        this.discardRejectedFile(imageInput);
+
                         return;
                     }
 
@@ -1207,7 +1209,19 @@
                     this.$refs.imagePreviewModalFull.close();
                 },
 
+                discardRejectedFile(imageInput) {
+                    const dataTransfer = new DataTransfer();
+
+                    if (this.acceptedFile) {
+                        dataTransfer.items.add(this.acceptedFile);
+                    }
+
+                    imageInput.files = dataTransfer.files;
+                },
+
                 setFile(file) {
+                    this.acceptedFile = file;
+
                     this.image.is_new = 1;
 
                     const dataTransfer = new DataTransfer();

@@ -3211,7 +3211,7 @@ return [
         'disable'           => 'Эрэмдэг зэрэмдэг',
         'no-match-found'    => 'Тохирох зүйл олдсонгүй!',
         'unauthorized'      => 'You do not have permission to perform this action.',
-        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
+        'file-size-exceeds' => 'Байршуулсан файл зөвшөөрөгдсөн дээд хэмжээ болох :max-аас хэтэрсэн байна.',
     ],
     'default-prompt' => [
         'detailed' => [

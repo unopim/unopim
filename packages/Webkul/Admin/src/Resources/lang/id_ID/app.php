@@ -3207,7 +3207,7 @@ return [
         'disable'           => 'Dengan disabilitas',
         'no-match-found'    => 'Tidak ditemukan kecocokan!',
         'unauthorized'      => 'You do not have permission to perform this action.',
-        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
+        'file-size-exceeds' => 'File yang diunggah melebihi ukuran maksimum yang diizinkan sebesar :max.',
     ],
     'default-prompt' => [
         'detailed' => [

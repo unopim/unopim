@@ -3207,7 +3207,7 @@ return [
         'disable'           => '無効',
         'no-match-found'    => '一致するものが見つかりません！',
         'unauthorized'      => 'You do not have permission to perform this action.',
-        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
+        'file-size-exceeds' => 'アップロードされたファイルが許可されている最大サイズ（:max）を超えています。',
     ],
     'default-prompt' => [
         'detailed' => [

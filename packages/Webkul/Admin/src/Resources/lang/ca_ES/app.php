@@ -3207,7 +3207,7 @@ return [
         'disable'           => 'Desactivat',
         'no-match-found'    => 'No s\'ha trobat cap coincidència!',
         'unauthorized'      => 'You do not have permission to perform this action.',
-        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
+        'file-size-exceeds' => 'El fitxer pujat supera la mida màxima permesa de :max.',
     ],
     'default-prompt' => [
         'detailed' => [

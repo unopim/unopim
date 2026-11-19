@@ -3211,7 +3211,7 @@ return [
         'disable'           => 'Dezactivat',
         'no-match-found'    => 'Nu s-a găsit nicio potrivire!',
         'unauthorized'      => 'You do not have permission to perform this action.',
-        'file-size-exceeds' => 'The uploaded file exceeds the maximum allowed size of :max.',
+        'file-size-exceeds' => 'Fișierul încărcat depășește dimensiunea maximă permisă de :max.',
     ],
     'default-prompt' => [
         'detailed' => [
