@@ -39,6 +39,8 @@ return [
             'output-too-large'        => 'La plantilla renderitzada supera els :max bytes i ha estat retallada.',
             'self-reference'          => 'La plantilla no pot fer referència al seu propi atribut ":attribute".',
             'single-brace'            => 'S\'ha trobat ":text" entre claus simples. Les expressions de plantilla necessiten claus dobles.',
+            'source-too-long'         => 'Una plantilla pot tenir com a màxim :max bytes.',
+            'too-complex'             => 'La plantilla és massa complexa per comprovar-la. Escurça-la o simplifica-la.',
             'too-many-expressions'    => 'Una plantilla pot contenir com a màxim :max expressions.',
             'too-many-filters'        => 'L\'expressió de plantilla ":expression" pot utilitzar com a màxim :max filtres.',
             'unclosed-expression'     => 'S\'ha obert una expressió de plantilla, però no s\'ha tancat mai.',

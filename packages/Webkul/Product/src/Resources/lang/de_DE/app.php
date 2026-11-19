@@ -41,6 +41,8 @@ return [
             'output-too-large'        => 'Die gerenderte Vorlage ist größer als :max Bytes und wurde abgeschnitten.',
             'self-reference'          => 'Die Vorlage kann nicht auf ihr eigenes Attribut ":attribute" verweisen.',
             'single-brace'            => '":text" in einfachen geschweiften Klammern gefunden. Vorlagenausdrücke benötigen doppelte geschweifte Klammern.',
+            'source-too-long'         => 'Eine Vorlage darf höchstens :max Bytes lang sein.',
+            'too-complex'             => 'Die Vorlage ist zu komplex für die Prüfung. Kürzen oder vereinfachen Sie sie.',
             'too-many-expressions'    => 'Eine Vorlage darf höchstens :max Ausdrücke enthalten.',
             'too-many-filters'        => 'Der Vorlagenausdruck ":expression" darf höchstens :max Filter verwenden.',
             'unclosed-expression'     => 'Ein Vorlagenausdruck wurde geöffnet, aber nie geschlossen.',

@@ -41,6 +41,8 @@ return [
             'output-too-large'        => 'O modelo renderizado excede :max bytes e foi truncado.',
             'self-reference'          => 'O modelo não pode fazer referência ao seu próprio atributo ":attribute".',
             'single-brace'            => 'Encontrado ":text" entre chavetas simples. As expressões de modelo necessitam de chavetas duplas.',
+            'source-too-long'         => 'Um modelo pode ter, no máximo, :max bytes.',
+            'too-complex'             => 'O modelo é demasiado complexo para ser verificado. Encurte-o ou simplifique-o.',
             'too-many-expressions'    => 'Um modelo pode conter, no máximo, :max expressões.',
             'too-many-filters'        => 'A expressão de modelo ":expression" pode utilizar, no máximo, :max filtros.',
             'unclosed-expression'     => 'Uma expressão de modelo foi aberta, mas nunca foi fechada.',

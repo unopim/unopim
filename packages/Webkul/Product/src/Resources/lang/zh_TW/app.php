@@ -41,6 +41,8 @@ return [
             'output-too-large'        => '渲染後的範本超過 :max 位元組，已被截斷。',
             'self-reference'          => '範本不能引用其自身的屬性 ":attribute"。',
             'single-brace'            => '發現單大括號中的 ":text"。範本運算式需要使用雙大括號。',
+            'source-too-long'         => '範本最多只能有 :max 位元組。',
+            'too-complex'             => '範本過於複雜，無法檢查。請縮短或簡化範本。',
             'too-many-expressions'    => '一個範本最多只能包含 :max 個運算式。',
             'too-many-filters'        => '範本運算式 ":expression" 最多只能使用 :max 個篩選器。',
             'unclosed-expression'     => '範本運算式已開啟但未關閉。',

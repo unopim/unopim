@@ -39,6 +39,8 @@ return [
             'output-too-large'        => 'Ang na-render na template ay mas malaki sa :max byte kaya ito ay pinutol.',
             'self-reference'          => 'Hindi maaaring i-reference ng template ang sarili nitong katangian na ":attribute".',
             'single-brace'            => 'Natagpuan ang ":text" sa iisang curly brace. Kailangan ng mga expression ng template ang dobleng curly brace.',
+            'source-too-long'         => 'Ang isang template ay maaaring hindi hihigit sa :max byte ang haba.',
+            'too-complex'             => 'Masyadong kumplikado ang template para masuri. Paikliin o pasimplehin ito.',
             'too-many-expressions'    => 'Ang isang template ay maaaring maglaman ng hindi hihigit sa :max na expression.',
             'too-many-filters'        => 'Ang expression ng template na ":expression" ay maaaring gumamit ng hindi hihigit sa :max na filter.',
             'unclosed-expression'     => 'May binuksang expression ng template ngunit hindi ito isinara.',

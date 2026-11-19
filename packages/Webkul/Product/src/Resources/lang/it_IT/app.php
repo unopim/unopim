@@ -41,6 +41,8 @@ return [
             'output-too-large'        => 'Il modello renderizzato supera i :max byte ed è stato troncato.',
             'self-reference'          => 'Il modello non può fare riferimento al proprio attributo ":attribute".',
             'single-brace'            => 'Trovato ":text" tra parentesi graffe singole. Le espressioni del modello richiedono doppie parentesi graffe.',
+            'source-too-long'         => 'Un modello può essere lungo al massimo :max byte.',
+            'too-complex'             => 'Il modello è troppo complesso per essere verificato. Accorcialo o semplificalo.',
             'too-many-expressions'    => 'Un modello può contenere al massimo :max espressioni.',
             'too-many-filters'        => 'L\'espressione del modello ":expression" può usare al massimo :max filtri.',
             'unclosed-expression'     => 'Un\'espressione del modello è stata aperta ma mai chiusa.',

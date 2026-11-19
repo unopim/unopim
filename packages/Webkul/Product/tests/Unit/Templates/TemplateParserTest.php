@@ -101,6 +101,40 @@ it('limits the number of filters in one expression', function () {
         ->and($template->errors[0]->replace['max'])->toBe(TemplateParser::MAX_FILTERS);
 });
 
+it('limits the byte length of a template source', function () {
+    $within = $this->parser->parse('{{ name }}'.str_repeat('x', TemplateParser::MAX_SOURCE_BYTES - 10));
+    $beyond = $this->parser->parse('{{ name }}'.str_repeat('x', TemplateParser::MAX_SOURCE_BYTES - 9));
+
+    expect($within->hasErrors())->toBeFalse()
+        ->and($beyond->errors)->toEqual([new TemplateMessage('source-too-long', ['max' => TemplateParser::MAX_SOURCE_BYTES])])
+        ->and($beyond->expressions())->toBe([]);
+});
+
+it('ignores the byte limit for long text without expressions', function () {
+    expect($this->parser->parse(str_repeat('{x} ', TemplateParser::MAX_SOURCE_BYTES))->hasErrors())->toBeFalse();
+});
+
+it('reports a flood of opening braces as one unclosed expression', function () {
+    $template = $this->parser->parse(str_repeat('{{', 30_000).'}');
+
+    expect($template->errors)->toEqual([new TemplateMessage('unclosed-expression')]);
+});
+
+it('reports a template the pattern engine fails on as too complex', function () {
+    $limit = ini_get('pcre.backtrack_limit');
+
+    ini_set('pcre.backtrack_limit', '1');
+
+    try {
+        $template = $this->parser->parse('Hi {{ name | upper }}');
+    } finally {
+        ini_set('pcre.backtrack_limit', $limit);
+    }
+
+    expect($template->errors)->toEqual([new TemplateMessage('too-complex')])
+        ->and($template->expressions())->toBe([]);
+});
+
 it('decodes editor entities inside expressions of rich text', function () {
     $source = '<p>{{&nbsp;released | format_date(&#39;d/m/Y&#39;) }} &amp; {{'."\u{00A0}".'name }}</p>';
 

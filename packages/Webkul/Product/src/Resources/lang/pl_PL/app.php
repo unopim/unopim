@@ -41,6 +41,8 @@ return [
             'output-too-large'        => 'Wyrenderowany szablon przekracza :max bajtów i został obcięty.',
             'self-reference'          => 'Szablon nie może odwoływać się do własnego atrybutu ":attribute".',
             'single-brace'            => 'Znaleziono ":text" w pojedynczych nawiasach klamrowych. Wyrażenia szablonu wymagają podwójnych nawiasów klamrowych.',
+            'source-too-long'         => 'Szablon może mieć maksymalnie :max bajtów.',
+            'too-complex'             => 'Szablon jest zbyt złożony, aby go sprawdzić. Skróć go lub uprość.',
             'too-many-expressions'    => 'Szablon może zawierać maksymalnie :max wyrażeń.',
             'too-many-filters'        => 'Wyrażenie szablonu ":expression" może używać maksymalnie :max filtrów.',
             'unclosed-expression'     => 'Wyrażenie szablonu zostało otwarte, ale nigdy nie zostało zamknięte.',

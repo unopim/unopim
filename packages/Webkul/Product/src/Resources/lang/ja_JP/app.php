@@ -41,6 +41,8 @@ return [
             'output-too-large'        => 'レンダリングされたテンプレートが :max バイトを超えたため、切り詰められました。',
             'self-reference'          => 'テンプレートは自身の属性 ":attribute" を参照できません。',
             'single-brace'            => '単一の波括弧で囲まれた ":text" が見つかりました。テンプレート式には二重の波括弧が必要です。',
+            'source-too-long'         => 'テンプレートの長さは最大 :max バイトです。',
+            'too-complex'             => 'テンプレートが複雑すぎるため確認できません。短くするか簡略化してください。',
             'too-many-expressions'    => 'テンプレートに含めることができる式は最大 :max 個です。',
             'too-many-filters'        => 'テンプレート式 ":expression" で使用できるフィルターは最大 :max 個です。',
             'unclosed-expression'     => 'テンプレート式が開始されましたが、閉じられていません。',

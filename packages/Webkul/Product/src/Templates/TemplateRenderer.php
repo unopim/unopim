@@ -76,17 +76,17 @@ class TemplateRenderer implements TemplateRendererContract
         $output = '';
 
         foreach ($template->segments as $segment) {
-            $value = $segment instanceof Expression
-                ? $this->evaluate($segment, $variables[$segment->attributeCode] ?? null, $context) ?? ''
+            $piece = $segment instanceof Expression
+                ? $this->escape($this->evaluate($segment, $variables[$segment->attributeCode] ?? null, $context) ?? '', $attribute)
                 : $segment;
 
-            if ($context->consumeOutput(strlen($value)) > self::MAX_RENDERED_BYTES) {
+            if ($context->consumeOutput(strlen($piece)) > self::MAX_RENDERED_BYTES) {
                 $context->warn(new TemplateMessage('output-too-large', ['max' => self::MAX_RENDERED_BYTES]));
 
                 break;
             }
 
-            $output .= $segment instanceof Expression ? $this->escape($value, $attribute) : $value;
+            $output .= $piece;
         }
 
         $context->leave();

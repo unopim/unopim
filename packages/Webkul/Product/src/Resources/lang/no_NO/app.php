@@ -41,6 +41,8 @@ return [
             'output-too-large'        => 'Den gjengitte malen er større enn :max byte og ble avkortet.',
             'self-reference'          => 'Malen kan ikke referere til sitt eget attributt ":attribute".',
             'single-brace'            => 'Fant ":text" i enkle krøllparenteser. Maluttrykk krever doble krøllparenteser.',
+            'source-too-long'         => 'En mal kan være maksimalt :max byte lang.',
+            'too-complex'             => 'Malen er for kompleks til å kontrolleres. Gjør den kortere eller enklere.',
             'too-many-expressions'    => 'En mal kan inneholde maksimalt :max uttrykk.',
             'too-many-filters'        => 'Maluttrykket ":expression" kan bruke maksimalt :max filtre.',
             'unclosed-expression'     => 'Et maluttrykk ble åpnet, men aldri lukket.',

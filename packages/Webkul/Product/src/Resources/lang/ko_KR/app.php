@@ -41,6 +41,8 @@ return [
             'output-too-large'        => '렌더링된 템플릿이 :max 바이트를 초과하여 잘렸습니다.',
             'self-reference'          => '템플릿은 자신의 속성 ":attribute"을(를) 참조할 수 없습니다.',
             'single-brace'            => '단일 중괄호로 묶인 ":text"이(가) 발견되었습니다. 템플릿 표현식에는 이중 중괄호가 필요합니다.',
+            'source-too-long'         => '템플릿은 최대 :max 바이트까지 가능합니다.',
+            'too-complex'             => '템플릿이 너무 복잡하여 확인할 수 없습니다. 줄이거나 단순화하세요.',
             'too-many-expressions'    => '템플릿에는 최대 :max 개의 표현식만 포함할 수 있습니다.',
             'too-many-filters'        => '템플릿 표현식 ":expression"은(는) 최대 :max 개의 필터를 사용할 수 있습니다.',
             'unclosed-expression'     => '템플릿 표현식이 열렸지만 닫히지 않았습니다.',

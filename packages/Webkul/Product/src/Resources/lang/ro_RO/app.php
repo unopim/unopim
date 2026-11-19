@@ -41,6 +41,8 @@ return [
             'output-too-large'        => 'Șablonul randat depășește :max octeți și a fost trunchiat.',
             'self-reference'          => 'Șablonul nu poate face referire la propriul atribut ":attribute".',
             'single-brace'            => 'S-a găsit ":text" între acolade simple. Expresiile de șablon necesită acolade duble.',
+            'source-too-long'         => 'Un șablon poate avea cel mult :max octeți.',
+            'too-complex'             => 'Șablonul este prea complex pentru a fi verificat. Scurtează-l sau simplifică-l.',
             'too-many-expressions'    => 'Un șablon poate conține cel mult :max expresii.',
             'too-many-filters'        => 'Expresia de șablon ":expression" poate folosi cel mult :max filtre.',
             'unclosed-expression'     => 'O expresie de șablon a fost deschisă, dar nu a fost închisă niciodată.',

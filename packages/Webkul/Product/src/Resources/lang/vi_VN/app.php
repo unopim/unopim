@@ -41,6 +41,8 @@ return [
             'output-too-large'        => 'Mẫu đã hiển thị lớn hơn :max byte và đã bị cắt bớt.',
             'self-reference'          => 'Mẫu không thể tham chiếu đến chính thuộc tính ":attribute" của nó.',
             'single-brace'            => 'Tìm thấy ":text" trong dấu ngoặc nhọn đơn. Biểu thức mẫu cần dấu ngoặc nhọn kép.',
+            'source-too-long'         => 'Một mẫu chỉ có thể dài tối đa :max byte.',
+            'too-complex'             => 'Mẫu quá phức tạp để kiểm tra. Hãy rút gọn hoặc đơn giản hóa mẫu.',
             'too-many-expressions'    => 'Một mẫu chỉ có thể chứa tối đa :max biểu thức.',
             'too-many-filters'        => 'Biểu thức mẫu ":expression" chỉ có thể dùng tối đa :max bộ lọc.',
             'unclosed-expression'     => 'Một biểu thức mẫu đã được mở nhưng chưa được đóng.',

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Validator;
 use Webkul\Core\Models\Currency;
 use Webkul\Product\Contracts\TemplateValidator as TemplateValidatorContract;
 use Webkul\Product\Templates\TemplateMessage;
+use Webkul\Product\Templates\TemplateParser;
 use Webkul\Product\Tests\Concerns\InteractsWithTemplates;
 use Webkul\Product\Validator\Rule\TemplateExpressionRule;
 
@@ -118,6 +119,37 @@ it('accepts a literal less than sign before an expression in rich text', functio
     'less or equal'     => ['<p>Size <= 10 {{ tpl_name }}</p>'],
     'shift operator'    => ['<p>1 << 2 {{ tpl_name }}</p>'],
 ]);
+
+it('accepts a run of unclosed tag openers before an expression in rich text', function () {
+    $source = str_repeat('<a', 30_000).'> {{ tpl_name }}';
+
+    expect($this->validator->validate($source, $this->richDescription)->passes())->toBeTrue();
+});
+
+it('reports a rich text template as too complex when the tag check fails', function () {
+    $source = '<p><a href="{{ tpl_name }}">Shop</a></p>';
+
+    expect(messageKeys($this->validator->validate($source, $this->richDescription)->errors))->toBe(['inside-html-tag']);
+
+    $limit = ini_get('pcre.backtrack_limit');
+
+    ini_set('pcre.backtrack_limit', '1');
+
+    try {
+        $result = $this->validator->validate($source, $this->richDescription);
+    } finally {
+        ini_set('pcre.backtrack_limit', $limit);
+    }
+
+    expect(messageKeys($result->errors))->toBe(['too-complex']);
+});
+
+it('rejects a template longer than the byte limit', function () {
+    $result = $this->validator->validate('{{ tpl_name }}'.str_repeat('x', TemplateParser::MAX_SOURCE_BYTES), $this->description);
+
+    expect(messageKeys($result->errors))->toBe(['source-too-long'])
+        ->and($result->errorMessages('en_US'))->toBe(['A template can be at most 65535 bytes long.']);
+});
 
 it('accepts expressions whose quotes were encoded by the editor', function () {
     $result = $this->validator->validate('<p>{{&nbsp;tpl_released | format_date(&#39;d/m/Y&#39;) }}</p>', $this->richDescription);

@@ -41,6 +41,8 @@ return [
             'output-too-large'        => 'Hahmonnettu mallipohja on suurempi kuin :max tavua, ja se katkaistiin.',
             'self-reference'          => 'Mallipohja ei voi viitata omaan attribuuttiinsa ":attribute".',
             'single-brace'            => 'Löytyi ":text" yksinkertaisissa aaltosulkeissa. Mallipohjan lausekkeet vaativat kaksinkertaiset aaltosulkeet.',
+            'source-too-long'         => 'Mallipohjan pituus voi olla enintään :max tavua.',
+            'too-complex'             => 'Mallipohja on liian monimutkainen tarkistettavaksi. Lyhennä tai yksinkertaista sitä.',
             'too-many-expressions'    => 'Mallipohja voi sisältää enintään :max lauseketta.',
             'too-many-filters'        => 'Mallipohjan lauseke ":expression" voi käyttää enintään :max suodatinta.',
             'unclosed-expression'     => 'Mallipohjan lauseke avattiin, mutta sitä ei koskaan suljettu.',

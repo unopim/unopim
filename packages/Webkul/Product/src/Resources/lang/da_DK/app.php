@@ -41,6 +41,8 @@ return [
             'output-too-large'        => 'Den gengivne skabelon er større end :max bytes og blev afkortet.',
             'self-reference'          => 'Skabelonen kan ikke referere til sin egen attribut ":attribute".',
             'single-brace'            => 'Fandt ":text" i enkelte krøllede parenteser. Skabelonudtryk kræver dobbelte krøllede parenteser.',
+            'source-too-long'         => 'En skabelon kan højst være :max bytes lang.',
+            'too-complex'             => 'Skabelonen er for kompleks til at blive kontrolleret. Forkort eller forenkl den.',
             'too-many-expressions'    => 'En skabelon kan højst indeholde :max udtryk.',
             'too-many-filters'        => 'Skabelonudtrykket ":expression" kan højst bruge :max filtre.',
             'unclosed-expression'     => 'Et skabelonudtryk blev åbnet, men aldrig lukket.',

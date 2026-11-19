@@ -41,6 +41,8 @@ return [
             'output-too-large'        => 'İşlenen şablon :max bayttan büyük olduğu için kesildi.',
             'self-reference'          => 'Şablon, kendi özniteliği olan ":attribute" özniteliğine referans veremez.',
             'single-brace'            => 'Tek süslü parantez içinde ":text" bulundu. Şablon ifadeleri çift süslü parantez gerektirir.',
+            'source-too-long'         => 'Bir şablon en fazla :max bayt uzunluğunda olabilir.',
+            'too-complex'             => 'Şablon kontrol edilemeyecek kadar karmaşık. Kısaltın veya basitleştirin.',
             'too-many-expressions'    => 'Bir şablon en fazla :max ifade içerebilir.',
             'too-many-filters'        => '":expression" şablon ifadesi en fazla :max filtre kullanabilir.',
             'unclosed-expression'     => 'Bir şablon ifadesi açıldı ancak hiç kapatılmadı.',

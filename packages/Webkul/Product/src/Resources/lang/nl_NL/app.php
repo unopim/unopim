@@ -41,6 +41,8 @@ return [
             'output-too-large'        => 'Het gerenderde sjabloon is groter dan :max bytes en is afgekapt.',
             'self-reference'          => 'Het sjabloon kan niet verwijzen naar zijn eigen attribuut ":attribute".',
             'single-brace'            => '":text" gevonden tussen enkele accolades. Sjabloonexpressies vereisen dubbele accolades.',
+            'source-too-long'         => 'Een sjabloon kan maximaal :max bytes lang zijn.',
+            'too-complex'             => 'Het sjabloon is te complex om te controleren. Maak het korter of eenvoudiger.',
             'too-many-expressions'    => 'Een sjabloon kan maximaal :max expressies bevatten.',
             'too-many-filters'        => 'De sjabloonexpressie ":expression" kan maximaal :max filters gebruiken.',
             'unclosed-expression'     => 'Er is een sjabloonexpressie geopend maar nooit gesloten.',

@@ -201,6 +201,15 @@ it('stops rendering once the output exceeds the size budget', function () {
         ->and($result->output)->toStartWith($blob);
 });
 
+it('counts escaped rich text values against the size budget', function () {
+    $values = ['locale_specific' => ['en_US' => ['tpl_name' => str_repeat('"', 200_000)]]];
+
+    $result = $this->renderer->render('<p>{{ tpl_name }}</p>', $this->richDescription, $values, $this->channel->code, 'en_US');
+
+    expect(warningKeys($result))->toBe(['output-too-large'])
+        ->and($result->output)->not->toContain('"');
+});
+
 it('returns the source unchanged when the attribute does not hold templates', function () {
     $plain = $this->variableAttribute('tpl_plain', 'textarea');
 

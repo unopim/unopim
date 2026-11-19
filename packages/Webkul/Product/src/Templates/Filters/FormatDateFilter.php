@@ -10,7 +10,7 @@ use Webkul\Attribute\Models\Attribute;
 
 class FormatDateFilter implements TemplateFilter
 {
-    private const string FORMAT_PATTERN = '/^[dDjlNSwzWFmMntLoXxYyaABgGhHisuveIOPpTZcrU .,:\/\-]{1,30}$/';
+    private const string FORMAT_PATTERN = '/^[dDjlNSwzWFmMntLoXxYyaABgGhHisuveIOPpTZcrU .,:\/\-]{1,30}$/D';
 
     /**
      * Determine if the attribute type is date or datetime.

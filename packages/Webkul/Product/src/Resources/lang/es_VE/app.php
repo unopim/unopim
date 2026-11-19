@@ -39,6 +39,8 @@ return [
             'output-too-large'        => 'La plantilla renderizada supera los :max bytes y se ha recortado.',
             'self-reference'          => 'La plantilla no puede hacer referencia a su propio atributo ":attribute".',
             'single-brace'            => 'Se encontró ":text" entre llaves simples. Las expresiones de plantilla requieren llaves dobles.',
+            'source-too-long'         => 'Una plantilla puede tener como máximo :max bytes.',
+            'too-complex'             => 'La plantilla es demasiado compleja para comprobarla. Acórtala o simplifícala.',
             'too-many-expressions'    => 'Una plantilla puede contener como máximo :max expresiones.',
             'too-many-filters'        => 'La expresión de plantilla ":expression" puede usar como máximo :max filtros.',
             'unclosed-expression'     => 'Se abrió una expresión de plantilla, pero nunca se cerró.',

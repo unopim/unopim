@@ -41,6 +41,8 @@ return [
             'output-too-large'        => 'Den renderade mallen är större än :max byte och har kortats av.',
             'self-reference'          => 'Mallen kan inte referera till sitt eget attribut ":attribute".',
             'single-brace'            => 'Hittade ":text" inom enkla klammerparenteser. Malluttryck kräver dubbla klammerparenteser.',
+            'source-too-long'         => 'En mall kan vara högst :max byte lång.',
+            'too-complex'             => 'Mallen är för komplex för att kontrolleras. Korta ner eller förenkla den.',
             'too-many-expressions'    => 'En mall kan innehålla högst :max uttryck.',
             'too-many-filters'        => 'Malluttrycket ":expression" kan använda högst :max filter.',
             'unclosed-expression'     => 'Ett malluttryck öppnades men stängdes aldrig.',

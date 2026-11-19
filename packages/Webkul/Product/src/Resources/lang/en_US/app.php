@@ -41,6 +41,8 @@ return [
             'output-too-large'        => 'The rendered template is larger than :max bytes and was cut off.',
             'self-reference'          => 'The template cannot reference its own attribute ":attribute".',
             'single-brace'            => 'Found ":text" in single curly braces. Template expressions need double curly braces.',
+            'source-too-long'         => 'A template can be at most :max bytes long.',
+            'too-complex'             => 'The template is too complex to check. Shorten or simplify it.',
             'too-many-expressions'    => 'A template can contain at most :max expressions.',
             'too-many-filters'        => 'The template expression ":expression" can use at most :max filters.',
             'unclosed-expression'     => 'A template expression was opened but never closed.',

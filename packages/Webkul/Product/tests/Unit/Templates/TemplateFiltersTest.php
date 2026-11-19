@@ -67,14 +67,15 @@ it('fails safely when a date cannot be parsed', function () {
 it('restricts the date format argument', function (?string $argument, bool $accepted) {
     expect((new FormatDateFilter)->acceptsArgument($argument))->toBe($accepted);
 })->with([
-    'missing'         => [null, false],
-    'empty'           => ['', false],
-    'date'            => ['d/m/Y', true],
-    'datetime'        => ['Y-m-d H:i:s', true],
-    'too long'        => [str_repeat('d', 31), false],
-    'escaped literal' => ['\\Y', false],
-    'markup'          => ['<b>Y</b>', false],
-    'unknown letters' => ['qqq', false],
+    'missing'          => [null, false],
+    'empty'            => ['', false],
+    'date'             => ['d/m/Y', true],
+    'datetime'         => ['Y-m-d H:i:s', true],
+    'too long'         => [str_repeat('d', 31), false],
+    'escaped literal'  => ['\\Y', false],
+    'markup'           => ['<b>Y</b>', false],
+    'unknown letters'  => ['qqq', false],
+    'trailing newline' => ["Y-m-d\n", false],
 ]);
 
 it('rejects an argument on filters that take none', function () {

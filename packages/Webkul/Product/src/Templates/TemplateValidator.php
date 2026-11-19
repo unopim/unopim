@@ -14,7 +14,7 @@ use Webkul\Product\Templates\Results\ValidationResult;
 
 class TemplateValidator implements TemplateValidatorContract
 {
-    private const string TAG_EXPRESSION_PATTERN = '/<[a-zA-Z\/!?][^>]*\{\{/';
+    private const string TAG_EXPRESSION_PATTERN = '/<[a-zA-Z\/!?][^<>]*\{\{/';
 
     private const string SINGLE_BRACE_PATTERN = '/(?<!\{)\{\s*(\w+)\s*\}(?!\})/';
 
@@ -82,9 +82,15 @@ class TemplateValidator implements TemplateValidatorContract
 
     private function markupErrors(string $source, Attribute $attribute): array
     {
-        return $attribute->isRichText() && preg_match(self::TAG_EXPRESSION_PATTERN, $source) === 1
-            ? [new TemplateMessage('inside-html-tag')]
-            : [];
+        if (! $attribute->isRichText()) {
+            return [];
+        }
+
+        return match (preg_match(self::TAG_EXPRESSION_PATTERN, $source)) {
+            1       => [new TemplateMessage('inside-html-tag')],
+            false   => [new TemplateMessage('too-complex')],
+            default => [],
+        };
     }
 
     private function singleBraceWarnings(ParsedTemplate $template): array

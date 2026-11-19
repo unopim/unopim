@@ -41,6 +41,8 @@ return [
             'output-too-large'        => 'Templat yang dirender lebih besar dari :max byte dan telah dipotong.',
             'self-reference'          => 'Templat tidak dapat mereferensikan atributnya sendiri ":attribute".',
             'single-brace'            => 'Ditemukan ":text" dalam kurung kurawal tunggal. Ekspresi templat memerlukan kurung kurawal ganda.',
+            'source-too-long'         => 'Templat dapat berukuran paling banyak :max byte.',
+            'too-complex'             => 'Templat terlalu kompleks untuk diperiksa. Persingkat atau sederhanakan.',
             'too-many-expressions'    => 'Templat dapat berisi paling banyak :max ekspresi.',
             'too-many-filters'        => 'Ekspresi templat ":expression" dapat menggunakan paling banyak :max filter.',
             'unclosed-expression'     => 'Ekspresi templat dibuka tetapi tidak pernah ditutup.',

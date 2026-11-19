@@ -41,6 +41,8 @@ return [
             'output-too-large'        => '渲染后的模板超过 :max 字节，已被截断。',
             'self-reference'          => '模板不能引用其自身的属性 ":attribute"。',
             'single-brace'            => '发现单花括号中的 ":text"。模板表达式需要使用双花括号。',
+            'source-too-long'         => '模板最多只能有 :max 字节。',
+            'too-complex'             => '模板过于复杂，无法检查。请缩短或简化模板。',
             'too-many-expressions'    => '一个模板最多只能包含 :max 个表达式。',
             'too-many-filters'        => '模板表达式 ":expression" 最多只能使用 :max 个筛选器。',
             'unclosed-expression'     => '模板表达式已打开但未关闭。',

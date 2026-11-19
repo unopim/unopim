@@ -12,11 +12,11 @@ class TemplateParser
 
     public const int MAX_FILTERS = 5;
 
+    public const int MAX_SOURCE_BYTES = 65_535;
+
     private const int CACHE_LIMIT = 500;
 
     private const int LABEL_LIMIT = 60;
-
-    private const string EXPRESSION_PATTERN = '/\{\{(.*?)\}\}/su';
 
     private const string BODY_PATTERN = '/^\s*(?<code>\w+)(?:\.(?<currency>\w+))?\s*(?<filters>(?:\|\s*\w+\s*(?:\(\s*(?:\'[^\']*\'|"[^"]*")\s*\)\s*)?)*)$/u';
 
@@ -48,13 +48,11 @@ class TemplateParser
 
     private function compile(string $source, bool $html): ParsedTemplate
     {
-        $matches = [];
-        $offset = 0;
-
-        while (count($matches) <= self::MAX_EXPRESSIONS && preg_match(self::EXPRESSION_PATTERN, $source, $match, PREG_OFFSET_CAPTURE, $offset) === 1) {
-            $matches[] = $match;
-            $offset = $match[0][1] + strlen($match[0][0]);
+        if (strlen($source) > self::MAX_SOURCE_BYTES && $this->containsTemplate($source)) {
+            return new ParsedTemplate([$source], [new TemplateMessage('source-too-long', ['max' => self::MAX_SOURCE_BYTES])]);
         }
+
+        $matches = $this->findExpressions($source);
 
         if (count($matches) > self::MAX_EXPRESSIONS) {
             return new ParsedTemplate([$source], [new TemplateMessage('too-many-expressions', ['max' => self::MAX_EXPRESSIONS])]);
@@ -64,7 +62,7 @@ class TemplateParser
         $errors = [];
         $cursor = 0;
 
-        foreach ($matches as [[$text, $offset], [$body]]) {
+        foreach ($matches as [$text, $offset, $body]) {
             $segments[] = substr($source, $cursor, $offset - $cursor);
             $cursor = $offset + strlen($text);
 
@@ -94,15 +92,34 @@ class TemplateParser
         );
     }
 
+    private function findExpressions(string $source): array
+    {
+        $matches = [];
+        $offset = 0;
+
+        while (count($matches) <= self::MAX_EXPRESSIONS
+            && ($open = strpos($source, '{{', $offset)) !== false
+            && ($close = strpos($source, '}}', $open + 2)) !== false) {
+            $matches[] = [substr($source, $open, $close + 2 - $open), $open, substr($source, $open + 2, $close - $open - 2)];
+            $offset = $close + 2;
+        }
+
+        return $matches;
+    }
+
     private function parseExpression(string $body): Expression|TemplateMessage
     {
         $label = $this->label($body);
 
-        if (! preg_match(self::BODY_PATTERN, $body, $parts, PREG_UNMATCHED_AS_NULL)) {
+        $matched = preg_match(self::BODY_PATTERN, $body, $parts, PREG_UNMATCHED_AS_NULL);
+
+        if ($matched === 0) {
             return new TemplateMessage('invalid-syntax', ['expression' => $label]);
         }
 
-        preg_match_all(self::FILTER_PATTERN, (string) $parts['filters'], $calls, PREG_SET_ORDER | PREG_UNMATCHED_AS_NULL);
+        if ($matched === false || preg_match_all(self::FILTER_PATTERN, (string) $parts['filters'], $calls, PREG_SET_ORDER | PREG_UNMATCHED_AS_NULL) === false) {
+            return new TemplateMessage('too-complex');
+        }
 
         if (count($calls) > self::MAX_FILTERS) {
             return new TemplateMessage('too-many-filters', ['expression' => $label, 'max' => self::MAX_FILTERS]);

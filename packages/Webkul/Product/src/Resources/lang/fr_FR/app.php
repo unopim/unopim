@@ -38,6 +38,8 @@ return [
             'output-too-large'        => 'Le modèle rendu dépasse :max octets et a été tronqué.',
             'self-reference'          => 'Le modèle ne peut pas faire référence à son propre attribut ":attribute".',
             'single-brace'            => '":text" trouvé entre accolades simples. Les expressions de modèle nécessitent des accolades doubles.',
+            'source-too-long'         => 'Un modèle peut contenir au maximum :max octets.',
+            'too-complex'             => 'Le modèle est trop complexe pour être vérifié. Raccourcissez-le ou simplifiez-le.',
             'too-many-expressions'    => 'Un modèle peut contenir au maximum :max expressions.',
             'too-many-filters'        => 'L\'expression de modèle ":expression" peut utiliser au maximum :max filtres.',
             'unclosed-expression'     => 'Une expression de modèle a été ouverte mais jamais fermée.',

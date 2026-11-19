@@ -41,6 +41,8 @@ return [
             'output-too-large'        => 'Iscrtani predložak veći je od :max bajtova i skraćen je.',
             'self-reference'          => 'Predložak ne može referencirati vlastiti atribut ":attribute".',
             'single-brace'            => 'Pronađeno ":text" u jednostrukim vitičastim zagradama. Izrazi predloška zahtijevaju dvostruke vitičaste zagrade.',
+            'source-too-long'         => 'Predložak može imati najviše :max bajtova.',
+            'too-complex'             => 'Predložak je previše složen za provjeru. Skratite ga ili pojednostavnite.',
             'too-many-expressions'    => 'Predložak može sadržavati najviše :max izraza.',
             'too-many-filters'        => 'Izraz predloška ":expression" može koristiti najviše :max filtara.',
             'unclosed-expression'     => 'Izraz predloška otvoren je, ali nikada nije zatvoren.',
