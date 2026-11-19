@@ -300,7 +300,7 @@ class PassportPayloadBuilder implements PayloadBuilder
      */
     private function toPlainText(string $html): string
     {
-        $withBreaks = preg_replace('/<(p|br|li|h[1-6]|tr)\b[^>]*>/i', "\n", $html) ?? $html;
+        $withBreaks = preg_replace('/<(p|br|li|h[1-6]|tr|td|th)\b[^>]*>/i', "\n", $html) ?? $html;
 
         $text = html_entity_decode(strip_tags($withBreaks), ENT_QUOTES);
 

@@ -112,6 +112,21 @@ it('strips a rich-text field down to a clean plain-text sibling for non-HTML con
         ->toContain('No tumble dry');
 });
 
+it('separates table cells in the plain-text sibling instead of running them together', function (): void {
+    [$product, $context] = $this->productWithRichTextPassportField(
+        '<table><tr><th>Fibre</th><th>Share</th></tr><tr><td>Cotton</td><td>80%</td></tr></table>'
+    );
+
+    $payload = resolve(PassportPayloadBuilder::class)->build($product, $context);
+
+    $field = collect($payload['sections'][0]['fields'])->firstWhere('code', 'dpp_care_instructions');
+
+    expect($field['value_text'])
+        ->not->toContain('FibreShare')
+        ->not->toContain('Cotton80%')
+        ->toBe("Fibre\nShare\nCotton\n80%");
+});
+
 it('never puts raw markup behind a non-rich-text field, even when the value looks like HTML', function (): void {
     [$product, $context] = $this->makeProductWithValues(['country' => '<b>Germany</b>']);
 

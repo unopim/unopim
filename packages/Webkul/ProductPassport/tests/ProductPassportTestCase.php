@@ -111,7 +111,9 @@ class ProductPassportTestCase extends TestCase
     protected function publicationContextFor(Product $product, ?Channel $channel = null, ?Locale $locale = null): PublicationContext
     {
         $channel ??= ChannelProxy::factory()->create();
-        $locale ??= $channel->locales()->first() ?: tap(Locale::factory()->create(), fn ($l) => $channel->locales()->attach($l));
+        $locale ??= $channel->locales()->first() ?: tap(Locale::factory()->create(), function (Locale $created) use ($channel): void {
+            $channel->locales()->attach($created);
+        });
 
         return new PublicationContext(
             uuid: (string) Str::uuid(),
