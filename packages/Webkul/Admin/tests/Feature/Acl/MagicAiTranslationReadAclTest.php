@@ -1,6 +1,11 @@
 <?php
 
+use Webkul\MagicAI\Services\Prompt\ProductPrompt;
 use Webkul\Product\Models\Product;
+
+afterEach(function () {
+    ProductPrompt::resetInstance();
+});
 
 dataset('magic ai product read routes', [
     'is translatable'                => 'admin.magic_ai.check.is_translatable',
