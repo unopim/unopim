@@ -20,7 +20,7 @@ class AccountForm extends FormRequest
         $user = auth()->guard('admin')->user();
 
         $this->merge([
-            'timezone'     => $this->input('timezone') ?: ($user?->timezone ?: config('app.timezone', 'UTC')),
+            'timezone'     => $this->input('timezone') ?: core()->resolveTimezone($user?->timezone),
             'ui_locale_id' => $this->input('ui_locale_id') ?: $user?->ui_locale_id,
         ]);
     }
@@ -57,7 +57,7 @@ class AccountForm extends FormRequest
             ),
             'image'              => $this->file('image') instanceof UploadedFile ? $imageRules : ['nullable'],
             'image.*'            => $imageRules,
-            'timezone'           => 'required',
+            'timezone'           => ['required', 'timezone:all_with_bc'],
             'ui_locale_id'       => 'required',
             'catalog_locale_id'  => 'nullable|integer|exists:locales,id,status,1',
             'default_channel_id' => 'nullable|integer|exists:channels,id',
