@@ -24,10 +24,16 @@ return [
     'file-outside-attribute-path'      => 'O arquivo :value não pertence a este registro. Envie-o novamente para o campo :attribute.',
     'password-surrounding-whitespace'  => 'O campo :attribute não pode começar nem terminar com espaço.',
     'password-whitespace-only'         => 'O campo :attribute não pode conter apenas espaços.',
+    'hideable-sections'                => 'O campo :attribute contém uma seção que não pode ser ocultada.',
     'active-content-detected'          => 'Não foi possível enviar :attribute porque contém conteúdo ativo (:reason).',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'JavaScript incorporado ou uma ação de PDF de execução automática',
         'embedded_vba_macro'            => 'uma macro VBA incorporada',
         'auto_executing_ole_object'     => 'um objeto incorporado de execução automática',
+    ],
+    'platform-modules'                => [
+        'empty'    => 'Selecione pelo menos um módulo da plataforma.',
+        'unknown'  => 'O módulo da plataforma ":module" não está instalado.',
+        'requires' => ':module só pode ser ativado junto com :requires.',
     ],
 ];

@@ -126,6 +126,8 @@ return [
                     'base'           => 'Desimaler for grunnverdi',
                     'base-info'      => 'Antall desimaler som beholdes for verdien konvertert til standardenheten.',
                 ],
+                'display-unit-symbol'      => 'Vis enhetssymboler',
+                'display-unit-symbol-info' => 'Vis måleverdier med enhetssymbolet (for eksempel 100 °C) i stedet for enhetsnavnet, i administrasjonen og i eksporter. Enheter uten symbol beholder navnet sitt.',
             ],
         ],
     ],
