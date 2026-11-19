@@ -81,16 +81,19 @@ it('filters products by a text attribute with = and CONTAINS', function () {
 it('filters products by a select attribute with IN and NOT IN', function () {
     $attribute = ($this->makeAttribute)('select');
 
-    ($this->makeProduct)('SEL-ALPHA', ['common' => [$attribute->code => 'alpha']]);
-    ($this->makeProduct)('SEL-BETA', ['common' => [$attribute->code => 'beta']]);
-    ($this->makeProduct)('SEL-GAMMA', ['common' => [$attribute->code => 'gamma']]);
+    $stamp = ['updated_at' => '2033-01-01 00:00:00'];
+
+    ($this->makeProduct)('SEL-ALPHA', ['common' => [$attribute->code => 'alpha']], $stamp);
+    ($this->makeProduct)('SEL-BETA', ['common' => [$attribute->code => 'beta']], $stamp);
+    ($this->makeProduct)('SEL-GAMMA', ['common' => [$attribute->code => 'gamma']], $stamp);
+
+    $window = ['updated_at' => [['operator' => 'BETWEEN', 'value' => ['2032-12-31 00:00:00', '2033-01-02 00:00:00']]]];
 
     expect(($this->listSkus)([$attribute->code => [['operator' => 'IN', 'value' => ['alpha', 'gamma']]]]))
         ->toEqualCanonicalizing(['SEL-ALPHA', 'SEL-GAMMA']);
 
-    expect(($this->listSkus)([$attribute->code => [['operator' => 'NOT IN', 'value' => ['alpha']]]]))
-        ->toContain('SEL-BETA', 'SEL-GAMMA')
-        ->not->toContain('SEL-ALPHA');
+    expect(($this->listSkus)([$attribute->code => [['operator' => 'NOT IN', 'value' => ['alpha']]]] + $window))
+        ->toEqualCanonicalizing(['SEL-BETA', 'SEL-GAMMA']);
 });
 
 it('keeps products without a value in NOT IN results', function (): void {
@@ -110,16 +113,19 @@ it('keeps products without a value in NOT IN results', function (): void {
 it('matches whole option codes only with IN and NOT IN', function () {
     $attribute = ($this->makeAttribute)('multiselect');
 
-    ($this->makeProduct)('OPT-RED', ['common' => [$attribute->code => 'red']]);
-    ($this->makeProduct)('OPT-RED-DARK', ['common' => [$attribute->code => 'red_dark']]);
-    ($this->makeProduct)('OPT-MIXED', ['common' => [$attribute->code => 'blue,red']]);
+    $stamp = ['updated_at' => '2033-04-01 00:00:00'];
+
+    ($this->makeProduct)('OPT-RED', ['common' => [$attribute->code => 'red']], $stamp);
+    ($this->makeProduct)('OPT-RED-DARK', ['common' => [$attribute->code => 'red_dark']], $stamp);
+    ($this->makeProduct)('OPT-MIXED', ['common' => [$attribute->code => 'blue,red']], $stamp);
+
+    $window = ['updated_at' => [['operator' => 'BETWEEN', 'value' => ['2033-03-31 00:00:00', '2033-04-02 00:00:00']]]];
 
     expect(($this->listSkus)([$attribute->code => [['operator' => 'IN', 'value' => ['red']]]]))
         ->toEqualCanonicalizing(['OPT-RED', 'OPT-MIXED']);
 
-    expect(($this->listSkus)([$attribute->code => [['operator' => 'NOT IN', 'value' => ['red']]]]))
-        ->toContain('OPT-RED-DARK')
-        ->not->toContain('OPT-RED', 'OPT-MIXED');
+    expect(($this->listSkus)([$attribute->code => [['operator' => 'NOT IN', 'value' => ['red']]]] + $window))
+        ->toBe(['OPT-RED-DARK']);
 });
 
 it('rejects an option filter value that is not an option code with 422', function () {

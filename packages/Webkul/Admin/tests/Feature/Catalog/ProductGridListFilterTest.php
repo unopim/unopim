@@ -21,6 +21,7 @@ beforeEach(function () {
         $response = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest'])
             ->json('GET', route('admin.catalog.products.index'), [
                 'pagination'     => ['page' => 1, 'per_page' => 50],
+                'sort'           => ['column' => 'product_id', 'order' => 'desc'],
                 'managedColumns' => [$this->attribute->code],
                 'filters'        => [
                     $this->attribute->code => [['operator' => $operator->value, 'value' => $value]],
