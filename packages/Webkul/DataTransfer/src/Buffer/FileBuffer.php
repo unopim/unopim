@@ -83,17 +83,17 @@ class FileBuffer
             $value = $cell->getValue();
 
             if (is_string($value) && $this->isFormulaValue($value)) {
-                return new Cell\StringCell("'".$value, null);
+                return new Cell\StringCell("'".$value);
             }
 
             if ($cell instanceof Cell\FormulaCell) {
-                return new Cell\StringCell($value, null);
+                return new Cell\StringCell($value);
             }
 
             return $cell;
-        }, $row->getCells());
+        }, $row->cells);
 
-        return new Row($escapedCells);
+        return $row->withCells($escapedCells);
     }
 
     /**

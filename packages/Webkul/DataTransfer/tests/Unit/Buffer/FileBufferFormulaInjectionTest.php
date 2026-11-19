@@ -1,5 +1,6 @@
 <?php
 
+use OpenSpout\Common\Entity\Cell;
 use OpenSpout\Common\Entity\Row;
 use Webkul\DataTransfer\Buffer\FileBuffer;
 
@@ -7,7 +8,7 @@ function escapedExportValues(array $values): array
 {
     $row = (new FileBuffer)->escapeFormulaCells(Row::fromValues($values));
 
-    return array_map(fn ($cell) => $cell->getValue(), $row->getCells());
+    return array_map(fn (Cell $cell): mixed => $cell->getValue(), $row->cells);
 }
 
 it('neutralizes every formula-injection lead character in exported cells', function () {

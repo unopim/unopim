@@ -1,5 +1,6 @@
 <?php
 
+use OpenSpout\Common\Entity\Cell;
 use OpenSpout\Reader\CSV\Reader as CsvReader;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
@@ -207,7 +208,7 @@ function channelScopeReadCsv(string $path): array
 
     foreach ($reader->getSheetIterator() as $sheet) {
         foreach ($sheet->getRowIterator() as $row) {
-            $rows[] = array_map(fn ($cell): string => (string) $cell->getValue(), $row->getCells());
+            $rows[] = array_map(fn (Cell $cell): string => (string) $cell->getValue(), $row->cells);
         }
 
         break;
