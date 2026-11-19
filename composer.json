@@ -43,6 +43,7 @@
         "prettus/l5-repository": "^4.0",
         "pusher/pusher-php-server": "^7.0",
         "shetabit/visitor": "^4.1",
+        "symfony/expression-language": "^8.1",
         "symfony/filesystem": "^8.0",
         "symfony/intl": "^7.0"
     },
@@ -89,7 +90,8 @@
             "Webkul\\AppUrlGuard\\": "packages/Webkul/AppUrlGuard/src",
             "Webkul\\Resource\\": "packages/Webkul/Resource/src",
             "Webkul\\Publication\\": "packages/Webkul/Publication/src",
-            "Webkul\\ProductPassport\\": "packages/Webkul/ProductPassport/src"
+            "Webkul\\ProductPassport\\": "packages/Webkul/ProductPassport/src",
+            "Webkul\\CalculatedAttribute\\": "packages/Webkul/CalculatedAttribute/src"
         }
     },
     "autoload-dev": {
@@ -109,7 +111,8 @@
             "Webkul\\Measurement\\Tests\\": "packages/Webkul/Measurement/tests",
             "Webkul\\Resource\\Tests\\": "packages/Webkul/Resource/tests",
             "Webkul\\Publication\\Tests\\": "packages/Webkul/Publication/tests",
-            "Webkul\\ProductPassport\\Tests\\": "packages/Webkul/ProductPassport/tests"
+            "Webkul\\ProductPassport\\Tests\\": "packages/Webkul/ProductPassport/tests",
+            "Webkul\\CalculatedAttribute\\Tests\\": "packages/Webkul/CalculatedAttribute/tests"
         }
     },
     "scripts": {

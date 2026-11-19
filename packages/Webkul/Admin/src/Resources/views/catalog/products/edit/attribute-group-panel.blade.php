@@ -14,6 +14,8 @@
 
     $groupLabel = $group->name;
     $groupLabel = empty($groupLabel) ? "[{$group->code}]" : $groupLabel;
+
+    $fieldValues = $fieldValues ?? $product->values;
 @endphp
 
 {!! view_render_event('unopim.admin.catalog.product.edit.form.column_before', ['product' => $product]) !!}
@@ -40,7 +42,7 @@
             <x-slot:content>
                 <x-admin::products.dynamic-attribute-fields
                     :fields="$customAttributes"
-                    :fieldValues="$product->values"
+                    :fieldValues="$fieldValues"
                     :currentLocaleCode="$currentLocale->code"
                     :currentChannelCode="$currentChannel->code"
                     :channelCurrencies="$currentChannel->currencies"
