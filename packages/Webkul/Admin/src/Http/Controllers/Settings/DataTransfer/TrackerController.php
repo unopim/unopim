@@ -141,7 +141,7 @@ class TrackerController extends Controller
 
         $disk = Storage::disk('private');
 
-        if ($disk->fileExists($jobTrack->file_path)) {
+        if (filled($jobTrack->file_path) && $disk->fileExists($jobTrack->file_path)) {
             return $disk->download($jobTrack->file_path);
         }
 
@@ -168,6 +168,12 @@ class TrackerController extends Controller
      */
     protected function archiveJobFiles(JobTrackContract $jobTrack): mixed
     {
+        $folderPath = trim((string) $jobTrack->file_path, " \t\n\r\0\x0B/");
+
+        if ($folderPath === '') {
+            abort(404, trans('admin::app.settings.data-transfer.tracker.nothing-to-archive'));
+        }
+
         $zip = new ZipArchive;
 
         // Slug the parts and basename the result so a job code containing "../"
@@ -184,8 +190,6 @@ class TrackerController extends Controller
         if (! is_dir(dirname($zipFilePath))) {
             mkdir(dirname($zipFilePath), 0755, true);
         }
-
-        $folderPath = $jobTrack->file_path;
 
         $disk = Storage::disk('private');
 
