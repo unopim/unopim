@@ -188,7 +188,7 @@ return [
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
             'render-templates'       => 'Rendera mallar',
-            'render-templates-info'  => 'Exportera renderade mallvärden i stället för den råa mallkällan',
+            'render-templates-info'  => 'Exportera renderade mallvärden i stället för den råa mallkällan. Om en renderad fil importeras igen ersätts den sparade mallkällan med vanlig text.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

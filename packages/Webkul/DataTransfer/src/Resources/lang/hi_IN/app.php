@@ -188,7 +188,7 @@ return [
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
             'render-templates'       => 'टेम्पलेट रेंडर करें',
-            'render-templates-info'  => 'कच्चे टेम्पलेट स्रोत के बजाय रेंडर किए गए टेम्पलेट मान निर्यात करें',
+            'render-templates-info'  => 'कच्चे टेम्पलेट स्रोत के बजाय रेंडर किए गए टेम्पलेट मान निर्यात करें। रेंडर की गई फ़ाइल को दोबारा आयात करने पर सहेजा गया टेम्पलेट स्रोत सादे टेक्स्ट से बदल जाता है।',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

@@ -1059,6 +1059,9 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         ];
     }
 
+    /**
+     * Resolve the merged parent and variant values of the rows that hold a template, keyed by product id.
+     */
     protected function resolveTemplateContexts(iterable $products): array
     {
         $rows = [];
@@ -1085,6 +1088,9 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         );
     }
 
+    /**
+     * Replace the template sources in the product values with their rendered output for the channel and locale.
+     */
     protected function renderTemplateValues(array $productValues, array $context, string $channel, string $locale): array
     {
         $scopes = [
@@ -1117,6 +1123,9 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         return $productValues;
     }
 
+    /**
+     * Get the template renderer instance.
+     */
     protected function templateRenderer(): TemplateRenderer
     {
         return $this->templateRenderer ??= app(TemplateRenderer::class);

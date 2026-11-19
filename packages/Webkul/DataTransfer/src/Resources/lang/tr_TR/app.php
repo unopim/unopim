@@ -188,7 +188,7 @@ return [
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
             'render-templates'       => 'Şablonları oluştur',
-            'render-templates-info'  => 'Ham şablon kaynağı yerine oluşturulmuş şablon değerlerini dışa aktar',
+            'render-templates-info'  => 'Ham şablon kaynağı yerine oluşturulmuş şablon değerlerini dışa aktar. Oluşturulmuş bir dosyanın yeniden içe aktarılması, kayıtlı şablon kaynağını düz metinle değiştirir.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

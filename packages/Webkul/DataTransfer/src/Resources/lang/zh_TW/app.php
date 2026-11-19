@@ -188,7 +188,7 @@ return [
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
             'render-templates'       => '轉譯範本',
-            'render-templates-info'  => '匯出轉譯後的範本值，而非原始範本來源',
+            'render-templates-info'  => '匯出轉譯後的範本值，而非原始範本來源。重新匯入轉譯後的檔案會以純文字取代已儲存的範本來源。',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

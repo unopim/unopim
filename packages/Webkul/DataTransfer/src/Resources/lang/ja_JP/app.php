@@ -188,7 +188,7 @@ return [
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
             'render-templates'       => 'テンプレートをレンダリング',
-            'render-templates-info'  => '生のテンプレートソースではなく、レンダリング後のテンプレート値をエクスポートします',
+            'render-templates-info'  => '生のテンプレートソースではなく、レンダリング後のテンプレート値をエクスポートします。レンダリング済みのファイルを再インポートすると、保存されているテンプレートソースがプレーンテキストに置き換えられます。',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

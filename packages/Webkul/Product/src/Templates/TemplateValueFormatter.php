@@ -6,6 +6,7 @@ namespace Webkul\Product\Templates;
 
 use Illuminate\Support\Str;
 use Webkul\Attribute\Contracts\Attribute as AttributeContract;
+use Webkul\Attribute\Contracts\AttributeOption;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Services\AttributeNormalizerFactory;
 use Webkul\Core\Repositories\ChannelRepository;
@@ -168,7 +169,7 @@ class TemplateValueFormatter
                 ->whereIn('code', $missing)
                 ->with('translations')
                 ->get()
-                ->each(function ($option) use (&$cached): void {
+                ->each(function (AttributeOption $option) use (&$cached): void {
                     $cached[(string) $option->code] = $option->translations->pluck('label', 'locale')->all();
                 });
 

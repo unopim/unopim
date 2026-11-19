@@ -188,7 +188,7 @@ return [
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
             'render-templates'       => 'Gengiv skabeloner',
-            'render-templates-info'  => 'Eksportér gengivne skabelonværdier i stedet for den rå skabelonkilde',
+            'render-templates-info'  => 'Eksportér gengivne skabelonværdier i stedet for den rå skabelonkilde. Genimport af en gengivet fil erstatter den gemte skabelonkilde med almindelig tekst.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

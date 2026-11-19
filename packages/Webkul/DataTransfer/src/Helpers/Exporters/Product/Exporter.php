@@ -5,6 +5,7 @@ namespace Webkul\DataTransfer\Helpers\Exporters\Product;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Event;
+use Webkul\Attribute\Contracts\Attribute as AttributeContract;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Rules\AttributeTypes;
@@ -125,6 +126,9 @@ class Exporter extends AbstractExporter
         return $this->variantValueResolver ??= app(VariantValueResolver::class);
     }
 
+    /**
+     * Get the template renderer instance.
+     */
     protected function templateRenderer(): TemplateRenderer
     {
         return $this->templateRenderer ??= app(TemplateRenderer::class);
@@ -178,19 +182,28 @@ class Exporter extends AbstractExporter
         $this->applyScopeFilters();
     }
 
-    protected function buildTemplateAttributes($attributes): array
+    /**
+     * Key the attributes that can hold a template by their code.
+     */
+    protected function buildTemplateAttributes(iterable $attributes): array
     {
         return collect($attributes)
-            ->filter(fn ($attribute): bool => $attribute->canHoldTemplate())
+            ->filter(fn (AttributeContract $attribute): bool => $attribute->canHoldTemplate())
             ->keyBy('code')
             ->all();
     }
 
+    /**
+     * Determine if the export job renders templates instead of exporting their source.
+     */
     protected function shouldRenderTemplates(): bool
     {
         return (string) ($this->getFilters()['render_templates'] ?? '0') === '1';
     }
 
+    /**
+     * Replace the exported template sources with their rendered output and log render problems in the job.
+     */
     protected function renderTemplateValues(array $fields, array $values, string $sku, string $channel, string $locale): array
     {
         foreach ($this->templateAttributes as $code => $attribute) {

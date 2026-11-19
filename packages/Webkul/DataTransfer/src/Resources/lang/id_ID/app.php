@@ -188,7 +188,7 @@ return [
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
             'render-templates'       => 'Render templat',
-            'render-templates-info'  => 'Ekspor nilai templat yang telah dirender alih-alih sumber templat mentah',
+            'render-templates-info'  => 'Ekspor nilai templat yang telah dirender alih-alih sumber templat mentah. Mengimpor ulang file yang telah dirender akan mengganti sumber templat yang tersimpan dengan teks biasa.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

@@ -188,7 +188,7 @@ return [
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
             'render-templates'       => 'عرض القوالب',
-            'render-templates-info'  => 'تصدير قيم القوالب المعروضة بدلاً من مصدر القالب الخام',
+            'render-templates-info'  => 'تصدير قيم القوالب المعروضة بدلاً من مصدر القالب الخام. إعادة استيراد ملف معروض تستبدل مصدر القالب المحفوظ بنص عادي.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

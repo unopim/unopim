@@ -188,7 +188,7 @@ return [
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
             'render-templates'       => '渲染模板',
-            'render-templates-info'  => '导出渲染后的模板值，而不是原始模板源',
+            'render-templates-info'  => '导出渲染后的模板值，而不是原始模板源。重新导入渲染后的文件会将已保存的模板源替换为纯文本。',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

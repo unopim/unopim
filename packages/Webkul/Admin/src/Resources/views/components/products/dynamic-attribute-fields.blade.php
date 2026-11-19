@@ -65,7 +65,7 @@
 
     $templateCurrencies = $templateProductId
         ? collect($channelCurrencies)
-            ->map(fn ($currency): array => [
+            ->map(fn (\Webkul\Core\Contracts\Currency $currency): array => [
                 'code'   => $currency->code,
                 'symbol' => core()->currencySymbol($currency),
             ])

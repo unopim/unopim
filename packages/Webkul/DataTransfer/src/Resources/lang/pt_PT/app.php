@@ -188,7 +188,7 @@ return [
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
             'render-templates'       => 'Processar modelos',
-            'render-templates-info'  => 'Exportar os valores processados dos modelos em vez da fonte bruta do modelo',
+            'render-templates-info'  => 'Exportar os valores processados dos modelos em vez da fonte bruta do modelo. Reimportar um ficheiro processado substitui a fonte guardada do modelo por texto simples.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

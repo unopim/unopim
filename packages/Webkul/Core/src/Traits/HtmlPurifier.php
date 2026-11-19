@@ -31,6 +31,9 @@ trait HtmlPurifier
         return $this->renderedHtmlPurifier->purify($value);
     }
 
+    /**
+     * Get the purifier configuration shared by the text and rendered template purifiers.
+     */
     protected function htmlPurifierConfig(): HTMLPurifier_Config
     {
         $config = HTMLPurifier_Config::createDefault();

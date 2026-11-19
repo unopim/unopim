@@ -188,7 +188,7 @@ return [
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
             'render-templates'       => '템플릿 렌더링',
-            'render-templates-info'  => '원본 템플릿 소스 대신 렌더링된 템플릿 값을 내보냅니다',
+            'render-templates-info'  => '원본 템플릿 소스 대신 렌더링된 템플릿 값을 내보냅니다. 렌더링된 파일을 다시 가져오면 저장된 템플릿 소스가 일반 텍스트로 바뀝니다.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

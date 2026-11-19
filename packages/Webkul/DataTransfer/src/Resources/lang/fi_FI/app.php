@@ -188,7 +188,7 @@ return [
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
             'render-templates'       => 'Muodosta mallipohjat',
-            'render-templates-info'  => 'Vie muodostetut mallipohja-arvot alkuperäisen mallipohjalähteen sijaan',
+            'render-templates-info'  => 'Vie muodostetut mallipohja-arvot alkuperäisen mallipohjalähteen sijaan. Muodostetun tiedoston tuominen uudelleen korvaa tallennetun mallipohjalähteen pelkällä tekstillä.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

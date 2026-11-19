@@ -188,7 +188,7 @@ return [
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
             'render-templates'       => 'Обрабатывать шаблоны',
-            'render-templates-info'  => 'Экспортировать готовые значения шаблонов вместо исходного текста шаблона',
+            'render-templates-info'  => 'Экспортировать готовые значения шаблонов вместо исходного текста шаблона. Повторный импорт готового файла заменяет сохранённый исходный текст шаблона обычным текстом.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

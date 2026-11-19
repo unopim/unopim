@@ -188,7 +188,7 @@ return [
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
             'render-templates'       => 'Renderizar modelos',
-            'render-templates-info'  => 'Exportar os valores renderizados dos modelos em vez da fonte bruta do modelo',
+            'render-templates-info'  => 'Exportar os valores renderizados dos modelos em vez da fonte bruta do modelo. Reimportar um arquivo renderizado substitui a fonte salva do modelo por texto simples.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

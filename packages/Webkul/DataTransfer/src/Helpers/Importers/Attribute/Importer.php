@@ -326,6 +326,9 @@ class Importer extends AbstractImporter
         }
     }
 
+    /**
+     * Get the attribute columns of the row that are saved on the attribute.
+     */
     protected function attributeFields(array $rowData): array
     {
         $fields = [
@@ -354,6 +357,9 @@ class Importer extends AbstractImporter
         return $data;
     }
 
+    /**
+     * Determine if the row keeps templates enabled only on an attribute that can hold them.
+     */
     protected function rowSupportsTemplates(array $rowData): bool
     {
         $code = $rowData['code'];
@@ -377,6 +383,9 @@ class Importer extends AbstractImporter
         return true;
     }
 
+    /**
+     * Get the stored attribute of the row code, or null when the attribute is new.
+     */
     protected function templateAttribute(string $code): ?AttributeContract
     {
         if (! $this->attributeStorage->has($code)) {

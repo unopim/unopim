@@ -9,6 +9,8 @@ use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
 use Webkul\Attribute\Contracts\Attribute;
 use Webkul\Attribute\Repositories\AttributeRepository;
+use Webkul\Core\Contracts\Channel;
+use Webkul\Core\Contracts\Locale;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Product\Contracts\VariantValueResolver;
 use Webkul\Product\Models\Product;
@@ -259,8 +261,8 @@ class ProductTemplatesValidator
         return $this->scopes ??= $this->channelRepository
             ->with('locales')
             ->all()
-            ->flatMap(fn ($channel): array => $channel->locales
-                ->map(fn ($locale): array => [$channel->code, $locale->code])
+            ->flatMap(fn (Channel $channel): array => $channel->locales
+                ->map(fn (Locale $locale): array => [$channel->code, $locale->code])
                 ->all())
             ->all();
     }

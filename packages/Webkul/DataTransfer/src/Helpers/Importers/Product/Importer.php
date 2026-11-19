@@ -462,6 +462,9 @@ class Importer extends AbstractImporter
         return $this->measurementHelper ??= resolve(MeasurementHelper::class);
     }
 
+    /**
+     * Get the product templates validator instance.
+     */
     protected function templatesValidator(): ProductTemplatesValidator
     {
         return $this->templatesValidator ??= resolve(ProductTemplatesValidator::class);
@@ -1356,6 +1359,9 @@ class Importer extends AbstractImporter
         return ! $this->errorHelper->isRowInvalid($rowNumber);
     }
 
+    /**
+     * Skip the row when its templates reference attributes outside the row family or form a circular reference.
+     */
     protected function validateTemplateReferences(array $rowData, int $rowNumber, array $sources): void
     {
         $sources = array_filter($sources, fn (mixed $value): bool => is_string($value) && str_contains($value, '{{'));
