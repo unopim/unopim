@@ -2,6 +2,7 @@
 
 namespace Webkul\Admin\Http\Requests\MagicAI;
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Http\FormRequest;
 
 class TranslateResourceRequest extends FormRequest
@@ -40,5 +41,15 @@ class TranslateResourceRequest extends FormRequest
         return $this->input('resource_type') === 'category'
             ? 'catalog.categories'
             : 'catalog.products';
+    }
+
+    /**
+     * Keep the unauthorized message the translate endpoints returned before.
+     *
+     * @throws AuthorizationException
+     */
+    protected function failedAuthorization(): void
+    {
+        throw new AuthorizationException(trans('admin::app.common.unauthorized'));
     }
 }
