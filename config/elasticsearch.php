@@ -8,7 +8,7 @@ return [
     'connection' => env('ELASTICSEARCH_CONNECTION', 'default') ?: 'default',
 
     'enabled'       => filter_var(env('ELASTICSEARCH_ENABLED', false), FILTER_VALIDATE_BOOLEAN),
-    'prefix'        => env('ELASTICSEARCH_INDEX_PREFIX') ?: env('APP_NAME', 'UnoPim'),
+    'prefix'        => preg_replace('/\s+/', '', (string) (env('ELASTICSEARCH_INDEX_PREFIX') ?: env('APP_NAME', 'UnoPim'))),
     'debug_payload' => filter_var(env('ELASTICSEARCH_DEBUG_PAYLOAD', false), FILTER_VALIDATE_BOOLEAN),
 
     /**

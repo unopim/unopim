@@ -2,9 +2,14 @@
 
 namespace Webkul\AiAgent\Http\Requests;
 
+use Closure;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Number;
+use Illuminate\Validation\Rules\File;
+use JsonException;
+use Webkul\AiAgent\Chat\ExtensionRegistry;
+use Webkul\AiAgent\Rules\BoundedJson;
 
 class ChatRequest extends FormRequest
 {
@@ -31,7 +36,7 @@ class ChatRequest extends FormRequest
             'images'      => ['nullable', 'array', 'max:5'],
             'images.*'    => ['image', 'mimes:jpeg,png,webp,gif', 'max:10240'],
             'files'       => ['nullable', 'array', 'max:3'],
-            'files.*'     => ['file', 'mimes:csv,xls,xlsx,txt', 'max:102400', function (string $attribute, mixed $value, \Closure $fail): void {
+            'files.*'     => [File::types(['csv', 'xls', 'xlsx', 'txt'])->max((int) config('ai-agent.chat.max_file_kilobytes')), function (string $attribute, mixed $value, Closure $fail): void {
                 $allowed = ['csv', 'xlsx', 'xls'];
                 $extension = strtolower((string) $value->getClientOriginalExtension());
 
@@ -41,8 +46,23 @@ class ChatRequest extends FormRequest
             }],
             'platform_id'     => ['nullable', 'integer'],
             'model'           => ['nullable', 'string', 'max:200'],
+            'extensions'      => ['nullable', 'array', 'max:10', new BoundedJson, function (string $attribute, mixed $value, Closure $fail): void {
+                if (! is_array($value)) {
+                    return;
+                }
+
+                foreach (array_keys($value) as $namespace) {
+                    if (! is_string($namespace) || ! preg_match(ExtensionRegistry::NAMESPACE_PATTERN, $namespace)) {
+                        $fail(trans('ai-agent::app.common.invalid-data'));
+
+                        return;
+                    }
+                }
+            }],
+            'extensions.*'    => ['array'],
             'context'         => ['nullable', 'array'],
             'history'         => ['nullable', 'array'],
+            'request_id'      => ['nullable', 'uuid'],
             'conversation_id' => ['nullable', 'string', 'max:64', 'regex:/^[A-Za-z0-9_-]+$/'],
         ];
     }
@@ -81,6 +101,21 @@ class ChatRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
+        if (is_string($this->input('extensions'))) {
+            $extensions = $this->input('extensions');
+
+            if (strlen($extensions) <= 16384) {
+                try {
+                    $decoded = json_decode($extensions, true, 10, JSON_THROW_ON_ERROR);
+
+                    if (is_array($decoded)) {
+                        $this->merge(['extensions' => $decoded]);
+                    }
+                } catch (JsonException) {
+                }
+            }
+        }
+
         if (is_string($this->input('history'))) {
             $this->merge(['history' => json_decode($this->input('history'), true) ?: []]);
         }

@@ -1,8 +1,17 @@
 const { test, expect } = require('../../utils/fixtures');
 const { navigateTo, generateUid, resolveEditableProductId } = require('../../utils/helpers');
+const { createSimpleProductRecord, deleteProductBySku } = require('../../utils/product-helpers');
 
 test.describe('Product Edit Associations - Field Validation Message (#1243)', () => {
   test.setTimeout(120000);
+
+  let targetSku;
+
+  test.afterEach(async ({ adminPage }) => {
+    if (targetSku) {
+      await deleteProductBySku(adminPage, targetSku);
+    }
+  });
 
   test('should name the field by its label instead of the request path', async ({ adminPage }) => {
     const uid = generateUid();
@@ -10,6 +19,10 @@ test.describe('Product Edit Associations - Field Validation Message (#1243)', ()
     const fieldCode = `qty_${uid}`;
     const fieldLabel = `Quantity ${uid}`;
     const productId = await resolveEditableProductId(adminPage);
+
+    // The picker never lists the product being edited, so a fresh catalog needs a second one to link.
+    targetSku = `assoc-target-${uid}`;
+    await createSimpleProductRecord(adminPage, targetSku);
 
     await navigateTo(adminPage, 'associationTypes');
 

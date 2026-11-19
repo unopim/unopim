@@ -1,21 +1,22 @@
 const { test, expect } = require('../../utils/fixtures');
+const { resolveEditableProductId } = require('../../utils/helpers');
+const { ensureMagicAITranslationEnabled } = require('../../utils/magic-ai-helpers');
 
-const PRODUCT_EDIT_ID = process.env.PRODUCT_EDIT_ID || 14;
-
-test.describe('Product Edit - More and Collapse Button Spacing (#1228)', () => {
+test.describe('Product Edit - More and Collapse Button Spacing (#1228)', { tag: '@global-state' }, () => {
   test.setTimeout(90000);
 
   test('should keep the More dropdown clear of the side rail collapse toggle', async ({ adminPage }) => {
     await adminPage.setViewportSize({ width: 1440, height: 900 });
 
-    await adminPage.goto(`/admin/catalog/products/edit/${PRODUCT_EDIT_ID}`, { waitUntil: 'domcontentloaded' });
-    await adminPage.waitForTimeout(1500);
+    // The More dropdown renders only while Magic AI translation is enabled.
+    await ensureMagicAITranslationEnabled(adminPage);
+
+    const productId = await resolveEditableProductId(adminPage);
+
+    await adminPage.goto(`/admin/catalog/products/edit/${productId}`, { waitUntil: 'domcontentloaded' });
 
     const more = adminPage.locator('div.relative.inline-block.text-left').first();
-
-    if (!(await more.isVisible().catch(() => false))) {
-      test.skip(true, 'Magic AI translation is disabled, so the More dropdown is not rendered');
-    }
+    await expect(more).toBeVisible();
 
     const collapse = adminPage.locator('.right-column button[title]').first();
     await expect(collapse).toBeVisible();

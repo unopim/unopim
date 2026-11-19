@@ -32,11 +32,7 @@ it('passes the timeout handler the argument list the installed framework declare
 
     $worker->register(null, $options);
 
-    $captured = $worker->captured;
+    $arity = (new ReflectionMethod(BaseWorker::class, 'registerTimeoutHandler'))->getNumberOfParameters();
 
-    expect($captured)->toHaveCount(
-        (new ReflectionMethod(BaseWorker::class, 'registerTimeoutHandler'))->getNumberOfParameters()
-    );
-
-    expect(end($captured))->toBe($options);
+    expect($worker->captured)->toBe(array_slice(['database', 'default', null, $options], -$arity));
 });

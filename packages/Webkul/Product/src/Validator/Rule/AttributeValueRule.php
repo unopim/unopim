@@ -8,9 +8,14 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Translation\PotentiallyTranslatedString;
 use Webkul\Attribute\Contracts\Attribute;
 use Webkul\Attribute\Models\Attribute as AttributeModel;
+use Webkul\Attribute\Rules\AttributeTypes;
+use Webkul\Core\Rules\FileOrImageValidValue;
+use Webkul\Product\Repositories\ProductRepository;
 
 class AttributeValueRule implements ValidationRule
 {
+    protected ?array $storedValues = null;
+
     /**
      * create validation rule object
      */
@@ -40,6 +45,16 @@ class AttributeValueRule implements ValidationRule
 
         $validations = $productAttribute->getValidationRules(currentChannelCode: $channel, currentLocaleCode: $locale, id: $this->productId);
 
+        $storedPaths = $this->storedMediaPaths($productAttribute, $channel, $locale);
+
+        if ($storedPaths !== []) {
+            foreach ($validations as $validation) {
+                if ($validation instanceof FileOrImageValidValue) {
+                    $validation->allowStoredPaths($storedPaths);
+                }
+            }
+        }
+
         $ruleKey = $this->ruleKey($productAttribute, $value);
 
         $validator = Validator::make(
@@ -52,6 +67,35 @@ class AttributeValueRule implements ValidationRule
         if ($validator->fails()) {
             $fail($validator->errors()->first());
         }
+    }
+
+    /**
+     * Media paths the product already stores for this attribute in this channel and locale.
+     *
+     * Read from the persisted record, never from the request, so only a value the
+     * product already owned can bypass the path-prefix check.
+     *
+     * @return string[]
+     */
+    protected function storedMediaPaths(Attribute $attribute, ?string $channel, ?string $locale): array
+    {
+        if (
+            ! $this->productId
+            || ! in_array($attribute->type, [AttributeTypes::FILE_ATTRIBUTE_TYPE, AttributeTypes::IMAGE_ATTRIBUTE_TYPE, AttributeTypes::GALLERY_ATTRIBUTE_TYPE], true)
+        ) {
+            return [];
+        }
+
+        $this->storedValues ??= (array) (resolve(ProductRepository::class)->find($this->productId)?->values ?? []);
+
+        $stored = $attribute->getValueFromProductValues($this->storedValues, (string) $channel, (string) $locale);
+
+        $paths = is_array($stored) ? $stored : explode(',', (string) $stored);
+
+        return array_values(array_filter(
+            array_map(fn (mixed $path): string => is_string($path) ? trim($path) : '', $paths),
+            fn (string $path): bool => $path !== '',
+        ));
     }
 
     /**

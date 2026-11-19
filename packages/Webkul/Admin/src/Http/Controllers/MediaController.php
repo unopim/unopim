@@ -13,11 +13,14 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Webkul\Admin\Http\Requests\MediaDownloadRequest;
 use Webkul\Admin\Http\Requests\MediaScanRequest;
+use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Core\Helpers\MediaContent;
 use Webkul\Core\Rules\FileOrImageValidValue;
 
 class MediaController extends Controller
 {
+    public function __construct(protected AttributeRepository $attributeRepository) {}
+
     /**
      * Run the save-time upload rule against a file the media widget has just
      * picked, so the admin hears about a rejected file before submitting the
@@ -99,7 +102,7 @@ class MediaController extends Controller
 
         $extension = strtolower((string) pathinfo($path, PATHINFO_EXTENSION));
 
-        abort_unless(in_array($extension, $this->allowedExtensions(), true), Response::HTTP_FORBIDDEN);
+        abort_unless($this->isAllowedExtension($extension, $segments), Response::HTTP_FORBIDDEN);
 
         abort_unless(Storage::exists($path), 404);
 
@@ -119,13 +122,40 @@ class MediaController extends Controller
     }
 
     /**
-     * Extensions the upload validators accept.
+     * Whether the upload validators would have accepted this extension for
+     * the path: a default extension anywhere, or one the owning product
+     * attribute (`product/{id}/{attribute}/...`) configures. Only the owning
+     * attribute is looked up, so another attribute's list never widens it.
+     *
+     * @param  array<int, string>  $segments
+     */
+    private function isAllowedExtension(string $extension, array $segments): bool
+    {
+        if (MediaContent::isBlockedExtension($extension)) {
+            return false;
+        }
+
+        if (in_array($extension, $this->defaultExtensions(), true)) {
+            return true;
+        }
+
+        if ($segments[0] !== 'product' || count($segments) < 4) {
+            return false;
+        }
+
+        $attribute = $this->attributeRepository->findOneByField('code', $segments[2]);
+
+        return $attribute !== null && in_array($extension, $attribute->resolvedAllowedExtensions(), true);
+    }
+
+    /**
+     * Extensions the upload validators accept by default.
      *
      * @return array<int, string>
      */
-    private function allowedExtensions(): array
+    private function defaultExtensions(): array
     {
-        return array_map('strtolower', array_merge(
+        return array_map(strtolower(...), array_merge(
             FileOrImageValidValue::IMAGE_ALLOWED_EXTENSIONS,
             FileOrImageValidValue::VIDEO_ALLOWED_EXTENSIONS,
             FileOrImageValidValue::FILE_ALLOWED_EXTENSION,

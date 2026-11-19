@@ -4,6 +4,7 @@ namespace Webkul\Publication\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 use Webkul\Publication\Enums\PublicationStatus;
 use Webkul\Publication\Jobs\RecordPublicationView;
@@ -18,7 +19,7 @@ class PublicationController extends Controller
      * Bump when the rendered template's HTML shape changes in a way that must
      * invalidate every previously cached ETag, independent of payload content.
      */
-    private const TEMPLATE_VERSION = '1';
+    private const TEMPLATE_VERSION = '2';
 
     public function __construct(
         private readonly PublicationResolver $resolver,
@@ -92,6 +93,9 @@ class PublicationController extends Controller
      *
      * The locale switcher is built from the published versions, not the channel's
      * locales: a channel locale with no current version has no URL to switch to.
+     *
+     * A Redacted tombstone answers 410 Gone because redaction is irreversible; a Withdrawn one can be
+     * reinstated, so it stays 200. Neither may sit in a shared cache, as there is no purge hook to evict it.
      */
     public function show(Request $request, string $uuid, string $locale): Response
     {
@@ -169,11 +173,15 @@ class PublicationController extends Controller
                 ->values(),
         ]);
 
+        $tombstone = $publication->status !== PublicationStatus::Published;
+
+        $status = $publication->status === PublicationStatus::Redacted ? 410 : 200;
+
         return $this->tierCache(
-            response($view->render())
+            response($view->render(), $status)
                 ->header('ETag', $etag)
-                ->header('Cache-Control', $this->cacheControl($publication->channel?->code))
-                ->header('X-Robots-Tag', ((bool) (core()->getConfigData('general.publication.settings.indexable', $publication->channel->code) ?? false)) ? 'index, nofollow' : 'noindex, nofollow'),
+                ->header('Cache-Control', $tombstone ? 'private, no-store' : $this->cacheControl($publication->channel?->code))
+                ->header('X-Robots-Tag', (! $tombstone && (bool) (core()->getConfigData('general.publication.settings.indexable', $publication->channel->code) ?? false)) ? 'index, nofollow' : 'noindex, nofollow'),
             $grantedIndex,
         );
     }
@@ -228,11 +236,41 @@ class PublicationController extends Controller
             $documents = array_merge($documents, $payload['tiers'][$tier]['documents'] ?? []);
         }
 
-        $payload['sections'][0]['fields'] = $fields;
+        $payload['sections'] = $this->groupIntoSections($payload['sections'] ?? [], $fields);
         $payload['documents'] = $documents;
         unset($payload['tiers']);
 
         return $payload;
+    }
+
+    /**
+     * Places each visible field under the section it was published in. A field
+     * from a section the payload does not list (a version published before every
+     * section was listed) gets a heading from its section key; a field without a
+     * section key (a pre-section payload) joins the first section.
+     *
+     * @param  list<array<string, mixed>>  $sections
+     * @param  list<array<string, mixed>>  $fields
+     * @return list<array<string, mixed>>
+     */
+    private function groupIntoSections(array $sections, array $fields): array
+    {
+        $grouped = [];
+
+        foreach ($sections as $section) {
+            $grouped[(string) ($section['key'] ?? '')] = [...$section, 'fields' => []];
+        }
+
+        $firstKey = array_key_first($grouped) ?? '';
+
+        foreach ($fields as $field) {
+            $key = isset($field['section']) ? (string) $field['section'] : $firstKey;
+
+            $grouped[$key] ??= ['key' => $key, 'label' => Str::headline($key), 'fields' => []];
+            $grouped[$key]['fields'][] = $field;
+        }
+
+        return array_values($grouped);
     }
 
     /**

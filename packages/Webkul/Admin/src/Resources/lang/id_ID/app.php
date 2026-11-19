@@ -1580,9 +1580,11 @@ return [
                     'zip-upload-success'  => 'ZIP berhasil diunggah dan diekstrak.',
                     'zip-upload-error'    => 'Gagal mengunggah ZIP. Silakan coba lagi.',
                     'invalid-zip'         => 'File yang diunggah bukan arsip ZIP yang valid.',
-                    'zip-upload-or'       => 'atau unggah ZIP berisi gambar',
-                    'zip-click-upload'    => 'Klik untuk mengunggah ZIP berisi gambar',
+                    'zip-upload-or'       => 'atau unggah ZIP berisi gambar dan dokumen',
+                    'zip-click-upload'    => 'Klik untuk mengunggah ZIP berisi gambar dan dokumen',
                     'zip-files-extracted' => 'file diekstrak',
+                    'zip-files-skipped'   => ':skipped (jenis tidak didukung, konten tidak valid, atau terlalu besar):',
+                    'zip-accepted-types'  => 'Diterima dalam ZIP: :types',
                     'zip-drop-hint'       => 'Klik atau seret dan lepaskan file ZIP di sini',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MAKS. 2MB)',
                     'images-directory'    => 'Jalur',
@@ -1704,6 +1706,9 @@ return [
                 'setup-queue-error'          => 'Harap ubah driver antrian Anda menjadi "basis data" atau "redis" untuk memulai proses impor.',
                 'update-success'             => 'Impor berhasil diperbarui.',
                 'zip-upload-success'         => 'ZIP berhasil diunggah dan diekstrak.',
+                'zip-extracted-count'        => ':count file diekstrak',
+                'zip-skipped-count'          => ':count dilewati',
+                'zip-upload-partial'         => 'ZIP diunggah. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [
@@ -2111,6 +2116,7 @@ return [
             'delete-failed'                   => 'Peran dihapus gagal',
             'delete-success'                  => 'Peran berhasil dihapus',
             'last-delete-error'               => 'Peran terakhir tidak dapat dihapus',
+            'last-full-access'                => 'Setidaknya satu pengguna aktif harus mempertahankan akses penuh.',
             'update-success'                  => 'Peran berhasil diperbarui',
         ],
     ],
@@ -2150,6 +2156,26 @@ return [
                     'info'  => '',
                     'title' => 'Umum',
                 ],
+                'platform' => [
+                    'info'  => 'Pilih modul platform yang diaktifkan.',
+                    'title' => 'Platform',
+
+                    'settings' => [
+                        'info'  => 'Jalankan modul mana pun secara mandiri atau beberapa sekaligus; modul yang membutuhkan modul lain hanya dapat diaktifkan bersamanya.',
+                        'title' => 'Pemilihan modul',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Menonaktifkan modul akan menyembunyikan menu, halaman, dan rute API-nya; datanya tetap disimpan.',
+                        'title' => 'Modul',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Hanya berlaku saat Informasi Produk (PIM) dinonaktifkan. Bagian yang dipilih dihapus dari menu dan halaman adminnya diblokir; datanya tetap disimpan dan rute Admin API-nya tetap tersedia.',
+                        'title' => 'Bagian tersembunyi',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -2321,6 +2347,7 @@ return [
                 'title'               => 'Prompt',
                 'create-btn'          => 'Buat Prompt',
                 'edit-title'          => 'Edit Prompt',
+                'insert-attribute'    => 'Sisipkan atribut',
                 'create-title'        => 'Buat Prompt Baru',
                 'label-title'         => 'Judul',
                 'purpose'             => 'Tujuan',
@@ -3093,6 +3120,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Dasbor',
+        'home'      => 'Beranda',
         'go-back'   => 'Kembali',
         'support'   => 'Jika masalah tetap ada, hubungi kami di <a href=":link" class=":class">:email</a> for assistance.',
         '404'       => [

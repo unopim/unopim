@@ -9,11 +9,20 @@
 </p>
 
 <p align="center">
-  <a href="https://packagist.org/packages/unopim/unopim"><img src="https://poser.pugx.org/unopim/unopim/d/total.svg" alt="Total Downloads"></a>
   <a href="https://packagist.org/packages/unopim/unopim"><img src="https://poser.pugx.org/unopim/unopim/v/stable.svg" alt="Latest Stable Version"></a>
+  <a href="https://packagist.org/packages/unopim/unopim"><img src="https://poser.pugx.org/unopim/unopim/d/total.svg" alt="Total Downloads"></a>
+  <a href="https://hub.docker.com/r/webkul/unopim"><img src="https://img.shields.io/docker/pulls/webkul/unopim?logo=docker&logoColor=white" alt="Docker Pulls"></a>
+  <a href="https://packagist.org/packages/unopim/unopim"><img src="https://img.shields.io/packagist/dependency-v/unopim/unopim/php?logo=php&logoColor=white" alt="PHP Version"></a>
+  <a href="https://laravel.com/"><img src="https://img.shields.io/packagist/dependency-v/unopim/unopim/laravel/framework?label=laravel&logo=laravel&logoColor=white" alt="Laravel Version"></a>
   <a href="https://packagist.org/packages/unopim/unopim"><img src="https://poser.pugx.org/unopim/unopim/license.svg" alt="License"></a>
+</p>
+
+<p align="center">
   <a href="https://github.com/unopim/unopim/actions"><img src="https://img.shields.io/github/actions/workflow/status/unopim/unopim/pest_tests.yml?branch=3.x&label=tests" alt="Tests"></a>
   <a href="https://github.com/unopim/unopim/actions"><img src="https://img.shields.io/github/actions/workflow/status/unopim/unopim/linting_tests.yml?branch=3.x&label=lint" alt="Lint"></a>
+  <a href="https://sonarcloud.io/summary/new_code?id=unopim_unopim"><img src="https://sonarcloud.io/api/project_badges/measure?project=unopim_unopim&metric=alert_status" alt="Quality Gate Status"></a>
+  <a href="https://www.bestpractices.dev/projects/16085"><img src="https://www.bestpractices.dev/projects/16085/badge" alt="OpenSSF Best Practices"></a>
+  <a href="https://scorecard.dev/viewer/?uri=github.com/unopim/unopim"><img src="https://api.scorecard.dev/projects/github.com/unopim/unopim/badge" alt="OpenSSF Scorecard"></a>
 </p>
 
 <p align="center">
@@ -178,7 +187,7 @@ UnoPim is engineered for high-volume catalogues. Read [how UnoPim scales to hand
 Free, officially maintained extensions:
 
 - [**UnoPim DAM**](https://github.com/unopim/unopim-digital-asset-management) — Digital Asset Management: file and directory management, asset upload and preview, metadata tagging, and CSV/XLSX asset assignment.
-- [**Shopify Connector**](https://github.com/unopim/shopify-connector) — sync product data, prices, descriptions, and images with a Shopify store.
+- [**Shopify Connector**](https://github.com/unopim/shopify-connector) — sync product data, prices, descriptions, and images with a Shopify store. Need real-time sync, scheduled exports or catalogs? Upgrade to [**Shopify Connector Pro**](https://store.webkul.com/unopim-shopify-connector-pro.html).
 - [**Bagisto Connector**](https://github.com/unopim/bagisto-connector) — sync products, attributes, and media into a [Bagisto](https://bagisto.com/) storefront, with customizable mappings.
 
 More connectors and modules are listed on the [UnoPim extensions marketplace](https://unopim.com/extensions/). Extensions are ordinary Concord packages — see the [developer documentation](https://devdocs.unopim.com/) to build your own.

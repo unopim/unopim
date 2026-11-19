@@ -1580,9 +1580,11 @@ return [
                     'zip-upload-success'  => 'ZIP başarıyla yüklendi ve çıkartıldı.',
                     'zip-upload-error'    => 'ZIP yüklenemedi. Lütfen tekrar deneyin.',
                     'invalid-zip'         => 'Yüklenen dosya geçerli bir ZIP arşivi değil.',
-                    'zip-upload-or'       => 'veya bir ZIP dosyası ile görsel yükleyin',
-                    'zip-click-upload'    => 'Görsel ZIP dosyası yüklemek için tıklayın',
+                    'zip-upload-or'       => 'veya görsel ve belgelerden oluşan bir ZIP dosyası yükleyin',
+                    'zip-click-upload'    => 'Görsel ve belge ZIP dosyası yüklemek için tıklayın',
                     'zip-files-extracted' => 'dosya çıkartıldı',
+                    'zip-files-skipped'   => ':skipped (desteklenmeyen tür, geçersiz içerik veya çok büyük):',
+                    'zip-accepted-types'  => 'ZIP içinde kabul edilenler: :types',
                     'zip-drop-hint'       => 'Buraya bir ZIP dosyasını tıklayın veya sürükleyip bırakın',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MAKS. 2MB)',
                     'images-directory'    => 'Yol',
@@ -1704,6 +1706,9 @@ return [
                 'setup-queue-error'          => 'İçe aktarma sürecini başlatmak için lütfen kuyruk sürücünüzü "database" veya "redis" olarak değiştirin.',
                 'update-success'             => 'İçe aktarma başarıyla güncellendi.',
                 'zip-upload-success'         => 'ZIP başarıyla yüklendi ve çıkartıldı.',
+                'zip-extracted-count'        => ':count dosya çıkarıldı',
+                'zip-skipped-count'          => ':count atlandı',
+                'zip-upload-partial'         => 'ZIP yüklendi. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [
@@ -2113,6 +2118,7 @@ return [
             'delete-failed'                   => 'Rol silinemedi',
             'delete-success'                  => 'Rol başarıyla silindi',
             'last-delete-error'               => 'Son rol silinemedi',
+            'last-full-access'                => 'En az bir aktif kullanıcı tam erişimi korumalıdır.',
             'update-success'                  => 'Rol başarıyla güncellendi',
         ],
     ],
@@ -2152,6 +2158,26 @@ return [
                     'info'  => '',
                     'title' => 'Genel',
                 ],
+                'platform' => [
+                    'info'  => 'Hangi platform modüllerinin açık olacağını seçin.',
+                    'title' => 'Platform',
+
+                    'settings' => [
+                        'info'  => 'Herhangi bir modülü tek başına veya birkaçını birlikte çalıştırın; başka bir modüle ihtiyaç duyan bir modül yalnızca onunla birlikte açılabilir.',
+                        'title' => 'Modül seçimi',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Bir modülü kapatmak menülerini, sayfalarını ve API rotalarını gizler; verileri korunur.',
+                        'title' => 'Modüller',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Yalnızca Ürün Bilgisi (PIM) kapalıyken geçerlidir. Seçilen bölümler menüden kaldırılır ve yönetim sayfaları engellenir; verileri korunur ve Admin API rotaları kullanılabilir kalır.',
+                        'title' => 'Gizli bölümler',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -2323,6 +2349,7 @@ return [
                 'title'               => 'İstem',
                 'create-btn'          => 'İstem Oluştur',
                 'edit-title'          => 'İstemi Düzenle',
+                'insert-attribute'    => 'Özellik ekle',
                 'create-title'        => 'Yeni İstem Oluştur',
                 'label-title'         => 'Başlık',
                 'purpose'             => 'Amaç',
@@ -3096,6 +3123,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Gösterge Paneli',
+        'home'      => 'Ana Sayfa',
         'go-back'   => 'Geri Dön',
         'support'   => 'Sorun devam ederse, bizimle iletişime geçin: <a href=":link" class=":class">:email</a> için yardım.',
         '404'       => [

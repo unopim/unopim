@@ -1580,9 +1580,11 @@ return [
                     'zip-upload-success'  => 'ZIP đã được tải lên và giải nén thành công.',
                     'zip-upload-error'    => 'Tải lên ZIP thất bại. Vui lòng thử lại.',
                     'invalid-zip'         => 'Tệp đã tải lên không phải là tệp ZIP hợp lệ.',
-                    'zip-upload-or'       => 'hoặc tải lên một tệp ZIP chứa hình ảnh',
-                    'zip-click-upload'    => 'Nhấn để tải lên tệp ZIP chứa hình ảnh',
+                    'zip-upload-or'       => 'hoặc tải lên một tệp ZIP chứa hình ảnh và tài liệu',
+                    'zip-click-upload'    => 'Nhấn để tải lên tệp ZIP chứa hình ảnh và tài liệu',
                     'zip-files-extracted' => 'tệp đã giải nén',
+                    'zip-files-skipped'   => ':skipped (loại không được hỗ trợ, nội dung không hợp lệ hoặc quá lớn):',
+                    'zip-accepted-types'  => 'Được chấp nhận trong ZIP: :types',
                     'zip-drop-hint'       => 'Nhấp hoặc kéo và thả tệp ZIP vào đây',
                     'file-upload-info'    => 'CSV, XLSX, JSON (TỐI ĐA. 2MB)',
                     'images-directory'    => 'Đường dẫn',
@@ -1704,6 +1706,9 @@ return [
                 'setup-queue-error'          => 'Vui lòng thay đổi trình điều khiển hàng đợi của bạn thành "database" hoặc "redis" để bắt đầu quá trình nhập.',
                 'update-success'             => 'Nhập đã được cập nhật thành công.',
                 'zip-upload-success'         => 'ZIP đã được tải lên và giải nén thành công.',
+                'zip-extracted-count'        => 'Đã giải nén :count tệp',
+                'zip-skipped-count'          => 'bỏ qua :count',
+                'zip-upload-partial'         => 'Đã tải ZIP lên. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [
@@ -2113,6 +2118,7 @@ return [
             'delete-failed'                   => 'Không thể xóa vai trò',
             'delete-success'                  => 'Vai trò đã bị xóa thành công',
             'last-delete-error'               => 'Không thể xóa vai trò cuối cùng',
+            'last-full-access'                => 'Ít nhất một người dùng đang hoạt động phải giữ toàn quyền truy cập.',
             'update-success'                  => 'Vai trò đã được cập nhật thành công',
         ],
     ],
@@ -2152,6 +2158,26 @@ return [
                     'info'  => '',
                     'title' => 'Chung',
                 ],
+                'platform' => [
+                    'info'  => 'Chọn các mô-đun nền tảng được bật.',
+                    'title' => 'Nền tảng',
+
+                    'settings' => [
+                        'info'  => 'Chạy bất kỳ mô-đun nào riêng lẻ hoặc nhiều mô-đun cùng lúc; mô-đun cần mô-đun khác chỉ có thể bật cùng với mô-đun đó.',
+                        'title' => 'Chọn mô-đun',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Tắt một mô-đun sẽ ẩn menu, trang và tuyến API của mô-đun đó; dữ liệu vẫn được giữ lại.',
+                        'title' => 'Mô-đun',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Chỉ áp dụng khi Thông tin sản phẩm (PIM) đang tắt. Các mục đã chọn bị xóa khỏi menu và trang quản trị của chúng bị chặn; dữ liệu vẫn được giữ lại và các route Admin API của chúng vẫn khả dụng.',
+                        'title' => 'Mục bị ẩn',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -2323,6 +2349,7 @@ return [
                 'title'               => 'Gợi ý',
                 'create-btn'          => 'Tạo Gợi ý',
                 'edit-title'          => 'Chỉnh sửa Gợi ý',
+                'insert-attribute'    => 'Chèn thuộc tính',
                 'create-title'        => 'Tạo Gợi ý Mới',
                 'label-title'         => 'Tiêu đề',
                 'purpose'             => 'Mục đích',
@@ -3096,6 +3123,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Bảng điều khiển',
+        'home'      => 'Trang chủ',
         'go-back'   => 'Quay lại',
         'support'   => 'Nếu vấn đề tiếp tục, hãy liên hệ với chúng tôi tại <a href=":link" class=":class">:email</a> để được trợ giúp.',
         '404'       => [

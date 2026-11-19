@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Storage;
+use Webkul\Attribute\Models\Attribute;
 use Webkul\User\Models\Admin;
 use Webkul\User\Models\Role;
 
@@ -91,3 +92,56 @@ it('allows a media download for an admin holding the owning module permission', 
     get(route('admin.media.download', ['path' => 'category/1/banner/photo.jpg']))
         ->assertOk();
 });
+
+it('downloads a stored file whose extension is configured on its owning attribute', function () {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create(['type' => 'file', 'allowed_extensions' => ['zip', 'pdf']]);
+
+    Storage::fake();
+    Storage::put('product/1/'.$attribute->code.'/bundle.zip', 'zip-bytes');
+
+    $response = get(route('admin.media.download', ['path' => 'product/1/'.$attribute->code.'/bundle.zip']))
+        ->assertOk();
+
+    expect($response->headers->get('Content-Disposition'))->toContain('attachment');
+});
+
+it('previews a custom-extension file as a download rather than inline', function () {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create(['type' => 'file', 'allowed_extensions' => ['zip']]);
+
+    Storage::fake();
+    Storage::put('product/1/'.$attribute->code.'/bundle.zip', 'zip-bytes');
+
+    $response = get(route('admin.media.preview', ['path' => 'product/1/'.$attribute->code.'/bundle.zip']))
+        ->assertOk();
+
+    expect($response->headers->get('Content-Disposition'))->toContain('attachment');
+});
+
+it('rejects a custom extension stored under an attribute that does not allow it', function () {
+    $this->loginAsAdmin();
+
+    Attribute::factory()->create(['type' => 'file', 'allowed_extensions' => ['zip']]);
+    $other = Attribute::factory()->create(['type' => 'file', 'allowed_extensions' => null]);
+
+    Storage::fake();
+    Storage::put('product/1/'.$other->code.'/bundle.zip', 'zip-bytes');
+
+    get(route('admin.media.download', ['path' => 'product/1/'.$other->code.'/bundle.zip']))
+        ->assertForbidden();
+});
+
+it('rejects a dangerous extension even when an attribute configures it', function (string $extension) {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create(['type' => 'file', 'allowed_extensions' => ['zip', $extension]]);
+
+    Storage::fake();
+    Storage::put('product/1/'.$attribute->code.'/payload.'.$extension, '<?php echo 1; ?>');
+
+    get(route('admin.media.download', ['path' => 'product/1/'.$attribute->code.'/payload.'.$extension]))
+        ->assertForbidden();
+})->with(['php', 'phtml', 'phar', 'html', 'htm', 'js', 'svgz']);

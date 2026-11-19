@@ -1581,9 +1581,11 @@ return [
                     'zip-upload-success'  => 'ZIP enviado e extraído com sucesso.',
                     'zip-upload-error'    => 'Falha ao enviar o ZIP. Tente novamente.',
                     'invalid-zip'         => 'O arquivo enviado não é um arquivo ZIP válido.',
-                    'zip-upload-or'       => 'ou envie um ZIP de imagens',
-                    'zip-click-upload'    => 'Clique para enviar um ZIP de imagens',
+                    'zip-upload-or'       => 'ou envie um ZIP de imagens e documentos',
+                    'zip-click-upload'    => 'Clique para enviar um ZIP de imagens e documentos',
                     'zip-files-extracted' => 'arquivos extraídos',
+                    'zip-files-skipped'   => ':skipped (tipo não suportado, conteúdo inválido ou muito grandes):',
+                    'zip-accepted-types'  => 'Aceito no ZIP: :types',
                     'zip-drop-hint'       => 'Clique ou arraste e solte um arquivo ZIP aqui',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MÁX. 2MB)',
                     'images-directory'    => 'Caminho',
@@ -1705,6 +1707,9 @@ return [
                 'setup-queue-error'          => 'Por favor, altere seu driver de fila para "database" ou "redis" para iniciar o processo de importação.',
                 'update-success'             => 'Importação atualizada com sucesso.',
                 'zip-upload-success'         => 'ZIP enviado e extraído com sucesso.',
+                'zip-extracted-count'        => '{1} :count arquivo extraído|[0,*] :count arquivos extraídos',
+                'zip-skipped-count'          => '{1} :count ignorado|[0,*] :count ignorados',
+                'zip-upload-partial'         => 'ZIP enviado. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [
@@ -2113,6 +2118,7 @@ return [
             'delete-failed'                   => 'Falha ao excluir a função',
             'delete-success'                  => 'Função excluída com sucesso',
             'last-delete-error'               => 'A última função não pode ser excluída',
+            'last-full-access'                => 'Pelo menos um usuário ativo deve manter acesso total.',
             'update-success'                  => 'Função atualizada com sucesso',
         ],
     ],
@@ -2152,6 +2158,26 @@ return [
                     'info'  => '',
                     'title' => 'Geral',
                 ],
+                'platform' => [
+                    'info'  => 'Escolha quais módulos da plataforma estão ativados.',
+                    'title' => 'Plataforma',
+
+                    'settings' => [
+                        'info'  => 'Execute qualquer módulo sozinho ou vários juntos; um módulo que depende de outro só pode ser ativado junto com ele.',
+                        'title' => 'Seleção de módulos',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Desativar um módulo oculta seus menus, páginas e rotas de API; seus dados são mantidos.',
+                        'title' => 'Módulos',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Aplica-se apenas enquanto Informações de produto (PIM) estiver desativado. As seções selecionadas são removidas do menu e suas páginas de administração bloqueadas; seus dados são mantidos e suas rotas da Admin API continuam disponíveis.',
+                        'title' => 'Seções ocultas',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -2323,6 +2349,7 @@ return [
                 'title'               => 'Prompt',
                 'create-btn'          => 'Criar Prompt',
                 'edit-title'          => 'Editar Prompt',
+                'insert-attribute'    => 'Inserir atributo',
                 'create-title'        => 'Criar Novo Prompt',
                 'label-title'         => 'Título',
                 'purpose'             => 'Finalidade',
@@ -3096,6 +3123,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Painel',
+        'home'      => 'Início',
         'go-back'   => 'Voltar',
         'support'   => 'Se o problema persistir, entre em contato conosco através do <a href=":link" class=":class">:email</a> para assistência.',
         '404'       => [

@@ -1580,9 +1580,11 @@ return [
                     'zip-upload-success'  => 'تم رفع واستخراج ZIP بنجاح.',
                     'zip-upload-error'    => 'فشل رفع ZIP. يرجى المحاولة مرة أخرى.',
                     'invalid-zip'         => 'الملف المرفوع ليس أرشيف ZIP صالح.',
-                    'zip-upload-or'       => 'أو ارفع ملف ZIP للصور',
-                    'zip-click-upload'    => 'انقر لرفع ملف ZIP للصور',
+                    'zip-upload-or'       => 'أو ارفع ملف ZIP للصور والمستندات',
+                    'zip-click-upload'    => 'انقر لرفع ملف ZIP للصور والمستندات',
                     'zip-files-extracted' => 'ملفات مستخرجة',
+                    'zip-files-skipped'   => ':skipped (نوع غير مدعوم أو محتوى غير صالح أو حجم كبير جدًا):',
+                    'zip-accepted-types'  => 'المقبول في ZIP: :types',
                     'zip-drop-hint'       => 'انقر أو اسحب وأفلت ملف ZIP هنا',
                     'file-upload-info'    => 'CSV, XLSX, JSON (بحد أقصى 2 ميغابايت)',
                     'images-directory'    => 'طريق',
@@ -1704,6 +1706,9 @@ return [
                 'setup-queue-error'          => 'يرجى تغيير برنامج قائمة الانتظار الخاص بك إلى "قاعدة البيانات" أو "redis" لبدء عملية الاستيراد.',
                 'update-success'             => 'استيراد تحديث بنجاح.',
                 'zip-upload-success'         => 'تم رفع واستخراج ZIP بنجاح.',
+                'zip-extracted-count'        => 'لم يتم استخراج أي ملف|تم استخراج ملف واحد|تم استخراج ملفين|تم استخراج :count ملفات|تم استخراج :count ملفًا|تم استخراج :count ملف',
+                'zip-skipped-count'          => 'لم يتم تخطي أي ملف|تم تخطي ملف واحد|تم تخطي ملفين|تم تخطي :count ملفات|تم تخطي :count ملفًا|تم تخطي :count ملف',
+                'zip-upload-partial'         => 'تم رفع ZIP. :extracted، و:skipped.',
             ],
             'exports' => [
                 'create' => [
@@ -2111,6 +2116,7 @@ return [
             'delete-failed'                   => 'تم حذف الأدوار فشلت',
             'delete-success'                  => 'تم حذف الأدوار بنجاح',
             'last-delete-error'               => 'لا يمكن حذف الأدوار الأخيرة',
+            'last-full-access'                => 'يجب أن يحتفظ مستخدم نشط واحد على الأقل بالوصول الكامل.',
             'update-success'                  => 'يتم تحديث الأدوار بنجاح',
         ],
     ],
@@ -2150,6 +2156,26 @@ return [
                     'info'  => '',
                     'title' => 'عام',
                 ],
+                'platform' => [
+                    'info'  => 'اختر وحدات المنصة المفعّلة.',
+                    'title' => 'المنصة',
+
+                    'settings' => [
+                        'info'  => 'شغّل أي وحدة بمفردها أو عدة وحدات معًا؛ الوحدة التي تحتاج إلى وحدة أخرى لا يمكن تفعيلها إلا معها.',
+                        'title' => 'اختيار الوحدات',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'إيقاف وحدة يخفي قوائمها وصفحاتها ومسارات واجهة البرمجة الخاصة بها، مع الاحتفاظ ببياناتها.',
+                        'title' => 'الوحدات',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'يُطبَّق فقط عندما تكون معلومات المنتجات (PIM) متوقفة. تُزال الأقسام المحددة من القائمة وتُحظر صفحات الإدارة الخاصة بها، مع الاحتفاظ ببياناتها وبقاء مسارات Admin API الخاصة بها متاحة.',
+                        'title' => 'الأقسام المخفية',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -2321,6 +2347,7 @@ return [
                 'title'               => 'الموجه',
                 'create-btn'          => 'إنشاء موجه',
                 'edit-title'          => 'تعديل الموجه',
+                'insert-attribute'    => 'إدراج سمة',
                 'create-title'        => 'إنشاء موجه جديد',
                 'label-title'         => 'العنوان',
                 'purpose'             => 'الغرض',
@@ -3092,6 +3119,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'لوحة القيادة',
+        'home'      => 'الرئيسية',
         'go-back'   => 'عُد',
         'support'   => 'إذا استمرت المشكلة، فتواصل معنا على <a href=":link" class=":class">:email</a> للحصول على المساعدة.',
         '404'       => [

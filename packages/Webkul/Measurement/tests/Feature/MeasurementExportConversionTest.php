@@ -495,10 +495,10 @@ describe('Issue #1196 - measurement conversion during product export', function 
             ->and($byLocale['fr_FR'][$measurement->code.'(unit)'])->toBe('Metre');
     });
 
-    it('resolves the product exporter to the core class, which reads amount and unit verbatim', function () {
+    it('resolves the product exporter to the core class or a subclass, which reads amount and unit verbatim', function () {
         $exporter = app(Exporter::class);
 
-        expect($exporter::class)->toBe(Exporter::class);
+        expect($exporter)->toBeInstanceOf(Exporter::class);
 
         $method = new ReflectionMethod($exporter, 'extractMeasurement');
         $method->setAccessible(true);

@@ -1580,9 +1580,11 @@ return [
                     'zip-upload-success'  => 'Matagumpay na na-upload at na-extract ang ZIP.',
                     'zip-upload-error'    => 'Nabigong mag-upload ng ZIP. Mangyaring subukan muli.',
                     'invalid-zip'         => 'Ang na-upload na file ay hindi wastong ZIP archive.',
-                    'zip-upload-or'       => 'o mag-upload ng ZIP ng mga larawan',
-                    'zip-click-upload'    => 'I-click upang mag-upload ng ZIP ng mga larawan',
+                    'zip-upload-or'       => 'o mag-upload ng ZIP ng mga larawan at dokumento',
+                    'zip-click-upload'    => 'I-click upang mag-upload ng ZIP ng mga larawan at dokumento',
                     'zip-files-extracted' => 'mga file na na-extract',
+                    'zip-files-skipped'   => ':skipped (hindi suportadong uri, di-wastong nilalaman, o masyadong malaki):',
+                    'zip-accepted-types'  => 'Tinatanggap sa ZIP: :types',
                     'zip-drop-hint'       => 'I-click o i-drag & drop ang isang ZIP file dito',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MAX. 2MB)',
                     'images-directory'    => 'Landas',
@@ -1704,6 +1706,9 @@ return [
                 'setup-queue-error'          => 'Mangyaring baguhin ang iyong queue driver sa "database" o "redis" upang simulan ang proseso ng pag-import.',
                 'update-success'             => 'Matagumpay na na-update ang pag-import.',
                 'zip-upload-success'         => 'Matagumpay na na-upload at na-extract ang ZIP.',
+                'zip-extracted-count'        => '{1} :count file ang na-extract|[0,*] :count mga file ang na-extract',
+                'zip-skipped-count'          => '{1} :count ang nilaktawan|[0,*] :count ang nilaktawan',
+                'zip-upload-partial'         => 'Na-upload ang ZIP. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [
@@ -2113,6 +2118,7 @@ return [
             'delete-failed'                   => 'Nabigo ang pagtanggal ng Tungkulin',
             'delete-success'                  => 'Tungkulin na tinanggal ng matagumpay',
             'last-delete-error'               => 'Ang huling Tungkulin ay hindi maaaring tanggalin',
+            'last-full-access'                => 'Kailangang manatili ang buong access ng hindi bababa sa isang aktibong user.',
             'update-success'                  => 'Tungkulin na na-update ng matagumpay',
         ],
     ],
@@ -2152,6 +2158,26 @@ return [
                     'info'  => '',
                     'title' => 'Pangkalahatan',
                 ],
+                'platform' => [
+                    'info'  => 'Piliin kung aling mga module ng platform ang naka-on.',
+                    'title' => 'Platform',
+
+                    'settings' => [
+                        'info'  => 'Patakbuhin ang anumang module nang mag-isa o ang ilan nang sabay; ang module na nangangailangan ng iba ay maaari lamang i-on kasama nito.',
+                        'title' => 'Pagpili ng module',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Kapag pinatay ang isang module, itinatago ang mga menu, pahina at API route nito; nananatili ang data nito.',
+                        'title' => 'Mga module',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Nalalapat lamang habang naka-off ang Impormasyon ng Produkto (PIM). Inaalis sa menu ang mga napiling seksyon at hinaharangan ang mga admin page nito; nananatili ang data nito at nananatiling available ang mga Admin API route nito.',
+                        'title' => 'Mga nakatagong seksyon',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -2323,6 +2349,7 @@ return [
                 'title'               => 'Prompt',
                 'create-btn'          => 'Lumikha ng Prompt',
                 'edit-title'          => 'I-edit ang Prompt',
+                'insert-attribute'    => 'Magsingit ng attribute',
                 'create-title'        => 'Lumikha ng Bagong Prompt',
                 'label-title'         => 'Pamagat',
                 'purpose'             => 'Layunin',
@@ -3096,6 +3123,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Dashboard',
+        'home'      => 'Home',
         'go-back'   => 'Bumalik',
         'support'   => 'Kung ang problema ay nagpapatuloy, makipag-ugnayan sa amin sa <a href=":link" class=":class">:email</a> para sa tulong.',
         '404'       => [

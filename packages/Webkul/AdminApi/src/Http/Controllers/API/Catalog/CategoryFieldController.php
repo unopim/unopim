@@ -193,6 +193,10 @@ class CategoryFieldController extends ApiController
 
         $requestData = $this->normalizeOptionsPayload(request()->all());
 
+        if ($errorResponse = $this->validateOptionsPayload($requestData)) {
+            return $errorResponse;
+        }
+
         try {
             $errors = [];
             foreach ($requestData as $optionInputs) {
@@ -236,10 +240,20 @@ class CategoryFieldController extends ApiController
 
         $requestData = $this->normalizeOptionsPayload(request()->all());
 
+        if ($errorResponse = $this->validateOptionsPayload($requestData)) {
+            return $errorResponse;
+        }
+
         try {
             $errors = [];
             foreach ($requestData as $optionInputs) {
                 $optionInputs = $this->setLabels($optionInputs, 'label');
+
+                if (! isset($optionInputs['code'])) {
+                    $errors[] = Validator::make($optionInputs, ['code' => 'required'])->errors();
+
+                    continue;
+                }
 
                 $categoryFieldOption = $this->categoryFieldOptionRepository
                     ->findOneWhere(['code' => $optionInputs['code'], 'category_field_id' => $categoryField->id]);
@@ -295,22 +309,6 @@ class CategoryFieldController extends ApiController
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);
         }
-    }
-
-    /**
-     * Normalizes the options payload so a single option object is treated the
-     * same as a list containing one option.
-     *
-     * @param  array<mixed>  $requestData
-     * @return array<int, array<string, mixed>>
-     */
-    private function normalizeOptionsPayload(array $requestData): array
-    {
-        if (empty($requestData) || array_is_list($requestData)) {
-            return $requestData;
-        }
-
-        return [$requestData];
     }
 
     /**

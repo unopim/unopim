@@ -48,7 +48,7 @@ class DateTimeFilter extends AbstractPropertyFilter
         $column = sprintf('%s.%s', $this->getSearchTablePath($options), $property);
 
         /** raw statements bypass the builder, so the prefix is applied here */
-        $rawColumn = DB::getTablePrefix().$column;
+        $rawColumn = DB::getQueryGrammar()->wrap($column);
 
         match ($operator) {
             FilterOperators::IN    => $this->queryBuilder->whereIn($column, $value),

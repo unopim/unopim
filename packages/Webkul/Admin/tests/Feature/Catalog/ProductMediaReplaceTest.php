@@ -414,7 +414,11 @@ describe('channel and locale scopes', function () {
 
         Storage::fake();
 
-        $defaultUri = route('admin.catalog.products.update', ['id' => $product->id, 'channel' => $defaultChannelCode]);
+        $defaultUri = route('admin.catalog.products.update', [
+            'id'      => $product->id,
+            'channel' => $defaultChannelCode,
+            'locale'  => $defaultChannel->locales->first()->code,
+        ]);
 
         $otherUri = route('admin.catalog.products.update', [
             'id'      => $product->id,
@@ -433,6 +437,9 @@ describe('channel and locale scopes', function () {
         $product->refresh();
 
         $defaultStored = scopedProductValue($product, 'channel_specific', $code, [$defaultChannelCode]);
+
+        expect($defaultStored)->toContain('default-first.jpg')
+            ->and(scopedProductValue($product, 'channel_specific', $code, [$newChannelCode]))->toContain('other-first.jpg');
 
         submitProductForm($otherUri, [
             'sku'    => $product->sku,

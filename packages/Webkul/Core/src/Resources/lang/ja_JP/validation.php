@@ -24,10 +24,16 @@ return [
     'file-outside-attribute-path'      => 'ファイル :value はこのレコードに属していません。:attribute フィールド用にもう一度アップロードしてください。',
     'password-surrounding-whitespace'  => ':attribute の先頭と末尾に空白は使用できません。',
     'password-whitespace-only'         => ':attribute を空白だけにすることはできません。',
+    'hideable-sections'                => ':attribute に非表示にできないセクションが含まれています。',
     'active-content-detected'          => ':attribute はアクティブコンテンツ (:reason) が含まれているためアップロードできませんでした。',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => '埋め込まれたJavaScriptまたは自動実行されるPDFアクション',
         'embedded_vba_macro'            => '埋め込まれたVBAマクロ',
         'auto_executing_ole_object'     => '自動実行される埋め込みオブジェクト',
+    ],
+    'platform-modules'                => [
+        'empty'    => 'プラットフォームモジュールを 1 つ以上選択してください。',
+        'unknown'  => 'プラットフォームモジュール「:module」はインストールされていません。',
+        'requires' => ':module は :requires と一緒にのみ有効にできます。',
     ],
 ];

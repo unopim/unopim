@@ -1,5 +1,6 @@
 const { test, expect } = require('../utils/fixtures');
-const { navigateTo, clickSave, generateUid, searchInDataGrid, closeDropdown } = require('../utils/helpers');
+const { navigateTo, generateUid, closeDropdown } = require('../utils/helpers');
+const { deleteProductBySku } = require('../utils/product-helpers');
 
 /** Select a value from a Vue-multiselect dropdown by field name (mirrors products.spec.js). */
 async function selectMultiselect(page, fieldName, optionLabel) {
@@ -17,17 +18,6 @@ async function selectMultiselect(page, fieldName, optionLabel) {
       .click();
   }
   await closeDropdown(page);
-}
-
-async function deleteProductBySku(adminPage, sku) {
-  await navigateTo(adminPage, 'products');
-  await searchInDataGrid(adminPage, sku);
-  const deleteIcon = adminPage.locator('span[title="Delete"]').first();
-  const visible = await deleteIcon.isVisible({ timeout: 3000 }).catch(() => false);
-  if (!visible) return;
-  await deleteIcon.click();
-  await adminPage.getByRole('button', { name: 'Delete' }).click();
-  await adminPage.locator('#app').getByText(/Product deleted successfully/i).waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
 }
 
 const FAMILY_ID = 1;

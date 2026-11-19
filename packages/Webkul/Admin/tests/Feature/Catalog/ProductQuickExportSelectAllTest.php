@@ -97,6 +97,25 @@ it('writes every matching product to the export file in chunks, leaving the rest
         ->and($notification->userNotifications()->pluck('admin_id')->all())->toBe([$adminId]);
 });
 
+it('leaves the products unticked after selecting all matching out of the export file', function () {
+    $ids = createQuickExportProducts('QEXPX-', 3);
+
+    (new SmallChunkExportDataGridSelection(
+        ProductDataGrid::class,
+        ['filters' => ['sku' => ['QEXPX-']], 'excluded_indices' => [$ids[1]]],
+        'csv',
+        auth()->guard('admin')->id(),
+        'admin::app.catalog.products.index.datagrid.select-all.export',
+        'admin.catalog.products.quick-export.download',
+    ))->handle();
+
+    $contents = Storage::disk('private')->get(latestQuickExportFile());
+
+    expect($contents)->toContain('QEXPX-1')
+        ->and($contents)->toContain('QEXPX-3')
+        ->and($contents)->not->toContain('QEXPX-2');
+});
+
 it('writes a spreadsheet when the queued export asks for xlsx', function () {
     createQuickExportProducts('QEXPX-', 3);
 

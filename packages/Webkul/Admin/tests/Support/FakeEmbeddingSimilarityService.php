@@ -3,6 +3,7 @@
 namespace Webkul\Admin\Tests\Support;
 
 use Webkul\AiAgent\Services\EmbeddingSimilarityService;
+use Webkul\MagicAI\Models\MagicAIPlatform;
 
 /**
  * Deterministic ranking stand-in so similarity tests do not depend on a
@@ -10,7 +11,12 @@ use Webkul\AiAgent\Services\EmbeddingSimilarityService;
  */
 class FakeEmbeddingSimilarityService extends EmbeddingSimilarityService
 {
-    public function rank(string $query, array $documents, ?int $limit = null): array
+    public function resolvePlatform(?MagicAIPlatform $preferred = null, ?int $dimensions = null): ?MagicAIPlatform
+    {
+        return $preferred;
+    }
+
+    public function rankOrFail(string $query, array $documents, ?int $limit = null, ?MagicAIPlatform $platform = null): array
     {
         $scores = array_map(
             fn (int $index) => ['index' => $index, 'score' => 1.0],

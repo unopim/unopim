@@ -1,6 +1,7 @@
 const path = require('path');
 const { test, expect } = require('../../utils/fixtures');
-const { clickSave, generateUid, searchInDataGrid, closeDropdown } = require('../../utils/helpers');
+const { clickSave, generateUid, closeDropdown } = require('../../utils/helpers');
+const { deleteProductBySku } = require('../../utils/product-helpers');
 
 const STORAGE_STATE = path.resolve(__dirname, '../..', process.env.PW_STATE_DIR || '.state', 'admin-auth.json');
 const BASE = process.env.BASE_URL || 'http://127.0.0.1:8000';
@@ -326,20 +327,6 @@ async function saveProduct(page) {
   await target.evaluate((el) => el.click());
 }
 
-async function deleteProductBySku(page, sku) {
-  await gotoAdmin(page, '/admin/catalog/products');
-  await searchInDataGrid(page, sku);
-
-  const deleteIcon = page.locator('span[title="Delete"]').first();
-  if (!(await deleteIcon.isVisible({ timeout: 3000 }).catch(() => false))) {
-    return;
-  }
-
-  await deleteIcon.click();
-  await page.getByRole('button', { name: 'Delete' }).click();
-  await page.locator('#app').getByText(/Product deleted successfully/i).waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
-}
-
 test.describe('Measurement - Attribute Family', () => {
   test('measurement attribute joins a family but is never offered as a variant axis', async ({ adminPage }) => {
     test.setTimeout(150000);
@@ -479,6 +466,54 @@ test.describe.serial('Measurement - Product value', () => {
 
     const reloaded = adminPage.locator('input[placeholder="Enter value"]').first();
     await expect(reloaded).toHaveValue('42', { timeout: 20000 });
+  });
+
+  test('a negative measurement value can be typed and persists', async ({ adminPage }) => {
+    test.setTimeout(120000);
+
+    expect(shared.productUrl, 'prerequisite product was not created in the earlier test').toBeTruthy();
+
+    await adminPage.goto(shared.productUrl, { waitUntil: 'domcontentloaded' });
+
+    const valueInput = adminPage.locator('input[placeholder="Enter value"]').first();
+    await valueInput.waitFor({ state: 'visible', timeout: 20000 });
+    await valueInput.scrollIntoViewIfNeeded();
+    await valueInput.fill('');
+    await valueInput.pressSequentially('-2-0');
+
+    await expect(valueInput).toHaveValue('-20');
+
+    await saveProduct(adminPage);
+    await expect(adminPage.locator('#app').getByText(/updated successfully/i).first()).toBeVisible({ timeout: 25000 });
+
+    await adminPage.reload({ waitUntil: 'domcontentloaded' });
+
+    const reloaded = adminPage.locator('input[placeholder="Enter value"]').first();
+    await expect(reloaded).toHaveValue('-20', { timeout: 20000 });
+  });
+
+  test('a comma decimal separator is kept as a decimal point', async ({ adminPage }) => {
+    test.setTimeout(120000);
+
+    expect(shared.productUrl, 'prerequisite product was not created in the earlier test').toBeTruthy();
+
+    await adminPage.goto(shared.productUrl, { waitUntil: 'domcontentloaded' });
+
+    const valueInput = adminPage.locator('input[placeholder="Enter value"]').first();
+    await valueInput.waitFor({ state: 'visible', timeout: 20000 });
+    await valueInput.scrollIntoViewIfNeeded();
+    await valueInput.fill('');
+    await valueInput.pressSequentially('-12,25');
+
+    await expect(valueInput).toHaveValue('-12.25');
+
+    await saveProduct(adminPage);
+    await expect(adminPage.locator('#app').getByText(/updated successfully/i).first()).toBeVisible({ timeout: 25000 });
+
+    await adminPage.reload({ waitUntil: 'domcontentloaded' });
+
+    const reloaded = adminPage.locator('input[placeholder="Enter value"]').first();
+    await expect(reloaded).toHaveValue('-12.25', { timeout: 20000 });
   });
 });
 

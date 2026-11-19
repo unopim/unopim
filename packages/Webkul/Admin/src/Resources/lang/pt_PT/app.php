@@ -1581,9 +1581,11 @@ return [
                     'zip-upload-success'  => 'ZIP carregado e extraído com sucesso.',
                     'zip-upload-error'    => 'Falha ao carregar o ZIP. Tente novamente.',
                     'invalid-zip'         => 'O ficheiro carregado não é um arquivo ZIP válido.',
-                    'zip-upload-or'       => 'ou carregue um ZIP de imagens',
-                    'zip-click-upload'    => 'Clique para carregar um ZIP de imagens',
+                    'zip-upload-or'       => 'ou carregue um ZIP de imagens e documentos',
+                    'zip-click-upload'    => 'Clique para carregar um ZIP de imagens e documentos',
                     'zip-files-extracted' => 'ficheiros extraídos',
+                    'zip-files-skipped'   => ':skipped (tipo não suportado, conteúdo inválido ou demasiado grandes):',
+                    'zip-accepted-types'  => 'Aceite no ZIP: :types',
                     'zip-drop-hint'       => 'Clique ou arraste e solte um arquivo ZIP aqui',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MÁX. 2MB)',
                     'images-directory'    => 'Caminho',
@@ -1705,6 +1707,9 @@ return [
                 'setup-queue-error'          => 'Por favor, mude seu driver de fila para "database" ou "redis" para iniciar o processo de importação.',
                 'update-success'             => 'Importação atualizada com sucesso.',
                 'zip-upload-success'         => 'ZIP carregado e extraído com sucesso.',
+                'zip-extracted-count'        => '{1} :count ficheiro extraído|[0,*] :count ficheiros extraídos',
+                'zip-skipped-count'          => '{1} :count ignorado|[0,*] :count ignorados',
+                'zip-upload-partial'         => 'ZIP carregado. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [
@@ -2113,6 +2118,7 @@ return [
             'delete-failed'                   => 'Falha ao eliminar a função',
             'delete-success'                  => 'Função eliminada com sucesso',
             'last-delete-error'               => 'A última função não pode ser eliminada',
+            'last-full-access'                => 'Pelo menos um utilizador ativo deve manter acesso total.',
             'update-success'                  => 'Função atualizada com sucesso',
         ],
     ],
@@ -2152,6 +2158,26 @@ return [
                     'info'  => '',
                     'title' => 'Geral',
                 ],
+                'platform' => [
+                    'info'  => 'Escolha quais os módulos da plataforma que estão ativados.',
+                    'title' => 'Plataforma',
+
+                    'settings' => [
+                        'info'  => 'Execute qualquer módulo isoladamente ou vários em conjunto; um módulo que precisa de outro só pode ser ativado com esse.',
+                        'title' => 'Seleção de módulos',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Desativar um módulo oculta os respetivos menus, páginas e rotas da API; os dados são mantidos.',
+                        'title' => 'Módulos',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Aplica-se apenas enquanto Informação de produto (PIM) estiver desativado. As secções selecionadas são removidas do menu e as respetivas páginas de administração bloqueadas; os dados são mantidos e as rotas da Admin API continuam disponíveis.',
+                        'title' => 'Secções ocultas',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -2323,6 +2349,7 @@ return [
                 'title'               => 'Prompt',
                 'create-btn'          => 'Criar Prompt',
                 'edit-title'          => 'Editar Prompt',
+                'insert-attribute'    => 'Inserir atributo',
                 'create-title'        => 'Criar Novo Prompt',
                 'label-title'         => 'Título',
                 'purpose'             => 'Finalidade',
@@ -3096,6 +3123,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Painel de Controle',
+        'home'      => 'Início',
         'go-back'   => 'Voltar',
         'support'   => 'Se o problema persistir, entre em contato conosco através do <a href=":link" class=":class">:email</a> para assistência.',
         '404'       => [

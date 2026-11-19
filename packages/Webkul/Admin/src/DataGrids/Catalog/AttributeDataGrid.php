@@ -8,6 +8,8 @@ use Webkul\DataGrid\DataGrid;
 
 class AttributeDataGrid extends DataGrid
 {
+    protected bool $plainTextColumns = true;
+
     protected array $typeConfig = [];
 
     /**
@@ -25,9 +27,11 @@ class AttributeDataGrid extends DataGrid
      */
     public function prepareQueryBuilder()
     {
-        $tablePrefix = DB::getTablePrefix();
-
         $grammar = DB::rawQueryGrammar();
+
+        $nameColumn = DB::getQueryGrammar()->wrap('attribute_name.name');
+
+        $codeColumn = DB::getQueryGrammar()->wrap('attributes.code');
 
         $queryBuilder = DB::table('attributes')
             ->leftJoin('attribute_translations as attribute_name', function ($join) {
@@ -45,10 +49,10 @@ class AttributeDataGrid extends DataGrid
                 'created_at',
                 DB::raw(
                     "(CASE 
-                        WHEN {$tablePrefix}attribute_name.name IS NULL 
-                            OR ".$grammar->length("TRIM({$tablePrefix}attribute_name.name)").' < 1
-                        THEN '.$grammar->concat("'['", "{$tablePrefix}attributes.code", "']'")."
-                        ELSE {$tablePrefix}attribute_name.name
+                        WHEN {$nameColumn} IS NULL 
+                            OR ".$grammar->length("TRIM({$nameColumn})").' < 1
+                        THEN '.$grammar->concat("'['", $codeColumn, "']'")."
+                        ELSE {$nameColumn}
                     END) AS name"
                 )
             );

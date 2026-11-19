@@ -8,7 +8,7 @@ const { test, expect } = require('../../utils/fixtures');
  * Verified on the system-settings email page — a tracked POST form with plain
  * text fields, so the bar activates on a real edit.
  */
-test.describe('Save button guards', () => {
+test.describe('Save button guards', { tag: '@global-state' }, () => {
   const URL = '/admin/configuration/system/system.email';
 
   const goto = (page) =>

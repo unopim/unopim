@@ -101,6 +101,6 @@ class ChatUploadStore
             return "ai-agent/{$kind}";
         }
 
-        return "ai-agent/{$kind}/".auth()->guard('admin')->id().'/'.sha1($conversationId);
+        return "ai-agent/{$kind}/".auth()->guard('admin')->id().'/'.hash('xxh128', $conversationId);
     }
 }

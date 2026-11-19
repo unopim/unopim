@@ -77,6 +77,11 @@ class Exporter extends AbstractExporter
     protected ?MeasurementHelper $measurementHelper = null;
 
     /**
+     * Whether unit columns hold symbols instead of names, read once per exporter instance.
+     */
+    protected ?bool $displayUnitSymbol = null;
+
+    /**
      * Attribute codes selected in the export profile. When empty every
      * attribute value is exported.
      *
@@ -706,7 +711,7 @@ class Exporter extends AbstractExporter
      *
      * Measurement attributes are withheld from the generic pass so it emits an
      * empty placeholder column in its usual position, then filled in here as the
-     * amount plus a companion "<code>(unit)" column holding the unit label.
+     * amount plus a companion "<code>(unit)" column holding the unit label or symbol.
      */
     protected function setAttributesValues(array $values, mixed $filePath, ?string $locale = null): array
     {
@@ -727,6 +732,8 @@ class Exporter extends AbstractExporter
 
         $measurementHelper = $this->measurementHelper();
 
+        $displayUnitSymbol = $this->displayUnitSymbol ??= $measurementHelper->displaysUnitSymbol();
+
         foreach ($measurementMeta as $meta) {
             $code = $meta['code'];
 
@@ -739,7 +746,7 @@ class Exporter extends AbstractExporter
             $attributeValues[$code] = EscapeFormulaOperators::escapeValue($amount);
 
             $attributeValues["{$code}(unit)"] = EscapeFormulaOperators::escapeValue(
-                $measurementHelper->getUnitLabel($unit, $meta['attribute'], $locale)
+                $measurementHelper->getUnitDisplayLabel($unit, $meta['attribute'], $locale, $displayUnitSymbol)
             );
         }
 

@@ -3,8 +3,8 @@
 use Illuminate\Support\Facades\Event;
 use Laravel\Ai\Responses\AgentResponse;
 use Laravel\Ai\Responses\Data\Meta;
+use Laravel\Ai\Responses\Data\TextUsage;
 use Laravel\Ai\Responses\Data\ToolResult;
-use Laravel\Ai\Responses\Data\Usage;
 use Webkul\AiAgent\Chat\AgentRunner;
 use Webkul\AiAgent\Chat\ToolRegistry;
 use Webkul\AiAgent\Chat\Tools\VerifyProduct;
@@ -30,7 +30,7 @@ function mutationToolResult(string $name, array $payload, bool $failed = false):
  */
 function blockingActionResult(array $toolResults): array
 {
-    $response = (new AgentResponse('invocation', 'reply', new Usage, new Meta))
+    $response = (new AgentResponse('invocation', 'reply', new TextUsage, new Meta))
         ->withToolCallsAndResults(collect(), collect($toolResults));
 
     $runner = new AgentRunner(app(ToolRegistry::class));
@@ -84,6 +84,7 @@ it('does not flag a mutation when the write tool errored, failed or changed noth
     'error status'     => fn () => mutationToolResult('assign_categories', ['result' => ['status' => 'Error: product not found']]),
     'nothing updated'  => fn () => mutationToolResult('bulk_edit', ['result' => ['updated' => 0]]),
     'tool call failed' => fn () => mutationToolResult('update_product', ['result' => ['updated' => 1]], failed: true),
+    'preview only'     => fn () => mutationToolResult('update_product', ['mutated' => false, 'result' => ['status' => 'preview']]),
 ]);
 
 it('flags a mutation from the registry write flag rather than a fixed tool list', function () {
@@ -98,6 +99,8 @@ it('flags a mutation from the registry write flag rather than a fixed tool list'
 });
 
 it('applies the same mutation rule to streamed responses', function () {
+    expect(streamedActionResult([mutationToolResult('update_product', ['mutated' => false, 'result' => ['status' => 'preview']])]))
+        ->not->toHaveKey('mutated');
     expect(streamedActionResult([mutationToolResult('data_quality_report', ['result' => ['score' => 80]])]))
         ->not->toHaveKey('mutated')
         ->and(streamedActionResult([mutationToolResult('manage_associations', ['result' => ['updated' => 1]])])['mutated'] ?? null)

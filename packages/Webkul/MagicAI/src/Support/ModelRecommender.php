@@ -37,6 +37,8 @@ class ModelRecommender
         '/(^|[-_])tts([-_]|$)/i',
         '/text-to-speech/i',
 
+        '/(^|[-_])ocr([-_]|$)/i',
+
         // Content moderation / safety
         '/moderation/i',
         '/(^|[-_])guard([-_]|$)/i',
@@ -193,7 +195,7 @@ class ModelRecommender
      */
     public static function chatCapable(array $models): array
     {
-        $capable = array_values(array_filter($models, static fn (string $model): bool => array_all(self::EXCLUDE_PATTERNS, fn (string $pattern): bool => ! preg_match($pattern, $model))));
+        $capable = array_values(array_filter($models, static fn (string $model): bool => ! self::isExcluded($model)));
 
         return $capable ?: array_values($models);
     }
@@ -296,9 +298,10 @@ class ModelRecommender
     }
 
     /**
-     * The models safe to send a text prompt to, in the given order. When every
-     * model looks image-only the first one is returned alone, so the caller
-     * can still attempt the request and surface the provider's error.
+     * The models safe to send a text prompt to, chat-capable ones first and
+     * otherwise in the given order. When every model looks image-only the
+     * first one is returned alone, so the caller can still attempt the request
+     * and surface the provider's error.
      *
      * @param  string[]  $models
      * @return string[]
@@ -311,11 +314,22 @@ class ModelRecommender
 
         $textModels = array_values(array_filter($models, static fn (string $model): bool => ! self::isImageOnly($model)));
 
-        return $textModels ?: [$models[0]];
+        if ($textModels === []) {
+            return [$models[0]];
+        }
+
+        $chat = array_filter($textModels, static fn (string $model): bool => ! self::isExcluded($model));
+
+        return array_values(array_unique([...$chat, ...$textModels]));
+    }
+
+    protected static function isExcluded(string $model): bool
+    {
+        return array_any(self::EXCLUDE_PATTERNS, fn (string $pattern): bool => preg_match($pattern, $model) === 1);
     }
 
     protected static function isImageOnly(string $model): bool
     {
-        return array_any(self::IMAGE_ONLY_PATTERNS, fn (string $pattern): int|false => preg_match($pattern, $model));
+        return array_any(self::IMAGE_ONLY_PATTERNS, fn (string $pattern): bool => preg_match($pattern, $model) === 1);
     }
 }

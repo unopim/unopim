@@ -1581,9 +1581,11 @@ return [
                     'zip-upload-success'  => 'ZIP succesvol geüpload en uitgepakt.',
                     'zip-upload-error'    => 'Uploaden van ZIP mislukt. Probeer het opnieuw.',
                     'invalid-zip'         => 'Het geüploade bestand is geen geldig ZIP-archief.',
-                    'zip-upload-or'       => 'of upload een ZIP met afbeeldingen',
-                    'zip-click-upload'    => 'Klik om een ZIP met afbeeldingen te uploaden',
+                    'zip-upload-or'       => 'of upload een ZIP met afbeeldingen en documenten',
+                    'zip-click-upload'    => 'Klik om een ZIP met afbeeldingen en documenten te uploaden',
                     'zip-files-extracted' => 'bestanden uitgepakt',
+                    'zip-files-skipped'   => ':skipped (niet-ondersteund type, ongeldige inhoud of te groot):',
+                    'zip-accepted-types'  => 'Geaccepteerd in de ZIP: :types',
                     'zip-drop-hint'       => 'Klik of sleep en laat een ZIP-bestand hier vallen',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MAX. 2MB)',
                     'images-directory'    => 'Afbeeldingenmap',
@@ -1705,6 +1707,9 @@ return [
                 'setup-queue-error'          => 'Wijzig je wachtrijdriver naar "database" of "redis" om het importproces te starten.',
                 'update-success'             => 'Import succesvol bijgewerkt.',
                 'zip-upload-success'         => 'ZIP succesvol geüpload en uitgepakt.',
+                'zip-extracted-count'        => '{1} :count bestand uitgepakt|[0,*] :count bestanden uitgepakt',
+                'zip-skipped-count'          => '{1} :count overgeslagen|[0,*] :count overgeslagen',
+                'zip-upload-partial'         => 'ZIP geüpload. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [
@@ -2113,6 +2118,7 @@ return [
             'delete-failed'                   => 'Rol verwijderen mislukt.',
             'delete-success'                  => 'Rol succesvol verwijderd.',
             'last-delete-error'               => 'De laatste rol kan niet worden verwijderd.',
+            'last-full-access'                => 'Minstens één actieve gebruiker moet volledige toegang behouden.',
             'update-success'                  => 'Rol succesvol bijgewerkt.',
         ],
     ],
@@ -2152,6 +2158,26 @@ return [
                     'info'  => '',
                     'title' => 'Algemeen',
                 ],
+                'platform' => [
+                    'info'  => 'Kies welke platformmodules zijn ingeschakeld.',
+                    'title' => 'Platform',
+
+                    'settings' => [
+                        'info'  => 'Gebruik elke module afzonderlijk of meerdere samen; een module die een andere nodig heeft, kan alleen samen daarmee worden ingeschakeld.',
+                        'title' => 'Modulekeuze',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Een module uitschakelen verbergt de menu’s, pagina’s en API-routes ervan; de gegevens blijven bewaard.',
+                        'title' => 'Modules',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Geldt alleen zolang Productinformatie (PIM) is uitgeschakeld. Geselecteerde secties worden uit het menu verwijderd en hun beheerpagina’s geblokkeerd; de gegevens blijven bewaard en hun Admin API-routes blijven beschikbaar.',
+                        'title' => 'Verborgen secties',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -2323,6 +2349,7 @@ return [
                 'title'               => 'Prompt',
                 'create-btn'          => 'Prompt aanmaken',
                 'edit-title'          => 'Prompt bewerken',
+                'insert-attribute'    => 'Attribuut invoegen',
                 'create-title'        => 'Nieuwe prompt aanmaken',
                 'label-title'         => 'Titel',
                 'purpose'             => 'Doel',
@@ -3096,6 +3123,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Dashboard',
+        'home'      => 'Home',
         'go-back'   => 'Ga terug',
         'support'   => 'Als het probleem aanhoudt, neem dan contact met ons op via <a href=":link" class=":class">:email</a>.',
         '404'       => [

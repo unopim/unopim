@@ -1581,9 +1581,11 @@ return [
                     'zip-upload-success'  => 'ZIP lastet opp og pakket ut vellykket.',
                     'zip-upload-error'    => 'Opplasting av ZIP mislyktes. Vennligst prøv igjen.',
                     'invalid-zip'         => 'Den opplastede filen er ikke et gyldig ZIP-arkiv.',
-                    'zip-upload-or'       => 'eller last opp en ZIP med bilder',
-                    'zip-click-upload'    => 'Klikk for å laste opp en ZIP med bilder',
+                    'zip-upload-or'       => 'eller last opp en ZIP med bilder og dokumenter',
+                    'zip-click-upload'    => 'Klikk for å laste opp en ZIP med bilder og dokumenter',
                     'zip-files-extracted' => 'filer pakket ut',
+                    'zip-files-skipped'   => ':skipped (type som ikke støttes, ugyldig innhold eller for store):',
+                    'zip-accepted-types'  => 'Akseptert i ZIP-filen: :types',
                     'zip-drop-hint'       => 'Klikk eller dra & slipp en ZIP-fil her',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MAKS. 2MB)',
                     'images-directory'    => 'Sti',
@@ -1705,6 +1707,9 @@ return [
                 'setup-queue-error'          => 'Vennligst endre kødriveren din til "database" eller "redis" for å starte importprosessen.',
                 'update-success'             => 'Import oppdatert vellykket.',
                 'zip-upload-success'         => 'ZIP lastet opp og pakket ut vellykket.',
+                'zip-extracted-count'        => '{1} :count fil pakket ut|[0,*] :count filer pakket ut',
+                'zip-skipped-count'          => '{1} :count hoppet over|[0,*] :count hoppet over',
+                'zip-upload-partial'         => 'ZIP lastet opp. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [
@@ -2113,6 +2118,7 @@ return [
             'delete-failed'                   => 'Rolle sletting mislyktes',
             'delete-success'                  => 'Rolle slettet suksessfullt',
             'last-delete-error'               => 'Siste rolle kan ikke slettes',
+            'last-full-access'                => 'Minst én aktiv bruker må beholde full tilgang.',
             'update-success'                  => 'Rolle oppdatert suksessfullt',
         ],
     ],
@@ -2152,6 +2158,26 @@ return [
                     'info'  => '',
                     'title' => 'Generelt',
                 ],
+                'platform' => [
+                    'info'  => 'Velg hvilke plattformmoduler som er slått på.',
+                    'title' => 'Plattform',
+
+                    'settings' => [
+                        'info'  => 'Kjør hvilken som helst modul alene eller flere sammen; en modul som trenger en annen, kan bare slås på sammen med den.',
+                        'title' => 'Modulvalg',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Når en modul slås av, skjules menyene, sidene og API-rutene; dataene beholdes.',
+                        'title' => 'Moduler',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Gjelder bare mens Produktinformasjon (PIM) er slått av. Valgte seksjoner fjernes fra menyen, og administrasjonssidene deres blokkeres; dataene beholdes, og Admin API-rutene deres forblir tilgjengelige.',
+                        'title' => 'Skjulte seksjoner',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -2323,6 +2349,7 @@ return [
                 'title'               => 'Prompt',
                 'create-btn'          => 'Opprett Prompt',
                 'edit-title'          => 'Rediger Prompt',
+                'insert-attribute'    => 'Sett inn attributt',
                 'create-title'        => 'Opprett Ny Prompt',
                 'label-title'         => 'Tittel',
                 'purpose'             => 'Formål',
@@ -3096,6 +3123,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Instrumentbord',
+        'home'      => 'Hjem',
         'go-back'   => 'Gå tilbake',
         'support'   => 'Hvis problemet vedvarer, kan du kontakte oss på <a href=":link" class=":class">:email</a> for hjelp.',
         '404'       => [

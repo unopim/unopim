@@ -15,13 +15,12 @@ class MeasurementFamilyDataGrid extends DataGrid
     public function prepareQueryBuilder()
     {
         $driver = DB::connection()->getDriverName();
-        $tablePrefix = DB::getTablePrefix();
         $locale = app()->getLocale();
 
-        $familyLabelQuery = $this->getFamilyLabelQuery($driver, $tablePrefix);
-        $standardUnitLabelQuery = $this->getStandardUnitLabelQuery($driver, $tablePrefix);
-        $standardUnitFilterQuery = $this->getStandardUnitFilterQuery($driver, $standardUnitLabelQuery, $tablePrefix);
-        $unitCountQuery = $this->getUnitCountQuery($tablePrefix);
+        $familyLabelQuery = $this->getFamilyLabelQuery($driver);
+        $standardUnitLabelQuery = $this->getStandardUnitLabelQuery($driver);
+        $standardUnitFilterQuery = $this->getStandardUnitFilterQuery($driver, $standardUnitLabelQuery);
+        $unitCountQuery = $this->getUnitCountQuery();
 
         $queryBuilder = DB::table('measurement_families')
             ->leftJoin('measurement_family_translations as mft_loc', function ($join) use ($locale): void {
@@ -56,20 +55,22 @@ class MeasurementFamilyDataGrid extends DataGrid
     /**
      * Localized family-label expression (translation -> en_US -> [code]).
      */
-    protected function getFamilyLabelQuery(string $driver, string $tablePrefix = ''): string
+    protected function getFamilyLabelQuery(string $driver): string
     {
+        $grammar = DB::getQueryGrammar();
+
         if ($driver === 'pgsql') {
             return "COALESCE(
-                NULLIF(TRIM({$tablePrefix}mft_loc.label), ''),
-                NULLIF(TRIM({$tablePrefix}mft_en.label), ''),
-                '[' || {$tablePrefix}measurement_families.code || ']'
+                NULLIF(TRIM({$grammar->wrap('mft_loc.label')}), ''),
+                NULLIF(TRIM({$grammar->wrap('mft_en.label')}), ''),
+                '[' || {$grammar->wrap('measurement_families.code')} || ']'
             )";
         }
 
         return "COALESCE(
-            NULLIF(TRIM({$tablePrefix}mft_loc.label), ''),
-            NULLIF(TRIM({$tablePrefix}mft_en.label), ''),
-            CONCAT('[', {$tablePrefix}measurement_families.code, ']')
+            NULLIF(TRIM({$grammar->wrap('mft_loc.label')}), ''),
+            NULLIF(TRIM({$grammar->wrap('mft_en.label')}), ''),
+            CONCAT('[', {$grammar->wrap('measurement_families.code')}, ']')
         )";
     }
 
@@ -77,26 +78,28 @@ class MeasurementFamilyDataGrid extends DataGrid
      * Localized standard-unit label expression via correlated subquery
      * (translation -> en_US -> [standard_unit]).
      */
-    protected function getStandardUnitLabelQuery(string $driver, string $tablePrefix = ''): string
+    protected function getStandardUnitLabelQuery(string $driver): string
     {
+        $grammar = DB::getQueryGrammar();
+
         $locale = preg_replace('/[^A-Za-z0-9_]/', '', app()->getLocale());
 
         $fallback = $driver === 'pgsql'
-            ? "'[' || {$tablePrefix}measurement_families.standard_unit || ']'"
-            : "CONCAT('[', {$tablePrefix}measurement_families.standard_unit, ']')";
+            ? "'[' || {$grammar->wrap('measurement_families.standard_unit')} || ']'"
+            : "CONCAT('[', {$grammar->wrap('measurement_families.standard_unit')}, ']')";
 
         return "COALESCE((
             SELECT COALESCE(
                 NULLIF(TRIM(su_loc.label), ''),
                 NULLIF(TRIM(su_en.label), '')
             )
-            FROM {$tablePrefix}measurement_units su
-            LEFT JOIN {$tablePrefix}measurement_unit_translations su_loc
+            FROM {$grammar->wrapTable('measurement_units')} su
+            LEFT JOIN {$grammar->wrapTable('measurement_unit_translations')} su_loc
                 ON su_loc.measurement_unit_id = su.id AND su_loc.locale = '{$locale}'
-            LEFT JOIN {$tablePrefix}measurement_unit_translations su_en
+            LEFT JOIN {$grammar->wrapTable('measurement_unit_translations')} su_en
                 ON su_en.measurement_unit_id = su.id AND su_en.locale = 'en_US'
-            WHERE su.measurement_family_id = {$tablePrefix}measurement_families.id
-                AND su.code = {$tablePrefix}measurement_families.standard_unit
+            WHERE su.measurement_family_id = {$grammar->wrap('measurement_families.id')}
+                AND su.code = {$grammar->wrap('measurement_families.standard_unit')}
             LIMIT 1
         ), {$fallback})";
     }
@@ -104,24 +107,28 @@ class MeasurementFamilyDataGrid extends DataGrid
     /**
      * Standard-unit filter expression (label + raw code), for searching.
      */
-    protected function getStandardUnitFilterQuery(string $driver, string $standardUnitLabelQuery, string $tablePrefix = ''): string
+    protected function getStandardUnitFilterQuery(string $driver, string $standardUnitLabelQuery): string
     {
+        $grammar = DB::getQueryGrammar();
+
         if ($driver === 'pgsql') {
-            return "({$standardUnitLabelQuery} || ' ' || {$tablePrefix}measurement_families.standard_unit)";
+            return "({$standardUnitLabelQuery} || ' ' || {$grammar->wrap('measurement_families.standard_unit')})";
         }
 
-        return "CONCAT({$standardUnitLabelQuery}, ' ', {$tablePrefix}measurement_families.standard_unit)";
+        return "CONCAT({$standardUnitLabelQuery}, ' ', {$grammar->wrap('measurement_families.standard_unit')})";
     }
 
     /**
      * Count of units belonging to the family via correlated subquery.
      */
-    protected function getUnitCountQuery(string $tablePrefix = ''): string
+    protected function getUnitCountQuery(): string
     {
+        $grammar = DB::getQueryGrammar();
+
         return "(
             SELECT COUNT(*)
-            FROM {$tablePrefix}measurement_units uc
-            WHERE uc.measurement_family_id = {$tablePrefix}measurement_families.id
+            FROM {$grammar->wrapTable('measurement_units')} uc
+            WHERE uc.measurement_family_id = {$grammar->wrap('measurement_families.id')}
         )";
     }
 
@@ -181,7 +188,7 @@ class MeasurementFamilyDataGrid extends DataGrid
                 'index'  => 'edit',
                 'title'  => trans('measurement::app.datagrid.edit'),
                 'method' => 'GET',
-                'url'    => fn ($row) => route('admin.measurement.families.edit', $row->id),
+                'url'    => fn ($row): string => route('admin.measurement.families.edit', $row->id),
             ]);
         }
 
@@ -191,7 +198,7 @@ class MeasurementFamilyDataGrid extends DataGrid
                 'index'  => 'delete',
                 'title'  => trans('measurement::app.datagrid.delete'),
                 'method' => 'DELETE',
-                'url'    => fn ($row) => route('admin.measurement.families.delete', $row->id),
+                'url'    => fn ($row): string => route('admin.measurement.families.delete', $row->id),
             ]);
         }
     }

@@ -1580,9 +1580,11 @@ return [
                     'zip-upload-success'  => 'ZIP uploaded and extracted successfully.',
                     'zip-upload-error'    => 'Failed to upload ZIP. Please try again.',
                     'invalid-zip'         => 'The uploaded file is not a valid ZIP archive.',
-                    'zip-upload-or'       => 'or upload a ZIP of images',
-                    'zip-click-upload'    => 'Click to upload a ZIP of images',
+                    'zip-upload-or'       => 'or upload a ZIP of images and documents',
+                    'zip-click-upload'    => 'Click to upload a ZIP of images and documents',
                     'zip-files-extracted' => 'files extracted',
+                    'zip-files-skipped'   => ':skipped (unsupported type, invalid content or too large):',
+                    'zip-accepted-types'  => 'Accepted in the ZIP: :types',
                     'zip-drop-hint'       => 'Click or drag & drop a ZIP file here',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MAX. 2MB)',
                     'images-directory'    => 'Path',
@@ -1704,6 +1706,9 @@ return [
                 'setup-queue-error'          => 'Please change your queue driver to "database" or "redis" to start the import process.',
                 'update-success'             => 'Import updated successfully.',
                 'zip-upload-success'         => 'ZIP uploaded and extracted successfully.',
+                'zip-extracted-count'        => '{1} :count file extracted|[0,*] :count files extracted',
+                'zip-skipped-count'          => '{1} :count skipped|[0,*] :count skipped',
+                'zip-upload-partial'         => 'ZIP uploaded. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [
@@ -2111,6 +2116,7 @@ return [
             'delete-failed'                   => 'Roles deletion failed',
             'delete-success'                  => 'Roles deleted successfully',
             'last-delete-error'               => 'Last Roles cannot be deleted',
+            'last-full-access'                => 'At least one active user must keep full access.',
             'update-success'                  => 'Roles updated successfully',
         ],
     ],
@@ -2150,6 +2156,26 @@ return [
                     'info'  => '',
                     'title' => 'General',
                 ],
+                'platform' => [
+                    'info'  => 'Choose which platform modules are switched on.',
+                    'title' => 'Platform',
+
+                    'settings' => [
+                        'info'  => 'Run any module on its own or several together; a module that needs another can only be switched on with it.',
+                        'title' => 'Module selection',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Switching a module off hides its menus, pages and API routes; its data is kept.',
+                        'title' => 'Modules',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Applies only while Product Information (PIM) is switched off. Selected sections are removed from the menu and their admin pages are blocked; their data is kept and their Admin API routes stay available.',
+                        'title' => 'Hidden sections',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -2321,6 +2347,7 @@ return [
                 'title'               => 'Prompt',
                 'create-btn'          => 'Create Prompt',
                 'edit-title'          => 'Edit Prompt',
+                'insert-attribute'    => 'Insert attribute',
                 'create-title'        => 'Create New Prompt',
                 'label-title'         => 'Title',
                 'purpose'             => 'Purpose',
@@ -3093,6 +3120,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Dashboard',
+        'home'      => 'Home',
         'go-back'   => 'Go Back',
         'support'   => 'If the problem persists, reach out to us at <a href=":link" class=":class">:email</a> for assistance.',
         '404'       => [

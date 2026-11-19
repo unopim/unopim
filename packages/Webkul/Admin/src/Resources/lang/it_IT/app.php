@@ -1580,9 +1580,11 @@ return [
                     'zip-upload-success'  => 'ZIP caricato ed estratto con successo.',
                     'zip-upload-error'    => 'Caricamento ZIP fallito. Riprova.',
                     'invalid-zip'         => 'Il file caricato non è un archivio ZIP valido.',
-                    'zip-upload-or'       => 'o carica un ZIP di immagini',
-                    'zip-click-upload'    => 'Clicca per caricare un ZIP di immagini',
+                    'zip-upload-or'       => 'o carica un ZIP di immagini e documenti',
+                    'zip-click-upload'    => 'Clicca per caricare un ZIP di immagini e documenti',
                     'zip-files-extracted' => 'file estratti',
+                    'zip-files-skipped'   => ':skipped (tipo non supportato, contenuto non valido o troppo grandi):',
+                    'zip-accepted-types'  => 'Accettato nello ZIP: :types',
                     'zip-drop-hint'       => 'Clicca o trascina e rilascia un file ZIP qui',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MAX. 2MB)',
                     'images-directory'    => 'Percorso',
@@ -1704,6 +1706,9 @@ return [
                 'setup-queue-error'          => 'Si prega di cambiare il driver della coda in "database" o "redis" per avviare il processo di importazione.',
                 'update-success'             => 'Importazione aggiornata con successo.',
                 'zip-upload-success'         => 'ZIP caricato ed estratto con successo.',
+                'zip-extracted-count'        => '{1} :count file estratto|[0,*] :count file estratti',
+                'zip-skipped-count'          => '{1} :count saltato|[0,*] :count saltati',
+                'zip-upload-partial'         => 'ZIP caricato. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [
@@ -2111,6 +2116,7 @@ return [
             'delete-failed'                   => 'Eliminazione del ruolo fallita',
             'delete-success'                  => 'Ruolo eliminato con successo',
             'last-delete-error'               => 'Non è possibile eliminare l\'ultimo ruolo',
+            'last-full-access'                => 'Almeno un utente attivo deve mantenere l\'accesso completo.',
             'update-success'                  => 'Ruolo aggiornato con successo',
         ],
     ],
@@ -2150,6 +2156,26 @@ return [
                     'info'  => '',
                     'title' => 'Generale',
                 ],
+                'platform' => [
+                    'info'  => 'Scegli quali moduli della piattaforma sono attivi.',
+                    'title' => 'Piattaforma',
+
+                    'settings' => [
+                        'info'  => 'Esegui qualsiasi modulo da solo o più moduli insieme; un modulo che ne richiede un altro può essere attivato solo insieme a esso.',
+                        'title' => 'Selezione dei moduli',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Disattivare un modulo ne nasconde menu, pagine e rotte API; i dati vengono conservati.',
+                        'title' => 'Moduli',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Si applica solo quando Informazioni prodotto (PIM) è disattivato. Le sezioni selezionate vengono rimosse dal menu e le relative pagine di amministrazione bloccate; i dati vengono conservati e le rotte Admin API restano disponibili.',
+                        'title' => 'Sezioni nascoste',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -2321,6 +2347,7 @@ return [
                 'title'               => 'Prompt',
                 'create-btn'          => 'Crea Prompt',
                 'edit-title'          => 'Modifica Prompt',
+                'insert-attribute'    => 'Inserisci attributo',
                 'create-title'        => 'Crea Nuovo Prompt',
                 'label-title'         => 'Titolo',
                 'purpose'             => 'Scopo',
@@ -3093,6 +3120,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Dashboard',
+        'home'      => 'Home',
         'go-back'   => 'Torna indietro',
         'support'   => 'Se il problema persiste, contattaci all\'indirizzo <a href=":link" class=":class">:email</a> per assistenza.',
         '404'       => [

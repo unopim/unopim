@@ -3,6 +3,7 @@
 use Illuminate\Http\Client\Factory;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
+use Laravel\Ai\Image;
 use Webkul\MagicAI\Gateways\OpenAiImageGateway;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Services\LaravelAiAdapter;
@@ -225,3 +226,26 @@ it('treats every gpt-image naming variant as returning base64 by default', funct
     ['dall-e-2', false],
     ['dall-e-3', false],
 ]);
+
+it('forwards provider options to the image request without letting them override the canonical fields', function () {
+    config(['ai.providers.openai.key' => 'sk-test']);
+
+    Image::of('a red apple')
+        ->withProviderOptions([
+            'user'            => 'unopim-admin-1',
+            'model'           => 'dall-e-2',
+            'prompt'          => 'something else',
+            'response_format' => 'url',
+        ])
+        ->generate('openai', 'dall-e-3');
+
+    Http::assertSent(function (Request $request) {
+        $body = json_decode($request->body(), true);
+
+        return $request->url() === 'https://api.openai.com/v1/images/generations'
+            && $body['user'] === 'unopim-admin-1'
+            && $body['model'] === 'dall-e-3'
+            && $body['prompt'] === 'a red apple'
+            && $body['response_format'] === 'b64_json';
+    });
+});

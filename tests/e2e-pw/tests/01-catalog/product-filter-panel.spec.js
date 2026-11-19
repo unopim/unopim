@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, openFilterDrawer: clickFilterToggle } = require('../../utils/helpers');
+const { navigateTo, waitForAppReady, openFilterDrawer: clickFilterToggle } = require('../../utils/helpers');
 
 async function openFilterDrawer(adminPage) {
   await navigateTo(adminPage, 'products');
@@ -253,17 +253,27 @@ test.describe('Product DataGrid saved filters', () => {
   test('Clearing drops every applied filter', async ({ adminPage }) => {
     await navigateTo(adminPage, 'products');
     await adminPage.evaluate(() => localStorage.removeItem('datagrids'));
-    await adminPage.reload({ waitUntil: 'networkidle' });
-
-    const total = await adminPage.locator('#app').getByText(/\d+ Results?/).first().innerText();
+    await adminPage.reload({ waitUntil: 'load' });
+    await waitForAppReady(adminPage);
 
     await applyStatusFilter(adminPage);
 
     await openSavedFilters(adminPage);
-    await adminPage.locator('[data-clear-filters]').click();
-    await adminPage.waitForLoadState('networkidle');
 
-    await expect(adminPage.locator('#app').getByText(/\d+ Results?/).first()).toHaveText(total);
+    /**
+     * Other workers add and delete products meanwhile, so the unfiltered total is read
+     * from the refresh the clear triggers rather than from a count taken before filtering.
+     */
+    const refreshed = adminPage.waitForResponse((response) => response.request().method() === 'GET'
+      && ['xhr', 'fetch'].includes(response.request().resourceType())
+      && new URL(response.url()).pathname.endsWith('/catalog/products'));
+    await adminPage.locator('[data-clear-filters]').click();
+    const response = await refreshed;
+
+    expect(decodeURIComponent(response.url())).not.toContain('[status]');
+
+    const { meta } = await response.json();
+    await expect(adminPage.locator('#app').getByText(/\d+ Results?/).first()).toHaveText(new RegExp(`^${meta.total} Results?$`));
 
     await clickFilterToggle(adminPage);
 
@@ -390,34 +400,25 @@ test.describe('Product DataGrid saved filters', () => {
 
     await navigateTo(adminPage, 'products');
     await adminPage.evaluate(() => localStorage.removeItem('datagrids'));
-    await adminPage.reload({ waitUntil: 'networkidle' });
+    await adminPage.reload({ waitUntil: 'load' });
+    await waitForAppReady(adminPage);
 
     await openSavedFilters(adminPage);
-    await adminPage.locator('[data-grid-view]').filter({ hasText: FILTER_NAME }).first().click();
-    await adminPage.waitForLoadState('networkidle');
+
+    // Other workers add and delete products meanwhile, so counts are not
+    // comparable over time; assert on the request the restored view sends.
+    const [restored] = await Promise.all([
+      adminPage.waitForResponse((response) => new URL(response.url()).pathname === '/admin/catalog/products'
+        && response.request().resourceType() === 'xhr'),
+      adminPage.locator('[data-grid-view]').filter({ hasText: FILTER_NAME }).first().click(),
+    ]);
+
+    expect(decodeURIComponent(restored.url())).toContain('filters[status]');
 
     await expect(adminPage.locator('[data-grid-views]')).toContainText(FILTER_NAME);
-
-    const restoredCount = await adminPage.locator('#app').getByText(/\d+ Results?/).first().innerText();
 
     await clickFilterToggle(adminPage);
 
     await expect(adminPage.locator('[data-datagrid-filter="status"] [data-filter-summary]')).toHaveText('True');
-
-    /**
-     * The shared QA catalog is written to by other concurrent test runs, so a
-     * count captured before the save/navigate/restore round-trip can legitimately
-     * drift from one captured after it, even when restoring worked correctly.
-     * Re-applying the identical condition right now — seconds, not minutes, away
-     * from the restored count above — proves the saved view reproduces the same
-     * query without depending on the catalog holding a specific, stable count.
-     */
-    await adminPage.locator('[data-datagrid-filter="status"] [data-filter-toggle]').click();
-    await adminPage.locator('[data-datagrid-filter="status"] .icon-chevron-down').last().click();
-    await adminPage.getByRole('listitem').filter({ hasText: /^True$/ }).first().click();
-    await adminPage.locator('.primary-button').filter({ hasText: 'Apply' }).click();
-    await adminPage.waitForLoadState('networkidle');
-
-    await expect(adminPage.locator('#app').getByText(/\d+ Results?/).first()).toHaveText(restoredCount);
   });
 });

@@ -1580,9 +1580,11 @@ return [
                     'zip-upload-success'  => 'ZIP subido y extraído correctamente.',
                     'zip-upload-error'    => 'Error al subir el ZIP. Inténtelo de nuevo.',
                     'invalid-zip'         => 'El archivo subido no es un archivo ZIP válido.',
-                    'zip-upload-or'       => 'o suba un ZIP de imágenes',
-                    'zip-click-upload'    => 'Haga clic para subir un ZIP de imágenes',
+                    'zip-upload-or'       => 'o suba un ZIP de imágenes y documentos',
+                    'zip-click-upload'    => 'Haga clic para subir un ZIP de imágenes y documentos',
                     'zip-files-extracted' => 'archivos extraídos',
+                    'zip-files-skipped'   => ':skipped (tipo no admitido, contenido no válido o demasiado grandes):',
+                    'zip-accepted-types'  => 'Aceptado en el ZIP: :types',
                     'zip-drop-hint'       => 'Haga clic o arrastre y suelte un archivo ZIP aquí',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MÁX. 2MB)',
                     'images-directory'    => 'Camino',
@@ -1704,6 +1706,9 @@ return [
                 'setup-queue-error'          => 'Cambie su controlador de cola a "base de datos" o "redis" para comenzar el proceso de importación.',
                 'update-success'             => 'Importar actualizado con éxito.',
                 'zip-upload-success'         => 'ZIP subido y extraído correctamente.',
+                'zip-extracted-count'        => '{1} :count archivo extraído|[0,*] :count archivos extraídos',
+                'zip-skipped-count'          => '{1} :count omitido|[0,*] :count omitidos',
+                'zip-upload-partial'         => 'ZIP subido. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [
@@ -2111,6 +2116,7 @@ return [
             'delete-failed'                   => 'Los roles se eliminan fallidos',
             'delete-success'                  => 'Los roles se eliminan con éxito',
             'last-delete-error'               => 'Los últimos roles no se pueden eliminar',
+            'last-full-access'                => 'Al menos un usuario activo debe mantener el acceso completo.',
             'update-success'                  => 'Los roles se actualizan con éxito',
         ],
     ],
@@ -2150,6 +2156,26 @@ return [
                     'info'  => '',
                     'title' => 'General',
                 ],
+                'platform' => [
+                    'info'  => 'Elige qué módulos de la plataforma están activados.',
+                    'title' => 'Plataforma',
+
+                    'settings' => [
+                        'info'  => 'Ejecuta cualquier módulo por separado o varios a la vez; un módulo que necesita otro solo puede activarse junto a él.',
+                        'title' => 'Selección de módulos',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Desactivar un módulo oculta sus menús, páginas y rutas de la API; sus datos se conservan.',
+                        'title' => 'Módulos',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Solo se aplica mientras la Información de producto (PIM) está desactivada. Las secciones seleccionadas se quitan del menú y sus páginas de administración se bloquean; sus datos se conservan y sus rutas de Admin API siguen disponibles.',
+                        'title' => 'Secciones ocultas',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -2321,6 +2347,7 @@ return [
                 'title'               => 'Solicitud',
                 'create-btn'          => 'Crear Solicitud',
                 'edit-title'          => 'Editar Solicitud',
+                'insert-attribute'    => 'Insertar atributo',
                 'create-title'        => 'Crear Nueva Solicitud',
                 'label-title'         => 'Título',
                 'purpose'             => 'Finalidad',
@@ -3093,6 +3120,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Panel',
+        'home'      => 'Inicio',
         'go-back'   => 'Regresa',
         'support'   => 'Si el problema persiste, comuníquese con nosotros en <a href=":link" class=":class">:email</a> for assistance.',
         '404'       => [

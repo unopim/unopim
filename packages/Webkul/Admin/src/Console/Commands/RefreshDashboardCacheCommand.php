@@ -5,6 +5,8 @@ namespace Webkul\Admin\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 use Webkul\Admin\Helpers\Dashboard;
+use Webkul\Core\Platform\Module;
+use Webkul\Core\Platform\ModuleGate;
 
 /**
  * Recomputes the dashboard aggregates off the request path. Clearing the keys
@@ -26,6 +28,10 @@ class RefreshDashboardCacheCommand extends Command
             'dashboard.needs_attention'      => fn () => $dashboardHelper->getNeedsAttention(),
             'dashboard.channel_readiness'    => fn () => $dashboardHelper->getChannelReadiness(),
         ];
+
+        if (! app(ModuleGate::class)->enabled(Module::Pim)) {
+            $warmers = array_diff_key($warmers, array_flip($dashboardHelper::PIM_WIDGETS));
+        }
 
         $failed = 0;
 

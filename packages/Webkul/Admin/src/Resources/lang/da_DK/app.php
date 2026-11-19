@@ -1580,9 +1580,11 @@ return [
                     'zip-upload-success'  => 'ZIP uploadet og udpakket med succes.',
                     'zip-upload-error'    => 'ZIP-upload mislykkedes. Prøv venligst igen.',
                     'invalid-zip'         => 'Den uploadede fil er ikke et gyldigt ZIP-arkiv.',
-                    'zip-upload-or'       => 'eller upload en ZIP med billeder',
-                    'zip-click-upload'    => 'Klik for at uploade en ZIP med billeder',
+                    'zip-upload-or'       => 'eller upload en ZIP med billeder og dokumenter',
+                    'zip-click-upload'    => 'Klik for at uploade en ZIP med billeder og dokumenter',
                     'zip-files-extracted' => 'filer udpakket',
+                    'zip-files-skipped'   => ':skipped (ikke-understøttet type, ugyldigt indhold eller for store):',
+                    'zip-accepted-types'  => 'Accepteret i ZIP: :types',
                     'zip-drop-hint'       => 'Klik eller træk og slip en ZIP-fil her',
                     'file-upload-info'    => 'CSV, XLSX, JSON (MAKS. 2MB)',
                     'images-directory'    => 'Sti',
@@ -1704,6 +1706,9 @@ return [
                 'setup-queue-error'          => 'Skift din kødriver til "database" eller "redis" for at starte importprocessen.',
                 'update-success'             => 'Import opdateret med succes.',
                 'zip-upload-success'         => 'ZIP uploadet og udpakket med succes.',
+                'zip-extracted-count'        => '{1} :count fil udpakket|[0,*] :count filer udpakket',
+                'zip-skipped-count'          => '{1} :count sprunget over|[0,*] :count sprunget over',
+                'zip-upload-partial'         => 'ZIP uploadet. :extracted, :skipped.',
             ],
             'exports' => [
                 'create' => [
@@ -2111,6 +2116,7 @@ return [
             'delete-failed'                   => 'Rolle sletning mislykkedes',
             'delete-success'                  => 'Rolle slettet succesfuldt',
             'last-delete-error'               => 'Sidste rolle kan ikke slettes',
+            'last-full-access'                => 'Mindst én aktiv bruger skal bevare fuld adgang.',
             'update-success'                  => 'Rolle opdateret succesfuldt',
         ],
     ],
@@ -2150,6 +2156,26 @@ return [
                     'info'  => '',
                     'title' => 'Generel',
                 ],
+                'platform' => [
+                    'info'  => 'Vælg, hvilke platformmoduler der er slået til.',
+                    'title' => 'Platform',
+
+                    'settings' => [
+                        'info'  => 'Kør ethvert modul alene eller flere sammen; et modul, der kræver et andet, kan kun slås til sammen med det.',
+                        'title' => 'Valg af moduler',
+                    ],
+
+                    'modules' => [
+                        'info'  => 'Når et modul slås fra, skjules dets menuer, sider og API-ruter; dets data bevares.',
+                        'title' => 'Moduler',
+                    ],
+
+                    'hidden-sections' => [
+                        'info'  => 'Gælder kun, mens Produktinformation (PIM) er slået fra. Valgte sektioner fjernes fra menuen, og deres administrationssider blokeres; data bevares, og deres Admin API-ruter forbliver tilgængelige.',
+                        'title' => 'Skjulte sektioner',
+                    ],
+                ],
+
                 'debug' => [
                     'info'     => 'Enable verbose debug output for specific IP addresses without exposing it to everyone.',
                     'title'    => 'Debug',
@@ -2321,6 +2347,7 @@ return [
                 'title'               => 'Prompt',
                 'create-btn'          => 'Opret Prompt',
                 'edit-title'          => 'Rediger Prompt',
+                'insert-attribute'    => 'Indsæt attribut',
                 'create-title'        => 'Opret Ny Prompt',
                 'label-title'         => 'Titel',
                 'purpose'             => 'Formål',
@@ -3093,6 +3120,7 @@ return [
     ],
     'errors' => [
         'dashboard' => 'Instrumentbræt',
+        'home'      => 'Hjem',
         'go-back'   => 'Gå tilbage',
         'support'   => 'Hvis problemet fortsætter, kontakt os på <a href=":link" class=":class">:email</a> for hjælp.',
         '404'       => [

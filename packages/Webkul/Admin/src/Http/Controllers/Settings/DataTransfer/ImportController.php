@@ -7,11 +7,14 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\Mime\MimeTypes;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\ImportDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Traits\GatesJobTypes;
+use Webkul\DataTransfer\Contracts\JobInstances as JobInstancesContract;
 use Webkul\DataTransfer\Contracts\JobTrack as JobTrackContract;
 use Webkul\DataTransfer\Contracts\Validator\JobInstances\JobValidator;
 use Webkul\DataTransfer\Enums\JobType;
@@ -25,6 +28,7 @@ use Webkul\DataTransfer\Services\JobHealth;
 class ImportController extends Controller
 {
     use Concerns\DownloadsSampleFile;
+    use GatesJobTypes;
 
     const TYPE = 'import';
 
@@ -62,9 +66,11 @@ class ImportController extends Controller
      */
     public function create(): View
     {
-        $importerConfig = config(self::IMPORTERS);
+        $importerConfig = $this->visibleJobTypes(self::IMPORTERS);
 
-        return view('admin::settings.data-transfer.imports.create', compact('importerConfig'));
+        $acceptedArchiveTypes = $this->allowedArchiveExtensionsLabel();
+
+        return view('admin::settings.data-transfer.imports.create', compact('importerConfig', 'acceptedArchiveTypes'));
     }
 
     /**
@@ -72,7 +78,7 @@ class ImportController extends Controller
      */
     public function store(): RedirectResponse
     {
-        $importerConfig = config(self::IMPORTERS);
+        $importerConfig = $this->visibleJobTypes(self::IMPORTERS);
 
         $importers = array_keys($importerConfig);
 
@@ -109,11 +115,7 @@ class ImportController extends Controller
 
         if (isset($importerConfig[$data['entity_type']]['has_file_options']) && $importerConfig[$data['entity_type']]['has_file_options'] == 'true') {
             $fileData = [
-                'file_path' => request()->file('file')->storeAs(
-                    'imports',
-                    time().'-'.request()->file('file')->getClientOriginalName(),
-                    'private'
-                ),
+                'file_path' => $this->storeImportFile(),
                 'type'      => self::TYPE,
             ];
         }
@@ -124,6 +126,8 @@ class ImportController extends Controller
                 $data
             )
         );
+
+        $this->recordProfileSaver($import, isset($fileData['file_path']));
 
         Event::dispatch('data_transfer.imports.create.after', $import);
 
@@ -137,11 +141,13 @@ class ImportController extends Controller
      */
     public function edit(int $id): View
     {
-        $importerConfig = config(self::IMPORTERS);
+        $importerConfig = $this->visibleJobTypes(self::IMPORTERS);
 
-        $import = $this->jobInstancesRepository->findOrFail($id);
+        $import = $this->findVisibleJobInstance($id);
 
-        return view('admin::settings.data-transfer.imports.edit', compact('import', 'importerConfig'));
+        $acceptedArchiveTypes = $this->allowedArchiveExtensionsLabel();
+
+        return view('admin::settings.data-transfer.imports.edit', compact('import', 'importerConfig', 'acceptedArchiveTypes'));
     }
 
     /**
@@ -149,11 +155,11 @@ class ImportController extends Controller
      */
     public function update(int $id): RedirectResponse
     {
-        $importerConfig = config(self::IMPORTERS);
+        $importerConfig = $this->visibleJobTypes(self::IMPORTERS);
 
         $importers = array_keys($importerConfig);
 
-        $import = $this->jobInstancesRepository->findOrFail($id);
+        $import = $this->findVisibleJobInstance($id);
 
         $this->validate(request(), [
             'code'                => ['required'],
@@ -195,14 +201,12 @@ class ImportController extends Controller
         if (request()->file('file') && request()->file('file')->isValid()) {
             Storage::disk('private')->delete($import->file_path);
 
-            $data['file_path'] = request()->file('file')->storeAs(
-                'imports',
-                time().'-'.request()->file('file')->getClientOriginalName(),
-                'private'
-            );
+            $data['file_path'] = $this->storeImportFile();
         }
 
         $import = $this->jobInstancesRepository->update($data, $import->id);
+
+        $this->recordProfileSaver($import, isset($data['file_path']));
 
         Event::dispatch('data_transfer.imports.update.after', $import);
 
@@ -212,13 +216,38 @@ class ImportController extends Controller
     }
 
     /**
+     * Store the uploaded import file under a key no other upload can reuse, so its bytes stay tied to the admin who supplied them.
+     */
+    private function storeImportFile(): string
+    {
+        return request()->file('file')->storeAs(
+            'imports',
+            time().'-'.Str::random(16).'-'.request()->file('file')->getClientOriginalName(),
+            'private'
+        );
+    }
+
+    /**
+     * Record the admin who saved the profile, and who supplied its file when a new one was uploaded; importers check both admins' access.
+     */
+    private function recordProfileSaver(JobInstancesContract $import, bool $uploadedFile): void
+    {
+        $adminId = auth()->guard('admin')->id();
+
+        $import->forceFill([
+            'updated_by' => $adminId,
+            ...($uploadedFile ? ['file_uploaded_by' => $adminId] : []),
+        ])->saveQuietly();
+    }
+
+    /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
      */
     public function destroy($id): JsonResponse
     {
-        $import = $this->jobInstancesRepository->findOrFail($id);
+        $import = $this->findVisibleJobInstance($id);
 
         try {
             if (! empty($import->file_path)) {
@@ -252,7 +281,7 @@ class ImportController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $import = $jobInstance = $this->jobInstancesRepository->findOrFail($id);
+        $import = $jobInstance = $this->findVisibleJobInstance($id);
 
         $import->unsetRelations();
 
@@ -266,9 +295,9 @@ class ImportController extends Controller
     {
         $jobTrackInstance = null;
 
-        try {
-            $import = $this->jobInstancesRepository->findOrFail($id);
+        $import = $this->findVisibleJobInstance($id);
 
+        try {
             $requiresFile = (bool) config(self::IMPORTERS.'.'.$import->entity_type.'.has_file_options', false);
 
             if ($requiresFile && empty($import->file_path)) {
@@ -319,7 +348,7 @@ class ImportController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $import = $this->jobTrackRepository->findOrFail($id);
+        $import = $this->findVisibleJobTrack($id);
 
         $isValid = $this->importHelper
             ->setImport($import)
@@ -340,7 +369,7 @@ class ImportController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $import = $this->jobTrackRepository->findOrFail($id);
+        $import = $this->findVisibleJobTrack($id);
 
         if (! $import->processed_rows_count) {
             return new JsonResponse([
@@ -404,7 +433,7 @@ class ImportController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $import = $this->jobTrackRepository->findOrFail($id);
+        $import = $this->findVisibleJobTrack($id);
 
         if (! $import->processed_rows_count) {
             return new JsonResponse([
@@ -469,7 +498,7 @@ class ImportController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $import = $this->jobTrackRepository->findOrFail($id);
+        $import = $this->findVisibleJobTrack($id);
 
         if (! $import->processed_rows_count) {
             return new JsonResponse([
@@ -544,7 +573,7 @@ class ImportController extends Controller
      */
     public function pause(int $id): JsonResponse
     {
-        $jobTrack = $this->jobTrackRepository->findOrFail($id);
+        $jobTrack = $this->findVisibleJobTrack($id);
 
         $jobType = $this->authorizeJobControl($jobTrack);
 
@@ -564,7 +593,7 @@ class ImportController extends Controller
      */
     public function resume(int $id): JsonResponse
     {
-        $jobTrack = $this->jobTrackRepository->findOrFail($id);
+        $jobTrack = $this->findVisibleJobTrack($id);
 
         $jobType = $this->authorizeJobControl($jobTrack);
 
@@ -584,7 +613,7 @@ class ImportController extends Controller
      */
     public function cancel(int $id): JsonResponse
     {
-        $jobTrack = $this->jobTrackRepository->findOrFail($id);
+        $jobTrack = $this->findVisibleJobTrack($id);
 
         $jobType = $this->authorizeJobControl($jobTrack);
 
@@ -608,7 +637,7 @@ class ImportController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $import = $this->jobTrackRepository->findOrFail($id);
+        $import = $this->findVisibleJobTrack($id);
 
         // The scheduled reaper is the safety net; failing it here too stops the
         // tracker polling a dead job for up to a scheduler tick.
@@ -682,7 +711,7 @@ class ImportController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $import = $this->jobInstancesRepository->findOrFail($id);
+        $import = $this->findVisibleJobInstance($id);
 
         return Storage::disk('private')->download($import->file_path);
     }
@@ -696,7 +725,7 @@ class ImportController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $import = $this->jobTrackRepository->findOrFail($id);
+        $import = $this->findVisibleJobTrack($id);
 
         return Storage::disk('private')->download($import->error_file_path);
     }
@@ -745,109 +774,196 @@ class ImportController extends Controller
             mkdir($extractPath, 0755, true);
         }
 
-        $filesCount = $this->extractImageEntries($zip, $extractPath);
+        $extraction = $this->extractMediaEntries($zip, $extractPath);
         $zip->close();
 
         return new JsonResponse([
-            'path'        => $folderName,
-            'files_count' => $filesCount,
-            'zip_name'    => $file->getClientOriginalName(),
-            'message'     => trans('admin::app.settings.data-transfer.imports.zip-upload-success'),
+            'path'            => $folderName,
+            'files_count'     => $extraction['extracted'],
+            'skipped_files'   => $extraction['skipped'],
+            'skipped_count'   => $extraction['skipped_count'],
+            'zip_name'        => $file->getClientOriginalName(),
+            'extracted_label' => $this->zipExtractedCountLabel($extraction['extracted']),
+            'skipped_label'   => $extraction['skipped_count'] > 0
+                ? trans('admin::app.settings.data-transfer.imports.create.zip-files-skipped', [
+                    'skipped' => $this->zipSkippedCountLabel($extraction['skipped_count']),
+                ])
+                : null,
+            'message'         => $this->zipUploadMessage($extraction),
         ]);
     }
 
-    /**
-     * Safely extract only genuine image entries from an uploaded ZIP into the
-     * target directory. Non-image extensions, spoofed content, and nested paths
-     * (zip-slip) are rejected so no script/executable file reaches the web root.
-     */
-    protected function extractImageEntries(\ZipArchive $zip, string $extractPath): int
+    protected function zipUploadMessage(array $extraction): string
     {
-        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'];
+        if ($extraction['skipped_count'] === 0) {
+            return trans('admin::app.settings.data-transfer.imports.zip-upload-success');
+        }
 
-        $maxEntrySize = (int) config('image_import.max_entry_size', 15 * 1024 * 1024);
+        return trans('admin::app.settings.data-transfer.imports.zip-upload-partial', [
+            'extracted' => $this->zipExtractedCountLabel($extraction['extracted']),
+            'skipped'   => $this->zipSkippedCountLabel($extraction['skipped_count']),
+        ]);
+    }
+
+    protected function zipExtractedCountLabel(int $count): string
+    {
+        return trans_choice('admin::app.settings.data-transfer.imports.zip-extracted-count', $count, ['count' => $count]);
+    }
+
+    protected function zipSkippedCountLabel(int $count): string
+    {
+        return trans_choice('admin::app.settings.data-transfer.imports.zip-skipped-count', $count, ['count' => $count]);
+    }
+
+    protected function allowedArchiveExtensions(): array
+    {
+        return array_map(strtolower(...), (array) config('image_import.allowed_extensions', []));
+    }
+
+    protected function allowedArchiveExtensionsLabel(): string
+    {
+        return strtoupper(implode(', ', $this->allowedArchiveExtensions()));
+    }
+
+    protected function isArchiveMetadataEntry(string $entryName): bool
+    {
+        $normalizedPath = str_replace('\\', '/', $entryName);
+        $baseName = basename($normalizedPath);
+
+        return str_starts_with($normalizedPath, '__MACOSX/')
+            || str_starts_with($baseName, '._')
+            || in_array($baseName, ['.DS_Store', 'Thumbs.db', 'desktop.ini'], true);
+    }
+
+    protected function contentMatchesExtension(string $extension, string $mimeType): bool
+    {
+        if (in_array($extension, MimeTypes::getDefault()->getExtensions($mimeType), true)) {
+            return true;
+        }
+
+        $fallbackMimeTypes = (array) config('image_import.extension_mime_fallbacks.'.$extension, []);
+
+        return in_array($mimeType, $fallbackMimeTypes, true);
+    }
+
+    /**
+     * Safely extract only genuine image, document and audio entries from an uploaded ZIP
+     * into the target directory. Disallowed extensions, spoofed content, and nested
+     * paths (zip-slip) are rejected so no script/executable file reaches the web root.
+     */
+    protected function extractMediaEntries(\ZipArchive $zip, string $extractPath): array
+    {
         $maxTotalSize = (int) config('image_import.max_total_size', 500 * 1024 * 1024);
+        $maxReportedSkipped = (int) config('image_import.max_reported_skipped', 50);
+        $allowedExtensions = $this->allowedArchiveExtensions();
 
         $fileInfo = new \finfo(FILEINFO_MIME_TYPE);
 
         $extractedCount = 0;
         $totalExtractedBytes = 0;
+        $skippedEntries = [];
+        $skippedCount = 0;
 
         for ($index = 0; $index < $zip->numFiles; $index++) {
             $entryName = $zip->getNameIndex($index);
 
-            if ($entryName === false || str_ends_with($entryName, '/')) {
+            if ($entryName === false || str_ends_with($entryName, '/') || $this->isArchiveMetadataEntry($entryName)) {
                 continue;
             }
 
-            $relativePath = ltrim(str_replace('\\', '/', $entryName), '/');
+            $remainingBytes = $maxTotalSize > 0 ? $maxTotalSize - $totalExtractedBytes : null;
 
-            if ($relativePath === '' || str_contains($relativePath, '../')) {
+            $writtenBytes = $this->extractMediaEntry($zip, $entryName, $extractPath, $fileInfo, $remainingBytes, $allowedExtensions);
+
+            if ($writtenBytes === null) {
+                $skippedCount++;
+
+                if (count($skippedEntries) < $maxReportedSkipped) {
+                    $skippedEntries[] = $entryName;
+                }
+
                 continue;
             }
-
-            $extension = strtolower(pathinfo($relativePath, PATHINFO_EXTENSION));
-
-            if (! in_array($extension, $allowedExtensions, true)) {
-                continue;
-            }
-
-            $stat = $zip->statIndex($index);
-
-            if ($stat === false || ($maxEntrySize > 0 && $stat['size'] > $maxEntrySize)) {
-                continue;
-            }
-
-            $stream = $zip->getStream($entryName);
-
-            if ($stream === false) {
-                continue;
-            }
-
-            $contents = $maxEntrySize > 0
-                ? stream_get_contents($stream, $maxEntrySize + 1)
-                : stream_get_contents($stream);
-
-            fclose($stream);
-
-            if ($contents === false) {
-                continue;
-            }
-
-            $actualSize = strlen($contents);
-
-            $mimeType = (string) $fileInfo->buffer($contents);
-
-            if (
-                ($maxEntrySize > 0 && $actualSize > $maxEntrySize)
-                || ($maxTotalSize > 0 && ($totalExtractedBytes + $actualSize) > $maxTotalSize)
-                || ! in_array($extension, MimeTypes::getDefault()->getExtensions($mimeType), true)
-            ) {
-                continue;
-            }
-
-            $targetPath = $extractPath.DIRECTORY_SEPARATOR.$relativePath;
-
-            $targetDir = dirname($targetPath);
-
-            if (! is_dir($targetDir)) {
-                mkdir($targetDir, 0755, true);
-            }
-
-            $realBase = realpath($extractPath);
-            $realDir = realpath($targetDir);
-
-            if ($realBase === false || $realDir === false || ! str_starts_with($realDir.DIRECTORY_SEPARATOR, $realBase.DIRECTORY_SEPARATOR)) {
-                continue;
-            }
-
-            file_put_contents($targetPath, $contents);
 
             $extractedCount++;
-            $totalExtractedBytes += $actualSize;
+            $totalExtractedBytes += $writtenBytes;
         }
 
-        return $extractedCount;
+        return [
+            'extracted'     => $extractedCount,
+            'skipped'       => $skippedEntries,
+            'skipped_count' => $skippedCount,
+        ];
+    }
+
+    protected function extractMediaEntry(\ZipArchive $zip, string $entryName, string $extractPath, \finfo $fileInfo, ?int $remainingBytes, array $allowedExtensions): ?int
+    {
+        $maxEntrySize = (int) config('image_import.max_entry_size', 15 * 1024 * 1024);
+
+        $relativePath = ltrim(str_replace('\\', '/', $entryName), '/');
+
+        if ($relativePath === '' || str_contains($relativePath, '../')) {
+            return null;
+        }
+
+        $extension = strtolower(pathinfo($relativePath, PATHINFO_EXTENSION));
+
+        if (! in_array($extension, $allowedExtensions, true)) {
+            return null;
+        }
+
+        $stat = $zip->statName($entryName);
+
+        if ($stat === false || ($maxEntrySize > 0 && $stat['size'] > $maxEntrySize)) {
+            return null;
+        }
+
+        $stream = $zip->getStream($entryName);
+
+        if ($stream === false) {
+            return null;
+        }
+
+        $contents = $maxEntrySize > 0
+            ? stream_get_contents($stream, $maxEntrySize + 1)
+            : stream_get_contents($stream);
+
+        fclose($stream);
+
+        if ($contents === false) {
+            return null;
+        }
+
+        $actualSize = strlen($contents);
+
+        $mimeType = (string) $fileInfo->buffer($contents);
+
+        if (
+            ($maxEntrySize > 0 && $actualSize > $maxEntrySize)
+            || ($remainingBytes !== null && $actualSize > $remainingBytes)
+            || ! $this->contentMatchesExtension($extension, $mimeType)
+        ) {
+            return null;
+        }
+
+        $targetPath = $extractPath.DIRECTORY_SEPARATOR.$relativePath;
+
+        $targetDir = dirname($targetPath);
+
+        if (! is_dir($targetDir)) {
+            mkdir($targetDir, 0755, true);
+        }
+
+        $realBase = realpath($extractPath);
+        $realDir = realpath($targetDir);
+
+        if ($realBase === false || $realDir === false || ! str_starts_with($realDir.DIRECTORY_SEPARATOR, $realBase.DIRECTORY_SEPARATOR)) {
+            return null;
+        }
+
+        file_put_contents($targetPath, $contents);
+
+        return $actualSize;
     }
 
     protected function archiveRejectionReason(\ZipArchive $zip): ?array

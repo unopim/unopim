@@ -58,6 +58,10 @@ class CategoryRequestValidator extends CategoryValidator
             $this->categoryId = null;
         }
 
+        if ($id) {
+            $rules = $this->allowStoredMediaPaths($rules, $id);
+        }
+
         $fieldKeys = [];
 
         foreach (array_keys($rules) as $key) {
@@ -79,6 +83,42 @@ class CategoryRequestValidator extends CategoryValidator
         }
 
         return ValidatorFacade::make($requestData, $rules, [], $fieldKeys);
+    }
+
+    /**
+     * Accept media paths the category already stores under the same field and locale.
+     *
+     * Values saved before the path-prefix check existed may sit outside the category's
+     * own directory. The stored value is read from the database, never the request, and
+     * each rule key gets its own copy because one rule instance is shared by every locale.
+     */
+    protected function allowStoredMediaPaths(array $rules, int $id): array
+    {
+        $stored = (array) ($this->categoryRepository->find($id)?->additional_data ?? []);
+
+        foreach ($rules as $key => $keyRules) {
+            if (! is_string($key) || ! is_array($keyRules)) {
+                continue;
+            }
+
+            $value = data_get($stored, substr($key, strlen(CategoryRepository::ADDITIONAL_VALUES_KEY) + 1));
+
+            $paths = array_values(array_filter(
+                array_map(fn (mixed $path): string => is_string($path) ? trim($path) : '', is_array($value) ? $value : explode(',', (string) $value)),
+                fn (string $path): bool => $path !== '',
+            ));
+
+            if ($paths === []) {
+                continue;
+            }
+
+            $rules[$key] = array_map(
+                fn (mixed $rule): mixed => $rule instanceof FileOrImageValidValue ? (clone $rule)->allowStoredPaths($paths) : $rule,
+                $keyRules,
+            );
+        }
+
+        return $rules;
     }
 
     protected function fieldTypeRules(CategoryField $field): array
