@@ -35,6 +35,18 @@ class Dashboard
     ];
 
     /**
+     * Stat types of the widgets that only render while the PIM module is switched on,
+     * mapped to the cache key that holds each one.
+     */
+    public const PIM_WIDGETS = [
+        'total-catalogs'       => 'dashboard.total_catalogs',
+        'total-configurations' => 'dashboard.total_configurations',
+        'product-stats'        => 'dashboard.product_stats',
+        'needs-attention'      => 'dashboard.needs_attention',
+        'channel-readiness'    => 'dashboard.channel_readiness',
+    ];
+
+    /**
      * Create a controller instance.
      *
      * @return void

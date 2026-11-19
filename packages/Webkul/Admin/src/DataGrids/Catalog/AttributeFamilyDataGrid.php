@@ -8,6 +8,8 @@ use Webkul\DataGrid\DataGrid;
 
 class AttributeFamilyDataGrid extends DataGrid
 {
+    protected bool $plainTextColumns = true;
+
     /**
      * Prepare query builder.
      *
