@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Webkul\Admin\DataGrids\Catalog\ProductDataGrid;
 use Webkul\Admin\Jobs\ExportDataGridSelection;
+use Webkul\Core\Facades\ElasticSearch;
 use Webkul\Product\Contracts\TemplateRenderer;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Tests\Concerns\InteractsWithTemplates;
@@ -147,6 +148,40 @@ it('writes rendered templates to the queued select-all export file', function (s
     expect($rows['en_US']['tpl_qexp_title'])->toBe('Sunglasses by Acme')
         ->and($rows['de_DE']['tpl_qexp_title'])->toBe('Sonnenbrille by Acme');
 })->with('quick template export formats');
+
+it('renders templates in quick exports when Elasticsearch is enabled', function () {
+    $product = Product::factory()->create([
+        'sku'    => 'QTPL-ES',
+        'values' => [
+            'common'          => ['tpl_qexp_brand' => 'Acme', 'tpl_qexp_title' => '{{ tpl_qexp_name }} by {{ tpl_qexp_brand }}'],
+            'locale_specific' => $this->names,
+        ],
+    ]);
+
+    config([
+        'elasticsearch.enabled'                     => true,
+        'elasticsearch.prefix'                      => 'testing',
+        'elasticsearch.connection'                  => 'default',
+        'elasticsearch.connections.default.hosts.0' => 'testhost:9200',
+    ]);
+
+    ElasticSearch::shouldReceive('makeConnection')
+        ->andReturn(Mockery::mock('Webkul\ElasticSearch\Client\Fake\FakeElasticClient'));
+
+    ElasticSearch::shouldReceive('search')
+        ->once()
+        ->withArgs(fn (array $args): bool => $args['index'] === 'testing_products')
+        ->andReturn(['hits' => ['hits' => [['_id' => (string) $product->id, 'sort' => [$product->id]]]]]);
+
+    $downloaded = quickTemplateDownloadRows([$product->id])[$product->sku][$this->channel->code];
+
+    $queued = quickTemplateQueuedRows('QTPL-ES', 'csv')[$product->sku][$this->channel->code];
+
+    expect($downloaded['en_US']['tpl_qexp_title'])->toBe('Sunglasses by Acme')
+        ->and($downloaded['de_DE']['tpl_qexp_title'])->toBe('Sonnenbrille by Acme')
+        ->and($queued['en_US']['tpl_qexp_title'])->toBe('Sunglasses by Acme')
+        ->and($queued['de_DE']['tpl_qexp_title'])->toBe('Sonnenbrille by Acme');
+});
 
 it('renders a variant template with values inherited from its parent while exporting own values only', function () {
     $parent = Product::factory()->configurable()->create(['values' => [
