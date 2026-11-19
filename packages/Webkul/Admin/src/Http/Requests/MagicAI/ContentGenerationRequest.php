@@ -3,28 +3,12 @@
 namespace Webkul\Admin\Http\Requests\MagicAI;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Webkul\Admin\Http\Requests\MagicAI\Concerns\AuthorizesPromptResource;
 use Webkul\MagicAI\MagicAI;
 
 class ContentGenerationRequest extends FormRequest
 {
-    /**
-     * Determine whether the user is authorized.
-     *
-     * Expanding a product or category into the prompt reads its stored values,
-     * so the matching catalog view permission is required as well.
-     */
-    public function authorize(): bool
-    {
-        if (! bouncer()->hasPermission('ai-agent')) {
-            return false;
-        }
-
-        return match ($this->input('resource_type')) {
-            'product'  => bouncer()->hasPermission('catalog.products'),
-            'category' => bouncer()->hasPermission('catalog.categories'),
-            default    => true,
-        };
-    }
+    use AuthorizesPromptResource;
 
     /**
      * Get the validation rules.
