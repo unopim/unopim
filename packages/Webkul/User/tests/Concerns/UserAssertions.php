@@ -49,15 +49,23 @@ trait UserAssertions
      */
     public function loginWithPermissions(string $permissionType = 'custom', mixed $permissions = ['dashboard']): AdminContract
     {
-        $role = Role::factory()->create(['permission_type' => $permissionType, 'permissions' => $permissions]);
-
-        $admin = Admin::factory()->create([
-            'password' => Hash::make('password'),
-            'role_id'  => $role->id,
-        ]);
+        $admin = $this->createAdminWithPermissions($permissionType, $permissions);
 
         $this->actingAs($admin, 'admin');
 
         return $admin;
+    }
+
+    /**
+     * Create an active admin whose role grants the given permissions and whose password is "password".
+     */
+    public function createAdminWithPermissions(string $permissionType = 'custom', mixed $permissions = ['dashboard']): AdminContract
+    {
+        $role = Role::factory()->create(['permission_type' => $permissionType, 'permissions' => $permissions]);
+
+        return Admin::factory()->create([
+            'password' => Hash::make('password'),
+            'role_id'  => $role->id,
+        ]);
     }
 }
