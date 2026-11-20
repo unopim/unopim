@@ -59,6 +59,10 @@ class BulkEdit implements PimTool
                     return $denied;
                 }
 
+                if ($denied = $this->denyUnlessAllowed($this->context, 'catalog.products.bulk_edit')) {
+                    return $denied;
+                }
+
                 $filter_by = $request->string('filter_by')->toString() ?: 'all';
                 $filter_value = $request->string('filter_value')->toString() ?: null;
                 $changes_json = $request->string('changes_json')->toString() ?: null;

@@ -25,12 +25,24 @@ it('denies bulk_edit to a user who can only toggle product status', function ():
     expect($result['error'] ?? '')->toContain('catalog.products.edit');
 });
 
-it('allows bulk_edit for a user with the product edit permission', function (): void {
+it('denies bulk_edit to a user who may edit products but not bulk edit them', function (): void {
     $result = runBulkEditTool(aiAgentToolContext(['catalog', 'catalog.products', 'catalog.products.edit']));
+
+    expect($result['error'] ?? '')->toContain('catalog.products.bulk_edit');
+});
+
+it('denies bulk_edit to a user who may bulk edit but not edit products', function (): void {
+    $result = runBulkEditTool(aiAgentToolContext(['catalog', 'catalog.products', 'catalog.products.bulk_edit']));
+
+    expect($result['error'] ?? '')->toContain('catalog.products.edit');
+});
+
+it('allows bulk_edit for a user with the product edit and bulk edit permissions', function (): void {
+    $result = runBulkEditTool(aiAgentToolContext(['catalog', 'catalog.products', 'catalog.products.edit', 'catalog.products.bulk_edit']));
 
     expect($result['error'] ?? '')->not->toContain('Permission denied');
 });
 
-it('registers bulk_edit under the product edit permission', function (): void {
-    expect(config('ai-agent.tools.'.BulkEdit::class.'.permission'))->toBe('catalog.products.edit');
+it('registers bulk_edit under the product bulk edit permission', function (): void {
+    expect(config('ai-agent.tools.'.BulkEdit::class.'.permission'))->toBe('catalog.products.bulk_edit');
 });
