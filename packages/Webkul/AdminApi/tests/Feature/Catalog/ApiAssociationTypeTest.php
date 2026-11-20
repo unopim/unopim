@@ -374,6 +374,27 @@ describe('association type custom fields', function () {
         expect($associationType->fields()->pluck('code')->all())->toBe(['quantity']);
     });
 
+    it('does not let an edit-only API key add a field under a key that only starts with an existing field id', function () {
+        $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.association_types.edit']);
+        $typeCode = createUserDefinedAssociationTypeForFieldTests();
+        $associationType = app(AssociationTypeRepository::class)->findByCode($typeCode);
+
+        $field = app(AssociationTypeFieldRepository::class)->create([
+            'association_type_id' => $associationType->id,
+            'code'                => 'quantity',
+            'type'                => 'text',
+        ]);
+
+        $this->withHeaders($headers)
+            ->json('PUT', route('admin.api.association-types.update', ['code' => $typeCode]), [
+                'fields' => [$field->id.'abc' => ['code' => 'note', 'type' => 'text']],
+            ])
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.fields.0', trans('admin::app.common.unauthorized'));
+
+        expect($associationType->fields()->pluck('code')->all())->toBe(['quantity']);
+    });
+
     it('lets an API key holding the field create and delete permissions change fields through the REST association type update', function () {
         $headers = $this->getAuthenticationHeaders('custom', [
             'api.catalog.association_types.edit',
