@@ -451,10 +451,8 @@ class MeasurementFamilySeeder extends Seeder
 
         MeasurementFamily::withoutAuditing(function () use ($repository, $families): void {
             foreach ($families as $family) {
-                $existing = $repository->findOneWhere(['code' => $family['code']]);
-
-                if ($existing) {
-                    $repository->delete($existing->id);
+                if ($repository->findOneWhere(['code' => $family['code']])) {
+                    continue;
                 }
 
                 $repository->createFamily($family);

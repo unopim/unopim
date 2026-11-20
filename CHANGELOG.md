@@ -37,6 +37,7 @@
 
 ## Bug fixes
 
+- Fixed `php artisan db:seed` deleting custom attributes, attribute groups, options, families, categories, channels, locales, currencies and admin users on an existing install, and failing once products existed. It now only fills empty tables, so it no longer duplicates the Magic AI prompts or recreates measurement families. Use `unopim:install` to reset to defaults.
 - Fixed exports in the XLS format writing an XLSX workbook with an `.xls` name, which Excel opened with a format warning. The file is now a genuine Excel 97-2003 workbook. An XLS export is rejected before any batch runs when it needs more than 65,536 rows, 256 columns or 500,000 cells, the most that can be converted within a queue worker's timeout and memory, and the export is marked as failed with the reason. Larger product exports, such as about 3,300 products with 150 columns in one channel and locale, that previously produced the mislabelled XLSX file must use the XLSX or CSV format.
 - Fixed saving a product with an unchanged status recording a status change in its history on PostgreSQL. `status` is now cast to a boolean on every database, so code comparing it with `=== 1` or `=== 0` should use a truthy check instead.
 - Fixed the Magic AI system prompt form accepting a Max Tokens value outside the 100 to 5000 range its help text gives; the server allowed 1 to 32768. A saved prompt already outside the range keeps its value and is still used as is when generating content, but its Max Tokens must be brought within 100 to 5000 before the prompt can be saved again.

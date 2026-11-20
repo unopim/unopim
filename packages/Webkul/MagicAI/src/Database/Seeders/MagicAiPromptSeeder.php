@@ -12,6 +12,10 @@ class MagicAiPromptSeeder extends Seeder
      */
     public function run($parameters = []): void
     {
+        if (DB::table('magic_ai_prompts')->exists()) {
+            return;
+        }
+
         $prompts = [
             [
                 'prompt'     => 'Write a comprehensive description of @name, including its features, benefits, technical specifications, and usage instructions.',

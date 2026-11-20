@@ -13,6 +13,10 @@ class MagicAISystemPromptSeeder extends Seeder
      */
     public function run($parameters = []): void
     {
+        if (DB::table('magic_ai_system_prompts')->exists()) {
+            return;
+        }
+
         $prompts = [
             [
                 'title'       => 'Friendly Assistant',

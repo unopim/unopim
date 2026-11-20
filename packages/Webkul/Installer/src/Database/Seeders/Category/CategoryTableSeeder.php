@@ -21,7 +21,9 @@ class CategoryTableSeeder extends Seeder
      */
     public function run($parameters = []): void
     {
-        DB::table('categories')->delete();
+        if (DB::table('categories')->exists()) {
+            return;
+        }
 
         $now = Date::now();
 

@@ -14,9 +14,9 @@ class AttributeTableSeeder extends Seeder
      */
     public function run(array $parameters = []): void
     {
-        DB::table('attributes')->delete();
-
-        DB::table('attribute_translations')->delete();
+        if (DB::table('attributes')->exists()) {
+            return;
+        }
 
         $now = Date::now();
 

@@ -13,9 +13,9 @@ class AttributeGroupTableSeeder extends Seeder
      */
     public function run(array $parameters = []): void
     {
-        DB::table('attribute_groups')->delete();
-
-        DB::table('attribute_group_translations')->delete();
+        if (DB::table('attribute_groups')->exists()) {
+            return;
+        }
 
         $defaultLocale = $parameters['default_locale'] ?? config('app.locale');
 

@@ -13,7 +13,9 @@ class AttributeFamilyTableSeeder extends Seeder
      */
     public function run(array $parameters = []): void
     {
-        DB::table('attribute_families')->delete();
+        if (DB::table('attribute_families')->exists()) {
+            return;
+        }
 
         $defaultLocale = $parameters['default_locale'] ?? config('app.locale');
 

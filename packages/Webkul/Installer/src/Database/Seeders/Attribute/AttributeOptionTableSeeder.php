@@ -13,9 +13,9 @@ class AttributeOptionTableSeeder extends Seeder
      */
     public function run(array $parameters = []): void
     {
-        DB::table('attribute_options')->delete();
-
-        DB::table('attribute_option_translations')->delete();
+        if (DB::table('attribute_options')->exists()) {
+            return;
+        }
 
         $defaultLocale = $parameters['default_locale'] ?? config('app.locale');
 
