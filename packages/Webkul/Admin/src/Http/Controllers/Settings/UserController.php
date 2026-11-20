@@ -17,6 +17,7 @@ use Webkul\Core\Filesystem\FileStorer;
 use Webkul\User\Models\Role;
 use Webkul\User\Repositories\AdminRepository;
 use Webkul\User\Repositories\RoleRepository;
+use Webkul\User\Services\RoleAccessGuard;
 
 class UserController extends Controller
 {
@@ -28,7 +29,8 @@ class UserController extends Controller
     public function __construct(
         protected AdminRepository $adminRepository,
         protected RoleRepository $roleRepository,
-        protected FileStorer $fileStorer
+        protected FileStorer $fileStorer,
+        protected RoleAccessGuard $roleAccessGuard
     ) {}
 
     /**
@@ -65,21 +67,7 @@ class UserController extends Controller
             return null;
         }
 
-        $actingRole = auth()->guard('admin')->user()->role;
-
-        if ($actingRole->permission_type === 'all') {
-            return null;
-        }
-
-        if ($targetRole->permission_type === 'all') {
-            return 'admin::app.settings.users.cannot-escalate-role';
-        }
-
-        if (array_diff($targetRole->permissions ?? [], $actingRole->permissions ?? [])) {
-            return 'admin::app.settings.users.cannot-assign-unheld-permissions';
-        }
-
-        return null;
+        return $this->roleAccessGuard->assignmentError(auth()->guard('admin')->user(), $targetRole);
     }
 
     /**
@@ -271,6 +259,12 @@ class UserController extends Controller
             ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
+        if ($this->cannotAssignRole($user->role)) {
+            return new JsonResponse([
+                'message' => trans('admin::app.common.unauthorized'),
+            ], JsonResponse::HTTP_FORBIDDEN);
+        }
+
         if (
             $user->role?->permission_type === 'all'
             && $this->adminRepository->countAdminsWithAllAccessAndActiveStatus() === 1
@@ -387,6 +381,10 @@ class UserController extends Controller
             )
         ) {
             return $this->cannotChangeRedirectResponse('status');
+        }
+
+        if ($this->cannotAssignRole($user->role)) {
+            return $this->cannotChangeRedirectResponse('role');
         }
 
         if ($this->cannotAssignRole($this->roleRepository->find($data['role_id'] ?? $user->role_id))) {

@@ -11,6 +11,7 @@ use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\RoleForm;
 use Webkul\User\Repositories\AdminRepository;
 use Webkul\User\Repositories\RoleRepository;
+use Webkul\User\Services\RoleAccessGuard;
 
 class RoleController extends Controller
 {
@@ -21,7 +22,8 @@ class RoleController extends Controller
      */
     public function __construct(
         protected RoleRepository $roleRepository,
-        protected AdminRepository $adminRepository
+        protected AdminRepository $adminRepository,
+        protected RoleAccessGuard $roleAccessGuard
     ) {}
 
     /**
@@ -85,6 +87,10 @@ class RoleController extends Controller
     {
         $role = $this->roleRepository->findOrFail($id);
 
+        if ($error = $this->roleAccessGuard->grantError(auth()->guard('admin')->user(), $role->permission_type, $role->permissions ?? [])) {
+            return $this->respondError(trans($error), JsonResponse::HTTP_FORBIDDEN, route('admin.settings.roles.index'));
+        }
+
         /**
          * Check for other admins if the role has been changed from all to custom.
          */
@@ -120,6 +126,10 @@ class RoleController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $role = $this->roleRepository->findOrFail($id);
+
+        if ($error = $this->roleAccessGuard->grantError(auth()->guard('admin')->user(), $role->permission_type, $role->permissions ?? [])) {
+            return new JsonResponse(['message' => trans($error)], JsonResponse::HTTP_FORBIDDEN);
+        }
 
         if ($name = $role->admins()->value('name')) {
             return new JsonResponse([

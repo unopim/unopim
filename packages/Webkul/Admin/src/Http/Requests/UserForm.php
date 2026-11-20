@@ -80,7 +80,7 @@ class UserForm extends FormRequest
             'ui_locale_id'          => 'required',
             'catalog_locale_id'     => 'nullable|integer|exists:locales,id,status,1',
             'default_channel_id'    => 'nullable|integer|exists:channels,id',
-            'role_id'               => 'required',
+            'role_id'               => 'required|integer|exists:roles,id',
             'timezone'              => 'required',
             'image'                 => $this->file('image') instanceof UploadedFile ? $imageRules : ['nullable'],
             'image.*'               => $imageRules,

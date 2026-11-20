@@ -21,6 +21,7 @@ use Webkul\DataTransfer\Jobs\Import\ImportTrackBatch;
 use Webkul\DataTransfer\Repositories\JobInstancesRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
 use Webkul\DataTransfer\Services\JobHealth;
+use Webkul\User\Services\RoleAccessGuard;
 
 class ImportController extends Controller
 {
@@ -41,6 +42,7 @@ class ImportController extends Controller
         protected Import $importHelper,
         protected Export $exportHelper,
         protected JobHealth $jobHealth,
+        protected RoleAccessGuard $roleAccessGuard,
     ) {}
 
     /**
@@ -80,6 +82,10 @@ class ImportController extends Controller
             'code'                => ['required', 'regex:/^[A-Za-z0-9_-]+$/', 'unique:job_instances,code'],
             'entity_type'         => 'required|in:'.implode(',', $importers),
         ], ['file.mimes' => trans('core::validation.file-type')]);
+
+        if (! $this->canSaveImportProfile(request()->input('entity_type'))) {
+            return $this->unauthorizedProfileResponse();
+        }
 
         Event::dispatch('data_transfer.imports.create.before');
 
@@ -160,6 +166,10 @@ class ImportController extends Controller
             'entity_type'         => 'required|in:'.implode(',', $importers),
         ], ['file.mimes' => trans('core::validation.file-type')]);
 
+        if (! $this->canSaveImportProfile($import->entity_type, request()->input('entity_type'))) {
+            return $this->unauthorizedProfileResponse();
+        }
+
         Event::dispatch('data_transfer.imports.update.before');
         $data = array_merge(
             request()->only([
@@ -209,6 +219,30 @@ class ImportController extends Controller
         session()->flash('success', trans('admin::app.settings.data-transfer.imports.update-success'));
 
         return redirect()->route('admin.settings.data_transfer.imports.import-view', $import->id);
+    }
+
+    /**
+     * Whether the acting admin may save a profile of these import types.
+     *
+     * Role and user imports are checked against the admin who runs them, so only a full-access admin may write the profile and file they run.
+     */
+    protected function canSaveImportProfile(?string ...$entityTypes): bool
+    {
+        if (array_intersect($entityTypes, ['roles', 'role', 'users', 'user']) === []) {
+            return true;
+        }
+
+        return $this->roleAccessGuard->hasFullAccess(auth()->guard('admin')->user()?->role);
+    }
+
+    /**
+     * Send the admin back with the unauthorized message, keeping the form input.
+     */
+    protected function unauthorizedProfileResponse(): RedirectResponse
+    {
+        session()->flash('error', trans('admin::app.common.unauthorized'));
+
+        return redirect()->back()->withInput(request()->except('file'));
     }
 
     /**
