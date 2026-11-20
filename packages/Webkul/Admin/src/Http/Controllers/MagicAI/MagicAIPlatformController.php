@@ -226,7 +226,7 @@ class MagicAIPlatformController extends Controller
         }
 
         try {
-            $provider = AiProvider::from(request()->input('provider'));
+            $provider = AiProvider::from($this->resolveProvider());
 
             // Custom providers route through the openai-compatible driver, so
             // without an explicit api_url the request would fall back to the
@@ -292,19 +292,11 @@ class MagicAIPlatformController extends Controller
         } catch (\Throwable $e) {
             $resolved = AiErrorResolver::resolve($e);
 
-            // Always use the resolver's message: known errors get the localized
-            // user-friendly text (rate limit / overloaded / too large), and
-            // unknown errors go through sanitizeRawMessage which extracts the
-            // underlying upstream HTTP response body when the gateway's own
-            // message is just an "Unknown error" placeholder.
-            $detail = $resolved['message'];
+            $detail = $resolved['is_known']
+                ? $resolved['message']
+                : trans('ai-agent::app.common.error-generic');
 
-            // Custom platforms route through laravel/ai's OpenAI-compatible
-            // gateway for the /chat/completions endpoint. Its error messages
-            // hardcode the driver's name (e.g. "OpenAI-compatible Error" when
-            // the actual HTTP call went to Cerebras). Rewrite the prefix so
-            // the message accurately reflects the user's selected provider.
-            if (request()->input('provider') === AiProvider::Custom->value) {
+            if ($this->resolveProvider() === AiProvider::Custom->value) {
                 $detail = preg_replace(
                     '/^(OpenAI-compatible|Groq) Error\b/',
                     trans('admin::app.configuration.platform.message.custom-provider-error'),
@@ -348,7 +340,7 @@ class MagicAIPlatformController extends Controller
         }
 
         try {
-            $provider = AiProvider::from(request()->input('provider'));
+            $provider = AiProvider::from($this->resolveProvider());
             $discovery = app(ModelDiscovery::class)->discover(
                 $provider,
                 $this->resolveApiKey(),
@@ -416,6 +408,18 @@ class MagicAIPlatformController extends Controller
         $platform = $this->storedKeyPlatform();
 
         return $platform ? $platform->api_url : request()->input('api_url');
+    }
+
+    /**
+     * Resolve the provider to call. A stored key only ever goes to the provider
+     * it was saved for, so a caller cannot route it to one that puts the key in
+     * a URL or echoes it back.
+     */
+    protected function resolveProvider(): ?string
+    {
+        $platform = $this->storedKeyPlatform();
+
+        return $platform ? $platform->provider : request()->input('provider');
     }
 
     /**

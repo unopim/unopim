@@ -49,9 +49,9 @@ function platformMatrix(): array
             'hardens'   => true,
             'images'    => true,
             'body'      => ['models' => [['name' => 'models/gemini-2.0-flash'], ['name' => 'models/gemini-1.5-pro']]],
-            'endpoint'  => 'https://generativelanguage.googleapis.com/v1beta/models?key=platform-key',
+            'endpoint'  => 'https://generativelanguage.googleapis.com/v1beta/models',
             'models'    => ['gemini-1.5-pro', 'gemini-2.0-flash'],
-            'auth'      => [],
+            'auth'      => ['x-goog-api-key' => 'platform-key'],
         ]],
         'groq' => [AiProvider::Groq, [
             'lab'       => Lab::Groq,

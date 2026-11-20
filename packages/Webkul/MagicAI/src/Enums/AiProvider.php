@@ -3,9 +3,11 @@
 namespace Webkul\MagicAI\Enums;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
-use Illuminate\Support\Str;
+use GuzzleHttp\Exception\TransferException;
 use Laravel\Ai\Enums\Lab;
+use Psr\Http\Message\ResponseInterface;
 use Webkul\Webhook\Validators\SafeWebhookUrl;
 
 enum AiProvider: string
@@ -144,7 +146,7 @@ enum AiProvider: string
                     harden: (bool) $apiUrl,
                 ),
             };
-        } catch (RequestException $e) {
+        } catch (TransferException $e) {
             report($e);
 
             throw new \RuntimeException($this->describeFetchFailure($e), previous: $e);
@@ -188,7 +190,7 @@ enum AiProvider: string
         foreach ($this->customBaseUrls($apiUrl) as $base) {
             try {
                 return $this->discovery($this->fetchOpenAiCompatModels($client, $apiKey, $base.'/models', harden: true), $base);
-            } catch (RequestException $e) {
+            } catch (TransferException $e) {
                 report($e);
 
                 $failure ??= new \RuntimeException($this->describeFetchFailure($e), previous: $e);
@@ -263,28 +265,25 @@ enum AiProvider: string
     }
 
     /**
-     * Turn a transport failure into a short, readable message: upstream bodies are
-     * often full HTML error pages that would otherwise be shown verbatim in the UI.
+     * Turn a transport failure into a short message naming only the host and the
+     * HTTP status. The upstream body is never shown: the URL may point at a host
+     * the caller cannot reach otherwise, and a provider can echo the request back.
      */
-    private function describeFetchFailure(RequestException $e): string
+    private function describeFetchFailure(TransferException $e): string
     {
-        $host = $e->getRequest()->getUri()->getHost();
-        $response = $e->getResponse();
+        $host = $e instanceof RequestException || $e instanceof ConnectException
+            ? $e->getRequest()->getUri()->getHost()
+            : '';
+        $response = $e instanceof RequestException ? $e->getResponse() : null;
 
-        if (! $response) {
+        if (! $response instanceof ResponseInterface) {
             return trans('admin::app.configuration.platform.message.fetch-models-unreachable', ['host' => $host]);
         }
-
-        $decoded = json_decode((string) $response->getBody(), true);
-
-        $detail = is_array($decoded)
-            ? (string) ($decoded['error']['message'] ?? $decoded['message'] ?? '')
-            : '';
 
         return trans('admin::app.configuration.platform.message.fetch-models-http-error', [
             'status' => $response->getStatusCode(),
             'host'   => $host,
-        ]).($detail === '' ? '' : ' '.Str::limit($detail, 160));
+        ]);
     }
 
     private function fetchOpenAiModels(Client $client, ?string $apiKey, ?string $apiUrl = null): array
@@ -308,7 +307,7 @@ enum AiProvider: string
         $url = $this->modelsUrl($apiUrl);
 
         $response = $client->get($url, $this->discoveryOptions($url, $apiUrl, [
-            'query' => ['key' => $apiKey],
+            'headers' => ['x-goog-api-key' => (string) $apiKey],
         ]));
 
         $data = json_decode($response->getBody()->getContents(), true);
