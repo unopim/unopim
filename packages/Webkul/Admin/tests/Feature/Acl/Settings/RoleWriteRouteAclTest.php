@@ -58,7 +58,7 @@ it('should allow POST roles.store when user has roles.create permission', functi
 
 it('should allow PUT roles.update when user has roles.edit permission', function () {
     $this->loginWithPermissions(permissions: ['dashboard', 'settings', 'settings.roles', 'settings.roles.edit']);
-    $role = Role::factory()->create(['name' => 'Before']);
+    $role = Role::factory()->create(['name' => 'Before', 'permission_type' => 'custom', 'permissions' => ['dashboard']]);
 
     $response = $this->put(route('admin.settings.roles.update', ['id' => $role->id]), [
         'name'            => 'After',
