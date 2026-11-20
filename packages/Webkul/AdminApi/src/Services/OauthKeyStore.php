@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Webkul\AdminApi\Services;
 
+use RuntimeException;
+
 /**
  * Owns the location and creation of Passport's RSA signing keypair.
  *
@@ -19,8 +21,17 @@ class OauthKeyStore
 {
     /**
      * Path a release before the keys moved onto the storage volume wrote to.
+     *
+     * Never read: keys left there by an older release are not trusted.
      */
     const LEGACY_PATH = __DIR__.'/../Secrets/Oauth';
+
+    /**
+     * SHA-256 of public keys, whitespace removed, that must never sign tokens again.
+     */
+    const REVOKED_PUBLIC_KEYS = [
+        '0c8c5a9800abfe66f884a6567648f9426ded406bcf61e4f853965b912a8306e8',
+    ];
 
     const PRIVATE_KEY = 'oauth-private.key';
 
@@ -45,30 +56,11 @@ class OauthKeyStore
     /**
      * Resolves the directory Passport should read from.
      *
-     * Equal to path() in every deployment that has run unopim:passport:keys.
-     * An install upgraded by hand, without the installer or the upgrade
-     * command, still has its pair in the previous location, and reading it
-     * there keeps already-issued tokens valid until the command is run. The
-     * fallback is read-only; nothing is ever written back to that directory.
+     * @deprecated Use path(); keys are only ever read from the configured location.
      */
     public function resolvedPath(): string
     {
-        $path = $this->path();
-
-        if ($this->exists()) {
-            return $path;
-        }
-
-        $legacyPath = $this->legacyPath();
-
-        if (
-            file_exists($legacyPath.'/'.self::PRIVATE_KEY)
-            && file_exists($legacyPath.'/'.self::PUBLIC_KEY)
-        ) {
-            return $legacyPath;
-        }
-
-        return $path;
+        return $this->path();
     }
 
     /**
@@ -96,6 +88,54 @@ class OauthKeyStore
     }
 
     /**
+     * Whether the stored public key is one that must be replaced.
+     */
+    public function isRevoked(): bool
+    {
+        $publicKey = @file_get_contents($this->publicKeyPath());
+
+        return $publicKey !== false && $this->isRevokedKey($publicKey);
+    }
+
+    /**
+     * Stops Passport from signing or verifying with a missing or revoked keypair.
+     *
+     * Keys supplied through Passport's own config replace the files, so they are checked instead.
+     *
+     * @throws RuntimeException when the keypair is missing or revoked
+     */
+    public function ensureExists(): void
+    {
+        $configuredPublicKey = config('passport.public_key');
+
+        $usable = config('passport.private_key') && $configuredPublicKey
+            ? ! $this->isRevokedKey(str_replace('\\n', "\n", (string) $configuredPublicKey))
+            : $this->exists() && ! $this->isRevoked();
+
+        if (! $usable) {
+            throw new RuntimeException(trans('admin::app.configuration.integrations.oauth-keys-missing'));
+        }
+    }
+
+    /**
+     * Whether the PEM public key matches a revoked one.
+     */
+    protected function isRevokedKey(string $publicKey): bool
+    {
+        return in_array(hash('sha256', (string) preg_replace('/\s+/', '', $publicKey)), $this->revokedPublicKeys(), true);
+    }
+
+    /**
+     * Fingerprints of public keys that must never sign tokens again.
+     *
+     * @return list<string>
+     */
+    protected function revokedPublicKeys(): array
+    {
+        return self::REVOKED_PUBLIC_KEYS;
+    }
+
+    /**
      * Creates the key directory, returning false when the filesystem refuses.
      *
      * Filesystem warnings are suppressed throughout this class because Laravel
@@ -111,34 +151,6 @@ class OauthKeyStore
         }
 
         return @mkdir($path, 0700, true) || is_dir($path);
-    }
-
-    /**
-     * Copies a keypair written by an earlier release into the current location.
-     *
-     * Only bare-metal installs benefit: a container upgrade replaces the image
-     * layer holding the old directory before this runs, so there is nothing
-     * left to adopt and a fresh pair is generated instead.
-     */
-    public function adoptLegacyKeys(): bool
-    {
-        $legacyPrivateKey = $this->legacyPath().'/'.self::PRIVATE_KEY;
-        $legacyPublicKey = $this->legacyPath().'/'.self::PUBLIC_KEY;
-
-        if (! file_exists($legacyPrivateKey) || ! file_exists($legacyPublicKey)) {
-            return false;
-        }
-
-        if (
-            ! @copy($legacyPrivateKey, $this->privateKeyPath())
-            || ! @copy($legacyPublicKey, $this->publicKeyPath())
-        ) {
-            return false;
-        }
-
-        $this->restrictPermissions();
-
-        return true;
     }
 
     /**

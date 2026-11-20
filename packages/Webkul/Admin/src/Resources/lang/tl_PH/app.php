@@ -2297,6 +2297,7 @@ return [
             'generate-key-success'           => 'Ang API Key ay matagumpay na nagenereate',
             're-generate-secret-key-success' => 'Ang API secret key ay matagumpay na na-regenerate',
             'client-not-found'               => 'Ang client ay hindi natagpuan',
+            'oauth-keys-missing'             => 'Nawawala o kailangang palitan ang mga signing key ng API. Patakbuhin ang "php artisan unopim:passport:keys" para gumawa ng mga bago.',
         ],
         'prompt' => [
             'index' => [

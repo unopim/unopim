@@ -2295,6 +2295,7 @@ return [
             'generate-key-success'           => 'API ključ je uspješno generiran',
             're-generate-secret-key-success' => 'API tajni ključ je uspješno ponovno generiran',
             'client-not-found'               => 'Klijent nije pronađen',
+            'oauth-keys-missing'             => 'Ključevi za potpisivanje API-ja nedostaju ili ih treba zamijeniti. Pokrenite "php artisan unopim:passport:keys" da biste stvorili nove.',
         ],
         'prompt' => [
             'index' => [
