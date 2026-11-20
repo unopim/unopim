@@ -45,17 +45,20 @@ class EnableDebugForAllowedIps
          * the feature is enabled — under Octane the worker is long-lived, so a
          * previous allow-listed request on the same worker may have flipped it on,
          * and leaving it on would leak stack traces to every later (including
-         * unauthenticated) request. When the feature is off the middleware stays
-         * inert and never touches app.debug.
+         * unauthenticated) request. The debug bar is also hidden from callers that
+         * APP_DEBUG_ALLOWED_IPS rejects; otherwise a bar enabled by the environment
+         * keeps working.
          */
         if ($featureEnabled) {
             config(['app.debug' => false]);
         }
 
-        config(['debugbar.enabled' => false]);
+        if ($featureEnabled || ! $this->isAllowedByEnvironment($request)) {
+            config(['debugbar.enabled' => false]);
 
-        if (class_exists(Debugbar::class)) {
-            Debugbar::disable();
+            if (class_exists(Debugbar::class)) {
+                Debugbar::disable();
+            }
         }
 
         return $next($request);
