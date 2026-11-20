@@ -14,6 +14,7 @@ use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Helpers\Importers\Attribute\Importer;
 use Webkul\DataTransfer\Helpers\Importers\Attribute\Storage;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
+use Webkul\DataTransfer\Tests\Support\BooleanImportValues;
 
 use function Pest\Laravel\mock;
 
@@ -354,22 +355,7 @@ describe('prepareAttributes', function () {
             'is_filterable'     => $expected,
             'ai_translate'      => $expected,
         ]);
-    })->with([
-        'false'      => ['false', 0],
-        'FALSE'      => ['FALSE', 0],
-        'no'         => ['no', 0],
-        'off'        => ['off', 0],
-        '0'          => ['0', 0],
-        'bool false' => [false, 0],
-        'int 0'      => [0, 0],
-        'true'       => ['true', 1],
-        'TRUE'       => ['TRUE', 1],
-        'yes'        => ['yes', 1],
-        'on'         => ['on', 1],
-        '1'          => ['1', 1],
-        'bool true'  => [true, 1],
-        'int 1'      => [1, 1],
-    ]);
+    })->with(BooleanImportValues::recognised());
 
     it('casts position to integer', function () {
         ['importer' => $importer, 'attributeStorage' => $storage] = makeImporter();
@@ -588,7 +574,7 @@ it('skips the row when a boolean column holds an unrecognised value', function (
     $errorHelper->shouldReceive('addRowToSkip')->once()->with(1);
 
     expect($importer->validateRow(['code' => 'weight', 'locale' => 'en', 'is_required' => $value], 1))->toBeFalse();
-})->with(['Y', 'y', '2', 'maybe']);
+})->with(BooleanImportValues::unrecognised());
 
 it('records a readable error for an unrecognised boolean value containing a percent sign', function () {
     ['importer' => $importer] = makeImporter();
