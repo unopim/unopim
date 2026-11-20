@@ -119,3 +119,62 @@ it('does nothing when the field is not a known attribute', function () {
 
     expect($product->fresh()->values)->toEqual($before);
 });
+
+it('purifies a translated rich-text value before it is stored', function () {
+    $attribute = Attribute::factory()->create([
+        'type'             => 'textarea',
+        'enable_wysiwyg'   => 1,
+        'value_per_locale' => 1,
+    ]);
+
+    $product = Product::factory()->create();
+
+    (new SaveTranslatedDataJob(
+        $product->id,
+        [['locale' => 'fr_FR', 'content' => '<p>Bonjour</p><script>alert(1)</script><img src="x" onerror="alert(2)">']],
+        'default',
+        $attribute->code,
+    ))->handle(
+        resolve(ProductRepository::class),
+        resolve(AttributeRepository::class),
+        resolve(ProductValueMapper::class),
+    );
+
+    expect(resolve(ProductValueMapper::class)->getScopedValue(
+        $product->fresh()->values,
+        $attribute,
+        'default',
+        'fr_FR',
+    ))
+        ->toContain('<p>Bonjour</p>')
+        ->not->toContain('<script')
+        ->not->toContain('onerror');
+});
+
+it('stores a translated plain-text value as returned', function () {
+    $attribute = Attribute::factory()->create([
+        'type'             => 'textarea',
+        'enable_wysiwyg'   => 0,
+        'value_per_locale' => 1,
+    ]);
+
+    $product = Product::factory()->create();
+
+    (new SaveTranslatedDataJob(
+        $product->id,
+        [['locale' => 'fr_FR', 'content' => 'Taille < 5 mm']],
+        'default',
+        $attribute->code,
+    ))->handle(
+        resolve(ProductRepository::class),
+        resolve(AttributeRepository::class),
+        resolve(ProductValueMapper::class),
+    );
+
+    expect(resolve(ProductValueMapper::class)->getScopedValue(
+        $product->fresh()->values,
+        $attribute,
+        'default',
+        'fr_FR',
+    ))->toBe('Taille < 5 mm');
+});
