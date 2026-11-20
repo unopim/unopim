@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Webkul\Attribute\Contracts\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Core\Eloquent\Repository;
@@ -77,30 +78,67 @@ class AttributeRepository extends Repository
 
         $attribute = $this->find($id);
 
+        $hasOptions = in_array($attribute->type, ['select', 'multiselect', 'checkbox']) && isset($data['options']);
+
+        if ($hasOptions) {
+            $this->ensureOptionsBelongToAttribute($data['options'], $attribute);
+        }
+
         if ($attribute->code === 'sku' && isset($data['is_filterable']) && $data['is_filterable'] === 0) {
             $data['is_filterable'] = 1;
         }
 
         $attribute->update($this->withoutUnchangedFlags($validatedData, $attribute));
 
-        if (in_array($attribute->type, ['select', 'multiselect', 'checkbox']) && isset($data['options'])) {
+        if ($hasOptions) {
             foreach ($data['options'] as $optionId => $optionInputs) {
                 if ($optionInputs['isNew'] == 'true') {
                     if (empty($optionInputs['code'])) {
                         $optionInputs['code'] = 'option_'.strtolower(Str::random(8));
                     }
-                    $this->attributeOptionRepository->create(array_merge([
+                    $this->attributeOptionRepository->create(array_merge($optionInputs, [
                         'attribute_id' => $attribute->id,
-                    ], $optionInputs));
+                    ]));
                 } elseif ($optionInputs['isDelete'] == 'true') {
                     $this->attributeOptionRepository->delete($optionId);
                 } else {
-                    $this->attributeOptionRepository->update($optionInputs, $optionId);
+                    $this->attributeOptionRepository->update(array_merge($optionInputs, [
+                        'attribute_id' => $attribute->id,
+                    ]), $optionId);
                 }
             }
         }
 
         return $attribute;
+    }
+
+    /**
+     * Reject existing option ids that do not belong to the attribute, before anything is written.
+     *
+     * @throws ValidationException
+     */
+    private function ensureOptionsBelongToAttribute(array $options, Attribute $attribute): void
+    {
+        $optionIds = array_keys(array_filter(
+            $options,
+            fn (mixed $optionInputs): bool => ($optionInputs['isNew'] ?? null) != 'true',
+        ));
+
+        if ($optionIds === []) {
+            return;
+        }
+
+        $ownedIds = $attribute->options()
+            ->whereIn('id', $optionIds)
+            ->pluck('id')
+            ->map(fn (mixed $id): int => (int) $id)
+            ->all();
+
+        if (array_diff(array_map(intval(...), $optionIds), $ownedIds) !== []) {
+            throw ValidationException::withMessages([
+                'options' => trans('validation.exists', ['attribute' => 'options']),
+            ]);
+        }
     }
 
     /**

@@ -54,14 +54,16 @@
                                     <p class="text-sm text-green-600/80 dark:text-green-400/80 mt-0.5">@lang('admin::app.settings.data-transfer.tracker.completed-info-sub')</p>
                                 </div>
                             </div>
-                            <a
-                                class="transparent-button hover:dark:bg-cherry-800 flex-shrink-0 ml-4"
-                                href="{{ route('admin.settings.data_transfer.tracker.log.download', $jobTrack->id) }}"
-                                target="_blank"
-                            >
-                                <svg class="w-4 h-4 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                                @lang('admin::app.settings.data-transfer.tracker.download-log-file')
-                            </a>
+                            @if ($canDownloadJobFiles)
+                                <a
+                                    class="transparent-button hover:dark:bg-cherry-800 flex-shrink-0 ml-4"
+                                    href="{{ route('admin.settings.data_transfer.tracker.log.download', $jobTrack->id) }}"
+                                    target="_blank"
+                                >
+                                    <svg class="w-4 h-4 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                                    @lang('admin::app.settings.data-transfer.tracker.download-log-file')
+                                </a>
+                            @endif
                         </div>
                     </div>
 
@@ -85,33 +87,38 @@
                         </div>
                     </div>
 
-                    <div class="flex gap-2 mb-2" v-if="jobInstance.type == 'export' && importResource.file_path">
-                        <a
-                            class="secondary-button"
-                            href="{{ route('admin.settings.data_transfer.tracker.archive.download', $jobTrack->id) }}"
-                            target="_blank"
-                            v-if="toBoolean(jobInstance.filters.with_media)"
-                        >
-                            @lang('admin::app.settings.data-transfer.exports.export.download-created-file')
-                        </a>
-                        <a
-                            class="secondary-button"
-                            href="{{ route('admin.settings.data_transfer.tracker.download', $jobTrack->id) }}"
-                            target="_blank"
-                            v-else
-                        >
-                            @lang('admin::app.settings.data-transfer.exports.export.download-created-file')
-                        </a>
-                    </div>
-                    <div class="flex gap-2 mb-2" v-if="jobInstance.type == 'import' && importResource.errors_count && importResource.error_file_path">
-                        <a
-                            class="secondary-button"
-                            href="{{ route('admin.settings.data_transfer.imports.download_error_report', $jobTrack->id) }}"
-                            target="_blank"
-                        >
-                            @lang('admin::app.settings.data-transfer.imports.import.download-error-report')
-                        </a>
-                    </div>
+                    @if ($canDownloadJobFiles)
+                        <div class="flex gap-2 mb-2" v-if="jobInstance.type == 'export' && importResource.file_path">
+                            <a
+                                class="secondary-button"
+                                href="{{ route('admin.settings.data_transfer.tracker.archive.download', $jobTrack->id) }}"
+                                target="_blank"
+                                v-if="toBoolean(jobInstance.filters.with_media)"
+                            >
+                                @lang('admin::app.settings.data-transfer.exports.export.download-created-file')
+                            </a>
+                            <a
+                                class="secondary-button"
+                                href="{{ route('admin.settings.data_transfer.tracker.download', $jobTrack->id) }}"
+                                target="_blank"
+                                v-else
+                            >
+                                @lang('admin::app.settings.data-transfer.exports.export.download-created-file')
+                            </a>
+                        </div>
+                    @endif
+
+                    @if (bouncer()->hasPermission('data_transfer.imports.execute'))
+                        <div class="flex gap-2 mb-2" v-if="jobInstance.type == 'import' && importResource.errors_count && importResource.error_file_path">
+                            <a
+                                class="secondary-button"
+                                href="{{ route('admin.settings.data_transfer.imports.download_error_report', $jobTrack->id) }}"
+                                target="_blank"
+                            >
+                                @lang('admin::app.settings.data-transfer.imports.import.download-error-report')
+                            </a>
+                        </div>
+                    @endif
 
                     <div class="flex justify-between items-center pt-3 border-t border-gray-200 dark:border-gray-700">
                         <span class="inline-flex items-center gap-1.5 text-sm text-gray-600 dark:text-gray-400">

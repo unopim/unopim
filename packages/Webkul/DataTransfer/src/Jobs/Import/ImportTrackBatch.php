@@ -46,9 +46,21 @@ class ImportTrackBatch implements ShouldQueue
 
     /**
      * Run the import pipeline for the tracked batch.
+     *
+     * The track is refreshed first so that a duplicate or stale delivery cannot
+     * restart a track that has already reached a terminal state.
+     *
+     * Validation can persist pending batches even when it fails or exceeds the
+     * configured error limit, so the pipeline stops before scheduling them.
      */
     protected function runImport(): void
     {
+        $this->importBatch->refresh();
+
+        if (in_array($this->importBatch->state, [ImportHelper::STATE_FAILED, ImportHelper::STATE_CANCELLED, ImportHelper::STATE_COMPLETED], true)) {
+            return;
+        }
+
         $importHelper = resolve(ImportHelper::class);
 
         $importHelper->setImport($this->importBatch);
@@ -65,6 +77,16 @@ class ImportTrackBatch implements ShouldQueue
         $import = $importHelper->validate();
 
         $this->importBatch = $import->getImport();
+
+        if ($import->isErrorLimitExceeded() || $this->importBatch->state === ImportHelper::STATE_FAILED) {
+            $importHelper->stateUpdate(ImportHelper::STATE_FAILED, ['completed_at' => now()]);
+
+            $logger->error(trans('data_transfer::app.job.stopped', [
+                'count' => $this->importBatch->errors_count,
+            ]));
+
+            return;
+        }
 
         if ($import->isValid() && $this->importBatch->state === ImportHelper::STATE_VALIDATED) {
             // Don't overwrite started_at — it was set at validation start

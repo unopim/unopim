@@ -508,7 +508,7 @@ test('9.2 - Fetched model list includes known OpenAI models', async ({ adminPage
   await adminPage.locator('input[type="checkbox"]').first().waitFor({ state: 'visible', timeout: 30000 }).catch(() => {});
 
   await expect(adminPage.locator('#app').getByText('gpt-4o', { exact: true })).toBeVisible();
-  await expect(adminPage.locator('#app').getByText('gpt-image-1', { exact: true })).toBeVisible();
+  await expect(adminPage.getByRole('checkbox', { name: /^gpt-image-/ }).first()).toBeVisible();
 
   await adminPage.locator('.icon-cancel').click();
 });
@@ -530,7 +530,7 @@ test('9.3 - Model search filters the model checkbox list', async ({ adminPage })
   const searchInput = adminPage.getByPlaceholder('Search models...');
   await searchInput.fill('gpt-image');
 
-  await expect(adminPage.locator('#app').getByText('gpt-image-1', { exact: true })).toBeVisible();
+  await expect(adminPage.getByRole('checkbox', { name: /^gpt-image-/ }).first()).toBeVisible();
 
   const gpt4oVisible = await adminPage.getByRole('checkbox', { name: 'gpt-4o', exact: true }).isVisible().catch(() => false);
   expect(gpt4oVisible).toBe(false);

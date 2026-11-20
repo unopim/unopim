@@ -32,17 +32,29 @@ function seedUserDefinedAssociationType(string $code): int
     return $id;
 }
 
+/**
+ * Installs may rename the seeded labels, so the expected name is the stored en_US translation.
+ */
+function associationTypeTranslation(string $code): ?string
+{
+    return DB::table('association_type_translations')
+        ->join('association_types', 'association_types.id', '=', 'association_type_translations.association_type_id')
+        ->where('association_types.code', $code)
+        ->where('association_type_translations.locale', 'en_US')
+        ->value('association_type_translations.name');
+}
+
 it('returns the seeded default association type rows with the joined translation, status and position', function () {
     $rows = app(AssociationTypeDataGrid::class)->prepareQueryBuilder()->get()->keyBy('code');
 
     expect($rows)->toHaveKeys(['related_products', 'up_sells', 'cross_sells']);
 
-    expect($rows['related_products']->name)->toBe('Related Products');
+    expect($rows['related_products']->name)->not->toBeEmpty()->toBe(associationTypeTranslation('related_products'));
     expect((int) $rows['related_products']->status)->toBe(1);
     expect((int) $rows['related_products']->is_user_defined)->toBe(0);
 
-    expect($rows['up_sells']->name)->toBe('Up Sells');
-    expect($rows['cross_sells']->name)->toBe('Cross Sells');
+    expect($rows['up_sells']->name)->not->toBeEmpty()->toBe(associationTypeTranslation('up_sells'));
+    expect($rows['cross_sells']->name)->not->toBeEmpty()->toBe(associationTypeTranslation('cross_sells'));
 });
 
 it('does not expose the type column on the association type grid', function () {

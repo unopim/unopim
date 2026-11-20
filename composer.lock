@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7be17824e9e754e7fcfcf78f4edbd0cd",
+    "content-hash": "e1b8c6c913de6afed36f9ea7c922d760",
     "packages": [
         {
             "name": "astrotomic/laravel-translatable",
@@ -1564,16 +1564,16 @@
         },
         {
             "name": "enshrined/svg-sanitize",
-            "version": "0.22.0",
+            "version": "1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/darylldoyle/svg-sanitizer.git",
-                "reference": "0afa95ea74be155a7bcd6c6fb60c276c39984500"
+                "reference": "1976ff93c8d8a234cdd3ff99626bd43ecf11bf49"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/darylldoyle/svg-sanitizer/zipball/0afa95ea74be155a7bcd6c6fb60c276c39984500",
-                "reference": "0afa95ea74be155a7bcd6c6fb60c276c39984500",
+                "url": "https://api.github.com/repos/darylldoyle/svg-sanitizer/zipball/1976ff93c8d8a234cdd3ff99626bd43ecf11bf49",
+                "reference": "1976ff93c8d8a234cdd3ff99626bd43ecf11bf49",
                 "shasum": ""
             },
             "require": {
@@ -1603,9 +1603,9 @@
             "description": "An SVG sanitizer for PHP",
             "support": {
                 "issues": "https://github.com/darylldoyle/svg-sanitizer/issues",
-                "source": "https://github.com/darylldoyle/svg-sanitizer/tree/0.22.0"
+                "source": "https://github.com/darylldoyle/svg-sanitizer/tree/1.1.1"
             },
-            "time": "2025-08-12T10:13:48+00:00"
+            "time": "2026-10-20T09:45:10+00:00"
         },
         {
             "name": "ezyang/htmlpurifier",
@@ -8393,16 +8393,16 @@
         },
         {
             "name": "symfony/http-foundation",
-            "version": "v8.1.6",
+            "version": "v8.1.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-foundation.git",
-                "reference": "093b78326f649c3a9db922b9f17123b6aeb3b8fb"
+                "reference": "7850897fb8659f98491b03be79ac48600bdaf9ab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/093b78326f649c3a9db922b9f17123b6aeb3b8fb",
-                "reference": "093b78326f649c3a9db922b9f17123b6aeb3b8fb",
+                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/7850897fb8659f98491b03be79ac48600bdaf9ab",
+                "reference": "7850897fb8659f98491b03be79ac48600bdaf9ab",
                 "shasum": ""
             },
             "require": {
@@ -8450,7 +8450,7 @@
             "description": "Defines an object-oriented layer for the HTTP specification",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/http-foundation/tree/v8.1.6"
+                "source": "https://github.com/symfony/http-foundation/tree/v8.1.9"
             },
             "funding": [
                 {
@@ -8470,7 +8470,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-08-30T20:10:55+00:00"
+            "time": "2026-10-08T16:57:43+00:00"
         },
         {
             "name": "symfony/http-kernel",

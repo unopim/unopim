@@ -261,7 +261,7 @@ class ProductCompletenessJob implements ShouldQueue
                 $locales[0]['code']
             );
 
-            if (! empty($value)) {
+            if (is_filled_value($value)) {
                 $nonLocalizableFilled++;
             }
         }
@@ -286,7 +286,7 @@ class ProductCompletenessJob implements ShouldQueue
                     $localeCode
                 );
 
-                if (! empty($value)) {
+                if (is_filled_value($value)) {
                     $filled++;
                 }
             }

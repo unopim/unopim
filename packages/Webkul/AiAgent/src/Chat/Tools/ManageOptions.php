@@ -70,6 +70,10 @@ class ManageOptions implements PimTool
                 }
 
                 if ($action === 'add' && $options) {
+                    if ($denied = $this->denyUnlessAllowed($context, 'catalog.attributes.edit')) {
+                        return $denied;
+                    }
+
                     $items = array_map(trim(...), explode(',', $options));
                     $added = [];
                     $maxSort = (int) DB::table('attribute_options')

@@ -14,7 +14,15 @@ it('lists categories for the product category filter', function () {
 
     $category = Category::factory()->create();
 
-    $codes = array_column(categoryOptions(['page' => 1]), 'code');
+    $codes = [];
+    $page = 1;
+
+    do {
+        $response = $this->getJson(route('admin.catalog.options.fetch-all', ['entityName' => 'category', 'page' => $page]))
+            ->assertOk();
+
+        $codes = [...$codes, ...array_column($response->json('options'), 'code')];
+    } while ($page++ < $response->json('lastPage'));
 
     expect($codes)->toContain($category->code);
 });

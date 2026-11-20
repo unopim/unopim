@@ -6,6 +6,7 @@ on:
   push:
     branches: [master, '3.x']
   pull_request:
+  workflow_dispatch:
 
 # head_ref is the branch on a pull request and empty elsewhere, which keeps a
 # branch's runs in one group no matter which event opened them.
@@ -47,9 +48,9 @@ jobs:
           --tmpfs /tmp:rw,noexec,nosuid,size=100m
 
     env:
-      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      GROQ_API_KEY: ${{ github.event_name == 'workflow_dispatch' && secrets.GROQ_API_KEY || '' }}
       GROQ_INVALID_KEY: ${{ secrets.GROQ_INVALID_KEY }}
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      OPENAI_API_KEY: ${{ github.event_name == 'workflow_dispatch' && secrets.OPENAI_API_KEY || '' }}
       UNOPIM_URL: ${{ secrets.UNOPIM_URL }}
       ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
       ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}

@@ -13,9 +13,10 @@ use Webkul\Product\Services\VariantStructureWriter;
 
 /**
  * The shipped samples are only meant to import against a stock installation:
- * one active locale, one channel currency. The workspace database usually has
- * more of both, which would demand extra per-locale rows and per-currency
- * price columns the samples deliberately do not carry.
+ * one active locale, one channel currency and the installer's option codes.
+ * The workspace database usually has more locales and currencies, which would
+ * demand extra per-locale rows and per-currency price columns the samples
+ * deliberately do not carry, and the demo data re-cases the size options.
  */
 function reduceToStockInstallation(): void
 {
@@ -24,6 +25,24 @@ function reduceToStockInstallation(): void
     DB::table('channel_currencies')->whereIn('currency_id', $currencyIds)->delete();
     DB::table('currencies')->whereIn('id', $currencyIds)->update(['status' => 0]);
     DB::table('locales')->where('code', '!=', 'en_US')->update(['status' => 0]);
+
+    $stockOptions = [
+        'color' => ['red', 'green', 'yellow', 'black', 'white'],
+        'size'  => ['s', 'm', 'l', 'xl'],
+    ];
+
+    foreach ($stockOptions as $attributeCode => $optionKeys) {
+        $attributeId = DB::table('attributes')->where('code', $attributeCode)->value('id');
+
+        foreach ($optionKeys as $optionKey) {
+            $optionCode = trans('installer::app.seeders.attribute.attribute-options.'.$optionKey, [], 'en_US');
+
+            DB::table('attribute_options')
+                ->where('attribute_id', $attributeId)
+                ->whereRaw('lower(code) = ?', [mb_strtolower($optionCode)])
+                ->update(['code' => $optionCode]);
+        }
+    }
 }
 
 function seedSampleVariantStructures(): void
