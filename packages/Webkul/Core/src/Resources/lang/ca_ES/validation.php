@@ -25,6 +25,7 @@ return [
     'password-surrounding-whitespace'  => 'El camp :attribute no pot començar ni acabar amb un espai.',
     'password-whitespace-only'         => 'El camp :attribute no pot estar format només per espais.',
     'active-content-detected'          => 'No s\'ha pogut pujar :attribute perquè conté contingut actiu (:reason).',
+    'uploaded-file-not-allowed'        => 'El camp :attribute no pot contenir fitxers pujats. Puja els fitxers a través del punt d\'accés de mitjans.',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'JavaScript incrustat o una acció de PDF d\'execució automàtica',
         'embedded_vba_macro'            => 'una macro VBA incrustada',

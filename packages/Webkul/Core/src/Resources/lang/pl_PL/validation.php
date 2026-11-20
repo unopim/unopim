@@ -25,6 +25,7 @@ return [
     'password-surrounding-whitespace'  => 'Pole :attribute nie może zaczynać się ani kończyć spacją.',
     'password-whitespace-only'         => 'Pole :attribute nie może składać się wyłącznie ze spacji.',
     'active-content-detected'          => 'Nie udało się przesłać :attribute, ponieważ zawiera aktywną zawartość (:reason).',
+    'uploaded-file-not-allowed'        => 'Pole :attribute nie może zawierać przesłanych plików. Prześlij pliki za pomocą punktu końcowego multimediów.',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'osadzony kod JavaScript lub automatycznie uruchamiana akcja PDF',
         'embedded_vba_macro'            => 'osadzone makro VBA',

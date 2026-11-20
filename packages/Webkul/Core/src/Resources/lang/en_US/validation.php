@@ -25,6 +25,7 @@ return [
     'password-surrounding-whitespace' => 'The :attribute cannot begin or end with a space.',
     'password-whitespace-only'        => 'The :attribute cannot consist only of spaces.',
     'active-content-detected'         => 'The :attribute could not be uploaded because it contains active content (:reason).',
+    'uploaded-file-not-allowed'       => 'The :attribute must not contain uploaded files. Upload files through the media endpoint instead.',
     'active-content-reasons'          => [
         'embedded_javascript_or_action' => 'embedded JavaScript or an auto-run PDF action',
         'embedded_vba_macro'            => 'an embedded VBA macro',

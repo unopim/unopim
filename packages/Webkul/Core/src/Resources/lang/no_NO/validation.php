@@ -25,6 +25,7 @@ return [
     'password-surrounding-whitespace'  => ':attribute kan ikke begynne eller slutte med et mellomrom.',
     'password-whitespace-only'         => ':attribute kan ikke bestå av bare mellomrom.',
     'active-content-detected'          => ':attribute kunne ikke lastes opp fordi den inneholder aktivt innhold (:reason).',
+    'uploaded-file-not-allowed'        => ':attribute kan ikke inneholde opplastede filer. Last opp filer via medieendepunktet i stedet.',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'innebygd JavaScript eller en PDF-handling som kjøres automatisk',
         'embedded_vba_macro'            => 'en innebygd VBA-makro',

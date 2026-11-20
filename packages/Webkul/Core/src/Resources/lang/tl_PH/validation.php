@@ -25,6 +25,7 @@ return [
     'password-surrounding-whitespace'  => 'Ang :attribute ay hindi maaaring magsimula o magtapos sa espasyo.',
     'password-whitespace-only'         => 'Ang :attribute ay hindi maaaring puro espasyo lamang.',
     'active-content-detected'          => 'Hindi ma-upload ang :attribute dahil naglalaman ito ng aktibong nilalaman (:reason).',
+    'uploaded-file-not-allowed'        => 'Hindi dapat maglaman ng mga na-upload na file ang :attribute. I-upload ang mga file sa pamamagitan ng media endpoint.',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'naka-embed na JavaScript o isang PDF na aksyon na awtomatikong tumatakbo',
         'embedded_vba_macro'            => 'isang naka-embed na VBA macro',

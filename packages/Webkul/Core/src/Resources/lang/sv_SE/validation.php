@@ -25,6 +25,7 @@ return [
     'password-surrounding-whitespace'  => 'Fältet :attribute får inte börja eller sluta med ett mellanslag.',
     'password-whitespace-only'         => 'Fältet :attribute får inte bestå enbart av mellanslag.',
     'active-content-detected'          => ':attribute kunde inte laddas upp eftersom den innehåller aktivt innehåll (:reason).',
+    'uploaded-file-not-allowed'        => ':attribute får inte innehålla uppladdade filer. Ladda upp filer via mediaslutpunkten i stället.',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'inbäddad JavaScript eller en PDF-åtgärd som körs automatiskt',
         'embedded_vba_macro'            => 'ett inbäddat VBA-makro',

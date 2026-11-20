@@ -25,6 +25,7 @@ return [
     'password-surrounding-whitespace'  => ':attribute 不能以空格开头或结尾。',
     'password-whitespace-only'         => ':attribute 不能只由空格组成。',
     'active-content-detected'          => '无法上传 :attribute，因为它包含活动内容 (:reason)。',
+    'uploaded-file-not-allowed'        => ':attribute 不能包含上传的文件。请改为通过媒体端点上传文件。',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => '嵌入的 JavaScript 或自动运行的 PDF 操作',
         'embedded_vba_macro'            => '嵌入的 VBA 宏',

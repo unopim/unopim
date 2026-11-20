@@ -25,6 +25,7 @@ return [
     'password-surrounding-whitespace'  => ':attribute boşlukla başlayamaz veya bitemez.',
     'password-whitespace-only'         => ':attribute yalnızca boşluklardan oluşamaz.',
     'active-content-detected'          => ':attribute yüklenemedi çünkü etkin içerik (:reason) içeriyor.',
+    'uploaded-file-not-allowed'        => ':attribute yüklenmiş dosya içeremez. Dosyaları bunun yerine medya uç noktası üzerinden yükleyin.',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'gömülü JavaScript veya otomatik çalışan bir PDF eylemi',
         'embedded_vba_macro'            => 'gömülü bir VBA makrosu',

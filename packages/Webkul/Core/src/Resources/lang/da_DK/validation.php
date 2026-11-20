@@ -25,6 +25,7 @@ return [
     'password-surrounding-whitespace'  => ':attribute må ikke begynde eller slutte med et mellemrum.',
     'password-whitespace-only'         => ':attribute må ikke kun bestå af mellemrum.',
     'active-content-detected'          => ':attribute kunne ikke uploades, fordi den indeholder aktivt indhold (:reason).',
+    'uploaded-file-not-allowed'        => ':attribute må ikke indeholde uploadede filer. Upload filer via medie-endpointet i stedet.',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'indlejret JavaScript eller en PDF-handling, der køres automatisk',
         'embedded_vba_macro'            => 'en indlejret VBA-makro',

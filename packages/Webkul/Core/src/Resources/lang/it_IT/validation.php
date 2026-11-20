@@ -25,6 +25,7 @@ return [
     'password-surrounding-whitespace'  => 'Il campo :attribute non può iniziare né terminare con uno spazio.',
     'password-whitespace-only'         => 'Il campo :attribute non può essere composto solo da spazi.',
     'active-content-detected'          => 'Impossibile caricare :attribute perché contiene contenuto attivo (:reason).',
+    'uploaded-file-not-allowed'        => 'Il campo :attribute non deve contenere file caricati. Carica i file tramite l\'endpoint dei media.',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'JavaScript incorporato o un\'azione PDF a esecuzione automatica',
         'embedded_vba_macro'            => 'una macro VBA incorporata',

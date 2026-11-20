@@ -25,6 +25,7 @@ return [
     'password-surrounding-whitespace'  => ':attribute 의 처음과 끝에는 공백을 사용할 수 없습니다.',
     'password-whitespace-only'         => ':attribute 를 공백만으로 구성할 수 없습니다.',
     'active-content-detected'          => ':attribute에 활성 콘텐츠(:reason)가 포함되어 있어 업로드할 수 없습니다.',
+    'uploaded-file-not-allowed'        => ':attribute에는 업로드된 파일을 포함할 수 없습니다. 대신 미디어 엔드포인트를 통해 파일을 업로드하세요.',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => '삽입된 JavaScript 또는 자동 실행 PDF 작업',
         'embedded_vba_macro'            => '삽입된 VBA 매크로',

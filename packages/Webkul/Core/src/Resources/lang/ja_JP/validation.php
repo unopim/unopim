@@ -25,6 +25,7 @@ return [
     'password-surrounding-whitespace'  => ':attribute の先頭と末尾に空白は使用できません。',
     'password-whitespace-only'         => ':attribute を空白だけにすることはできません。',
     'active-content-detected'          => ':attribute はアクティブコンテンツ (:reason) が含まれているためアップロードできませんでした。',
+    'uploaded-file-not-allowed'        => ':attribute にアップロードファイルを含めることはできません。ファイルはメディアエンドポイントからアップロードしてください。',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => '埋め込まれたJavaScriptまたは自動実行されるPDFアクション',
         'embedded_vba_macro'            => '埋め込まれたVBAマクロ',

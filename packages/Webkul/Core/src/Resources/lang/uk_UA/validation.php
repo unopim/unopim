@@ -25,6 +25,7 @@ return [
     'password-surrounding-whitespace'  => 'Поле :attribute не може починатися або закінчуватися пробілом.',
     'password-whitespace-only'         => 'Поле :attribute не може складатися лише з пробілів.',
     'active-content-detected'          => 'Не вдалося завантажити :attribute, оскільки він містить активний вміст (:reason).',
+    'uploaded-file-not-allowed'        => 'Поле :attribute не повинно містити завантажені файли. Завантажуйте файли через ендпоінт медіафайлів.',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'вбудований JavaScript або автоматично запущена дія PDF',
         'embedded_vba_macro'            => 'вбудований макрос VBA',

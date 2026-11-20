@@ -1,7 +1,10 @@
 <?php
 
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Webkul\AdminApi\Http\Middleware\LocaleMiddleware;
 use Webkul\Category\Models\Category;
+use Webkul\Category\Models\CategoryField;
 use Webkul\Core\Models\Locale;
 
 beforeEach(function (): void {
@@ -83,3 +86,79 @@ it('does not return a server error for an array leaf value', function (): void {
 
     expect($response->status())->toBeLessThan(500);
 });
+
+dataset('uploadedFileInAdditionalData', [
+    'common leaf' => [fn (string $commonCode, string $locale): array => [
+        'common'          => [$commonCode => UploadedFile::fake()->create('shell.php', 1, 'text/html')],
+        'locale_specific' => [$locale => ['name' => 'Uploaded']],
+    ]],
+    'locale specific leaf' => [fn (string $commonCode, string $locale): array => [
+        'locale_specific' => [$locale => ['name' => UploadedFile::fake()->create('page.html', 1, 'text/html')]],
+    ]],
+    'nested array leaf' => [fn (string $commonCode, string $locale): array => [
+        'common'          => [$commonCode => [UploadedFile::fake()->image('photo.jpg')]],
+        'locale_specific' => [$locale => ['name' => 'Uploaded']],
+    ]],
+]);
+
+/**
+ * Build an additional_data payload that places an uploaded file on active text fields.
+ *
+ * Text fields carry no type rule in the category field validator, so they are the leaves the
+ * repository would otherwise hand to the file storer.
+ */
+function additionalDataWithUploadedFile(Closure $payload): array
+{
+    $commonField = CategoryField::factory()->create(['type' => 'text', 'status' => 1, 'value_per_locale' => 0, 'validation' => null]);
+
+    return $payload($commonField->code, Locale::where('status', 1)->first()->code);
+}
+
+it('rejects an uploaded file inside additional_data on create without storing it', function (Closure $payload): void {
+    Storage::fake();
+
+    $code = 'upload_category_'.uniqid();
+
+    $this->withHeaders($this->headers)
+        ->post(route('admin.api.categories.store'), [
+            'code'            => $code,
+            'additional_data' => additionalDataWithUploadedFile($payload),
+        ], ['Accept' => 'application/json'])
+        ->assertStatus(422)
+        ->assertJsonValidationErrors(['additional_data' => trans('core::validation.uploaded-file-not-allowed', ['attribute' => 'additional data'])]);
+
+    expect(Storage::allFiles())->toBe([])
+        ->and(Category::where('code', $code)->exists())->toBeFalse();
+})->with('uploadedFileInAdditionalData');
+
+it('rejects an uploaded file inside additional_data on update without storing it', function (Closure $payload): void {
+    Storage::fake();
+
+    $category = Category::factory()->create();
+
+    $this->withHeaders($this->headers)
+        ->put(route('admin.api.categories.update', ['code' => $category->code]), [
+            'additional_data' => additionalDataWithUploadedFile($payload),
+        ], ['Accept' => 'application/json'])
+        ->assertStatus(422)
+        ->assertJsonValidationErrors(['additional_data' => trans('core::validation.uploaded-file-not-allowed', ['attribute' => 'additional data'])]);
+
+    expect(Storage::allFiles())->toBe([])
+        ->and($category->fresh()->additional_data)->toEqual($category->additional_data);
+})->with('uploadedFileInAdditionalData');
+
+it('rejects an uploaded file inside additional_data on partial update without storing it', function (Closure $payload): void {
+    Storage::fake();
+
+    $category = Category::factory()->create();
+
+    $this->withHeaders($this->headers)
+        ->patch(route('admin.api.categories.patch', ['code' => $category->code]), [
+            'additional_data' => additionalDataWithUploadedFile($payload),
+        ], ['Accept' => 'application/json'])
+        ->assertStatus(422)
+        ->assertJsonValidationErrors(['additional_data' => trans('core::validation.uploaded-file-not-allowed', ['attribute' => 'additional data'])]);
+
+    expect(Storage::allFiles())->toBe([])
+        ->and($category->fresh()->additional_data)->toEqual($category->additional_data);
+})->with('uploadedFileInAdditionalData');
