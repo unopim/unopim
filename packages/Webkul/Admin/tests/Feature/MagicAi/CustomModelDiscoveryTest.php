@@ -62,12 +62,14 @@ it('reduces an HTML error body to a short status message', function () {
         });
 });
 
-it('surfaces a json error message from the upstream endpoint', function () {
+it('reports only the status and host of an upstream error, never its body', function (): void {
     $client = magicAiMockClient([
         new Response(401, [], json_encode(['error' => ['message' => 'Invalid API key provided.']])),
         new Response(401, [], json_encode(['error' => ['message' => 'Invalid API key provided.']])),
     ]);
 
     expect(fn () => AiProvider::Custom->discoverModels('sk-bad-key', 'https://1.1.1.1', $client))
-        ->toThrow(RuntimeException::class, 'Invalid API key provided.');
+        ->toThrow(function (RuntimeException $e): void {
+            expect($e->getMessage())->toContain('401')->toContain('1.1.1.1')->not->toContain('Invalid API key provided.');
+        });
 });

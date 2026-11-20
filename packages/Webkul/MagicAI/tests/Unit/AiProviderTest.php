@@ -1,9 +1,11 @@
 <?php
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
+use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use Laravel\Ai\Enums\Lab;
 use Webkul\MagicAI\Enums\AiProvider;
@@ -155,16 +157,39 @@ it('summarises an upstream failure instead of surfacing the raw response body', 
     }
 });
 
-it('surfaces the upstream reason whatever error shape the provider returns', function (string $body, string $reason) {
+it('never surfaces the upstream reason, whatever error shape the provider returns', function (string $body, string $reason): void {
     $client = fakeProviderClient([new Response(403, [], $body)]);
 
     expect(fn () => AiProvider::XAI->fetchModels('xai-key', null, $client))
-        ->toThrow(RuntimeException::class, $reason);
+        ->toThrow(function (RuntimeException $e) use ($reason): void {
+            expect($e->getMessage())->toContain('403')->not->toContain($reason);
+        });
 })->with([
     'xai string error'    => ['{"code":"permission-denied","error":"Your team has no credits."}', 'Your team has no credits.'],
     'openai error object' => ['{"error":{"message":"Key lacks scope."}}', 'Key lacks scope.'],
     'top-level message'   => ['{"message":"Forbidden for region."}', 'Forbidden for region.'],
 ]);
+
+it('keeps the key out of the message when the provider cannot be reached', function (): void {
+    $client = fakeProviderClient([
+        new ConnectException('cURL error 6: could not resolve https://api.openai.com/v1/models?key=sk-leaky-key', new Request('GET', 'https://api.openai.com/v1/models?key=sk-leaky-key')),
+    ]);
+
+    expect(fn () => AiProvider::OpenAI->fetchModels('sk-leaky-key', null, $client))
+        ->toThrow(function (RuntimeException $e): void {
+            expect($e->getMessage())->toContain('api.openai.com')->not->toContain('sk-leaky-key');
+        });
+});
+
+it('sends the Gemini key in a header, never in the request URL', function (): void {
+    $history = [];
+    $client = fakeProviderClient([new Response(200, [], json_encode(['models' => []]))], $history);
+
+    AiProvider::Gemini->fetchModels('gemini-secret', null, $client);
+
+    expect((string) $history[0]['request']->getUri())->not->toContain('gemini-secret')
+        ->and($history[0]['request']->getHeaderLine('x-goog-api-key'))->toBe('gemini-secret');
+});
 
 it('keeps the release date each provider reports alongside the model id', function () {
     $client = fakeProviderClient([

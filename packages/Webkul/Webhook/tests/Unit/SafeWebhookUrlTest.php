@@ -152,3 +152,20 @@ it('allows loopback only when WEBHOOK_ALLOW_LOOPBACK opt-in is set', function ()
         putenv('WEBHOOK_ALLOW_LOOPBACK');
     }
 });
+
+it('rejects shared, private and IPv4-embedding addresses the filter flags miss', function (string $url): void {
+    $result = SafeWebhookUrl::validate($url);
+
+    expect($result['valid'])->toBeFalse()
+        ->and($result['reason'])->toBe('restricted_ip');
+})->with([
+    'shared address space'        => ['http://100.64.0.1/'],
+    'cloud metadata in 100.64/10' => ['http://100.100.100.200/latest/meta-data/'],
+    'IPv4-compatible IPv6'        => ['http://[::a9fe:a9fe]/'],
+    'NAT64 of the metadata IP'    => ['http://[64:ff9b::a9fe:a9fe]/'],
+    '6to4 of the metadata IP'     => ['http://[2002:a9fe:a9fe::1]/'],
+    'Teredo'                      => ['http://[2001:0:a9fe:a9fe::1]/'],
+    'IPv6 unique local'           => ['http://[fd12:3456::1]/'],
+    'IPv6 link local'             => ['http://[fe80::1]/'],
+    'IPv4-mapped loopback'        => ['http://[::ffff:127.0.0.1]/'],
+]);

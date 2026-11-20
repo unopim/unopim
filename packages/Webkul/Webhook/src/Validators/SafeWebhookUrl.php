@@ -2,6 +2,8 @@
 
 namespace Webkul\Webhook\Validators;
 
+use Symfony\Component\HttpFoundation\IpUtils;
+
 /**
  * Validate that a webhook URL is safe to call from the server side.
  *
@@ -155,6 +157,9 @@ class SafeWebhookUrl
      * 203.0.113.0/24, 240.0.0.0/4 (reserved), and IPv6 ::/128, ::1/128,
      * ::ffff:0:0/96, fe80::/10. Multicast (IPv4 224/4, IPv6 ff00::/8) is
      * NOT covered by the flag, so it is checked separately via inet_pton.
+     * The flags also miss shared address space (100.64/10) and the IPv6
+     * prefixes that embed an IPv4 host (::/96, 6to4, Teredo, NAT64), so
+     * Symfony's PRIVATE_SUBNETS list is checked as well.
      */
     protected static function isAllowedIp(string $ip): bool
     {
@@ -193,6 +198,10 @@ class SafeWebhookUrl
             if (strlen($bin) === 16 && $ip === '::1') {
                 return true;
             }
+        }
+
+        if (IpUtils::checkIp($ip, IpUtils::PRIVATE_SUBNETS)) {
+            return false;
         }
 
         return (bool) filter_var($ip, FILTER_VALIDATE_IP, $flags);
