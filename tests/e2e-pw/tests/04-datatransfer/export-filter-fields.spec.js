@@ -226,6 +226,24 @@ test.describe('Export filter fields — reusable input components', () => {
     await deleteExport(adminPage, code);
   });
 
+  test('clears a kept filter whose value the new job type does not allow', async ({ adminPage }) => {
+    await openCreateExport(adminPage);
+    await selectEntityType(adminPage, 'Products');
+
+    await chooseFilterOption(adminPage, 'status', 'Disable');
+    await expect(filterValue(adminPage, 'status')).toHaveValue('disable');
+
+    await selectEntityType(adminPage, 'Locales');
+
+    await expect(filter(adminPage, 'status').first()).toBeAttached();
+    await expect(filterValue(adminPage, 'status')).toHaveValue('');
+
+    await chooseFilterOption(adminPage, 'status', 'Enable');
+    await selectEntityType(adminPage, 'Products');
+
+    await expect(filterValue(adminPage, 'status')).toHaveValue('enable');
+  });
+
   test('datagrid column filters render through the shared field component', async ({ adminPage }) => {
     await navigateTo(adminPage, 'exports');
     await openFilterDrawer(adminPage);
