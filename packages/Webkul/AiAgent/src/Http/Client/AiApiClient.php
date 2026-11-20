@@ -128,11 +128,10 @@ class AiApiClient
      */
     protected function execute(string $method, string $url, ?array $data = null): array
     {
-        // Pin the connection to the validated IP and block redirects to prevent SSRF TOCTOU rebinding.
-        $safeOptions = SafeWebhookUrl::httpOptions($url);
+        $safeOptions = SafeWebhookUrl::pinnedHttpOptions($url);
 
-        throw_unless(
-            isset($safeOptions['curl'][CURLOPT_RESOLVE]),
+        throw_if(
+            $safeOptions === null,
             ApiException::class,
             trans('admin::app.configuration.platform.message.unsafe-api-url'),
             422
