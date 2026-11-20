@@ -13,6 +13,7 @@ use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 use Webkul\AiAgent\Services\SemanticRankingService;
 use Webkul\Core\Helpers\Database\GrammarQueryManager;
+use Webkul\Product\Contracts\VariantValueResolver;
 
 class SearchProducts implements PimTool
 {
@@ -91,7 +92,7 @@ class SearchProducts implements PimTool
                 $qb = DB::table('products as p')
                     ->leftJoin('attribute_families as af', 'af.id', '=', 'p.attribute_family_id')
                     ->select(
-                        'p.id', 'p.sku', 'p.type', 'p.status', 'af.code as family_code',
+                        'p.id', 'p.sku', 'p.type', 'p.status', 'p.parent_id', 'af.code as family_code',
                         DB::raw($valuesColumn),
                         DB::raw($grammar->jsonExtract("{$prefix}p.values", ...$namePath).' as product_name'),
                         DB::raw($grammar->jsonExtract("{$prefix}p.values", 'common', 'url_key').' as url_key'),
@@ -157,6 +158,8 @@ class SearchProducts implements PimTool
 
                 $products = $qb->orderByDesc('p.id')->limit($candidateLimit)->get();
 
+                $inherited = resolve(VariantValueResolver::class)->resolveBatch($products);
+
                 $editBaseUrl = route('admin.catalog.products.edit', ['id' => '__ID__']);
 
                 $attributeTexts = $products->map(
@@ -166,7 +169,7 @@ class SearchProducts implements PimTool
                 $results = $products->map(fn ($p): array => [
                     'id'              => $p->id,
                     'sku'             => $p->sku,
-                    'name'            => $p->product_name ?? $p->url_key ?? '(unnamed)',
+                    'name'            => $p->product_name ?? data_get($inherited[$p->id] ?? [], $namePath) ?? $p->url_key ?? '(unnamed)',
                     'type'            => $p->type,
                     'status'          => $p->status ? 'active' : 'inactive',
                     'family'          => $p->family_code,
