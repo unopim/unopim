@@ -224,7 +224,7 @@ class AssociationTypeController extends ApiController
             ]);
         }
 
-        $requestData = $this->setLabels(request()->except(['code', 'type']));
+        $requestData = $this->setLabels(request()->except(['code', 'type', 'association_type_id']));
 
         try {
             $this->associationTypeFieldRepository->update($requestData, $field->id);
