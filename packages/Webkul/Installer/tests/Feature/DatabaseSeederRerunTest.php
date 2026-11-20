@@ -79,6 +79,18 @@ it('treats existing option codes as the defaults regardless of letter case', fun
         ->toBe(['s', 'm', 'l', 'xl']);
 });
 
+it('reuses defaults stored under a different letter case instead of failing', function (): void {
+    Attribute::query()->where('code', 'brand')->update(['code' => 'Brand']);
+    AttributeGroup::query()->where('code', 'general')->update(['code' => 'General']);
+    DB::table('attribute_families')->where('code', 'default')->update(['code' => 'Default']);
+
+    $this->seed(InstallerSeeder::class);
+
+    expect(Attribute::query()->whereIn('code', ['brand', 'Brand'])->pluck('code')->all())->toBe(['Brand'])
+        ->and(AttributeGroup::query()->whereIn('code', ['general', 'General'])->pluck('code')->all())->toBe(['General'])
+        ->and(DB::table('attribute_families')->whereIn('code', ['default', 'Default'])->pluck('code')->all())->toBe(['Default']);
+});
+
 it('does not add default options to an attribute that is no longer a select', function (): void {
     $colorId = Attribute::query()->where('code', 'color')->value('id');
 

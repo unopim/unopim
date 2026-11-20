@@ -12,9 +12,8 @@ class MeasurementFamilySeeder extends Seeder
     /**
      * Seed the default measurement families and units.
      */
-    public function run($parameters = []): void
+    public function run(array $parameters = []): void
     {
-        $parameters ??= [];
         $defaultLocale = $parameters['default_locale'] ?? config('app.locale');
         $locales = $parameters['allowed_locales'] ?? $this->getActiveLocales($defaultLocale);
 

@@ -2,6 +2,7 @@
 
 namespace Webkul\Installer\Database\Seeders\Concerns;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Webkul\Core\Helpers\Database\DatabaseSequenceHelper;
@@ -36,6 +37,27 @@ trait SeedsMissingRows
         }
 
         return $insertedIds;
+    }
+
+    /**
+     * Resolve the stored ids of these codes, matching case-insensitively and preferring an exact match.
+     *
+     * @param  list<string>  $codes
+     * @return array<string, int>
+     */
+    protected function idsByCode(Builder $query, array $codes): array
+    {
+        $rows = $query
+            ->whereIn(DB::raw('LOWER('.$query->getGrammar()->wrap('code').')'), array_map(mb_strtolower(...), $codes))
+            ->get(['id', 'code']);
+
+        return collect($codes)
+            ->mapWithKeys(fn (string $code): array => [
+                $code => ($rows->firstWhere('code', $code) ?? $rows->first(fn (object $row): bool => mb_strtolower($row->code) === mb_strtolower($code)))?->id,
+            ])
+            ->filter()
+            ->map(fn (int|string $id): int => (int) $id)
+            ->all();
     }
 
     /**

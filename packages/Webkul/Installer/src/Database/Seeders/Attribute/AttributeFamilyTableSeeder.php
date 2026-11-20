@@ -38,12 +38,9 @@ class AttributeFamilyTableSeeder extends Seeder
             ], 'attribute_family_id', $insertedIds));
         }
 
-        $familyId = DB::table('attribute_families')->where('code', 'default')->value('id');
+        $familyId = $this->idsByCode(DB::table('attribute_families'), ['default'])['default'];
 
-        $groupIds = DB::table('attribute_groups')
-            ->whereIn('code', ['general', 'description', 'meta_description', 'price', 'media'])
-            ->pluck('id', 'code')
-            ->all();
+        $groupIds = $this->idsByCode(DB::table('attribute_groups'), ['general', 'description', 'meta_description', 'price', 'media']);
 
         $this->insertMissingRows('attribute_family_group_mappings', [
             [
@@ -147,10 +144,7 @@ class AttributeFamilyTableSeeder extends Seeder
             ->pluck('id', 'attribute_group_id')
             ->all();
 
-        $attributeIds = DB::table('attributes')
-            ->whereIn('code', array_column($attributeMappings, 'attribute'))
-            ->pluck('id', 'code')
-            ->all();
+        $attributeIds = $this->idsByCode(DB::table('attributes'), array_column($attributeMappings, 'attribute'));
 
         $mappedAttributeIds = DB::table('attribute_group_mappings')
             ->whereIn('attribute_family_group_id', $familyGroupIds)

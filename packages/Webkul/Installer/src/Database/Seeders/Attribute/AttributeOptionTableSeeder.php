@@ -18,7 +18,7 @@ class AttributeOptionTableSeeder extends Seeder
     {
         $defaultLocale = $parameters['default_locale'] ?? config('app.locale');
 
-        $attributeIds = DB::table('attributes')->where('type', 'select')->whereIn('code', ['color', 'size'])->pluck('id', 'code')->all();
+        $attributeIds = $this->idsByCode(DB::table('attributes')->where('type', 'select'), ['color', 'size']);
 
         $options = [
             [

@@ -10,7 +10,7 @@ class MagicAiPromptSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run($parameters = []): void
+    public function run(array $parameters = []): void
     {
         if (DB::table('magic_ai_prompts')->exists()) {
             return;
