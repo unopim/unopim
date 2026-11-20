@@ -109,7 +109,7 @@ class AttributeController extends ApiController
             ?? $this->invalidOptionEntries(
                 $requestData['options'] ?? null,
                 fn (array $option): ValidatorContract => $this->optionValidate($option, $attribute->id),
-                ['swatch_value' => [new ValidSwatchValue($attribute->id)]],
+                ['swatch_value'                       => [new ValidSwatchValue($attribute->id)]],
             );
 
         if ($denied) {
