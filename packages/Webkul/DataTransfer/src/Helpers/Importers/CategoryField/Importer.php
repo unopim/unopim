@@ -23,11 +23,6 @@ class Importer extends AbstractImporter
     public const ERROR_NOT_FOUND_LOCALE = 'locale_not_exist';
 
     /**
-     * Boolean category field columns
-     */
-    protected const BOOLEAN_FIELDS = ['enable_wysiwyg', 'status', 'is_required', 'is_unique', 'value_per_locale'];
-
-    /**
      * Valid field types for category fields
      */
     public const VALID_TYPES = [
@@ -160,10 +155,6 @@ class Importer extends AbstractImporter
             return false;
         }
 
-        if ($this->skipRowWithInvalidBooleans($rowData, $rowNumber, self::BOOLEAN_FIELDS)) {
-            return false;
-        }
-
         $isUpdate = $this->categoryFieldStorage->has($rowData['code'])
             || in_array($rowData['code'], $this->categoryFieldCodesInBatch);
 
@@ -271,13 +262,12 @@ class Importer extends AbstractImporter
             'value_per_locale',
         ];
 
+        $booleanFields = ['enable_wysiwyg', 'status', 'is_required', 'is_unique', 'value_per_locale'];
+
         foreach ($scalarFields as $field) {
             if (isset($rowData[$field]) && $rowData[$field] !== '') {
-                if (in_array($field, self::BOOLEAN_FIELDS)) {
-                    $data[$field] = (int) filter_var(
-                        $rowData[$field],
-                        FILTER_VALIDATE_BOOLEAN
-                    );
+                if (in_array($field, $booleanFields)) {
+                    $data[$field] = (int) (bool) $rowData[$field];
                 } elseif ($field === 'position') {
                     $data[$field] = (int) $rowData[$field];
                 } else {
