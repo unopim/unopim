@@ -245,7 +245,7 @@ class TrackerController extends Controller
     }
 
     /**
-     * Download Log file for the job
+     * Download the job log, which names imported rows and so needs the same permissions as the job files.
      */
     public function downloadLogFile(int $id)
     {
@@ -253,7 +253,7 @@ class TrackerController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $this->abortIfHiddenJobType($this->jobTrackRepository->find($id)?->jobInstance?->entity_type);
+        $this->abortIfDownloadForbidden($this->findVisibleJobTrack($id));
 
         $path = JobLogger::getJobLogPath($id);
 

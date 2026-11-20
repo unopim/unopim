@@ -1,9 +1,11 @@
 <?php
 
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Webkul\DataTransfer\Helpers\Export;
 use Webkul\DataTransfer\Models\JobInstances;
 use Webkul\DataTransfer\Models\JobTrack;
+use Webkul\DataTransfer\Services\JobLogger;
 
 use function Pest\Laravel\get;
 
@@ -185,4 +187,51 @@ it('shows the import error report link on the tracker only with import execute',
     $this->loginWithPermissions(permissions: ['data_transfer', 'data_transfer.job_tracker', 'data_transfer.imports', 'data_transfer.imports.execute']);
 
     get(route('admin.settings.data_transfer.tracker.view', $track->id))->assertOk()->assertSee($reportUrl, false);
+});
+
+it('requires the execute permission of the track to download its job log', function (string $type, string $viewPermission, string $executePermission) {
+    $track = trackerAclTrack($type, 'imports/source/products.csv');
+    $logPath = storage_path(JobLogger::getJobLogPath($track->id));
+
+    File::ensureDirectoryExists(dirname($logPath));
+    File::put($logPath, "Row 'admin@example.com' passed validation but was not imported");
+
+    try {
+        $this->loginWithPermissions(permissions: ['data_transfer', 'data_transfer.job_tracker', $viewPermission]);
+
+        get(route('admin.settings.data_transfer.tracker.log.download', $track->id))->assertForbidden();
+
+        $this->loginWithPermissions(permissions: ['data_transfer', 'data_transfer.job_tracker', $viewPermission, $executePermission]);
+
+        get(route('admin.settings.data_transfer.tracker.log.download', $track->id))->assertOk();
+    } finally {
+        File::deleteDirectory(dirname($logPath));
+    }
+})->with([
+    'import' => ['import', 'data_transfer.imports', 'data_transfer.imports.execute'],
+    'export' => ['export', 'data_transfer.export', 'data_transfer.export.execute'],
+]);
+
+it('shows the job log link on the tracker only with the execute permission of the track', function (string $type, string $viewPermission, string $executePermission) {
+    $track = trackerAclTrack($type, 'imports/source/products.csv');
+    $logUrl = route('admin.settings.data_transfer.tracker.log.download', $track->id);
+
+    $this->loginWithPermissions(permissions: ['data_transfer', 'data_transfer.job_tracker', $viewPermission]);
+
+    get(route('admin.settings.data_transfer.tracker.view', $track->id))->assertOk()->assertDontSee($logUrl, false);
+
+    $this->loginWithPermissions(permissions: ['data_transfer', 'data_transfer.job_tracker', $viewPermission, $executePermission]);
+
+    get(route('admin.settings.data_transfer.tracker.view', $track->id))->assertOk()->assertSee($logUrl, false);
+})->with([
+    'import' => ['import', 'data_transfer.imports', 'data_transfer.imports.execute'],
+    'export' => ['export', 'data_transfer.export', 'data_transfer.export.execute'],
+]);
+
+it('blocks the export error report for a role without export execute', function () {
+    $track = trackerAclTrack('export', 'ai-agent/exports/1/catalogue/products.csv');
+
+    $this->loginWithPermissions(permissions: ['data_transfer', 'data_transfer.export']);
+
+    get(route('admin.settings.data_transfer.exports.download_error_report', $track->jobInstance->id))->assertForbidden();
 });
