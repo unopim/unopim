@@ -70,14 +70,16 @@
                         </div>
                     </div>
 
-                    <div class="flex gap-2" v-if="importResource.errors_count && importResource.error_file_path">
-                        <a
-                            class="secondary-button"
-                            href="{{ route('admin.settings.data_transfer.imports.download_error_report', $jobTrack->id) }}"
-                            target="_blank"
-                        >
-                            @lang('admin::app.settings.data-transfer.imports.import.download-error-report')
-                        </a>
-                    </div>
+                    @if (bouncer()->hasPermission('data_transfer.imports.execute'))
+                        <div class="flex gap-2" v-if="importResource.errors_count && importResource.error_file_path">
+                            <a
+                                class="secondary-button"
+                                href="{{ route('admin.settings.data_transfer.imports.download_error_report', $jobTrack->id) }}"
+                                target="_blank"
+                            >
+                                @lang('admin::app.settings.data-transfer.imports.import.download-error-report')
+                            </a>
+                        </div>
+                    @endif
                     {!! view_render_event('unopim.admin.settings.data_transfer.tracker.job.state.validated.after', $jobTrack) !!}
                 </div>

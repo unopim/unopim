@@ -110,15 +110,17 @@
                         </div>
                     @endif
 
-                    <div class="flex gap-2 mb-2" v-if="jobInstance.type == 'import' && importResource.errors_count && importResource.error_file_path">
-                        <a
-                            class="secondary-button"
-                            href="{{ route('admin.settings.data_transfer.imports.download_error_report', $jobTrack->id) }}"
-                            target="_blank"
-                        >
-                            @lang('admin::app.settings.data-transfer.imports.import.download-error-report')
-                        </a>
-                    </div>
+                    @if (bouncer()->hasPermission('data_transfer.imports.execute'))
+                        <div class="flex gap-2 mb-2" v-if="jobInstance.type == 'import' && importResource.errors_count && importResource.error_file_path">
+                            <a
+                                class="secondary-button"
+                                href="{{ route('admin.settings.data_transfer.imports.download_error_report', $jobTrack->id) }}"
+                                target="_blank"
+                            >
+                                @lang('admin::app.settings.data-transfer.imports.import.download-error-report')
+                            </a>
+                        </div>
+                    @endif
 
                     <div class="flex justify-between items-center pt-3 border-t border-gray-200 dark:border-gray-700">
                         <span class="inline-flex items-center gap-1.5 text-sm text-gray-600 dark:text-gray-400">
