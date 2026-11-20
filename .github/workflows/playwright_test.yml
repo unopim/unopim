@@ -101,7 +101,6 @@ jobs:
           PW_PASS=serial npx playwright test --pass-with-no-tests || status=$?
           exit $status
 
-      # Withholds any report, trace or log that captured an AI provider key.
       - name: Scrub credentials from test results
         id: scrub
         if: failure()
@@ -116,19 +115,11 @@ jobs:
             /tmp/queue.log
 
       - name: Upload test results
-        if: failure() && steps.scrub.outcome == 'success'
+        if: failure() && steps.scrub.outcome == 'success' && steps.scrub.outputs.paths != ''
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: playwright-report-shard-${{ matrix.shard-index }}-${{ github.run_id }}
-          path: |
-            tests/e2e-pw/playwright-report
-            tests/e2e-pw/playwright-report-serial
-            tests/e2e-pw/test-results
-            tests/e2e-pw/test-results-serial
-            storage/logs/*.log
-            /tmp/server.log
-            /tmp/queue.log
-            storage/logs/laravel.log
+          path: ${{ steps.scrub.outputs.paths }}
           retention-days: 7
 
   # A short pass over the admin flows every change can break: sign-in, ajax
@@ -176,21 +167,16 @@ jobs:
           bash .github/scripts/scrub-e2e-artifacts.sh \
             tests/e2e-pw/playwright-report \
             tests/e2e-pw/test-results \
-            storage/logs \
+            storage/logs/laravel.log \
             /tmp/server.log \
             /tmp/queue.log
 
       - name: Upload test results
-        if: failure() && steps.scrub.outcome == 'success'
+        if: failure() && steps.scrub.outcome == 'success' && steps.scrub.outputs.paths != ''
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: playwright-report-smoke-${{ github.run_id }}
-          path: |
-            tests/e2e-pw/playwright-report
-            tests/e2e-pw/test-results
-            storage/logs/laravel.log
-            /tmp/server.log
-            /tmp/queue.log
+          path: ${{ steps.scrub.outputs.paths }}
           retention-days: 7
 
   # A skipped matrix job reports its check under the unexpanded name, which can
