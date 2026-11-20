@@ -138,3 +138,40 @@ function decodeSearchToolResult(string $result): array
 {
     return json_decode($result, true, 512, JSON_THROW_ON_ERROR);
 }
+
+it('shows the name inherited from the parent for variant groups and child products', function () {
+    $admin = $this->loginAsAdmin();
+
+    $name = Attribute::query()->where('code', 'name')->first();
+    $path = match (true) {
+        $name->value_per_locale && $name->value_per_channel => 'channel_locale_specific.default.en_US.name',
+        (bool) $name->value_per_locale                      => 'locale_specific.en_US.name',
+        (bool) $name->value_per_channel                     => 'channel_specific.default.name',
+        default                                             => 'common.name',
+    };
+
+    $sku = 'INHERIT-NAME-'.random_int(10000, 99999);
+
+    $parentValues = ['common' => ['sku' => $sku, 'url_key' => strtolower($sku)]];
+    data_set($parentValues, $path, 'Inherited Tee');
+
+    $parent = Product::factory()->configurable()->create(['sku' => $sku, 'values' => $parentValues]);
+    $group = Product::factory()->create(['sku' => "{$sku}-RED", 'parent_id' => $parent->id, 'values' => ['common' => ['sku' => "{$sku}-RED"]]]);
+    $child = Product::factory()->simple()->create([
+        'sku'       => "{$sku}-RED-S",
+        'parent_id' => $group->id,
+        'values'    => ['common' => ['sku' => "{$sku}-RED-S", 'url_key' => strtolower("{$sku}-RED-S")]],
+    ]);
+
+    $result = decodeSearchToolResult(
+        app(SearchProducts::class)
+            ->register(buildSearchChatContext($admin))
+            ->handle(new Request(['query' => $sku]))
+    );
+
+    $names = array_column($result['products'], 'name', 'sku');
+
+    expect($names[$group->sku])->toBe('Inherited Tee')
+        ->and($names[$child->sku])->toBe('Inherited Tee')
+        ->and($names[$parent->sku])->toBe('Inherited Tee');
+});
