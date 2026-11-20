@@ -217,7 +217,9 @@ class MagicAIPlatformController extends Controller
             abort(403);
         }
 
-        if (! $this->platformValidator()->isSafeApiUrl(request()->input('api_url'))) {
+        $apiUrl = $request->outboundApiUrl();
+
+        if (! $this->platformValidator()->isSafeApiUrl($apiUrl)) {
             return new JsonResponse([
                 'success' => false,
                 'message' => trans('admin::app.configuration.platform.message.test-fail'),
@@ -230,7 +232,7 @@ class MagicAIPlatformController extends Controller
             // Custom providers route through the openai-compatible driver, so
             // without an explicit api_url the request would fall back to the
             // global env URL and ship the caller's API key to the wrong host.
-            if ($provider === AiProvider::Custom && empty(trim((string) request()->input('api_url')))) {
+            if ($provider === AiProvider::Custom && empty(trim((string) $apiUrl))) {
                 return new JsonResponse([
                     'success' => false,
                     'message' => trans('admin::app.configuration.platform.message.test-fail').': '.trans('admin::app.configuration.platform.message.custom-api-url-required'),
@@ -263,7 +265,7 @@ class MagicAIPlatformController extends Controller
                 try {
                     ScopedProviderConfig::run(
                         $provider->configKey(),
-                        $this->providerOverridesFromRequest(),
+                        $this->providerOverridesFromRequest($apiUrl),
                         fn () => $agent->prompt(
                             'Say OK',
                             provider: $provider->toLab(),
@@ -324,7 +326,9 @@ class MagicAIPlatformController extends Controller
             abort(403);
         }
 
-        if (! $this->platformValidator()->isSafeApiUrl(request()->input('api_url'))) {
+        $apiUrl = $request->outboundApiUrl();
+
+        if (! $this->platformValidator()->isSafeApiUrl($apiUrl)) {
             return new JsonResponse([
                 'message' => trans('admin::app.configuration.platform.message.fetch-models-fail'),
             ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
@@ -351,7 +355,7 @@ class MagicAIPlatformController extends Controller
             $discovery = app(ModelDiscovery::class)->discover(
                 $provider,
                 $this->resolveApiKey(),
-                request()->input('api_url'),
+                $apiUrl,
             );
 
             $models = ModelRecommender::chatCapable($discovery['models']);
@@ -420,14 +424,14 @@ class MagicAIPlatformController extends Controller
      *
      * @return array<string, mixed>
      */
-    protected function providerOverridesFromRequest(): array
+    protected function providerOverridesFromRequest(?string $apiUrl): array
     {
         $overrides = [
             'key' => $this->resolveApiKey(),
         ];
 
-        if (request()->input('api_url')) {
-            $overrides['url'] = request()->input('api_url');
+        if ($apiUrl) {
+            $overrides['url'] = $apiUrl;
         }
 
         return ProviderOverrides::build($overrides, request()->input('extras'));

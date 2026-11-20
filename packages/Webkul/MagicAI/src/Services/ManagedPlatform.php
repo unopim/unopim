@@ -41,6 +41,16 @@ class ManagedPlatform
     }
 
     /**
+     * Whether a provider and endpoint are the ones the platform is saved
+     * with, so its stored key would reach only its own host.
+     */
+    public function isPlatformConnection(MagicAIPlatform $platform, ?string $provider, ?string $apiUrl): bool
+    {
+        return $provider === $platform->provider
+            && $this->effectiveUrl($provider, $apiUrl) === $this->apiUrl($platform);
+    }
+
+    /**
      * The models the platform is saved with.
      *
      * @return string[]
@@ -70,11 +80,7 @@ class ManagedPlatform
 
         $errors = [];
 
-        if (
-            $provider !== $platform->provider
-            || $this->effectiveUrl($provider, $apiUrl) !== $this->apiUrl($platform)
-            || $extras !== []
-        ) {
+        if (! $this->isPlatformConnection($platform, $provider, $apiUrl) || $extras !== []) {
             $errors['api_key'] = trans('admin::app.configuration.platform.message.managed-connection-locked');
         }
 
