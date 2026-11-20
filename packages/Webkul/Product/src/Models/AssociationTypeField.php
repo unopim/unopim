@@ -118,38 +118,13 @@ class AssociationTypeField extends TranslatableModel implements AssociationTypeF
      */
     public function getValidationsField(): string
     {
-        $validations = [];
+        $uploadKilobytes = match ($this->type) {
+            'file'  => (int) (core()->getConfigData('catalog.categories.fields.file_attribute_upload_size') ?? 2048),
+            'image' => (int) (core()->getConfigData('catalog.categories.fields.image_attribute_upload_size') ?? 2048),
+            default => 0,
+        };
 
-        if ($this->is_required) {
-            $validations['required'] = true;
-        }
-
-        if ($this->type === 'file') {
-            $retVal = (int) (core()->getConfigData('catalog.categories.fields.file_attribute_upload_size') ?? 2048);
-
-            if ($retVal) {
-                $validations['size'] = $retVal;
-            }
-        }
-
-        if ($this->type === 'image') {
-            $retVal = (int) (core()->getConfigData('catalog.categories.fields.image_attribute_upload_size') ?? 2048);
-
-            if ($retVal) {
-                $validations['size'] = $retVal;
-                $validations['mimes'] = ['image/bmp', 'image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-            }
-        }
-
-        if ($this->validation) {
-            $validations += match ($this->validation) {
-                'regex'  => ['regex' => (string) $this->regex_pattern],
-                'number' => ['numeric' => true],
-                default  => [$this->validation => true],
-            };
-        }
-
-        return ClientValidationRules::encode($validations);
+        return ClientValidationRules::forField((bool) $this->is_required, $this->type, $uploadKilobytes, $this->validation, $this->regex_pattern);
     }
 
     /**
