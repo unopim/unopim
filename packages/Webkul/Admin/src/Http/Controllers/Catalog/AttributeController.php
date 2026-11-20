@@ -13,6 +13,7 @@ use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\SelectableMassDestroyRequest;
 use Webkul\Attribute\Enums\SwatchTypeEnum;
 use Webkul\Attribute\Repositories\AttributeRepository;
+use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Attribute\Rules\NotSupportedAttributes;
 use Webkul\Attribute\Rules\SwatchTypes;
 use Webkul\Core\Repositories\LocaleRepository;
@@ -71,7 +72,7 @@ class AttributeController extends Controller
     {
         $this->validate(request(), [
             'code'        => ['required', 'unique:attributes,code', new Code, new NotSupportedAttributes],
-            'type'        => 'required',
+            'type'        => ['required', 'string', new AttributeTypes],
             'swatch_type' => [
                 'required_if:type,select,multiselect',
                 'prohibited_unless:type,select,multiselect',
