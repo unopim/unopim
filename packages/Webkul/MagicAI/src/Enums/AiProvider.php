@@ -73,6 +73,16 @@ enum AiProvider: string
         };
     }
 
+    /**
+     * Whether a base URL is the built-in local Ollama daemon, the one documented
+     * exception to the public-address rule for platform URLs.
+     */
+    public function isLocalOllamaDefault(?string $apiUrl): bool
+    {
+        return $this === self::Ollama
+            && ($apiUrl === null || $apiUrl === '' || rtrim($apiUrl, '/') === $this->defaultUrl());
+    }
+
     public function configKey(): string
     {
         return match ($this) {
@@ -136,7 +146,7 @@ enum AiProvider: string
                 self::OpenAI                                                                              => $this->fetchOpenAiModels($client, $apiKey, $apiUrl),
                 self::Anthropic                                                                           => $this->fetchAnthropicModels($client, $apiKey, $apiUrl),
                 self::Gemini                                                                              => $this->fetchGeminiModels($client, $apiKey, $apiUrl),
-                self::Ollama                                                                              => $this->fetchOllamaModels($client, $apiUrl ?: $this->defaultUrl()),
+                self::Ollama                                                                              => $this->fetchOllamaModels($client, $apiUrl),
                 self::Azure                                                                               => $this->fetchAzureModels($client, $apiKey, $apiUrl),
                 self::Custom                                                                              => $this->discoverModels($apiKey, $apiUrl, $client)['released'],
                 self::Groq, self::XAI, self::Mistral, self::DeepSeek, self::OpenRouter, self::Concentrate => $this->fetchOpenAiCompatModels(
@@ -350,11 +360,19 @@ enum AiProvider: string
         return $this->catalog($data['data'] ?? [], 'id', 'created', static fn (string $id): string => ltrim($id, '~'));
     }
 
-    private function fetchOllamaModels(Client $client, string $baseUrl): array
+    /**
+     * List Ollama models. The local daemon default is called unpinned, with
+     * redirects off: it is the one host a platform may reach without validation.
+     */
+    private function fetchOllamaModels(Client $client, ?string $apiUrl): array
     {
-        $url = rtrim($baseUrl, '/').'/api/tags';
+        $url = rtrim($apiUrl ?: $this->defaultUrl(), '/').'/api/tags';
 
-        $response = $client->get($url, $this->ssrfGuardedOptions($url));
+        $options = $this->isLocalOllamaDefault($apiUrl)
+            ? ['allow_redirects' => false]
+            : $this->ssrfGuardedOptions($url);
+
+        $response = $client->get($url, $options);
 
         $data = json_decode($response->getBody()->getContents(), true);
 
@@ -362,18 +380,25 @@ enum AiProvider: string
     }
 
     /**
-     * Forbid redirect following, and — when the URL validates as public —
-     * additionally pin the host to the address that validation resolved, so a
-     * user-supplied model-discovery URL cannot pivot to an internal host via a
-     * 30x redirect or DNS rebinding. A URL that fails validation gets the
-     * redirect guard alone; the caller is expected to have rejected it already.
+     * Forbid redirect following and pin the host to the address validation
+     * resolved, so a user-supplied model-discovery URL cannot pivot to an
+     * internal host via a 30x redirect or DNS rebinding. A URL that cannot be
+     * validated and pinned is refused rather than fetched.
      *
      * @param  array<string, mixed>  $options
      * @return array<string, mixed>
+     *
+     * @throws \RuntimeException
      */
     private function ssrfGuardedOptions(string $url, array $options = []): array
     {
-        return array_merge($options, SafeWebhookUrl::httpOptions($url));
+        $pinned = SafeWebhookUrl::pinnedHttpOptions($url);
+
+        if ($pinned === null) {
+            throw new \RuntimeException(trans('admin::app.configuration.platform.message.unsafe-api-url'));
+        }
+
+        return array_merge($options, $pinned);
     }
 
     private function fetchAnthropicModels(Client $client, ?string $apiKey, ?string $apiUrl = null): array

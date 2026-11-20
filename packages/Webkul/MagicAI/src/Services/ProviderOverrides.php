@@ -6,10 +6,10 @@ namespace Webkul\MagicAI\Services;
  * Builds laravel/ai provider config overrides from a validated base plus
  * user-supplied extras.
  *
- * The endpoint and credential keys are stripped from the extras at merge
- * time, not only at validation time: a platform row persisted before this
- * guard existed can still carry an `extras.url` that would otherwise
- * overwrite the SafeWebhookUrl-checked api_url and reach an internal host.
+ * Extras are filtered to an allowlist at merge time, not only at validation
+ * time: a platform row persisted before this guard existed can still carry a
+ * `url`, `driver`, `region` or `headers` key that would swap the provider
+ * class or move the request off the SafeWebhookUrl-checked api_url.
  */
 class ProviderOverrides
 {
@@ -18,6 +18,21 @@ class ProviderOverrides
      * case-insensitively, so a legacy `URL` is stripped alongside `url`.
      */
     public const RESERVED_KEYS = ['url', 'key', 'api_key', 'base_url'];
+
+    /**
+     * The only extras a platform may set: names and versions that select a
+     * deployment or feature on the platform's own host, never a host, driver,
+     * region or header.
+     */
+    public const ALLOWED_KEYS = [
+        'deployment',
+        'embedding_deployment',
+        'image_deployment',
+        'api_version',
+        'organization',
+        'project',
+        'anthropic_beta',
+    ];
 
     /**
      * @param  array<string, mixed>  $base
@@ -32,7 +47,7 @@ class ProviderOverrides
     }
 
     /**
-     * Decode extras into a reserved-key-free array, or [] when unusable.
+     * Decode extras into an array of allowlisted keys, or [] when unusable.
      *
      * @param  array<string, mixed>|string|null  $extras
      * @return array<string, mixed>
@@ -49,7 +64,7 @@ class ProviderOverrides
 
         return array_filter(
             $extras,
-            fn (string|int $key): bool => ! in_array(strtolower((string) $key), self::RESERVED_KEYS, true),
+            fn (string|int $key): bool => in_array($key, self::ALLOWED_KEYS, true),
             ARRAY_FILTER_USE_KEY,
         );
     }

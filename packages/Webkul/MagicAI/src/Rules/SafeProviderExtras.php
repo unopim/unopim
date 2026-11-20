@@ -10,7 +10,7 @@ use Webkul\MagicAI\Services\ProviderOverrides;
 /**
  * Guards the free-form `extras` payload merged into a laravel/ai provider
  * config. Rejects anything that would redefine the endpoint or credential
- * the platform record already owns and validates separately.
+ * the platform record already owns, and any key outside the allowlist.
  */
 class SafeProviderExtras implements ValidationRule
 {
@@ -59,6 +59,17 @@ class SafeProviderExtras implements ValidationRule
         if ($reserved !== []) {
             $fail(trans('admin::app.configuration.platform.message.extras-reserved-key', [
                 'keys' => implode(', ', $reserved),
+            ]));
+
+            return;
+        }
+
+        $unsupported = array_diff(array_keys((array) $value), ProviderOverrides::ALLOWED_KEYS);
+
+        if ($unsupported !== []) {
+            $fail(trans('admin::app.configuration.platform.message.extras-unsupported-key', [
+                'keys'    => implode(', ', $unsupported),
+                'allowed' => implode(', ', ProviderOverrides::ALLOWED_KEYS),
             ]));
         }
     }
