@@ -61,6 +61,7 @@ return [
                     'duplicate-code'                       => 'Attributkoden :code er allerede i brug.',
                     'code_not_found_to_delete'             => 'Attributkode blev ikke fundet til sletning.',
                     'code_is_system_and_cannot_be_deleted' => 'Systemattribut kan ikke slettes.',
+                    'templates-unsupported'                => 'Skabeloner kan kun aktiveres på tekst- og tekstområdeattributter, der ikke har indtastningsvalidering og ikke er unikke.',
                 ],
             ],
         ],
@@ -190,6 +191,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'Gengiv skabeloner',
+            'render-templates-info'  => 'Eksportér gengivne skabelonværdier i stedet for den rå skabelonkilde. Genimport af en gengivet fil erstatter den gemte skabelonkilde med almindelig tekst.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

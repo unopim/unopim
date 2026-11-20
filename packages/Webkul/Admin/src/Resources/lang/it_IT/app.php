@@ -285,6 +285,24 @@ return [
                     'root-not-allowed' => 'La categoria radice non può essere assegnata a un prodotto.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Guida ai modelli',
+                    'title'    => 'Modelli dinamici',
+                    'info'     => 'Digita @ per inserire un altro attributo di questo prodotto. Le variabili vengono sostituite con i valori del prodotto durante l\'esportazione.',
+                    'example'  => 'Esempio',
+                    'filters'  => 'Filtri',
+                    'currency' => 'Prezzo in una sola valuta',
+
+                    'preview'  => [
+                        'button'       => 'Anteprima modello',
+                        'title'        => 'Anteprima del modello',
+                        'refresh'      => 'Aggiorna',
+                        'empty'        => 'Il modello genera un valore vuoto.',
+                        'failed'       => 'Impossibile caricare l\'anteprima. Riprova.',
+                        'saved-values' => 'Usa i valori non salvati delle sezioni caricate in questa pagina. Gli altri valori provengono dall\'ultimo salvataggio.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Gruppo di attributi:',
                     'title'              => 'Gruppi di attributi',
@@ -675,6 +693,8 @@ return [
                 'usable-in-grid'         => 'Usabile nella griglia',
                 'is-filterable'          => 'È filtrabile',
                 'ai-translate'           => 'Traduzione IA',
+                'enable-templates'       => 'Abilita modelli',
+                'templates-unsupported'  => 'I modelli possono essere abilitati solo sugli attributi di tipo testo e area di testo che non hanno una validazione dell\'input e non sono unici.',
                 'invalid-swatch-type'    => 'L\'attributo :attribute non è consentito per il tipo di attributo :type con il tipo di campione :swatch_type.',
                 'single-object-only'     => 'Ogni richiesta di creazione deve inviare un solo oggetto attributo.',
                 'option'                 => [
@@ -2054,20 +2074,24 @@ return [
         ],
 
         'appearance' => [
-            'title'          => 'Appearance',
-            'info'           => 'Logo e favicon.',
-            'section-title'  => 'Visual Branding',
-            'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
-            'logo'           => 'Logo',
-            'logo-size'      => 'Recommended image resolution: 192px X 50px',
-            'favicon'        => 'Favicon',
-            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
-            'no-logo'        => 'No logo uploaded yet.',
-            'no-favicon'     => 'No favicon uploaded yet.',
-            'upload-cta'     => 'Click to upload',
-            'upload-hint'    => ' or drag and drop',
-            'save-btn'       => 'Save Appearance',
-            'update-success' => 'Appearance updated successfully.',
+            'title'             => 'Aspetto',
+            'info'              => 'Logo e favicon.',
+            'section-title'     => 'Identità visiva',
+            'section-info'      => 'Carica il tuo logo e la tua favicon, con versioni facoltative per la modalità scura. Le modifiche vengono applicate al salvataggio.',
+            'logo'              => 'Logo',
+            'logo-size'         => 'Risoluzione immagine consigliata: 192px X 50px',
+            'favicon'           => 'Favicon',
+            'favicon-size'      => 'Risoluzione immagine consigliata: 16px X 16px',
+            'dark-logo'         => 'Logo per la modalità scura',
+            'dark-logo-info'    => 'Mostrato in modalità scura. Lascia vuoto per usare il logo qui sopra.',
+            'dark-favicon'      => 'Favicon per la modalità scura',
+            'dark-favicon-info' => 'Mostrato in modalità scura. Lascia vuoto per usare la favicon qui sopra.',
+            'no-logo'           => 'Nessun logo caricato.',
+            'no-favicon'        => 'Nessuna favicon caricata.',
+            'upload-cta'        => 'Fai clic per caricare',
+            'upload-hint'       => ' o trascina e rilascia',
+            'save-btn'          => 'Salva aspetto',
+            'update-success'    => 'Aspetto aggiornato correttamente.',
         ],
         'roles' => [
             'index' => [

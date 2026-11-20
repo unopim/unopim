@@ -285,6 +285,24 @@ return [
                     'root-not-allowed' => '根类别不能分配给产品。',
                 ],
 
+                'templates' => [
+                    'help'     => '模板帮助',
+                    'title'    => '动态模板',
+                    'info'     => '输入 @ 可插入此产品的其他属性。导出时变量会被替换为产品的值。',
+                    'example'  => '示例',
+                    'filters'  => '过滤器',
+                    'currency' => '单一货币价格',
+
+                    'preview'  => [
+                        'button'       => '预览模板',
+                        'title'        => '模板预览',
+                        'refresh'      => '刷新',
+                        'empty'        => '模板渲染结果为空。',
+                        'failed'       => '无法加载预览，请重试。',
+                        'saved-values' => '使用本页已加载部分中未保存的值，其他值来自上次保存。',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => '属性组：',
                     'title'              => '属性组',
@@ -675,6 +693,8 @@ return [
                 'usable-in-grid'         => '可在网格中使用',
                 'is-filterable'          => '可筛选',
                 'ai-translate'           => 'AI翻译',
+                'enable-templates'       => '启用模板',
+                'templates-unsupported'  => '只有没有输入验证且非唯一的文本和文本区域属性才能启用模板。',
                 'invalid-swatch-type'    => ':attribute 不允许用于属性类型 :type 和样本类型 :swatch_type。',
                 'single-object-only'     => '每个创建请求只能发送一个属性对象。',
                 'option'                 => [
@@ -2056,20 +2076,24 @@ return [
         ],
 
         'appearance' => [
-            'title'          => 'Appearance',
-            'info'           => '徽标和图标。',
-            'section-title'  => 'Visual Branding',
-            'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
-            'logo'           => 'Logo',
-            'logo-size'      => 'Recommended image resolution: 192px X 50px',
-            'favicon'        => 'Favicon',
-            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
-            'no-logo'        => 'No logo uploaded yet.',
-            'no-favicon'     => 'No favicon uploaded yet.',
-            'upload-cta'     => 'Click to upload',
-            'upload-hint'    => ' or drag and drop',
-            'save-btn'       => 'Save Appearance',
-            'update-success' => 'Appearance updated successfully.',
+            'title'             => '外观',
+            'info'              => '徽标和图标。',
+            'section-title'     => '视觉品牌',
+            'section-info'      => '上传您自己的徽标和网站图标，并可选择添加深色模式版本。保存后更改生效。',
+            'logo'              => '徽标',
+            'logo-size'         => '建议图片分辨率：192px X 50px',
+            'favicon'           => '网站图标',
+            'favicon-size'      => '建议图片分辨率：16px X 16px',
+            'dark-logo'         => '深色模式徽标',
+            'dark-logo-info'    => '在深色模式下显示。留空则使用上方的徽标。',
+            'dark-favicon'      => '深色模式网站图标',
+            'dark-favicon-info' => '在深色模式下显示。留空则使用上方的网站图标。',
+            'no-logo'           => '尚未上传徽标。',
+            'no-favicon'        => '尚未上传网站图标。',
+            'upload-cta'        => '点击上传',
+            'upload-hint'       => '或拖放文件',
+            'save-btn'          => '保存外观',
+            'update-success'    => '外观已成功更新。',
         ],
         'roles' => [
             'index' => [

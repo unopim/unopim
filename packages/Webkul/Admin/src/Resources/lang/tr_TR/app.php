@@ -285,6 +285,24 @@ return [
                     'root-not-allowed' => 'Kök kategori bir ürüne atanamaz.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Şablon yardımı',
+                    'title'    => 'Dinamik şablonlar',
+                    'info'     => 'Bu ürünün başka bir niteliğini eklemek için @ yazın. Değişkenler dışa aktarma sırasında ürün değerleriyle değiştirilir.',
+                    'example'  => 'Örnek',
+                    'filters'  => 'Filtreler',
+                    'currency' => 'Tek para biriminde fiyat',
+
+                    'preview'  => [
+                        'button'       => 'Şablonu önizle',
+                        'title'        => 'Şablon önizlemesi',
+                        'refresh'      => 'Yenile',
+                        'empty'        => 'Şablon boş bir değer üretiyor.',
+                        'failed'       => 'Önizleme yüklenemedi. Lütfen tekrar deneyin.',
+                        'saved-values' => 'Bu sayfada yüklenen bölümlerin kaydedilmemiş değerlerini kullanır. Diğer değerler son kayıttan gelir.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Öznitelik grubu:',
                     'title'              => 'Öznitelik Grupları',
@@ -675,6 +693,8 @@ return [
                 'usable-in-grid'         => 'Izgarada Kullanılabilir',
                 'is-filterable'          => 'Filtrelenebilir',
                 'ai-translate'           => 'AI Çeviri',
+                'enable-templates'       => 'Şablonları Etkinleştir',
+                'templates-unsupported'  => 'Şablonlar yalnızca girdi doğrulaması olmayan ve benzersiz olmayan metin ve metin alanı özniteliklerinde etkinleştirilebilir.',
                 'invalid-swatch-type'    => ':attribute, :type türü için :swatch_type swatch türü ile kullanılamaz.',
                 'single-object-only'     => 'Her oluşturma isteği yalnızca bir öznitelik nesnesi göndermelidir.',
                 'option'                 => [
@@ -2056,20 +2076,24 @@ return [
         ],
 
         'appearance' => [
-            'title'          => 'Appearance',
-            'info'           => 'Logo ve favicon.',
-            'section-title'  => 'Visual Branding',
-            'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
-            'logo'           => 'Logo',
-            'logo-size'      => 'Recommended image resolution: 192px X 50px',
-            'favicon'        => 'Favicon',
-            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
-            'no-logo'        => 'No logo uploaded yet.',
-            'no-favicon'     => 'No favicon uploaded yet.',
-            'upload-cta'     => 'Click to upload',
-            'upload-hint'    => ' or drag and drop',
-            'save-btn'       => 'Save Appearance',
-            'update-success' => 'Appearance updated successfully.',
+            'title'             => 'Görünüm',
+            'info'              => 'Logo ve favicon.',
+            'section-title'     => 'Görsel Kimlik',
+            'section-info'      => 'Kendi logonuzu ve favicon\'unuzu, isteğe bağlı koyu mod sürümleriyle birlikte yükleyin. Değişiklikler kaydedildikten sonra uygulanır.',
+            'logo'              => 'Logo',
+            'logo-size'         => 'Önerilen görsel çözünürlüğü: 192px X 50px',
+            'favicon'           => 'Favicon',
+            'favicon-size'      => 'Önerilen görsel çözünürlüğü: 16px X 16px',
+            'dark-logo'         => 'Koyu Mod Logosu',
+            'dark-logo-info'    => 'Koyu modda gösterilir. Yukarıdaki logoyu kullanmak için boş bırakın.',
+            'dark-favicon'      => 'Koyu Mod Favicon\'u',
+            'dark-favicon-info' => 'Koyu modda gösterilir. Yukarıdaki favicon\'u kullanmak için boş bırakın.',
+            'no-logo'           => 'Henüz logo yüklenmedi.',
+            'no-favicon'        => 'Henüz favicon yüklenmedi.',
+            'upload-cta'        => 'Yüklemek için tıklayın',
+            'upload-hint'       => ' veya sürükleyip bırakın',
+            'save-btn'          => 'Görünümü Kaydet',
+            'update-success'    => 'Görünüm başarıyla güncellendi.',
         ],
         'roles' => [
             'index' => [

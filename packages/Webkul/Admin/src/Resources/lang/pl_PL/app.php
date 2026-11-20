@@ -286,6 +286,24 @@ return [
                     'root-not-allowed' => 'Kategorii głównej nie można przypisać do produktu.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Pomoc dotycząca szablonów',
+                    'title'    => 'Szablony dynamiczne',
+                    'info'     => 'Wpisz @, aby wstawić inny atrybut tego produktu. Zmienne są zastępowane wartościami produktu podczas eksportu.',
+                    'example'  => 'Przykład',
+                    'filters'  => 'Filtry',
+                    'currency' => 'Cena w jednej walucie',
+
+                    'preview'  => [
+                        'button'       => 'Podgląd szablonu',
+                        'title'        => 'Podgląd szablonu',
+                        'refresh'      => 'Odśwież',
+                        'empty'        => 'Szablon daje pustą wartość.',
+                        'failed'       => 'Nie udało się wczytać podglądu. Spróbuj ponownie.',
+                        'saved-values' => 'Używa niezapisanych wartości z sekcji wczytanych na tej stronie. Pozostałe wartości pochodzą z ostatniego zapisu.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Grupa atrybutów:',
                     'title'              => 'Grupy atrybutów',
@@ -676,6 +694,8 @@ return [
                 'usable-in-grid'         => 'Można używać w siatce',
                 'is-filterable'          => 'Jest filtrowalne',
                 'ai-translate'           => 'Tłumaczenie SI',
+                'enable-templates'       => 'Włącz szablony',
+                'templates-unsupported'  => 'Szablony można włączyć tylko dla atrybutów typu tekst i pole tekstowe, które nie mają weryfikacji danych wejściowych i nie są unikalne.',
                 'invalid-swatch-type'    => 'Atrybut :attribute nie jest dozwolony dla typu atrybutu :type z typem próbki :swatch_type.',
                 'single-object-only'     => 'Każde żądanie tworzenia musi zawierać tylko jeden obiekt atrybutu.',
                 'option'                 => [
@@ -2056,20 +2076,24 @@ return [
         ],
 
         'appearance' => [
-            'title'          => 'Appearance',
-            'info'           => 'Logo i favicon.',
-            'section-title'  => 'Visual Branding',
-            'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
-            'logo'           => 'Logo',
-            'logo-size'      => 'Recommended image resolution: 192px X 50px',
-            'favicon'        => 'Favicon',
-            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
-            'no-logo'        => 'No logo uploaded yet.',
-            'no-favicon'     => 'No favicon uploaded yet.',
-            'upload-cta'     => 'Click to upload',
-            'upload-hint'    => ' or drag and drop',
-            'save-btn'       => 'Save Appearance',
-            'update-success' => 'Appearance updated successfully.',
+            'title'             => 'Wygląd',
+            'info'              => 'Logo i favicon.',
+            'section-title'     => 'Identyfikacja wizualna',
+            'section-info'      => 'Prześlij własne logo i favicon, opcjonalnie także w wersjach dla trybu ciemnego. Zmiany zostaną zastosowane po zapisaniu.',
+            'logo'              => 'Logo',
+            'logo-size'         => 'Zalecana rozdzielczość obrazu: 192px X 50px',
+            'favicon'           => 'Favicon',
+            'favicon-size'      => 'Zalecana rozdzielczość obrazu: 16px X 16px',
+            'dark-logo'         => 'Logo trybu ciemnego',
+            'dark-logo-info'    => 'Wyświetlane w trybie ciemnym. Pozostaw puste, aby użyć powyższego logo.',
+            'dark-favicon'      => 'Favicon trybu ciemnego',
+            'dark-favicon-info' => 'Wyświetlane w trybie ciemnym. Pozostaw puste, aby użyć powyższego faviconu.',
+            'no-logo'           => 'Nie przesłano jeszcze logo.',
+            'no-favicon'        => 'Nie przesłano jeszcze favicony.',
+            'upload-cta'        => 'Kliknij, aby przesłać',
+            'upload-hint'       => ' lub przeciągnij i upuść',
+            'save-btn'          => 'Zapisz wygląd',
+            'update-success'    => 'Wygląd został zaktualizowany.',
         ],
         'roles' => [
             'index' => [

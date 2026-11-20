@@ -61,6 +61,7 @@ return [
                     'duplicate-code'                       => 'El codi d\'atribut :code ja està en ús.',
                     'code_not_found_to_delete'             => 'Codi d\'atribut no trobat per a supressió.',
                     'code_is_system_and_cannot_be_deleted' => 'L\'atribut del sistema no es pot eliminar.',
+                    'templates-unsupported'                => 'Les plantilles només es poden habilitar en atributs de text i àrea de text que no tinguin validació d\'entrada i no siguin únics.',
                 ],
             ],
         ],
@@ -190,6 +191,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'Renderitza les plantilles',
+            'render-templates-info'  => 'Exporta els valors renderitzats de les plantilles en lloc de la font original de la plantilla. Tornar a importar un fitxer renderitzat substitueix la font de la plantilla desada per text pla.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

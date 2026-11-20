@@ -61,6 +61,7 @@ return [
                     'duplicate-code'                       => 'كود السمة :code مستخدم بالفعل.',
                     'code_not_found_to_delete'             => 'لم يتم العثور على كود السمة للحذف.',
                     'code_is_system_and_cannot_be_deleted' => 'لا يمكن حذف سمة النظام.',
+                    'templates-unsupported'                => 'يمكن تفعيل القوالب فقط على سمات النص ومنطقة النص التي لا تحتوي على تحقق من صحة المدخلات وليست فريدة.',
                 ],
             ],
         ],
@@ -190,6 +191,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'عرض القوالب',
+            'render-templates-info'  => 'تصدير قيم القوالب المعروضة بدلاً من مصدر القالب الخام. إعادة استيراد ملف معروض تستبدل مصدر القالب المحفوظ بنص عادي.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

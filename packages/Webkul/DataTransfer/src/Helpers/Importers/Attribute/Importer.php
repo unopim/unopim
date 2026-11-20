@@ -6,6 +6,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Validator;
+use Webkul\Attribute\Contracts\Attribute as AttributeContract;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Core\Rules\Code;
@@ -24,10 +25,12 @@ class Importer extends AbstractImporter
 
     public const ERROR_CODE_IS_SYSTEM = 'code_is_system';
 
+    public const ERROR_TEMPLATES_UNSUPPORTED = 'templates_unsupported';
+
     /**
      * Boolean attribute columns
      */
-    protected const BOOLEAN_COLUMNS = ['enable_wysiwyg', 'is_required', 'is_unique', 'value_per_locale', 'value_per_channel', 'is_filterable', 'ai_translate'];
+    protected const BOOLEAN_COLUMNS = ['enable_wysiwyg', 'is_required', 'is_unique', 'value_per_locale', 'value_per_channel', 'is_filterable', 'ai_translate', 'enable_templates'];
 
     /**
      * Permanent entity columns
@@ -48,6 +51,7 @@ class Importer extends AbstractImporter
         'value_per_channel',
         'is_filterable',
         'ai_translate',
+        'enable_templates',
         'productCounts',
     ];
 
@@ -74,6 +78,7 @@ class Importer extends AbstractImporter
         self::ERROR_CODE_NOT_FOUND_FOR_DELETE => 'data_transfer::app.importers.attributes.validation.errors.code_not_found_to_delete',
         self::ERROR_NOT_FOUND_LOCALE          => 'data_transfer::app.importers.products.validation.errors.locale-not-exist',
         self::ERROR_CODE_IS_SYSTEM            => 'data_transfer::app.importers.attributes.validation.errors.code_is_system_and_cannot_be_deleted',
+        self::ERROR_TEMPLATES_UNSUPPORTED     => 'data_transfer::app.importers.attributes.validation.errors.templates-unsupported',
     ];
 
     /**
@@ -85,6 +90,10 @@ class Importer extends AbstractImporter
      * codes storage
      */
     protected array $codes = [];
+
+    protected array $templateSettings = [];
+
+    protected array $templateAttributes = [];
 
     public function __construct(
         protected JobTrackBatchRepository $importBatchRepository,
@@ -123,6 +132,14 @@ class Importer extends AbstractImporter
     public function validateData(): void
     {
         $this->attributeStorage->init();
+
+        $this->templateSettings = [];
+
+        $this->templateAttributes = $this->attributeRepository->query()
+            ->where('enable_templates', true)
+            ->get()
+            ->keyBy('code')
+            ->all();
 
         parent::validateData();
     }
@@ -180,6 +197,10 @@ class Importer extends AbstractImporter
                 $errorCode = array_key_first($failedAttributes[$attributeCode] ?? []);
                 $this->skipRow($rowNumber, $errorCode, $attributeCode, current($message));
             }
+        }
+
+        if (! $this->errorHelper->isRowInvalid($rowNumber) && ! $this->rowSupportsTemplates($rowData)) {
+            $this->skipRow($rowNumber, self::ERROR_TEMPLATES_UNSUPPORTED, 'enable_templates');
         }
 
         $isValidRow = ! $this->errorHelper->isRowInvalid($rowNumber);
@@ -286,13 +307,37 @@ class Importer extends AbstractImporter
         $data = [
             'code'             => $rowData['code'],
             $rowData['locale'] => ['name' => $rowData['name'] ?? null],
+            ...$this->attributeFields($rowData),
         ];
 
+        if ($isAttribute || isset($attributes['insert'][$rowData['code']])) {
+            $type = $isAttribute ? 'update' : 'insert';
+
+            if (isset($attributes[$type][$rowData['code']])) {
+                $attributes[$type][$rowData['code']] = array_replace_recursive(
+                    $attributes[$type][$rowData['code']],
+                    $data
+                );
+            } else {
+                $attributes[$type][$rowData['code']] = $data;
+            }
+        } else {
+            $attributes['insert'][$rowData['code']] = $data;
+        }
+    }
+
+    /**
+     * Get the attribute columns of the row that are saved on the attribute.
+     */
+    protected function attributeFields(array $rowData): array
+    {
         $fields = [
             'type', 'enable_wysiwyg', 'position', 'swatch_type', 'is_required',
             'is_unique', 'validation', 'regex_pattern', 'value_per_locale',
-            'value_per_channel', 'is_filterable', 'ai_translate',
+            'value_per_channel', 'is_filterable', 'ai_translate', 'enable_templates',
         ];
+
+        $data = [];
 
         foreach ($fields as $field) {
             if (isset($rowData[$field]) && $rowData[$field] !== '') {
@@ -309,20 +354,45 @@ class Importer extends AbstractImporter
             }
         }
 
-        if ($isAttribute || isset($attributes['insert'][$rowData['code']])) {
-            $type = $isAttribute ? 'update' : 'insert';
+        return $data;
+    }
 
-            if (isset($attributes[$type][$rowData['code']])) {
-                $attributes[$type][$rowData['code']] = array_replace_recursive(
-                    $attributes[$type][$rowData['code']],
-                    $data
-                );
-            } else {
-                $attributes[$type][$rowData['code']] = $data;
-            }
-        } else {
-            $attributes['insert'][$rowData['code']] = $data;
+    /**
+     * Determine if the row keeps templates enabled only on an attribute that can hold them.
+     */
+    protected function rowSupportsTemplates(array $rowData): bool
+    {
+        $code = $rowData['code'];
+
+        $settings = array_replace(
+            $this->templateSettings[$code] ?? [],
+            Arr::only($this->attributeFields($rowData), AttributeRepository::TEMPLATE_SETTINGS),
+        );
+
+        $enabled = $settings['enable_templates'] ?? $this->templateAttributes[$code]->enable_templates ?? false;
+
+        if ($enabled && ! $this->attributeRepository->supportsTemplates(
+            $this->attributeRepository->validateUserInput($settings),
+            $this->templateAttribute($code),
+        )) {
+            return false;
         }
+
+        $this->templateSettings[$code] = $settings;
+
+        return true;
+    }
+
+    /**
+     * Get the stored attribute of the row code, or null when the attribute is new.
+     */
+    protected function templateAttribute(string $code): ?AttributeContract
+    {
+        if (! $this->attributeStorage->has($code)) {
+            return null;
+        }
+
+        return $this->templateAttributes[$code] ??= $this->attributeRepository->findOneByField('code', $code);
     }
 
     /**

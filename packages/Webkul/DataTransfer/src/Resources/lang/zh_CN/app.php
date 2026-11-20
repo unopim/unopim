@@ -61,6 +61,7 @@ return [
                     'duplicate-code'                       => '属性代码 :code 已被使用。',
                     'code_not_found_to_delete'             => '未找到要删除的属性代码。',
                     'code_is_system_and_cannot_be_deleted' => '无法删除系统属性。',
+                    'templates-unsupported'                => '只有没有输入验证且非唯一的文本和文本区域属性才能启用模板。',
                 ],
             ],
         ],
@@ -190,6 +191,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => '渲染模板',
+            'render-templates-info'  => '导出渲染后的模板值，而不是原始模板源。重新导入渲染后的文件会将已保存的模板源替换为纯文本。',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

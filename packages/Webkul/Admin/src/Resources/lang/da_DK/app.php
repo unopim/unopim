@@ -285,6 +285,24 @@ return [
                     'root-not-allowed' => 'Rodkategorien kan ikke tildeles et produkt.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Hjælp til skabeloner',
+                    'title'    => 'Dynamiske skabeloner',
+                    'info'     => 'Skriv @ for at indsætte en anden egenskab fra dette produkt. Variabler erstattes med produktets værdier ved eksport.',
+                    'example'  => 'Eksempel',
+                    'filters'  => 'Filtre',
+                    'currency' => 'Pris i én valuta',
+
+                    'preview'  => [
+                        'button'       => 'Forhåndsvis skabelon',
+                        'title'        => 'Forhåndsvisning af skabelon',
+                        'refresh'      => 'Opdater',
+                        'empty'        => 'Skabelonen giver en tom værdi.',
+                        'failed'       => 'Forhåndsvisningen kunne ikke indlæses. Prøv igen.',
+                        'saved-values' => 'Bruger de ikke-gemte værdier fra de sektioner, der er indlæst på denne side. Andre værdier kommer fra den seneste gemning.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Attributgruppe:',
                     'title'              => 'Attributgrupper',
@@ -675,6 +693,8 @@ return [
                 'usable-in-grid'         => 'Brugbar i gitter',
                 'is-filterable'          => 'Er filtrerbar',
                 'ai-translate'           => 'AI Oversæt',
+                'enable-templates'       => 'Aktivér skabeloner',
+                'templates-unsupported'  => 'Skabeloner kan kun aktiveres på tekst- og tekstområdeattributter, der ikke har indtastningsvalidering og ikke er unikke.',
                 'invalid-swatch-type'    => 'Attributten :attribute er ikke tilladt for attributtype :type med swatchtype :swatch_type.',
                 'single-object-only'     => 'Hver oprettelsesanmodning må kun indeholde ét attributobjekt.',
                 'option'                 => [
@@ -2054,20 +2074,24 @@ return [
         ],
 
         'appearance' => [
-            'title'          => 'Appearance',
-            'info'           => 'Logo og favicon.',
-            'section-title'  => 'Visual Branding',
-            'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
-            'logo'           => 'Logo',
-            'logo-size'      => 'Recommended image resolution: 192px X 50px',
-            'favicon'        => 'Favicon',
-            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
-            'no-logo'        => 'No logo uploaded yet.',
-            'no-favicon'     => 'No favicon uploaded yet.',
-            'upload-cta'     => 'Click to upload',
-            'upload-hint'    => ' or drag and drop',
-            'save-btn'       => 'Save Appearance',
-            'update-success' => 'Appearance updated successfully.',
+            'title'             => 'Udseende',
+            'info'              => 'Logo og favicon.',
+            'section-title'     => 'Visuel identitet',
+            'section-info'      => 'Upload dit eget logo og favicon med valgfrie versioner til mørk tilstand. Ændringerne træder i kraft, når du gemmer.',
+            'logo'              => 'Logo',
+            'logo-size'         => 'Anbefalet billedopløsning: 192px X 50px',
+            'favicon'           => 'Favicon',
+            'favicon-size'      => 'Anbefalet billedopløsning: 16px X 16px',
+            'dark-logo'         => 'Logo til mørk tilstand',
+            'dark-logo-info'    => 'Vises i mørk tilstand. Lad feltet være tomt for at bruge logoet ovenfor.',
+            'dark-favicon'      => 'Favicon til mørk tilstand',
+            'dark-favicon-info' => 'Vises i mørk tilstand. Lad feltet være tomt for at bruge faviconet ovenfor.',
+            'no-logo'           => 'Der er endnu ikke uploadet et logo.',
+            'no-favicon'        => 'Der er endnu ikke uploadet et favicon.',
+            'upload-cta'        => 'Klik for at uploade',
+            'upload-hint'       => ' eller træk og slip',
+            'save-btn'          => 'Gem udseende',
+            'update-success'    => 'Udseendet er opdateret.',
         ],
         'roles' => [
             'index' => [

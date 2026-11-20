@@ -286,6 +286,24 @@ return [
                     'root-not-allowed' => 'Үндсэн ангиллыг бүтээгдэхүүнд оноох боломжгүй.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Загварын тусламж',
+                    'title'    => 'Динамик загвар',
+                    'info'     => 'Энэ бүтээгдэхүүний өөр шинж чанар оруулахын тулд @ гэж бичнэ үү. Экспорт хийх үед хувьсагчид бүтээгдэхүүний утгаар солигдоно.',
+                    'example'  => 'Жишээ',
+                    'filters'  => 'Шүүлтүүр',
+                    'currency' => 'Нэг валют дахь үнэ',
+
+                    'preview'  => [
+                        'button'       => 'Загварыг урьдчилан харах',
+                        'title'        => 'Загварын урьдчилсан харагдац',
+                        'refresh'      => 'Шинэчлэх',
+                        'empty'        => 'Загвар хоосон утга гаргаж байна.',
+                        'failed'       => 'Урьдчилан харахыг ачаалж чадсангүй. Дахин оролдоно уу.',
+                        'saved-values' => 'Энэ хуудсанд ачаалагдсан хэсгүүдийн хадгалаагүй утгыг ашиглана. Бусад утга сүүлд хадгалснаас ирнэ.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Шинж чанарын бүлэг:',
                     'title'              => 'Шинж чанарын бүлгүүд',
@@ -676,6 +694,8 @@ return [
                 'usable-in-grid'         => 'Сүлжээнд ашиглах боломжтой',
                 'is-filterable'          => 'Шүүж болох',
                 'ai-translate'           => 'ХИ Орчуулга',
+                'enable-templates'       => 'Загвар идэвхжүүлэх',
+                'templates-unsupported'  => 'Загварыг зөвхөн оролтын баталгаажуулалтгүй бөгөөд өвөрмөц биш текст болон текст талбарын шинж чанарт идэвхжүүлэх боломжтой.',
                 'invalid-swatch-type'    => ':attribute нь :type төрлийн шинж чанарт :swatch_type өнгөний төрлийг ашиглахыг зөвшөөрөхгүй.',
                 'single-object-only'     => 'Үүсгэх хүсэлт бүр нь зөвхөн нэг шинж чанарын объект илгээх ёстой.',
                 'option'                 => [
@@ -2056,20 +2076,24 @@ return [
         ],
 
         'appearance' => [
-            'title'          => 'Appearance',
-            'info'           => 'Лого болон favicon.',
-            'section-title'  => 'Visual Branding',
-            'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
-            'logo'           => 'Logo',
-            'logo-size'      => 'Recommended image resolution: 192px X 50px',
-            'favicon'        => 'Favicon',
-            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
-            'no-logo'        => 'No logo uploaded yet.',
-            'no-favicon'     => 'No favicon uploaded yet.',
-            'upload-cta'     => 'Click to upload',
-            'upload-hint'    => ' or drag and drop',
-            'save-btn'       => 'Save Appearance',
-            'update-success' => 'Appearance updated successfully.',
+            'title'             => 'Харагдах байдал',
+            'info'              => 'Лого болон favicon.',
+            'section-title'     => 'Визуал брэнд',
+            'section-info'      => 'Өөрийн лого болон фавиконыг байршуулж, хүсвэл харанхуй горимын хувилбарыг нэмээрэй. Өөрчлөлтүүд хадгалсны дараа хэрэгжинэ.',
+            'logo'              => 'Лого',
+            'logo-size'         => 'Санал болгох зургийн нягтрал: 192px X 50px',
+            'favicon'           => 'Фавикон',
+            'favicon-size'      => 'Санал болгох зургийн нягтрал: 16px X 16px',
+            'dark-logo'         => 'Харанхуй горимын лого',
+            'dark-logo-info'    => 'Харанхуй горимд харагдана. Дээрх логог ашиглахын тулд хоосон үлдээнэ үү.',
+            'dark-favicon'      => 'Харанхуй горимын фавикон',
+            'dark-favicon-info' => 'Харанхуй горимд харагдана. Дээрх фавиконыг ашиглахын тулд хоосон үлдээнэ үү.',
+            'no-logo'           => 'Лого хараахан байршуулаагүй байна.',
+            'no-favicon'        => 'Фавикон хараахан байршуулаагүй байна.',
+            'upload-cta'        => 'Байршуулахын тулд дарна уу',
+            'upload-hint'       => ' эсвэл чирж оруулна уу',
+            'save-btn'          => 'Харагдах байдлыг хадгалах',
+            'update-success'    => 'Харагдах байдал амжилттай шинэчлэгдлээ.',
         ],
         'roles' => [
             'index' => [

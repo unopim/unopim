@@ -61,6 +61,7 @@ return [
                     'duplicate-code'                       => 'Il codice attributo :code è già in uso.',
                     'code_not_found_to_delete'             => 'Codice attributo non trovato per l\'eliminazione.',
                     'code_is_system_and_cannot_be_deleted' => 'L\'attributo di sistema non può essere eliminato.',
+                    'templates-unsupported'                => 'I modelli possono essere abilitati solo sugli attributi di tipo testo e area di testo che non hanno una validazione dell\'input e non sono unici.',
                 ],
             ],
         ],
@@ -190,6 +191,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'Elabora modelli',
+            'render-templates-info'  => 'Esporta i valori elaborati dei modelli invece del sorgente grezzo del modello. Reimportare un file elaborato sostituisce il sorgente salvato del modello con testo semplice.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

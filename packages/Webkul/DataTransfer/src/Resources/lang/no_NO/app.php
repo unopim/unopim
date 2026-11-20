@@ -61,6 +61,7 @@ return [
                     'duplicate-code'                       => 'Attributtkoden :code er allerede i bruk.',
                     'code_not_found_to_delete'             => 'Attributtkoden ble ikke funnet for sletting.',
                     'code_is_system_and_cannot_be_deleted' => 'Systemattributt kan ikke slettes.',
+                    'templates-unsupported'                => 'Maler kan bare aktiveres for tekst- og tekstområdeattributter som ikke har inndatavalidering og ikke er unike.',
                 ],
             ],
         ],
@@ -190,6 +191,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'Gjengi maler',
+            'render-templates-info'  => 'Eksporter gjengitte malverdier i stedet for den rå malkilden. Reimport av en gjengitt fil erstatter den lagrede malkilden med ren tekst.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

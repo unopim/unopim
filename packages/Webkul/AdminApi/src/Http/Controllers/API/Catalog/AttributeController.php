@@ -196,9 +196,9 @@ class AttributeController extends ApiController
                     continue;
                 }
 
-                $this->attributeOptionRepository->create(array_merge([
+                $this->attributeOptionRepository->create(array_merge($optionInputs, [
                     'attribute_id' => $attribute->id,
-                ], $optionInputs));
+                ]));
             }
 
             if (! empty($errors)) {
@@ -251,11 +251,13 @@ class AttributeController extends ApiController
                         continue;
                     }
 
-                    $this->attributeOptionRepository->create(array_merge([
+                    $this->attributeOptionRepository->create(array_merge($optionInputs, [
                         'attribute_id' => $attribute->id,
-                    ], $optionInputs));
+                    ]));
                 } else {
-                    $this->attributeOptionRepository->update($optionInputs, $attributeOption->id);
+                    $this->attributeOptionRepository->update(array_merge($optionInputs, [
+                        'attribute_id' => $attribute->id,
+                    ]), $attributeOption->id);
                 }
             }
 

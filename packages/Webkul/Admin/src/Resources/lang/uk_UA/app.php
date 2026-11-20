@@ -285,6 +285,24 @@ return [
                     'root-not-allowed' => 'Коренева категорія не може бути призначена продукту.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Довідка щодо шаблонів',
+                    'title'    => 'Динамічні шаблони',
+                    'info'     => 'Введіть @, щоб вставити інший атрибут цього товару. Під час експорту змінні замінюються значеннями товару.',
+                    'example'  => 'Приклад',
+                    'filters'  => 'Фільтри',
+                    'currency' => 'Ціна в одній валюті',
+
+                    'preview'  => [
+                        'button'       => 'Попередній перегляд шаблону',
+                        'title'        => 'Попередній перегляд шаблону',
+                        'refresh'      => 'Оновити',
+                        'empty'        => 'Шаблон повертає порожнє значення.',
+                        'failed'       => 'Не вдалося завантажити попередній перегляд. Спробуйте ще раз.',
+                        'saved-values' => 'Використовуються незбережені значення розділів, завантажених на цій сторінці. Інші значення беруться з останнього збереження.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Група атрибутів:',
                     'title'              => 'Групи атрибутів',
@@ -675,6 +693,8 @@ return [
                 'usable-in-grid'         => 'Доступно в сітці',
                 'is-filterable'          => 'Фільтрований',
                 'ai-translate'           => 'Переклад ШІ',
+                'enable-templates'       => 'Увімкнути шаблони',
+                'templates-unsupported'  => 'Шаблони можна ввімкнути лише для атрибутів типу "Текст" і "Текстове поле", які не мають валідації введення та не є унікальними.',
                 'invalid-swatch-type'    => ':attribute не дозволено для типу атрибута :type з типом зразка :swatch_type.',
                 'single-object-only'     => 'Кожен запит на створення має містити лише один об\'єкт атрибута.',
                 'option'                 => [
@@ -2056,20 +2076,24 @@ return [
         ],
 
         'appearance' => [
-            'title'          => 'Appearance',
-            'info'           => 'Логотип і значок.',
-            'section-title'  => 'Visual Branding',
-            'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
-            'logo'           => 'Logo',
-            'logo-size'      => 'Recommended image resolution: 192px X 50px',
-            'favicon'        => 'Favicon',
-            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
-            'no-logo'        => 'No logo uploaded yet.',
-            'no-favicon'     => 'No favicon uploaded yet.',
-            'upload-cta'     => 'Click to upload',
-            'upload-hint'    => ' or drag and drop',
-            'save-btn'       => 'Save Appearance',
-            'update-success' => 'Appearance updated successfully.',
+            'title'             => 'Вигляд',
+            'info'              => 'Логотип і значок.',
+            'section-title'     => 'Візуальний стиль',
+            'section-info'      => 'Завантажте власний логотип і фавікон, за бажанням — з версіями для темного режиму. Зміни застосовуються після збереження.',
+            'logo'              => 'Логотип',
+            'logo-size'         => 'Рекомендована роздільна здатність зображення: 192px X 50px',
+            'favicon'           => 'Фавікон',
+            'favicon-size'      => 'Рекомендована роздільна здатність зображення: 16px X 16px',
+            'dark-logo'         => 'Логотип для темного режиму',
+            'dark-logo-info'    => 'Відображається в темному режимі. Залиште порожнім, щоб використовувати логотип вище.',
+            'dark-favicon'      => 'Фавікон для темного режиму',
+            'dark-favicon-info' => 'Відображається в темному режимі. Залиште порожнім, щоб використовувати фавікон вище.',
+            'no-logo'           => 'Логотип ще не завантажено.',
+            'no-favicon'        => 'Фавікон ще не завантажено.',
+            'upload-cta'        => 'Натисніть, щоб завантажити',
+            'upload-hint'       => ' або перетягніть файл',
+            'save-btn'          => 'Зберегти вигляд',
+            'update-success'    => 'Вигляд успішно оновлено.',
         ],
         'roles' => [
             'index' => [

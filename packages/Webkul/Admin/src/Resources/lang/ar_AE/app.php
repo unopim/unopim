@@ -285,6 +285,24 @@ return [
                     'root-not-allowed' => 'لا يمكن تعيين الفئة الجذرية لمنتج.',
                 ],
 
+                'templates' => [
+                    'help'     => 'مساعدة القوالب',
+                    'title'    => 'القوالب الديناميكية',
+                    'info'     => 'اكتب @ لإدراج سمة أخرى من هذا المنتج. يتم استبدال المتغيرات بقيم المنتج عند التصدير.',
+                    'example'  => 'مثال',
+                    'filters'  => 'المرشحات',
+                    'currency' => 'السعر بعملة واحدة',
+
+                    'preview'  => [
+                        'button'       => 'معاينة القالب',
+                        'title'        => 'معاينة القالب',
+                        'refresh'      => 'تحديث',
+                        'empty'        => 'ينتج القالب قيمة فارغة.',
+                        'failed'       => 'تعذر تحميل المعاينة. يرجى المحاولة مرة أخرى.',
+                        'saved-values' => 'تستخدم القيم غير المحفوظة للأقسام المحمّلة في هذه الصفحة. تأتي القيم الأخرى من آخر حفظ.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'مجموعة السمات:',
                     'title'              => 'مجموعات السمات',
@@ -675,6 +693,8 @@ return [
                 'usable-in-grid'         => 'قابلة للاستخدام في الشبكة',
                 'is-filterable'          => 'قابل للتصفية',
                 'ai-translate'           => 'ترجمة الذكاء الاصطناعي',
+                'enable-templates'       => 'تفعيل القوالب',
+                'templates-unsupported'  => 'يمكن تفعيل القوالب فقط على سمات النص ومنطقة النص التي لا تحتوي على تحقق من صحة المدخلات وليست فريدة.',
                 'invalid-swatch-type'    => 'ال:attribute غير مسموح به لنوع السمة :type مع نوع العينة :swatch_type.',
                 'single-object-only'     => 'يجب إرسال كائن سمة واحد فقط لكل طلب إنشاء.',
                 'option'                 => [
@@ -2054,20 +2074,24 @@ return [
         ],
 
         'appearance' => [
-            'title'          => 'Appearance',
-            'info'           => 'الشعار والأيقونة المفضلة.',
-            'section-title'  => 'Visual Branding',
-            'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
-            'logo'           => 'Logo',
-            'logo-size'      => 'Recommended image resolution: 192px X 50px',
-            'favicon'        => 'Favicon',
-            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
-            'no-logo'        => 'No logo uploaded yet.',
-            'no-favicon'     => 'No favicon uploaded yet.',
-            'upload-cta'     => 'Click to upload',
-            'upload-hint'    => ' or drag and drop',
-            'save-btn'       => 'Save Appearance',
-            'update-success' => 'Appearance updated successfully.',
+            'title'             => 'المظهر',
+            'info'              => 'الشعار والأيقونة المفضلة.',
+            'section-title'     => 'الهوية المرئية',
+            'section-info'      => 'ارفع شعارك وأيقونة الموقع الخاصة بك، مع إصدارات اختيارية للوضع الداكن. تُطبَّق التغييرات بعد الحفظ.',
+            'logo'              => 'الشعار',
+            'logo-size'         => 'دقة الصورة الموصى بها: 192 × 50 بكسل',
+            'favicon'           => 'أيقونة الموقع',
+            'favicon-size'      => 'دقة الصورة الموصى بها: 16 × 16 بكسل',
+            'dark-logo'         => 'شعار الوضع الداكن',
+            'dark-logo-info'    => 'يظهر في الوضع الداكن. اتركه فارغًا لاستخدام الشعار أعلاه.',
+            'dark-favicon'      => 'أيقونة الموقع للوضع الداكن',
+            'dark-favicon-info' => 'يظهر في الوضع الداكن. اتركها فارغة لاستخدام الأيقونة أعلاه.',
+            'no-logo'           => 'لم يتم رفع أي شعار بعد.',
+            'no-favicon'        => 'لم يتم رفع أي أيقونة موقع بعد.',
+            'upload-cta'        => 'انقر للرفع',
+            'upload-hint'       => ' أو اسحب وأفلت',
+            'save-btn'          => 'حفظ المظهر',
+            'update-success'    => 'تم تحديث المظهر بنجاح.',
         ],
         'roles' => [
             'index' => [

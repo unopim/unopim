@@ -285,6 +285,24 @@ return [
                     'root-not-allowed' => 'ルートカテゴリを製品に割り当てることはできません。',
                 ],
 
+                'templates' => [
+                    'help'     => 'テンプレートのヘルプ',
+                    'title'    => '動的テンプレート',
+                    'info'     => '@ を入力すると、この商品の別の属性を挿入できます。変数はエクスポート時に商品の値に置き換えられます。',
+                    'example'  => '例',
+                    'filters'  => 'フィルター',
+                    'currency' => '単一通貨での価格',
+
+                    'preview'  => [
+                        'button'       => 'テンプレートをプレビュー',
+                        'title'        => 'テンプレートのプレビュー',
+                        'refresh'      => '更新',
+                        'empty'        => 'テンプレートの出力は空です。',
+                        'failed'       => 'プレビューを読み込めませんでした。もう一度お試しください。',
+                        'saved-values' => 'このページで読み込まれたセクションの未保存の値を使用します。その他の値は最後に保存された内容から取得されます。',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => '属性グループ:',
                     'title'              => '属性グループ',
@@ -675,6 +693,8 @@ return [
                 'usable-in-grid'         => 'グリッドで使用可能',
                 'is-filterable'          => 'フィルタリング可能',
                 'ai-translate'           => 'AI翻訳',
+                'enable-templates'       => 'テンプレートを有効にする',
+                'templates-unsupported'  => 'テンプレートは、入力検証がなく、一意ではないテキストおよびテキストエリア属性でのみ有効にできます。',
                 'invalid-swatch-type'    => ':attribute は、スウォッチタイプ :swatch_type の属性タイプ :type には許可されていません。',
                 'single-object-only'     => '属性の作成リクエストには属性オブジェクトを1つだけ送信してください。',
                 'option'                 => [
@@ -2054,20 +2074,24 @@ return [
         ],
 
         'appearance' => [
-            'title'          => 'Appearance',
-            'info'           => 'ロゴとファビコン。',
-            'section-title'  => 'Visual Branding',
-            'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
-            'logo'           => 'Logo',
-            'logo-size'      => 'Recommended image resolution: 192px X 50px',
-            'favicon'        => 'Favicon',
-            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
-            'no-logo'        => 'No logo uploaded yet.',
-            'no-favicon'     => 'No favicon uploaded yet.',
-            'upload-cta'     => 'Click to upload',
-            'upload-hint'    => ' or drag and drop',
-            'save-btn'       => 'Save Appearance',
-            'update-success' => 'Appearance updated successfully.',
+            'title'             => '外観',
+            'info'              => 'ロゴとファビコン。',
+            'section-title'     => 'ビジュアルブランディング',
+            'section-info'      => '独自のロゴとファビコンをアップロードできます。ダークモード用のバージョンも任意で設定できます。変更は保存後に反映されます。',
+            'logo'              => 'ロゴ',
+            'logo-size'         => '推奨画像解像度: 192px X 50px',
+            'favicon'           => 'ファビコン',
+            'favicon-size'      => '推奨画像解像度: 16px X 16px',
+            'dark-logo'         => 'ダークモード用ロゴ',
+            'dark-logo-info'    => 'ダークモードで表示されます。空欄の場合は上のロゴが使用されます。',
+            'dark-favicon'      => 'ダークモード用ファビコン',
+            'dark-favicon-info' => 'ダークモードで表示されます。空欄の場合は上のファビコンが使用されます。',
+            'no-logo'           => 'ロゴはまだアップロードされていません。',
+            'no-favicon'        => 'ファビコンはまだアップロードされていません。',
+            'upload-cta'        => 'クリックしてアップロード',
+            'upload-hint'       => 'またはドラッグ＆ドロップ',
+            'save-btn'          => '外観を保存',
+            'update-success'    => '外観を更新しました。',
         ],
         'roles' => [
             'index' => [

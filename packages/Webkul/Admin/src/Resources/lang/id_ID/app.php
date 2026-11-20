@@ -285,6 +285,24 @@ return [
                     'root-not-allowed' => 'Kategori induk tidak dapat ditetapkan ke produk.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Bantuan templat',
+                    'title'    => 'Templat dinamis',
+                    'info'     => 'Ketik @ untuk menyisipkan atribut lain dari produk ini. Variabel diganti dengan nilai produk saat ekspor.',
+                    'example'  => 'Contoh',
+                    'filters'  => 'Filter',
+                    'currency' => 'Harga dalam satu mata uang',
+
+                    'preview'  => [
+                        'button'       => 'Pratinjau templat',
+                        'title'        => 'Pratinjau templat',
+                        'refresh'      => 'Muat ulang',
+                        'empty'        => 'Templat menghasilkan nilai kosong.',
+                        'failed'       => 'Pratinjau tidak dapat dimuat. Silakan coba lagi.',
+                        'saved-values' => 'Menggunakan nilai yang belum disimpan dari bagian yang dimuat di halaman ini. Nilai lainnya berasal dari penyimpanan terakhir.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Grup atribut:',
                     'title'              => 'Grup Atribut',
@@ -675,6 +693,8 @@ return [
                 'usable-in-grid'         => 'Dapat digunakan dalam grid',
                 'is-filterable'          => 'Dapat difilter',
                 'ai-translate'           => 'AI Terjemahan',
+                'enable-templates'       => 'Aktifkan Templat',
+                'templates-unsupported'  => 'Templat hanya dapat diaktifkan pada atribut teks dan textarea yang tidak memiliki validasi input dan tidak unik.',
                 'invalid-swatch-type'    => 'Atribut :attribute tidak diperbolehkan untuk tipe atribut :type dengan tipe swatch :swatch_type.',
                 'single-object-only'     => 'Setiap permintaan pembuatan harus mengirim satu objek atribut.',
                 'option'                 => [
@@ -2054,20 +2074,24 @@ return [
         ],
 
         'appearance' => [
-            'title'          => 'Appearance',
-            'info'           => 'Logo dan favicon.',
-            'section-title'  => 'Visual Branding',
-            'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
-            'logo'           => 'Logo',
-            'logo-size'      => 'Recommended image resolution: 192px X 50px',
-            'favicon'        => 'Favicon',
-            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
-            'no-logo'        => 'No logo uploaded yet.',
-            'no-favicon'     => 'No favicon uploaded yet.',
-            'upload-cta'     => 'Click to upload',
-            'upload-hint'    => ' or drag and drop',
-            'save-btn'       => 'Save Appearance',
-            'update-success' => 'Appearance updated successfully.',
+            'title'             => 'Tampilan',
+            'info'              => 'Logo dan favicon.',
+            'section-title'     => 'Identitas Visual',
+            'section-info'      => 'Unggah logo dan favicon Anda sendiri, dengan versi mode gelap opsional. Perubahan berlaku setelah disimpan.',
+            'logo'              => 'Logo',
+            'logo-size'         => 'Resolusi gambar yang disarankan: 192px X 50px',
+            'favicon'           => 'Favicon',
+            'favicon-size'      => 'Resolusi gambar yang disarankan: 16px X 16px',
+            'dark-logo'         => 'Logo Mode Gelap',
+            'dark-logo-info'    => 'Ditampilkan dalam mode gelap. Biarkan kosong untuk menggunakan logo di atas.',
+            'dark-favicon'      => 'Favicon Mode Gelap',
+            'dark-favicon-info' => 'Ditampilkan dalam mode gelap. Biarkan kosong untuk menggunakan favicon di atas.',
+            'no-logo'           => 'Belum ada logo yang diunggah.',
+            'no-favicon'        => 'Belum ada favicon yang diunggah.',
+            'upload-cta'        => 'Klik untuk mengunggah',
+            'upload-hint'       => ' atau seret dan lepas',
+            'save-btn'          => 'Simpan Tampilan',
+            'update-success'    => 'Tampilan berhasil diperbarui.',
         ],
         'roles' => [
             'index' => [

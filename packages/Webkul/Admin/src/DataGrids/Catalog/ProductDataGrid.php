@@ -22,6 +22,7 @@ use Webkul\DataGrid\Contracts\ExportableInterface;
 use Webkul\DataGrid\DataGrid;
 use Webkul\ElasticSearch\Cursor\MatchingIdCursor;
 use Webkul\ElasticSearch\Enums\FilterOperators;
+use Webkul\Product\Contracts\TemplateRenderer;
 use Webkul\Product\Contracts\VariantValueResolver;
 use Webkul\Product\Factories\ElasticSearch\Cursor\ResultCursorFactory;
 use Webkul\Product\Factories\ProductQueryBuilderFactory;
@@ -75,6 +76,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     protected $attributeColumns = [];
 
     protected ?array $variantStructureCodes = null;
+
+    protected ?TemplateRenderer $templateRenderer = null;
 
     protected $productQueryBuilder;
 
@@ -1102,6 +1105,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $this->queryBuilder = $this->queryBuilder->select(
             'products.sku',
             'products.id as product_id',
+            'products.parent_id',
             'products.status',
             'products.type',
             'products.created_at',
@@ -1125,6 +1129,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $channelsAndLocales = $this->getAllChannelsAndLocales();
 
+        $templateContexts = $this->resolveTemplateContexts($gridData);
+
         foreach ($gridData as $product) {
             $productArray = (array) $product;
             if (! empty($productArray['values']) && is_string($productArray['values'])) {
@@ -1133,13 +1139,19 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
             $productValues = $this->getProductValues($productArray);
 
-            unset($productArray[AbstractType::PRODUCT_VALUES_KEY], $productArray['raw_values'], $productArray['completeness']);
+            $templateContext = $templateContexts[$productArray['product_id']] ?? null;
+
+            unset($productArray[AbstractType::PRODUCT_VALUES_KEY], $productArray['raw_values'], $productArray['completeness'], $productArray['parent_id']);
 
             foreach ($channelsAndLocales as [$channelCode, $localeCode]) {
                 $data = $this->getInitialData($channelCode, $localeCode);
 
+                $scopedValues = $templateContext === null
+                    ? $productValues
+                    : $this->renderTemplateValues($productValues, $templateContext, $channelCode, $localeCode);
+
                 $data += $this->formatProductColumnsData($productArray);
-                $data += $this->formatProductValues($productValues, $localeCode, $channelCode);
+                $data += $this->formatProductValues($scopedValues, $localeCode, $channelCode);
 
                 $columns = $this->getColumnsFromData($data, $columns);
 
@@ -1151,6 +1163,78 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'columns' => $columns,
             'records' => $exportableData,
         ];
+    }
+
+    /**
+     * Resolve the merged parent and variant values of the rows that hold a template, keyed by product id.
+     */
+    protected function resolveTemplateContexts(iterable $products): array
+    {
+        $rows = [];
+
+        foreach ($products as $product) {
+            if (is_string($product->values ?? null) && str_contains($product->values, '{{')) {
+                $rows[$product->product_id] = [
+                    'id'        => $product->product_id,
+                    'parent_id' => $product->parent_id ?? null,
+                    'values'    => $product->values,
+                ];
+            }
+        }
+
+        if ($rows === []) {
+            return [];
+        }
+
+        $mergedValues = $this->variantValueResolver->resolveBatch($rows);
+
+        return array_map(
+            fn (array $row): array => $mergedValues[$row['id']] ?? $this->getProductValues($row),
+            $rows,
+        );
+    }
+
+    /**
+     * Replace the template sources in the product values with their rendered output for the channel and locale.
+     */
+    protected function renderTemplateValues(array $productValues, array $context, string $channel, string $locale): array
+    {
+        $scopes = [
+            [AbstractType::COMMON_VALUES_KEY],
+            [AbstractType::LOCALE_VALUES_KEY, $locale],
+            [AbstractType::CHANNEL_VALUES_KEY, $channel],
+            [AbstractType::CHANNEL_LOCALE_VALUES_KEY, $channel, $locale],
+        ];
+
+        foreach ($scopes as $scope) {
+            $values = data_get($productValues, $scope);
+
+            if (! is_array($values)) {
+                continue;
+            }
+
+            foreach ($values as $code => $source) {
+                $attribute = is_string($source) && str_contains($source, '{{')
+                    ? $this->attributeService->findAttributeByCode((string) $code)
+                    : null;
+
+                if ($attribute !== null) {
+                    $values[$code] = $this->templateRenderer()->render($source, $attribute, $context, $channel, $locale)->output;
+                }
+            }
+
+            data_set($productValues, $scope, $values);
+        }
+
+        return $productValues;
+    }
+
+    /**
+     * Get the template renderer instance.
+     */
+    protected function templateRenderer(): TemplateRenderer
+    {
+        return $this->templateRenderer ??= app(TemplateRenderer::class);
     }
 
     /**

@@ -61,6 +61,7 @@ return [
                     'duplicate-code'                       => 'Attributcode :code wird bereits verwendet.',
                     'code_not_found_to_delete'             => 'Attributcode zum Löschen nicht gefunden.',
                     'code_is_system_and_cannot_be_deleted' => 'Systemattribut kann nicht gelöscht werden.',
+                    'templates-unsupported'                => 'Vorlagen können nur für Text- und Textbereich-Attribute aktiviert werden, die keine Eingabevalidierung haben und nicht eindeutig sind.',
                 ],
             ],
         ],
@@ -190,6 +191,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'Vorlagen rendern',
+            'render-templates-info'  => 'Gerenderte Vorlagenwerte statt der unverarbeiteten Vorlagenquelle exportieren. Beim erneuten Import einer gerenderten Datei wird die gespeicherte Vorlagenquelle durch reinen Text ersetzt.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

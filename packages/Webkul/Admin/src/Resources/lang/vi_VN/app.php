@@ -285,6 +285,24 @@ return [
                     'root-not-allowed' => 'Danh mục gốc không thể được gán cho sản phẩm.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Trợ giúp mẫu',
+                    'title'    => 'Mẫu động',
+                    'info'     => 'Nhập @ để chèn một thuộc tính khác của sản phẩm này. Các biến được thay bằng giá trị của sản phẩm khi xuất.',
+                    'example'  => 'Ví dụ',
+                    'filters'  => 'Bộ lọc',
+                    'currency' => 'Giá theo một loại tiền tệ',
+
+                    'preview'  => [
+                        'button'       => 'Xem trước mẫu',
+                        'title'        => 'Xem trước mẫu',
+                        'refresh'      => 'Làm mới',
+                        'empty'        => 'Mẫu tạo ra giá trị trống.',
+                        'failed'       => 'Không thể tải bản xem trước. Vui lòng thử lại.',
+                        'saved-values' => 'Sử dụng các giá trị chưa lưu của những phần đã tải trên trang này. Các giá trị khác lấy từ lần lưu gần nhất.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Nhóm thuộc tính:',
                     'title'              => 'Nhóm thuộc tính',
@@ -675,6 +693,8 @@ return [
                 'usable-in-grid'         => 'Có thể sử dụng trong lưới',
                 'is-filterable'          => 'Có thể lọc',
                 'ai-translate'           => 'Dịch thuật AI',
+                'enable-templates'       => 'Bật mẫu',
+                'templates-unsupported'  => 'Chỉ có thể bật mẫu cho các thuộc tính văn bản và văn bản lớn không có xác thực nhập liệu và không phải là duy nhất.',
                 'invalid-swatch-type'    => ':attribute không được phép cho loại thuộc tính :type với loại mẫu :swatch_type.',
                 'single-object-only'     => 'Mỗi yêu cầu tạo chỉ được gửi một đối tượng thuộc tính.',
                 'option'                 => [
@@ -2056,20 +2076,24 @@ return [
         ],
 
         'appearance' => [
-            'title'          => 'Appearance',
-            'info'           => 'Logo và favicon.',
-            'section-title'  => 'Visual Branding',
-            'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
-            'logo'           => 'Logo',
-            'logo-size'      => 'Recommended image resolution: 192px X 50px',
-            'favicon'        => 'Favicon',
-            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
-            'no-logo'        => 'No logo uploaded yet.',
-            'no-favicon'     => 'No favicon uploaded yet.',
-            'upload-cta'     => 'Click to upload',
-            'upload-hint'    => ' or drag and drop',
-            'save-btn'       => 'Save Appearance',
-            'update-success' => 'Appearance updated successfully.',
+            'title'             => 'Giao diện',
+            'info'              => 'Logo và favicon.',
+            'section-title'     => 'Nhận diện thương hiệu',
+            'section-info'      => 'Tải lên logo và favicon của riêng bạn, kèm phiên bản tùy chọn cho chế độ tối. Thay đổi sẽ được áp dụng sau khi lưu.',
+            'logo'              => 'Logo',
+            'logo-size'         => 'Độ phân giải hình ảnh đề xuất: 192px X 50px',
+            'favicon'           => 'Favicon',
+            'favicon-size'      => 'Độ phân giải hình ảnh đề xuất: 16px X 16px',
+            'dark-logo'         => 'Logo chế độ tối',
+            'dark-logo-info'    => 'Hiển thị ở chế độ tối. Để trống để dùng logo ở trên.',
+            'dark-favicon'      => 'Favicon chế độ tối',
+            'dark-favicon-info' => 'Hiển thị ở chế độ tối. Để trống để dùng favicon ở trên.',
+            'no-logo'           => 'Chưa có logo nào được tải lên.',
+            'no-favicon'        => 'Chưa có favicon nào được tải lên.',
+            'upload-cta'        => 'Nhấp để tải lên',
+            'upload-hint'       => ' hoặc kéo và thả',
+            'save-btn'          => 'Lưu giao diện',
+            'update-success'    => 'Đã cập nhật giao diện thành công.',
         ],
         'roles' => [
             'index' => [

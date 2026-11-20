@@ -61,6 +61,7 @@ return [
                     'duplicate-code'                       => 'Attribuutcode :code is al in gebruik.',
                     'code_not_found_to_delete'             => 'Attribuutcode niet gevonden voor verwijdering.',
                     'code_is_system_and_cannot_be_deleted' => 'Systeemattribuut kan niet worden verwijderd.',
+                    'templates-unsupported'                => 'Sjablonen kunnen alleen worden ingeschakeld voor tekst- en textarea-attributen die geen invoervalidatie hebben en niet uniek zijn.',
                 ],
             ],
         ],
@@ -190,6 +191,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'Sjablonen weergeven',
+            'render-templates-info'  => 'Weergegeven sjabloonwaarden exporteren in plaats van de ruwe sjabloonbron. Een weergegeven bestand opnieuw importeren vervangt de opgeslagen sjabloonbron door platte tekst.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
