@@ -1,5 +1,6 @@
 const { test, expect } = require('../../utils/fixtures');
 const { clickSave } = require('../../utils/helpers');
+const { fillSecret } = require('../../utils/secret-helpers');
 
 const BASE_URL = process.env.BASE_URL || 'http://127.0.0.1:8000';
 const ADMIN_EMAIL = process.env.ADMIN_USERNAME || process.env.ADMIN_EMAIL || 'admin@example.com';
@@ -50,7 +51,7 @@ test.describe('Security Vulnerability Fixes', () => {
     // Login fresh
     await page.goto('/admin/login', { waitUntil: 'networkidle' });
     await page.getByRole('textbox', { name: 'Email Address' }).fill(ADMIN_EMAIL);
-    await page.getByRole('textbox', { name: 'Password' }).fill(ADMIN_PASSWORD);
+    await fillSecret(page.getByRole('textbox', { name: 'Password' }), ADMIN_PASSWORD);
     await page.getByRole('button', { name: 'Sign In' }).click();
     // The login form validates asynchronously then POSTs via AJAX, so
     // networkidle can resolve before the request fires. Wait for the

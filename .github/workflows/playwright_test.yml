@@ -104,6 +104,8 @@ jobs:
       - name: Scrub credentials from test results
         id: scrub
         if: failure()
+        env:
+          INSTALLER_ADMIN_PASSWORD: ${{ secrets.INSTALLER_ADMIN_PASSWORD }}
         run: |
           bash .github/scripts/scrub-e2e-artifacts.sh \
             tests/e2e-pw/playwright-report \
@@ -163,6 +165,10 @@ jobs:
       - name: Scrub credentials from test results
         id: scrub
         if: failure()
+        env:
+          INSTALLER_ADMIN_PASSWORD: ${{ secrets.INSTALLER_ADMIN_PASSWORD }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          INVALID_ADMIN_PASSWORD: ${{ secrets.INVALID_ADMIN_PASSWORD }}
         run: |
           bash .github/scripts/scrub-e2e-artifacts.sh \
             tests/e2e-pw/playwright-report \

@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 #
-# Withhold every Playwright failure-artifact path that holds an AI provider key.
+# Withhold every Playwright failure-artifact path that holds a credential.
 #
 # Usage: scrub-e2e-artifacts.sh <path>...
 #
 # Each path is searched recursively, including inside zip archives (traces) and
 # the zip the HTML report embeds as base64, for OpenAI (sk-) and Groq (gsk_)
-# key shapes and for the literal values of OPENAI_API_KEY, GROQ_API_KEY and
-# GROQ_INVALID_KEY when they are set. A path that matches, or that cannot be
+# key shapes and for the literal value of every secret env var named in
+# SCRUB_SECRET_VARS (space-separated; it defaults to the AI keys and the admin
+# passwords the e2e jobs use). A path that matches, or that cannot be
 # fully scanned (a read error, a symlink or other non-regular file, an archive
 # nested too deep), is deleted. A match is never printed.
 #
@@ -27,7 +28,14 @@ chmod 700 "$work_dir" || exit 1
 literals="$work_dir/literals"
 : > "$literals" || exit 1
 
-for name in OPENAI_API_KEY GROQ_API_KEY GROQ_INVALID_KEY; do
+read -r -a secret_vars <<< "${SCRUB_SECRET_VARS:-OPENAI_API_KEY GROQ_API_KEY GROQ_INVALID_KEY ADMIN_PASSWORD INVALID_ADMIN_PASSWORD INSTALLER_ADMIN_PASSWORD}"
+
+for name in "${secret_vars[@]}"; do
+    if [[ ! "$name" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]; then
+        echo "::error::SCRUB_SECRET_VARS holds an invalid variable name, so nothing is uploaded."
+        exit 1
+    fi
+
     value="${!name:-}"
 
     if [[ -n "$value" ]]; then
@@ -147,7 +155,7 @@ for path in "$@"; do
     fi
 
     if [[ "$status" -eq 0 ]]; then
-        echo "::warning::Withheld $path from the failure artifact because it contains an AI provider credential."
+        echo "::warning::Withheld $path from the failure artifact because it contains a credential."
     else
         echo "::warning::Withheld $path from the failure artifact because it could not be fully scanned for credentials."
     fi
