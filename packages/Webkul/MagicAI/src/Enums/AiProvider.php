@@ -3,9 +3,11 @@
 namespace Webkul\MagicAI\Enums;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
-use Illuminate\Support\Str;
+use GuzzleHttp\Exception\TransferException;
 use Laravel\Ai\Enums\Lab;
+use Psr\Http\Message\ResponseInterface;
 use Webkul\Webhook\Validators\SafeWebhookUrl;
 
 enum AiProvider: string
@@ -71,6 +73,16 @@ enum AiProvider: string
         };
     }
 
+    /**
+     * Whether a base URL is the built-in local Ollama daemon, the one documented
+     * exception to the public-address rule for platform URLs.
+     */
+    public function isLocalOllamaDefault(?string $apiUrl): bool
+    {
+        return $this === self::Ollama
+            && ($apiUrl === null || $apiUrl === '' || rtrim($apiUrl, '/') === $this->defaultUrl());
+    }
+
     public function configKey(): string
     {
         return match ($this) {
@@ -127,14 +139,14 @@ enum AiProvider: string
      */
     public function fetchModelCatalog(?string $apiKey, ?string $apiUrl = null, ?Client $client = null): array
     {
-        $client ??= new Client(['timeout' => 15]);
+        $client ??= new Client(['timeout' => 15, 'allow_redirects' => false]);
 
         try {
             return match ($this) {
                 self::OpenAI                                                                              => $this->fetchOpenAiModels($client, $apiKey, $apiUrl),
                 self::Anthropic                                                                           => $this->fetchAnthropicModels($client, $apiKey, $apiUrl),
                 self::Gemini                                                                              => $this->fetchGeminiModels($client, $apiKey, $apiUrl),
-                self::Ollama                                                                              => $this->fetchOllamaModels($client, $apiUrl ?: $this->defaultUrl()),
+                self::Ollama                                                                              => $this->fetchOllamaModels($client, $apiUrl),
                 self::Azure                                                                               => $this->fetchAzureModels($client, $apiKey, $apiUrl),
                 self::Custom                                                                              => $this->discoverModels($apiKey, $apiUrl, $client)['released'],
                 self::Groq, self::XAI, self::Mistral, self::DeepSeek, self::OpenRouter, self::Concentrate => $this->fetchOpenAiCompatModels(
@@ -144,7 +156,7 @@ enum AiProvider: string
                     harden: (bool) $apiUrl,
                 ),
             };
-        } catch (RequestException $e) {
+        } catch (TransferException $e) {
             report($e);
 
             throw new \RuntimeException($this->describeFetchFailure($e), previous: $e);
@@ -173,7 +185,7 @@ enum AiProvider: string
      */
     public function discoverModels(?string $apiKey, ?string $apiUrl = null, ?Client $client = null): array
     {
-        $client ??= new Client(['timeout' => 15]);
+        $client ??= new Client(['timeout' => 15, 'allow_redirects' => false]);
 
         if ($this !== self::Custom) {
             return $this->discovery($this->fetchModelCatalog($apiKey, $apiUrl, $client), (string) $apiUrl);
@@ -188,7 +200,7 @@ enum AiProvider: string
         foreach ($this->customBaseUrls($apiUrl) as $base) {
             try {
                 return $this->discovery($this->fetchOpenAiCompatModels($client, $apiKey, $base.'/models', harden: true), $base);
-            } catch (RequestException $e) {
+            } catch (TransferException $e) {
                 report($e);
 
                 $failure ??= new \RuntimeException($this->describeFetchFailure($e), previous: $e);
@@ -263,28 +275,25 @@ enum AiProvider: string
     }
 
     /**
-     * Turn a transport failure into a short, readable message: upstream bodies are
-     * often full HTML error pages that would otherwise be shown verbatim in the UI.
+     * Turn a transport failure into a short message naming only the host and the
+     * HTTP status. The upstream body is never shown: the URL may point at a host
+     * the caller cannot reach otherwise, and a provider can echo the request back.
      */
-    private function describeFetchFailure(RequestException $e): string
+    private function describeFetchFailure(TransferException $e): string
     {
-        $host = $e->getRequest()->getUri()->getHost();
-        $response = $e->getResponse();
+        $host = $e instanceof RequestException || $e instanceof ConnectException
+            ? $e->getRequest()->getUri()->getHost()
+            : '';
+        $response = $e instanceof RequestException ? $e->getResponse() : null;
 
-        if (! $response) {
+        if (! $response instanceof ResponseInterface) {
             return trans('admin::app.configuration.platform.message.fetch-models-unreachable', ['host' => $host]);
         }
-
-        $decoded = json_decode((string) $response->getBody(), true);
-
-        $detail = is_array($decoded)
-            ? (string) ($decoded['error']['message'] ?? $decoded['message'] ?? '')
-            : '';
 
         return trans('admin::app.configuration.platform.message.fetch-models-http-error', [
             'status' => $response->getStatusCode(),
             'host'   => $host,
-        ]).($detail === '' ? '' : ' '.Str::limit($detail, 160));
+        ]);
     }
 
     private function fetchOpenAiModels(Client $client, ?string $apiKey, ?string $apiUrl = null): array
@@ -308,7 +317,7 @@ enum AiProvider: string
         $url = $this->modelsUrl($apiUrl);
 
         $response = $client->get($url, $this->discoveryOptions($url, $apiUrl, [
-            'query' => ['key' => $apiKey],
+            'headers' => ['x-goog-api-key' => (string) $apiKey],
         ]));
 
         $data = json_decode($response->getBody()->getContents(), true);
@@ -351,11 +360,19 @@ enum AiProvider: string
         return $this->catalog($data['data'] ?? [], 'id', 'created', static fn (string $id): string => ltrim($id, '~'));
     }
 
-    private function fetchOllamaModels(Client $client, string $baseUrl): array
+    /**
+     * List Ollama models. The local daemon default is called unpinned, with
+     * redirects off: it is the one host a platform may reach without validation.
+     */
+    private function fetchOllamaModels(Client $client, ?string $apiUrl): array
     {
-        $url = rtrim($baseUrl, '/').'/api/tags';
+        $url = rtrim($apiUrl ?: $this->defaultUrl(), '/').'/api/tags';
 
-        $response = $client->get($url, $this->ssrfGuardedOptions($url));
+        $options = $this->isLocalOllamaDefault($apiUrl)
+            ? ['allow_redirects' => false]
+            : $this->ssrfGuardedOptions($url);
+
+        $response = $client->get($url, $options);
 
         $data = json_decode($response->getBody()->getContents(), true);
 
@@ -363,18 +380,25 @@ enum AiProvider: string
     }
 
     /**
-     * Forbid redirect following, and — when the URL validates as public —
-     * additionally pin the host to the address that validation resolved, so a
-     * user-supplied model-discovery URL cannot pivot to an internal host via a
-     * 30x redirect or DNS rebinding. A URL that fails validation gets the
-     * redirect guard alone; the caller is expected to have rejected it already.
+     * Forbid redirect following and pin the host to the address validation
+     * resolved, so a user-supplied model-discovery URL cannot pivot to an
+     * internal host via a 30x redirect or DNS rebinding. A URL that cannot be
+     * validated and pinned is refused rather than fetched.
      *
      * @param  array<string, mixed>  $options
      * @return array<string, mixed>
+     *
+     * @throws \RuntimeException
      */
     private function ssrfGuardedOptions(string $url, array $options = []): array
     {
-        return array_merge($options, SafeWebhookUrl::httpOptions($url));
+        $pinned = SafeWebhookUrl::pinnedHttpOptions($url);
+
+        if ($pinned === null) {
+            throw new \RuntimeException(trans('admin::app.configuration.platform.message.unsafe-api-url'));
+        }
+
+        return array_merge($options, $pinned);
     }
 
     private function fetchAnthropicModels(Client $client, ?string $apiKey, ?string $apiUrl = null): array

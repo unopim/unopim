@@ -1,9 +1,11 @@
 <?php
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
+use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use Laravel\Ai\Enums\Lab;
 use Webkul\MagicAI\Enums\AiProvider;
@@ -60,10 +62,10 @@ it('fetches and sorts OpenAI models from the platform base url', function () {
         new Response(200, [], json_encode(['data' => [['id' => 'gpt-4o'], ['id' => 'dall-e-3']]])),
     ], $history);
 
-    $models = AiProvider::OpenAI->fetchModels('sk-test', 'https://proxy.test/v1', $client);
+    $models = AiProvider::OpenAI->fetchModels('sk-test', 'https://1.0.0.1/v1', $client);
 
     expect($models)->toBe(['dall-e-3', 'gpt-4o'])
-        ->and((string) $history[0]['request']->getUri())->toBe('https://proxy.test/v1/models')
+        ->and((string) $history[0]['request']->getUri())->toBe('https://1.0.0.1/v1/models')
         ->and($history[0]['request']->getHeaderLine('Authorization'))->toBe('Bearer sk-test');
 });
 
@@ -94,13 +96,13 @@ it('sends the Anthropic version header when listing models', function () {
         ->and($history[0]['request']->getHeaderLine('x-api-key'))->toBe('sk-ant');
 });
 
-it('lists Ollama models from its tags endpoint', function () {
+it('lists Ollama models from the local default tags endpoint when no url is set', function () {
     $history = [];
     $client = fakeProviderClient([
         new Response(200, [], json_encode(['models' => [['name' => 'llama3.2'], ['name' => 'gemma3']]])),
     ], $history);
 
-    expect(AiProvider::Ollama->fetchModels(null, 'http://localhost:11434', $client))
+    expect(AiProvider::Ollama->fetchModels(null, null, $client))
         ->toBe(['gemma3', 'llama3.2'])
         ->and((string) $history[0]['request']->getUri())->toBe('http://localhost:11434/api/tags');
 });
@@ -155,6 +157,40 @@ it('summarises an upstream failure instead of surfacing the raw response body', 
     }
 });
 
+it('never surfaces the upstream reason, whatever error shape the provider returns', function (string $body, string $reason): void {
+    $client = fakeProviderClient([new Response(403, [], $body)]);
+
+    expect(fn () => AiProvider::XAI->fetchModels('xai-key', null, $client))
+        ->toThrow(function (RuntimeException $e) use ($reason): void {
+            expect($e->getMessage())->toContain('403')->not->toContain($reason);
+        });
+})->with([
+    'xai string error'    => ['{"code":"permission-denied","error":"Your team has no credits."}', 'Your team has no credits.'],
+    'openai error object' => ['{"error":{"message":"Key lacks scope."}}', 'Key lacks scope.'],
+    'top-level message'   => ['{"message":"Forbidden for region."}', 'Forbidden for region.'],
+]);
+
+it('keeps the key out of the message when the provider cannot be reached', function (): void {
+    $client = fakeProviderClient([
+        new ConnectException('cURL error 6: could not resolve https://api.openai.com/v1/models?key=sk-leaky-key', new Request('GET', 'https://api.openai.com/v1/models?key=sk-leaky-key')),
+    ]);
+
+    expect(fn () => AiProvider::OpenAI->fetchModels('sk-leaky-key', null, $client))
+        ->toThrow(function (RuntimeException $e): void {
+            expect($e->getMessage())->toContain('api.openai.com')->not->toContain('sk-leaky-key');
+        });
+});
+
+it('sends the Gemini key in a header, never in the request URL', function (): void {
+    $history = [];
+    $client = fakeProviderClient([new Response(200, [], json_encode(['models' => []]))], $history);
+
+    AiProvider::Gemini->fetchModels('gemini-secret', null, $client);
+
+    expect((string) $history[0]['request']->getUri())->not->toContain('gemini-secret')
+        ->and($history[0]['request']->getHeaderLine('x-goog-api-key'))->toBe('gemini-secret');
+});
+
 it('keeps the release date each provider reports alongside the model id', function () {
     $client = fakeProviderClient([
         new Response(200, [], json_encode(['data' => [['id' => 'gpt-5-mini', 'created' => 1754425928], ['id' => 'gpt-3.5-turbo', 'created' => 1677610602]]])),
@@ -179,4 +215,28 @@ it('lists only the Gemini models that can generate content or images', function 
 
     expect(AiProvider::Gemini->fetchModels('key', null, $client))
         ->toBe(['gemini-3.1-flash-lite', 'imagen-4.0-generate-001']);
+});
+
+it('refuses model discovery against a url that cannot be validated and pinned', function (AiProvider $provider, string $url) {
+    $history = [];
+    $client = fakeProviderClient([new Response(200, [], '{}')], $history);
+
+    expect(fn () => $provider->fetchModels('sk-test', $url, $client))
+        ->toThrow(RuntimeException::class, trans('admin::app.configuration.platform.message.unsafe-api-url'))
+        ->and($history)->toBe([]);
+})->with([
+    'ollama on loopback'    => [AiProvider::Ollama, 'http://127.0.0.1:8080'],
+    'openai on metadata ip' => [AiProvider::OpenAI, 'http://169.254.169.254/v1'],
+    'azure unresolvable'    => [AiProvider::Azure, 'https://unresolvable.invalid'],
+]);
+
+it('lists Ollama models from the local daemon default url without pinning it', function () {
+    $history = [];
+    $client = fakeProviderClient([
+        new Response(200, [], json_encode(['models' => [['name' => 'llama3.2']]])),
+    ], $history);
+
+    expect(AiProvider::Ollama->fetchModels(null, 'http://localhost:11434/', $client))->toBe(['llama3.2'])
+        ->and($history[0]['options']['allow_redirects'])->toBeFalse()
+        ->and($history[0]['options'])->not->toHaveKey('curl');
 });

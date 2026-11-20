@@ -1,6 +1,7 @@
 <?php
 
 use Webkul\MagicAI\Rules\SafeProviderExtras;
+use Webkul\MagicAI\Services\ProviderOverrides;
 
 function validateExtras(mixed $value): array
 {
@@ -53,4 +54,17 @@ it('rejects a reserved key regardless of its casing', function () {
 
 it('rejects nesting deeper than the allowed depth', function () {
     expect(validateExtras('{"a":{"b":{"c":{"d":{"e":{"f":1}}}}}}'))->toHaveCount(1);
+});
+
+it('rejects an extras key outside the allowlist', function (string $key) {
+    $failures = validateExtras(json_encode([$key => 'attacker.example']));
+
+    expect($failures)->toBe([trans('admin::app.configuration.platform.message.extras-unsupported-key', [
+        'keys'    => $key,
+        'allowed' => implode(', ', ProviderOverrides::ALLOWED_KEYS),
+    ])]);
+})->with(['driver', 'region', 'headers', 'endpoint']);
+
+it('accepts every allowlisted extras key', function () {
+    expect(validateExtras(array_fill_keys(ProviderOverrides::ALLOWED_KEYS, 'value')))->toBe([]);
 });

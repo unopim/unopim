@@ -17,8 +17,8 @@ it('returns an empty array for unusable extras', function (mixed $extras) {
 ]);
 
 it('strips reserved endpoint and credential keys from extras', function (string $key) {
-    expect(ProviderOverrides::decode([$key => 'http://169.254.169.254', 'keep' => 'me']))
-        ->toBe(['keep' => 'me']);
+    expect(ProviderOverrides::decode([$key => 'http://169.254.169.254', 'deployment' => 'gpt-4o']))
+        ->toBe(['deployment' => 'gpt-4o']);
 })->with(ProviderOverrides::RESERVED_KEYS);
 
 it('strips reserved keys case-insensitively so a legacy uppercase entry cannot slip through', function () {
@@ -42,3 +42,7 @@ it('merges extras over the base without letting them redefine the platform url o
 it('returns the base untouched when extras decode to nothing', function () {
     expect(ProviderOverrides::build(['key' => 'sk-real'], null))->toBe(['key' => 'sk-real']);
 });
+it('drops every extras key outside the allowlist, so extras cannot swap the driver or move the host', function (string $key) {
+    expect(ProviderOverrides::decode([$key => 'attacker.example', 'deployment' => 'gpt-4o']))
+        ->toBe(['deployment' => 'gpt-4o']);
+})->with(['driver', 'region', 'headers', 'endpoint', 'name', 'Deployment']);

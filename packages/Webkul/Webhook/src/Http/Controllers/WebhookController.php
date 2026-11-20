@@ -143,7 +143,9 @@ class WebhookController
 
         $url = (string) $request->input('url');
 
-        if (! SafeWebhookUrl::validate($url)['valid']) {
+        $pinned = SafeWebhookUrl::pinnedHttpOptions($url);
+
+        if ($pinned === null) {
             return new JsonResponse([
                 'success' => false,
                 'message' => trans('webhook::app.webhooks.validation.unsafe-url'),
@@ -151,7 +153,7 @@ class WebhookController
         }
 
         try {
-            $response = Http::withOptions(SafeWebhookUrl::httpOptions($url))
+            $response = Http::withOptions($pinned)
                 ->timeout(self::TEST_REQUEST_TIMEOUT)
                 ->post($url, [
                     'event'     => 'webhook.test',

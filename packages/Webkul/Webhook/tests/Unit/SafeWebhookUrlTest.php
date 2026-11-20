@@ -19,11 +19,11 @@ it('pins the resolved IP in httpOptions to close DNS-rebinding TOCTOU', function
     expect($options['curl'][CURLOPT_RESOLVE])->toBe(['1.1.1.1:443:1.1.1.1']);
 });
 
-it('omits the pin and falls back to redirect-disable when validation fails', function () {
-    $options = SafeWebhookUrl::httpOptions('http://127.0.0.1/hook');
+it('refuses to build options without a pin when validation fails', function () {
+    expect(fn () => SafeWebhookUrl::httpOptions('http://127.0.0.1/hook'))
+        ->toThrow(InvalidArgumentException::class, trans('webhook::app.webhooks.validation.unsafe-url'));
 
-    expect($options['allow_redirects'])->toBeFalse();
-    expect($options)->not->toHaveKey('curl');
+    expect(SafeWebhookUrl::pinnedHttpOptions('http://127.0.0.1/hook'))->toBeNull();
 });
 
 it('rejects loopback IPv4 literal', function () {
@@ -152,3 +152,20 @@ it('allows loopback only when WEBHOOK_ALLOW_LOOPBACK opt-in is set', function ()
         putenv('WEBHOOK_ALLOW_LOOPBACK');
     }
 });
+
+it('rejects shared, private and IPv4-embedding addresses the filter flags miss', function (string $url): void {
+    $result = SafeWebhookUrl::validate($url);
+
+    expect($result['valid'])->toBeFalse()
+        ->and($result['reason'])->toBe('restricted_ip');
+})->with([
+    'shared address space'        => ['https://100.64.0.1/'],
+    'cloud metadata in 100.64/10' => ['https://100.100.100.200/latest/meta-data/'],
+    'IPv4-compatible IPv6'        => ['https://[::a9fe:a9fe]/'],
+    'NAT64 of the metadata IP'    => ['https://[64:ff9b::a9fe:a9fe]/'],
+    '6to4 of the metadata IP'     => ['https://[2002:a9fe:a9fe::1]/'],
+    'Teredo'                      => ['https://[2001:0:a9fe:a9fe::1]/'],
+    'IPv6 unique local'           => ['https://[fd12:3456::1]/'],
+    'IPv6 link local'             => ['https://[fe80::1]/'],
+    'IPv4-mapped loopback'        => ['https://[::ffff:127.0.0.1]/'],
+]);
