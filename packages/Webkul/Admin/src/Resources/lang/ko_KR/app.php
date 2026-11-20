@@ -2347,6 +2347,7 @@ return [
             'generate-key-success'           => 'API 키가 성공적으로 생성되었습니다',
             're-generate-secret-key-success' => 'API 비밀 키가 성공적으로 재생성되었습니다',
             'client-not-found'               => '클라이언트를 찾을 수 없습니다',
+            'oauth-keys-missing'             => 'API 서명 키가 없거나 교체해야 합니다. "php artisan unopim:passport:keys" 명령을 실행하여 새 키를 생성하세요.',
         ],
         'prompt' => [
             'index' => [

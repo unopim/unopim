@@ -2345,6 +2345,7 @@ return [
             'generate-key-success'           => 'API キーが正常に生成されました',
             're-generate-secret-key-success' => 'API シークレット キーが正常に再生成されました',
             'client-not-found'               => 'クライアントが見つかりません',
+            'oauth-keys-missing'             => 'API の署名キーがないか、置き換える必要があります。「php artisan unopim:passport:keys」を実行して新しいキーを作成してください。',
         ],
         'prompt' => [
             'index' => [

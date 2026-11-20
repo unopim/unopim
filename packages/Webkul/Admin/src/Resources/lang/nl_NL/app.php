@@ -2347,6 +2347,7 @@ return [
             'generate-key-success'           => 'API-sleutel succesvol gegenereerd.',
             're-generate-secret-key-success' => 'Nieuwe API-geheime sleutel succesvol gegenereerd.',
             'client-not-found'               => 'Integratie niet gevonden.',
+            'oauth-keys-missing'             => 'De API-ondertekeningssleutels ontbreken of moeten worden vervangen. Voer "php artisan unopim:passport:keys" uit om nieuwe aan te maken.',
         ],
         'prompt' => [
             'index' => [

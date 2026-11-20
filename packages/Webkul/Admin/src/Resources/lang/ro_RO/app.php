@@ -2347,6 +2347,7 @@ return [
             'generate-key-success'           => 'Cheia API a fost generată cu succes',
             're-generate-secret-key-success' => 'Cheia API secretă a fost regenerată cu succes',
             'client-not-found'               => 'Clientul nu a fost găsit',
+            'oauth-keys-missing'             => 'Cheile de semnare ale API-ului lipsesc sau trebuie înlocuite. Rulați "php artisan unopim:passport:keys" pentru a crea altele noi.',
         ],
         'prompt' => [
             'index' => [

@@ -2345,6 +2345,7 @@ return [
             'generate-key-success'           => 'Kunci API berhasil dihasilkan',
             're-generate-secret-key-success' => 'Kunci Rahasia API dengan sukses',
             'client-not-found'               => 'Klien tidak ditemukan',
+            'oauth-keys-missing'             => 'Kunci penandatanganan API tidak ada atau harus diganti. Jalankan "php artisan unopim:passport:keys" untuk membuat yang baru.',
         ],
         'prompt' => [
             'index' => [

@@ -2345,6 +2345,7 @@ return [
             'generate-key-success'           => 'Chiave API generata con successo',
             're-generate-secret-key-success' => 'Chiave segreta API rigenerata con successo',
             'client-not-found'               => 'Cliente non trovato',
+            'oauth-keys-missing'             => 'Le chiavi di firma dell\'API mancano o devono essere sostituite. Esegui "php artisan unopim:passport:keys" per crearne di nuove.',
         ],
         'prompt' => [
             'index' => [
