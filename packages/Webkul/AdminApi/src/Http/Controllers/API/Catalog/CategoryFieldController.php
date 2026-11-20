@@ -95,12 +95,12 @@ class CategoryFieldController extends ApiController
             ]);
         }
 
-        if ($denied = $this->deniedChildWrites($request->input('options'), 'api.catalog.category_fields', 'options')) {
-            return $denied;
-        }
-
         $requestData = request()->except(['code', 'type']);
         $requestData = $this->setLabels($requestData);
+
+        if ($denied = $this->deniedChildWrites($requestData['options'] ?? null, 'api.catalog.category_fields', 'options')) {
+            return $denied;
+        }
         $requestData['enable_wysiwyg'] = $categoryField->type == 'textarea' ? $requestData['enable_wysiwyg'] : 0;
         $id = $categoryField->id;
 
