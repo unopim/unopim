@@ -94,12 +94,22 @@ class SafeWebhookUrl
      */
     public static function httpOptions(string $url): array
     {
-        $options = ['allow_redirects' => false];
+        return self::pinnedHttpOptions($url) ?? ['allow_redirects' => false];
+    }
 
+    /**
+     * The redirect-blocking options plus the CURLOPT_RESOLVE pin for a URL
+     * that validates as public, or null when it cannot be validated and pinned,
+     * so a caller that must fail closed can refuse the request outright.
+     *
+     * @return array{allow_redirects: false, curl: array<int, list<string>>}|null
+     */
+    public static function pinnedHttpOptions(string $url): ?array
+    {
         $check = self::validate($url);
 
         if (! ($check['valid'] ?? false) || empty($check['ip'])) {
-            return $options;
+            return null;
         }
 
         $parts = parse_url($url);
@@ -111,18 +121,18 @@ class SafeWebhookUrl
 
         $port = $parts['port'] ?? (strtolower($parts['scheme'] ?? '') === 'https' ? 443 : 80);
 
-        // CURLOPT_RESOLVE wants the literal IPv6 wrapped in brackets so the
-        // resolver entry parses correctly.
         $ip = $check['ip'];
+
         if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
             $ip = "[{$ip}]";
         }
 
-        $options['curl'] = [
-            CURLOPT_RESOLVE => ["{$host}:{$port}:{$ip}"],
+        return [
+            'allow_redirects' => false,
+            'curl'            => [
+                CURLOPT_RESOLVE => ["{$host}:{$port}:{$ip}"],
+            ],
         ];
-
-        return $options;
     }
 
     /**

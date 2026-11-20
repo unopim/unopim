@@ -433,12 +433,16 @@ class MagicAIPlatformController extends Controller
     /**
      * Build the laravel/ai provider overrides from request data so Test
      * Connection honours custom api_url / api_key / extras for the chosen
-     * platform. Applied via ScopedProviderConfig for the test call only.
+     * platform. A reused stored key takes the saved platform's url and extras
+     * whole, so a request cannot pair it with its own. Applied via
+     * ScopedProviderConfig for the test call only.
      *
      * @return array<string, mixed>
      */
     protected function providerOverridesFromRequest(): array
     {
+        $platform = $this->storedKeyPlatform();
+
         $overrides = [
             'key' => $this->resolveApiKey(),
         ];
@@ -449,6 +453,6 @@ class MagicAIPlatformController extends Controller
             $overrides['url'] = $apiUrl;
         }
 
-        return ProviderOverrides::build($overrides, request()->input('extras'));
+        return ProviderOverrides::build($overrides, $platform ? $platform->extras : request()->input('extras'));
     }
 }

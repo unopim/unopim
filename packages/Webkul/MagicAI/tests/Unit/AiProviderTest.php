@@ -62,10 +62,10 @@ it('fetches and sorts OpenAI models from the platform base url', function () {
         new Response(200, [], json_encode(['data' => [['id' => 'gpt-4o'], ['id' => 'dall-e-3']]])),
     ], $history);
 
-    $models = AiProvider::OpenAI->fetchModels('sk-test', 'https://proxy.test/v1', $client);
+    $models = AiProvider::OpenAI->fetchModels('sk-test', 'https://1.0.0.1/v1', $client);
 
     expect($models)->toBe(['dall-e-3', 'gpt-4o'])
-        ->and((string) $history[0]['request']->getUri())->toBe('https://proxy.test/v1/models')
+        ->and((string) $history[0]['request']->getUri())->toBe('https://1.0.0.1/v1/models')
         ->and($history[0]['request']->getHeaderLine('Authorization'))->toBe('Bearer sk-test');
 });
 
@@ -96,13 +96,13 @@ it('sends the Anthropic version header when listing models', function () {
         ->and($history[0]['request']->getHeaderLine('x-api-key'))->toBe('sk-ant');
 });
 
-it('lists Ollama models from its tags endpoint', function () {
+it('lists Ollama models from the local default tags endpoint when no url is set', function () {
     $history = [];
     $client = fakeProviderClient([
         new Response(200, [], json_encode(['models' => [['name' => 'llama3.2'], ['name' => 'gemma3']]])),
     ], $history);
 
-    expect(AiProvider::Ollama->fetchModels(null, 'http://localhost:11434', $client))
+    expect(AiProvider::Ollama->fetchModels(null, null, $client))
         ->toBe(['gemma3', 'llama3.2'])
         ->and((string) $history[0]['request']->getUri())->toBe('http://localhost:11434/api/tags');
 });
@@ -215,4 +215,28 @@ it('lists only the Gemini models that can generate content or images', function 
 
     expect(AiProvider::Gemini->fetchModels('key', null, $client))
         ->toBe(['gemini-3.1-flash-lite', 'imagen-4.0-generate-001']);
+});
+
+it('refuses model discovery against a url that cannot be validated and pinned', function (AiProvider $provider, string $url) {
+    $history = [];
+    $client = fakeProviderClient([new Response(200, [], '{}')], $history);
+
+    expect(fn () => $provider->fetchModels('sk-test', $url, $client))
+        ->toThrow(RuntimeException::class, trans('admin::app.configuration.platform.message.unsafe-api-url'))
+        ->and($history)->toBe([]);
+})->with([
+    'ollama on loopback'    => [AiProvider::Ollama, 'http://127.0.0.1:8080'],
+    'openai on metadata ip' => [AiProvider::OpenAI, 'http://169.254.169.254/v1'],
+    'azure unresolvable'    => [AiProvider::Azure, 'https://unresolvable.invalid'],
+]);
+
+it('lists Ollama models from the local daemon default url without pinning it', function () {
+    $history = [];
+    $client = fakeProviderClient([
+        new Response(200, [], json_encode(['models' => [['name' => 'llama3.2']]])),
+    ], $history);
+
+    expect(AiProvider::Ollama->fetchModels(null, 'http://localhost:11434/', $client))->toBe(['llama3.2'])
+        ->and($history[0]['options']['allow_redirects'])->toBeFalse()
+        ->and($history[0]['options'])->not->toHaveKey('curl');
 });
