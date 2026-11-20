@@ -129,7 +129,7 @@ enum AiProvider: string
      */
     public function fetchModelCatalog(?string $apiKey, ?string $apiUrl = null, ?Client $client = null): array
     {
-        $client ??= new Client(['timeout' => 15]);
+        $client ??= new Client(['timeout' => 15, 'allow_redirects' => false]);
 
         try {
             return match ($this) {
@@ -175,7 +175,7 @@ enum AiProvider: string
      */
     public function discoverModels(?string $apiKey, ?string $apiUrl = null, ?Client $client = null): array
     {
-        $client ??= new Client(['timeout' => 15]);
+        $client ??= new Client(['timeout' => 15, 'allow_redirects' => false]);
 
         if ($this !== self::Custom) {
             return $this->discovery($this->fetchModelCatalog($apiKey, $apiUrl, $client), (string) $apiUrl);
