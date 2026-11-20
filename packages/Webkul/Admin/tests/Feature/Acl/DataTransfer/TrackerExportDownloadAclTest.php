@@ -141,3 +141,19 @@ it('hides the export download link from import execute when the job instance is 
         ->assertOk()
         ->assertDontSee(route('admin.settings.data_transfer.tracker.download', $track->id), false);
 });
+
+it('requires the execute permission to download a job file through the import and export routes', function (string $type, string $route, string $viewPermission, string $executePermission) {
+    $track = trackerAclTrack($type, 'imports/source/products.csv');
+    $track->jobInstance->update(['file_path' => 'imports/source/products.csv']);
+
+    $this->loginWithPermissions(permissions: ['data_transfer', $viewPermission]);
+
+    get(route($route, $track->jobInstance->id))->assertForbidden();
+
+    $this->loginWithPermissions(permissions: ['data_transfer', $viewPermission, $executePermission]);
+
+    get(route($route, $track->jobInstance->id))->assertOk();
+})->with([
+    'import' => ['import', 'admin.settings.data_transfer.imports.download', 'data_transfer.imports', 'data_transfer.imports.execute'],
+    'export' => ['export', 'admin.settings.data_transfer.exports.download', 'data_transfer.export', 'data_transfer.export.execute'],
+]);
