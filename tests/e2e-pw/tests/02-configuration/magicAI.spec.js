@@ -1,4 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
+const { keepSecretsOutOfArtifacts, fillSecret } = require('../../utils/secret-helpers');
 const { clickSave, navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect, clickEditOnRow, closeDropdown } = require('../../utils/helpers');
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
@@ -107,7 +108,7 @@ async function createOpenAIPlatform(adminPage, label) {
   await adminPage.getByRole('option', { name: 'OpenAI' }).first().click();
   await expect(adminPage.locator('input[name="label"]')).toBeVisible();
   await adminPage.locator('input[name="label"]').fill(label);
-  await adminPage.locator('input[name="api_key"]').fill(OPENAI_API_KEY);
+  await fillSecret(adminPage.locator('input[name="api_key"]'), OPENAI_API_KEY);
   await adminPage.locator('input[name="label"]').click();
 
   // Models load from the API-key test call.
@@ -146,6 +147,8 @@ async function deletePlatform(adminPage, label) {
     await expect(adminPage.locator('#app').getByText(/deleted successfully/i)).toBeVisible();
   }
 }
+
+keepSecretsOutOfArtifacts(test);
 
 test.describe('UnoPim Magic AI Test Cases', () => {
 

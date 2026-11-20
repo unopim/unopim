@@ -1,9 +1,12 @@
 const { test, expect } = require('../../utils/fixtures');
+const { keepSecretsOutOfArtifacts, fillSecret } = require('../../utils/secret-helpers');
 const { clickSave, generateUid, closeDropdown, visiblePaginationSymbols } = require('../../utils/helpers');
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 const MAGIC_AI_CONFIG_URL = '/admin/magic-ai/settings';
 const MAGIC_AI_PLATFORM_URL = '/admin/magic-ai/platforms';
+
+keepSecretsOutOfArtifacts(test);
 
 test.describe('UnoPim Magic AI v2.1.0 Configuration', () => {
 
@@ -480,7 +483,7 @@ test('9.1 - Add Platform with valid OpenAI API key fetches models automatically'
   await adminPage.locator('input[name="provider"]').first().locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
   await adminPage.getByRole('option', { name: 'OpenAI' }).first().click();
 
-  await adminPage.locator('input[name="api_key"]').fill(OPENAI_API_KEY);
+  await fillSecret(adminPage.locator('input[name="api_key"]'), OPENAI_API_KEY);
   await adminPage.locator('input[name="label"]').click();
 
   const modelCheckbox = adminPage.locator('.grid.grid-cols-2 label input[type="checkbox"]').first();
@@ -502,7 +505,7 @@ test('9.2 - Fetched model list includes known OpenAI models', async ({ adminPage
   await adminPage.locator('input[name="provider"]').first().locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
   await adminPage.getByRole('option', { name: 'OpenAI' }).first().click();
 
-  await adminPage.locator('input[name="api_key"]').fill(OPENAI_API_KEY);
+  await fillSecret(adminPage.locator('input[name="api_key"]'), OPENAI_API_KEY);
   await adminPage.locator('input[name="label"]').click();
 
   await adminPage.locator('input[type="checkbox"]').first().waitFor({ state: 'visible', timeout: 30000 }).catch(() => {});
@@ -522,7 +525,7 @@ test('9.3 - Model search filters the model checkbox list', async ({ adminPage })
   await adminPage.locator('input[name="provider"]').first().locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
   await adminPage.getByRole('option', { name: 'OpenAI' }).first().click();
 
-  await adminPage.locator('input[name="api_key"]').fill(OPENAI_API_KEY);
+  await fillSecret(adminPage.locator('input[name="api_key"]'), OPENAI_API_KEY);
   await adminPage.locator('input[name="label"]').click();
 
   await adminPage.locator('input[type="checkbox"]').first().waitFor({ state: 'visible', timeout: 30000 }).catch(() => {});
@@ -547,7 +550,7 @@ test('9.4 - Selecting a model adds it as a tag chip', async ({ adminPage }) => {
   await adminPage.locator('input[name="provider"]').first().locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
   await adminPage.getByRole('option', { name: 'OpenAI' }).first().click();
 
-  await adminPage.locator('input[name="api_key"]').fill(OPENAI_API_KEY);
+  await fillSecret(adminPage.locator('input[name="api_key"]'), OPENAI_API_KEY);
   await adminPage.locator('input[name="label"]').click();
 
   await adminPage.locator('input[type="checkbox"]').first().waitFor({ state: 'visible', timeout: 30000 }).catch(() => {});
@@ -574,7 +577,7 @@ test('9.5 - Removing a model tag chip unchecks it in the list', async ({ adminPa
   await adminPage.locator('input[name="provider"]').first().locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
   await adminPage.getByRole('option', { name: 'OpenAI' }).first().click();
 
-  await adminPage.locator('input[name="api_key"]').fill(OPENAI_API_KEY);
+  await fillSecret(adminPage.locator('input[name="api_key"]'), OPENAI_API_KEY);
   await adminPage.locator('input[name="label"]').click();
 
   await adminPage.locator('input[type="checkbox"]').first().waitFor({ state: 'visible', timeout: 30000 }).catch(() => {});
@@ -600,7 +603,7 @@ test('9.6 - Adding a custom model ID via the text input', async ({ adminPage }) 
   await adminPage.locator('input[name="provider"]').first().locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
   await adminPage.getByRole('option', { name: 'OpenAI' }).first().click();
 
-  await adminPage.locator('input[name="api_key"]').fill(OPENAI_API_KEY);
+  await fillSecret(adminPage.locator('input[name="api_key"]'), OPENAI_API_KEY);
   await adminPage.locator('input[name="label"]').click();
 
   await adminPage.locator('input[type="checkbox"]').first().waitFor({ state: 'visible', timeout: 30000 }).catch(() => {});
@@ -629,7 +632,7 @@ test('9.8 - Save platform with valid API key and selected models succeeds', asyn
 
   await adminPage.locator('input[name="label"]').clear();
   await adminPage.locator('input[name="label"]').fill(uniqueLabel);
-  await adminPage.locator('input[name="api_key"]').fill(OPENAI_API_KEY);
+  await fillSecret(adminPage.locator('input[name="api_key"]'), OPENAI_API_KEY);
   await adminPage.locator('input[name="label"]').click();
 
   await adminPage.locator('input[type="checkbox"]').first().waitFor({ state: 'visible', timeout: 30000 }).catch(() => {});
