@@ -8,25 +8,23 @@ use Webkul\Core\Platform\ModuleGate;
 trait ResolvesLandingUrl
 {
     /**
-     * Resolve the landing URL for the authenticated admin by walking the sorted
-     * menu config and returning the first item whose ACL key the user owns.
+     * Resolve the landing URL for the authenticated admin: the first menu item,
+     * top level first and then by sort, whose page the user may open.
      *
      * A menu item's own key is not enough: the destination route is gated by its
      * own ACL key (menu key "settings" routes to admin.settings.locales.index,
-     * gated by "settings.locales"), so both are checked. The acl config sweep
-     * afterwards covers roles that grant only child-level keys. Entries of a
-     * switched-off module are skipped, as are routes a plain redirect cannot
-     * reach (non-GET or with required parameters). Falls back to logging the
-     * user out when no entry is reachable.
+     * gated by "settings.locales"), so both are checked. Routes a redirect cannot
+     * open (non-GET or with required parameters) are skipped. The acl config is
+     * only a last resort and limited to "*.index" routes, because it also lists
+     * ajax endpoints that are not pages. Entries of a
+     * switched-off module are skipped. Falls back to logging the
+     * user out when no page is reachable.
      */
     protected function firstAllowedUrl(): string
     {
-        $items = array_filter(
-            config('menu.admin') ?? [],
-            fn ($item) => ! empty($item['key']) && ! str_contains($item['key'], '.'),
-        );
+        $items = array_filter(config('menu.admin') ?? [], fn ($item) => ! empty($item['key']));
 
-        usort($items, fn ($a, $b) => ($a['sort'] ?? 0) <=> ($b['sort'] ?? 0));
+        usort($items, fn ($a, $b) => [substr_count($a['key'], '.'), $a['sort'] ?? 0] <=> [substr_count($b['key'], '.'), $b['sort'] ?? 0]);
 
         $aclRoutes = optional(app('acl'))->roles ?? [];
 
@@ -39,7 +37,7 @@ trait ResolvesLandingUrl
         }
 
         foreach (config('acl') ?? [] as $aclItem) {
-            if ($this->canLandOn($aclItem, $aclRoutes, $gate)) {
+            if (str_ends_with($aclItem['route'] ?? '', '.index') && $this->canLandOn($aclItem, $aclRoutes, $gate)) {
                 return route($aclItem['route']);
             }
         }
