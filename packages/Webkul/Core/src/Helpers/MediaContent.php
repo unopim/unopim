@@ -82,6 +82,9 @@ class MediaContent
         return self::inlineType($extension) !== null;
     }
 
+    /**
+     * Whether the extension is on the blocked list, whatever an attribute configures.
+     */
     public static function isBlockedExtension(?string $extension): bool
     {
         return in_array(strtolower(ltrim(trim((string) $extension), '.')), self::BLOCKED_EXTENSIONS, true);

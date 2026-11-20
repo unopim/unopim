@@ -13,7 +13,6 @@ use Webkul\Attribute\Presenters\AttributeHistoryPresenter;
 use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Core\Eloquent\TranslatableModel;
 use Webkul\Core\Helpers\ClientValidationRules;
-use Webkul\Core\Helpers\MediaContent;
 use Webkul\Core\Rules\BooleanString;
 use Webkul\Core\Rules\Decimal;
 use Webkul\Core\Rules\FileOrImageValidValue;
@@ -120,23 +119,14 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
     }
 
     /**
-     * Per-attribute allowed extensions, normalised and stripped of anything
-     * MediaContent blocks, or an empty array to fall back to the
+     * Per-attribute allowed extensions, or an empty array to fall back to the
      * FileOrImageValidValue defaults.
      *
      * @return array<int, string>
      */
     public function resolvedAllowedExtensions(): array
     {
-        $extensions = array_map(
-            fn (mixed $extension): string => strtolower(ltrim(trim((string) $extension), '.')),
-            (array) ($this->allowed_extensions ?? []),
-        );
-
-        return array_values(array_unique(array_filter(
-            $extensions,
-            fn (string $extension): bool => $extension !== '' && ! MediaContent::isBlockedExtension($extension),
-        )));
+        return empty($this->allowed_extensions) ? [] : array_values($this->allowed_extensions);
     }
 
     const NON_DELETABLE_ATTRIBUTE_CODE = 'sku';
@@ -276,7 +266,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
                 allowedPathPrefixes: $id ? ['product/'.$id.'/'.$this->code] : [],
             );
 
-            if ($this->resolvedAllowedExtensions() === []) {
+            if (empty($this->allowed_extensions)) {
                 $galleryValue->mergeAllowedExtensions(FileOrImageValidValue::VIDEO_ALLOWED_EXTENSIONS);
             }
 
@@ -517,7 +507,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
                     allowedPathPrefixes: $mediaPathPrefixes,
                 );
 
-                if ($this->resolvedAllowedExtensions() === []) {
+                if (empty($this->allowed_extensions)) {
                     $galleryRule->mergeAllowedExtensions(FileOrImageValidValue::VIDEO_ALLOWED_EXTENSIONS);
                 }
 

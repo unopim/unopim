@@ -121,13 +121,17 @@
 
         $fieldInstructions = $field->translate($currentLocaleCode)['instructions'] ?? '';
 
-        $customExtensions = $field->resolvedAllowedExtensions();
+        $imageExtensions = ! empty($field->allowed_extensions)
+            ? $field->allowed_extensions
+            : \Webkul\Core\Rules\FileOrImageValidValue::IMAGE_ALLOWED_EXTENSIONS;
 
-        $imageExtensions = $customExtensions ?: \Webkul\Core\Rules\FileOrImageValidValue::IMAGE_ALLOWED_EXTENSIONS;
+        $galleryExtensions = ! empty($field->allowed_extensions)
+            ? $field->allowed_extensions
+            : array_merge(\Webkul\Core\Rules\FileOrImageValidValue::IMAGE_ALLOWED_EXTENSIONS, \Webkul\Core\Rules\FileOrImageValidValue::VIDEO_ALLOWED_EXTENSIONS);
 
-        $galleryExtensions = $customExtensions ?: array_merge(\Webkul\Core\Rules\FileOrImageValidValue::IMAGE_ALLOWED_EXTENSIONS, \Webkul\Core\Rules\FileOrImageValidValue::VIDEO_ALLOWED_EXTENSIONS);
-
-        $fileExtensions = $customExtensions ?: \Webkul\Core\Rules\FileOrImageValidValue::FILE_ALLOWED_EXTENSION;
+        $fileExtensions = ! empty($field->allowed_extensions)
+            ? $field->allowed_extensions
+            : \Webkul\Core\Rules\FileOrImageValidValue::FILE_ALLOWED_EXTENSION;
 
         $fieldType = $field->type;
 
