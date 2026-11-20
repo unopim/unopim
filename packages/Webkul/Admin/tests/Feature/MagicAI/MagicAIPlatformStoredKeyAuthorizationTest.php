@@ -48,6 +48,23 @@ it('forbids a create-only user from using the stored key of a saved platform', f
         ->assertForbidden();
 });
 
+it('forbids a create-only user from reading a saved platform by omitting its key', function (mixed $apiKey): void {
+    $this->platform->update(['is_managed' => true]);
+
+    $this->loginWithPermissions('custom', ['ai-agent', 'ai-agent.platform', 'ai-agent.platform.create']);
+
+    $payload = ['id' => $this->platform->id, 'provider' => 'openai'];
+
+    if ($apiKey !== null) {
+        $payload['api_key'] = $apiKey;
+    }
+
+    $this->postJson(route('admin.magic_ai.platform.fetch_models'), $payload)->assertForbidden();
+})->with([
+    'omitted' => [null],
+    'empty'   => [''],
+]);
+
 it('forbids a view-only user from probing a provider with a typed key', function (): void {
     $this->loginWithPermissions('custom', ['ai-agent', 'ai-agent.platform']);
 
