@@ -4,7 +4,7 @@ return [
 
     'acl' => [
         'ai-agent'              => 'AI Kỳ Diệu',
-        'general'               => 'Chung',
+        'general'               => 'Cài đặt',
         'prompt'                => 'Lệnh nhắc',
         'system-prompt'         => 'Lệnh nhắc hệ thống',
         'execute'               => 'Thực thi',

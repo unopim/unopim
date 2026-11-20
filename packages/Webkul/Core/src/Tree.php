@@ -91,6 +91,14 @@ class Tree
             foreach ($item['also_authorizes'] ?? [] as $route) {
                 $this->alternateRoles[$route][] = $item['key'];
             }
+
+            /**
+             * A hidden entry still guards its routes, but is not offered as an assignable
+             * permission checkbox, so only full-access roles can pass it.
+             */
+            if (! empty($item['hidden'])) {
+                return;
+            }
         }
 
         $children = str_replace('.', '.children.', $item['key']);

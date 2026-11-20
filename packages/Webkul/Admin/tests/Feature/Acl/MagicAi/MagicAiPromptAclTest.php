@@ -82,7 +82,7 @@ it('should restrict system prompt store route when user lacks permission', funct
 });
 
 it('should allow system prompt store route when user has permission', function () {
-    $this->loginWithPermissions('custom', ['ai-agent', 'ai-agent.system-prompt', 'ai-agent.system-prompt.edit']);
+    $this->loginWithPermissions('custom', ['ai-agent', 'ai-agent.system-prompt', 'ai-agent.system-prompt.create']);
 
     $response = $this->postJson(route('admin.magic_ai.system_prompt.store'), [
         'title'       => 'Test Prompt',
@@ -137,7 +137,7 @@ it('should restrict prompt store route when user lacks permission', function () 
 });
 
 it('should allow prompt store route when user has permission', function () {
-    $this->loginWithPermissions('custom', ['ai-agent', 'ai-agent.prompt', 'ai-agent.prompt.edit']);
+    $this->loginWithPermissions('custom', ['ai-agent', 'ai-agent.prompt', 'ai-agent.prompt.create']);
 
     $response = $this->postJson(route('admin.magic_ai.prompt.store'), [
         'title'       => 'Test Prompt',
@@ -169,4 +169,54 @@ it('should allow prompt update route when user has permission', function () {
     ]);
 
     expect($response->status())->not->toBe(403);
+});
+
+it('should not let the edit permission create a prompt', function () {
+    $this->loginWithPermissions('custom', ['ai-agent', 'ai-agent.prompt', 'ai-agent.prompt.edit']);
+
+    $this->postJson(route('admin.magic_ai.prompt.store'), ['title' => 'Test Prompt', 'prompt' => 'Test Prompt text'])
+        ->assertStatus(403);
+});
+
+it('should not let the edit permission create a system prompt', function () {
+    $this->loginWithPermissions('custom', ['ai-agent', 'ai-agent.system-prompt', 'ai-agent.system-prompt.edit']);
+
+    $this->postJson(route('admin.magic_ai.system_prompt.store'), [
+        'title'       => 'Test Prompt',
+        'tone'        => 'professional',
+        'is_enabled'  => 1,
+        'max_tokens'  => 1000,
+        'temperature' => 1.0,
+    ])->assertStatus(403);
+});
+
+it('should not let the create permission edit a prompt', function () {
+    $this->loginWithPermissions('custom', ['ai-agent', 'ai-agent.prompt', 'ai-agent.prompt.create']);
+
+    $this->putJson(route('admin.magic_ai.prompt.update'), ['id' => 1, 'title' => 'x', 'prompt' => 'y'])
+        ->assertStatus(403);
+});
+
+it('should hide the create button on the prompt and system prompt pages without the create permission', function () {
+    $this->loginWithPermissions('custom', ['ai-agent', 'ai-agent.prompt', 'ai-agent.system-prompt']);
+
+    $this->get(route('admin.magic_ai.prompt.index'))
+        ->assertOk()
+        ->assertDontSee(trans('admin::app.configuration.prompt.create.create-btn'));
+
+    $this->get(route('admin.magic_ai.system_prompt.index'))
+        ->assertOk()
+        ->assertDontSee(trans('admin::app.configuration.system-prompt.create.create-btn'));
+});
+
+it('should show the create button on the prompt and system prompt pages with the create permission', function () {
+    $this->loginWithPermissions('custom', ['ai-agent', 'ai-agent.prompt', 'ai-agent.prompt.create', 'ai-agent.system-prompt', 'ai-agent.system-prompt.create']);
+
+    $this->get(route('admin.magic_ai.prompt.index'))
+        ->assertOk()
+        ->assertSee(trans('admin::app.configuration.prompt.create.create-btn'));
+
+    $this->get(route('admin.magic_ai.system_prompt.index'))
+        ->assertOk()
+        ->assertSee(trans('admin::app.configuration.system-prompt.create.create-btn'));
 });

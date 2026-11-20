@@ -17,6 +17,7 @@ class TinyMCEUploadRequest extends FormRequest
             'catalog.products.edit',
             'catalog.categories.create',
             'catalog.categories.edit',
+            'ai-agent.prompt.create',
             'ai-agent.prompt.edit',
         ] as $permission) {
             if (bouncer()->hasPermission($permission)) {
