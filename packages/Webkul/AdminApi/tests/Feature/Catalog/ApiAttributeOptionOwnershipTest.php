@@ -105,3 +105,38 @@ it('lets an API key holding the create and delete permissions change options thr
     expect(apiOptionOwner('api_full_added'))->toBe([$this->attribute->id])
         ->and(AttributeOption::whereKey($option->id)->exists())->toBeFalse();
 });
+
+it('rejects options of another attribute in a REST attribute update', function () {
+    $foreignDelete = AttributeOption::create(['code' => 'api_foreign_delete', 'sort_order' => 10, 'attribute_id' => $this->other->id]);
+    $foreignUpdate = AttributeOption::create(['code' => 'api_foreign_update', 'sort_order' => 11, 'attribute_id' => $this->other->id]);
+
+    $this->withHeaders($this->headers)
+        ->json('PUT', route('admin.api.attributes.update', $this->attribute->code), [
+            'options' => [
+                $foreignDelete->id => ['isNew' => false, 'isDelete' => true],
+                $foreignUpdate->id => ['isNew' => false, 'isDelete' => false, 'code' => 'api_hijacked', 'attribute_id' => $this->attribute->id],
+            ],
+        ])
+        ->assertUnprocessable()
+        ->assertJsonPath('errors.options.0', trans('validation.exists', ['attribute' => 'options']));
+
+    expect(AttributeOption::whereKey($foreignDelete->id)->exists())->toBeTrue()
+        ->and(apiOptionOwner('api_foreign_update'))->toBe([$this->other->id])
+        ->and(apiOptionOwner('api_hijacked'))->toBe([]);
+});
+
+it('keeps options written through a REST attribute update on the attribute in the URL', function () {
+    $owned = AttributeOption::create(['code' => 'api_owned_moved', 'sort_order' => 10, 'attribute_id' => $this->attribute->id]);
+
+    $this->withHeaders($this->headers)
+        ->json('PUT', route('admin.api.attributes.update', $this->attribute->code), [
+            'options' => [
+                $owned->id  => ['isNew' => false, 'isDelete' => false, 'code' => 'api_owned_moved', 'attribute_id' => $this->other->id],
+                'option_0'  => ['isNew' => true, 'isDelete' => false, 'code' => 'api_owned_added', 'attribute_id' => $this->other->id],
+            ],
+        ])
+        ->assertOk();
+
+    expect(apiOptionOwner('api_owned_moved'))->toBe([$this->attribute->id])
+        ->and(apiOptionOwner('api_owned_added'))->toBe([$this->attribute->id]);
+});
