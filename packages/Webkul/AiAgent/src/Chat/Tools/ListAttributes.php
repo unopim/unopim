@@ -62,13 +62,16 @@ class ListAttributes implements PimTool
                 }
 
                 if ($sku && ! $familyId) {
+                    if ($denied = $this->denyUnlessAllowed($this->context, 'catalog.products')) {
+                        return $denied;
+                    }
+
                     $familyId = DB::table('products')
                         ->where('sku', $sku)
                         ->value('attribute_family_id');
                 }
 
-                if (! $familyId && $this->context->hasProductContext()) {
-                    // Default to the family of the product being edited.
+                if (! $familyId && $this->context->hasProductContext() && $this->context->hasPermission('catalog.products')) {
                     $familyId = DB::table('products')
                         ->where('id', $this->context->productId)
                         ->value('attribute_family_id');
