@@ -302,6 +302,30 @@ describe('association type custom fields', function () {
             ->and($field->type)->toBe('text');
     });
 
+    it('keeps a field updated through the REST API on the association type in the URL', function () {
+        $typeCode = createUserDefinedAssociationTypeForFieldTests();
+        $associationType = app(AssociationTypeRepository::class)->findByCode($typeCode);
+        $otherType = app(AssociationTypeRepository::class)->findByCode(createUserDefinedAssociationTypeForFieldTests());
+
+        $field = app(AssociationTypeFieldRepository::class)->create([
+            'association_type_id' => $associationType->id,
+            'code'                => 'quantity',
+            'type'                => 'text',
+        ]);
+
+        $this->withHeaders($this->headers)
+            ->json('PUT', route('admin.api.association-types-fields.update', ['code' => $typeCode, 'fieldCode' => 'quantity']), [
+                'is_required'         => true,
+                'association_type_id' => $otherType->id,
+            ])
+            ->assertOk();
+
+        $field->refresh();
+
+        expect((int) $field->association_type_id)->toBe($associationType->id)
+            ->and((bool) $field->is_required)->toBeTrue();
+    });
+
     it('returns a 404 when updating a field that does not exist on the association type', function () {
         $typeCode = createUserDefinedAssociationTypeForFieldTests();
 
