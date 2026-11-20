@@ -177,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Deze export is te groot om uit te voeren: naar schatting :rows rijen × :columns kolommen (~:estimated) overschrijden de beschikbare ruimte (~:available). Beperk de export door minder kanalen/talen (en attributen) te selecteren en probeer het opnieuw.',
-        'fields'           => [
+        'export-too-large'      => 'Deze export is te groot om uit te voeren: naar schatting :rows rijen × :columns kolommen (~:estimated) overschrijden de beschikbare ruimte (~:available). Beperk de export door minder kanalen/talen (en attributen) te selecteren en probeer het opnieuw.',
+        'xls-too-many-columns'  => 'Deze export heeft meer dan :limit kolommen, het maximum dat een XLS-bestand kan bevatten. Kies XLSX of CSV, of selecteer minder attributen, en probeer het opnieuw.',
+        'xls-too-many-rows'     => 'Deze export heeft meer dan :limit rijen, het maximum dat een XLS-bestand kan bevatten. Kies XLSX of CSV, of beperk de export, en probeer het opnieuw.',
+        'xls-too-large'         => 'Deze export is te groot om naar XLS te converteren: :rows rijen × :columns kolommen is meer dan de :limit cellen die deze server kan converteren. Kies XLSX of CSV, of beperk de export, en probeer het opnieuw.',
+        'xls-conversion-failed' => 'Het exportbestand kon niet worden vervangen door de XLS-versie. Probeer het opnieuw, of kies XLSX of CSV.',
+        'fields'                => [
             'file-format'            => 'Bestandsformaat',
             'with-media'             => 'Met media',
             'with-associations'      => 'Met koppelingen',

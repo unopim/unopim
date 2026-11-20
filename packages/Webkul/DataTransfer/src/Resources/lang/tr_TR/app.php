@@ -177,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Bu dışa aktarma çalıştırılamayacak kadar büyük: tahmini :rows satır × :columns sütun (~:estimated) kullanılabilir alanı (~:available) aşıyor. Daha az kanal/yerel (ve öznitelik) seçerek dışa aktarmayı daraltın ve tekrar deneyin.',
-        'fields'           => [
+        'export-too-large'      => 'Bu dışa aktarma çalıştırılamayacak kadar büyük: tahmini :rows satır × :columns sütun (~:estimated) kullanılabilir alanı (~:available) aşıyor. Daha az kanal/yerel (ve öznitelik) seçerek dışa aktarmayı daraltın ve tekrar deneyin.',
+        'xls-too-many-columns'  => 'Bu dışa aktarımda bir XLS dosyasının alabileceği en fazla sayı olan :limit sütundan fazlası var. XLSX veya CSV seçin ya da daha az nitelik seçip tekrar deneyin.',
+        'xls-too-many-rows'     => 'Bu dışa aktarımda bir XLS dosyasının alabileceği en fazla sayı olan :limit satırdan fazlası var. XLSX veya CSV seçin ya da dışa aktarımı daraltıp tekrar deneyin.',
+        'xls-too-large'         => 'Bu dışa aktarma XLS\'ye dönüştürülemeyecek kadar büyük: :rows satır × :columns sütun, bu sunucunun dönüştürebileceği :limit hücreyi aşıyor. XLSX veya CSV\'yi seçin ya da dışa aktarmayı daraltın ve yeniden deneyin.',
+        'xls-conversion-failed' => 'Dışa aktarma dosyası XLS sürümüyle değiştirilemedi. Yeniden deneyin ya da XLSX veya CSV\'yi seçin.',
+        'fields'                => [
             'file-format'            => 'Dosya biçimi',
             'with-media'             => 'Medya ile',
             'with-associations'      => 'İlişkilendirmelerle',

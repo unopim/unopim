@@ -177,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Questa esportazione è troppo grande per essere eseguita: circa :rows righe × :columns colonne (~:estimated) superano lo spazio disponibile (~:available). Restringi l\'esportazione selezionando meno canali/lingue (e attributi) e riprova.',
-        'fields'           => [
+        'export-too-large'      => 'Questa esportazione è troppo grande per essere eseguita: circa :rows righe × :columns colonne (~:estimated) superano lo spazio disponibile (~:available). Restringi l\'esportazione selezionando meno canali/lingue (e attributi) e riprova.',
+        'xls-too-many-columns'  => 'Questa esportazione ha più di :limit colonne, il massimo che un file XLS può contenere. Scegli XLSX o CSV, oppure seleziona meno attributi, e riprova.',
+        'xls-too-many-rows'     => 'Questa esportazione ha più di :limit righe, il massimo che un file XLS può contenere. Scegli XLSX o CSV, oppure restringi l\'esportazione, e riprova.',
+        'xls-too-large'         => 'Questa esportazione è troppo grande per essere convertita in XLS: :rows righe × :columns colonne superano le :limit celle che questo server può convertire. Scegli XLSX o CSV, oppure restringi l\'esportazione, e riprova.',
+        'xls-conversion-failed' => 'Impossibile sostituire il file di esportazione con la sua versione XLS. Riprova oppure scegli XLSX o CSV.',
+        'fields'                => [
             'file-format'            => 'Formato file',
             'with-media'             => 'Con media',
             'with-associations'      => 'Con associazioni',

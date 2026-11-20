@@ -177,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Tämä vienti on liian suuri suoritettavaksi: arvioidut :rows riviä × :columns saraketta (~:estimated) ylittävät käytettävissä olevan tilan (~:available). Rajaa vientiä valitsemalla vähemmän kanavia/kieliä (ja attribuutteja) ja yritä uudelleen.',
-        'fields'           => [
+        'export-too-large'      => 'Tämä vienti on liian suuri suoritettavaksi: arvioidut :rows riviä × :columns saraketta (~:estimated) ylittävät käytettävissä olevan tilan (~:available). Rajaa vientiä valitsemalla vähemmän kanavia/kieliä (ja attribuutteja) ja yritä uudelleen.',
+        'xls-too-many-columns'  => 'Tässä viennissä on yli :limit saraketta, mikä on XLS-tiedoston enimmäismäärä. Valitse XLSX tai CSV tai valitse vähemmän attribuutteja ja yritä uudelleen.',
+        'xls-too-many-rows'     => 'Tässä viennissä on yli :limit riviä, mikä on XLS-tiedoston enimmäismäärä. Valitse XLSX tai CSV tai rajaa vientiä ja yritä uudelleen.',
+        'xls-too-large'         => 'Tämä vienti on liian suuri muunnettavaksi XLS-muotoon: :rows riviä × :columns saraketta on enemmän kuin :limit solua, jotka tämä palvelin pystyy muuntamaan. Valitse XLSX tai CSV tai rajaa vientiä ja yritä uudelleen.',
+        'xls-conversion-failed' => 'Vientitiedostoa ei voitu korvata sen XLS-versiolla. Yritä uudelleen tai valitse XLSX tai CSV.',
+        'fields'                => [
             'file-format'            => 'Tiedostomuoto',
             'with-media'             => 'Median kanssa',
             'with-associations'      => 'Liitoksineen',

@@ -177,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Denne eksport er for stor til at køre: anslået :rows rækker × :columns kolonner (~:estimated) overstiger den tilgængelige plads (~:available). Indsnævr eksporten ved at vælge færre kanaler/sprog (og attributter), og prøv igen.',
-        'fields'           => [
+        'export-too-large'      => 'Denne eksport er for stor til at køre: anslået :rows rækker × :columns kolonner (~:estimated) overstiger den tilgængelige plads (~:available). Indsnævr eksporten ved at vælge færre kanaler/sprog (og attributter), og prøv igen.',
+        'xls-too-many-columns'  => 'Denne eksport har mere end :limit kolonner, hvilket er det maksimale en XLS-fil kan indeholde. Vælg XLSX eller CSV, eller vælg færre attributter, og prøv igen.',
+        'xls-too-many-rows'     => 'Denne eksport har mere end :limit rækker, hvilket er det maksimale en XLS-fil kan indeholde. Vælg XLSX eller CSV, eller indsnævr eksporten, og prøv igen.',
+        'xls-too-large'         => 'Denne eksport er for stor til at blive konverteret til XLS: :rows rækker × :columns kolonner er mere end de :limit celler, denne server kan konvertere. Vælg XLSX eller CSV, eller indsnævr eksporten, og prøv igen.',
+        'xls-conversion-failed' => 'Eksportfilen kunne ikke erstattes med dens XLS-version. Prøv igen, eller vælg XLSX eller CSV.',
+        'fields'                => [
             'file-format'            => 'Filformat',
             'with-media'             => 'Med medier',
             'with-associations'      => 'Med tilknytninger',

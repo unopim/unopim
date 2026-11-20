@@ -18,6 +18,7 @@ use Webkul\DataTransfer\Jobs\Export\ExportBatch as ExportBatchJob;
 use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
 use Webkul\DataTransfer\Jobs\Export\File\JSONFileBuffer;
 use Webkul\DataTransfer\Jobs\Export\File\SpoutWriterFactory;
+use Webkul\DataTransfer\Jobs\Export\File\XlsFileConverter;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 use Webkul\User\Models\AdminProxy;
 
@@ -234,7 +235,7 @@ abstract class AbstractExporter
             'fieldEnclosure' => '"',
             'shouldAddBOM'   => false,
             'type'           => $filters['file_format'] ?? SpoutWriterFactory::CSV,
-            'writeHeaders'   => ($filters['header_row'] ?? '1') !== '0',
+            'writeHeaders'   => $this->writesHeaderRow(),
             'headerLabels'   => $this->getHeaderLabels(),
         ];
     }
@@ -489,7 +490,47 @@ abstract class AbstractExporter
         return $this;
     }
 
-    protected function assertExportIsFeasible($results): void {}
+    /**
+     * Reject an export that cannot be produced, before any batch is dispatched.
+     */
+    protected function assertExportIsFeasible(mixed $results): void
+    {
+        if ($results instanceof \Countable) {
+            $this->guardXlsLimits(count($results), 1);
+        }
+    }
+
+    /**
+     * Whether the export file starts with a header row.
+     */
+    protected function writesHeaderRow(): bool
+    {
+        return ($this->getFilters()['header_row'] ?? '1') !== '0';
+    }
+
+    /**
+     * Whether the export is written as an Excel 97-2003 file.
+     */
+    protected function exportsXls(): bool
+    {
+        return SpoutWriterFactory::normalizeType((string) ($this->getFilters()['file_format'] ?? '')) === SpoutWriterFactory::XLS;
+    }
+
+    /**
+     * Reject an XLS export whose estimated size an XLS sheet cannot hold or that cannot be converted.
+     *
+     * @throws \RuntimeException
+     */
+    protected function guardXlsLimits(int $rows, int $columns): void
+    {
+        if (! $this->exportsXls()) {
+            return;
+        }
+
+        $headerRows = $this->writesHeaderRow() ? 1 : 0;
+
+        resolve(XlsFileConverter::class)->assertFits($rows + $headerRows, $columns);
+    }
 
     protected function getHeartbeatTrack(): mixed
     {
@@ -498,6 +539,8 @@ abstract class AbstractExporter
 
     protected function guardAgainstOversizedExport(int $rows, int $columns): void
     {
+        $this->guardXlsLimits($rows, $columns);
+
         $freeBytes = @disk_free_space(sys_get_temp_dir());
 
         if ($freeBytes === false || $freeBytes <= 0) {
