@@ -10,6 +10,7 @@ use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
 use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Helpers\Importers\AbstractImporter;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
+use Webkul\User\Contracts\Role;
 use Webkul\User\Repositories\RoleRepository;
 
 class Importer extends AbstractImporter
@@ -23,6 +24,11 @@ class Importer extends AbstractImporter
      * Error code for non existing name
      */
     public const ERROR_CODE_NOT_FOUND_FOR_DELETE = 'name_not_found_to_delete';
+
+    /**
+     * Error code for a role the importing admin cannot grant
+     */
+    public const ERROR_CANNOT_GRANT_ACCESS = 'cannot_grant_access';
 
     /**
      * Permanent entity columns
@@ -45,7 +51,15 @@ class Importer extends AbstractImporter
     protected array $messages = [
         self::ERROR_DUPLICATE_NAME            => 'data_transfer::app.importers.roles.validation.errors.duplicate-name',
         self::ERROR_CODE_NOT_FOUND_FOR_DELETE => 'data_transfer::app.importers.roles.validation.errors.name-not-found-to-delete',
+        self::ERROR_CANNOT_GRANT_ACCESS       => 'admin::app.settings.roles.cannot-grant-unheld-permissions',
     ];
+
+    /**
+     * Existing roles loaded for access checks, keyed by id
+     *
+     * @var array<int, Role|null>
+     */
+    protected array $roles = [];
 
     /**
      * Create a new helper instance.
@@ -89,7 +103,7 @@ class Importer extends AbstractImporter
                 return false;
             }
 
-            return true;
+            return $this->validateAccess($rowData, $rowNumber, deleting: true);
         }
 
         $validator = Validator::make($rowData, [
@@ -102,14 +116,56 @@ class Importer extends AbstractImporter
             foreach ($validator->errors()->getMessages() as $attributeCode => $message) {
                 $this->skipRow($rowNumber, 'invalid_field', $attributeCode, current($message));
             }
+
+            return false;
         }
 
-        return ! $this->errorHelper->isRowInvalid($rowNumber);
+        return $this->validateAccess($rowData, $rowNumber);
+    }
+
+    /**
+     * Reject a row that changes a role, or grants access, beyond what the importing admin holds.
+     */
+    protected function validateAccess(array $rowData, int $rowNumber, bool $deleting = false): bool
+    {
+        if ($error = $this->accessError($rowData, $deleting)) {
+            $this->skipRow($rowNumber, self::ERROR_CANNOT_GRANT_ACCESS, 'permission_type', trans($error));
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Translation key explaining why the importing admin cannot write the row, or null when it can.
+     */
+    protected function accessError(array $rowData, bool $deleting = false): ?string
+    {
+        $actor = $this->importActor();
+
+        if ($roleId = $this->roleStorage->get($rowData['name'])) {
+            $role = $this->roles[$roleId] ??= $this->roleRepository->find($roleId);
+
+            if ($error = $this->roleAccessGuard()->grantError($actor, $role?->permission_type, $role?->permissions ?? [])) {
+                return $error;
+            }
+        }
+
+        if ($deleting) {
+            return null;
+        }
+
+        $permissions = empty($rowData['permissions']) ? [] : explode(',', $rowData['permissions']);
+
+        return $this->roleAccessGuard()->grantError($actor, $rowData['permission_type'] ?? null, $permissions);
     }
 
     public function importBatch(JobTrackBatchContract $batch): bool
     {
         Event::dispatch('data_transfer.imports.batch.import.before', $batch);
+
+        $this->roles = [];
 
         if ($batch->jobTrack->action == Import::ACTION_DELETE) {
             $this->deleteRoleData($batch);
@@ -140,7 +196,7 @@ class Importer extends AbstractImporter
         foreach ($batch->data as $rowData) {
             $id = $this->roleStorage->get($rowData['name']);
 
-            if ($id) {
+            if ($id && ! $this->accessError($rowData, deleting: true)) {
                 $idsToDelete[] = $id;
             }
         }
@@ -160,6 +216,10 @@ class Importer extends AbstractImporter
         $this->roleStorage->load(Arr::pluck($batch->data, 'name'));
 
         foreach ($batch->data as $rowData) {
+            if ($this->accessError($rowData)) {
+                continue;
+            }
+
             $id = $this->roleStorage->get($rowData['name']);
 
             $data = [
@@ -171,6 +231,7 @@ class Importer extends AbstractImporter
 
             if ($id) {
                 $this->roleRepository->update($data, $id);
+                unset($this->roles[$id]);
                 $this->updatedItemsCount++;
             } else {
                 $role = $this->roleRepository->create($data);

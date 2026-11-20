@@ -13,6 +13,7 @@ use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
 use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Helpers\Importers\AbstractImporter;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
+use Webkul\User\Contracts\Role;
 use Webkul\User\Repositories\AdminRepository;
 use Webkul\User\Repositories\RoleRepository;
 
@@ -44,6 +45,11 @@ class Importer extends AbstractImporter
     public const ERROR_INVALID_LOCALE = 'invalid_locale';
 
     /**
+     * Error code for a role the importing admin cannot assign or grant
+     */
+    public const ERROR_CANNOT_ASSIGN_ROLE = 'cannot_assign_role';
+
+    /**
      * Permanent entity columns
      */
     protected array $validColumnNames = [
@@ -70,7 +76,15 @@ class Importer extends AbstractImporter
         self::ERROR_EMAIL_NOT_FOUND_FOR_DELETE => 'data_transfer::app.importers.users.validation.errors.email-not-found-to-delete',
         self::ERROR_INVALID_ROLE               => 'data_transfer::app.importers.users.validation.errors.invalid-role',
         self::ERROR_INVALID_LOCALE             => 'data_transfer::app.importers.users.validation.errors.invalid-locale',
+        self::ERROR_CANNOT_ASSIGN_ROLE         => 'admin::app.settings.users.cannot-escalate-role',
     ];
+
+    /**
+     * Roles loaded for access checks, keyed by id
+     *
+     * @var array<int, Role|null>
+     */
+    protected array $roles = [];
 
     /**
      * Create a new helper instance.
@@ -121,7 +135,7 @@ class Importer extends AbstractImporter
                 return false;
             }
 
-            return true;
+            return $this->validateAccess($rowData, $rowNumber, deleting: true);
         }
 
         if (! $this->shouldImportRow($rowData)) {
@@ -153,7 +167,73 @@ class Importer extends AbstractImporter
             $this->skipRow($rowNumber, self::ERROR_INVALID_LOCALE, $rowData['ui_locale_code']);
         }
 
-        return ! $this->errorHelper->isRowInvalid($rowNumber);
+        if ($this->errorHelper->isRowInvalid($rowNumber)) {
+            return false;
+        }
+
+        $this->userStorage->loadAdmins([$rowData['email']]);
+
+        return $this->validateAccess($rowData, $rowNumber);
+    }
+
+    /**
+     * Reject a row whose user or role the importing admin could not manage, assign or grant.
+     */
+    protected function validateAccess(array $rowData, int $rowNumber, bool $deleting = false): bool
+    {
+        if ($error = $this->accessError($rowData, $deleting)) {
+            $this->skipRow($rowNumber, self::ERROR_CANNOT_ASSIGN_ROLE, $deleting ? 'email' : 'role_name', trans($error));
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Translation key explaining why the importing admin cannot write the row, or null when it can.
+     */
+    protected function accessError(array $rowData, bool $deleting = false): ?string
+    {
+        $actor = $this->importActor();
+        $guard = $this->roleAccessGuard();
+
+        if ($this->userStorage->getAdminId($rowData['email'])
+            && $error = $guard->assignmentError($actor, $this->findRole($this->userStorage->getAdminRoleId($rowData['email'])))) {
+            return $error;
+        }
+
+        if ($deleting) {
+            return null;
+        }
+
+        $role = $this->findRole($this->userStorage->getRoleId($rowData['role_name'] ?? ''));
+
+        if (empty($rowData['permission_type'])) {
+            return $guard->assignmentError($actor, $role);
+        }
+
+        if ($role instanceof Role && $error = $guard->grantError($actor, $role->permission_type, $role->permissions ?? [])) {
+            return $error;
+        }
+
+        return $guard->grantError(
+            $actor,
+            $rowData['permission_type'],
+            empty($rowData['permissions']) ? [] : explode(',', $rowData['permissions'])
+        );
+    }
+
+    /**
+     * Role by id, loaded once per batch.
+     */
+    protected function findRole(?int $roleId): ?Role
+    {
+        if (! $roleId) {
+            return null;
+        }
+
+        return $this->roles[$roleId] ??= $this->roleRepository->find($roleId);
     }
 
     protected function shouldImportRow(array $rowData): bool
@@ -175,6 +255,8 @@ class Importer extends AbstractImporter
     public function importBatch(JobTrackBatchContract $batch): bool
     {
         Event::dispatch('data_transfer.imports.batch.import.before', $batch);
+
+        $this->roles = [];
 
         if ($batch->jobTrack->action == Import::ACTION_DELETE) {
             $this->deleteUserData($batch);
@@ -205,7 +287,7 @@ class Importer extends AbstractImporter
         foreach ($batch->data as $rowData) {
             $id = $this->userStorage->getAdminId($rowData['email']);
 
-            if ($id) {
+            if ($id && ! $this->accessError($rowData, deleting: true)) {
                 $idsToDelete[] = $id;
             }
         }
@@ -227,6 +309,10 @@ class Importer extends AbstractImporter
         $this->userStorage->loadAdmins(Arr::pluck($batch->data, 'email'));
 
         foreach ($batch->data as $rowData) {
+            if ($this->accessError($rowData)) {
+                continue;
+            }
+
             $id = $this->userStorage->getAdminId($rowData['email']);
 
             $roleId = $this->userStorage->getRoleId($rowData['role_name']);
@@ -240,6 +326,8 @@ class Importer extends AbstractImporter
 
                 if ($roleId) {
                     $this->roleRepository->update($roleData, $roleId);
+
+                    unset($this->roles[$roleId]);
                 } else {
                     $role = $this->roleRepository->create($roleData);
                     $roleId = $role->id;
@@ -265,6 +353,7 @@ class Importer extends AbstractImporter
                 }
 
                 $this->adminRepository->update($data, $id);
+                $this->userStorage->setAdmin($rowData['email'], $id, $roleId);
                 $this->updatedItemsCount++;
             } else {
                 $data['password'] = null;
@@ -275,7 +364,7 @@ class Importer extends AbstractImporter
                     $this->adminRepository->update(['image' => $imagePath], $admin->id);
                 }
 
-                $this->userStorage->setAdmin($admin->email, $admin->id);
+                $this->userStorage->setAdmin($admin->email, $admin->id, $roleId);
                 $this->createdItemsCount++;
             }
         }
