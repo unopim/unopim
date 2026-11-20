@@ -162,7 +162,7 @@ class Importer extends AbstractImporter
             'permission_type' => ['nullable', 'in:all,custom'],
             'permissions'     => ['nullable', 'string'],
             'status'          => ['nullable', 'in:active,inactive'],
-            'timezone'        => ['nullable', 'string'],
+            'timezone'        => ['nullable', 'string', 'timezone:all_with_bc'],
             'ui_locale_code'  => ['nullable', 'string'],
         ]);
 
@@ -443,12 +443,16 @@ class Importer extends AbstractImporter
                 'email'        => $rowData['email'],
                 'status'       => ($rowData['status'] ?? 'active') == 'active' ? 1 : 0,
                 'role_id'      => $roleId,
-                'timezone'     => $rowData['timezone'] ?? config('app.timezone'),
+                'timezone'     => core()->resolveTimezone($rowData['timezone'] ?? null),
                 'ui_locale_id' => $this->userStorage->getLocaleId($rowData['ui_locale_code'] ?? ''),
             ];
 
             if ($id) {
                 $admin = $this->adminRepository->find($id);
+
+                if (blank($rowData['timezone'] ?? null)) {
+                    unset($data['timezone']);
+                }
 
                 if ($imagePath = $this->storeUserImage($rowData['image'] ?? null, $admin)) {
                     $data['image'] = $imagePath;

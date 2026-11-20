@@ -285,6 +285,24 @@ return [
                     'root-not-allowed' => 'La categoria arrel no es pot assignar a un producte.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Ajuda de plantilles',
+                    'title'    => 'Plantilles dinàmiques',
+                    'info'     => 'Escriu @ per inserir un altre atribut d\'aquest producte. Les variables se substitueixen pels valors del producte en exportar.',
+                    'example'  => 'Exemple',
+                    'filters'  => 'Filtres',
+                    'currency' => 'Preu en una sola moneda',
+
+                    'preview'  => [
+                        'button'       => 'Previsualitza la plantilla',
+                        'title'        => 'Previsualització de la plantilla',
+                        'refresh'      => 'Actualitza',
+                        'empty'        => 'La plantilla genera un valor buit.',
+                        'failed'       => 'No s\'ha pogut carregar la previsualització. Torneu-ho a provar.',
+                        'saved-values' => 'Utilitza els valors no desats de les seccions carregades en aquesta pàgina. La resta de valors provenen de l\'últim desament.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Grup d\'atributs:',
                     'title'              => 'Grups d\'atributs',
@@ -675,6 +693,8 @@ return [
                 'usable-in-grid'         => 'Útil a la graella',
                 'is-filterable'          => 'És filtrable',
                 'ai-translate'           => 'Traducció IA',
+                'enable-templates'       => 'Habilitar plantilles',
+                'templates-unsupported'  => 'Les plantilles només es poden habilitar en atributs de text i àrea de text que no tinguin validació d\'entrada i no siguin únics.',
                 'invalid-swatch-type'    => 'L\':attribute no està permès per al tipus d\'atribut :type amb el tipus de mostra :swatch_type.',
                 'single-object-only'     => 'Cada sol·licitud de creació ha d\'enviar només un objecte d\'atribut.',
                 'option'                 => [
@@ -2054,20 +2074,24 @@ return [
         ],
 
         'appearance' => [
-            'title'          => 'Appearance',
-            'info'           => 'Logotip i icona.',
-            'section-title'  => 'Visual Branding',
-            'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
-            'logo'           => 'Logo',
-            'logo-size'      => 'Recommended image resolution: 192px X 50px',
-            'favicon'        => 'Favicon',
-            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
-            'no-logo'        => 'No logo uploaded yet.',
-            'no-favicon'     => 'No favicon uploaded yet.',
-            'upload-cta'     => 'Click to upload',
-            'upload-hint'    => ' or drag and drop',
-            'save-btn'       => 'Save Appearance',
-            'update-success' => 'Appearance updated successfully.',
+            'title'             => 'Aparença',
+            'info'              => 'Logotip i icona.',
+            'section-title'     => 'Identitat visual',
+            'section-info'      => 'Pugeu el vostre logotip i favicon, amb versions opcionals per al mode fosc. Els canvis s\'apliquen en desar.',
+            'logo'              => 'Logotip',
+            'logo-size'         => 'Resolució d\'imatge recomanada: 192px X 50px',
+            'favicon'           => 'Favicon',
+            'favicon-size'      => 'Resolució d\'imatge recomanada: 16px X 16px',
+            'dark-logo'         => 'Logotip del mode fosc',
+            'dark-logo-info'    => 'Es mostra en mode fosc. Deixeu-ho buit per utilitzar el logotip de dalt.',
+            'dark-favicon'      => 'Favicon del mode fosc',
+            'dark-favicon-info' => 'Es mostra en mode fosc. Deixeu-ho buit per utilitzar el favicon de dalt.',
+            'no-logo'           => 'Encara no s\'ha pujat cap logotip.',
+            'no-favicon'        => 'Encara no s\'ha pujat cap favicon.',
+            'upload-cta'        => 'Feu clic per pujar',
+            'upload-hint'       => ' o arrossegueu i deixeu anar',
+            'save-btn'          => 'Desa l\'aparença',
+            'update-success'    => 'L\'aparença s\'ha actualitzat correctament.',
         ],
         'roles' => [
             'index' => [

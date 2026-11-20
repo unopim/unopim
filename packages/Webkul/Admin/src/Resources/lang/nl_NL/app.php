@@ -286,6 +286,24 @@ return [
                     'root-not-allowed' => 'De hoofdcategorie kan niet aan een product worden toegewezen.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Hulp bij sjablonen',
+                    'title'    => 'Dynamische sjablonen',
+                    'info'     => 'Typ @ om een ander attribuut van dit product in te voegen. Variabelen worden bij export vervangen door de productwaarden.',
+                    'example'  => 'Voorbeeld',
+                    'filters'  => 'Filters',
+                    'currency' => 'Prijs in één valuta',
+
+                    'preview'  => [
+                        'button'       => 'Sjabloon bekijken',
+                        'title'        => 'Sjabloonvoorbeeld',
+                        'refresh'      => 'Vernieuwen',
+                        'empty'        => 'Het sjabloon levert een lege waarde op.',
+                        'failed'       => 'Het voorbeeld kon niet worden geladen. Probeer het opnieuw.',
+                        'saved-values' => 'Gebruikt de niet-opgeslagen waarden van de secties die op deze pagina zijn geladen. Andere waarden komen uit de laatste opslag.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Attribuutgroep:',
                     'title'              => 'Attribuutgroepen',
@@ -676,6 +694,8 @@ return [
                 'usable-in-grid'         => 'Bruikbaar in het raster',
                 'is-filterable'          => 'Filterbaar',
                 'ai-translate'           => 'AI-vertaling',
+                'enable-templates'       => 'Sjablonen inschakelen',
+                'templates-unsupported'  => 'Sjablonen kunnen alleen worden ingeschakeld voor tekst- en textarea-attributen die geen invoervalidatie hebben en niet uniek zijn.',
                 'invalid-swatch-type'    => 'De :attribute is niet toegestaan voor attribuuttype :type met staaltype :swatch_type.',
                 'single-object-only'     => 'Per aanvraag mag slechts één attribuutobject worden aangemaakt.',
                 'option'                 => [
@@ -2056,20 +2076,24 @@ return [
         ],
 
         'appearance' => [
-            'title'          => 'Appearance',
-            'info'           => 'Logo en favicon.',
-            'section-title'  => 'Visual Branding',
-            'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
-            'logo'           => 'Logo',
-            'logo-size'      => 'Recommended image resolution: 192px X 50px',
-            'favicon'        => 'Favicon',
-            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
-            'no-logo'        => 'No logo uploaded yet.',
-            'no-favicon'     => 'No favicon uploaded yet.',
-            'upload-cta'     => 'Click to upload',
-            'upload-hint'    => ' or drag and drop',
-            'save-btn'       => 'Save Appearance',
-            'update-success' => 'Appearance updated successfully.',
+            'title'             => 'Weergave',
+            'info'              => 'Logo en favicon.',
+            'section-title'     => 'Visuele huisstijl',
+            'section-info'      => 'Upload je eigen logo en favicon, met optionele versies voor de donkere modus. Wijzigingen worden toegepast na het opslaan.',
+            'logo'              => 'Logo',
+            'logo-size'         => 'Aanbevolen beeldresolutie: 192px X 50px',
+            'favicon'           => 'Favicon',
+            'favicon-size'      => 'Aanbevolen beeldresolutie: 16px X 16px',
+            'dark-logo'         => 'Logo voor donkere modus',
+            'dark-logo-info'    => 'Wordt getoond in de donkere modus. Laat leeg om het logo hierboven te gebruiken.',
+            'dark-favicon'      => 'Favicon voor donkere modus',
+            'dark-favicon-info' => 'Wordt getoond in de donkere modus. Laat leeg om de favicon hierboven te gebruiken.',
+            'no-logo'           => 'Nog geen logo geüpload.',
+            'no-favicon'        => 'Nog geen favicon geüpload.',
+            'upload-cta'        => 'Klik om te uploaden',
+            'upload-hint'       => ' of sleep het hierheen',
+            'save-btn'          => 'Weergave opslaan',
+            'update-success'    => 'Weergave succesvol bijgewerkt.',
         ],
         'roles' => [
             'index' => [

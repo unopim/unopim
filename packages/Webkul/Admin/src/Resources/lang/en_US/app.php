@@ -298,6 +298,24 @@ return [
                     'root-not-allowed' => 'Root category cannot be assigned to a product.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Template help',
+                    'title'    => 'Dynamic templates',
+                    'info'     => 'Type @ to insert another attribute of this product. Variables are replaced with the product values on export.',
+                    'example'  => 'Example',
+                    'filters'  => 'Filters',
+                    'currency' => 'Price in one currency',
+
+                    'preview'  => [
+                        'button'       => 'Preview template',
+                        'title'        => 'Template preview',
+                        'refresh'      => 'Refresh',
+                        'empty'        => 'The template renders an empty value.',
+                        'failed'       => 'The preview could not be loaded. Please try again.',
+                        'saved-values' => 'Uses the unsaved values of the sections loaded on this page. Other values come from the last save.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Attribute group:',
                     'title'              => 'Attribute Groups',
@@ -718,6 +736,8 @@ return [
                 'usable-in-grid'         => 'Usable in grid',
                 'is-filterable'          => 'Is Filterable',
                 'ai-translate'           => 'AI Translate',
+                'enable-templates'       => 'Enable Templates',
+                'templates-unsupported'  => 'Templates can only be enabled on text and textarea attributes that have no input validation and are not unique.',
                 'invalid-swatch-type'    => 'The :attribute is not allowed for attribute type :type with swatch type :swatch_type.',
 
                 'single-object-only' => 'Each create request must send a single attribute object.',
@@ -2174,20 +2194,24 @@ return [
         ],
 
         'appearance' => [
-            'title'          => 'Appearance',
-            'info'           => 'Logo and favicon.',
-            'section-title'  => 'Visual Branding',
-            'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
-            'logo'           => 'Logo',
-            'logo-size'      => 'Recommended image resolution: 192px X 50px',
-            'favicon'        => 'Favicon',
-            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
-            'no-logo'        => 'No logo uploaded yet.',
-            'no-favicon'     => 'No favicon uploaded yet.',
-            'upload-cta'     => 'Click to upload',
-            'upload-hint'    => ' or drag and drop',
-            'save-btn'       => 'Save Appearance',
-            'update-success' => 'Appearance updated successfully.',
+            'title'             => 'Appearance',
+            'info'              => 'Logo and favicon.',
+            'section-title'     => 'Visual Branding',
+            'section-info'      => 'Upload your own logo and favicon, with optional dark-mode versions. Changes apply once saved.',
+            'logo'              => 'Logo',
+            'logo-size'         => 'Recommended image resolution: 192px X 50px',
+            'favicon'           => 'Favicon',
+            'favicon-size'      => 'Recommended image resolution: 16px X 16px',
+            'dark-logo'         => 'Dark Mode Logo',
+            'dark-logo-info'    => 'Shown in dark mode. Leave empty to use the logo above.',
+            'dark-favicon'      => 'Dark Mode Favicon',
+            'dark-favicon-info' => 'Shown in dark mode. Leave empty to use the favicon above.',
+            'no-logo'           => 'No logo uploaded yet.',
+            'no-favicon'        => 'No favicon uploaded yet.',
+            'upload-cta'        => 'Click to upload',
+            'upload-hint'       => ' or drag and drop',
+            'save-btn'          => 'Save Appearance',
+            'update-success'    => 'Appearance updated successfully.',
         ],
 
         'roles' => [

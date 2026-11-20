@@ -285,6 +285,24 @@ return [
                     'root-not-allowed' => 'Ang kategoryang ugat ay hindi maaaring italaga sa isang produkto.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Tulong sa template',
+                    'title'    => 'Mga dynamic na template',
+                    'info'     => 'I-type ang @ para maglagay ng ibang attribute ng produktong ito. Papalitan ang mga variable ng mga value ng produkto sa pag-export.',
+                    'example'  => 'Halimbawa',
+                    'filters'  => 'Mga filter',
+                    'currency' => 'Presyo sa iisang currency',
+
+                    'preview'  => [
+                        'button'       => 'I-preview ang template',
+                        'title'        => 'Preview ng template',
+                        'refresh'      => 'I-refresh',
+                        'empty'        => 'Walang laman ang resulta ng template.',
+                        'failed'       => 'Hindi ma-load ang preview. Pakisubukang muli.',
+                        'saved-values' => 'Ginagamit ang mga hindi pa naka-save na value ng mga seksyong naka-load sa pahinang ito. Ang ibang value ay mula sa huling pag-save.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Pangkat ng katangian:',
                     'title'              => 'Mga Pangkat ng Katangian',
@@ -675,6 +693,8 @@ return [
                 'usable-in-grid'         => 'Magagamit sa grid',
                 'is-filterable'          => 'Nafifilter',
                 'ai-translate'           => 'AI Pagsasalin',
+                'enable-templates'       => 'I-enable ang mga Template',
+                'templates-unsupported'  => 'Maaari lamang i-enable ang mga template sa mga katangiang text at textarea na walang pag-validate ng input at hindi natatangi.',
                 'invalid-swatch-type'    => 'Ang :attribute ay hindi pinapayagan para sa uri ng katangian :type na may uri ng swatch :swatch_type.',
                 'single-object-only'     => 'Ang bawat create request ay dapat magpadala ng iisang attribute object.',
                 'option'                 => [
@@ -2056,20 +2076,24 @@ return [
         ],
 
         'appearance' => [
-            'title'          => 'Appearance',
-            'info'           => 'Logo at favicon.',
-            'section-title'  => 'Visual Branding',
-            'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
-            'logo'           => 'Logo',
-            'logo-size'      => 'Recommended image resolution: 192px X 50px',
-            'favicon'        => 'Favicon',
-            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
-            'no-logo'        => 'No logo uploaded yet.',
-            'no-favicon'     => 'No favicon uploaded yet.',
-            'upload-cta'     => 'Click to upload',
-            'upload-hint'    => ' or drag and drop',
-            'save-btn'       => 'Save Appearance',
-            'update-success' => 'Appearance updated successfully.',
+            'title'             => 'Hitsura',
+            'info'              => 'Logo at favicon.',
+            'section-title'     => 'Biswal na Branding',
+            'section-info'      => 'Mag-upload ng sarili mong logo at favicon, kasama ang opsyonal na bersyon para sa dark mode. Ilalapat ang mga pagbabago kapag na-save.',
+            'logo'              => 'Logo',
+            'logo-size'         => 'Inirerekomendang resolusyon ng larawan: 192px X 50px',
+            'favicon'           => 'Favicon',
+            'favicon-size'      => 'Inirerekomendang resolusyon ng larawan: 16px X 16px',
+            'dark-logo'         => 'Logo para sa Dark Mode',
+            'dark-logo-info'    => 'Ipinapakita sa dark mode. Iwanang blangko para gamitin ang logo sa itaas.',
+            'dark-favicon'      => 'Favicon para sa Dark Mode',
+            'dark-favicon-info' => 'Ipinapakita sa dark mode. Iwanang blangko para gamitin ang favicon sa itaas.',
+            'no-logo'           => 'Wala pang na-upload na logo.',
+            'no-favicon'        => 'Wala pang na-upload na favicon.',
+            'upload-cta'        => 'I-click para mag-upload',
+            'upload-hint'       => ' o i-drag at i-drop',
+            'save-btn'          => 'I-save ang Hitsura',
+            'update-success'    => 'Matagumpay na na-update ang hitsura.',
         ],
         'roles' => [
             'index' => [

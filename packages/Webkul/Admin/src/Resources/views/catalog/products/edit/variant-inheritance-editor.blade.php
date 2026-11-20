@@ -1,3 +1,5 @@
+@include('completeness::score-thresholds')
+
 @php
     $variationTrans = trans('admin::app.catalog.products.edit.variations');
 
@@ -341,9 +343,11 @@
                     }
                 },
                 completenessClass(v) {
-                    if (v >= 100) { return 'text-green-600 border-green-300 bg-green-50 dark:bg-transparent'; }
-                    if (v >= 50) { return 'text-amber-600 border-amber-300 bg-amber-50 dark:bg-transparent'; }
-                    return 'text-red-600 border-red-300 bg-red-50 dark:bg-transparent';
+                    return {
+                        success: 'text-success border-success/30 bg-success/10 dark:bg-transparent',
+                        warning: 'text-warning border-warning/30 bg-warning/10 dark:bg-transparent',
+                        danger: 'text-danger border-danger/30 bg-danger/10 dark:bg-transparent',
+                    }[this.$completeness.level(v)];
                 },
                 countClass(done, total) {
                     if (total > 0 && done >= total) { return 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300'; }

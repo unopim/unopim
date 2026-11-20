@@ -285,6 +285,24 @@ return [
                     'root-not-allowed' => 'Korijensku kategoriju nije moguće dodijeliti proizvodu.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Pomoć za predloške',
+                    'title'    => 'Dinamički predlošci',
+                    'info'     => 'Upišite @ za umetanje drugog atributa ovog proizvoda. Varijable se pri izvozu zamjenjuju vrijednostima proizvoda.',
+                    'example'  => 'Primjer',
+                    'filters'  => 'Filtri',
+                    'currency' => 'Cijena u jednoj valuti',
+
+                    'preview'  => [
+                        'button'       => 'Pregledaj predložak',
+                        'title'        => 'Pregled predloška',
+                        'refresh'      => 'Osvježi',
+                        'empty'        => 'Predložak daje praznu vrijednost.',
+                        'failed'       => 'Pregled nije moguće učitati. Pokušajte ponovno.',
+                        'saved-values' => 'Koristi nespremljene vrijednosti odjeljaka učitanih na ovoj stranici. Ostale vrijednosti dolaze iz posljednjeg spremanja.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Grupa atributa:',
                     'title'              => 'Grupe atributa',
@@ -675,6 +693,8 @@ return [
                 'usable-in-grid'         => 'Upotrebljivo u mreži',
                 'is-filterable'          => 'Je filtrabilno',
                 'ai-translate'           => 'AI Prevod',
+                'enable-templates'       => 'Omogući predloške',
+                'templates-unsupported'  => 'Predlošci se mogu omogućiti samo za tekstualne atribute i atribute tekstualnog polja koji nemaju validaciju unosa i nisu jedinstveni.',
                 'invalid-swatch-type'    => ':attribute nije dozvoljen za tip atributa :type s tipom uzorka :swatch_type.',
                 'single-object-only'     => 'Svaki zahtjev za stvaranje mora sadržavati samo jedan objekt atributa.',
                 'option'                 => [
@@ -2054,20 +2074,24 @@ return [
         ],
 
         'appearance' => [
-            'title'          => 'Appearance',
-            'info'           => 'Logotip i favicon.',
-            'section-title'  => 'Visual Branding',
-            'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
-            'logo'           => 'Logo',
-            'logo-size'      => 'Recommended image resolution: 192px X 50px',
-            'favicon'        => 'Favicon',
-            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
-            'no-logo'        => 'No logo uploaded yet.',
-            'no-favicon'     => 'No favicon uploaded yet.',
-            'upload-cta'     => 'Click to upload',
-            'upload-hint'    => ' or drag and drop',
-            'save-btn'       => 'Save Appearance',
-            'update-success' => 'Appearance updated successfully.',
+            'title'             => 'Izgled',
+            'info'              => 'Logotip i favicon.',
+            'section-title'     => 'Vizualni identitet',
+            'section-info'      => 'Učitajte vlastiti logotip i favicon, uz neobavezne verzije za tamni način rada. Promjene se primjenjuju nakon spremanja.',
+            'logo'              => 'Logotip',
+            'logo-size'         => 'Preporučena razlučivost slike: 192px X 50px',
+            'favicon'           => 'Favicon',
+            'favicon-size'      => 'Preporučena razlučivost slike: 16px X 16px',
+            'dark-logo'         => 'Logotip za tamni način',
+            'dark-logo-info'    => 'Prikazuje se u tamnom načinu. Ostavite prazno za korištenje gornjeg logotipa.',
+            'dark-favicon'      => 'Favicon za tamni način',
+            'dark-favicon-info' => 'Prikazuje se u tamnom načinu. Ostavite prazno za korištenje gornjeg favicona.',
+            'no-logo'           => 'Logotip još nije prenesen.',
+            'no-favicon'        => 'Favicon još nije prenesen.',
+            'upload-cta'        => 'Kliknite za prijenos',
+            'upload-hint'       => ' ili povucite i ispustite',
+            'save-btn'          => 'Spremi izgled',
+            'update-success'    => 'Izgled je uspješno ažuriran.',
         ],
         'roles' => [
             'index' => [

@@ -286,6 +286,24 @@ return [
                     'root-not-allowed' => 'Categoria rădăcină nu poate fi atribuită unui produs.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Ajutor pentru șabloane',
+                    'title'    => 'Șabloane dinamice',
+                    'info'     => 'Tastați @ pentru a insera un alt atribut al acestui produs. Variabilele sunt înlocuite cu valorile produsului la export.',
+                    'example'  => 'Exemplu',
+                    'filters'  => 'Filtre',
+                    'currency' => 'Preț într-o singură monedă',
+
+                    'preview'  => [
+                        'button'       => 'Previzualizează șablonul',
+                        'title'        => 'Previzualizare șablon',
+                        'refresh'      => 'Reîmprospătează',
+                        'empty'        => 'Șablonul generează o valoare goală.',
+                        'failed'       => 'Previzualizarea nu a putut fi încărcată. Încercați din nou.',
+                        'saved-values' => 'Folosește valorile nesalvate ale secțiunilor încărcate pe această pagină. Celelalte valori provin din ultima salvare.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Grup de atribute:',
                     'title'              => 'Grupuri de atribute',
@@ -676,6 +694,8 @@ return [
                 'usable-in-grid'         => 'Utilizabil în grilă',
                 'is-filterable'          => 'Este filtrabil',
                 'ai-translate'           => 'Traducere IA',
+                'enable-templates'       => 'Activează șabloanele',
+                'templates-unsupported'  => 'Șabloanele pot fi activate doar pentru atributele de tip text și câmp text care nu au validare a intrării și nu sunt unice.',
                 'invalid-swatch-type'    => 'Atributul :attribute nu este permis pentru tipul de atribut :type cu tipul de eșantion :swatch_type.',
                 'single-object-only'     => 'Fiecare cerere de creare trebuie să trimită un singur obiect de atribut.',
                 'option'                 => [
@@ -2056,20 +2076,24 @@ return [
         ],
 
         'appearance' => [
-            'title'          => 'Appearance',
-            'info'           => 'Logo și favicon.',
-            'section-title'  => 'Visual Branding',
-            'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
-            'logo'           => 'Logo',
-            'logo-size'      => 'Recommended image resolution: 192px X 50px',
-            'favicon'        => 'Favicon',
-            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
-            'no-logo'        => 'No logo uploaded yet.',
-            'no-favicon'     => 'No favicon uploaded yet.',
-            'upload-cta'     => 'Click to upload',
-            'upload-hint'    => ' or drag and drop',
-            'save-btn'       => 'Save Appearance',
-            'update-success' => 'Appearance updated successfully.',
+            'title'             => 'Aspect',
+            'info'              => 'Logo și favicon.',
+            'section-title'     => 'Identitate vizuală',
+            'section-info'      => 'Încărcați propriul logo și favicon, cu versiuni opționale pentru modul întunecat. Modificările se aplică după salvare.',
+            'logo'              => 'Logo',
+            'logo-size'         => 'Rezoluție recomandată a imaginii: 192px X 50px',
+            'favicon'           => 'Favicon',
+            'favicon-size'      => 'Rezoluție recomandată a imaginii: 16px X 16px',
+            'dark-logo'         => 'Logo pentru modul întunecat',
+            'dark-logo-info'    => 'Afișat în modul întunecat. Lăsați gol pentru a folosi logo-ul de mai sus.',
+            'dark-favicon'      => 'Favicon pentru modul întunecat',
+            'dark-favicon-info' => 'Afișat în modul întunecat. Lăsați gol pentru a folosi favicon-ul de mai sus.',
+            'no-logo'           => 'Nu a fost încărcat încă niciun logo.',
+            'no-favicon'        => 'Nu a fost încărcat încă niciun favicon.',
+            'upload-cta'        => 'Faceți clic pentru a încărca',
+            'upload-hint'       => ' sau trageți și plasați',
+            'save-btn'          => 'Salvează aspectul',
+            'update-success'    => 'Aspectul a fost actualizat cu succes.',
         ],
         'roles' => [
             'index' => [

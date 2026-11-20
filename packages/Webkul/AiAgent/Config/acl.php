@@ -343,6 +343,13 @@ return [
     ],
 
     [
+        'key'   => 'data_transfer.export.execute',
+        'name'  => 'admin::app.acl.execute',
+        'route' => 'ai-agent.exports.download',
+        'sort'  => 4,
+    ],
+
+    [
         'key'    => 'ai-agent.dashboard',
         'name'   => 'ai-agent::app.acl.dashboard',
         'route'  => 'ai-agent.dashboard.audit-trail',

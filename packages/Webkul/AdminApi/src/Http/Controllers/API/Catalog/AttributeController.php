@@ -3,6 +3,7 @@
 namespace Webkul\AdminApi\Http\Controllers\API\Catalog;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Validator;
@@ -97,6 +98,10 @@ class AttributeController extends ApiController
             return $this->validateErrorResponse([
                 'immutable' => [trans('admin::app.catalog.attributes.immutable-fields', ['fields' => implode(', ', $immutable)])],
             ]);
+        }
+
+        if ($denied = $this->deniedChildWrites($request->input('options'), 'api.catalog.attributes', 'options')) {
+            return $denied;
         }
 
         $requestData = $request->except(['type', 'code', 'swatch_type', 'value_per_locale', 'value_per_channel', 'is_unique']);
@@ -196,9 +201,9 @@ class AttributeController extends ApiController
                     continue;
                 }
 
-                $this->attributeOptionRepository->create(array_merge([
+                $this->attributeOptionRepository->create(array_merge(Arr::except($optionInputs, ['attribute_id']), [
                     'attribute_id' => $attribute->id,
-                ], $optionInputs));
+                ]));
             }
 
             if (! empty($errors)) {
@@ -244,6 +249,12 @@ class AttributeController extends ApiController
                 $attributeOption = $this->attributeOptionRepository
                     ->findOneWhere(['code' => $optionInputs['code'], 'attribute_id' => $attribute->id]);
                 if (! $attributeOption) {
+                    if (! $this->apiKeyAllows('api.catalog.attributes.create')) {
+                        $errors[$optionInputs['code']] = [trans('admin::app.common.unauthorized')];
+
+                        continue;
+                    }
+
                     $validator = $this->optionValidate($optionInputs, $attribute->id);
                     if ($validator->fails()) {
                         $errors[] = $validator->errors();
@@ -251,11 +262,13 @@ class AttributeController extends ApiController
                         continue;
                     }
 
-                    $this->attributeOptionRepository->create(array_merge([
+                    $this->attributeOptionRepository->create(array_merge(Arr::except($optionInputs, ['attribute_id']), [
                         'attribute_id' => $attribute->id,
-                    ], $optionInputs));
+                    ]));
                 } else {
-                    $this->attributeOptionRepository->update($optionInputs, $attributeOption->id);
+                    $this->attributeOptionRepository->update(array_merge(Arr::except($optionInputs, ['attribute_id']), [
+                        'attribute_id' => $attribute->id,
+                    ]), $attributeOption->id);
                 }
             }
 

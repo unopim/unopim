@@ -285,6 +285,24 @@ return [
                     'root-not-allowed' => 'Rotkategorin kan inte tilldelas en produkt.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Hjälp för mallar',
+                    'title'    => 'Dynamiska mallar',
+                    'info'     => 'Skriv @ för att infoga ett annat attribut från den här produkten. Variabler ersätts med produktens värden vid export.',
+                    'example'  => 'Exempel',
+                    'filters'  => 'Filter',
+                    'currency' => 'Pris i en valuta',
+
+                    'preview'  => [
+                        'button'       => 'Förhandsgranska mall',
+                        'title'        => 'Förhandsgranskning av mall',
+                        'refresh'      => 'Uppdatera',
+                        'empty'        => 'Mallen ger ett tomt värde.',
+                        'failed'       => 'Förhandsgranskningen kunde inte läsas in. Försök igen.',
+                        'saved-values' => 'Använder de osparade värdena från avsnitten som har lästs in på den här sidan. Övriga värden kommer från den senaste sparningen.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Attributgrupp:',
                     'title'              => 'Attributgrupper',
@@ -675,6 +693,8 @@ return [
                 'usable-in-grid'         => 'Kan användas i rutnät',
                 'is-filterable'          => 'Är filtrerbar',
                 'ai-translate'           => 'AI Översättning',
+                'enable-templates'       => 'Aktivera mallar',
+                'templates-unsupported'  => 'Mallar kan endast aktiveras för text- och textområdesattribut som saknar inmatningsvalidering och inte är unika.',
                 'invalid-swatch-type'    => 'Attributet :attribute är inte tillåtet för attributtyp :type med swatchtyp :swatch_type.',
                 'single-object-only'     => 'Varje skapandeförfrågan får endast innehålla ett attributobjekt.',
                 'option'                 => [
@@ -2056,20 +2076,24 @@ return [
         ],
 
         'appearance' => [
-            'title'          => 'Appearance',
-            'info'           => 'Logotyp och favicon.',
-            'section-title'  => 'Visual Branding',
-            'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
-            'logo'           => 'Logo',
-            'logo-size'      => 'Recommended image resolution: 192px X 50px',
-            'favicon'        => 'Favicon',
-            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
-            'no-logo'        => 'No logo uploaded yet.',
-            'no-favicon'     => 'No favicon uploaded yet.',
-            'upload-cta'     => 'Click to upload',
-            'upload-hint'    => ' or drag and drop',
-            'save-btn'       => 'Save Appearance',
-            'update-success' => 'Appearance updated successfully.',
+            'title'             => 'Utseende',
+            'info'              => 'Logotyp och favicon.',
+            'section-title'     => 'Visuell identitet',
+            'section-info'      => 'Ladda upp din egen logotyp och favicon, med valfria versioner för mörkt läge. Ändringarna tillämpas när du sparar.',
+            'logo'              => 'Logotyp',
+            'logo-size'         => 'Rekommenderad bildupplösning: 192px X 50px',
+            'favicon'           => 'Favicon',
+            'favicon-size'      => 'Rekommenderad bildupplösning: 16px X 16px',
+            'dark-logo'         => 'Logotyp för mörkt läge',
+            'dark-logo-info'    => 'Visas i mörkt läge. Lämna tomt för att använda logotypen ovan.',
+            'dark-favicon'      => 'Favicon för mörkt läge',
+            'dark-favicon-info' => 'Visas i mörkt läge. Lämna tomt för att använda faviconen ovan.',
+            'no-logo'           => 'Ingen logotyp har laddats upp ännu.',
+            'no-favicon'        => 'Ingen favicon har laddats upp ännu.',
+            'upload-cta'        => 'Klicka för att ladda upp',
+            'upload-hint'       => ' eller dra och släpp',
+            'save-btn'          => 'Spara utseende',
+            'update-success'    => 'Utseendet har uppdaterats.',
         ],
         'roles' => [
             'index' => [

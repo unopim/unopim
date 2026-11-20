@@ -286,6 +286,24 @@ return [
                     'root-not-allowed' => 'Rotkategorien kan ikke tildeles et produkt.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Hjelp for maler',
+                    'title'    => 'Dynamiske maler',
+                    'info'     => 'Skriv @ for å sette inn et annet attributt fra dette produktet. Variabler erstattes med produktverdiene ved eksport.',
+                    'example'  => 'Eksempel',
+                    'filters'  => 'Filtre',
+                    'currency' => 'Pris i én valuta',
+
+                    'preview'  => [
+                        'button'       => 'Forhåndsvis mal',
+                        'title'        => 'Forhåndsvisning av mal',
+                        'refresh'      => 'Oppdater',
+                        'empty'        => 'Malen gir en tom verdi.',
+                        'failed'       => 'Forhåndsvisningen kunne ikke lastes inn. Prøv igjen.',
+                        'saved-values' => 'Bruker de ulagrede verdiene fra seksjonene som er lastet inn på denne siden. Andre verdier kommer fra siste lagring.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Attributtgruppe:',
                     'title'              => 'Attributtgrupper',
@@ -676,6 +694,8 @@ return [
                 'usable-in-grid'         => 'Brukes i rutenett',
                 'is-filterable'          => 'Er filtrerbar',
                 'ai-translate'           => 'AI Oversettelse',
+                'enable-templates'       => 'Aktiver maler',
+                'templates-unsupported'  => 'Maler kan bare aktiveres for tekst- og tekstområdeattributter som ikke har inndatavalidering og ikke er unike.',
                 'invalid-swatch-type'    => ':attribute er ikke tillatt for attributttype :type med fargeprøvetype :swatch_type.',
                 'single-object-only'     => 'Hver opprettelsesforespørsel må inneholde kun ett attributtobjekt.',
                 'option'                 => [
@@ -2056,20 +2076,24 @@ return [
         ],
 
         'appearance' => [
-            'title'          => 'Appearance',
-            'info'           => 'Logo og favikon.',
-            'section-title'  => 'Visual Branding',
-            'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
-            'logo'           => 'Logo',
-            'logo-size'      => 'Recommended image resolution: 192px X 50px',
-            'favicon'        => 'Favicon',
-            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
-            'no-logo'        => 'No logo uploaded yet.',
-            'no-favicon'     => 'No favicon uploaded yet.',
-            'upload-cta'     => 'Click to upload',
-            'upload-hint'    => ' or drag and drop',
-            'save-btn'       => 'Save Appearance',
-            'update-success' => 'Appearance updated successfully.',
+            'title'             => 'Utseende',
+            'info'              => 'Logo og favikon.',
+            'section-title'     => 'Visuell profil',
+            'section-info'      => 'Last opp din egen logo og favicon, med valgfrie versjoner for mørk modus. Endringene tas i bruk når du lagrer.',
+            'logo'              => 'Logo',
+            'logo-size'         => 'Anbefalt bildeoppløsning: 192px X 50px',
+            'favicon'           => 'Favikon',
+            'favicon-size'      => 'Anbefalt bildeoppløsning: 16px X 16px',
+            'dark-logo'         => 'Logo for mørk modus',
+            'dark-logo-info'    => 'Vises i mørk modus. La feltet stå tomt for å bruke logoen ovenfor.',
+            'dark-favicon'      => 'Favicon for mørk modus',
+            'dark-favicon-info' => 'Vises i mørk modus. La feltet stå tomt for å bruke faviconet ovenfor.',
+            'no-logo'           => 'Ingen logo er lastet opp ennå.',
+            'no-favicon'        => 'Ingen favikon er lastet opp ennå.',
+            'upload-cta'        => 'Klikk for å laste opp',
+            'upload-hint'       => ' eller dra og slipp',
+            'save-btn'          => 'Lagre utseende',
+            'update-success'    => 'Utseendet ble oppdatert.',
         ],
         'roles' => [
             'index' => [

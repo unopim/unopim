@@ -119,7 +119,7 @@
                                         type="text"
                                         name="title"
                                         v-model="title"
-                                        rules="required"
+                                        rules="required|max:255"
                                     />
                                     <x-admin::form.control-group.error control-name="title" />
                                 </x-admin::form.control-group>
@@ -341,7 +341,14 @@
                             .catch(error => {
                                 if (error.response.status == 422) {
                                     setErrors(error.response.data.errors);
+
+                                    return;
                                 }
+
+                                this.$emitter.emit('add-flash', {
+                                    type: 'error',
+                                    message: error.response?.data?.message ?? error.message
+                                });
                             });
                     },
 

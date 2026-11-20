@@ -286,6 +286,24 @@ return [
                     'root-not-allowed' => 'A categoria raiz não pode ser atribuída a um produto.',
                 ],
 
+                'templates' => [
+                    'help'     => 'Ajuda de modelos',
+                    'title'    => 'Modelos dinâmicos',
+                    'info'     => 'Escreva @ para inserir outro atributo deste produto. As variáveis são substituídas pelos valores do produto na exportação.',
+                    'example'  => 'Exemplo',
+                    'filters'  => 'Filtros',
+                    'currency' => 'Preço numa única moeda',
+
+                    'preview'  => [
+                        'button'       => 'Pré-visualizar modelo',
+                        'title'        => 'Pré-visualização do modelo',
+                        'refresh'      => 'Atualizar',
+                        'empty'        => 'O modelo gera um valor vazio.',
+                        'failed'       => 'Não foi possível carregar a pré-visualização. Tente novamente.',
+                        'saved-values' => 'Utiliza os valores não guardados das secções carregadas nesta página. Os restantes valores vêm da última gravação.',
+                    ],
+                ],
+
                 'attribute-groups' => [
                     'label'              => 'Grupo de atributos:',
                     'title'              => 'Grupos de atributos',
@@ -676,6 +694,8 @@ return [
                 'usable-in-grid'         => 'Usável na grade',
                 'is-filterable'          => 'É filtrável',
                 'ai-translate'           => 'Tradução IA',
+                'enable-templates'       => 'Ativar modelos',
+                'templates-unsupported'  => 'Os modelos só podem ser ativados em atributos de texto e área de texto que não tenham validação de entrada e não sejam únicos.',
                 'invalid-swatch-type'    => 'O :attribute não é permitido para o tipo de atributo :type com o tipo de amostra :swatch_type.',
                 'single-object-only'     => 'Cada pedido de criação deve enviar um único objeto de atributo.',
                 'option'                 => [
@@ -2056,20 +2076,24 @@ return [
         ],
 
         'appearance' => [
-            'title'          => 'Appearance',
-            'info'           => 'Logótipo e favicon.',
-            'section-title'  => 'Visual Branding',
-            'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
-            'logo'           => 'Logo',
-            'logo-size'      => 'Recommended image resolution: 192px X 50px',
-            'favicon'        => 'Favicon',
-            'favicon-size'   => 'Recommended image resolution: 16px X 16px',
-            'no-logo'        => 'No logo uploaded yet.',
-            'no-favicon'     => 'No favicon uploaded yet.',
-            'upload-cta'     => 'Click to upload',
-            'upload-hint'    => ' or drag and drop',
-            'save-btn'       => 'Save Appearance',
-            'update-success' => 'Appearance updated successfully.',
+            'title'             => 'Aspeto',
+            'info'              => 'Logótipo e favicon.',
+            'section-title'     => 'Identidade visual',
+            'section-info'      => 'Carregue o seu próprio logótipo e favicon, com versões opcionais para o modo escuro. As alterações são aplicadas depois de guardar.',
+            'logo'              => 'Logótipo',
+            'logo-size'         => 'Resolução de imagem recomendada: 192px X 50px',
+            'favicon'           => 'Favicon',
+            'favicon-size'      => 'Resolução de imagem recomendada: 16px X 16px',
+            'dark-logo'         => 'Logótipo do modo escuro',
+            'dark-logo-info'    => 'Apresentado no modo escuro. Deixe em branco para utilizar o logótipo acima.',
+            'dark-favicon'      => 'Favicon do modo escuro',
+            'dark-favicon-info' => 'Apresentado no modo escuro. Deixe em branco para utilizar o favicon acima.',
+            'no-logo'           => 'Ainda não foi carregado nenhum logótipo.',
+            'no-favicon'        => 'Ainda não foi carregado nenhum favicon.',
+            'upload-cta'        => 'Clique para carregar',
+            'upload-hint'       => ' ou arraste e largue',
+            'save-btn'          => 'Guardar aspeto',
+            'update-success'    => 'Aspeto atualizado com sucesso.',
         ],
         'roles' => [
             'index' => [

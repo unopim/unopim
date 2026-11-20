@@ -9,39 +9,39 @@ use Webkul\DataTransfer\Support\FormulaGuard;
 const DDE_PAYLOAD = '=cmd|\'/c calc.exe\'!A0';
 
 it('prefixes a formula-shaped CSV cell so it is read as text', function () {
-    Storage::fake('public');
+    Storage::fake('private');
 
     app(ExportProducts::class)->writeCsv('security/export.csv', [
         ['sku', 'name'],
         ['SKU-1', DDE_PAYLOAD],
     ]);
 
-    expect(Storage::disk('public')->get('security/export.csv'))->toContain("'".DDE_PAYLOAD);
+    expect(Storage::disk('private')->get('security/export.csv'))->toContain("'".DDE_PAYLOAD);
 });
 
 it('pins a formula-shaped XLSX cell to text so it never becomes a live formula', function () {
-    Storage::fake('public');
+    Storage::fake('private');
 
     app(ExportProducts::class)->writeXlsx('security/export.xlsx', [
         ['sku', 'name', 'qty'],
         ['SKU-1', '=1+1', 42],
     ]);
 
-    $sheet = IOFactory::load(Storage::disk('public')->path('security/export.xlsx'))->getActiveSheet();
+    $sheet = IOFactory::load(Storage::disk('private')->path('security/export.xlsx'))->getActiveSheet();
 
     expect($sheet->getCell('B2')->getDataType())->toBe(DataType::TYPE_STRING)
         ->and($sheet->getCell('B2')->getValue())->toBe('=1+1');
 });
 
 it('leaves a numeric XLSX cell typed as a number', function () {
-    Storage::fake('public');
+    Storage::fake('private');
 
     app(ExportProducts::class)->writeXlsx('security/numeric.xlsx', [
         ['sku', 'qty'],
         ['SKU-1', 42],
     ]);
 
-    $cell = IOFactory::load(Storage::disk('public')->path('security/numeric.xlsx'))
+    $cell = IOFactory::load(Storage::disk('private')->path('security/numeric.xlsx'))
         ->getActiveSheet()
         ->getCell('B2');
 
