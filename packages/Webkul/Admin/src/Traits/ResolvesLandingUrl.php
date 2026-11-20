@@ -33,39 +33,13 @@ trait ResolvesLandingUrl
         $gate = resolve(ModuleGate::class);
 
         foreach ($items as $item) {
-            if (empty($item['route']) || ! $this->isLandableRoute($item['route'])) {
-                continue;
+            if ($this->canLandOn($item, $aclRoutes, $gate)) {
+                return route($item['route']);
             }
-
-            if (! $gate->allowsKey($item['key']) || ! $gate->allowsRoute($item['route'])) {
-                continue;
-            }
-
-            if (! bouncer()->hasPermission($item['key'])) {
-                continue;
-            }
-
-            $routeAclKey = $aclRoutes[$item['route']] ?? $item['key'];
-
-            if (! bouncer()->hasPermission($routeAclKey)) {
-                continue;
-            }
-
-            return route($item['route']);
         }
 
         foreach (config('acl') ?? [] as $aclItem) {
-            if (empty($aclItem['route']) || ! $this->isLandableRoute($aclItem['route'])) {
-                continue;
-            }
-
-            if (! $gate->allowsKey($aclItem['key']) || ! $gate->allowsRoute($aclItem['route'])) {
-                continue;
-            }
-
-            $routeAclKey = $aclRoutes[$aclItem['route']] ?? $aclItem['key'];
-
-            if (bouncer()->hasPermission($aclItem['key']) && bouncer()->hasPermission($routeAclKey)) {
+            if ($this->canLandOn($aclItem, $aclRoutes, $gate)) {
                 return route($aclItem['route']);
             }
         }
@@ -78,7 +52,30 @@ trait ResolvesLandingUrl
     }
 
     /**
-     * Determine whether the named route can be opened by a redirect.
+     * Determine whether the user may be sent to the item's route: it must be
+     * reachable by a redirect and both the item's ACL key and the key gating
+     * the route itself must be granted.
+     *
+     * @param  array{key?: string, route?: string}  $item
+     * @param  array<string, string>  $aclRoutes
+     */
+    protected function canLandOn(array $item, array $aclRoutes, ModuleGate $gate): bool
+    {
+        if (empty($item['key']) || empty($item['route']) || ! $this->isLandableRoute($item['route'])) {
+            return false;
+        }
+
+        if (! $gate->allowsKey($item['key']) || ! $gate->allowsRoute($item['route'])) {
+            return false;
+        }
+
+        return bouncer()->hasPermission($item['key'])
+            && bouncer()->hasPermission($aclRoutes[$item['route']] ?? $item['key']);
+    }
+
+    /**
+     * Determine whether the named route can be opened by a redirect: a GET
+     * route with no required parameter in its URI or domain.
      */
     protected function isLandableRoute(string $name): bool
     {
@@ -86,6 +83,6 @@ trait ResolvesLandingUrl
 
         return $route !== null
             && in_array('GET', $route->methods(), true)
-            && preg_match('/\{\w+\}/', $route->uri()) === 0;
+            && preg_match('/\{\w+\}/', ($route->getDomain() ?? '').'/'.$route->uri()) === 0;
     }
 }
