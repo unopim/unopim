@@ -85,7 +85,7 @@
                         </div>
                     </div>
 
-                    @if (bouncer()->hasPermission('data_transfer.export.execute'))
+                    @if (collect($jobType::downloadPermissions($jobTrack))->every(fn (string $permission): bool => bouncer()->hasPermission($permission)))
                         <div class="flex gap-2 mb-2" v-if="jobInstance.type == 'export' && importResource.file_path">
                             <a
                                 class="secondary-button"
