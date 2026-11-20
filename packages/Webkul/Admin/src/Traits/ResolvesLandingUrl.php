@@ -13,8 +13,9 @@ trait ResolvesLandingUrl
      * A menu item's own key is not enough: the destination route is gated by its
      * own ACL key (menu key "settings" routes to admin.settings.locales.index,
      * gated by "settings.locales"), so both are checked. The acl config sweep
-     * afterwards covers roles that grant only child-level keys. Falls back to
-     * logging the user out when no entry is reachable.
+     * afterwards covers roles that grant only child-level keys. Routes a plain
+     * redirect cannot reach (non-GET or with required parameters) are skipped.
+     * Falls back to logging the user out when no entry is reachable.
      */
     protected function firstAllowedUrl(): string
     {
@@ -28,7 +29,7 @@ trait ResolvesLandingUrl
         $aclRoutes = optional(app('acl'))->roles ?? [];
 
         foreach ($items as $item) {
-            if (empty($item['route']) || ! Route::has($item['route'])) {
+            if (empty($item['route']) || ! $this->isLandableRoute($item['route'])) {
                 continue;
             }
 
@@ -46,11 +47,13 @@ trait ResolvesLandingUrl
         }
 
         foreach (config('acl') ?? [] as $aclItem) {
-            if (empty($aclItem['route']) || ! Route::has($aclItem['route'])) {
+            if (empty($aclItem['route']) || ! $this->isLandableRoute($aclItem['route'])) {
                 continue;
             }
 
-            if (bouncer()->hasPermission($aclItem['key'])) {
+            $routeAclKey = $aclRoutes[$aclItem['route']] ?? $aclItem['key'];
+
+            if (bouncer()->hasPermission($aclItem['key']) && bouncer()->hasPermission($routeAclKey)) {
                 return route($aclItem['route']);
             }
         }
@@ -60,5 +63,17 @@ trait ResolvesLandingUrl
         session()->flash('error', trans('admin::app.errors.403.message'));
 
         return route('admin.session.create');
+    }
+
+    /**
+     * Determine whether the named route can be opened by a redirect.
+     */
+    protected function isLandableRoute(string $name): bool
+    {
+        $route = Route::getRoutes()->getByName($name);
+
+        return $route !== null
+            && in_array('GET', $route->methods(), true)
+            && preg_match('/\{\w+\}/', $route->uri()) === 0;
     }
 }
