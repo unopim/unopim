@@ -703,11 +703,11 @@ class ImportController extends Controller
     }
 
     /**
-     * Download import error report
+     * Download the uploaded import source file, which needs the import execute permission like the tracker download.
      */
     public function download(int $id)
     {
-        if (! bouncer()->hasPermission('data_transfer.imports')) {
+        if (! bouncer()->hasPermission('data_transfer.imports.execute')) {
             abort(403, trans('admin::app.common.unauthorized'));
         }
 

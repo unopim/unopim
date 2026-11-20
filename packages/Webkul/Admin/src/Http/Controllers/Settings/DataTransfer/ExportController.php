@@ -536,10 +536,14 @@ class ExportController extends Controller
     }
 
     /**
-     * Download export error report
+     * Download the export file, which needs the export execute permission like the tracker download.
      */
     public function download(int $id)
     {
+        if (! bouncer()->hasPermission('data_transfer.export.execute')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $export = $this->findVisibleJobInstance($id);
 
         return Storage::disk('private')->download($export->file_path);
