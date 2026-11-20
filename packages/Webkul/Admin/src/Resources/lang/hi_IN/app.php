@@ -2295,6 +2295,7 @@ return [
             'generate-key-success'           => 'एपीआई कुंजी सफलतापूर्वक उत्पन्न होती है',
             're-generate-secret-key-success' => 'एपीआई सीक्रेट कुंजी सफलतापूर्वक पुनर्जीवित है',
             'client-not-found'               => 'ग्राहक नहीं मिला',
+            'oauth-keys-missing'             => 'API साइनिंग कुंजियाँ मौजूद नहीं हैं या उन्हें बदलना ज़रूरी है। नई कुंजियाँ बनाने के लिए "php artisan unopim:passport:keys" चलाएँ।',
         ],
         'prompt' => [
             'index' => [

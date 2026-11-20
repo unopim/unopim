@@ -2297,6 +2297,7 @@ return [
             'generate-key-success'           => 'Khóa API đã được tạo thành công',
             're-generate-secret-key-success' => 'Khóa bí mật API đã được tạo lại thành công',
             'client-not-found'               => 'Không tìm thấy khách hàng',
+            'oauth-keys-missing'             => 'Khóa ký của API bị thiếu hoặc cần được thay thế. Hãy chạy "php artisan unopim:passport:keys" để tạo khóa mới.',
         ],
         'prompt' => [
             'index' => [

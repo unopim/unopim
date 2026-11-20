@@ -2297,6 +2297,7 @@ return [
             'generate-key-success'           => 'API anahtarı başarıyla oluşturuldu',
             're-generate-secret-key-success' => 'API gizli anahtar başarıyla yeniden oluşturuldu',
             'client-not-found'               => 'Müşteri Bulunamadı',
+            'oauth-keys-missing'             => 'API imzalama anahtarları eksik veya değiştirilmesi gerekiyor. Yenilerini oluşturmak için "php artisan unopim:passport:keys" komutunu çalıştırın.',
         ],
         'prompt' => [
             'index' => [

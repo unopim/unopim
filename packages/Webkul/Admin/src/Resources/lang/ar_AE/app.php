@@ -2295,6 +2295,7 @@ return [
             'generate-key-success'           => 'يتم إنشاء مفتاح API بنجاح',
             're-generate-secret-key-success' => 'يتم تجديد مفتاح API السري بنجاح',
             'client-not-found'               => 'لم يتم العثور على العميل',
+            'oauth-keys-missing'             => 'مفاتيح توقيع واجهة API مفقودة أو يجب استبدالها. شغّل "php artisan unopim:passport:keys" لإنشاء مفاتيح جديدة.',
         ],
         'prompt' => [
             'index' => [
