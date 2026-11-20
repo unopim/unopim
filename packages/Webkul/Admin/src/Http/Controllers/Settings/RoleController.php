@@ -25,7 +25,8 @@ class RoleController extends Controller
      */
     public function __construct(
         protected RoleRepository $roleRepository,
-        protected AdminRepository $adminRepository
+        protected AdminRepository $adminRepository,
+        protected RoleAccessGuard $roleAccessGuard,
     ) {}
 
     /**
@@ -92,6 +93,10 @@ class RoleController extends Controller
      */
     public function update(RoleForm $request, int $id): JsonResponse|RedirectResponse
     {
+        if ($error = $this->targetAccessError($this->roleRepository->findOrFail($id))) {
+            return $this->respondError(trans($error), JsonResponse::HTTP_FORBIDDEN, route('admin.settings.roles.index'));
+        }
+
         $data = $request->only([
             'name',
             'description',
@@ -139,6 +144,10 @@ class RoleController extends Controller
     {
         $role = $this->roleRepository->findOrFail($id);
 
+        if ($error = $this->targetAccessError($role)) {
+            return new JsonResponse(['message' => trans($error)], JsonResponse::HTTP_FORBIDDEN);
+        }
+
         if ($role->admins()->exists()) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.roles.being-used-by', ['name' => $role->admins()->orderBy('id')->value('name')]),
@@ -165,5 +174,13 @@ class RoleController extends Controller
         return new JsonResponse([
             'message' => trans('admin::app.settings.roles.delete-failed'),
         ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Translation key explaining why the acting admin may not change or delete the role's current access, or null when it may.
+     */
+    protected function targetAccessError(Role $role): ?string
+    {
+        return $this->roleAccessGuard->grantError(auth()->guard('admin')->user(), $role->permission_type, (array) ($role->permissions ?? []));
     }
 }
