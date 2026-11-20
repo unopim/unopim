@@ -3,6 +3,7 @@
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Webkul\MagicAI\Services\ScopedProviderConfig;
+use Webkul\Webhook\Validators\SafeWebhookUrl;
 
 beforeEach(function () {
     config(['ai.providers.openai' => ['key' => 'env-key', 'url' => 'https://api.openai.com/v1']]);
@@ -61,11 +62,32 @@ it('pins a platform base url and turns redirects off for the provider call', fun
         ->and(sentHttpOptions())->not->toHaveKey('curl');
 });
 
-it('pins only requests to the platform host', function (): void {
-    $seen = ScopedProviderConfig::run('openai', ['url' => 'https://1.1.1.1/v1'], fn (): array => sentHttpOptions('https://8.8.8.8/v1/models'));
+it('refuses a request to any other host while a platform url is in scope', function (): void {
+    Http::fake();
+
+    expect(fn () => ScopedProviderConfig::run('openai', ['url' => 'https://1.1.1.1/v1'], fn () => Http::get('https://8.8.8.8/v1/models')))
+        ->toThrow(RuntimeException::class, trans('admin::app.configuration.platform.message.unsafe-api-url'));
+
+    Http::assertNothingSent();
+});
+
+it('lets a request already pinned to its own host by another guarded sink through', function (): void {
+    $seen = ScopedProviderConfig::run('openai', ['url' => 'https://1.1.1.1/v1'], function (): array {
+        $sent = [];
+
+        Http::fake(function (Request $request, array $options) use (&$sent) {
+            $sent = $options;
+
+            return Http::response([]);
+        });
+
+        Http::withOptions(SafeWebhookUrl::httpOptions('https://8.8.8.8/hook'))->post('https://8.8.8.8/hook');
+
+        return $sent;
+    });
 
     expect($seen['allow_redirects'])->toBeFalse()
-        ->and($seen)->not->toHaveKey('curl');
+        ->and($seen['curl'][CURLOPT_RESOLVE])->toBe(['8.8.8.8:443:8.8.8.8']);
 });
 
 it('turns redirects off even when the provider uses its default url', function (): void {
