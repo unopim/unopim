@@ -28,8 +28,6 @@ abstract class DataGrid
      */
     const MATCHING_IDS_BATCH_SIZE = 1000;
 
-    protected const HTML_TAG_PATTERN = '/<!--.*?-->|<\/?[a-z][a-z0-9-]*(?:\s[^<>]*)?\/?>/is';
-
     /**
      * Primary column.
      *
@@ -42,13 +40,6 @@ abstract class DataGrid
      * Grids where a whole-result-set mass action is unsafe or meaningless can disable it.
      */
     protected bool $enableSelectAll = true;
-
-    /**
-     * Whether non-closure columns render as escaped text (the shared datagrid table's v-text cells).
-     * Such grids show a stored "<" (e.g. "Washer <5mm thick") and drop only real HTML tags; keep it
-     * false for a grid whose view prints plain columns with v-html.
-     */
-    protected bool $plainTextColumns = false;
 
     /**
      * Default sort column of datagrid.
@@ -584,8 +575,6 @@ abstract class DataGrid
         }
 
         foreach ($paginator['data'] as $record) {
-            $storedRecord = clone $record;
-
             $record = $this->sanitizeRow($record);
 
             foreach ($this->columns as $column) {
@@ -595,8 +584,6 @@ abstract class DataGrid
                     $record->is_closure = true;
                 }
             }
-
-            $this->restorePlainTextColumns($record, $storedRecord);
 
             $record->actions = [];
 
@@ -654,34 +641,6 @@ abstract class DataGrid
         $this->setQueryBuilder();
 
         $this->processRequest();
-    }
-
-    /**
-     * Show plain-text columns as stored minus real HTML tags; closure columns keep the fully sanitized row.
-     */
-    protected function restorePlainTextColumns(object $record, object $storedRecord): void
-    {
-        if (! $this->plainTextColumns) {
-            return;
-        }
-
-        foreach ($this->columns as $column) {
-            $index = $column->index;
-
-            if ($column->closure || ! is_string($storedRecord->{$index} ?? null)) {
-                continue;
-            }
-
-            $record->{$index} = $this->stripHtmlTags($storedRecord->{$index});
-        }
-    }
-
-    /**
-     * Remove only well-formed HTML tags and comments, so a stray "<" such as "<5mm" stays visible.
-     */
-    protected function stripHtmlTags(mixed $value): mixed
-    {
-        return is_string($value) ? (preg_replace(self::HTML_TAG_PATTERN, '', $value) ?? $value) : $value;
     }
 
     /**

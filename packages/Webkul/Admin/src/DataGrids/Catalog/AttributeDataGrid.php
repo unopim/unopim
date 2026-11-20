@@ -8,8 +8,6 @@ use Webkul\DataGrid\DataGrid;
 
 class AttributeDataGrid extends DataGrid
 {
-    protected bool $plainTextColumns = true;
-
     protected array $typeConfig = [];
 
     /**
