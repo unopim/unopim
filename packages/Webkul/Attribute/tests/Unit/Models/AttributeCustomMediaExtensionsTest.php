@@ -88,11 +88,11 @@ it('normalises configured extensions to lowercase without a leading dot', functi
 it('uses the per-attribute max file size in the client-side size rule', function (string $type) {
     $attribute = Attribute::factory()->make(['type' => $type, 'max_file_size' => 25]);
 
-    expect($attribute->getValidationsField())->toContain('size:25600');
+    expect(json_decode($attribute->getValidationsField(), true)['size'])->toBe(25600);
 })->with(['file', 'image']);
 
 it('falls back to the global upload size in the client-side size rule', function (string $type) {
     $attribute = Attribute::factory()->make(['type' => $type, 'max_file_size' => null]);
 
-    expect($attribute->getValidationsField())->toContain('size:2048');
+    expect(json_decode($attribute->getValidationsField(), true)['size'])->toBe(2048);
 })->with(['file', 'image']);
