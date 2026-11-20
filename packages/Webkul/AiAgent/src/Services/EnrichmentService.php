@@ -29,6 +29,11 @@ class EnrichmentService
         'product_number',
     ];
 
+    /**
+     * Output budget (maxTokens) of a single enrichment call.
+     */
+    public const MAX_OUTPUT_TOKENS = 2048;
+
     public function __construct(
         protected AiApiClient $apiClient,
         protected CredentialRepository $credentialRepository,
@@ -43,18 +48,9 @@ class EnrichmentService
      */
     public function enrich(ImageProductContext $ctx, int $credentialId = 0, ?AiApiClient $apiClient = null, array $options = []): ImageProductContext
     {
-        // Check completeness against locale-specific data only.  Merging with
-        // $ctx->enrichment (previously generated fields from this same run) is
-        // still correct; the caller must NOT merge $common into $ctx->attributes
-        // so that content from another locale does not suppress generation here.
-        $existing = array_merge($ctx->enrichment, $ctx->attributes);
+        $messages = $this->previewMessages($ctx, $options);
 
-        $missing = array_filter(
-            self::TARGETS,
-            fn (string $key): bool => empty($existing[$key]),
-        );
-
-        if ($missing === []) {
+        if ($messages === []) {
             return $ctx;
         }
 
@@ -70,16 +66,7 @@ class EnrichmentService
             $this->apiClient->configure($config);
         }
 
-        $locale = $options['locale'] ?? 'en';
-        $instruction = $options['instruction'] ?? '';
-        // $common holds product-level fields (e.g. English content) passed as
-        // reference so the AI can translate/adapt, without polluting the
-        // completeness check above.
-        $common = $options['common'] ?? [];
-
-        $messages = $this->buildMessages($existing, array_values($missing), $locale, $instruction, $ctx, $common);
-
-        $response = $this->apiClient->chat(messages: $messages, maxTokens: 2048, temperature: 0.6);
+        $response = $this->apiClient->chat(messages: $messages, maxTokens: self::MAX_OUTPUT_TOKENS, temperature: 0.6);
         $generated = $this->parseResponse($response['content'] ?? '');
 
         // Score: AI-generated fields get medium confidence
@@ -98,6 +85,64 @@ class EnrichmentService
         return $ctx
             ->withEnrichment($generated)
             ->withConfidence($confidence);
+    }
+
+    /**
+     * Build the messages an enrichment call would send, without calling the provider.
+     * Returns an empty array when every target attribute is already filled.
+     *
+     * Completeness is checked against the locale-specific attributes only; the
+     * product-level `common` values are passed as reference so content present
+     * in another locale does not suppress generation here.
+     *
+     * @param  array<string, mixed>  $options
+     * @return array<int, array{role: string, content: string}>
+     */
+    public function previewMessages(ImageProductContext $ctx, array $options = []): array
+    {
+        $existing = array_merge($ctx->enrichment, $ctx->attributes);
+
+        $missing = array_filter(
+            self::TARGETS,
+            fn (string $key): bool => empty($existing[$key]),
+        );
+
+        if ($missing === []) {
+            return [];
+        }
+
+        return $this->buildMessages(
+            $existing,
+            array_values($missing),
+            $options['locale'] ?? 'en',
+            $options['instruction'] ?? '',
+            $ctx,
+            $options['common'] ?? [],
+        );
+    }
+
+    /**
+     * Build the enrichment context and options for a stored product's values,
+     * scoped to one channel and locale.
+     *
+     * @param  array<string, mixed>  $values
+     * @return array{0: ImageProductContext, 1: array<string, mixed>}
+     */
+    public function productContext(array $values, string $channel, string $locale, string $instruction = ''): array
+    {
+        $common = $values['common'] ?? [];
+
+        $ctx = new ImageProductContext(
+            detectedProduct: $common['product_type'] ?? null,
+            attributes: $values['channel_locale_specific'][$channel][$locale] ?? [],
+            category: $values['categories'][0] ?? null,
+        );
+
+        return [$ctx, [
+            'locale'      => $locale,
+            'instruction' => $instruction,
+            'common'      => $common,
+        ]];
     }
 
     /**
