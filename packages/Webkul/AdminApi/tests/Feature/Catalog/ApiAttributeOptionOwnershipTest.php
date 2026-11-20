@@ -57,3 +57,31 @@ it('rejects options of another attribute in a REST attribute update', function (
         ->and(apiOptionOwner('api_foreign_update'))->toBe([$this->other->id])
         ->and(apiOptionOwner('api_hijacked'))->toBe([]);
 });
+
+it('does not let an edit-only API key add options through the REST option update', function () {
+    $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.attributes.edit']);
+    $option = AttributeOption::create(['code' => 'api_edit_only_existing', 'sort_order' => 1, 'attribute_id' => $this->attribute->id]);
+
+    $this->withHeaders($headers)
+        ->json('PUT', route('admin.api.attribute_options.update_option', $this->attribute->code), [
+            ['code' => $option->code, 'sort_order' => 4],
+            ['code' => 'api_edit_only_new'],
+        ])
+        ->assertUnprocessable()
+        ->assertJsonPath('errors.api_edit_only_new.0', trans('admin::app.common.unauthorized'));
+
+    expect(apiOptionOwner('api_edit_only_new'))->toBe([])
+        ->and((int) $option->fresh()->sort_order)->toBe(4);
+});
+
+it('lets an API key holding the create permission add options through the REST option update', function () {
+    $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.attributes.edit', 'api.catalog.attributes.create']);
+
+    $this->withHeaders($headers)
+        ->json('PUT', route('admin.api.attribute_options.update_option', $this->attribute->code), [
+            ['code' => 'api_create_allowed_new'],
+        ])
+        ->assertOk();
+
+    expect(apiOptionOwner('api_create_allowed_new'))->toBe([$this->attribute->id]);
+});
