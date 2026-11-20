@@ -1715,6 +1715,9 @@ app.component('v-agenting-pim', {
             if (key) delete this.extensionContext[key];
         },
 
+        /**
+         * Send the message with the locale and channel of the page being viewed.
+         */
         async send(retryRequestId = null) {
             const text = this.inputText.trim();
             const files = [...this.pendingFiles];
@@ -1738,6 +1741,15 @@ app.component('v-agenting-pim', {
                 fd.append('extensions', JSON.stringify(selectedContext));
                 fd.append('history', JSON.stringify(this.messages.slice(0, -1).map(m => ({ role: m.role, content: m.content || '' }))));
                 fd.append('context[current_page]', window.location.pathname);
+                const scopeParams = new URLSearchParams(window.location.search);
+                const scopeLocale = scopeParams.get('locale')
+                    || document.querySelector('input[data-catalog-scope][name="locale"]')?.value
+                    || '';
+                const scopeChannel = scopeParams.get('channel')
+                    || document.querySelector('input[data-catalog-scope][name="channel"]')?.value
+                    || '';
+                if (scopeLocale) fd.append('context[locale]', scopeLocale);
+                if (scopeChannel) fd.append('context[channel]', scopeChannel);
                 if (this.productContext) {
                     fd.append('context[product_id]', this.productContext.id);
                     if (this.productContext.sku) fd.append('context[product_sku]', this.productContext.sku);

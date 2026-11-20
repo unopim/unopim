@@ -10,6 +10,8 @@ use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 use Webkul\AiAgent\Jobs\TranslateProductValuesJob;
 use Webkul\AiAgent\Services\ProductWriterService;
+use Webkul\Attribute\Contracts\Attribute;
+use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Product\Repositories\ProductRepository;
 
 class UpdateProduct implements PimTool
@@ -40,17 +42,23 @@ class UpdateProduct implements PimTool
 
             public function description(): string
             {
-                return 'Update product attributes by SKU. Pass changes as JSON in changes_json.';
+                return 'Update product attributes by SKU. Pass changes as JSON in changes_json. '
+                    .'For attributes that hold a value per locale (name, description, ...), pass "locale" '
+                    .'to choose which locale is written; without it the conversation locale is used.';
             }
 
             public function schema(JsonSchema $schema): array
             {
                 return [
                     'sku'          => $schema->string()->description('Product SKU to update (can be comma-separated for bulk)'),
-                    'changes_json' => $schema->string()->description('JSON string of attribute_code => new_value pairs to update (e.g. {"name": "New Name", "price": 29.99, "color": "Red"})'),
+                    'changes_json' => $schema->string()->description('JSON string of attribute_code => new_value pairs to update (e.g. {"name": "New Name", "price": 29.99, "color": "Red"}). A per-locale attribute may also take a locale map, e.g. {"description": {"en_US": "...", "de_DE": "..."}}'),
+                    'locale'       => $schema->string()->description('Locale code to write locale-scoped attributes to (e.g. de_DE). Defaults to the conversation locale. Attributes that are not per-locale ignore this.'),
                 ];
             }
 
+            /**
+             * Apply the requested attribute changes to each SKU and report the outcome.
+             */
             public function handle(Request $request): string
             {
                 if ($denied = $this->denyUnlessAllowed($this->context, 'catalog.products.edit')) {
@@ -73,6 +81,16 @@ class UpdateProduct implements PimTool
                 $productRepo = resolve(ProductRepository::class);
                 $currencies = $this->writerService->getActiveCurrencyCodes();
                 $activeLocaleCodes = array_flip(core()->getAllActiveLocales()->pluck('code')->all());
+
+                $requestedLocale = trim($request->string('locale')->toString());
+                $targetLocale = $requestedLocale !== '' ? $requestedLocale : (string) $this->context->locale;
+
+                if (! isset($activeLocaleCodes[$targetLocale]) && $this->writesToTargetLocale($changes, $activeLocaleCodes)) {
+                    return json_encode([
+                        'error'          => "Unknown or inactive locale: {$targetLocale}",
+                        'active_locales' => array_keys($activeLocaleCodes),
+                    ]);
+                }
 
                 foreach ($skus as $s) {
                     $product = $productRepo->findOneByField('sku', $s);
@@ -103,7 +121,18 @@ class UpdateProduct implements PimTool
                         // Detect and route each locale value to the correct bucket.
                         if (is_array($value) && $value !== []) {
                             $localeKeys = array_keys($value);
-                            $looksLikeLocaleMap = isset($activeLocaleCodes[(string) ($localeKeys[0] ?? '')]);
+                            $unknownLocaleKeys = array_values(array_filter(
+                                $localeKeys,
+                                fn (int|string $localeKey): bool => ! isset($activeLocaleCodes[(string) $localeKey])
+                            ));
+                            $looksLikeLocaleMap = $unknownLocaleKeys === [];
+
+                            if (! $looksLikeLocaleMap && \count($unknownLocaleKeys) < \count($localeKeys)) {
+                                $errors[] = "{$code}: unknown or inactive locale keys ".implode(', ', $unknownLocaleKeys)
+                                    ." on SKU {$s}; active locales: ".implode(', ', array_keys($activeLocaleCodes));
+
+                                continue;
+                            }
 
                             if ($looksLikeLocaleMap && isset($familyAttributes[$code])) {
                                 $meta = $familyAttributes[$code];
@@ -177,9 +206,9 @@ class UpdateProduct implements PimTool
                         // Route to correct bucket — source locale + translate others
                         if ($meta['value_per_channel'] && $meta['value_per_locale']) {
                             foreach ($allChannels as $ch) {
-                                $values['channel_locale_specific'][$ch->code][$this->context->locale][$code] = $value;
+                                $values['channel_locale_specific'][$ch->code][$targetLocale][$code] = $value;
                             }
-                            if (\in_array($meta['type'], ['text', 'textarea'], true) && is_string($value)) {
+                            if ($requestedLocale === '' && \in_array($meta['type'], ['text', 'textarea'], true) && is_string($value)) {
                                 $translatableFields[$code] = $value;
                             }
                         } elseif ($meta['value_per_channel']) {
@@ -187,8 +216,8 @@ class UpdateProduct implements PimTool
                                 $values['channel_specific'][$ch->code][$code] = $value;
                             }
                         } elseif ($meta['value_per_locale']) {
-                            $values['locale_specific'][$this->context->locale][$code] = $value;
-                            if (\in_array($meta['type'], ['text', 'textarea'], true) && is_string($value)) {
+                            $values['locale_specific'][$targetLocale][$code] = $value;
+                            if ($requestedLocale === '' && \in_array($meta['type'], ['text', 'textarea'], true) && is_string($value)) {
                                 $translatableFields[$code] = $value;
                             }
                         } else {
@@ -201,7 +230,7 @@ class UpdateProduct implements PimTool
 
                     // Dispatch translation for text fields
                     if ($translatableFields !== []) {
-                        dispatch(new TranslateProductValuesJob(productId: $productId, sourceLocale: $this->context->locale, fieldsToTranslate: $translatableFields, channel: $this->context->channel))->delay(now()->addSeconds(3));
+                        dispatch(new TranslateProductValuesJob(productId: $productId, sourceLocale: $targetLocale, fieldsToTranslate: $translatableFields, channel: $this->context->channel))->delay(now()->addSeconds(3));
                     }
                 }
 
@@ -212,6 +241,37 @@ class UpdateProduct implements PimTool
                         'errors'  => $errors === [] ? null : $errors,
                     ],
                 ]);
+            }
+
+            /**
+             * Determine whether any change would be written to the target locale.
+             *
+             * Only a per-locale attribute given a plain value lands in the target locale;
+             * a locale map names its own locales and every other attribute ignores the
+             * locale, so an inactive page locale must not block a price or status update.
+             *
+             * @param  array<string, mixed>  $changes
+             * @param  array<string, int>  $activeLocaleCodes
+             */
+            protected function writesToTargetLocale(array $changes, array $activeLocaleCodes): bool
+            {
+                $codes = array_keys(array_filter(
+                    $changes,
+                    fn (mixed $value, int|string $code): bool => $code !== 'status' && ! (
+                        is_array($value)
+                        && $value !== []
+                        && array_all(array_keys($value), fn (int|string $localeKey): bool => isset($activeLocaleCodes[(string) $localeKey]))
+                    ),
+                    ARRAY_FILTER_USE_BOTH
+                ));
+
+                if ($codes === []) {
+                    return false;
+                }
+
+                return resolve(AttributeRepository::class)
+                    ->findWhereIn('code', $codes, ['value_per_locale'])
+                    ->contains(fn (Attribute $attribute): bool => $attribute->isLocaleBasedAttribute());
             }
         };
     }
