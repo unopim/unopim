@@ -5,21 +5,20 @@ namespace Webkul\Installer\Database\Seeders\Attribute;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Webkul\Core\Helpers\Database\DatabaseSequenceHelper;
+use Webkul\Installer\Database\Seeders\Concerns\SeedsMissingRows;
 
 class AttributeGroupTableSeeder extends Seeder
 {
+    use SeedsMissingRows;
+
     /**
      * Seed the application's database.
      */
     public function run(array $parameters = []): void
     {
-        if (DB::table('attribute_groups')->exists()) {
-            return;
-        }
-
         $defaultLocale = $parameters['default_locale'] ?? config('app.locale');
 
-        DB::table('attribute_groups')->insert([
+        $insertedIds = $this->insertMissingRows('attribute_groups', [
             [
                 'id'       => 1,
                 'code'     => 'general',
@@ -41,7 +40,7 @@ class AttributeGroupTableSeeder extends Seeder
         $locales = $parameters['allowed_locales'] ?? [$defaultLocale];
 
         foreach ($locales as $locale) {
-            DB::table('attribute_group_translations')->insert([
+            DB::table('attribute_group_translations')->insert($this->rowsOfInserted([
                 [
                     'locale'             => $locale,
                     'name'               => trans('installer::app.seeders.attribute.attribute-groups.general', [], $locale),
@@ -63,7 +62,7 @@ class AttributeGroupTableSeeder extends Seeder
                     'name'               => trans('installer::app.seeders.attribute.attribute-groups.media', [], $locale),
                     'attribute_group_id' => 5,
                 ],
-            ]);
+            ], 'attribute_group_id', $insertedIds));
         }
 
         DatabaseSequenceHelper::fixSequences(['attribute_groups', 'attribute_group_translations']);

@@ -6,23 +6,22 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Webkul\Core\Helpers\Database\DatabaseSequenceHelper;
+use Webkul\Installer\Database\Seeders\Concerns\SeedsMissingRows;
 
 class AttributeTableSeeder extends Seeder
 {
+    use SeedsMissingRows;
+
     /**
      * Seed the application's database.
      */
     public function run(array $parameters = []): void
     {
-        if (DB::table('attributes')->exists()) {
-            return;
-        }
-
         $now = Date::now();
 
         $defaultLocale = $parameters['default_locale'] ?? config('app.locale');
 
-        DB::table('attributes')->insert([
+        $insertedIds = $this->insertMissingRows('attributes', [
             [
                 'id'                  => 1,
                 'code'                => 'sku',
@@ -384,7 +383,7 @@ class AttributeTableSeeder extends Seeder
         $locales = $parameters['allowed_locales'] ?? [$defaultLocale];
 
         foreach ($locales as $locale) {
-            DB::table('attribute_translations')->insert([
+            DB::table('attribute_translations')->insert($this->rowsOfInserted([
                 [
                     'locale'       => $locale,
                     'name'         => trans('installer::app.seeders.attribute.attributes.sku', [], $locale),
@@ -470,7 +469,7 @@ class AttributeTableSeeder extends Seeder
                     'name'         => trans('installer::app.seeders.attribute.attributes.manage-stock', [], $locale),
                     'attribute_id' => 28,
                 ],
-            ]);
+            ], 'attribute_id', $insertedIds));
         }
 
         DatabaseSequenceHelper::fixSequences(['attributes', 'attribute_translations']);

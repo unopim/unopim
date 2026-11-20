@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\DB;
 use Webkul\Attribute\Models\Attribute;
+use Webkul\Attribute\Models\AttributeGroup;
 use Webkul\Category\Models\Category;
 use Webkul\Installer\Database\Seeders\DatabaseSeeder as InstallerSeeder;
 use Webkul\Measurement\Models\MeasurementFamily;
@@ -18,7 +19,7 @@ function seededTableCounts(): array
     $tables = [
         'attribute_groups', 'attribute_group_translations', 'attributes', 'attribute_translations',
         'attribute_options', 'attribute_option_translations', 'attribute_families', 'attribute_family_translations',
-        'attribute_family_group_mappings', 'categories', 'category_fields', 'category_field_translations',
+        'attribute_family_group_mappings', 'attribute_group_mappings', 'categories', 'category_fields', 'category_field_translations',
         'channels', 'channel_translations', 'channel_currencies', 'channel_locales', 'locales', 'currencies',
         'admins', 'roles', 'measurement_families', 'magic_ai_prompts', 'magic_ai_system_prompts',
     ];
@@ -56,4 +57,55 @@ it('keeps existing measurement families instead of recreating them', function ()
     $this->seed(InstallerSeeder::class);
 
     $this->assertDatabaseHas('measurement_families', ['id' => $family->id, 'code' => $family->code]);
+});
+
+it('restores the default attributes, options, groups and family mappings deleted from the catalog', function (): void {
+    $customAttribute = Attribute::factory()->create(['code' => 'custom_attribute_test', 'type' => 'text']);
+
+    Attribute::query()->whereNotIn('code', ['sku', 'custom_attribute_test'])->delete();
+    AttributeGroup::query()->where('code', 'media')->delete();
+
+    $this->seed(InstallerSeeder::class);
+
+    $color = Attribute::query()->where('code', 'color')->firstOrFail();
+    $size = Attribute::query()->where('code', 'size')->firstOrFail();
+
+    expect(Attribute::query()->where('code', '!=', 'custom_attribute_test')->count())->toBe(21)
+        ->and(DB::table('attribute_options')->where('attribute_id', $color->id)->orderBy('sort_order')->pluck('code')->all())
+        ->toBe(['Red', 'Green', 'Yellow', 'Black', 'White'])
+        ->and(DB::table('attribute_options')->where('attribute_id', $size->id)->orderBy('sort_order')->pluck('code')->all())
+        ->toBe(['S', 'M', 'L', 'XL'])
+        ->and(DB::table('attribute_translations')->where('attribute_id', $color->id)->exists())->toBeTrue()
+        ->and(DB::table('attribute_group_translations')->where('attribute_group_id', AttributeGroup::query()->where('code', 'media')->value('id'))->exists())->toBeTrue();
+
+    $familyAttributeCodes = DB::table('attribute_group_mappings')
+        ->join('attribute_family_group_mappings', 'attribute_family_group_mappings.id', '=', 'attribute_group_mappings.attribute_family_group_id')
+        ->join('attribute_families', 'attribute_families.id', '=', 'attribute_family_group_mappings.attribute_family_id')
+        ->join('attributes', 'attributes.id', '=', 'attribute_group_mappings.attribute_id')
+        ->where('attribute_families.code', 'default')
+        ->pluck('attributes.code')
+        ->sort()
+        ->values()
+        ->all();
+
+    expect($familyAttributeCodes)->toBe([
+        'brand',
+        'color',
+        'cost',
+        'description',
+        'image',
+        'meta_description',
+        'meta_keywords',
+        'meta_title',
+        'name',
+        'price',
+        'product_number',
+        'short_description',
+        'size',
+        'sku',
+        'tax_category_id',
+        'url_key',
+    ]);
+
+    $this->assertDatabaseHas('attributes', ['id' => $customAttribute->id, 'code' => 'custom_attribute_test']);
 });
