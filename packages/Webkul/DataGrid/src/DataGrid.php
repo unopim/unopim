@@ -259,13 +259,15 @@ abstract class DataGrid
     public function validatedRequest(): array
     {
         request()->validate([
-            'filters'         => ['sometimes', 'required', 'array'],
-            'sort'            => ['sometimes', 'required', 'array'],
-            'pagination'      => ['sometimes', 'required', 'array'],
-            'export'          => ['sometimes', 'required', 'boolean'],
-            'format'          => ['sometimes', 'required', 'in:csv,xls,xlsx'],
-            'productIds'      => ['sometimes', 'array'],
-            'mass_action_ids' => ['sometimes', 'required', 'boolean'],
+            'filters'             => ['sometimes', 'required', 'array'],
+            'sort'                => ['sometimes', 'required', 'array'],
+            'pagination'          => ['sometimes', 'required', 'array'],
+            'pagination.per_page' => ['sometimes', 'integer', 'min:1', 'max:50'],
+            'pagination.page'     => ['sometimes', 'integer', 'min:1'],
+            'export'              => ['sometimes', 'required', 'boolean'],
+            'format'              => ['sometimes', 'required', 'in:csv,xls,xlsx'],
+            'productIds'          => ['sometimes', 'array'],
+            'mass_action_ids'     => ['sometimes', 'required', 'boolean'],
         ]);
 
         return request()->only(['filters', 'sort', 'pagination', 'export', 'format', 'productIds', 'mass_action_ids']);
