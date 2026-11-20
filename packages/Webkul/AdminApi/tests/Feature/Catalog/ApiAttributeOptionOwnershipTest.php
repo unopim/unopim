@@ -140,3 +140,26 @@ it('keeps options written through a REST attribute update on the attribute in th
     expect(apiOptionOwner('api_owned_moved'))->toBe([$this->attribute->id])
         ->and(apiOptionOwner('api_owned_added'))->toBe([$this->attribute->id]);
 });
+
+it('does not let a labels wrapper smuggle options past the edit-only gate on the REST attribute update', function () {
+    $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.attributes.edit']);
+
+    $this->withHeaders($headers)
+        ->json('PUT', route('admin.api.attributes.update', $this->attribute->code), [
+            'labels' => ['options' => ['code' => 'api_labels_smuggled', 'isNew' => true, 'isDelete' => false]],
+        ]);
+
+    expect(apiOptionOwner('api_labels_smuggled'))->toBe([]);
+});
+
+it('does not let a labels wrapper change immutable attribute fields on the REST attribute update', function () {
+    $this->withHeaders($this->headers)
+        ->json('PUT', route('admin.api.attributes.update', $this->attribute->code), [
+            'labels' => ['code' => 'api_labels_renamed', 'type' => 'text', 'en_US' => 'Relabelled'],
+        ]);
+
+    $attribute = $this->attribute->fresh();
+
+    expect($attribute->code)->toBe($this->attribute->code)
+        ->and($attribute->type)->toBe('select');
+});

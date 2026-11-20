@@ -395,6 +395,34 @@ describe('association type custom fields', function () {
         expect($associationType->fields()->pluck('code')->all())->toBe(['quantity']);
     });
 
+    it('does not let a labels wrapper smuggle fields past the edit-only gate on the REST association type update', function () {
+        $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.association_types.edit']);
+        $typeCode = createUserDefinedAssociationTypeForFieldTests();
+        $associationType = app(AssociationTypeRepository::class)->findByCode($typeCode);
+
+        $this->withHeaders($headers)
+            ->json('PUT', route('admin.api.association-types.update', ['code' => $typeCode]), [
+                'labels' => ['fields' => ['code' => 'smuggled', 'type' => 'text', 'isNew' => true]],
+            ]);
+
+        expect($associationType->fields()->pluck('code')->all())->toBe([]);
+    });
+
+    it('does not let a create-only API key add fields through the REST association type store', function () {
+        $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.association_types.create']);
+        $typeCode = 'bundle_'.Str::random(8);
+
+        $this->withHeaders($headers)
+            ->json('POST', route('admin.api.association-types.store'), [
+                'code'   => $typeCode,
+                'fields' => [['code' => 'note', 'type' => 'text']],
+            ])
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.fields.0', trans('admin::app.common.unauthorized'));
+
+        expect(app(AssociationTypeRepository::class)->findByCode($typeCode))->toBeNull();
+    });
+
     it('lets an API key holding the field create and delete permissions change fields through the REST association type update', function () {
         $headers = $this->getAuthenticationHeaders('custom', [
             'api.catalog.association_types.edit',

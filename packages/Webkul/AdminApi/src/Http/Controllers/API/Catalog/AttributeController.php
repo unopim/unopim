@@ -100,13 +100,13 @@ class AttributeController extends ApiController
             ]);
         }
 
-        if ($denied = $this->deniedChildWrites($request->input('options'), 'api.catalog.attributes', 'options')) {
-            return $denied;
-        }
-
         $requestData = $request->except(['type', 'code', 'swatch_type', 'value_per_locale', 'value_per_channel', 'is_unique']);
 
         $requestData = $this->setLabels($requestData);
+
+        if ($denied = $this->deniedChildWrites($requestData['options'] ?? null, 'api.catalog.attributes', 'options')) {
+            return $denied;
+        }
         $id = $attribute->id;
 
         try {

@@ -57,6 +57,17 @@ class AssociationTypeController extends ApiController
     {
         $requestData = $this->setLabels($request->all());
 
+        $denied = $this->deniedChildWrites(
+            $requestData['fields'] ?? null,
+            'api.catalog.association_types.fields',
+            'fields',
+            fn (): bool => true,
+        );
+
+        if ($denied) {
+            return $denied;
+        }
+
         $requestData['status'] = $requestData['status'] ?? true;
         $requestData['is_user_defined'] = 1;
         $requestData['position'] = ((int) $this->associationTypeRepository->max('position')) + 1;
@@ -96,10 +107,12 @@ class AssociationTypeController extends ApiController
             ]);
         }
 
+        $requestData = $this->setLabels(request()->except(['code', 'is_user_defined']));
+
         $existingFieldIds = $associationType->fields()->pluck('id')->map(fn (mixed $fieldId): string => (string) $fieldId);
 
         $denied = $this->deniedChildWrites(
-            request()->input('fields'),
+            $requestData['fields'] ?? null,
             'api.catalog.association_types.fields',
             'fields',
             fn (array $field, int|string $fieldId): bool => filter_var($field['isNew'] ?? false, FILTER_VALIDATE_BOOLEAN)
@@ -109,8 +122,6 @@ class AssociationTypeController extends ApiController
         if ($denied) {
             return $denied;
         }
-
-        $requestData = $this->setLabels(request()->except(['code', 'is_user_defined']));
 
         try {
             Event::dispatch('catalog.association_type.update.before');
