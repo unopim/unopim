@@ -106,3 +106,72 @@ it('calls the provider the stored key was saved for, whatever provider is submit
 
     expect($controller->provider())->toBe('openai');
 });
+
+it('tests a reused stored key with the saved extras, never the request ones', function (): void {
+    $this->platform->update(['extras' => ['deployment' => 'saved-deployment']]);
+
+    $this->app->instance('request', Request::create('/', 'POST', $this->storedKeyPayload + [
+        'extras' => json_encode(['deployment' => 'request-deployment', 'driver' => 'bedrock', 'region' => 'attacker.example.com']),
+    ]));
+
+    $controller = new class(app(MagicAIPlatformRepository::class)) extends MagicAIPlatformController
+    {
+        /**
+         * Expose the provider overrides the connection test would use.
+         *
+         * @return array<string, mixed>
+         */
+        public function overrides(): array
+        {
+            return $this->providerOverridesFromRequest();
+        }
+    };
+
+    expect($controller->overrides())->toBe([
+        'key'        => $this->storedKey,
+        'url'        => 'https://api.openai.com/v1',
+        'deployment' => 'saved-deployment',
+    ]);
+});
+
+it('drops request extras that would swap the driver or region for a typed key', function (): void {
+    $this->app->instance('request', Request::create('/', 'POST', [
+        'provider' => 'openai',
+        'api_key'  => 'sk-typed-key',
+        'api_url'  => 'https://1.1.1.1/v1',
+        'extras'   => json_encode(['driver' => 'bedrock', 'region' => 'attacker.example.com', 'headers' => ['Host' => 'x'], 'organization' => 'org-1']),
+    ]));
+
+    $controller = new class(app(MagicAIPlatformRepository::class)) extends MagicAIPlatformController
+    {
+        /**
+         * Expose the provider overrides the connection test would use.
+         *
+         * @return array<string, mixed>
+         */
+        public function overrides(): array
+        {
+            return $this->providerOverridesFromRequest();
+        }
+    };
+
+    expect($controller->overrides())->toBe([
+        'key'          => 'sk-typed-key',
+        'url'          => 'https://1.1.1.1/v1',
+        'organization' => 'org-1',
+    ]);
+});
+
+it('keeps only allowlisted extras on a saved platform', function (): void {
+    $this->loginAsAdmin();
+
+    $this->postJson(route('admin.magic_ai.platform.store'), [
+        'label'    => 'Extras Allowlist',
+        'provider' => 'openai',
+        'api_key'  => 'sk-test-ExtrasAllowlist0123456789',
+        'models'   => 'gpt-4o-mini',
+        'extras'   => json_encode(['deployment' => 'gpt-4o', 'driver' => 'bedrock', 'region' => 'attacker.example.com', 'url' => 'http://169.254.169.254/']),
+    ])->assertOk();
+
+    expect(MagicAIPlatform::where('label', 'Extras Allowlist')->firstOrFail()->extras)->toBe(['deployment' => 'gpt-4o']);
+});

@@ -18,7 +18,7 @@ it('records the acting admin on a bulk-edit webhook log even with no request-sco
 
     Webhook::create([
         'name'      => 'Test Hook',
-        'url'       => 'https://example.test/hook',
+        'url'       => 'https://8.8.8.8/hook',
         'is_active' => true,
         'events'    => ['product.updated'],
     ]);

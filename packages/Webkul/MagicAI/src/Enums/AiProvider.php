@@ -63,6 +63,16 @@ enum AiProvider: string
         };
     }
 
+    /**
+     * Whether a base URL is the built-in local Ollama daemon, the one documented
+     * exception to the public-address rule for platform URLs.
+     */
+    public function isLocalOllamaDefault(?string $apiUrl): bool
+    {
+        return $this === self::Ollama
+            && ($apiUrl === null || $apiUrl === '' || rtrim($apiUrl, '/') === $this->defaultUrl());
+    }
+
     public function configKey(): string
     {
         return match ($this) {
@@ -111,7 +121,7 @@ enum AiProvider: string
                 self::Anthropic  => $this->fetchAnthropicModels($client, $apiKey),
                 self::Gemini     => $this->fetchGeminiModels($client, $apiKey),
                 self::Groq       => $this->fetchOpenAiCompatModels($client, $apiKey, 'https://api.groq.com/openai/v1/models'),
-                self::Ollama     => $this->fetchOllamaModels($client, $apiUrl ?: 'http://localhost:11434'),
+                self::Ollama     => $this->fetchOllamaModels($client, $apiUrl),
                 self::XAI        => $this->fetchOpenAiCompatModels($client, $apiKey, 'https://api.x.ai/v1/models'),
                 self::Mistral    => $this->fetchOpenAiCompatModels($client, $apiKey, 'https://api.mistral.ai/v1/models'),
                 self::DeepSeek   => $this->fetchOpenAiCompatModels($client, $apiKey, 'https://api.deepseek.com/models'),
@@ -196,11 +206,19 @@ enum AiProvider: string
         return $models;
     }
 
-    private function fetchOllamaModels(Client $client, string $baseUrl): array
+    /**
+     * List Ollama models. The local daemon default is called unpinned, with
+     * redirects off: it is the one host a platform may reach without validation.
+     */
+    private function fetchOllamaModels(Client $client, ?string $apiUrl): array
     {
-        $url = rtrim($baseUrl, '/').'/api/tags';
+        $url = rtrim($apiUrl ?: $this->defaultUrl(), '/').'/api/tags';
 
-        $response = $client->get($url, $this->pinnedOptions($url));
+        $options = $this->isLocalOllamaDefault($apiUrl)
+            ? ['allow_redirects' => false]
+            : $this->pinnedOptions($url);
+
+        $response = $client->get($url, $options);
 
         $data = json_decode($response->getBody()->getContents(), true);
         $models = array_column($data['models'] ?? [], 'name');
@@ -255,13 +273,22 @@ enum AiProvider: string
     /**
      * Pin a platform-supplied host to the address its validation resolved and
      * forbid redirects, so the request cannot reach an internal host through
-     * DNS rebinding or a 30x hop.
+     * DNS rebinding or a 30x hop. A URL that cannot be validated and pinned is
+     * refused rather than fetched.
      *
      * @param  array<string, mixed>  $options
      * @return array<string, mixed>
+     *
+     * @throws \RuntimeException
      */
     private function pinnedOptions(string $url, array $options = []): array
     {
-        return array_replace($options, SafeWebhookUrl::httpOptions($url));
+        $pinned = SafeWebhookUrl::pinnedHttpOptions($url);
+
+        if ($pinned === null) {
+            throw new \RuntimeException(trans('admin::app.configuration.platform.message.unsafe-api-url'));
+        }
+
+        return array_replace($options, $pinned);
     }
 }

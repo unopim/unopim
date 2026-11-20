@@ -17,11 +17,11 @@ it('pins the resolved IP in httpOptions to close DNS-rebinding TOCTOU', function
     expect($options['curl'][CURLOPT_RESOLVE])->toBe(['1.1.1.1:443:1.1.1.1']);
 });
 
-it('omits the pin and falls back to redirect-disable when validation fails', function () {
-    $options = SafeWebhookUrl::httpOptions('http://127.0.0.1/hook');
+it('refuses to build options without a pin when validation fails', function () {
+    expect(fn () => SafeWebhookUrl::httpOptions('http://127.0.0.1/hook'))
+        ->toThrow(InvalidArgumentException::class, trans('webhook::app.webhooks.validation.unsafe-url'));
 
-    expect($options['allow_redirects'])->toBeFalse();
-    expect($options)->not->toHaveKey('curl');
+    expect(SafeWebhookUrl::pinnedHttpOptions('http://127.0.0.1/hook'))->toBeNull();
 });
 
 it('rejects loopback IPv4 literal', function () {

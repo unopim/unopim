@@ -17,6 +17,7 @@ use Webkul\AiAgent\Chat\AiErrorResolver;
 use Webkul\MagicAI\Contracts\MagicAIPlatform;
 use Webkul\MagicAI\Enums\AiProvider;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
+use Webkul\MagicAI\Services\ProviderOverrides;
 use Webkul\MagicAI\Services\ScopedProviderConfig;
 use Webkul\MagicAI\Support\ModelRecommender;
 use Webkul\Webhook\Validators\SafeWebhookUrl;
@@ -70,7 +71,7 @@ class MagicAIPlatformController extends Controller
 
         $extras = request()->input('extras');
         if ($extras) {
-            $data['extras'] = is_string($extras) ? json_decode($extras, true) : $extras;
+            $data['extras'] = ProviderOverrides::decode($extras) ?: null;
         }
 
         $this->platformRepository->create($data);
@@ -135,7 +136,7 @@ class MagicAIPlatformController extends Controller
 
         $extras = request()->input('extras');
         if ($extras) {
-            $data['extras'] = is_string($extras) ? json_decode($extras, true) : $extras;
+            $data['extras'] = ProviderOverrides::decode($extras) ?: null;
         }
 
         $this->platformRepository->update($data, $id);
@@ -427,7 +428,9 @@ class MagicAIPlatformController extends Controller
     /**
      * Build the laravel/ai provider overrides from request data so Test
      * Connection honours custom api_url / api_key / extras for the chosen
-     * platform. Applied via ScopedProviderConfig for the test call only.
+     * platform. A reused stored key takes the saved platform's url and extras
+     * whole, so a request cannot pair it with its own. Applied via
+     * ScopedProviderConfig for the test call only.
      *
      * @return array<string, mixed>
      */
@@ -443,20 +446,8 @@ class MagicAIPlatformController extends Controller
             $overrides['url'] = $apiUrl;
         }
 
-        $extras = request()->input('extras');
-        if ($extras) {
-            $decoded = is_string($extras) ? json_decode($extras, true) : $extras;
-            if (is_array($decoded)) {
-                $decoded = array_filter(
-                    $decoded,
-                    fn (string|int $key): bool => ! in_array(strtolower((string) $key), ['url', 'key', 'api_key', 'base_url'], true),
-                    ARRAY_FILTER_USE_KEY,
-                );
+        $platform = $this->storedKeyPlatform();
 
-                $overrides = array_merge($overrides, $decoded);
-            }
-        }
-
-        return $overrides;
+        return ProviderOverrides::build($overrides, $platform ? $platform->extras : request()->input('extras'));
     }
 }

@@ -18,6 +18,7 @@ use Webkul\AiAgent\Events\AgentSystemPromptBuilding;
 use Webkul\AiAgent\Events\AgentToolExecuted;
 use Webkul\AiAgent\Services\TokenUsageRecorder;
 use Webkul\MagicAI\Enums\AiProvider;
+use Webkul\MagicAI\Services\ProviderOverrides;
 use Webkul\MagicAI\Services\ScopedProviderConfig;
 
 /**
@@ -94,14 +95,10 @@ class AgentRunner
     public function runStreaming(ChatContext $context): StreamedResponse
     {
         return new StreamedResponse(function () use ($context): void {
-            // Release session lock BEFORE the long-running LLM call.
-            // Without this, file-based sessions block ALL other requests
-            // from the same user until the chat response completes (30-120s).
             if (session()->isStarted()) {
                 session()->save();
             }
 
-            // Disable output buffering for real-time streaming
             while (ob_get_level()) {
                 ob_end_flush();
             }
@@ -154,8 +151,6 @@ class AgentRunner
                             }
                         }
 
-                        // After stream completes, the StreamableAgentResponse holds
-                        // final usage + text. Fall back to buffer if usage is null.
                         $finalText = $stream->text ?: $textBuffer ?: trans('ai-agent::app.common.operation-completed');
                         $usage = $stream->usage;
                         $tokensUsed = ($usage?->promptTokens ?? 0) + ($usage?->completionTokens ?? 0);
@@ -177,7 +172,6 @@ class AgentRunner
                     },
                 );
 
-                // Already streamed as text_delta; strip from final payload.
                 unset($result['reply']);
                 $this->sendSSE('complete', $result);
             } catch (\Throwable $e) {
@@ -291,11 +285,7 @@ class AgentRunner
             $overrides['url'] = $context->platform->api_url;
         }
 
-        if ($context->platform->extras && is_array($context->platform->extras)) {
-            return array_merge($overrides, $context->platform->extras);
-        }
-
-        return $overrides;
+        return ProviderOverrides::build($overrides, $context->platform->extras);
     }
 
     /**
@@ -329,7 +319,6 @@ PROMPT;
         $prompt .= "\n\n".$this->buildToolGroupsSection();
 
         $prompt .= <<<'PROMPT'
-
 
 Agent Behaviors:
 - SELF-CHECK: After creating/updating products, call verify_product to confirm quality. Report the score.
@@ -417,7 +406,6 @@ You may ONLY suggest changes — never execute them.
 MODE;
         }
 
-        // Inject relevant memories — prefer keyword-matched, fallback to recent
         $keywords = array_filter(
             array_unique(preg_split('/\s+/', mb_strtolower($context->message))),
             fn ($w): bool => mb_strlen((string) $w) >= 3
@@ -563,7 +551,6 @@ MODE;
                 context: $context,
             ));
 
-            // ToolResult.result may be string, Stringable, or already array-shaped
             $payload = is_string($toolResult->result) || $toolResult->result instanceof \Stringable
                 ? json_decode((string) $toolResult->result, true)
                 : null;
@@ -580,9 +567,6 @@ MODE;
      */
     protected function extractStreamActionResults(mixed $stream, array &$result, ?ChatContext $context = null): void
     {
-        // StreamableAgentResponse copies tool results onto itself once the
-        // underlying StreamedAgentResponse completes; access via $stream->events
-        // collected during iteration.
         foreach ($stream->events as $event) {
             if (! isset($event->toolResult)) {
                 continue;
@@ -645,8 +629,6 @@ MODE;
 
             [$width, $height, $type] = $info;
 
-            // Skip pixel-flood images before decoding — a small file with huge
-            // dimensions would allocate gigabytes on decode. Use the original.
             if ($width * $height > self::MAX_IMAGE_PIXELS) {
                 return $path;
             }
@@ -682,8 +664,6 @@ MODE;
 
             $this->sweepStaleTempImages($tmpDir);
 
-            // Unpredictable name in an app-private directory (not the shared,
-            // world-readable system temp) with owner-only permissions.
             $compressedPath = $tmpDir.'/'.bin2hex(random_bytes(16)).'.jpg';
             imagejpeg($resized, $compressedPath, 80);
             @chmod($compressedPath, 0600);
