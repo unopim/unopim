@@ -48,6 +48,23 @@ it('forbids a create-only user from using the stored key of a saved platform', f
         ->assertForbidden();
 });
 
+it('forbids a create-only user from reading a saved platform by omitting its key', function (mixed $apiKey): void {
+    $this->platform->update(['is_managed' => true]);
+
+    $this->loginWithPermissions('custom', ['ai-agent', 'ai-agent.platform', 'ai-agent.platform.create']);
+
+    $payload = ['id' => $this->platform->id, 'provider' => 'openai'];
+
+    if ($apiKey !== null) {
+        $payload['api_key'] = $apiKey;
+    }
+
+    $this->postJson(route('admin.magic_ai.platform.fetch_models'), $payload)->assertForbidden();
+})->with([
+    'omitted' => [null],
+    'empty'   => [''],
+]);
+
 it('forbids a view-only user from probing a provider with a typed key', function (): void {
     $this->loginWithPermissions('custom', ['ai-agent', 'ai-agent.platform']);
 
@@ -86,5 +103,19 @@ it('sends the stored key only to the stored api url, never to the submitted one'
     });
 
     $this->postJson(route('admin.magic_ai.platform.fetch_models'), $this->storedKeyPayload)
+        ->assertOk();
+});
+
+it('calls the provider the stored key was saved for, whatever provider is submitted', function (): void {
+    $this->loginWithPermissions('custom', ['ai-agent', 'ai-agent.platform', 'ai-agent.platform.edit']);
+
+    $this->mock(ModelDiscovery::class, function (MockInterface $mock): void {
+        $mock->shouldReceive('discover')
+            ->once()
+            ->with(AiProvider::OpenAI, $this->storedKey, 'https://api.openai.com/v1')
+            ->andReturn(['models' => ['gpt-4o-mini'], 'released' => [], 'api_url' => 'https://api.openai.com/v1']);
+    });
+
+    $this->postJson(route('admin.magic_ai.platform.fetch_models'), ['provider' => 'gemini'] + $this->storedKeyPayload)
         ->assertOk();
 });

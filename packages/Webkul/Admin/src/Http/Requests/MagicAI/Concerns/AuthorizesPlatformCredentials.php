@@ -3,16 +3,24 @@
 namespace Webkul\Admin\Http\Requests\MagicAI\Concerns;
 
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
+use Webkul\MagicAI\Services\ManagedPlatform;
 
 trait AuthorizesPlatformCredentials
 {
     /**
-     * Whether the submission reuses a saved platform's key: a masked key plus the platform id.
+     * Whether the submission reuses a saved platform's key or settings: a
+     * platform id with a masked or omitted key, the same rule the managed
+     * platform path applies when it answers from the saved record.
      */
     public function usesStoredPlatformKey(): bool
     {
-        return app(MagicAIPlatformRepository::class)
-            ->findForMaskedKey($this->input('api_key'), $this->input('id')) !== null;
+        $id = (int) $this->input('id');
+
+        $apiKey = $this->input('api_key');
+
+        return $id > 0
+            && (! is_string($apiKey) || app(ManagedPlatform::class)->usesStoredKey($apiKey))
+            && app(MagicAIPlatformRepository::class)->find($id) !== null;
     }
 
     /**
