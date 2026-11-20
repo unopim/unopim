@@ -482,6 +482,31 @@ describe('association type custom fields', function () {
         expect($field->fresh()->only(['code', 'type']))->toBe(['code' => 'quantity', 'type' => 'text']);
     });
 
+    it('does not let a non-canonical field key bypass the field immutability on the REST association type update', function () {
+        $typeCode = createUserDefinedAssociationTypeForFieldTests();
+        $associationType = app(AssociationTypeRepository::class)->findByCode($typeCode);
+
+        $field = app(AssociationTypeFieldRepository::class)->create([
+            'association_type_id' => $associationType->id,
+            'code'                => 'quantity',
+            'type'                => 'text',
+        ]);
+
+        foreach (['0'.$field->id, ' '.$field->id, $field->id.'.0'] as $key) {
+            $this->withHeaders($this->headers)
+                ->json('PUT', route('admin.api.association-types.update', ['code' => $typeCode]), [
+                    'fields' => [$key => ['code' => 'renamed', 'type' => 'boolean']],
+                ]);
+
+            $this->withHeaders($this->headers)
+                ->json('PUT', route('admin.api.association-types.update', ['code' => $typeCode]), [
+                    'fields' => [$key => ['isDelete' => true]],
+                ]);
+        }
+
+        expect($field->fresh()?->only(['code', 'type']))->toBe(['code' => 'quantity', 'type' => 'text']);
+    });
+
     it('validates fields carried by the REST association type store and update like the field routes', function () {
         $typeCode = createUserDefinedAssociationTypeForFieldTests();
         $associationType = app(AssociationTypeRepository::class)->findByCode($typeCode);

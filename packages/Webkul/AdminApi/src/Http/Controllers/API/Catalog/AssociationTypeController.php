@@ -116,6 +116,10 @@ class AssociationTypeController extends ApiController
 
         $existingFields = $storedFields->mapWithKeys(fn (AssociationTypeField $field): array => [(string) $field->code => (string) $field->id]);
 
+        if (array_key_exists('fields', $requestData)) {
+            $requestData['fields'] = $this->canonicalFieldEntries($requestData['fields'], $existingFields);
+        }
+
         $denied = $this->deniedChildWrites(
             $requestData['fields'] ?? null,
             'api.catalog.association_types.fields',
@@ -199,7 +203,7 @@ class AssociationTypeController extends ApiController
     }
 
     /**
-     * The existing field id an update entry writes to, resolved the way AssociationTypeRepository::update() does.
+     * The existing field id an update entry writes to: by its exact id key, or by its code for a new or unknown key.
      *
      * @param  Collection<string, string>  $existingFields  field ids keyed by field code
      * @param  array<string, mixed>  $field
@@ -212,7 +216,47 @@ class AssociationTypeController extends ApiController
             return $byCode;
         }
 
-        return $existingFields->contains((string) $fieldId) ? (string) $fieldId : $byCode;
+        return in_array((string) $fieldId, $existingFields->all(), true) ? (string) $fieldId : $byCode;
+    }
+
+    /**
+     * Re-key the fields of a parent update so the gates, the validation and the repository all see one resolution.
+     *
+     * An entry that resolves to an existing field is keyed by that field's exact id; any other entry is keyed as
+     * new, and a removal of a field that does not exist is dropped. A key such as `07` therefore never reaches the
+     * repository, which matches ids loosely.
+     *
+     * @param  Collection<string, string>  $existingFields  field ids keyed by field code
+     */
+    private function canonicalFieldEntries(mixed $entries, Collection $existingFields): mixed
+    {
+        if (! is_array($entries)) {
+            return $entries;
+        }
+
+        $canonical = [];
+
+        foreach ($entries as $fieldId => $field) {
+            if (! is_array($field)) {
+                $canonical['invalid_'.count($canonical)] = $field;
+
+                continue;
+            }
+
+            $resolvedId = $this->resolveExistingField($existingFields, $field, $fieldId);
+
+            if ($resolvedId !== null) {
+                $canonical[$resolvedId] = [...$field, 'isNew' => false];
+
+                continue;
+            }
+
+            if (! filter_var($field['isDelete'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
+                $canonical['new_'.count($canonical)] = [...$field, 'isNew' => true];
+            }
+        }
+
+        return $canonical;
     }
 
     /**
