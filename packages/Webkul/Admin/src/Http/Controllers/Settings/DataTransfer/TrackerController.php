@@ -242,13 +242,15 @@ class TrackerController extends Controller
     }
 
     /**
-     * Download Log file for the job
+     * Download the job log, which names imported rows and so needs the same permissions as the job files.
      */
     public function downloadLogFile(int $id)
     {
         if (! bouncer()->hasPermission('data_transfer.job_tracker')) {
             abort(403, trans('admin::app.common.unauthorized'));
         }
+
+        $this->abortIfDownloadForbidden($this->jobTrackRepository->findOrFail($id));
 
         $path = JobLogger::getJobLogPath($id);
 
