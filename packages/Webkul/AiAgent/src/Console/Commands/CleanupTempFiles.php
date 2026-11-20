@@ -6,6 +6,8 @@ use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
+use Webkul\AiAgent\Chat\Tools\ExportProducts;
 
 /**
  * Clean up temporary AI-generated files.
@@ -48,6 +50,7 @@ class CleanupTempFiles extends Command
             storage_path('app/public/ai-agent/exports'),
             storage_path('app/public/ai-agent/generated'),
             storage_path('app/public/ai-agent/edited'),
+            Storage::disk(ExportProducts::DISK)->path(ExportProducts::DIRECTORY),
         ];
 
         foreach ($storageDirs as $dir) {

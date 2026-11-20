@@ -123,6 +123,9 @@ class SystemSettings
     }
 
     /**
+     * Config groups keyed to the ACL key that owns them, from settings registry
+     * rows and from core config sections that declare an `acl`.
+     *
      * @return array<string, string>
      */
     protected function configGroupOwners(): array
@@ -137,6 +140,12 @@ class SystemSettings
             }
 
             $owners[$configGroup] = (string) $item['acl'];
+        }
+
+        foreach ((array) config('core', []) as $section) {
+            if (! empty($section['key']) && ! empty($section['acl'])) {
+                $owners[(string) $section['key']] ??= (string) $section['acl'];
+            }
         }
 
         return $owners;

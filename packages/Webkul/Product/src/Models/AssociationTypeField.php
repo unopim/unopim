@@ -5,6 +5,7 @@ namespace Webkul\Product\Models;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Webkul\Core\Eloquent\TranslatableModel;
+use Webkul\Core\Helpers\ClientValidationRules;
 use Webkul\Core\Rules\Decimal;
 use Webkul\Core\Rules\FileOrImageValidValue;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
@@ -113,39 +114,17 @@ class AssociationTypeField extends TranslatableModel implements AssociationTypeF
     }
 
     /**
-     * Returns field validation rules
+     * Returns the client-side validation rules as a JSON object literal for a Vue `:rules` binding.
      */
     public function getValidationsField(): string
     {
-        $validations = [];
+        $uploadKilobytes = match ($this->type) {
+            'file'  => (int) (core()->getConfigData('catalog.categories.fields.file_attribute_upload_size') ?? 2048),
+            'image' => (int) (core()->getConfigData('catalog.categories.fields.image_attribute_upload_size') ?? 2048),
+            default => 0,
+        };
 
-        if ($this->is_required) {
-            $validations[] = 'required: true';
-        }
-
-        if ($this->type === 'file') {
-            $validations[] = 'size:'.(core()->getConfigData('catalog.categories.fields.file_attribute_upload_size') ?? '2048');
-        }
-
-        if ($this->type === 'image') {
-            $retVal = core()->getConfigData('catalog.categories.fields.image_attribute_upload_size') ?? '2048';
-
-            if ($retVal) {
-                $validations[] = 'size:'.$retVal.', mimes: ["image/bmp", "image/jpeg", "image/jpg", "image/png", "image/webp"]';
-            }
-        }
-
-        if ($this->validation) {
-            $validations[] = match ($this->validation) {
-                'regex'  => 'regex: "'.$this->regex_pattern.'"',
-                'number' => 'numeric: true',
-                default  => $this->validation.': true'
-            };
-        }
-
-        $validations = '{ '.implode(', ', array_filter($validations)).' }';
-
-        return $validations;
+        return ClientValidationRules::forField((bool) $this->is_required, $this->type, $uploadKilobytes, $this->validation, $this->regex_pattern);
     }
 
     /**

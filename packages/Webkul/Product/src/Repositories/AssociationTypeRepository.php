@@ -100,7 +100,9 @@ class AssociationTypeRepository extends Repository
                     continue;
                 }
 
-                $this->associationTypeFieldRepository->update($fieldData, $resolvedId);
+                $this->associationTypeFieldRepository->update(array_merge($fieldData, [
+                    'association_type_id' => $associationType->id,
+                ]), $resolvedId);
             }
 
             return $associationType;

@@ -142,7 +142,7 @@ it('aborts the save with a validation exception when a link field value is inval
         ],
     ], $source->id))->toThrow(ValidationException::class);
 
-    $this->assertDatabaseCount('product_associations', 0);
+    $this->assertDatabaseMissing('product_associations', ['product_id' => $source->id]);
 });
 
 it('allows re-saving a product unchanged when a link sets an `is_unique` field -- the link\'s own persisted value must not fail against itself (Important 1)', function () {
@@ -219,7 +219,7 @@ it('prunes all `product_associations` rows for a CUSTOM type when it is present 
         ],
     ], $source->id);
 
-    $this->assertDatabaseCount('product_associations', 1);
+    expect(DB::table('product_associations')->where('product_id', $source->id)->count())->toBe(1);
 
     // Removing the last link in the UI still submits the type's key --
     // `links.blade.php`'s `__present` sentinel -- with no numeric link rows,
@@ -232,7 +232,7 @@ it('prunes all `product_associations` rows for a CUSTOM type when it is present 
         ],
     ], $source->id);
 
-    $this->assertDatabaseCount('product_associations', 0);
+    $this->assertDatabaseMissing('product_associations', ['product_id' => $source->id]);
 });
 
 it('prunes rows AND clears the legacy JSON list for a LEGACY section (up_sells) present-but-empty in the payload', function () {
@@ -252,7 +252,7 @@ it('prunes rows AND clears the legacy JSON list for a LEGACY section (up_sells) 
 
     expect($updated->values['associations']['up_sells'] ?? null)->toBe([$related->sku]);
 
-    $this->assertDatabaseCount('product_associations', 1);
+    expect(DB::table('product_associations')->where('product_id', $source->id)->count())->toBe(1);
 
     $updated = $this->productRepository->update([
         'sku'          => $source->sku,
@@ -290,7 +290,7 @@ it('does NOT prune existing association links on an update with no `associations
         ],
     ], $source->id);
 
-    $this->assertDatabaseCount('product_associations', 1);
+    expect(DB::table('product_associations')->where('product_id', $source->id)->count())->toBe(1);
 
     // The REST/import write path never sends an `associations` key at all
     // (see `AbstractType::update()`): this must keep relying on the legacy

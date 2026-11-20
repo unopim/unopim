@@ -82,7 +82,7 @@
                                         </x-admin::dropdown.menu.item>
 
                                         <x-admin::dropdown.menu.item
-                                            v-if="$parent.applied.massActions.indices.length"
+                                            v-if="$parent.selectedCount"
                                             @click="$parent.clearMassSelection()"
                                         >
                                             <span class="flex items-center gap-2">

@@ -64,6 +64,10 @@ class ManageFamilies implements PimTool
                 }
 
                 if ($action === 'create') {
+                    if ($denied = $this->denyUnlessAllowed($context, 'catalog.families.create')) {
+                        return $denied;
+                    }
+
                     if (! $name) {
                         return json_encode(['error' => 'Family name is required']);
                     }

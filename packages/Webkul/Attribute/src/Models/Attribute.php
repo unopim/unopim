@@ -12,6 +12,7 @@ use Webkul\Attribute\Database\Factories\AttributeFactory;
 use Webkul\Attribute\Presenters\AttributeHistoryPresenter;
 use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Core\Eloquent\TranslatableModel;
+use Webkul\Core\Helpers\ClientValidationRules;
 use Webkul\Core\Rules\BooleanString;
 use Webkul\Core\Rules\Decimal;
 use Webkul\Core\Rules\FileOrImageValidValue;
@@ -146,45 +147,24 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
     }
 
     /**
-     * Returns attribute validation rules
+     * Returns the client-side validation rules as a JSON object literal for a Vue `:rules` binding.
      */
     public function getValidationsField(): string
     {
-        $validations = [];
+        $uploadKilobytes = match ($this->type) {
+            'file'  => $this->resolvedMaxKilobytes((int) (core()->getConfigData('catalog.products.attribute.file_attribute_upload_size') ?? 2048)),
+            'image' => $this->resolvedMaxKilobytes((int) (core()->getConfigData('catalog.products.attribute.image_attribute_upload_size') ?? 2048)),
+            default => 0,
+        };
 
-        if ($this->is_required) {
-            $validations[] = 'required: true';
-        }
-
-        if ($this->type == 'price') {
-            $validations[] = 'decimal: true';
-        }
-
-        if ($this->type == 'file') {
-            $retVal = core()->getConfigData('catalog.products.attribute.file_attribute_upload_size') ?? '2048';
-
-            if ($retVal) {
-                $validations[] = 'size:'.$retVal;
-            }
-        }
-
-        if ($this->type == 'image') {
-            $retVal = core()->getConfigData('catalog.products.attribute.image_attribute_upload_size') ?? '2048';
-
-            if ($retVal) {
-                $validations[] = 'size:'.$retVal.', mimes: ["image/bmp", "image/jpeg", "image/jpg", "image/png", "image/webp"]';
-            }
-        }
-
-        if ($this->validation) {
-            $validations[] = match ($this->validation) {
-                'regex'  => 'regex: "'.$this->regex_pattern.'"',
-                'number' => 'numeric: true',
-                default  => $this->validation.': true'
-            };
-        }
-
-        return '{ '.implode(', ', array_filter($validations)).' }';
+        return ClientValidationRules::forField(
+            (bool) $this->is_required,
+            $this->type,
+            $uploadKilobytes,
+            $this->validation,
+            $this->regex_pattern,
+            $this->type === 'price' ? ['decimal' => true] : [],
+        );
     }
 
     /**

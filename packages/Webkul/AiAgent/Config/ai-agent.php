@@ -25,8 +25,8 @@ return [
         Tools\UpdateProduct::class       => ['name' => 'update_product', 'group' => 'catalog', 'write' => true, 'permission' => 'catalog.products.edit', 'enabled' => true],
         Tools\DeleteProducts::class      => ['name' => 'delete_products', 'group' => 'catalog', 'write' => true, 'permission' => 'catalog.products.delete', 'enabled' => true],
         Tools\AttachImage::class         => ['name' => 'attach_image', 'group' => 'catalog', 'write' => true, 'permission' => 'catalog.products.edit', 'enabled' => true],
-        Tools\BulkEdit::class            => ['name' => 'bulk_edit', 'group' => 'catalog', 'write' => true, 'permission' => 'catalog.products.mass_update', 'enabled' => true],
-        Tools\ExportProducts::class      => ['name' => 'export_products', 'group' => 'catalog', 'write' => false, 'permission' => 'data_transfer.export', 'enabled' => true],
+        Tools\BulkEdit::class            => ['name' => 'bulk_edit', 'group' => 'catalog', 'write' => true, 'permission' => 'catalog.products.bulk_edit', 'enabled' => true],
+        Tools\ExportProducts::class      => ['name' => 'export_products', 'group' => 'catalog', 'write' => false, 'permission' => 'data_transfer.export.execute', 'enabled' => true],
         Tools\ImportProducts::class      => ['name' => 'import_products', 'group' => 'catalog', 'write' => true, 'permission' => 'data_transfer.imports.execute', 'enabled' => true],
         Tools\ManageAssociations::class  => ['name' => 'manage_associations', 'group' => 'catalog', 'write' => true, 'permission' => 'catalog.products.edit', 'enabled' => true],
 
@@ -41,7 +41,7 @@ return [
         Tools\UpdateCategory::class   => ['name' => 'update_category', 'group' => 'taxonomy', 'write' => true, 'permission' => 'catalog.categories.edit', 'enabled' => true],
         Tools\CategoryTree::class     => ['name' => 'category_tree', 'group' => 'taxonomy', 'write' => false, 'permission' => 'catalog.categories', 'enabled' => true],
         Tools\ListAttributes::class   => ['name' => 'list_attributes', 'group' => 'taxonomy', 'write' => false, 'permission' => 'catalog.attributes', 'enabled' => true],
-        Tools\CreateAttribute::class  => ['name' => 'create_attribute', 'group' => 'taxonomy', 'write' => true, 'permission' => 'catalog.attributes', 'enabled' => true],
+        Tools\CreateAttribute::class  => ['name' => 'create_attribute', 'group' => 'taxonomy', 'write' => true, 'permission' => 'catalog.attributes.create', 'enabled' => true],
         Tools\ManageOptions::class    => ['name' => 'manage_attribute_options', 'group' => 'taxonomy', 'write' => true, 'permission' => 'catalog.attributes', 'enabled' => true],
         Tools\ManageFamilies::class   => ['name' => 'manage_families', 'group' => 'taxonomy', 'write' => true, 'permission' => 'catalog.families', 'enabled' => true],
 

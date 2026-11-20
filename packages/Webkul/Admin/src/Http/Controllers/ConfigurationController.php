@@ -215,12 +215,12 @@ class ConfigurationController extends Controller
      */
     public function download(): StreamedResponse
     {
-        $path = request()->route()->parameters()['path'];
-
-        $fileName = 'configuration/'.$path;
+        $fileName = 'configuration/'.request()->route('path');
 
         $config = $this->coreConfigRepository->findOneByField('value', $fileName);
 
-        return Storage::download($config['value']);
+        abort_if(! $config || ! Storage::exists($config->value), 404);
+
+        return Storage::download($config->value);
     }
 }
