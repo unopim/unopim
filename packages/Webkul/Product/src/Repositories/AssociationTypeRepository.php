@@ -63,26 +63,10 @@ class AssociationTypeRepository extends Repository
         return DB::transaction(function () use ($data, $id, $fields) {
             $associationType = parent::update($data, $id);
 
-            /**
-             * The browser keeps a field flagged as new until the page reloads, so a
-             * resubmitted form (a failed first attempt, a double submit) would insert
-             * a code that already exists. Resolving the row by its code instead of
-             * trusting the flag keeps the save idempotent.
-             */
-            $existingIds = $this->associationTypeFieldRepository->getModel()->newQuery()
-                ->where('association_type_id', $associationType->id)
-                ->pluck('id', 'code');
+            $resolvedIds = $this->resolveFieldIds($associationType->id, $fields);
 
             foreach ($fields as $fieldId => $fieldData) {
-                $isNew = filter_var($fieldData['isNew'] ?? false, FILTER_VALIDATE_BOOLEAN);
-
-                $resolvedId = $isNew
-                    ? ($existingIds[$fieldData['code'] ?? ''] ?? null)
-                    : $fieldId;
-
-                if ($resolvedId !== null && ! $existingIds->contains($resolvedId)) {
-                    $resolvedId = $existingIds[$fieldData['code'] ?? ''] ?? null;
-                }
+                $resolvedId = $resolvedIds[$fieldId];
 
                 if (filter_var($fieldData['isDelete'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
                     if ($resolvedId) {
@@ -105,6 +89,45 @@ class AssociationTypeRepository extends Repository
 
             return $associationType;
         });
+    }
+
+    /**
+     * The id of the existing field each nested `fields` entry addresses, keyed
+     * like the entries, or null for an entry that describes a new field.
+     *
+     * An entry addresses the field whose id is its key, unless it is flagged
+     * `isNew`; otherwise, or when the key is not a field of this type, the field
+     * with its code. The browser keeps a field flagged as new until the page
+     * reloads, so a resubmitted form (a failed first attempt, a double submit)
+     * would insert a code that already exists. Resolving the row by its code
+     * instead of trusting the flag keeps the save idempotent.
+     *
+     * @param  array<int|string, mixed>  $fields
+     * @return array<int|string, int|string|null>
+     */
+    public function resolveFieldIds(int $associationTypeId, array $fields): array
+    {
+        $existingIds = $this->associationTypeFieldRepository->getModel()->newQuery()
+            ->where('association_type_id', $associationTypeId)
+            ->pluck('id', 'code');
+
+        $resolvedIds = [];
+
+        foreach ($fields as $fieldId => $fieldData) {
+            $isNew = filter_var($fieldData['isNew'] ?? false, FILTER_VALIDATE_BOOLEAN);
+
+            $resolvedId = $isNew
+                ? ($existingIds[$fieldData['code'] ?? ''] ?? null)
+                : $fieldId;
+
+            if ($resolvedId !== null && ! $existingIds->contains($resolvedId)) {
+                $resolvedId = $existingIds[$fieldData['code'] ?? ''] ?? null;
+            }
+
+            $resolvedIds[$fieldId] = $resolvedId;
+        }
+
+        return $resolvedIds;
     }
 
     /**
