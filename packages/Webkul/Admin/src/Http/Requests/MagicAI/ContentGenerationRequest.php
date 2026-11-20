@@ -3,17 +3,12 @@
 namespace Webkul\Admin\Http\Requests\MagicAI;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Webkul\Admin\Http\Requests\MagicAI\Concerns\AuthorizesPromptResource;
 use Webkul\MagicAI\MagicAI;
 
 class ContentGenerationRequest extends FormRequest
 {
-    /**
-     * Determine whether the user is authorized.
-     */
-    public function authorize(): bool
-    {
-        return bouncer()->hasPermission('ai-agent');
-    }
+    use AuthorizesPromptResource;
 
     /**
      * Get the validation rules.
