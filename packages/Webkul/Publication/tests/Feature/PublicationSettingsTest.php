@@ -25,6 +25,8 @@ it('no longer serves the retired publication configuration page', function (): v
 });
 
 it('defaults every field before any core_config row exists', function (): void {
+    DB::table('core_config')->where('code', 'like', 'general.publication.settings.%')->delete();
+
     expect(core()->getConfigData('general.publication.settings.rate_limit') ?? '60')->toBe('60')
         ->and(core()->getConfigData('general.publication.settings.indexable') ?? '0')->toBe('0');
 });

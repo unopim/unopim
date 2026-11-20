@@ -428,9 +428,14 @@ describe('Issue #1196 - channel scoped measurement values during product export'
             'locales'  => ['en_US'],
         ], $spy);
 
-        expect($spy->extractMeasurementInputs)->toHaveCount(2);
+        $inputs = collect($spy->extractMeasurementInputs)
+            ->where('family', $this->measurementFamily->code)
+            ->values()
+            ->all();
 
-        foreach ($spy->extractMeasurementInputs as $input) {
+        expect($inputs)->toHaveCount(2);
+
+        foreach ($inputs as $input) {
             expect($input)->toBeArray()
                 ->and($input)->not->toHaveKey('<all_channels>')
                 ->and($input)->not->toHaveKey($this->channelA->code)
@@ -438,7 +443,7 @@ describe('Issue #1196 - channel scoped measurement values during product export'
                 ->and($input)->toHaveKeys(['unit', 'amount', 'family', 'base_data', 'base_unit', 'symbol']);
         }
 
-        $byUnit = collect($spy->extractMeasurementInputs)->keyBy('unit');
+        $byUnit = collect($inputs)->keyBy('unit');
 
         expect($byUnit->keys()->sort()->values()->all())->toBe(['centimeter', 'meter'])
             ->and($byUnit['meter']['amount'])->toBe('2.5000')

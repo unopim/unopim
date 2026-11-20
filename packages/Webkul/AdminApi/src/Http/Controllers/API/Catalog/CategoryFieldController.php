@@ -3,6 +3,7 @@
 namespace Webkul\AdminApi\Http\Controllers\API\Catalog;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -92,6 +93,10 @@ class CategoryFieldController extends ApiController
             return $this->validateErrorResponse([
                 'immutable' => [trans('admin::app.catalog.category_fields.immutable-fields', ['fields' => implode(', ', $immutable)])],
             ]);
+        }
+
+        if ($denied = $this->deniedChildWrites($request->input('options'), 'api.catalog.category_fields', 'options')) {
+            return $denied;
         }
 
         $requestData = request()->except(['code', 'type']);
@@ -193,6 +198,10 @@ class CategoryFieldController extends ApiController
 
         $requestData = $this->normalizeOptionsPayload(request()->all());
 
+        if ($errorResponse = $this->validateOptionsPayload($requestData)) {
+            return $errorResponse;
+        }
+
         try {
             $errors = [];
             foreach ($requestData as $optionInputs) {
@@ -206,9 +215,9 @@ class CategoryFieldController extends ApiController
                     continue;
                 }
 
-                $this->categoryFieldOptionRepository->create(array_merge([
+                $this->categoryFieldOptionRepository->create(array_merge(Arr::except($optionInputs, ['category_field_id']), [
                     'category_field_id' => $categoryField->id,
-                ], $optionInputs));
+                ]));
             }
 
             if (! empty($errors)) {
@@ -236,10 +245,20 @@ class CategoryFieldController extends ApiController
 
         $requestData = $this->normalizeOptionsPayload(request()->all());
 
+        if ($errorResponse = $this->validateOptionsPayload($requestData)) {
+            return $errorResponse;
+        }
+
         try {
             $errors = [];
             foreach ($requestData as $optionInputs) {
                 $optionInputs = $this->setLabels($optionInputs, 'label');
+
+                if (! isset($optionInputs['code'])) {
+                    $errors[] = Validator::make($optionInputs, ['code' => 'required'])->errors();
+
+                    continue;
+                }
 
                 $categoryFieldOption = $this->categoryFieldOptionRepository
                     ->findOneWhere(['code' => $optionInputs['code'], 'category_field_id' => $categoryField->id]);
@@ -252,7 +271,9 @@ class CategoryFieldController extends ApiController
                     continue;
                 }
 
-                $this->categoryFieldOptionRepository->update($optionInputs, $categoryFieldOption->id);
+                $this->categoryFieldOptionRepository->update(array_merge(Arr::except($optionInputs, ['category_field_id']), [
+                    'category_field_id' => $categoryField->id,
+                ]), $categoryFieldOption->id);
             }
 
             if (! empty($errors)) {
@@ -295,22 +316,6 @@ class CategoryFieldController extends ApiController
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);
         }
-    }
-
-    /**
-     * Normalizes the options payload so a single option object is treated the
-     * same as a list containing one option.
-     *
-     * @param  array<mixed>  $requestData
-     * @return array<int, array<string, mixed>>
-     */
-    private function normalizeOptionsPayload(array $requestData): array
-    {
-        if (empty($requestData) || array_is_list($requestData)) {
-            return $requestData;
-        }
-
-        return [$requestData];
     }
 
     /**

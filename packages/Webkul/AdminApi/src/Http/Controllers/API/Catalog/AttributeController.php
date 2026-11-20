@@ -3,6 +3,7 @@
 namespace Webkul\AdminApi\Http\Controllers\API\Catalog;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Validator;
@@ -99,6 +100,10 @@ class AttributeController extends ApiController
             ]);
         }
 
+        if ($denied = $this->deniedChildWrites($request->input('options'), 'api.catalog.attributes', 'options')) {
+            return $denied;
+        }
+
         $requestData = $request->except(['type', 'code', 'swatch_type', 'value_per_locale', 'value_per_channel', 'is_unique']);
 
         $requestData = $this->setLabels($requestData);
@@ -181,6 +186,10 @@ class AttributeController extends ApiController
 
         $requestData = $this->normalizeOptionsPayload(request()->all());
 
+        if ($errorResponse = $this->validateOptionsPayload($requestData)) {
+            return $errorResponse;
+        }
+
         try {
             $errors = [];
             foreach ($requestData as $optionInputs) {
@@ -192,9 +201,9 @@ class AttributeController extends ApiController
                     continue;
                 }
 
-                $this->attributeOptionRepository->create(array_merge([
+                $this->attributeOptionRepository->create(array_merge(Arr::except($optionInputs, ['attribute_id']), [
                     'attribute_id' => $attribute->id,
-                ], $optionInputs));
+                ]));
             }
 
             if (! empty($errors)) {
@@ -222,12 +231,30 @@ class AttributeController extends ApiController
 
         $requestData = $this->normalizeOptionsPayload(request()->all());
 
+        if ($errorResponse = $this->validateOptionsPayload($requestData)) {
+            return $errorResponse;
+        }
+
         try {
             $errors = [];
             foreach ($requestData as $optionInputs) {
                 $optionInputs = $this->setLabels($optionInputs, 'label');
-                $attributeOption = $this->attributeOptionRepository->findOneByField('code', $optionInputs['code']);
+
+                if (! isset($optionInputs['code'])) {
+                    $errors[] = Validator::make($optionInputs, ['code' => 'required'])->errors();
+
+                    continue;
+                }
+
+                $attributeOption = $this->attributeOptionRepository
+                    ->findOneWhere(['code' => $optionInputs['code'], 'attribute_id' => $attribute->id]);
                 if (! $attributeOption) {
+                    if (! $this->apiKeyAllows('api.catalog.attributes.create')) {
+                        $errors[$optionInputs['code']] = [trans('admin::app.common.unauthorized')];
+
+                        continue;
+                    }
+
                     $validator = $this->optionValidate($optionInputs, $attribute->id);
                     if ($validator->fails()) {
                         $errors[] = $validator->errors();
@@ -235,11 +262,13 @@ class AttributeController extends ApiController
                         continue;
                     }
 
-                    $this->attributeOptionRepository->create(array_merge([
+                    $this->attributeOptionRepository->create(array_merge(Arr::except($optionInputs, ['attribute_id']), [
                         'attribute_id' => $attribute->id,
-                    ], $optionInputs));
+                    ]));
                 } else {
-                    $this->attributeOptionRepository->update($optionInputs, $attributeOption->id);
+                    $this->attributeOptionRepository->update(array_merge(Arr::except($optionInputs, ['attribute_id']), [
+                        'attribute_id' => $attribute->id,
+                    ]), $attributeOption->id);
                 }
             }
 
@@ -283,22 +312,6 @@ class AttributeController extends ApiController
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);
         }
-    }
-
-    /**
-     * Normalizes the options payload so a single option object is treated the
-     * same as a list containing one option.
-     *
-     * @param  array<mixed>  $requestData
-     * @return array<int, array<string, mixed>>
-     */
-    private function normalizeOptionsPayload(array $requestData): array
-    {
-        if (empty($requestData) || array_is_list($requestData)) {
-            return $requestData;
-        }
-
-        return [$requestData];
     }
 
     /**

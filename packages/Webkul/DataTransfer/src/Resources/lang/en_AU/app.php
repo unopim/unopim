@@ -299,6 +299,7 @@ return [
             'column-not-found'       => 'Required columns not found: %s.',
             'column-numbers'         => 'Number of columns does not correspond to the number of rows in the header.',
             'invalid-attribute'      => 'Header contains invalid attribute(s): "%s".',
+            'invalid-boolean'        => 'Column ":column" has the value ":value", which is not a boolean. Use true, false, yes, no, on, off, 1 or 0.',
             'system'                 => 'An unexpected system error occurred.',
             'wrong-quotes'           => 'Curly quotes used instead of straight quotes.',
             'file-empty'             => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
@@ -310,5 +311,6 @@ return [
         'completed' => 'Job execution completed',
         'stalled'   => 'The job stopped responding for more than :minutes minutes and was marked as failed. Its worker was most likely terminated.',
         'reaped'    => 'Marked :count stalled jobs as failed.',
+        'stopped'   => 'Import stopped after validation with :count errors. No rows were imported.',
     ],
 ];

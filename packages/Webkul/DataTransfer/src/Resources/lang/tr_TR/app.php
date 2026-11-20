@@ -299,6 +299,7 @@ return [
             'column-not-found'       => 'Gerekli kolonlar bulunamadı: %s.',
             'column-numbers'         => 'Kolon sayısı, başlıktaki satır sayısı ile uyumsuz.',
             'invalid-attribute'      => 'Başlık geçersiz attribute(s) içeriyor: "%s".',
+            'invalid-boolean'        => '":column" sütunu ":value" değerine sahip, bu bir boolean değil. true, false, yes, no, on, off, 1 veya 0 kullanın.',
             'system'                 => 'Beklenmeyen bir sistem hatası oluştu.',
             'wrong-quotes'           => 'Kıvrık tırnaklar, doğru tırnaklar yerine kullanıldı.',
             'file-empty'             => 'Dosya boş veya başlık satırı içermiyor. Lütfen veri içeren geçerli bir dosya yükleyin.',
@@ -310,5 +311,6 @@ return [
         'completed' => 'İş yürütme tamamlandı',
         'stalled'   => 'İş :minutes dakikadan uzun süre yanıt vermedi ve başarısız olarak işaretlendi. Onu çalıştıran işlem büyük olasılıkla sonlandırıldı.',
         'reaped'    => ':count takılı kalan iş başarısız olarak işaretlendi.',
+        'stopped'   => 'İçe aktarma, doğrulamada :count hata bulunduğu için durduruldu. Hiçbir satır içe aktarılmadı.',
     ],
 ];

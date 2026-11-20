@@ -12,6 +12,8 @@ use Webkul\Attribute\Database\Factories\AttributeFactory;
 use Webkul\Attribute\Presenters\AttributeHistoryPresenter;
 use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Core\Eloquent\TranslatableModel;
+use Webkul\Core\Helpers\ClientValidationRules;
+use Webkul\Core\Helpers\MediaContent;
 use Webkul\Core\Rules\BooleanString;
 use Webkul\Core\Rules\Decimal;
 use Webkul\Core\Rules\FileOrImageValidValue;
@@ -118,14 +120,23 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
     }
 
     /**
-     * Per-attribute allowed extensions, or an empty array to fall back to the
+     * Per-attribute allowed extensions, normalised and stripped of anything
+     * MediaContent blocks, or an empty array to fall back to the
      * FileOrImageValidValue defaults.
      *
      * @return array<int, string>
      */
     public function resolvedAllowedExtensions(): array
     {
-        return empty($this->allowed_extensions) ? [] : array_values($this->allowed_extensions);
+        $extensions = array_map(
+            fn (mixed $extension): string => strtolower(ltrim(trim((string) $extension), '.')),
+            (array) ($this->allowed_extensions ?? []),
+        );
+
+        return array_values(array_unique(array_filter(
+            $extensions,
+            fn (string $extension): bool => $extension !== '' && ! MediaContent::isBlockedExtension($extension),
+        )));
     }
 
     const NON_DELETABLE_ATTRIBUTE_CODE = 'sku';
@@ -146,45 +157,24 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
     }
 
     /**
-     * Returns attribute validation rules
+     * Returns the client-side validation rules as a JSON object literal for a Vue `:rules` binding.
      */
     public function getValidationsField(): string
     {
-        $validations = [];
+        $uploadKilobytes = match ($this->type) {
+            'file'  => $this->resolvedMaxKilobytes((int) (core()->getConfigData('catalog.products.attribute.file_attribute_upload_size') ?? 2048)),
+            'image' => $this->resolvedMaxKilobytes((int) (core()->getConfigData('catalog.products.attribute.image_attribute_upload_size') ?? 2048)),
+            default => 0,
+        };
 
-        if ($this->is_required) {
-            $validations[] = 'required: true';
-        }
-
-        if ($this->type == 'price') {
-            $validations[] = 'decimal: true';
-        }
-
-        if ($this->type == 'file') {
-            $retVal = core()->getConfigData('catalog.products.attribute.file_attribute_upload_size') ?? '2048';
-
-            if ($retVal) {
-                $validations[] = 'size:'.$retVal;
-            }
-        }
-
-        if ($this->type == 'image') {
-            $retVal = core()->getConfigData('catalog.products.attribute.image_attribute_upload_size') ?? '2048';
-
-            if ($retVal) {
-                $validations[] = 'size:'.$retVal.', mimes: ["image/bmp", "image/jpeg", "image/jpg", "image/png", "image/webp"]';
-            }
-        }
-
-        if ($this->validation) {
-            $validations[] = match ($this->validation) {
-                'regex'  => 'regex: "'.$this->regex_pattern.'"',
-                'number' => 'numeric: true',
-                default  => $this->validation.': true'
-            };
-        }
-
-        return '{ '.implode(', ', array_filter($validations)).' }';
+        return ClientValidationRules::forField(
+            (bool) $this->is_required,
+            $this->type,
+            $uploadKilobytes,
+            $this->validation,
+            $this->regex_pattern,
+            $this->type === 'price' ? ['decimal' => true] : [],
+        );
     }
 
     /**
@@ -286,7 +276,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
                 allowedPathPrefixes: $id ? ['product/'.$id.'/'.$this->code] : [],
             );
 
-            if (empty($this->allowed_extensions)) {
+            if ($this->resolvedAllowedExtensions() === []) {
                 $galleryValue->mergeAllowedExtensions(FileOrImageValidValue::VIDEO_ALLOWED_EXTENSIONS);
             }
 
@@ -527,7 +517,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
                     allowedPathPrefixes: $mediaPathPrefixes,
                 );
 
-                if (empty($this->allowed_extensions)) {
+                if ($this->resolvedAllowedExtensions() === []) {
                     $galleryRule->mergeAllowedExtensions(FileOrImageValidValue::VIDEO_ALLOWED_EXTENSIONS);
                 }
 

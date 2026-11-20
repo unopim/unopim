@@ -299,6 +299,7 @@ return [
             'column-not-found'       => '未找到所需的列：%s。',
             'column-numbers'         => '列数与标题中的行数不对应。',
             'invalid-attribute'      => '标头包含无效属性：“%s”。',
+            'invalid-boolean'        => '列“:column”的值为“:value”，不是布尔值。请使用 true, false, yes, no, on, off, 1 或 0。',
             'system'                 => '发生意外的系统错误。',
             'wrong-quotes'           => '使用弯引号代替直引号。',
             'file-empty'             => '文件为空或不包含标题行。请上传包含数据的有效文件。',
@@ -310,5 +311,6 @@ return [
         'completed' => '作业执行完成',
         'stalled'   => '该任务超过 :minutes 分钟没有响应，已标记为失败。执行它的工作进程很可能已被终止。',
         'reaped'    => '已将 :count 个停滞的任务标记为失败。',
+        'stopped'   => '验证发现 :count 个错误，导入已停止。未导入任何行。',
     ],
 ];

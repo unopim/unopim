@@ -299,6 +299,7 @@ return [
             'column-not-found'       => 'Kolom yang wajib diisi tidak ditemukan: %s.',
             'column-numbers'         => 'Jumlah kolom tidak sesuai dengan jumlah baris pada header.',
             'invalid-attribute'      => 'Header berisi atribut yang tidak valid: "%s".',
+            'invalid-boolean'        => 'Kolom ":column" memiliki nilai ":value", yang bukan boolean. Gunakan true, false, yes, no, on, off, 1 atau 0.',
             'system'                 => 'Terjadi kesalahan sistem yang tidak terduga.',
             'wrong-quotes'           => 'Kutipan keriting digunakan sebagai pengganti tanda kutip lurus.',
             'file-empty'             => 'File kosong atau tidak memiliki baris header. Silakan unggah file yang valid dengan data.',
@@ -310,5 +311,6 @@ return [
         'completed' => 'Eksekusi pekerjaan selesai',
         'stalled'   => 'Tugas berhenti merespons selama lebih dari :minutes menit dan ditandai gagal. Proses yang menjalankannya kemungkinan besar dihentikan.',
         'reaped'    => ':count tugas yang macet ditandai sebagai gagal.',
+        'stopped'   => 'Impor dihentikan setelah validasi dengan :count kesalahan. Tidak ada baris yang diimpor.',
     ],
 ];

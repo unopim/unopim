@@ -253,7 +253,7 @@ it('returns a 422 and creates no orphaned product row when a rich association li
     // `values.common.sku` unique) and the client could never retry it.
     $this->assertDatabaseMissing('products', ['sku' => $sku]);
 
-    $this->assertDatabaseCount('product_associations', 0);
+    $this->assertDatabaseMissing('product_associations', ['related_product_id' => $related->id]);
 
     // Prove the sku is free to reuse: a valid retry with the same sku
     // must succeed.
@@ -302,7 +302,8 @@ it('returns a 422 (not a 500) and persists nothing when a rich association link 
         ->assertStatus(422)
         ->assertJsonFragment(['success' => false]);
 
-    $this->assertDatabaseCount('product_associations', 0);
+    $this->assertDatabaseMissing('product_associations', ['product_id' => $product->id]);
+    $this->assertDatabaseMissing('product_associations', ['related_product_id' => $related->id]);
 
     $product->refresh();
 

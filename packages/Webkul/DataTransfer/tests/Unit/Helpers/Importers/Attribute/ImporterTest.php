@@ -14,6 +14,7 @@ use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Helpers\Importers\Attribute\Importer;
 use Webkul\DataTransfer\Helpers\Importers\Attribute\Storage;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
+use Webkul\DataTransfer\Tests\Support\BooleanImportValues;
 
 use function Pest\Laravel\mock;
 
@@ -323,6 +324,39 @@ describe('prepareAttributes', function () {
             ->and($data['is_filterable'])->toBe(1);
     });
 
+    it('casts boolean words to the matching integer', function (mixed $value, int $expected) {
+        ['importer' => $importer, 'attributeStorage' => $storage] = makeImporter();
+
+        $storage->shouldReceive('has')->with('weight')->andReturn(false);
+
+        $attributes = [];
+        $importer->prepareAttributes(
+            [
+                'code'              => 'weight',
+                'locale'            => 'en',
+                'type'              => 'text',
+                'enable_wysiwyg'    => $value,
+                'is_required'       => $value,
+                'is_unique'         => $value,
+                'value_per_locale'  => $value,
+                'value_per_channel' => $value,
+                'is_filterable'     => $value,
+                'ai_translate'      => $value,
+            ],
+            $attributes,
+        );
+
+        expect($attributes['insert']['weight'])->toMatchArray([
+            'enable_wysiwyg'    => $expected,
+            'is_required'       => $expected,
+            'is_unique'         => $expected,
+            'value_per_locale'  => $expected,
+            'value_per_channel' => $expected,
+            'is_filterable'     => $expected,
+            'ai_translate'      => $expected,
+        ]);
+    })->with(BooleanImportValues::recognised());
+
     it('casts position to integer', function () {
         ['importer' => $importer, 'attributeStorage' => $storage] = makeImporter();
 
@@ -529,4 +563,28 @@ describe('isAttributeExist', function () {
 
         expect($importer->isAttributeExist('missing'))->toBeFalse();
     });
+});
+
+it('skips the row when a boolean column holds an unrecognised value', function (string $value) {
+    ['importer' => $importer, 'errorHelper' => $errorHelper] = makeImporter();
+
+    $importer->setImport(makeImport(Import::ACTION_APPEND));
+
+    $errorHelper->shouldReceive('addError')->once()->with('invalid_boolean', 1, 'is_required', Mockery::any());
+    $errorHelper->shouldReceive('addRowToSkip')->once()->with(1);
+
+    expect($importer->validateRow(['code' => 'weight', 'locale' => 'en', 'is_required' => $value], 1))->toBeFalse();
+})->with(BooleanImportValues::unrecognised());
+
+it('records a readable error for an unrecognised boolean value containing a percent sign', function () {
+    ['importer' => $importer] = makeImporter();
+
+    $errorHelper = new Error;
+    $importer->setErrorHelper($errorHelper);
+    $importer->setImport(makeImport(Import::ACTION_APPEND));
+
+    expect($importer->validateRow(['code' => 'weight', 'locale' => 'en', 'is_required' => '100%'], 1))->toBeFalse()
+        ->and($errorHelper->isRowInvalid(1))->toBeTrue()
+        ->and($errorHelper->getAllErrors()[1][0])->toMatchArray(['code' => 'invalid_boolean', 'column' => 'is_required'])
+        ->and($errorHelper->getAllErrors()[1][0]['message'])->toContain('is_required')->toContain('100%');
 });

@@ -138,3 +138,41 @@ it('calculates completeness correctly for localizable and non-localizable attrib
         'avg_completeness_score' => 75,
     ]);
 });
+
+it('counts a zero attribute value as filled', function (mixed $value) {
+    $channel = ChannelProxy::first();
+    $locale = $channel->locales()->first();
+
+    $attribute = AttributeProxy::factory()->create([
+        'type'              => 'text',
+        'is_required'       => 0,
+        'value_per_channel' => 0,
+        'value_per_locale'  => 0,
+    ]);
+
+    $familyId = AttributeFamilyProxy::factory()->withMinimalAttributesForProductTypes()->create()->id;
+
+    $product = ProductProxy::factory()->create([
+        'attribute_family_id' => $familyId,
+        'values'              => ['common' => [$attribute->code => $value]],
+    ]);
+
+    CompletenessSettingProxy::factory()->create([
+        'family_id'    => $familyId,
+        'attribute_id' => $attribute->id,
+        'channel_id'   => $channel->id,
+    ]);
+
+    ProductCompletenessJob::dispatchSync([$product->id]);
+
+    $this->assertDatabaseHas('product_completeness', [
+        'product_id'    => $product->id,
+        'channel_id'    => $channel->id,
+        'locale_id'     => $locale->id,
+        'score'         => 100,
+        'missing_count' => 0,
+    ]);
+})->with([
+    'string zero'  => ['0'],
+    'integer zero' => [0],
+]);

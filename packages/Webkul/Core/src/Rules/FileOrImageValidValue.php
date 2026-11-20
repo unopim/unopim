@@ -24,6 +24,15 @@ class FileOrImageValidValue implements ValidationRule
 
     protected FileMimeExtensionMatch $fileExtensionMatchRule;
 
+    /**
+     * @var string[]
+     */
+    protected array $storedPaths = [];
+
+    /**
+     * The mimes check defaults to the extension allowlist, since Laravel's
+     * `mimes` rule takes extensions and sniffs the content against them.
+     */
     public function __construct(
         protected bool $isImage = false,
         protected array $allowedMimes = [],
@@ -39,9 +48,7 @@ class FileOrImageValidValue implements ValidationRule
             $this->isImage ? self::IMAGE_ALLOWED_EXTENSIONS : self::FILE_ALLOWED_EXTENSION
         );
 
-        $this->allowedMimes = $allowedMimes ?: (
-            $this->isImage ? self::IMAGE_ALLOWED_EXTENSIONS : self::FILE_ALLOWED_EXTENSION
-        );
+        $this->allowedMimes = $allowedMimes ?: $this->allowedExtensions;
 
         $this->fileExtensionMatchRule = new FileMimeExtensionMatch;
     }
@@ -62,6 +69,21 @@ class FileOrImageValidValue implements ValidationRule
     public function mergeAllowedMimes(array $mimes): self
     {
         $this->allowedMimes = array_unique(array_merge($this->allowedMimes, $mimes));
+
+        return $this;
+    }
+
+    /**
+     * Accept paths the record already stores for this field, wherever they live.
+     *
+     * Values saved before the path-prefix check existed may sit outside the
+     * record's own directory; resubmitting them unchanged must not fail.
+     *
+     * @param  string[]  $paths
+     */
+    public function allowStoredPaths(array $paths): self
+    {
+        $this->storedPaths = array_values(array_unique(array_merge($this->storedPaths, $paths)));
 
         return $this;
     }
@@ -175,6 +197,10 @@ class FileOrImageValidValue implements ValidationRule
             return false;
         }
 
+        if (in_array($path, $this->storedPaths, true)) {
+            return true;
+        }
+
         return array_any($this->allowedPathPrefixes, fn ($prefix): bool => str_starts_with($path, rtrim((string) $prefix, '/').'/'));
     }
 
@@ -182,7 +208,7 @@ class FileOrImageValidValue implements ValidationRule
     {
         $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
 
-        if (! in_array($extension, $this->allowedExtensions, true)) {
+        if (MediaContent::isBlockedExtension($extension) || ! in_array($extension, $this->allowedExtensions, true)) {
             return false;
         }
 
@@ -203,7 +229,7 @@ class FileOrImageValidValue implements ValidationRule
     {
         $extension = $value instanceof UploadedFile ? $value->getClientOriginalExtension() : $value->getExtension();
 
-        if ($this->allowedExtensions && ! in_array(strtolower($extension), $this->allowedExtensions, true)) {
+        if (MediaContent::isBlockedExtension($extension) || ($this->allowedExtensions && ! in_array(strtolower($extension), $this->allowedExtensions, true))) {
             $fail('validation.extensions')->translate(['values' => implode(', ', $this->allowedExtensions)]);
 
             return false;
