@@ -2,6 +2,7 @@
 
 namespace Webkul\MagicAI\Services;
 
+use GuzzleHttp\Promise\Create;
 use GuzzleHttp\Promise\PromiseInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -69,9 +70,10 @@ class ProviderCallGuard
 
     /**
      * Guzzle middleware body: refuse redirects and pin the platform host for
-     * a request made while a provider call is in scope. Guzzle's redirect
-     * middleware sits outside this one, so a 3xx loses its Location header
-     * here rather than relying on allow_redirects alone.
+     * a request made while a provider call is in scope, and refuse a request
+     * to any other host unless another guarded sink already pinned it. Guzzle's
+     * redirect middleware sits outside this one, so a 3xx loses its Location
+     * header here rather than relying on allow_redirects alone.
      *
      * @param  array<string, mixed>  $options
      */
@@ -83,8 +85,12 @@ class ProviderCallGuard
 
         $options['allow_redirects'] = false;
 
-        if ($this->matches($request)) {
-            $options['curl'] = array_replace($options['curl'] ?? [], $this->active['curl']);
+        if ($this->active['host'] !== null) {
+            if ($this->matches($request)) {
+                $options['curl'] = array_replace($options['curl'] ?? [], $this->active['curl']);
+            } elseif (! $this->pinnedElsewhere($request, $options)) {
+                return Create::rejectionFor(new RuntimeException(trans('admin::app.configuration.platform.message.unsafe-api-url')));
+            }
         }
 
         return $handler($request, $options)->then(
@@ -104,6 +110,26 @@ class ProviderCallGuard
         return $this->active['host'] !== null
             && strtolower(trim($uri->getHost(), '[]')) === $this->active['host']
             && ($uri->getPort() ?? ($uri->getScheme() === 'https' ? 443 : 80)) === $this->active['port'];
+    }
+
+    /**
+     * Whether the request already carries a CURLOPT_RESOLVE pin for its own
+     * host and port, as SafeWebhookUrl sinks such as webhook delivery set.
+     *
+     * @param  array<string, mixed>  $options
+     */
+    protected function pinnedElsewhere(RequestInterface $request, array $options): bool
+    {
+        $uri = $request->getUri();
+        $prefix = strtolower(trim($uri->getHost(), '[]')).':'.($uri->getPort() ?? ($uri->getScheme() === 'https' ? 443 : 80)).':';
+
+        foreach ((array) ($options['curl'][CURLOPT_RESOLVE] ?? []) as $entry) {
+            if (is_string($entry) && str_starts_with(strtolower($entry), $prefix)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected function port(string $url): int
