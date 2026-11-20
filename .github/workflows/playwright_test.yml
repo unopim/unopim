@@ -157,7 +157,6 @@ jobs:
           cd tests/e2e-pw
           npx playwright test --reporter=list,html --shard=${{ matrix.shard-index }}/${{ matrix.shard-total }}
 
-      # Withholds any report, trace or log that captured an AI provider key.
       - name: Scrub credentials from test results
         id: scrub
         if: failure()
@@ -165,15 +164,12 @@ jobs:
           bash .github/scripts/scrub-e2e-artifacts.sh \
             tests/e2e-pw/playwright-report \
             tests/e2e-pw/test-results \
-            storage/logs
+            storage/logs/laravel.log
 
       - name: Upload test results
-        if: failure() && steps.scrub.outcome == 'success'
+        if: failure() && steps.scrub.outcome == 'success' && steps.scrub.outputs.paths != ''
         uses: actions/upload-artifact@v7
         with:
           name: playwright-report-shard-${{ matrix.shard-index }}-${{ github.run_id }}
-          path: |
-            tests/e2e-pw/playwright-report
-            tests/e2e-pw/test-results
-            storage/logs/laravel.log
+          path: ${{ steps.scrub.outputs.paths }}
           retention-days: 1
