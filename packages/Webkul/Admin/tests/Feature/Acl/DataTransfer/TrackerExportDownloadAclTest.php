@@ -68,8 +68,24 @@ it('allows a role with export execute permission to download an export track fil
     get(route('admin.settings.data_transfer.tracker.archive.download', $folderTrack->id))->assertOk();
 });
 
-it('keeps import track downloads available to a tracker-only role', function () {
+it('blocks a tracker-only role from downloading an import track file and archive', function () {
     $this->loginWithPermissions(permissions: ['data_transfer', 'data_transfer.job_tracker']);
+
+    $fileTrack = trackerAclTrack('import', 'imports/source/products.csv');
+    $folderTrack = trackerAclTrack('import', 'imports/source');
+
+    get(route('admin.settings.data_transfer.tracker.download', $fileTrack->id))->assertForbidden();
+
+    get(route('admin.settings.data_transfer.tracker.archive.download', $folderTrack->id))->assertForbidden();
+});
+
+it('allows a role with import execute permission to download an import track file and archive', function () {
+    $this->loginWithPermissions(permissions: [
+        'data_transfer',
+        'data_transfer.job_tracker',
+        'data_transfer.imports',
+        'data_transfer.imports.execute',
+    ]);
 
     $fileTrack = trackerAclTrack('import', 'imports/source/products.csv');
     $folderTrack = trackerAclTrack('import', 'imports/source');
@@ -77,4 +93,51 @@ it('keeps import track downloads available to a tracker-only role', function () 
     get(route('admin.settings.data_transfer.tracker.download', $fileTrack->id))->assertOk();
 
     get(route('admin.settings.data_transfer.tracker.archive.download', $folderTrack->id))->assertOk();
+});
+
+it('does not let import execute download an import track whose job instance is an export', function () {
+    $this->loginWithPermissions(permissions: [
+        'data_transfer',
+        'data_transfer.job_tracker',
+        'data_transfer.imports',
+        'data_transfer.imports.execute',
+    ]);
+
+    $track = trackerAclTrack('import', 'ai-agent/exports/1/catalogue/products.csv');
+    $track->jobInstance->update(['type' => 'export', 'action' => 'export']);
+
+    get(route('admin.settings.data_transfer.tracker.download', $track->id))->assertForbidden();
+});
+
+it('requires import execute for a track whose type is unknown', function () {
+    $this->loginWithPermissions(permissions: ['data_transfer', 'data_transfer.job_tracker']);
+
+    $track = trackerAclTrack('import', 'imports/source/products.csv');
+    $track->update(['type' => 'unknown']);
+
+    get(route('admin.settings.data_transfer.tracker.download', $track->id))->assertForbidden();
+});
+
+it('shows the export download link on the tracker only with the execute permission of the track', function () {
+    $track = trackerAclTrack('export', 'ai-agent/exports/1/catalogue/products.csv');
+    $downloadUrl = route('admin.settings.data_transfer.tracker.download', $track->id);
+
+    $this->loginWithPermissions(permissions: ['data_transfer', 'data_transfer.job_tracker', 'data_transfer.export']);
+
+    get(route('admin.settings.data_transfer.tracker.view', $track->id))->assertOk()->assertDontSee($downloadUrl, false);
+
+    $this->loginWithPermissions(permissions: ['data_transfer', 'data_transfer.job_tracker', 'data_transfer.export', 'data_transfer.export.execute']);
+
+    get(route('admin.settings.data_transfer.tracker.view', $track->id))->assertOk()->assertSee($downloadUrl, false);
+});
+
+it('hides the export download link from import execute when the job instance is an export', function () {
+    $track = trackerAclTrack('import', 'ai-agent/exports/1/catalogue/products.csv');
+    $track->jobInstance->update(['type' => 'export', 'action' => 'export']);
+
+    $this->loginWithPermissions(permissions: ['data_transfer', 'data_transfer.job_tracker', 'data_transfer.imports', 'data_transfer.imports.execute']);
+
+    get(route('admin.settings.data_transfer.tracker.view', $track->id))
+        ->assertOk()
+        ->assertDontSee(route('admin.settings.data_transfer.tracker.download', $track->id), false);
 });
