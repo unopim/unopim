@@ -78,7 +78,7 @@ class ListAttributes implements PimTool
                 }
 
                 if (! $familyId) {
-                    $familyId = DB::table('attribute_families')->value('id');
+                    $familyId = DB::table('attribute_families')->orderBy('id')->value('id');
                 }
 
                 if (! $familyId) {

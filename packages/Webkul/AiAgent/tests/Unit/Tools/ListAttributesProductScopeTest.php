@@ -47,12 +47,12 @@ function runListAttributesTool(ChatContext $context, array $arguments = []): arr
 }
 
 /**
- * Create a product in a family of its own, so its family is never the fallback one.
+ * Create a product in a family of its own whose code sorts before every seeded family, so an unordered fallback lookup would pick it.
  */
 function productInOwnFamily(): Product
 {
     return Product::factory()->simple()->create([
-        'attribute_family_id' => AttributeFamily::factory()->create()->id,
+        'attribute_family_id' => AttributeFamily::factory()->create(['code' => 'aaa_'.fake()->unique()->numerify('######')])->id,
     ]);
 }
 
