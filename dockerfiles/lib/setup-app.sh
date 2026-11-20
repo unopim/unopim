@@ -14,7 +14,7 @@ setup_app() {
     echo "→ Ensuring API signing keys..."
     php artisan unopim:passport:keys --no-interaction || return 1
 
-    if [ "${UNOPIM_SKIP_MIGRATIONS:-false}" = "true" ]; then
+    if [[ "${UNOPIM_SKIP_MIGRATIONS:-false}" = "true" ]]; then
         echo "→ UNOPIM_SKIP_MIGRATIONS=true — schema is managed outside the container."
         touch "$lock_file"
 
@@ -32,7 +32,7 @@ setup_app() {
 
     php artisan storage:link --relative --no-interaction >/dev/null 2>&1 || true
 
-    if [ "${ELASTICSEARCH_ENABLED:-false}" = "true" ] && [ ! -f "$lock_file" ]; then
+    if [[ "${ELASTICSEARCH_ENABLED:-false}" = "true" && ! -f "$lock_file" ]]; then
         _wait_for_elasticsearch || return 1
 
         echo "→ Building search indexes..."
@@ -86,9 +86,9 @@ _wait_for_elasticsearch() {
 # It is piped to curl -K - so ELASTICSEARCH_USER, ELASTICSEARCH_PASS and
 # ELASTICSEARCH_API_KEY never appear in a process argument list.
 _elasticsearch_curl_auth() {
-    if [ -n "${ELASTICSEARCH_API_KEY:-}" ] && [ "${ELASTICSEARCH_CONNECTION:-default}" != "default" ]; then
+    if [[ -n "${ELASTICSEARCH_API_KEY:-}" && "${ELASTICSEARCH_CONNECTION:-default}" != "default" ]]; then
         printf 'header = "Authorization: ApiKey %s"\n' "$(_curl_config_escape "$ELASTICSEARCH_API_KEY")"
-    elif [ -n "${ELASTICSEARCH_USER:-}" ]; then
+    elif [[ -n "${ELASTICSEARCH_USER:-}" ]]; then
         printf 'user = "%s:%s"\n' "$(_curl_config_escape "$ELASTICSEARCH_USER")" "$(_curl_config_escape "${ELASTICSEARCH_PASS:-}")"
     fi
 }
