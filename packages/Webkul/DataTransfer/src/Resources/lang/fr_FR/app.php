@@ -177,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Cet export est trop volumineux pour être exécuté : environ :rows lignes × :columns colonnes (~:estimated) dépassent l\'espace disponible (~:available). Réduisez l\'export en sélectionnant moins de canaux/locales (et d\'attributs), puis réessayez.',
-        'fields'           => [
+        'export-too-large'      => 'Cet export est trop volumineux pour être exécuté : environ :rows lignes × :columns colonnes (~:estimated) dépassent l\'espace disponible (~:available). Réduisez l\'export en sélectionnant moins de canaux/locales (et d\'attributs), puis réessayez.',
+        'xls-too-many-columns'  => 'Cet export contient plus de :limit colonnes, le maximum qu\'un fichier XLS peut contenir. Choisissez XLSX ou CSV, ou sélectionnez moins d\'attributs, puis réessayez.',
+        'xls-too-many-rows'     => 'Cet export contient plus de :limit lignes, le maximum qu\'un fichier XLS peut contenir. Choisissez XLSX ou CSV, ou réduisez l\'export, puis réessayez.',
+        'xls-too-large'         => 'Cet export est trop volumineux pour être converti en XLS : :rows lignes × :columns colonnes dépassent les :limit cellules que ce serveur peut convertir. Choisissez XLSX ou CSV, ou réduisez l\'export, puis réessayez.',
+        'xls-conversion-failed' => 'Le fichier d\'export n\'a pas pu être remplacé par sa version XLS. Réessayez, ou choisissez XLSX ou CSV.',
+        'fields'                => [
             'file-format'            => 'Format de fichier',
             'with-media'             => 'Avec médias',
             'with-associations'      => 'Avec associations',

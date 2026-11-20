@@ -177,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Ekspor ini terlalu besar untuk dijalankan: perkiraan :rows baris × :columns kolom (~:estimated) melebihi ruang yang tersedia (~:available). Persempit ekspor dengan memilih lebih sedikit saluran/lokal (dan atribut) lalu coba lagi.',
-        'fields'           => [
+        'export-too-large'      => 'Ekspor ini terlalu besar untuk dijalankan: perkiraan :rows baris × :columns kolom (~:estimated) melebihi ruang yang tersedia (~:available). Persempit ekspor dengan memilih lebih sedikit saluran/lokal (dan atribut) lalu coba lagi.',
+        'xls-too-many-columns'  => 'Ekspor ini memiliki lebih dari :limit kolom, jumlah maksimum yang dapat ditampung file XLS. Pilih XLSX atau CSV, atau pilih lebih sedikit atribut, lalu coba lagi.',
+        'xls-too-many-rows'     => 'Ekspor ini memiliki lebih dari :limit baris, jumlah maksimum yang dapat ditampung file XLS. Pilih XLSX atau CSV, atau persempit ekspor, lalu coba lagi.',
+        'xls-too-large'         => 'Ekspor ini terlalu besar untuk dikonversi ke XLS: :rows baris × :columns kolom melebihi :limit sel yang dapat dikonversi server ini. Pilih XLSX atau CSV, atau persempit ekspor, lalu coba lagi.',
+        'xls-conversion-failed' => 'File ekspor tidak dapat diganti dengan versi XLS-nya. Coba lagi, atau pilih XLSX atau CSV.',
+        'fields'                => [
             'file-format'            => 'Format file',
             'with-media'             => 'Dengan media',
             'with-associations'      => 'Dengan asosiasi',

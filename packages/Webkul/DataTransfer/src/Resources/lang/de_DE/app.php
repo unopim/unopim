@@ -177,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Dieser Export ist zu groß: geschätzte :rows Zeilen × :columns Spalten (~:estimated) überschreiten den verfügbaren Speicherplatz (~:available). Schränken Sie den Export ein, indem Sie weniger Kanäle/Sprachen (und Attribute) auswählen, und versuchen Sie es erneut.',
-        'fields'           => [
+        'export-too-large'      => 'Dieser Export ist zu groß: geschätzte :rows Zeilen × :columns Spalten (~:estimated) überschreiten den verfügbaren Speicherplatz (~:available). Schränken Sie den Export ein, indem Sie weniger Kanäle/Sprachen (und Attribute) auswählen, und versuchen Sie es erneut.',
+        'xls-too-many-columns'  => 'Dieser Export hat mehr als :limit Spalten, das Maximum, das eine XLS-Datei aufnehmen kann. Wählen Sie XLSX oder CSV oder weniger Attribute aus und versuchen Sie es erneut.',
+        'xls-too-many-rows'     => 'Dieser Export hat mehr als :limit Zeilen, das Maximum, das eine XLS-Datei aufnehmen kann. Wählen Sie XLSX oder CSV oder grenzen Sie den Export ein und versuchen Sie es erneut.',
+        'xls-too-large'         => 'Dieser Export ist zu groß für die Umwandlung in XLS: :rows Zeilen × :columns Spalten sind mehr als die :limit Zellen, die dieser Server umwandeln kann. Wählen Sie XLSX oder CSV oder grenzen Sie den Export ein und versuchen Sie es erneut.',
+        'xls-conversion-failed' => 'Die Exportdatei konnte nicht durch ihre XLS-Version ersetzt werden. Versuchen Sie es erneut oder wählen Sie XLSX oder CSV.',
+        'fields'                => [
             'file-format'            => 'Dateiformat',
             'with-media'             => 'Mit Medien',
             'with-associations'      => 'Mit Verknüpfungen',

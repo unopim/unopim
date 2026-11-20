@@ -177,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Aquesta exportació és massa gran per executar-se: s\'estimen :rows files × :columns columnes (~:estimated), que superen l\'espai disponible (~:available). Reduïu l\'exportació seleccionant menys canals/idiomes (i atributs) i torneu-ho a provar.',
-        'fields'           => [
+        'export-too-large'      => 'Aquesta exportació és massa gran per executar-se: s\'estimen :rows files × :columns columnes (~:estimated), que superen l\'espai disponible (~:available). Reduïu l\'exportació seleccionant menys canals/idiomes (i atributs) i torneu-ho a provar.',
+        'xls-too-many-columns'  => 'Aquesta exportació té més de :limit columnes, el màxim que pot contenir un fitxer XLS. Trieu XLSX o CSV, o seleccioneu menys atributs, i torneu-ho a provar.',
+        'xls-too-many-rows'     => 'Aquesta exportació té més de :limit files, el màxim que pot contenir un fitxer XLS. Trieu XLSX o CSV, o reduïu l\'exportació, i torneu-ho a provar.',
+        'xls-too-large'         => 'Aquesta exportació és massa gran per convertir-la a XLS: :rows files × :columns columnes supera les :limit cel·les que aquest servidor pot convertir. Trieu XLSX o CSV, o reduïu l\'exportació, i torneu-ho a provar.',
+        'xls-conversion-failed' => 'No s\'ha pogut substituir el fitxer d\'exportació per la seva versió XLS. Torneu-ho a provar o trieu XLSX o CSV.',
+        'fields'                => [
             'file-format'            => 'Format de fitxer',
             'with-media'             => 'Amb mèdia',
             'with-associations'      => 'Amb associacions',
