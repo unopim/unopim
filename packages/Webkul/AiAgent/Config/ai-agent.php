@@ -29,7 +29,7 @@ return [
         Tools\UpdateProduct::class       => ['name' => 'update_product', 'group' => 'catalog', 'write' => true, 'permission' => 'catalog.products.edit', 'enabled' => true],
         Tools\DeleteProducts::class      => ['name' => 'delete_products', 'group' => 'catalog', 'write' => true, 'permission' => 'catalog.products.delete', 'enabled' => true],
         Tools\AttachImage::class         => ['name' => 'attach_image', 'group' => 'catalog', 'write' => true, 'permission' => 'catalog.products.edit', 'enabled' => true],
-        Tools\BulkEdit::class            => ['name' => 'bulk_edit', 'group' => 'catalog', 'write' => true, 'permission' => 'catalog.products.edit', 'enabled' => true],
+        Tools\BulkEdit::class            => ['name' => 'bulk_edit', 'group' => 'catalog', 'write' => true, 'permission' => 'catalog.products.bulk_edit', 'enabled' => true],
         Tools\ExportProducts::class      => ['name' => 'export_products', 'group' => 'catalog', 'write' => false, 'permission' => 'data_transfer.export.execute', 'enabled' => true],
         Tools\ImportProducts::class      => ['name' => 'import_products', 'group' => 'catalog', 'write' => true, 'permission' => 'data_transfer.imports.execute', 'enabled' => true],
         Tools\ManageAssociations::class  => ['name' => 'manage_associations', 'group' => 'catalog', 'write' => true, 'permission' => 'catalog.products.edit', 'enabled' => true],
