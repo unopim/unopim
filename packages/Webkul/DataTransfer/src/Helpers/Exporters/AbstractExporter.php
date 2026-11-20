@@ -235,7 +235,7 @@ abstract class AbstractExporter
             'fieldEnclosure' => '"',
             'shouldAddBOM'   => false,
             'type'           => $filters['file_format'] ?? SpoutWriterFactory::CSV,
-            'writeHeaders'   => ($filters['header_row'] ?? '1') !== '0',
+            'writeHeaders'   => $this->writesHeaderRow(),
             'headerLabels'   => $this->getHeaderLabels(),
         ];
     }
@@ -493,11 +493,19 @@ abstract class AbstractExporter
     /**
      * Reject an export that cannot be produced, before any batch is dispatched.
      */
-    protected function assertExportIsFeasible($results): void
+    protected function assertExportIsFeasible(mixed $results): void
     {
-        if ($this->exportsXls() && method_exists($results, 'count')) {
-            $this->guardXlsLimits((int) $results->count(), 1);
+        if ($results instanceof \Countable) {
+            $this->guardXlsLimits(count($results), 1);
         }
+    }
+
+    /**
+     * Whether the export file starts with a header row.
+     */
+    protected function writesHeaderRow(): bool
+    {
+        return ($this->getFilters()['header_row'] ?? '1') !== '0';
     }
 
     /**
@@ -519,7 +527,7 @@ abstract class AbstractExporter
             return;
         }
 
-        $headerRows = ($this->getFilters()['header_row'] ?? '1') !== '0' ? 1 : 0;
+        $headerRows = $this->writesHeaderRow() ? 1 : 0;
 
         resolve(XlsFileConverter::class)->assertFits($rows + $headerRows, $columns);
     }

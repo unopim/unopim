@@ -47,13 +47,16 @@ class Completed implements ShouldQueue
         Cache::forget('export_init_'.$this->export->id);
     }
 
+    /**
+     * Mark the export as failed and record the reason.
+     */
     public function failed(\Throwable $exception): void
     {
         JobLogger::make($this->jobTrackId)->error("Export Completed job failed: {$exception->getMessage()}", [
             'exception' => $exception->getTraceAsString(),
         ]);
 
-        $this->export->forceFill([
+        $this->export->refresh()->forceFill([
             'state'        => ExportHelper::STATE_FAILED,
             'errors'       => array_merge((array) $this->export->errors, [$exception->getMessage()]),
             'completed_at' => now(),
