@@ -139,6 +139,8 @@ class TrackerController extends Controller
 
         $jobTrack = $this->jobTrackRepository->findOrFail($id);
 
+        $this->abortIfExportDownloadForbidden($jobTrack);
+
         $disk = Storage::disk('private');
 
         if (filled($jobTrack->file_path) && $disk->fileExists($jobTrack->file_path)) {
@@ -160,7 +162,24 @@ class TrackerController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        return $this->archiveJobFiles($this->jobTrackRepository->findOrFail($id));
+        $jobTrack = $this->jobTrackRepository->findOrFail($id);
+
+        $this->abortIfExportDownloadForbidden($jobTrack);
+
+        return $this->archiveJobFiles($jobTrack);
+    }
+
+    /**
+     * Exported files hold catalogue data, so downloading them needs the export execute permission, not only tracker access.
+     */
+    protected function abortIfExportDownloadForbidden(JobTrackContract $jobTrack): void
+    {
+        $isExport = JobType::fromTrack($jobTrack)->isExport()
+            || $jobTrack->jobInstance?->type === JobType::EXPORT->value;
+
+        if ($isExport && ! bouncer()->hasPermission(JobType::EXPORT->executePermission())) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
     }
 
     /**
