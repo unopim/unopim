@@ -37,10 +37,12 @@
                             <span class="w-2 h-2 rounded-full bg-red-500"></span>
                             @lang('admin::app.settings.data-transfer.tracker.index.datagrid.cancelled')
                         </span>
-                        <a class="transparent-button text-sm hover:dark:bg-cherry-800" href="{{ route('admin.settings.data_transfer.tracker.log.download', $jobTrack->id) }}" target="_blank">
-                            <svg class="w-4 h-4 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                            @lang('admin::app.settings.data-transfer.tracker.download-log-file')
-                        </a>
+                        @if ($canDownloadJobFiles)
+                            <a class="transparent-button text-sm hover:dark:bg-cherry-800" href="{{ route('admin.settings.data_transfer.tracker.log.download', $jobTrack->id) }}" target="_blank">
+                                <svg class="w-4 h-4 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                                @lang('admin::app.settings.data-transfer.tracker.download-log-file')
+                            </a>
+                        @endif
                     </div>
                     {!! view_render_event('unopim.admin.settings.data_transfer.tracker.job.state.cancelled.after', $jobTrack) !!}
                 </div>

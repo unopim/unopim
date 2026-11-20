@@ -410,7 +410,7 @@ Agent Behaviors:
   5. Execute directly within this conversation turn — do NOT create a plan for this.
 PROMPT;
 
-        if ($context->hasProductContext()) {
+        if ($context->hasProductContext() && $context->hasPermission('catalog.products')) {
             $product = DB::table('products')
                 ->where('id', $context->productId)
                 ->select('id', 'sku', 'type', 'status')

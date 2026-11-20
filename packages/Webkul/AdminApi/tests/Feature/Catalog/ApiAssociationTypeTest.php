@@ -302,6 +302,105 @@ describe('association type custom fields', function () {
             ->and($field->type)->toBe('text');
     });
 
+    it('keeps a field updated through the REST API on the association type in the URL', function () {
+        $typeCode = createUserDefinedAssociationTypeForFieldTests();
+        $associationType = app(AssociationTypeRepository::class)->findByCode($typeCode);
+        $otherType = app(AssociationTypeRepository::class)->findByCode(createUserDefinedAssociationTypeForFieldTests());
+
+        $field = app(AssociationTypeFieldRepository::class)->create([
+            'association_type_id' => $associationType->id,
+            'code'                => 'quantity',
+            'type'                => 'text',
+        ]);
+
+        $this->withHeaders($this->headers)
+            ->json('PUT', route('admin.api.association-types-fields.update', ['code' => $typeCode, 'fieldCode' => 'quantity']), [
+                'is_required'         => true,
+                'association_type_id' => $otherType->id,
+            ])
+            ->assertOk();
+
+        $field->refresh();
+
+        expect((int) $field->association_type_id)->toBe($associationType->id)
+            ->and((bool) $field->is_required)->toBeTrue();
+    });
+
+    it('keeps fields edited through the REST association type update on the type in the URL', function () {
+        $typeCode = createUserDefinedAssociationTypeForFieldTests();
+        $associationType = app(AssociationTypeRepository::class)->findByCode($typeCode);
+        $otherType = app(AssociationTypeRepository::class)->findByCode(createUserDefinedAssociationTypeForFieldTests());
+
+        $field = app(AssociationTypeFieldRepository::class)->create([
+            'association_type_id' => $associationType->id,
+            'code'                => 'quantity',
+            'type'                => 'text',
+        ]);
+
+        $this->withHeaders($this->headers)
+            ->json('PUT', route('admin.api.association-types.update', ['code' => $typeCode]), [
+                'fields' => [$field->id => ['code' => 'quantity', 'type' => 'text', 'association_type_id' => $otherType->id]],
+            ])
+            ->assertOk();
+
+        expect((int) $field->fresh()->association_type_id)->toBe($associationType->id);
+    });
+
+    it('does not let an edit-only API key add or delete fields through the REST association type update', function () {
+        $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.association_types.edit']);
+        $typeCode = createUserDefinedAssociationTypeForFieldTests();
+        $associationType = app(AssociationTypeRepository::class)->findByCode($typeCode);
+
+        $field = app(AssociationTypeFieldRepository::class)->create([
+            'association_type_id' => $associationType->id,
+            'code'                => 'quantity',
+            'type'                => 'text',
+        ]);
+
+        $this->withHeaders($headers)
+            ->json('PUT', route('admin.api.association-types.update', ['code' => $typeCode]), [
+                'fields' => ['field_0' => ['code' => 'note', 'type' => 'text', 'isNew' => true]],
+            ])
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.fields.0', trans('admin::app.common.unauthorized'));
+
+        $this->withHeaders($headers)
+            ->json('PUT', route('admin.api.association-types.update', ['code' => $typeCode]), [
+                'fields' => [$field->id => ['isDelete' => true]],
+            ])
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.fields.0', trans('admin::app.common.unauthorized'));
+
+        expect($associationType->fields()->pluck('code')->all())->toBe(['quantity']);
+    });
+
+    it('lets an API key holding the field create and delete permissions change fields through the REST association type update', function () {
+        $headers = $this->getAuthenticationHeaders('custom', [
+            'api.catalog.association_types.edit',
+            'api.catalog.association_types.fields.create',
+            'api.catalog.association_types.fields.delete',
+        ]);
+        $typeCode = createUserDefinedAssociationTypeForFieldTests();
+        $associationType = app(AssociationTypeRepository::class)->findByCode($typeCode);
+
+        $field = app(AssociationTypeFieldRepository::class)->create([
+            'association_type_id' => $associationType->id,
+            'code'                => 'quantity',
+            'type'                => 'text',
+        ]);
+
+        $this->withHeaders($headers)
+            ->json('PUT', route('admin.api.association-types.update', ['code' => $typeCode]), [
+                'fields' => [
+                    'field_0'  => ['code' => 'note', 'type' => 'text', 'isNew' => true],
+                    $field->id => ['isDelete' => true],
+                ],
+            ])
+            ->assertOk();
+
+        expect($associationType->fields()->pluck('code')->all())->toBe(['note']);
+    });
+
     it('returns a 404 when updating a field that does not exist on the association type', function () {
         $typeCode = createUserDefinedAssociationTypeForFieldTests();
 

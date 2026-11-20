@@ -312,24 +312,69 @@
 
                         this.filterFields = this.fieldsFor(configKey);
 
-                        if (this.filterFields.filter(field => field.name == 'file_format').length == 0) {
-                            this.selectedFileFormat = '';
-                        }
-
                         this.$emitter.emit('entity-type-changed', value);
 
-                        let formValues = this.$refs.exportCreateForm.values;
+                        const form = this.$refs.exportCreateForm;
 
-                        let resetState = {
-                            values: {code: formValues.code},
-                            errors: this.$refs.exportCreateForm.errors,
-                        };
+                        const filters = this.retainedFilters(form.values);
 
-                        this.$refs.exportCreateForm.resetForm(resetState);
+                        this.selectedFileFormat = filters.file_format ?? '';
+
+                        form.resetForm({
+                            values: {
+                                ...this.withoutFilters(form.values),
+                                ...Object.fromEntries(Object.entries(filters).map(([name, value]) => [`filters[${name}]`, value])),
+                            },
+                            errors: this.withoutFilters(form.errors),
+                        });
+
+                        this.$emitter.emit('filter-values-reset', filters);
                     },
                 },
 
                 methods: {
+                    filterName(key) {
+                        return key.match(/^filters\[(.+)\]$/)?.[1] ?? null;
+                    },
+
+                    withoutFilters(entries) {
+                        return Object.fromEntries(
+                            Object.entries(entries ?? {}).filter(([key]) => key !== 'filters' && ! this.filterName(key))
+                        );
+                    },
+
+                    retainedFilters(values) {
+                        const retained = {};
+
+                        for (const [key, value] of Object.entries(values ?? {})) {
+                            const name = this.filterName(key);
+
+                            const field = this.filterFields.find(candidate => candidate.name === name);
+
+                            if (field && this.acceptsValue(field, value)) {
+                                retained[name] = value;
+                            }
+                        }
+
+                        return retained;
+                    },
+
+                    acceptsValue(field, value) {
+                        const values = Array.isArray(value) ? value : [value];
+
+                        if (! values.length || values.some(item => item === null || item === undefined || item === '')) {
+                            return false;
+                        }
+
+                        if (! Array.isArray(field.options) || ! field.options.length) {
+                            return true;
+                        }
+
+                        const allowed = field.options.map(option => String(option.value));
+
+                        return values.every(item => allowed.includes(String(item)));
+                    },
+
                     fieldsFor(entityType) {
                         return (window.unopim?.fieldSets?.[this.setsKey] ?? {})[entityType] ?? [];
                     },
