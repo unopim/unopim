@@ -16,15 +16,28 @@ class StoreAssociationTypeFieldRequest extends ApiFormRequest
     {
         $associationType = app(AssociationTypeRepository::class)->findByCode((string) $this->route('code'));
 
-        $rules = [
-            'code' => [
-                'required',
-                new Code,
-                new AssociationNotSupportedFields,
-                Rule::unique('association_type_fields', 'code')->where(
-                    fn ($query) => $query->where('association_type_id', $associationType?->id)
-                ),
-            ],
+        $rules = self::fieldRules();
+
+        $rules['code'][] = Rule::unique('association_type_fields', 'code')->where(
+            fn ($query) => $query->where('association_type_id', $associationType?->id)
+        );
+
+        foreach (core()->getAllActiveLocales() as $locale) {
+            $rules[$locale->code.'.name'] = ['sometimes', 'nullable', 'string'];
+        }
+
+        return $rules;
+    }
+
+    /**
+     * Rules a new association type field must pass, wherever it is created from.
+     *
+     * @return array<string, array<int, mixed>>
+     */
+    public static function fieldRules(): array
+    {
+        return [
+            'code'             => ['required', new Code, new AssociationNotSupportedFields],
             'type'             => ['required', new AssociationFieldTypes],
             'status'           => ['sometimes', 'boolean'],
             'validation'       => ['sometimes', 'nullable', new ValidationTypes],
@@ -32,11 +45,5 @@ class StoreAssociationTypeFieldRequest extends ApiFormRequest
             'is_unique'        => ['sometimes', 'boolean'],
             'value_per_locale' => ['sometimes', 'boolean'],
         ];
-
-        foreach (core()->getAllActiveLocales() as $locale) {
-            $rules[$locale->code.'.name'] = ['sometimes', 'nullable', 'string'];
-        }
-
-        return $rules;
     }
 }

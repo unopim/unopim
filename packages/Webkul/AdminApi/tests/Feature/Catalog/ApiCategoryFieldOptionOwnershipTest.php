@@ -70,3 +70,21 @@ it('does not let a labels wrapper smuggle options past the edit-only gate on the
 
     expect(apiCategoryFieldOptionOwner('api_cf_labels_smuggled'))->toBe([]);
 });
+
+it('validates options carried by the REST category field update like the option routes', function () {
+    $existing = CategoryFieldOption::factory()->create(['code' => 'api_cf_valid_existing', 'category_field_id' => $this->field->id]);
+
+    $this->withHeaders($this->headers)
+        ->json('PUT', route('admin.api.category-fields.update', $this->field->code), [
+            'options' => ['option_0' => ['code' => 'bad code!', 'isNew' => true, 'isDelete' => false]],
+        ])
+        ->assertUnprocessable();
+
+    $this->withHeaders($this->headers)
+        ->json('PUT', route('admin.api.category-fields.update', $this->field->code), [
+            'options' => [$existing->id => ['code' => 'bad code!', 'isNew' => false, 'isDelete' => false]],
+        ])
+        ->assertUnprocessable();
+
+    expect(apiCategoryFieldOptionOwner('bad code!'))->toBe([]);
+});
