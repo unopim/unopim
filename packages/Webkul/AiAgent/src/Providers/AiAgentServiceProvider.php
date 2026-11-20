@@ -15,6 +15,7 @@ use Webkul\AiAgent\Console\Commands\IndexProductEmbeddings;
 use Webkul\AiAgent\Contracts\AgentServiceContract;
 use Webkul\AiAgent\Contracts\PromptBuilderContract;
 use Webkul\AiAgent\Listeners\ProductEventListener;
+use Webkul\AiAgent\Observers\AdminMemoryObserver;
 use Webkul\AiAgent\Observers\ProductEmbeddingObserver;
 use Webkul\AiAgent\Services\AgentService;
 use Webkul\AiAgent\Services\EnrichmentService;
@@ -25,6 +26,7 @@ use Webkul\AiAgent\Services\VectorStore\ProductEmbeddingDocumentBuilder;
 use Webkul\AiAgent\Services\VectorStore\ProductEmbeddingIndex;
 use Webkul\AiAgent\Services\VisionService;
 use Webkul\Product\Models\Product as Products;
+use Webkul\User\Models\AdminProxy;
 
 class AiAgentServiceProvider extends ServiceProvider
 {
@@ -59,6 +61,8 @@ class AiAgentServiceProvider extends ServiceProvider
 
         // Vector store: keep product embeddings in sync (gated inside the observer)
         Products::observe(ProductEmbeddingObserver::class);
+
+        AdminProxy::observe(AdminMemoryObserver::class);
 
         // Register console commands
         if ($this->app->runningInConsole()) {
