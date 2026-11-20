@@ -1153,6 +1153,12 @@ return [
         'key'    => 'catalog.products',
         'module' => 'pim',
         'name'   => 'admin::app.acl.products',
+        'route'  => 'admin.catalog.products.configurable_variants',
+        'sort'   => 1,
+    ], [
+        'key'    => 'catalog.products',
+        'module' => 'pim',
+        'name'   => 'admin::app.acl.products',
         'route'  => 'admin.catalog.products.grid_views.index',
         'sort'   => 1,
     ], [
