@@ -85,7 +85,7 @@ RUN a2enmod rewrite headers deflate \
     && echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 # Install Composer (for runtime use in entrypoint)
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 # Application code + Composer vendor from stage 1
 WORKDIR /var/www/html

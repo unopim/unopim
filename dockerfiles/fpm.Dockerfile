@@ -86,7 +86,7 @@ COPY dockerfiles/php.ini "$PHP_INI_DIR/conf.d/unopim.ini"
 COPY dockerfiles/www.conf /usr/local/etc/php-fpm.d/www.conf
 
 # Install Composer (for runtime use in entrypoint)
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 # Application code + Composer vendor from stage 1
 WORKDIR /var/www/html
