@@ -16,6 +16,19 @@ class MagicAIPlatformRepository extends Repository
     }
 
     /**
+     * The saved platform a submission points at when it sends a masked key and
+     * the platform id, so that platform's stored key is reused.
+     */
+    public function findForMaskedKey(mixed $apiKey, mixed $platformId): ?MagicAIPlatform
+    {
+        if (! is_string($apiKey) || preg_match('/^\*+$/', $apiKey) !== 1 || (int) $platformId < 1) {
+            return null;
+        }
+
+        return $this->find((int) $platformId);
+    }
+
+    /**
      * Get the platform marked as default, enabled or not.
      */
     public function getDefault()

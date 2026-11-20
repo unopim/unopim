@@ -2,6 +2,9 @@
 
 namespace Webkul\Webhook\Validators;
 
+use InvalidArgumentException;
+use Symfony\Component\HttpFoundation\IpUtils;
+
 /**
  * Validate that a webhook URL is safe to call from the server side.
  *
@@ -13,10 +16,10 @@ namespace Webkul\Webhook\Validators;
  *  - WebhookSettingsController::store + testWebhookUrl
  *  - WebhookService::sendDataToWebhook / sendCreatedToWebhook / sendBatch
  *
- * DNS-rebinding (TOCTOU) defense: callers pair validate() with
- * httpOptions($url), which returns a CURLOPT_RESOLVE entry pinning the
- * hostname to the validated IP so the connection cannot re-resolve to an
- * internal address between check and use. HTTP redirects are also disabled.
+ * DNS-rebinding (TOCTOU) defense: callers send with pinnedHttpOptions($url)
+ * and refuse when it returns null, so the connection is pinned to the
+ * validated IP and cannot re-resolve to an internal address between check
+ * and use. HTTP redirects are also disabled.
  *
  * Test-env opt-in: setting WEBHOOK_ALLOW_LOOPBACK=true (default false) lets
  * the loopback range pass so Playwright E2E can spin up a localhost catcher
@@ -84,20 +87,33 @@ class SafeWebhookUrl
      * header still carry the original hostname, so TLS certificate validation
      * is unaffected.
      *
-     * Returns redirect-blocking options only when the URL fails validation —
-     * the dispatch site MUST guard with validate() first, but this fallback
-     * stops the request from following 30x chains in the failure path.
+     * Fails closed: a URL that cannot be validated and pinned at this point,
+     * even one that passed an earlier validate(), throws instead of returning
+     * options that would let the connection re-resolve the host.
      *
-     * @return array<string, mixed>
+     * @return array{allow_redirects: false, curl: array<int, list<string>>}
+     *
+     * @throws InvalidArgumentException
      */
     public static function httpOptions(string $url): array
     {
-        $options = ['allow_redirects' => false];
+        return self::pinnedHttpOptions($url)
+            ?? throw new InvalidArgumentException(trans('webhook::app.webhooks.validation.unsafe-url'));
+    }
 
+    /**
+     * The redirect-blocking options plus the CURLOPT_RESOLVE pin for a URL
+     * that validates as public, or null when it cannot be validated and pinned,
+     * so a caller that must fail closed can refuse the request outright.
+     *
+     * @return array{allow_redirects: false, curl: array<int, list<string>>}|null
+     */
+    public static function pinnedHttpOptions(string $url): ?array
+    {
         $check = self::validate($url);
 
         if (! ($check['valid'] ?? false) || empty($check['ip'])) {
-            return $options;
+            return null;
         }
 
         $parts = parse_url($url);
@@ -109,18 +125,18 @@ class SafeWebhookUrl
 
         $port = $parts['port'] ?? (strtolower($parts['scheme'] ?? '') === 'https' ? 443 : 80);
 
-        // CURLOPT_RESOLVE wants the literal IPv6 wrapped in brackets so the
-        // resolver entry parses correctly.
         $ip = $check['ip'];
+
         if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
             $ip = "[{$ip}]";
         }
 
-        $options['curl'] = [
-            CURLOPT_RESOLVE => ["{$host}:{$port}:{$ip}"],
+        return [
+            'allow_redirects' => false,
+            'curl'            => [
+                CURLOPT_RESOLVE => ["{$host}:{$port}:{$ip}"],
+            ],
         ];
-
-        return $options;
     }
 
     /**
@@ -155,12 +171,12 @@ class SafeWebhookUrl
      * 203.0.113.0/24, 240.0.0.0/4 (reserved), and IPv6 ::/128, ::1/128,
      * ::ffff:0:0/96, fe80::/10. Multicast (IPv4 224/4, IPv6 ff00::/8) is
      * NOT covered by the flag, so it is checked separately via inet_pton.
+     * The flags also miss shared address space (100.64/10) and the IPv6
+     * prefixes that embed an IPv4 host (::/96, 6to4, Teredo, NAT64), so
+     * Symfony's PRIVATE_SUBNETS list is checked as well.
      */
     protected static function isAllowedIp(string $ip): bool
     {
-        // Loopback opt-in for Playwright E2E delivery test (explicit
-        // allowlist, off in production by default). getenv() covers the
-        // putenv() path used by tests; config covers .env deployments.
         $loopbackAllowed = filter_var(
             getenv('WEBHOOK_ALLOW_LOOPBACK') ?: config('webhook.allow_loopback', false),
             FILTER_VALIDATE_BOOLEAN
@@ -172,12 +188,10 @@ class SafeWebhookUrl
             return false;
         }
 
-        // IPv4 multicast 224.0.0.0/4 — first nibble 0xe (0xe0..0xef).
         if (strlen($bin) === 4 && (ord($bin[0]) & 0xF0) === 0xE0) {
             return false;
         }
 
-        // IPv6 multicast ff00::/8 — first byte 0xff.
         if (strlen($bin) === 16 && ord($bin[0]) === 0xFF) {
             return false;
         }
@@ -185,14 +199,16 @@ class SafeWebhookUrl
         $flags = FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE;
 
         if ($loopbackAllowed) {
-            // Re-allow ONLY the loopback ranges (127/8, ::1) while keeping
-            // every other reserved/private/link-local/multicast block intact.
             if (strlen($bin) === 4 && ord($bin[0]) === 127) {
                 return true;
             }
             if (strlen($bin) === 16 && $ip === '::1') {
                 return true;
             }
+        }
+
+        if (IpUtils::checkIp($ip, IpUtils::PRIVATE_SUBNETS)) {
+            return false;
         }
 
         return (bool) filter_var($ip, FILTER_VALIDATE_IP, $flags);

@@ -46,8 +46,6 @@ class LaravelAiAdapter implements LLMModelInterface, SupportsStructuredTranslati
         ];
 
         if ($this->aiProvider === AiProvider::Custom) {
-            // Never fall back to the global openai-compatible env URL — that
-            // would send this platform's API key to an unrelated host.
             if (! $this->platform->api_url) {
                 throw new \RuntimeException(
                     trans('admin::app.configuration.platform.message.custom-api-url-required')
@@ -59,11 +57,7 @@ class LaravelAiAdapter implements LLMModelInterface, SupportsStructuredTranslati
             $overrides['url'] = $this->platform->api_url;
         }
 
-        if ($this->platform->extras && is_array($this->platform->extras)) {
-            return array_merge($overrides, $this->platform->extras);
-        }
-
-        return $overrides;
+        return ProviderOverrides::build($overrides, $this->platform->extras);
     }
 
     /**
@@ -103,9 +97,6 @@ class LaravelAiAdapter implements LLMModelInterface, SupportsStructuredTranslati
             ),
         );
 
-        // Providers without real JSON-schema support (DeepSeek, Ollama, some
-        // OpenAI-compatible endpoints) may ignore the schema; fall back to
-        // the raw reply, which the prompt constrains to translated HTML.
         $translated = $response['translated_html'] ?? null;
 
         if (! is_string($translated) || trim($translated) === '') {
@@ -137,7 +128,6 @@ class LaravelAiAdapter implements LLMModelInterface, SupportsStructuredTranslati
     {
         $model = strtolower($model);
 
-        // gpt-5-chat* models accept temperature and are not reasoning models.
         if (str_starts_with($model, 'gpt-5-chat')) {
             return false;
         }

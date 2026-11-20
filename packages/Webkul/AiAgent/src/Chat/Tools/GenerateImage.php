@@ -7,12 +7,14 @@ use Illuminate\Http\File;
 use Illuminate\Support\Str;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Image;
+use Laravel\Ai\Responses\ImageResponse;
 use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 use Webkul\Core\Filesystem\FileStorer;
 use Webkul\MagicAI\Enums\AiProvider;
+use Webkul\MagicAI\Services\ScopedProviderConfig;
 use Webkul\Product\Repositories\ProductRepository;
 
 class GenerateImage implements PimTool
@@ -68,17 +70,6 @@ class GenerateImage implements PimTool
                 }
 
                 try {
-                    // Configure the AI provider
-                    $configKey = $aiProvider->configKey();
-                    config([
-                        "ai.providers.{$configKey}.key" => $this->context->platform->api_key,
-                    ]);
-
-                    if ($this->context->platform->api_url) {
-                        config(["ai.providers.{$configKey}.url" => $this->context->platform->api_url]);
-                    }
-
-                    // Find an image-generation capable model
                     $imageModel = $this->outer->resolveImageModel($this->context);
 
                     $sizeMap = [
@@ -87,13 +78,23 @@ class GenerateImage implements PimTool
                         '1792x1024' => '3:2',
                     ];
 
-                    $response = Image::of($prompt)
-                        ->size($sizeMap[$size] ?? '1:1')
-                        ->quality('high')
-                        ->generate(
-                            provider: $aiProvider->toLab(),
-                            model: $imageModel,
-                        );
+                    $overrides = ['key' => $this->context->platform->api_key];
+
+                    if ($this->context->platform->api_url) {
+                        $overrides['url'] = $this->context->platform->api_url;
+                    }
+
+                    $response = ScopedProviderConfig::run(
+                        $aiProvider->configKey(),
+                        $overrides,
+                        fn (): ImageResponse => Image::of($prompt)
+                            ->size($sizeMap[$size] ?? '1:1')
+                            ->quality('high')
+                            ->generate(
+                                provider: $aiProvider->toLab(),
+                                model: $imageModel,
+                            ),
+                    );
 
                     if (empty($response->images)) {
                         return json_encode(['error' => 'Image generation returned no images.']);
@@ -103,12 +104,10 @@ class GenerateImage implements PimTool
                     $mime = $imageData->mime ?? 'image/png';
                     $extension = $mime === 'image/png' ? 'png' : 'webp';
 
-                    // Save generated image to storage
                     $filename = 'ai-generated-'.Str::random(12).'.'.$extension;
                     $storagePath = 'ai-agent/generated/'.$filename;
                     $fullPath = storage_path('app/public/'.$storagePath);
 
-                    // Validate path stays within allowed directory.
                     $baseDir = storage_path('app/public/ai-agent/');
                     if (! str_starts_with($fullPath, $baseDir)) {
                         return json_encode(['error' => trans('ai-agent::app.common.invalid-file-path')]);
@@ -127,7 +126,6 @@ class GenerateImage implements PimTool
                         'download_url' => asset('storage/'.$storagePath),
                     ];
 
-                    // Attach to product if SKU provided
                     if ($sku) {
                         $repo = resolve(ProductRepository::class);
                         $product = $repo->findOneByField('sku', $sku);
@@ -184,7 +182,6 @@ class GenerateImage implements PimTool
             default   => [],
         };
 
-        // 1. If the user explicitly selected an image-capable model, use it
         if ($context->model !== '' && $context->model !== '0') {
             foreach ($imageModelPatterns as $pattern) {
                 if (stripos($context->model, $pattern) !== false) {
@@ -193,7 +190,6 @@ class GenerateImage implements PimTool
             }
         }
 
-        // 2. Scan the platform's model list — prefer known valid image models
         $knownImageModels = match ($provider) {
             'openai'  => ['gpt-image-1', 'gpt-image-1-mini', 'gpt-image-1.5', 'dall-e-3', 'dall-e-2'],
             'gemini'  => ['gemini-2.0-flash-preview-image-generation', 'gemini-2.5-flash-image'],
@@ -203,14 +199,12 @@ class GenerateImage implements PimTool
 
         $models = $context->platform->model_list ?? [];
 
-        // First pass: prefer known valid models
         foreach ($knownImageModels as $known) {
             if (in_array($known, $models, true)) {
                 return $known;
             }
         }
 
-        // Second pass: any model matching image patterns
         foreach ($models as $model) {
             foreach ($imageModelPatterns as $pattern) {
                 if (stripos((string) $model, $pattern) !== false) {
@@ -219,7 +213,6 @@ class GenerateImage implements PimTool
             }
         }
 
-        // 3. Fallback defaults
         return match ($provider) {
             'openai'  => 'gpt-image-1',
             'gemini'  => 'gemini-2.0-flash-preview-image-generation',

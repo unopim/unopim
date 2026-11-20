@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Files\Image as AiImage;
 use Laravel\Ai\Image;
+use Laravel\Ai\Responses\ImageResponse;
 use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
@@ -17,6 +18,7 @@ use Webkul\Attribute\Models\Attribute;
 use Webkul\Core\Filesystem\FileStorer;
 use Webkul\Core\Helpers\Database\GrammarQueryManager;
 use Webkul\MagicAI\Enums\AiProvider;
+use Webkul\MagicAI\Services\ScopedProviderConfig;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\ProductRepository;
 
@@ -75,7 +77,6 @@ class EditImage implements PimTool
                     return json_encode(['error' => "Product with SKU '{$sku}' not found."]);
                 }
 
-                // Resolve the source image path
                 $sourceResult = $this->outer->resolveSourceImage($this->context, $product, $attribute, (int) ($image_index ?? 0));
 
                 if (isset($sourceResult['error'])) {
@@ -96,15 +97,6 @@ class EditImage implements PimTool
                 }
 
                 try {
-                    $configKey = $aiProvider->configKey();
-                    config([
-                        "ai.providers.{$configKey}.key" => $this->context->platform->api_key,
-                    ]);
-
-                    if ($this->context->platform->api_url) {
-                        config(["ai.providers.{$configKey}.url" => $this->context->platform->api_url]);
-                    }
-
                     $imageModel = $this->outer->resolveImageModel($this->context);
 
                     $sizeMap = [
@@ -113,16 +105,26 @@ class EditImage implements PimTool
                         '1792x1024' => '3:2',
                     ];
 
-                    $response = Image::of($instruction)
-                        ->attachments([
-                            AiImage::fromPath($imagePath),
-                        ])
-                        ->size($sizeMap[$size] ?? '1:1')
-                        ->quality('high')
-                        ->generate(
-                            provider: $aiProvider->toLab(),
-                            model: $imageModel,
-                        );
+                    $overrides = ['key' => $this->context->platform->api_key];
+
+                    if ($this->context->platform->api_url) {
+                        $overrides['url'] = $this->context->platform->api_url;
+                    }
+
+                    $response = ScopedProviderConfig::run(
+                        $aiProvider->configKey(),
+                        $overrides,
+                        fn (): ImageResponse => Image::of($instruction)
+                            ->attachments([
+                                AiImage::fromPath($imagePath),
+                            ])
+                            ->size($sizeMap[$size] ?? '1:1')
+                            ->quality('high')
+                            ->generate(
+                                provider: $aiProvider->toLab(),
+                                model: $imageModel,
+                            ),
+                    );
 
                     if (empty($response->images)) {
                         return json_encode(['error' => 'Image editing returned no results.']);
@@ -142,7 +144,6 @@ class EditImage implements PimTool
 
                     file_put_contents($tempPath, base64_decode($imageData->image));
 
-                    // Save edited image back to the product
                     $saveResult = $this->outer->saveToProduct($product, $resolvedAttribute, $resolvedIndex, $scope, $tempPath, $repo);
 
                     $result = [
@@ -178,7 +179,6 @@ class EditImage implements PimTool
      */
     public function resolveSourceImage(ChatContext $context, Product $product, ?string $attributeCode, int $imageIndex): array
     {
-        // If user uploaded an image in chat, use that
         if ($context->hasImages()) {
             $path = $context->firstImagePath();
 
@@ -194,7 +194,6 @@ class EditImage implements PimTool
             }
         }
 
-        // Otherwise fetch from product
         $attr = $this->resolveImageAttribute($product, $attributeCode);
 
         if (! $attr instanceof Attribute) {
@@ -215,7 +214,6 @@ class EditImage implements PimTool
             return ['error' => "No image found in attribute '{$attr->code}' for product '{$product->sku}'. Upload an image to the product first."];
         }
 
-        // For gallery (array of paths), pick by index
         if ($attr->type === 'gallery') {
             $images = is_array($value) ? $value : explode(',', (string) $value);
             $images = array_values(array_filter($images));
@@ -231,7 +229,6 @@ class EditImage implements PimTool
             $value = $images[$imageIndex];
         }
 
-        // Resolve to filesystem path
         $fullPath = Storage::disk('public')->path($value);
 
         if (! file_exists($fullPath)) {
@@ -257,7 +254,6 @@ class EditImage implements PimTool
                 ->first();
         }
 
-        // Auto-detect: find the first image/gallery attribute in the product's family
         $family = $product->attribute_family;
 
         if (! $family) {
@@ -332,7 +328,6 @@ class EditImage implements PimTool
             $newValue = $storedPath;
         }
 
-        // Write back to the correct scope
         match ($scope) {
             'channel_locale_specific' => $values['channel_locale_specific'][$channelCode][$localeCode][$attribute->code] = $newValue,
             'channel_specific'        => $values['channel_specific'][$channelCode][$attribute->code] = $newValue,

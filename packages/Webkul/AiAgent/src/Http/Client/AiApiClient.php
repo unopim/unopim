@@ -127,11 +127,10 @@ class AiApiClient
      */
     protected function execute(string $method, string $url, ?array $data = null): array
     {
-        // Pin the connection to the validated IP and block redirects to prevent SSRF TOCTOU rebinding.
-        $safeOptions = SafeWebhookUrl::httpOptions($url);
+        $safeOptions = SafeWebhookUrl::pinnedHttpOptions($url);
 
-        throw_unless(
-            isset($safeOptions['curl'][CURLOPT_RESOLVE]),
+        throw_if(
+            $safeOptions === null,
             ApiException::class,
             trans('admin::app.configuration.platform.message.unsafe-api-url'),
             422
@@ -211,7 +210,6 @@ class AiApiClient
             $system = $this->extractSystemMessage($messages);
 
             if ($system !== '') {
-                // Mark the static system prefix for Anthropic prompt caching (issue #421).
                 $body['system'] = [
                     [
                         'type'          => 'text',
@@ -230,7 +228,6 @@ class AiApiClient
             'max_completion_tokens' => $maxTokens,
         ];
 
-        // Reasoning models (o-series, gpt-5*) reject `temperature` — only the default is allowed.
         if (! preg_match('/^chat-latest|^o[1-9]|^o[1-9]-|^gpt-5/i', $this->model)) {
             $body['temperature'] = $temperature;
         }
@@ -251,7 +248,6 @@ class AiApiClient
     protected function parseChatResponse(array $response): array
     {
         return match ($this->provider) {
-            // Anthropic's input_tokens excludes cached tokens (reported separately); add them so budgets see real usage.
             'anthropic' => [
                 'content'      => $response['content'][0]['text'] ?? '',
                 'tokensUsed'   => ($response['usage']['input_tokens'] ?? 0)
@@ -337,7 +333,6 @@ class AiApiClient
 
         $lastIndex = array_key_last($messages);
 
-        // Pass 1: drop the oldest non-system history, never the final message.
         foreach (array_keys($messages) as $index) {
             if ($index === $lastIndex) {
                 continue;
