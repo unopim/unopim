@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Webkul\Admin\Tests\AdminTestCase;
 use Webkul\AdminApi\Tests\ApiTestCase;
+use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\Attribute\Tests\AttributeTestCase;
 use Webkul\Category\Tests\CategoryTestCase;
 use Webkul\Completeness\Tests\CompletenessTestCase;
@@ -13,12 +14,15 @@ use Webkul\Core\Models\Channel;
 use Webkul\Core\Tests\CoreTestCase;
 use Webkul\DataGrid\Tests\DataGridTestCase;
 use Webkul\Installer\Tests\UserCreateCommandTestCase;
+use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\Measurement\Tests\MeasurementTestCase;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Tests\ProductTestCase;
 use Webkul\ProductPassport\Tests\ProductPassportTestCase;
 use Webkul\Publication\Tests\PublicationTestCase;
 use Webkul\Resource\Tests\ResourceTestCase;
+use Webkul\User\Models\Admin;
+use Webkul\User\Models\Role;
 use Webkul\User\Tests\UserTestCase;
 
 ini_set('memory_limit', getenv('PEST_MEMORY_LIMIT') ?: '1024M');
@@ -166,4 +170,33 @@ function submitMultipartForm(string $uri, string $method, array $parameters, arr
     $kernel->terminate($request, $response);
 
     return $response;
+}
+
+/**
+ * Build an AI agent chat context for an admin whose custom role holds only the given permissions.
+ *
+ * @param  array<int, string>  $permissions
+ */
+function aiAgentToolContext(array $permissions): ChatContext
+{
+    $role = Role::factory()->create([
+        'permission_type' => 'custom',
+        'permissions'     => $permissions,
+    ]);
+
+    return new ChatContext(
+        message: 'Run the tool',
+        history: [],
+        productId: null,
+        productSku: null,
+        productName: null,
+        locale: 'en_US',
+        channel: 'default',
+        platform: new MagicAIPlatform(['provider' => 'openai', 'models' => 'gpt-4o']),
+        model: 'gpt-4o',
+        uploadedImagePaths: [],
+        uploadedFilePaths: [],
+        currentPage: null,
+        user: Admin::factory()->create(['role_id' => $role->id]),
+    );
 }

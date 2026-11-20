@@ -48,6 +48,10 @@ class AssignCategories implements PimTool
                 $categories = $request->string('categories')->toString();
 
                 $skuList = array_map(trim(...), explode(',', $skus));
+
+                if ($denied = $this->denyMultiProductUnlessAllowed($this->context, $skuList, 'catalog.products.bulk_edit')) {
+                    return $denied;
+                }
                 $categoryInputs = array_map(trim(...), explode(',', $categories));
 
                 // Build candidate codes to search for
