@@ -13,6 +13,7 @@ use Webkul\Admin\Http\Requests\MagicAI\FetchModelsRequest;
 use Webkul\Admin\Http\Requests\MagicAI\PlatformRequest;
 use Webkul\Admin\Http\Requests\MagicAI\PlatformTestRequest;
 use Webkul\AiAgent\Chat\AiErrorResolver;
+use Webkul\MagicAI\Contracts\MagicAIPlatform;
 use Webkul\MagicAI\Enums\AiProvider;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
 use Webkul\MagicAI\Services\ManagedPlatform;
@@ -217,7 +218,7 @@ class MagicAIPlatformController extends Controller
             abort(403);
         }
 
-        if (! $this->platformValidator()->isSafeApiUrl(request()->input('api_url'))) {
+        if (! $this->platformValidator()->isSafeApiUrl($this->resolveApiUrl())) {
             return new JsonResponse([
                 'success' => false,
                 'message' => trans('admin::app.configuration.platform.message.test-fail'),
@@ -230,7 +231,7 @@ class MagicAIPlatformController extends Controller
             // Custom providers route through the openai-compatible driver, so
             // without an explicit api_url the request would fall back to the
             // global env URL and ship the caller's API key to the wrong host.
-            if ($provider === AiProvider::Custom && empty(trim((string) request()->input('api_url')))) {
+            if ($provider === AiProvider::Custom && empty(trim((string) $this->resolveApiUrl()))) {
                 return new JsonResponse([
                     'success' => false,
                     'message' => trans('admin::app.configuration.platform.message.test-fail').': '.trans('admin::app.configuration.platform.message.custom-api-url-required'),
@@ -324,7 +325,7 @@ class MagicAIPlatformController extends Controller
             abort(403);
         }
 
-        if (! $this->platformValidator()->isSafeApiUrl(request()->input('api_url'))) {
+        if (! $this->platformValidator()->isSafeApiUrl($this->resolveApiUrl())) {
             return new JsonResponse([
                 'message' => trans('admin::app.configuration.platform.message.fetch-models-fail'),
             ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
@@ -351,7 +352,7 @@ class MagicAIPlatformController extends Controller
             $discovery = app(ModelDiscovery::class)->discover(
                 $provider,
                 $this->resolveApiKey(),
-                request()->input('api_url'),
+                $this->resolveApiUrl(),
             );
 
             $models = ModelRecommender::chatCapable($discovery['models']);
@@ -401,16 +402,28 @@ class MagicAIPlatformController extends Controller
      */
     protected function resolveApiKey(): ?string
     {
-        $apiKey = request()->input('api_key');
-        $platformId = request()->input('id');
+        $platform = $this->storedKeyPlatform();
 
-        if ($apiKey && preg_match('/^\*+$/', $apiKey) && $platformId) {
-            $platform = $this->platformRepository->find($platformId);
+        return $platform ? $platform->safeApiKey() : request()->input('api_key');
+    }
 
-            return $platform?->safeApiKey();
-        }
+    /**
+     * Resolve the base URL to call. A stored key only ever goes to its own
+     * platform's saved URL, never to one the request supplies.
+     */
+    protected function resolveApiUrl(): ?string
+    {
+        $platform = $this->storedKeyPlatform();
 
-        return $apiKey;
+        return $platform ? $platform->api_url : request()->input('api_url');
+    }
+
+    /**
+     * The saved platform whose stored key the request reuses, if any.
+     */
+    protected function storedKeyPlatform(): ?MagicAIPlatform
+    {
+        return $this->platformRepository->findForMaskedKey(request()->input('api_key'), request()->input('id'));
     }
 
     /**
@@ -426,8 +439,10 @@ class MagicAIPlatformController extends Controller
             'key' => $this->resolveApiKey(),
         ];
 
-        if (request()->input('api_url')) {
-            $overrides['url'] = request()->input('api_url');
+        $apiUrl = $this->resolveApiUrl();
+
+        if ($apiUrl) {
+            $overrides['url'] = $apiUrl;
         }
 
         return ProviderOverrides::build($overrides, request()->input('extras'));
