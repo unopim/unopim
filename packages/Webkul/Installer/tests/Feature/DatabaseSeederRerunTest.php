@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\DB;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeGroup;
 use Webkul\Category\Models\Category;
+use Webkul\Core\Helpers\Database\DatabaseSequenceHelper;
 use Webkul\Installer\Database\Seeders\DatabaseSeeder as InstallerSeeder;
 use Webkul\Measurement\Models\MeasurementFamily;
 use Webkul\Product\Models\Product;
@@ -26,6 +27,10 @@ function seededTableCounts(): array
 
     return collect($tables)->mapWithKeys(fn (string $table): array => [$table => DB::table($table)->count()])->all();
 }
+
+beforeEach(function (): void {
+    DatabaseSequenceHelper::fixSequences(['admins', 'attributes', 'categories', 'products']);
+});
 
 it('keeps custom attributes and every seeded table unchanged when the seeder runs again', function (): void {
     $customAttribute = Attribute::factory()->create(['code' => 'custom_attribute_test', 'type' => 'text']);
@@ -59,8 +64,38 @@ it('keeps existing measurement families instead of recreating them', function ()
     $this->assertDatabaseHas('measurement_families', ['id' => $family->id, 'code' => $family->code]);
 });
 
+it('treats existing option codes as the defaults regardless of letter case', function (): void {
+    $sizeId = Attribute::query()->where('code', 'size')->value('id');
+
+    DB::table('attribute_options')->where('attribute_id', $sizeId)->delete();
+
+    foreach (['s', 'm', 'l', 'xl'] as $position => $code) {
+        DB::table('attribute_options')->insert(['attribute_id' => $sizeId, 'code' => $code, 'sort_order' => $position + 1]);
+    }
+
+    $this->seed(InstallerSeeder::class);
+
+    expect(DB::table('attribute_options')->where('attribute_id', $sizeId)->orderBy('sort_order')->pluck('code')->all())
+        ->toBe(['s', 'm', 'l', 'xl']);
+});
+
+it('does not add default options to an attribute that is no longer a select', function (): void {
+    $colorId = Attribute::query()->where('code', 'color')->value('id');
+
+    DB::table('attribute_options')->where('attribute_id', $colorId)->delete();
+
+    Attribute::query()->whereKey($colorId)->update(['type' => 'text']);
+
+    $this->seed(InstallerSeeder::class);
+
+    $this->assertDatabaseMissing('attribute_options', ['attribute_id' => $colorId]);
+    $this->assertDatabaseHas('attributes', ['id' => $colorId, 'code' => 'color', 'type' => 'text']);
+});
+
 it('restores the default attributes, options, groups and family mappings deleted from the catalog', function (): void {
     $customAttribute = Attribute::factory()->create(['code' => 'custom_attribute_test', 'type' => 'text']);
+
+    DB::table('product_super_attributes')->delete();
 
     Attribute::query()->whereNotIn('code', ['sku', 'custom_attribute_test'])->delete();
     AttributeGroup::query()->where('code', 'media')->delete();

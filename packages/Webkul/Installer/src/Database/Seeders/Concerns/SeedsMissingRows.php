@@ -28,7 +28,7 @@ trait SeedsMissingRows
         $insertedIds = [];
 
         foreach ($rows as $row) {
-            if (DB::table($table)->where(Arr::only($row, $matchColumns))->exists()) {
+            if ($this->rowIsStored($table, Arr::only($row, $matchColumns))) {
                 continue;
             }
 
@@ -36,6 +36,24 @@ trait SeedsMissingRows
         }
 
         return $insertedIds;
+    }
+
+    /**
+     * Check whether a row with these values is stored, comparing text case-insensitively on every database.
+     *
+     * @param  array<string, mixed>  $values
+     */
+    protected function rowIsStored(string $table, array $values): bool
+    {
+        $query = DB::table($table);
+
+        foreach ($values as $column => $value) {
+            is_string($value)
+                ? $query->whereRaw('LOWER('.$query->getGrammar()->wrap($column).') = ?', [mb_strtolower($value)])
+                : $query->where($column, $value);
+        }
+
+        return $query->exists();
     }
 
     /**
