@@ -157,3 +157,32 @@ it('requires the execute permission to download a job file through the import an
     'import' => ['import', 'admin.settings.data_transfer.imports.download', 'data_transfer.imports', 'data_transfer.imports.execute'],
     'export' => ['export', 'admin.settings.data_transfer.exports.download', 'data_transfer.export', 'data_transfer.export.execute'],
 ]);
+
+it('requires import execute to download an import error report', function () {
+    Storage::disk('private')->put('imports/errors/products.csv', 'sku,error');
+
+    $track = trackerAclTrack('import', 'imports/source/products.csv');
+    $track->update(['error_file_path' => 'imports/errors/products.csv']);
+
+    $this->loginWithPermissions(permissions: ['data_transfer', 'data_transfer.imports']);
+
+    get(route('admin.settings.data_transfer.imports.download_error_report', $track->id))->assertForbidden();
+
+    $this->loginWithPermissions(permissions: ['data_transfer', 'data_transfer.imports', 'data_transfer.imports.execute']);
+
+    get(route('admin.settings.data_transfer.imports.download_error_report', $track->id))->assertOk();
+});
+
+it('shows the import error report link on the tracker only with import execute', function () {
+    $track = trackerAclTrack('import', 'imports/source/products.csv');
+    $track->update(['error_file_path' => 'imports/errors/products.csv']);
+    $reportUrl = route('admin.settings.data_transfer.imports.download_error_report', $track->id);
+
+    $this->loginWithPermissions(permissions: ['data_transfer', 'data_transfer.job_tracker', 'data_transfer.imports']);
+
+    get(route('admin.settings.data_transfer.tracker.view', $track->id))->assertOk()->assertDontSee($reportUrl, false);
+
+    $this->loginWithPermissions(permissions: ['data_transfer', 'data_transfer.job_tracker', 'data_transfer.imports', 'data_transfer.imports.execute']);
+
+    get(route('admin.settings.data_transfer.tracker.view', $track->id))->assertOk()->assertSee($reportUrl, false);
+});
