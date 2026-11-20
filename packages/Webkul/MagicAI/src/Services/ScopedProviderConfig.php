@@ -3,7 +3,10 @@
 namespace Webkul\MagicAI\Services;
 
 use Closure;
+use Illuminate\Http\Client\Factory;
+use Illuminate\Support\Facades\Http;
 use Laravel\Ai\Ai;
+use Webkul\Webhook\Validators\SafeWebhookUrl;
 
 /**
  * Applies per-request laravel/ai provider overrides for the duration of a
@@ -23,7 +26,10 @@ class ScopedProviderConfig
 {
     /**
      * Run the callback with the given provider config overrides applied,
-     * restoring the original provider config afterwards.
+     * restoring the original provider config afterwards. Every provider call
+     * made inside it refuses redirects, and a platform base URL that validates
+     * as public is pinned to the address it resolved to, so the call cannot be
+     * steered to an internal host by a 30x hop or DNS rebinding.
      *
      * @param  array<string, mixed>  $overrides
      */
@@ -39,11 +45,35 @@ class ScopedProviderConfig
         Ai::forgetInstance($configKey);
 
         try {
-            return $callback();
+            return self::withGuardedHttp($overrides['url'] ?? null, $callback);
         } finally {
             config([$prefix => $original]);
 
             Ai::forgetInstance($configKey);
+        }
+    }
+
+    /**
+     * Run the callback with the guarded options on every Http client request,
+     * restoring the previous global options afterwards.
+     */
+    protected static function withGuardedHttp(mixed $url, Closure $callback): mixed
+    {
+        /** @var Factory $factory */
+        $factory = Http::getFacadeRoot();
+
+        $previous = (fn (): mixed => $this->globalOptions)->call($factory);
+
+        $guarded = is_string($url) && $url !== ''
+            ? SafeWebhookUrl::httpOptions($url)
+            : ['allow_redirects' => false];
+
+        $factory->globalOptions(array_replace((array) value($previous), $guarded));
+
+        try {
+            return $callback();
+        } finally {
+            $factory->globalOptions($previous);
         }
     }
 }

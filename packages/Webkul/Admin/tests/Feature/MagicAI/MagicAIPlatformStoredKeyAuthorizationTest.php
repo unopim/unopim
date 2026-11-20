@@ -89,3 +89,20 @@ it('sends the stored key only to the stored api url, never to the submitted one'
     expect($controller->overrides())
         ->toMatchArray(['key' => $this->storedKey, 'url' => 'https://api.openai.com/v1']);
 });
+
+it('calls the provider the stored key was saved for, whatever provider is submitted', function (): void {
+    $this->app->instance('request', Request::create('/', 'POST', ['provider' => 'gemini'] + $this->storedKeyPayload));
+
+    $controller = new class(app(MagicAIPlatformRepository::class)) extends MagicAIPlatformController
+    {
+        /**
+         * Expose the provider the connection test and model listing would call.
+         */
+        public function provider(): ?string
+        {
+            return $this->resolveProvider();
+        }
+    };
+
+    expect($controller->provider())->toBe('openai');
+});

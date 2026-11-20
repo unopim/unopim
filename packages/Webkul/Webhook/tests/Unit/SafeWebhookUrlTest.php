@@ -3,8 +3,6 @@
 use Webkul\Webhook\Validators\SafeWebhookUrl;
 
 it('accepts a normal public https URL', function () {
-    // Public IP literal — bypasses DNS so the test is deterministic in
-    // network-restricted CI. 1.1.1.1 is in public unicast space.
     $result = SafeWebhookUrl::validate('https://1.1.1.1/inbound');
 
     expect($result['valid'])->toBeTrue();
@@ -129,14 +127,12 @@ it('allows loopback only when WEBHOOK_ALLOW_LOOPBACK opt-in is set', function ()
     putenv('WEBHOOK_ALLOW_LOOPBACK=true');
 
     try {
-        // Loopback now allowed.
         $loopback = SafeWebhookUrl::validate('http://127.0.0.1:9999/probe');
         expect($loopback['valid'])->toBeTrue();
 
         $loopback6 = SafeWebhookUrl::validate('http://[::1]:9999/probe');
         expect($loopback6['valid'])->toBeTrue();
 
-        // Private / link-local / multicast must STILL be blocked.
         $private = SafeWebhookUrl::validate('http://10.0.0.1/');
         expect($private['valid'])->toBeFalse();
         expect($private['reason'])->toBe('restricted_ip');
@@ -152,3 +148,20 @@ it('allows loopback only when WEBHOOK_ALLOW_LOOPBACK opt-in is set', function ()
         putenv('WEBHOOK_ALLOW_LOOPBACK');
     }
 });
+
+it('rejects shared, private and IPv4-embedding addresses the filter flags miss', function (string $url): void {
+    $result = SafeWebhookUrl::validate($url);
+
+    expect($result['valid'])->toBeFalse()
+        ->and($result['reason'])->toBe('restricted_ip');
+})->with([
+    'shared address space'        => ['https://100.64.0.1/'],
+    'cloud metadata in 100.64/10' => ['https://100.100.100.200/latest/meta-data/'],
+    'IPv4-compatible IPv6'        => ['https://[::a9fe:a9fe]/'],
+    'NAT64 of the metadata IP'    => ['https://[64:ff9b::a9fe:a9fe]/'],
+    '6to4 of the metadata IP'     => ['https://[2002:a9fe:a9fe::1]/'],
+    'Teredo'                      => ['https://[2001:0:a9fe:a9fe::1]/'],
+    'IPv6 unique local'           => ['https://[fd12:3456::1]/'],
+    'IPv6 link local'             => ['https://[fe80::1]/'],
+    'IPv4-mapped loopback'        => ['https://[::ffff:127.0.0.1]/'],
+]);

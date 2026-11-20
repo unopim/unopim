@@ -210,7 +210,7 @@ class MagicAIPlatformController extends Controller
         }
 
         try {
-            $provider = AiProvider::from(request()->input('provider'));
+            $provider = AiProvider::from($this->resolveProvider());
 
             if ($provider === AiProvider::Custom && empty(trim((string) $this->resolveApiUrl()))) {
                 return new JsonResponse([
@@ -257,9 +257,11 @@ class MagicAIPlatformController extends Controller
         } catch (\Throwable $e) {
             $resolved = AiErrorResolver::resolve($e);
 
-            $detail = $resolved['message'];
+            $detail = $resolved['is_known']
+                ? $resolved['message']
+                : trans('ai-agent::app.common.error-generic');
 
-            if (request()->input('provider') === AiProvider::Custom->value) {
+            if ($this->resolveProvider() === AiProvider::Custom->value) {
                 $detail = preg_replace(
                     '/^(OpenAI-compatible|Groq) Error\b/',
                     trans('admin::app.configuration.platform.message.custom-provider-error'),
@@ -287,7 +289,7 @@ class MagicAIPlatformController extends Controller
         }
 
         try {
-            $provider = AiProvider::from(request()->input('provider'));
+            $provider = AiProvider::from($this->resolveProvider());
             $models = $provider->fetchModels(
                 $this->resolveApiKey(),
                 $this->resolveApiUrl(),
@@ -299,9 +301,9 @@ class MagicAIPlatformController extends Controller
                 'models'      => $models,
                 'recommended' => $recommended,
             ]);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return new JsonResponse([
-                'message' => trans('admin::app.configuration.platform.message.fetch-models-fail').': '.$e->getMessage(),
+                'message' => trans('admin::app.configuration.platform.message.fetch-models-fail'),
             ], JsonResponse::HTTP_BAD_REQUEST);
         }
     }
@@ -400,6 +402,18 @@ class MagicAIPlatformController extends Controller
         $platform = $this->storedKeyPlatform();
 
         return $platform ? $platform->api_url : request()->input('api_url');
+    }
+
+    /**
+     * Resolve the provider to call. A stored key only ever goes to the provider
+     * it was saved for, so a caller cannot route it to one that puts the key in
+     * a URL or echoes it back.
+     */
+    protected function resolveProvider(): ?string
+    {
+        $platform = $this->storedKeyPlatform();
+
+        return $platform ? $platform->provider : request()->input('provider');
     }
 
     /**

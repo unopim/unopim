@@ -2,6 +2,8 @@
 
 namespace Webkul\Webhook\Validators;
 
+use Symfony\Component\HttpFoundation\IpUtils;
+
 /**
  * Validate that a webhook URL is safe to call from the server side.
  *
@@ -109,8 +111,6 @@ class SafeWebhookUrl
 
         $port = $parts['port'] ?? (strtolower($parts['scheme'] ?? '') === 'https' ? 443 : 80);
 
-        // CURLOPT_RESOLVE wants the literal IPv6 wrapped in brackets so the
-        // resolver entry parses correctly.
         $ip = $check['ip'];
         if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
             $ip = "[{$ip}]";
@@ -155,12 +155,12 @@ class SafeWebhookUrl
      * 203.0.113.0/24, 240.0.0.0/4 (reserved), and IPv6 ::/128, ::1/128,
      * ::ffff:0:0/96, fe80::/10. Multicast (IPv4 224/4, IPv6 ff00::/8) is
      * NOT covered by the flag, so it is checked separately via inet_pton.
+     * The flags also miss shared address space (100.64/10) and the IPv6
+     * prefixes that embed an IPv4 host (::/96, 6to4, Teredo, NAT64), so
+     * Symfony's PRIVATE_SUBNETS list is checked as well.
      */
     protected static function isAllowedIp(string $ip): bool
     {
-        // Loopback opt-in for Playwright E2E delivery test (explicit
-        // allowlist, off in production by default). getenv() covers the
-        // putenv() path used by tests; config covers .env deployments.
         $loopbackAllowed = filter_var(
             getenv('WEBHOOK_ALLOW_LOOPBACK') ?: config('webhook.allow_loopback', false),
             FILTER_VALIDATE_BOOLEAN
@@ -172,12 +172,10 @@ class SafeWebhookUrl
             return false;
         }
 
-        // IPv4 multicast 224.0.0.0/4 — first nibble 0xe (0xe0..0xef).
         if (strlen($bin) === 4 && (ord($bin[0]) & 0xF0) === 0xE0) {
             return false;
         }
 
-        // IPv6 multicast ff00::/8 — first byte 0xff.
         if (strlen($bin) === 16 && ord($bin[0]) === 0xFF) {
             return false;
         }
@@ -185,14 +183,16 @@ class SafeWebhookUrl
         $flags = FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE;
 
         if ($loopbackAllowed) {
-            // Re-allow ONLY the loopback ranges (127/8, ::1) while keeping
-            // every other reserved/private/link-local/multicast block intact.
             if (strlen($bin) === 4 && ord($bin[0]) === 127) {
                 return true;
             }
             if (strlen($bin) === 16 && $ip === '::1') {
                 return true;
             }
+        }
+
+        if (IpUtils::checkIp($ip, IpUtils::PRIVATE_SUBNETS)) {
+            return false;
         }
 
         return (bool) filter_var($ip, FILTER_VALIDATE_IP, $flags);

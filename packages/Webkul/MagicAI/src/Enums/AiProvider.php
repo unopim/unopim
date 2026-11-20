@@ -4,6 +4,7 @@ namespace Webkul\MagicAI\Enums;
 
 use GuzzleHttp\Client;
 use Laravel\Ai\Enums\Lab;
+use Webkul\Webhook\Validators\SafeWebhookUrl;
 
 enum AiProvider: string
 {
@@ -32,10 +33,7 @@ enum AiProvider: string
             self::DeepSeek   => Lab::DeepSeek,
             self::Azure      => Lab::Azure,
             self::OpenRouter => Lab::OpenRouter,
-            // Custom providers (Cerebras, Together, Fireworks, Perplexity,
-            // DeepInfra, etc.) implement OpenAI's /chat/completions endpoint,
-            // which laravel/ai's dedicated OpenAI-compatible driver speaks.
-            self::Custom => Lab::OpenAICompatible,
+            self::Custom     => Lab::OpenAICompatible,
         };
     }
 
@@ -69,10 +67,8 @@ enum AiProvider: string
     {
         return match ($this) {
             self::OpenRouter => 'openrouter',
-            // Custom routes through laravel/ai's OpenAI-compatible driver, so
-            // its api_url override must land in that config namespace.
-            self::Custom => 'openai-compatible',
-            default      => $this->value,
+            self::Custom     => 'openai-compatible',
+            default          => $this->value,
         };
     }
 
@@ -102,11 +98,12 @@ enum AiProvider: string
     }
 
     /**
-     * Fetch available models from the provider API.
+     * Fetch available models from the provider API. Redirects are never
+     * followed, so a validated URL cannot pivot to an internal host.
      */
     public function fetchModels(?string $apiKey, ?string $apiUrl = null): array
     {
-        $client = new Client(['timeout' => 15]);
+        $client = new Client(['timeout' => 15, 'allow_redirects' => false]);
 
         try {
             return match ($this) {
@@ -140,7 +137,7 @@ enum AiProvider: string
             return [];
         }
 
-        return $this->fetchOpenAiCompatModels($client, $apiKey, rtrim($apiUrl, '/').'/models');
+        return $this->fetchOpenAiCompatModels($client, $apiKey, rtrim($apiUrl, '/').'/models', pinned: true);
     }
 
     private function fetchOpenAiModels(Client $client, ?string $apiKey): array
@@ -162,7 +159,7 @@ enum AiProvider: string
     private function fetchGeminiModels(Client $client, ?string $apiKey): array
     {
         $response = $client->get('https://generativelanguage.googleapis.com/v1beta/models', [
-            'query' => ['key' => $apiKey],
+            'headers' => ['x-goog-api-key' => (string) $apiKey],
         ]);
 
         $data = json_decode($response->getBody()->getContents(), true);
@@ -178,14 +175,16 @@ enum AiProvider: string
         return $models;
     }
 
-    private function fetchOpenAiCompatModels(Client $client, ?string $apiKey, string $url): array
+    private function fetchOpenAiCompatModels(Client $client, ?string $apiKey, string $url, bool $pinned = false): array
     {
-        $response = $client->get($url, [
+        $options = [
             'headers' => [
                 'Authorization' => 'Bearer '.$apiKey,
                 'Content-Type'  => 'application/json',
             ],
-        ]);
+        ];
+
+        $response = $client->get($url, $pinned ? $this->pinnedOptions($url, $options) : $options);
 
         $data = json_decode($response->getBody()->getContents(), true);
         $models = array_map(
@@ -199,7 +198,9 @@ enum AiProvider: string
 
     private function fetchOllamaModels(Client $client, string $baseUrl): array
     {
-        $response = $client->get(rtrim($baseUrl, '/').'/api/tags');
+        $url = rtrim($baseUrl, '/').'/api/tags';
+
+        $response = $client->get($url, $this->pinnedOptions($url));
 
         $data = json_decode($response->getBody()->getContents(), true);
         $models = array_column($data['models'] ?? [], 'name');
@@ -234,12 +235,12 @@ enum AiProvider: string
         try {
             $url = rtrim($apiUrl, '/').'/openai/models?api-version=2024-10-21';
 
-            $response = $client->get($url, [
+            $response = $client->get($url, $this->pinnedOptions($url, [
                 'headers' => [
                     'api-key'      => $apiKey,
                     'Content-Type' => 'application/json',
                 ],
-            ]);
+            ]));
 
             $data = json_decode($response->getBody()->getContents(), true);
             $models = array_column($data['data'] ?? [], 'id');
@@ -249,5 +250,18 @@ enum AiProvider: string
         } catch (\Exception) {
             return [];
         }
+    }
+
+    /**
+     * Pin a platform-supplied host to the address its validation resolved and
+     * forbid redirects, so the request cannot reach an internal host through
+     * DNS rebinding or a 30x hop.
+     *
+     * @param  array<string, mixed>  $options
+     * @return array<string, mixed>
+     */
+    private function pinnedOptions(string $url, array $options = []): array
+    {
+        return array_replace($options, SafeWebhookUrl::httpOptions($url));
     }
 }
