@@ -30,50 +30,43 @@ function productWithValue(Attribute $attribute, string $channel, string $locale,
     return $product;
 }
 
+/**
+ * Run the job that saves a single translated field for the fr_FR locale of the default channel.
+ */
+function saveFrenchTranslation(Product $product, string $attributeCode, string $content): void
+{
+    (new SaveTranslatedDataJob($product->id, [['locale' => 'fr_FR', 'content' => $content]], 'default', $attributeCode))
+        ->handle(
+            resolve(ProductRepository::class),
+            resolve(AttributeRepository::class),
+            resolve(ProductValueMapper::class),
+        );
+}
+
+/**
+ * Read the stored fr_FR value of the attribute in the default channel.
+ */
+function storedFrenchTranslation(Product $product, Attribute $attribute): mixed
+{
+    return resolve(ProductValueMapper::class)->getScopedValue($product->fresh()->values, $attribute, 'default', 'fr_FR');
+}
+
 it('writes the translated value into the target locale scope', function () {
     $attribute = translatableAttribute();
     $product = productWithValue($attribute, 'default', 'en_US', 'Source text');
 
-    (new SaveTranslatedDataJob(
-        $product->id,
-        [['locale' => 'fr_FR', 'content' => 'Texte traduit']],
-        'default',
-        $attribute->code,
-    ))->handle(
-        resolve(ProductRepository::class),
-        resolve(AttributeRepository::class),
-        resolve(ProductValueMapper::class),
-    );
+    saveFrenchTranslation($product, $attribute->code, 'Texte traduit');
 
-    expect(resolve(ProductValueMapper::class)->getScopedValue(
-        $product->fresh()->values,
-        $attribute,
-        'default',
-        'fr_FR',
-    ))->toBe('Texte traduit');
+    expect(storedFrenchTranslation($product, $attribute))->toBe('Texte traduit');
 });
 
 it('leaves an already translated value alone unless the install opts into replacing', function () {
     $attribute = translatableAttribute();
     $product = productWithValue($attribute, 'default', 'fr_FR', 'Valeur existante');
 
-    (new SaveTranslatedDataJob(
-        $product->id,
-        [['locale' => 'fr_FR', 'content' => 'Nouvelle valeur']],
-        'default',
-        $attribute->code,
-    ))->handle(
-        resolve(ProductRepository::class),
-        resolve(AttributeRepository::class),
-        resolve(ProductValueMapper::class),
-    );
+    saveFrenchTranslation($product, $attribute->code, 'Nouvelle valeur');
 
-    expect(resolve(ProductValueMapper::class)->getScopedValue(
-        $product->fresh()->values,
-        $attribute,
-        'default',
-        'fr_FR',
-    ))->toBe('Valeur existante');
+    expect(storedFrenchTranslation($product, $attribute))->toBe('Valeur existante');
 });
 
 it('overwrites an existing translation when the install opts into replacing', function () {
@@ -87,94 +80,37 @@ it('overwrites an existing translation when the install opts into replacing', fu
     $attribute = translatableAttribute();
     $product = productWithValue($attribute, 'default', 'fr_FR', 'Valeur existante');
 
-    (new SaveTranslatedDataJob(
-        $product->id,
-        [['locale' => 'fr_FR', 'content' => 'Nouvelle valeur']],
-        'default',
-        $attribute->code,
-    ))->handle(
-        resolve(ProductRepository::class),
-        resolve(AttributeRepository::class),
-        resolve(ProductValueMapper::class),
-    );
+    saveFrenchTranslation($product, $attribute->code, 'Nouvelle valeur');
 
-    expect(resolve(ProductValueMapper::class)->getScopedValue(
-        $product->fresh()->values,
-        $attribute,
-        'default',
-        'fr_FR',
-    ))->toBe('Nouvelle valeur');
+    expect(storedFrenchTranslation($product, $attribute))->toBe('Nouvelle valeur');
 });
 
 it('does nothing when the field is not a known attribute', function () {
     $product = Product::factory()->create();
     $before = $product->values;
 
-    (new SaveTranslatedDataJob($product->id, [['locale' => 'fr_FR', 'content' => 'x']], 'default', 'no_such_attribute'))
-        ->handle(
-            resolve(ProductRepository::class),
-            resolve(AttributeRepository::class),
-            resolve(ProductValueMapper::class),
-        );
+    saveFrenchTranslation($product, 'no_such_attribute', 'x');
 
     expect($product->fresh()->values)->toEqual($before);
 });
 
 it('purifies a translated rich-text value before it is stored', function () {
-    $attribute = Attribute::factory()->create([
-        'type'             => 'textarea',
-        'enable_wysiwyg'   => 1,
-        'value_per_locale' => 1,
-    ]);
-
+    $attribute = Attribute::factory()->create(['type' => 'textarea', 'enable_wysiwyg' => 1, 'value_per_locale' => 1]);
     $product = Product::factory()->create();
 
-    (new SaveTranslatedDataJob(
-        $product->id,
-        [['locale' => 'fr_FR', 'content' => '<p>Bonjour</p><script>alert(1)</script><img src="x" onerror="alert(2)">']],
-        'default',
-        $attribute->code,
-    ))->handle(
-        resolve(ProductRepository::class),
-        resolve(AttributeRepository::class),
-        resolve(ProductValueMapper::class),
-    );
+    saveFrenchTranslation($product, $attribute->code, '<p>Bonjour</p><script>alert(1)</script><img src="x" onerror="alert(2)">');
 
-    expect(resolve(ProductValueMapper::class)->getScopedValue(
-        $product->fresh()->values,
-        $attribute,
-        'default',
-        'fr_FR',
-    ))
+    expect(storedFrenchTranslation($product, $attribute))
         ->toContain('<p>Bonjour</p>')
         ->not->toContain('<script')
         ->not->toContain('onerror');
 });
 
 it('stores a translated plain-text value as returned', function () {
-    $attribute = Attribute::factory()->create([
-        'type'             => 'textarea',
-        'enable_wysiwyg'   => 0,
-        'value_per_locale' => 1,
-    ]);
-
+    $attribute = Attribute::factory()->create(['type' => 'textarea', 'enable_wysiwyg' => 0, 'value_per_locale' => 1]);
     $product = Product::factory()->create();
 
-    (new SaveTranslatedDataJob(
-        $product->id,
-        [['locale' => 'fr_FR', 'content' => 'Taille < 5 mm']],
-        'default',
-        $attribute->code,
-    ))->handle(
-        resolve(ProductRepository::class),
-        resolve(AttributeRepository::class),
-        resolve(ProductValueMapper::class),
-    );
+    saveFrenchTranslation($product, $attribute->code, 'Taille < 5 mm');
 
-    expect(resolve(ProductValueMapper::class)->getScopedValue(
-        $product->fresh()->values,
-        $attribute,
-        'default',
-        'fr_FR',
-    ))->toBe('Taille < 5 mm');
+    expect(storedFrenchTranslation($product, $attribute))->toBe('Taille < 5 mm');
 });
