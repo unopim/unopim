@@ -76,6 +76,18 @@ class RoleAccessGuard
     }
 
     /**
+     * Translation key explaining why the actor lacks the permission, or null when it holds it.
+     */
+    public function permissionError(?Admin $actor, string $permission): ?string
+    {
+        if ($this->hasFullAccess($actor?->role) || $actor?->hasPermission($permission)) {
+            return null;
+        }
+
+        return 'admin::app.common.unauthorized';
+    }
+
+    /**
      * The active admin who started a job, with their role, or null when none is recorded or they have since been disabled.
      */
     public function actor(?int $adminId): ?Admin

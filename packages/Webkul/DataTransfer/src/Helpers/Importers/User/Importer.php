@@ -198,7 +198,19 @@ class Importer extends AbstractImporter
         $actor = $this->importActor();
         $guard = $this->roleAccessGuard();
 
-        if ($this->userStorage->getAdminId($rowData['email'])
+        $existingAdminId = $this->userStorage->getAdminId($rowData['email']);
+
+        $userPermission = match (true) {
+            $deleting               => 'settings.users.users.delete',
+            (bool) $existingAdminId => 'settings.users.users.edit',
+            default                 => 'settings.users.users.create',
+        };
+
+        if ($error = $guard->permissionError($actor, $userPermission)) {
+            return $error;
+        }
+
+        if ($existingAdminId
             && $error = $guard->assignmentError($actor, $this->findRole($this->userStorage->getAdminRoleId($rowData['email'])))) {
             return $error;
         }
@@ -211,6 +223,10 @@ class Importer extends AbstractImporter
 
         if (empty($rowData['permission_type'])) {
             return $guard->assignmentError($actor, $role);
+        }
+
+        if ($error = $guard->permissionError($actor, $role instanceof Role ? 'settings.roles.edit' : 'settings.roles.create')) {
+            return $error;
         }
 
         if ($role instanceof Role && $error = $guard->grantError($actor, $role->permission_type, $role->permissions ?? [])) {

@@ -17,12 +17,27 @@ beforeEach(function (): void {
     $this->limitedRole = Role::factory()->create([
         'name'            => 'Limited '.uniqid(),
         'permission_type' => 'custom',
-        'permissions'     => ['dashboard', 'data_transfer.imports', 'settings.users.users.create', 'settings.users.users.edit'],
+        'permissions'     => [
+            'dashboard',
+            'data_transfer.imports',
+            'settings.roles.create',
+            'settings.roles.edit',
+            'settings.roles.delete',
+            'settings.users.users.create',
+            'settings.users.users.edit',
+            'settings.users.users.delete',
+        ],
+    ]);
+    $this->importOnlyRole = Role::factory()->create([
+        'name'            => 'Import only '.uniqid(),
+        'permission_type' => 'custom',
+        'permissions'     => ['dashboard', 'data_transfer.imports'],
     ]);
     $this->subsetRole = Role::factory()->create(['name' => 'Subset '.uniqid(), 'permission_type' => 'custom', 'permissions' => ['dashboard']]);
 
     $this->fullAdmin = Admin::factory()->create(['role_id' => $this->fullRole->id, 'status' => 1]);
     $this->limitedAdmin = Admin::factory()->create(['role_id' => $this->limitedRole->id, 'status' => 1]);
+    $this->importOnlyAdmin = Admin::factory()->create(['role_id' => $this->importOnlyRole->id, 'status' => 1]);
 
     $this->loginAsAdmin($this->fullAdmin);
 });
@@ -86,6 +101,27 @@ describe('role importer', function (): void {
             ->and($importer->validateRow(['name' => 'New '.uniqid(), 'permission_type' => 'custom', 'permissions' => 'dashboard'], 2))->toBeFalse();
     });
 
+    it('requires the role management permission for each row', function (): void {
+        $append = guardedImporter(RoleImporter::class, Import::ACTION_APPEND, $this->importOnlyAdmin->id);
+        $delete = guardedImporter(RoleImporter::class, Import::ACTION_DELETE, $this->importOnlyAdmin->id);
+
+        expect($append->validateRow(['name' => 'New '.uniqid(), 'permission_type' => 'custom', 'permissions' => 'dashboard'], 1))->toBeFalse()
+            ->and($append->validateRow(['name' => $this->subsetRole->name, 'permission_type' => 'custom', 'permissions' => 'dashboard'], 2))->toBeFalse()
+            ->and($delete->validateRow(['name' => $this->subsetRole->name], 1))->toBeFalse();
+    });
+
+    it('refuses deleting a role that admins still hold', function (): void {
+        Admin::factory()->create(['role_id' => $this->subsetRole->id]);
+
+        $delete = guardedImporter(RoleImporter::class, Import::ACTION_DELETE, $this->fullAdmin->id);
+
+        expect($delete->validateRow(['name' => $this->subsetRole->name], 1))->toBeFalse();
+
+        writeGuardedBatch(RoleImporter::class, Import::ACTION_DELETE, $this->fullAdmin->id, [['name' => $this->subsetRole->name]]);
+
+        expect(Role::find($this->subsetRole->id))->not->toBeNull();
+    });
+
     it('grants nothing once the admin who started the job is disabled', function (): void {
         $this->fullAdmin->update(['status' => 0]);
 
@@ -136,6 +172,20 @@ describe('user importer', function (): void {
         expect($append->validateRow(userRow($this->fullAdmin->email, $this->subsetRole->name), 1))->toBeFalse()
             ->and($delete->validateRow(['email' => $this->fullAdmin->email], 1))->toBeFalse()
             ->and($delete->validateRow(['email' => $subsetUser->email], 2))->toBeTrue();
+    });
+
+    it('requires the user and role management permissions for each row', function (): void {
+        $append = guardedImporter(UserImporter::class, Import::ACTION_APPEND, $this->importOnlyAdmin->id);
+        $delete = guardedImporter(UserImporter::class, Import::ACTION_DELETE, $this->importOnlyAdmin->id);
+        $subsetUser = Admin::factory()->create(['role_id' => $this->subsetRole->id]);
+
+        expect($append->validateRow(userRow('a-'.uniqid().'@example.com', $this->subsetRole->name), 1))->toBeFalse()
+            ->and($append->validateRow(userRow($subsetUser->email, $this->subsetRole->name), 2))->toBeFalse()
+            ->and($delete->validateRow(['email' => $subsetUser->email], 1))->toBeFalse();
+
+        writeGuardedBatch(UserImporter::class, Import::ACTION_DELETE, $this->importOnlyAdmin->id, [['email' => $subsetUser->email]]);
+
+        expect(Admin::find($subsetUser->id))->not->toBeNull();
     });
 
     it('lets a full-access admin assign full access', function (): void {

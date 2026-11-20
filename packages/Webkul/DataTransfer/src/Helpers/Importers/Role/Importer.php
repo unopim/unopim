@@ -31,6 +31,11 @@ class Importer extends AbstractImporter
     public const ERROR_CANNOT_GRANT_ACCESS = 'cannot_grant_access';
 
     /**
+     * Error code for deleting a role that admins still hold
+     */
+    public const ERROR_ROLE_IN_USE = 'role_in_use';
+
+    /**
      * Permanent entity columns
      */
     protected array $validColumnNames = [
@@ -52,6 +57,7 @@ class Importer extends AbstractImporter
         self::ERROR_DUPLICATE_NAME            => 'data_transfer::app.importers.roles.validation.errors.duplicate-name',
         self::ERROR_CODE_NOT_FOUND_FOR_DELETE => 'data_transfer::app.importers.roles.validation.errors.name-not-found-to-delete',
         self::ERROR_CANNOT_GRANT_ACCESS       => 'admin::app.settings.roles.cannot-grant-unheld-permissions',
+        self::ERROR_ROLE_IN_USE               => 'admin::app.settings.roles.being-used',
     ];
 
     /**
@@ -103,7 +109,17 @@ class Importer extends AbstractImporter
                 return false;
             }
 
-            return $this->validateAccess($rowData, $rowNumber, deleting: true);
+            if (! $this->validateAccess($rowData, $rowNumber, deleting: true)) {
+                return false;
+            }
+
+            if ($this->isRoleInUse($rowData)) {
+                $this->skipRow($rowNumber, self::ERROR_ROLE_IN_USE, 'name');
+
+                return false;
+            }
+
+            return true;
         }
 
         $validator = Validator::make($rowData, [
@@ -144,7 +160,19 @@ class Importer extends AbstractImporter
     {
         $actor = $this->importActor();
 
-        if ($roleId = $this->roleStorage->get($rowData['name'])) {
+        $roleId = $this->roleStorage->get($rowData['name']);
+
+        $permission = match (true) {
+            $deleting      => 'settings.roles.delete',
+            (bool) $roleId => 'settings.roles.edit',
+            default        => 'settings.roles.create',
+        };
+
+        if ($error = $this->roleAccessGuard()->permissionError($actor, $permission)) {
+            return $error;
+        }
+
+        if ($roleId) {
             $role = $this->roles[$roleId] ??= $this->roleRepository->find($roleId);
 
             if ($error = $this->roleAccessGuard()->grantError($actor, $role?->permission_type, $role?->permissions ?? [])) {
@@ -159,6 +187,16 @@ class Importer extends AbstractImporter
         $permissions = empty($rowData['permissions']) ? [] : explode(',', $rowData['permissions']);
 
         return $this->roleAccessGuard()->grantError($actor, $rowData['permission_type'] ?? null, $permissions);
+    }
+
+    /**
+     * Whether admins still hold the existing role the row names.
+     */
+    protected function isRoleInUse(array $rowData): bool
+    {
+        $roleId = $this->roleStorage->get($rowData['name']);
+
+        return $roleId && (bool) $this->roleRepository->find($roleId)?->admins()->exists();
     }
 
     public function importBatch(JobTrackBatchContract $batch): bool
@@ -196,7 +234,7 @@ class Importer extends AbstractImporter
         foreach ($batch->data as $rowData) {
             $id = $this->roleStorage->get($rowData['name']);
 
-            if ($id && ! $this->accessError($rowData, deleting: true)) {
+            if ($id && ! $this->accessError($rowData, deleting: true) && ! $this->isRoleInUse($rowData)) {
                 $idsToDelete[] = $id;
             }
         }
