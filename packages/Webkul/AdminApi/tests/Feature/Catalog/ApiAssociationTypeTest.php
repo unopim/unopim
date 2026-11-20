@@ -374,6 +374,168 @@ describe('association type custom fields', function () {
         expect($associationType->fields()->pluck('code')->all())->toBe(['quantity']);
     });
 
+    it('does not let an edit-only API key add a field under a key that only starts with an existing field id', function () {
+        $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.association_types.edit']);
+        $typeCode = createUserDefinedAssociationTypeForFieldTests();
+        $associationType = app(AssociationTypeRepository::class)->findByCode($typeCode);
+
+        $field = app(AssociationTypeFieldRepository::class)->create([
+            'association_type_id' => $associationType->id,
+            'code'                => 'quantity',
+            'type'                => 'text',
+        ]);
+
+        $this->withHeaders($headers)
+            ->json('PUT', route('admin.api.association-types.update', ['code' => $typeCode]), [
+                'fields' => [$field->id.'abc' => ['code' => 'note', 'type' => 'text']],
+            ])
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.fields.0', trans('admin::app.common.unauthorized'));
+
+        expect($associationType->fields()->pluck('code')->all())->toBe(['quantity']);
+    });
+
+    it('does not let a labels wrapper smuggle fields past the edit-only gate on the REST association type update', function () {
+        $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.association_types.edit']);
+        $typeCode = createUserDefinedAssociationTypeForFieldTests();
+        $associationType = app(AssociationTypeRepository::class)->findByCode($typeCode);
+
+        $this->withHeaders($headers)
+            ->json('PUT', route('admin.api.association-types.update', ['code' => $typeCode]), [
+                'labels' => ['fields' => ['code' => 'smuggled', 'type' => 'text', 'isNew' => true]],
+            ]);
+
+        expect($associationType->fields()->pluck('code')->all())->toBe([]);
+    });
+
+    it('does not let a create-only API key add fields through the REST association type store', function () {
+        $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.association_types.create']);
+        $typeCode = 'bundle_'.Str::random(8);
+
+        $this->withHeaders($headers)
+            ->json('POST', route('admin.api.association-types.store'), [
+                'code'   => $typeCode,
+                'fields' => [['code' => 'note', 'type' => 'text']],
+            ])
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.fields.0', trans('admin::app.common.unauthorized'));
+
+        expect(app(AssociationTypeRepository::class)->findByCode($typeCode))->toBeNull();
+    });
+
+    it('does not let an edit-only API key rewrite existing fields through the REST association type update', function () {
+        $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.association_types.edit']);
+        $typeCode = createUserDefinedAssociationTypeForFieldTests();
+        $associationType = app(AssociationTypeRepository::class)->findByCode($typeCode);
+
+        $field = app(AssociationTypeFieldRepository::class)->create([
+            'association_type_id' => $associationType->id,
+            'code'                => 'quantity',
+            'type'                => 'text',
+            'is_required'         => false,
+        ]);
+
+        $this->withHeaders($headers)
+            ->json('PUT', route('admin.api.association-types.update', ['code' => $typeCode]), [
+                'fields' => [$field->id => ['code' => 'quantity', 'type' => 'text', 'is_required' => true]],
+            ])
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.fields.0', trans('admin::app.common.unauthorized'));
+
+        expect((bool) $field->fresh()->is_required)->toBeFalse();
+
+        app('auth')->forgetGuards();
+
+        $editHeaders = $this->getAuthenticationHeaders('custom', ['api.catalog.association_types.edit', 'api.catalog.association_types.fields.edit']);
+
+        $this->withHeaders($editHeaders)
+            ->json('PUT', route('admin.api.association-types.update', ['code' => $typeCode]), [
+                'fields' => [$field->id => ['code' => 'quantity', 'type' => 'text', 'is_required' => true]],
+            ])
+            ->assertOk();
+
+        expect((bool) $field->fresh()->is_required)->toBeTrue();
+    });
+
+    it('keeps the code and type of existing fields immutable through the REST association type update', function () {
+        $typeCode = createUserDefinedAssociationTypeForFieldTests();
+        $associationType = app(AssociationTypeRepository::class)->findByCode($typeCode);
+
+        $field = app(AssociationTypeFieldRepository::class)->create([
+            'association_type_id' => $associationType->id,
+            'code'                => 'quantity',
+            'type'                => 'text',
+        ]);
+
+        $this->withHeaders($this->headers)
+            ->json('PUT', route('admin.api.association-types.update', ['code' => $typeCode]), [
+                'fields' => [$field->id => ['code' => 'quantity', 'type' => 'boolean']],
+            ])
+            ->assertUnprocessable();
+
+        $this->withHeaders($this->headers)
+            ->json('PUT', route('admin.api.association-types.update', ['code' => $typeCode]), [
+                'fields' => [$field->id => ['code' => 'renamed', 'type' => 'text']],
+            ])
+            ->assertUnprocessable();
+
+        expect($field->fresh()->only(['code', 'type']))->toBe(['code' => 'quantity', 'type' => 'text']);
+    });
+
+    it('does not let a non-canonical field key bypass the field immutability on the REST association type update', function () {
+        $typeCode = createUserDefinedAssociationTypeForFieldTests();
+        $associationType = app(AssociationTypeRepository::class)->findByCode($typeCode);
+
+        $field = app(AssociationTypeFieldRepository::class)->create([
+            'association_type_id' => $associationType->id,
+            'code'                => 'quantity',
+            'type'                => 'text',
+        ]);
+
+        foreach (['0'.$field->id, ' '.$field->id, $field->id.'.0'] as $key) {
+            $this->withHeaders($this->headers)
+                ->json('PUT', route('admin.api.association-types.update', ['code' => $typeCode]), [
+                    'fields' => [$key => ['code' => 'renamed', 'type' => 'boolean']],
+                ]);
+
+            $this->withHeaders($this->headers)
+                ->json('PUT', route('admin.api.association-types.update', ['code' => $typeCode]), [
+                    'fields' => [$key => ['isDelete' => true]],
+                ]);
+        }
+
+        expect($field->fresh()?->only(['code', 'type']))->toBe(['code' => 'quantity', 'type' => 'text']);
+    });
+
+    it('validates fields carried by the REST association type store and update like the field routes', function () {
+        $typeCode = createUserDefinedAssociationTypeForFieldTests();
+        $associationType = app(AssociationTypeRepository::class)->findByCode($typeCode);
+
+        $this->withHeaders($this->headers)
+            ->json('PUT', route('admin.api.association-types.update', ['code' => $typeCode]), [
+                'fields' => ['field_0' => ['code' => 'note', 'type' => 'select', 'isNew' => true]],
+            ])
+            ->assertUnprocessable();
+
+        $this->withHeaders($this->headers)
+            ->json('PUT', route('admin.api.association-types.update', ['code' => $typeCode]), [
+                'fields' => ['field_0' => ['code' => 'note', 'type' => 'text', 'isNew' => true, 'validation' => 'not-a-rule']],
+            ])
+            ->assertUnprocessable();
+
+        $newTypeCode = 'bundle_'.Str::random(8);
+
+        $this->withHeaders($this->headers)
+            ->json('POST', route('admin.api.association-types.store'), [
+                'code'   => $newTypeCode,
+                'fields' => [['code' => 'note', 'type' => 'select']],
+            ])
+            ->assertUnprocessable();
+
+        expect($associationType->fields()->count())->toBe(0)
+            ->and(app(AssociationTypeRepository::class)->findByCode($newTypeCode))->toBeNull();
+    });
+
     it('lets an API key holding the field create and delete permissions change fields through the REST association type update', function () {
         $headers = $this->getAuthenticationHeaders('custom', [
             'api.catalog.association_types.edit',
