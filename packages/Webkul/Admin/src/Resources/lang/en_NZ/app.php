@@ -2345,6 +2345,7 @@ return [
             'generate-key-success'           => 'API key generated successfully',
             're-generate-secret-key-success' => 'API secret key regenerated successfully',
             'client-not-found'               => 'Client Not Found',
+            'oauth-keys-missing'             => 'The API signing keys are missing or must be replaced. Run "php artisan unopim:passport:keys" to create new ones.',
         ],
         'prompt' => [
             'index' => [

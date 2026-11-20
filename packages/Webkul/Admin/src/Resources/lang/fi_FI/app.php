@@ -2345,6 +2345,7 @@ return [
             'generate-key-success'           => 'API-avain luotiin onnistuneesti',
             're-generate-secret-key-success' => 'API-salainen avain luotiin uudelleen onnistuneesti',
             'client-not-found'               => 'Asiakasta ei löytynyt',
+            'oauth-keys-missing'             => 'API:n allekirjoitusavaimet puuttuvat tai ne on vaihdettava. Luo uudet suorittamalla "php artisan unopim:passport:keys".',
         ],
         'prompt' => [
             'index' => [

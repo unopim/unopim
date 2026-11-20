@@ -2347,6 +2347,7 @@ return [
             'generate-key-success'           => 'API түлхүүрийг амжилттай бий болгосон',
             're-generate-secret-key-success' => 'API нууц түлхүүрийг амжилттай зохицуулж байна',
             'client-not-found'               => 'Үйлчлүүлэгч олдсонгүй',
+            'oauth-keys-missing'             => 'API гарын үсгийн түлхүүрүүд байхгүй эсвэл солих шаардлагатай байна. Шинээр үүсгэхийн тулд "php artisan unopim:passport:keys" командыг ажиллуулна уу.',
         ],
         'prompt' => [
             'index' => [

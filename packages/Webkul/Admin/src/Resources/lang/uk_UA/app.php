@@ -2347,6 +2347,7 @@ return [
             'generate-key-success'           => 'Ключ API успішно згенеровано',
             're-generate-secret-key-success' => 'Секретний ключ API успішно перегенеровано',
             'client-not-found'               => 'Клієнт не знайдено',
+            'oauth-keys-missing'             => 'Ключі підпису API відсутні або їх потрібно замінити. Виконайте «php artisan unopim:passport:keys», щоб створити нові.',
         ],
         'prompt' => [
             'index' => [

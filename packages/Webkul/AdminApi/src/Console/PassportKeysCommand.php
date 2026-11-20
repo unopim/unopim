@@ -26,11 +26,12 @@ class PassportKeysCommand extends Command
     /**
      * Existing keys are never replaced: regenerating invalidates every access
      * and refresh token already issued, so rotation has to be a deliberate act
-     * rather than a side effect of running the installer again.
+     * rather than a side effect of running the installer again. A revoked pair
+     * is the one exception and is always replaced.
      */
     public function handle(OauthKeyStore $keys): int
     {
-        if ($keys->exists()) {
+        if ($keys->exists() && ! $keys->isRevoked()) {
             $this->info('Passport keys already exist at '.$keys->path().'.');
 
             return self::SUCCESS;
@@ -41,12 +42,6 @@ class PassportKeysCommand extends Command
             $this->line('Grant the application write access to that directory, or point UNOPIM_OAUTH_KEY_PATH somewhere writable.');
 
             return self::FAILURE;
-        }
-
-        if ($keys->adoptLegacyKeys()) {
-            $this->info('Migrated the existing Passport keypair to '.$keys->path().'.');
-
-            return self::SUCCESS;
         }
 
         if (! $keys->generate()) {

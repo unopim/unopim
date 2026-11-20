@@ -2347,6 +2347,7 @@ return [
             'generate-key-success'           => 'API-nyckel genererades framgångsrikt',
             're-generate-secret-key-success' => 'API-sekret-nyckel genererades om framgångsrikt',
             'client-not-found'               => 'Klient hittades inte',
+            'oauth-keys-missing'             => 'API-signeringsnycklarna saknas eller måste bytas ut. Kör "php artisan unopim:passport:keys" för att skapa nya.',
         ],
         'prompt' => [
             'index' => [

@@ -2347,6 +2347,7 @@ return [
             'generate-key-success'           => 'API密钥成功生成',
             're-generate-secret-key-success' => 'API秘密密钥已成功再生',
             'client-not-found'               => '未找到客户',
+            'oauth-keys-missing'             => 'API 签名密钥缺失或需要更换。请运行“php artisan unopim:passport:keys”来创建新的密钥。',
         ],
         'prompt' => [
             'index' => [
