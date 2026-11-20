@@ -25,6 +25,27 @@ class ApiController extends BaseController
     }
 
     /**
+     * Refuse `isNew` or `isDelete` option entries in a parent update the key may not create or delete.
+     *
+     * The option routes gate adds and removals on the create and delete keys, so the parent update must too.
+     */
+    protected function deniedOptionWrites(mixed $options, string $permissionPrefix): ?JsonResponse
+    {
+        $entries = collect(is_array($options) ? $options : [])->filter(fn (mixed $option): bool => is_array($option));
+
+        $isFlagged = fn (string $flag): bool => $entries->contains(fn (array $option): bool => in_array($option[$flag] ?? null, [true, 'true'], true));
+
+        if (
+            ($isFlagged('isNew') && ! $this->apiKeyAllows($permissionPrefix.'.create'))
+            || ($isFlagged('isDelete') && ! $this->apiKeyAllows($permissionPrefix.'.delete'))
+        ) {
+            return $this->validateErrorResponse(['options' => [trans('admin::app.common.unauthorized')]]);
+        }
+
+        return null;
+    }
+
+    /**
      * This function processes and transforms the 'labels' key in the given request data.
      *
      * @return array

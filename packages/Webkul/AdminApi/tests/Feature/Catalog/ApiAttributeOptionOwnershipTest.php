@@ -66,3 +66,42 @@ it('lets an API key holding the create permission add options through the REST o
 
     expect(apiOptionOwner('api_create_allowed_new'))->toBe([$this->attribute->id]);
 });
+
+it('does not let an edit-only API key add or delete options through the REST attribute update', function () {
+    $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.attributes.edit']);
+    $option = AttributeOption::create(['code' => 'api_edit_only_kept', 'sort_order' => 1, 'attribute_id' => $this->attribute->id]);
+
+    $this->withHeaders($headers)
+        ->json('PUT', route('admin.api.attributes.update', $this->attribute->code), [
+            'options' => ['option_0' => ['code' => 'api_edit_only_added', 'isNew' => true, 'isDelete' => false]],
+        ])
+        ->assertUnprocessable()
+        ->assertJsonPath('errors.options.0', trans('admin::app.common.unauthorized'));
+
+    $this->withHeaders($headers)
+        ->json('PUT', route('admin.api.attributes.update', $this->attribute->code), [
+            'options' => [$option->id => ['isNew' => false, 'isDelete' => true]],
+        ])
+        ->assertUnprocessable()
+        ->assertJsonPath('errors.options.0', trans('admin::app.common.unauthorized'));
+
+    expect(apiOptionOwner('api_edit_only_added'))->toBe([])
+        ->and(AttributeOption::whereKey($option->id)->exists())->toBeTrue();
+});
+
+it('lets an API key holding the create and delete permissions change options through the REST attribute update', function () {
+    $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.attributes.edit', 'api.catalog.attributes.create', 'api.catalog.attributes.delete']);
+    $option = AttributeOption::create(['code' => 'api_full_removed', 'sort_order' => 1, 'attribute_id' => $this->attribute->id]);
+
+    $this->withHeaders($headers)
+        ->json('PUT', route('admin.api.attributes.update', $this->attribute->code), [
+            'options' => [
+                'option_0'   => ['code' => 'api_full_added', 'isNew' => true, 'isDelete' => false],
+                $option->id  => ['isNew' => false, 'isDelete' => true],
+            ],
+        ])
+        ->assertOk();
+
+    expect(apiOptionOwner('api_full_added'))->toBe([$this->attribute->id])
+        ->and(AttributeOption::whereKey($option->id)->exists())->toBeFalse();
+});

@@ -37,3 +37,25 @@ it('keeps options updated through the REST API on the category field in the URL'
     expect(apiCategoryFieldOptionOwner($option->code))->toBe([$this->field->id])
         ->and((int) $option->fresh()->sort_order)->toBe(7);
 });
+
+it('does not let an edit-only API key add or delete options through the REST category field update', function () {
+    $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.category_fields.edit']);
+    $option = CategoryFieldOption::factory()->create(['code' => 'api_cf_edit_only_kept', 'category_field_id' => $this->field->id]);
+
+    $this->withHeaders($headers)
+        ->json('PUT', route('admin.api.category-fields.update', $this->field->code), [
+            'options' => ['option_0' => ['code' => 'api_cf_edit_only_added', 'isNew' => true, 'isDelete' => false]],
+        ])
+        ->assertUnprocessable()
+        ->assertJsonPath('errors.options.0', trans('admin::app.common.unauthorized'));
+
+    $this->withHeaders($headers)
+        ->json('PUT', route('admin.api.category-fields.update', $this->field->code), [
+            'options' => [$option->id => ['isNew' => false, 'isDelete' => true]],
+        ])
+        ->assertUnprocessable()
+        ->assertJsonPath('errors.options.0', trans('admin::app.common.unauthorized'));
+
+    expect(apiCategoryFieldOptionOwner('api_cf_edit_only_added'))->toBe([])
+        ->and(CategoryFieldOption::whereKey($option->id)->exists())->toBeTrue();
+});
