@@ -401,7 +401,7 @@ class MagicAIController extends Controller
             return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
         }
 
-        $product = $this->productRepository->find(request()->resource_id);
+        $product = $this->productRepository->findOrFail(request()->resource_id);
 
         $values = ProductValueMapperFacade::getScopedFields(
             $product->toArray(),
@@ -472,7 +472,7 @@ class MagicAIController extends Controller
             return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
         }
 
-        $product = $this->productRepository->find(request()->resource_id);
+        $product = $this->productRepository->findOrFail(request()->resource_id);
 
         $values = ProductValueMapperFacade::getScopedFields(
             $product->toArray(),
