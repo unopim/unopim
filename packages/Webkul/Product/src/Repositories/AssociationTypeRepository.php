@@ -4,6 +4,7 @@ namespace Webkul\Product\Repositories;
 
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Webkul\Core\Eloquent\Repository;
 use Webkul\Product\Contracts\AssociationType;
@@ -100,7 +101,7 @@ class AssociationTypeRepository extends Repository
                     continue;
                 }
 
-                $this->associationTypeFieldRepository->update($fieldData, $resolvedId);
+                $this->associationTypeFieldRepository->update(Arr::except($fieldData, ['association_type_id']), $resolvedId);
             }
 
             return $associationType;

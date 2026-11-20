@@ -175,3 +175,27 @@ it('does not duplicate a field when the same still-new payload is submitted twic
         ->and($fields->first()->options)->toHaveCount(1)
         ->and($fields->first()->options->first()->code)->toBe('gps');
 });
+
+it('keeps an existing field on its association type when an update names another one', function (): void {
+    $repo = app(AssociationTypeRepository::class);
+
+    $type = $repo->create([
+        'code'            => 'owner_type_'.uniqid(),
+        'is_user_defined' => 1,
+        'fields'          => [['code' => 'quantity', 'type' => 'text']],
+    ]);
+
+    $other = $repo->create(['code' => 'other_owner_'.uniqid(), 'is_user_defined' => 1]);
+
+    $field = $type->fields()->first();
+
+    $repo->update([
+        'fields' => [$field->id => ['code' => 'quantity', 'type' => 'text', 'is_required' => 1, 'association_type_id' => $other->id]],
+    ], $type->id);
+
+    $field->refresh();
+
+    expect($field->association_type_id)->toBe($type->id)
+        ->and((bool) $field->is_required)->toBeTrue()
+        ->and($other->fields()->count())->toBe(0);
+});

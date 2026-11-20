@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Webkul\Category\Contracts\CategoryField as CategoryFieldContract;
 use Webkul\Category\Database\Factories\CategoryFieldFactory;
 use Webkul\Core\Eloquent\TranslatableModel;
-use Webkul\Core\Rules\Decimal;
 use Webkul\Core\Rules\FileOrImageValidValue;
+use Webkul\Core\Traits\ValidationSettingRules;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 
@@ -31,6 +31,7 @@ class CategoryField extends TranslatableModel implements CategoryFieldContract, 
 {
     use HasFactory;
     use HistoryTrait;
+    use ValidationSettingRules;
 
     const NON_DELETABLE_FIELD_CODE = 'name';
 
@@ -113,13 +114,7 @@ class CategoryField extends TranslatableModel implements CategoryFieldContract, 
             }
         }
 
-        if ($this->validation) {
-            $validations[] = match ($this->validation) {
-                'regex'  => 'regex: "'.$this->regex_pattern.'"',
-                'number' => 'numeric: true',
-                default  => $this->validation.': true'
-            };
-        }
+        $validations[] = $this->clientValidationRule();
 
         return '{ '.implode(', ', array_filter($validations)).' }';
     }
@@ -133,16 +128,7 @@ class CategoryField extends TranslatableModel implements CategoryFieldContract, 
 
         $validations[] = $this->is_required ? 'required' : 'nullable';
 
-        if ($this->validation) {
-            $validations[] = match ($this->validation) {
-                'regex'   => 'regex: "'.$this->regex_pattern.'"',
-                'number'  => 'numeric',
-                'decimal' => new Decimal,
-                default   => $this->validation
-            };
-        }
-
-        return $validations;
+        return [...$validations, ...$this->serverValidationRules()];
     }
 
     /**
@@ -243,16 +229,7 @@ class CategoryField extends TranslatableModel implements CategoryFieldContract, 
             $validations[] = $rule;
         }
 
-        if ($this->validation) {
-            $validations[] = match ($this->validation) {
-                'regex'   => 'regex: "'.$this->regex_pattern.'"',
-                'number'  => 'numeric',
-                'decimal' => new Decimal,
-                default   => $this->validation
-            };
-        }
-
-        return $validations;
+        return [...$validations, ...$this->serverValidationRules()];
     }
 
     /**

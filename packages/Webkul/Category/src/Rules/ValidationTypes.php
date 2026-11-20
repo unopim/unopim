@@ -20,7 +20,7 @@ class ValidationTypes implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (! in_array($value, self::VALIDATION_TYPES)) {
+        if (! in_array($value, self::VALIDATION_TYPES, true)) {
             $fail('core::validation.validation-type')->translate();
         }
     }
