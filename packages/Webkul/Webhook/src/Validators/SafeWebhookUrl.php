@@ -2,6 +2,7 @@
 
 namespace Webkul\Webhook\Validators;
 
+use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\IpUtils;
 
 /**
@@ -15,10 +16,10 @@ use Symfony\Component\HttpFoundation\IpUtils;
  *  - WebhookSettingsController::store + testWebhookUrl
  *  - WebhookService::sendDataToWebhook / sendCreatedToWebhook / sendBatch
  *
- * DNS-rebinding (TOCTOU) defense: callers pair validate() with
- * httpOptions($url), which returns a CURLOPT_RESOLVE entry pinning the
- * hostname to the validated IP so the connection cannot re-resolve to an
- * internal address between check and use. HTTP redirects are also disabled.
+ * DNS-rebinding (TOCTOU) defense: callers send with pinnedHttpOptions($url)
+ * and refuse when it returns null, so the connection is pinned to the
+ * validated IP and cannot re-resolve to an internal address between check
+ * and use. HTTP redirects are also disabled.
  *
  * Test-env opt-in: setting WEBHOOK_ALLOW_LOOPBACK=true (default false) lets
  * the loopback range pass so Playwright E2E can spin up a localhost catcher
@@ -86,15 +87,18 @@ class SafeWebhookUrl
      * header still carry the original hostname, so TLS certificate validation
      * is unaffected.
      *
-     * Returns redirect-blocking options only when the URL fails validation —
-     * the dispatch site MUST guard with validate() first, but this fallback
-     * stops the request from following 30x chains in the failure path.
+     * Fails closed: a URL that cannot be validated and pinned at this point,
+     * even one that passed an earlier validate(), throws instead of returning
+     * options that would let the connection re-resolve the host.
      *
-     * @return array<string, mixed>
+     * @return array{allow_redirects: false, curl: array<int, list<string>>}
+     *
+     * @throws InvalidArgumentException
      */
     public static function httpOptions(string $url): array
     {
-        return self::pinnedHttpOptions($url) ?? ['allow_redirects' => false];
+        return self::pinnedHttpOptions($url)
+            ?? throw new InvalidArgumentException(trans('webhook::app.webhooks.validation.unsafe-url'));
     }
 
     /**

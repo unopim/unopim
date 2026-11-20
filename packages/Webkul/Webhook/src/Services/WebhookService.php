@@ -186,9 +186,11 @@ class WebhookService
      */
     protected function deliver(Webhook $webhook, array $payload, ?string $sku, string $event, $batchProducts = null): ?Response
     {
-        $safety = SafeWebhookUrl::validate($webhook->url);
+        $pinned = SafeWebhookUrl::pinnedHttpOptions((string) $webhook->url);
 
-        if (! $safety['valid']) {
+        if ($pinned === null) {
+            $safety = SafeWebhookUrl::validate($webhook->url);
+
             Log::warning('Webhook dispatch blocked — unsafe URL', [
                 'webhook_id' => $webhook->id,
                 'reason'     => $safety['reason'],
@@ -202,7 +204,7 @@ class WebhookService
         $exception = null;
 
         try {
-            $response = Http::withOptions(SafeWebhookUrl::httpOptions($webhook->url))
+            $response = Http::withOptions($pinned)
                 ->withHeaders($this->buildHeaders($webhook, $event, $body))
                 ->withBody($body, 'application/json')
                 ->post($webhook->url);
