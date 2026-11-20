@@ -22,7 +22,7 @@ class AvatarController extends Controller
      */
     public function gravatar(Request $request, string $hash): Response
     {
-        if (! Admin::isGravatarHash($hash)) {
+        if (! preg_match('/^[a-f0-9]{32}$/', $hash)) {
             abort(404);
         }
 

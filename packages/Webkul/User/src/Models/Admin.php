@@ -66,8 +66,6 @@ class Admin extends Authenticatable implements AdminContract, HistoryAuditable, 
 
     public const GRAVATAR_MISS_TTL = 600;
 
-    public const GRAVATAR_HASH_PATTERN = '[a-f0-9]{64}';
-
     private const GRAVATAR_CACHE_PREFIX = 'admin.gravatar.';
 
     private const GRAVATAR_REFRESH_LOCK_PREFIX = 'admin.gravatar.refreshing.';
@@ -139,11 +137,17 @@ class Admin extends Authenticatable implements AdminContract, HistoryAuditable, 
      */
     public static function getGravatarUrlFromEmail(?string $email): ?string
     {
-        $hash = self::gravatarHash($email);
-
-        if ($hash === null) {
+        if (! $email) {
             return null;
         }
+
+        $normalizedEmail = mb_strtolower(trim($email));
+
+        if ($normalizedEmail === '') {
+            return null;
+        }
+
+        $hash = md5($normalizedEmail);
 
         try {
             return route('admin.avatar.public', ['hash' => $hash]);
@@ -214,39 +218,51 @@ class Admin extends Authenticatable implements AdminContract, HistoryAuditable, 
 
     public static function gravatarExistsForEmail(?string $email): bool
     {
-        $hash = self::gravatarHash($email);
-
-        if ($hash === null) {
+        if (! $email) {
             return false;
         }
 
-        return self::gravatarPayload($hash)['found'];
+        $normalizedEmail = mb_strtolower(trim($email));
+
+        if ($normalizedEmail === '') {
+            return false;
+        }
+
+        return self::gravatarPayload(md5($normalizedEmail))['found'];
     }
 
     /** Cache-only gravatar check; never contacts gravatar.com. */
     public static function gravatarCachedForEmail(?string $email): bool
     {
-        $hash = self::gravatarHash($email);
-
-        if ($hash === null) {
+        if (! $email) {
             return false;
         }
 
-        $cached = Cache::get(self::GRAVATAR_CACHE_PREFIX.$hash);
+        $normalizedEmail = mb_strtolower(trim($email));
+
+        if ($normalizedEmail === '') {
+            return false;
+        }
+
+        $cached = Cache::get(self::GRAVATAR_CACHE_PREFIX.md5($normalizedEmail));
 
         return is_array($cached) && ($cached['found'] ?? false);
     }
 
     public static function forgetGravatarCacheForEmail(?string $email): void
     {
-        $hash = self::gravatarHash($email);
-
-        if ($hash === null) {
+        if (! $email) {
             return;
         }
 
-        Cache::forget(self::GRAVATAR_CACHE_PREFIX.$hash);
-        Cache::forget(self::GRAVATAR_REFRESH_LOCK_PREFIX.$hash);
+        $normalizedEmail = mb_strtolower(trim($email));
+
+        if ($normalizedEmail === '') {
+            return;
+        }
+
+        Cache::forget(self::GRAVATAR_CACHE_PREFIX.md5($normalizedEmail));
+        Cache::forget(self::GRAVATAR_REFRESH_LOCK_PREFIX.md5($normalizedEmail));
     }
 
     /**
@@ -347,20 +363,9 @@ class Admin extends Authenticatable implements AdminContract, HistoryAuditable, 
         return ['found' => false, 'body' => '', 'content_type' => 'image/png', 'last_modified' => null];
     }
 
-    /**
-     * SHA-256 rather than MD5: gravatar accepts both, and an MD5 of an email is trivially reversed
-     * from a list of known addresses, which matters because the hash is exposed in a public URL.
-     */
-    private static function gravatarHash(?string $email): ?string
+    private static function isGravatarHash(string $hash): bool
     {
-        $normalizedEmail = mb_strtolower(trim((string) $email));
-
-        return $normalizedEmail === '' ? null : hash('sha256', $normalizedEmail);
-    }
-
-    public static function isGravatarHash(string $hash): bool
-    {
-        return (bool) preg_match('/^'.self::GRAVATAR_HASH_PATTERN.'$/', $hash);
+        return (bool) preg_match('/^[a-f0-9]{32}$/', $hash);
     }
 
     /**

@@ -46,7 +46,7 @@ class HashableClosure
             'static' => $this->hashStaticVariables($staticVars),
         ];
 
-        return hash('xxh128', serialize($hashData));
+        return md5(serialize($hashData));
     }
 
     /**
@@ -72,6 +72,6 @@ class HashableClosure
             }
         }
 
-        return hash('xxh128', serialize($processed));
+        return md5(serialize($processed));
     }
 }

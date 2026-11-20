@@ -2,14 +2,13 @@
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
-use Webkul\User\Models\Admin;
 
 beforeEach(function () {
     Http::fake();
 });
 
 it('serves a found gravatar with a public cache header', function () {
-    $hash = hash('sha256', 'cached-avatar@example.com');
+    $hash = md5('cached-avatar@example.com');
 
     Cache::put("admin.gravatar.{$hash}", [
         'found'        => true,
@@ -27,7 +26,7 @@ it('serves a found gravatar with a public cache header', function () {
 });
 
 it('serves a missing gravatar as a cacheable 404', function () {
-    $hash = hash('sha256', 'no-avatar@example.com');
+    $hash = md5('no-avatar@example.com');
 
     Cache::put("admin.gravatar.{$hash}", [
         'found'        => false,
@@ -48,14 +47,4 @@ it('still prevents caching of admin pages', function () {
     $response = $this->get(route('admin.session.create'));
 
     expect($response->headers->get('Cache-Control'))->toContain('no-store');
-});
-
-it('addresses gravatars by the sha256 of the email rather than its md5', function () {
-    $url = Admin::getGravatarUrlFromEmail(' Mixed.Case@Example.com ');
-
-    expect($url)->toBe(route('admin.avatar.public', ['hash' => hash('sha256', 'mixed.case@example.com')]));
-});
-
-it('rejects a legacy md5 avatar hash', function () {
-    $this->get('/'.config('app.admin_url').'/avatar/u/b58996c504c5638798eb6b511e6f49af')->assertNotFound();
 });

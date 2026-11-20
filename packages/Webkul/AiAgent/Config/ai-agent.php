@@ -3,10 +3,6 @@
 use Webkul\AiAgent\Chat\Tools;
 
 return [
-    'chat' => [
-        'max_file_kilobytes' => (int) env('AI_AGENT_CHAT_MAX_FILE_KB', 102400),
-    ],
-
     /**
      * Agent chat tools.
      *
