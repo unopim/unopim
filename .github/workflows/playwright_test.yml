@@ -101,8 +101,22 @@ jobs:
           PW_PASS=serial npx playwright test --pass-with-no-tests || status=$?
           exit $status
 
-      - name: Upload test results
+      # Withholds any report, trace or log that captured an AI provider key.
+      - name: Scrub credentials from test results
+        id: scrub
         if: failure()
+        run: |
+          bash .github/scripts/scrub-e2e-artifacts.sh \
+            tests/e2e-pw/playwright-report \
+            tests/e2e-pw/playwright-report-serial \
+            tests/e2e-pw/test-results \
+            tests/e2e-pw/test-results-serial \
+            storage/logs \
+            /tmp/server.log \
+            /tmp/queue.log
+
+      - name: Upload test results
+        if: failure() && steps.scrub.outcome == 'success'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: playwright-report-shard-${{ matrix.shard-index }}-${{ github.run_id }}
@@ -155,8 +169,19 @@ jobs:
             tests/01-catalog/category.spec.js \
             tests/01-catalog/products.spec.js
 
-      - name: Upload test results
+      - name: Scrub credentials from test results
+        id: scrub
         if: failure()
+        run: |
+          bash .github/scripts/scrub-e2e-artifacts.sh \
+            tests/e2e-pw/playwright-report \
+            tests/e2e-pw/test-results \
+            storage/logs \
+            /tmp/server.log \
+            /tmp/queue.log
+
+      - name: Upload test results
+        if: failure() && steps.scrub.outcome == 'success'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: playwright-report-smoke-${{ github.run_id }}
