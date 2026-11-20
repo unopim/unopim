@@ -46,10 +46,9 @@ jobs:
           --tmpfs /var/lib/mysql:rw,noexec,nosuid,size=600m
           --tmpfs /tmp:rw,noexec,nosuid,size=100m
 
+    # No live AI provider keys: this line has no nightly run, and every run here
+    # can upload a public failure artifact. The live-provider specs skip without one.
     env:
-      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-      GROQ_INVALID_KEY: ${{ secrets.GROQ_INVALID_KEY }}
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       UNOPIM_URL: ${{ secrets.UNOPIM_URL }}
       ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
       ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
@@ -158,8 +157,18 @@ jobs:
           cd tests/e2e-pw
           npx playwright test --reporter=list,html --shard=${{ matrix.shard-index }}/${{ matrix.shard-total }}
 
-      - name: Upload test results
+      # Withholds any report, trace or log that captured an AI provider key.
+      - name: Scrub credentials from test results
+        id: scrub
         if: failure()
+        run: |
+          bash .github/scripts/scrub-e2e-artifacts.sh \
+            tests/e2e-pw/playwright-report \
+            tests/e2e-pw/test-results \
+            storage/logs
+
+      - name: Upload test results
+        if: failure() && steps.scrub.outcome == 'success'
         uses: actions/upload-artifact@v7
         with:
           name: playwright-report-shard-${{ matrix.shard-index }}-${{ github.run_id }}
