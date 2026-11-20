@@ -100,6 +100,10 @@ class AttributeController extends ApiController
             ]);
         }
 
+        if ($denied = $this->deniedOptionWrites($request->input('options'), 'api.catalog.attributes')) {
+            return $denied;
+        }
+
         $requestData = $request->except(['type', 'code', 'swatch_type', 'value_per_locale', 'value_per_channel', 'is_unique']);
 
         $requestData = $this->setLabels($requestData);

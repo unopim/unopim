@@ -95,6 +95,10 @@ class CategoryFieldController extends ApiController
             ]);
         }
 
+        if ($denied = $this->deniedOptionWrites($request->input('options'), 'api.catalog.category_fields')) {
+            return $denied;
+        }
+
         $requestData = request()->except(['code', 'type']);
         $requestData = $this->setLabels($requestData);
         $requestData['enable_wysiwyg'] = $categoryField->type == 'textarea' ? $requestData['enable_wysiwyg'] : 0;
