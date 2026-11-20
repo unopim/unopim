@@ -26,6 +26,7 @@ return [
     'password-whitespace-only'         => ':attribute нь зөвхөн хоосон зайнаас бүрдэж болохгүй.',
     'hideable-sections'                => ':attribute нуух боломжгүй хэсэг агуулж байна.',
     'active-content-detected'          => ':attribute нь идэвхтэй агуулга (:reason) агуулж байгаа тул байршуулах боломжгүй.',
+    'uploaded-file-not-allowed'        => ':attribute нь байршуулсан файл агуулах ёсгүй. Файлуудыг медиа төгсгөлийн цэгээр байршуулна уу.',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'суулгасан JavaScript эсвэл автоматаар ажилладаг PDF үйлдэл',
         'embedded_vba_macro'            => 'суулгасан VBA макро',

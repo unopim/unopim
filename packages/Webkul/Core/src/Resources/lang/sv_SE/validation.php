@@ -26,6 +26,7 @@ return [
     'password-whitespace-only'         => 'Fältet :attribute får inte bestå enbart av mellanslag.',
     'hideable-sections'                => ':attribute innehåller ett avsnitt som inte kan döljas.',
     'active-content-detected'          => ':attribute kunde inte laddas upp eftersom den innehåller aktivt innehåll (:reason).',
+    'uploaded-file-not-allowed'        => ':attribute får inte innehålla uppladdade filer. Ladda upp filer via mediaslutpunkten i stället.',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'inbäddad JavaScript eller en PDF-åtgärd som körs automatiskt',
         'embedded_vba_macro'            => 'ett inbäddat VBA-makro',

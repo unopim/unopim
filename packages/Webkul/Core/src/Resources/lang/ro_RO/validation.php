@@ -26,6 +26,7 @@ return [
     'password-whitespace-only'         => 'Câmpul :attribute nu poate conține doar spații.',
     'hideable-sections'                => 'Câmpul :attribute conține o secțiune care nu poate fi ascunsă.',
     'active-content-detected'          => 'Fișierul :attribute nu a putut fi încărcat deoarece conține conținut activ (:reason).',
+    'uploaded-file-not-allowed'        => 'Câmpul :attribute nu trebuie să conțină fișiere încărcate. Încărcați fișierele prin endpoint-ul pentru media.',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'JavaScript încorporat sau o acțiune PDF cu executare automată',
         'embedded_vba_macro'            => 'o macro VBA încorporată',

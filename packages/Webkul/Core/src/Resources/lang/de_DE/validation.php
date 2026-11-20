@@ -26,6 +26,7 @@ return [
     'password-whitespace-only'         => ':attribute darf nicht ausschließlich aus Leerzeichen bestehen.',
     'hideable-sections'                => ':attribute enthält einen Bereich, der nicht ausgeblendet werden kann.',
     'active-content-detected'          => ':attribute konnte nicht hochgeladen werden, da es aktive Inhalte enthält (:reason).',
+    'uploaded-file-not-allowed'        => ':attribute darf keine hochgeladenen Dateien enthalten. Laden Sie Dateien stattdessen über den Medien-Endpunkt hoch.',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'eingebettetes JavaScript oder eine automatisch ausgeführte PDF-Aktion',
         'embedded_vba_macro'            => 'ein eingebettetes VBA-Makro',

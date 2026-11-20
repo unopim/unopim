@@ -26,6 +26,7 @@ return [
     'password-whitespace-only'         => 'Ang :attribute ay hindi maaaring puro espasyo lamang.',
     'hideable-sections'                => 'Ang :attribute ay may seksyong hindi maaaring itago.',
     'active-content-detected'          => 'Hindi ma-upload ang :attribute dahil naglalaman ito ng aktibong nilalaman (:reason).',
+    'uploaded-file-not-allowed'        => 'Hindi dapat maglaman ng mga na-upload na file ang :attribute. I-upload ang mga file sa pamamagitan ng media endpoint.',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'naka-embed na JavaScript o isang PDF na aksyon na awtomatikong tumatakbo',
         'embedded_vba_macro'            => 'isang naka-embed na VBA macro',

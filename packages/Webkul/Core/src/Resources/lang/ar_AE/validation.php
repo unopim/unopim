@@ -26,6 +26,7 @@ return [
     'password-whitespace-only'         => 'لا يمكن أن يتكوّن :attribute من مسافات فقط.',
     'hideable-sections'                => 'يحتوي :attribute على قسم لا يمكن إخفاؤه.',
     'active-content-detected'          => 'تعذر رفع :attribute لأنه يحتوي على محتوى نشط (:reason).',
+    'uploaded-file-not-allowed'        => 'يجب ألا يحتوي :attribute على ملفات مرفوعة. ارفع الملفات عبر نقطة نهاية الوسائط بدلاً من ذلك.',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'جافا سكريبت مضمّنة أو إجراء PDF يعمل تلقائيًا',
         'embedded_vba_macro'            => 'ماكرو VBA مضمّن',
