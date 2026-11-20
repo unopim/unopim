@@ -64,7 +64,7 @@ it('should not be able to delete roles if does not have permission', function ()
 it('should be able to delete roles if has permission', function () {
     $this->loginWithPermissions(permissions: ['dashboard', 'settings.roles.delete']);
 
-    $role = Role::factory()->create();
+    $role = Role::factory()->create(['permission_type' => 'custom', 'permissions' => ['dashboard']]);
 
     $this->delete(route('admin.settings.roles.delete', ['id' => $role->id]))
         ->assertJsonFragment(['message' => trans('admin::app.settings.roles.delete-success')]);
