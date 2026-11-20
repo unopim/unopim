@@ -6,6 +6,7 @@ use Illuminate\Container\Container;
 use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Webkul\Category\Contracts\CategoryField;
 use Webkul\Category\Services\CategoryFieldValueService;
 use Webkul\Core\Eloquent\Repository;
@@ -74,6 +75,10 @@ class CategoryFieldRepository extends Repository
     {
         $data = $this->withoutStaleRegexPattern($data);
 
+        if (! empty($data['options']) && is_array($data['options'])) {
+            $this->ensureOptionsBelongToField($data['options'], (int) $id);
+        }
+
         $wasPerLocale = (bool) $this->find($id)?->value_per_locale;
 
         $categoryField = parent::update($data, $id);
@@ -91,9 +96,9 @@ class CategoryFieldRepository extends Repository
 
         foreach ($data['options'] as $optionId => $option) {
             if ($option['isNew'] == 'true') {
-                $this->categoryFieldOptionRepository->create(array_merge([
+                $this->categoryFieldOptionRepository->create(array_merge($option, [
                     'category_field_id' => $categoryField->id,
-                ], $option));
+                ]));
 
                 continue;
             }
@@ -101,11 +106,39 @@ class CategoryFieldRepository extends Repository
             if ($option['isDelete'] == 'true') {
                 $this->categoryFieldOptionRepository->delete($optionId);
             } else {
-                $this->categoryFieldOptionRepository->update($option, $optionId);
+                $this->categoryFieldOptionRepository->update(array_merge($option, [
+                    'category_field_id' => $categoryField->id,
+                ]), $optionId);
             }
         }
 
         return $categoryField;
+    }
+
+    /**
+     * Reject existing option ids that belong to another category field, before anything is written.
+     *
+     * @throws ValidationException
+     */
+    protected function ensureOptionsBelongToField(array $options, int $categoryFieldId): void
+    {
+        $existingIds = collect($options)
+            ->reject(fn (mixed $option): bool => is_array($option) && ($option['isNew'] ?? null) == 'true')
+            ->keys()
+            ->map(fn (int|string $optionId): int => (int) $optionId)
+            ->unique();
+
+        if ($existingIds->isEmpty()) {
+            return;
+        }
+
+        $ownedCount = $this->find($categoryFieldId)?->options()->whereIn('id', $existingIds->all())->count() ?? 0;
+
+        if ($ownedCount !== $existingIds->count()) {
+            throw ValidationException::withMessages([
+                'options' => trans('validation.exists', ['attribute' => 'options']),
+            ]);
+        }
     }
 
     protected function withoutStaleRegexPattern(array $data): array
