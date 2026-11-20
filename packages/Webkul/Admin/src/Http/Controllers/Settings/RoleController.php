@@ -127,6 +127,10 @@ class RoleController extends Controller
     {
         $role = $this->roleRepository->findOrFail($id);
 
+        if ($error = $this->roleAccessGuard->grantError(auth()->guard('admin')->user(), $role->permission_type, $role->permissions ?? [])) {
+            return new JsonResponse(['message' => trans($error)], JsonResponse::HTTP_FORBIDDEN);
+        }
+
         if ($name = $role->admins()->value('name')) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.roles.being-used-by', ['name' => $name]),
