@@ -2,6 +2,7 @@
 
 namespace Webkul\AdminApi\Http\Controllers\API\Catalog;
 
+use Illuminate\Contracts\Validation\Validator as ValidatorContract;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
@@ -98,7 +99,13 @@ class CategoryFieldController extends ApiController
         $requestData = request()->except(['code', 'type']);
         $requestData = $this->setLabels($requestData);
 
-        if ($denied = $this->deniedChildWrites($requestData['options'] ?? null, 'api.catalog.category_fields', 'options')) {
+        $denied = $this->deniedChildWrites($requestData['options'] ?? null, 'api.catalog.category_fields', 'options')
+            ?? $this->invalidOptionEntries(
+                $requestData['options'] ?? null,
+                fn (array $option): ValidatorContract => $this->optionValidate($option, $categoryField->id),
+            );
+
+        if ($denied) {
             return $denied;
         }
         $requestData['enable_wysiwyg'] = $categoryField->type == 'textarea' ? $requestData['enable_wysiwyg'] : 0;
@@ -321,7 +328,7 @@ class CategoryFieldController extends ApiController
     /**
      * Validates the category field option data.
      *
-     * @return \Illuminate\Contracts\Validation\Validator The Validator instance with the applied rules.
+     * @return ValidatorContract The Validator instance with the applied rules.
      */
     private function optionValidate(array $requestData, int $categoryFieldId)
     {

@@ -2,6 +2,7 @@
 
 namespace Webkul\AdminApi\Http\Controllers\API\Catalog;
 
+use Illuminate\Contracts\Validation\Validator as ValidatorContract;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -104,7 +105,14 @@ class AttributeController extends ApiController
 
         $requestData = $this->setLabels($requestData);
 
-        if ($denied = $this->deniedChildWrites($requestData['options'] ?? null, 'api.catalog.attributes', 'options')) {
+        $denied = $this->deniedChildWrites($requestData['options'] ?? null, 'api.catalog.attributes', 'options')
+            ?? $this->invalidOptionEntries(
+                $requestData['options'] ?? null,
+                fn (array $option): ValidatorContract => $this->optionValidate($option, $attribute->id),
+                ['swatch_value' => [new ValidSwatchValue($attribute->id)]],
+            );
+
+        if ($denied) {
             return $denied;
         }
         $id = $attribute->id;
@@ -317,7 +325,7 @@ class AttributeController extends ApiController
     /**
      * Validates attribute option data.
      *
-     * @return \Illuminate\Contracts\Validation\Validator
+     * @return ValidatorContract
      */
     private function optionValidate(array $requestData, int $attributeId)
     {

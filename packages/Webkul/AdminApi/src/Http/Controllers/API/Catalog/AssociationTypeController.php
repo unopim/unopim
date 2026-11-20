@@ -3,7 +3,9 @@
 namespace Webkul\AdminApi\Http\Controllers\API\Catalog;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 use Webkul\AdminApi\ApiDataSource\Catalog\AssociationTypeDataSource;
 use Webkul\AdminApi\Http\Controllers\API\ApiController;
@@ -11,6 +13,7 @@ use Webkul\AdminApi\Http\Requests\Catalog\StoreAssociationTypeFieldRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\StoreAssociationTypeRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\UpdateAssociationTypeFieldRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\UpdateAssociationTypeRequest;
+use Webkul\Product\Contracts\AssociationTypeField;
 use Webkul\Product\Repositories\AssociationTypeFieldRepository;
 use Webkul\Product\Repositories\AssociationTypeRepository;
 
@@ -62,7 +65,7 @@ class AssociationTypeController extends ApiController
             'api.catalog.association_types.fields',
             'fields',
             fn (): bool => true,
-        );
+        ) ?? $this->invalidFieldEntries($requestData['fields'] ?? null, new Collection);
 
         if ($denied) {
             return $denied;
@@ -109,15 +112,17 @@ class AssociationTypeController extends ApiController
 
         $requestData = $this->setLabels(request()->except(['code', 'is_user_defined']));
 
-        $existingFieldIds = $associationType->fields()->pluck('id')->map(fn (mixed $fieldId): string => (string) $fieldId);
+        $storedFields = $associationType->fields()->get(['id', 'code', 'type'])->keyBy(fn (AssociationTypeField $field): string => (string) $field->id);
+
+        $existingFields = $storedFields->mapWithKeys(fn (AssociationTypeField $field): array => [(string) $field->code => (string) $field->id]);
 
         $denied = $this->deniedChildWrites(
             $requestData['fields'] ?? null,
             'api.catalog.association_types.fields',
             'fields',
-            fn (array $field, int|string $fieldId): bool => filter_var($field['isNew'] ?? false, FILTER_VALIDATE_BOOLEAN)
-                || ! $existingFieldIds->contains((string) $fieldId),
-        );
+            fn (array $field, int|string $fieldId): bool => $this->resolveExistingField($existingFields, $field, $fieldId) === null,
+            gateEdits: true,
+        ) ?? $this->invalidFieldEntries($requestData['fields'] ?? null, $storedFields, $existingFields);
 
         if ($denied) {
             return $denied;
@@ -137,6 +142,77 @@ class AssociationTypeController extends ApiController
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);
         }
+    }
+
+    /**
+     * Validate the fields of a parent store or update with the rules of the field routes.
+     *
+     * A new field must pass the field store rules, and an existing one the field update rules,
+     * with its code and type left as stored.
+     *
+     * @param  Collection<string, AssociationTypeField>  $storedFields  existing fields keyed by id
+     * @param  Collection<string, string>|null  $existingFields  existing field ids keyed by code
+     */
+    private function invalidFieldEntries(mixed $entries, Collection $storedFields, ?Collection $existingFields = null): ?JsonResponse
+    {
+        foreach (is_array($entries) ? $entries : [] as $fieldId => $field) {
+            if (! is_array($field)) {
+                return $this->validateErrorResponse(['fields' => [trans('validation.array', ['attribute' => 'fields'])]]);
+            }
+
+            if (filter_var($field['isDelete'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
+                continue;
+            }
+
+            $stored = $storedFields->get((string) $this->resolveExistingField($existingFields ?? new Collection, $field, $fieldId));
+
+            if (! $stored) {
+                $validator = Validator::make($field, StoreAssociationTypeFieldRequest::fieldRules());
+
+                if ($validator->fails()) {
+                    return $this->validateErrorResponse($validator);
+                }
+
+                continue;
+            }
+
+            $changed = array_keys(array_filter(
+                ['code' => $field['code'] ?? $stored->code, 'type' => $field['type'] ?? $stored->type],
+                fn (mixed $value, string $key): bool => (string) $value !== (string) $stored->{$key},
+                ARRAY_FILTER_USE_BOTH,
+            ));
+
+            if ($changed !== []) {
+                return $this->validateErrorResponse([
+                    'immutable' => [trans('admin::app.catalog.association_types.immutable-fields', ['fields' => implode(', ', $changed)])],
+                ]);
+            }
+
+            $validator = Validator::make($field, UpdateAssociationTypeFieldRequest::fieldRules());
+
+            if ($validator->fails()) {
+                return $this->validateErrorResponse($validator);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * The existing field id an update entry writes to, resolved the way AssociationTypeRepository::update() does.
+     *
+     * @param  Collection<string, string>  $existingFields  field ids keyed by field code
+     * @param  array<string, mixed>  $field
+     */
+    private function resolveExistingField(Collection $existingFields, array $field, int|string $fieldId): ?string
+    {
+        $byCode = $existingFields->get((string) ($field['code'] ?? ''));
+
+        if (filter_var($field['isNew'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
+            return $byCode;
+        }
+
+        return $existingFields->contains((string) $fieldId) ? (string) $fieldId : $byCode;
     }
 
     /**

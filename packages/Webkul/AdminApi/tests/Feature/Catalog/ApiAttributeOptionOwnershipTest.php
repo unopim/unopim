@@ -163,3 +163,28 @@ it('does not let a labels wrapper change immutable attribute fields on the REST 
     expect($attribute->code)->toBe($this->attribute->code)
         ->and($attribute->type)->toBe('select');
 });
+
+it('validates options carried by the REST attribute update like the option routes', function () {
+    $existing = AttributeOption::create(['code' => 'api_valid_existing', 'sort_order' => 1, 'attribute_id' => $this->attribute->id]);
+
+    $this->withHeaders($this->headers)
+        ->json('PUT', route('admin.api.attributes.update', $this->attribute->code), [
+            'options' => ['option_0' => ['code' => 'bad code!', 'isNew' => true, 'isDelete' => false]],
+        ])
+        ->assertUnprocessable();
+
+    $this->withHeaders($this->headers)
+        ->json('PUT', route('admin.api.attributes.update', $this->attribute->code), [
+            'options' => ['option_0' => ['code' => 'api_valid_existing', 'isNew' => true, 'isDelete' => false]],
+        ])
+        ->assertUnprocessable();
+
+    $this->withHeaders($this->headers)
+        ->json('PUT', route('admin.api.attributes.update', $this->attribute->code), [
+            'options' => [$existing->id => ['code' => 'bad code!', 'isNew' => false, 'isDelete' => false]],
+        ])
+        ->assertUnprocessable();
+
+    expect(apiOptionOwner('bad code!'))->toBe([])
+        ->and(apiOptionOwner('api_valid_existing'))->toBe([$this->attribute->id]);
+});
