@@ -85,24 +85,27 @@
                         </div>
                     </div>
 
-                    <div class="flex gap-2 mb-2" v-if="jobInstance.type == 'export' && importResource.file_path">
-                        <a
-                            class="secondary-button"
-                            href="{{ route('admin.settings.data_transfer.tracker.archive.download', $jobTrack->id) }}"
-                            target="_blank"
-                            v-if="toBoolean(jobInstance.filters.with_media)"
-                        >
-                            @lang('admin::app.settings.data-transfer.exports.export.download-created-file')
-                        </a>
-                        <a
-                            class="secondary-button"
-                            href="{{ route('admin.settings.data_transfer.tracker.download', $jobTrack->id) }}"
-                            target="_blank"
-                            v-else
-                        >
-                            @lang('admin::app.settings.data-transfer.exports.export.download-created-file')
-                        </a>
-                    </div>
+                    @if (collect($jobType::downloadPermissions($jobTrack))->every(fn (string $permission): bool => bouncer()->hasPermission($permission)))
+                        <div class="flex gap-2 mb-2" v-if="jobInstance.type == 'export' && importResource.file_path">
+                            <a
+                                class="secondary-button"
+                                href="{{ route('admin.settings.data_transfer.tracker.archive.download', $jobTrack->id) }}"
+                                target="_blank"
+                                v-if="toBoolean(jobInstance.filters.with_media)"
+                            >
+                                @lang('admin::app.settings.data-transfer.exports.export.download-created-file')
+                            </a>
+                            <a
+                                class="secondary-button"
+                                href="{{ route('admin.settings.data_transfer.tracker.download', $jobTrack->id) }}"
+                                target="_blank"
+                                v-else
+                            >
+                                @lang('admin::app.settings.data-transfer.exports.export.download-created-file')
+                            </a>
+                        </div>
+                    @endif
+
                     <div class="flex gap-2 mb-2" v-if="jobInstance.type == 'import' && importResource.errors_count && importResource.error_file_path">
                         <a
                             class="secondary-button"
