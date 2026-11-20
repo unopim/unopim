@@ -22,7 +22,7 @@ it('deletes expired chat uploads kept in per-conversation folders', function () 
     File::deleteDirectory(dirname($directory));
 });
 
-it('deletes expired ai exports from the private export disk', function () {
+it('deletes expired ai exports from the private export disk', function (): void {
     Storage::fake(ExportProducts::DISK);
 
     $disk = Storage::disk(ExportProducts::DISK);

@@ -9,6 +9,11 @@ use Webkul\Product\Models\Product;
 use Webkul\User\Models\Admin;
 use Webkul\User\Models\Role;
 
+/**
+ * Run the export tool as an export-capable user.
+ *
+ * @return array{0: array<string, mixed>, 1: Admin}
+ */
 function privateExportToolRun(string $format): array
 {
     $role = Role::factory()->create([
@@ -39,7 +44,7 @@ function privateExportToolRun(string $format): array
     return [$result, $user];
 }
 
-it('writes the ai export to the private disk and links it through the authenticated download route', function (string $format) {
+it('writes the ai export to the private disk and links it through the authenticated download route', function (string $format): void {
     Storage::fake('private');
     Storage::fake('public');
 

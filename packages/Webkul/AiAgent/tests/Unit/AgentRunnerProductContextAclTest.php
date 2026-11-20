@@ -8,6 +8,11 @@ use Webkul\Product\Models\Product;
 use Webkul\User\Models\Admin;
 use Webkul\User\Models\Role;
 
+/**
+ * Build the agent system prompt for a custom role chatting from a product page.
+ *
+ * @param  array<int, string>  $permissions
+ */
 function productContextSystemPrompt(array $permissions, int $productId): string
 {
     $role = Role::factory()->create([
@@ -33,7 +38,7 @@ function productContextSystemPrompt(array $permissions, int $productId): string
     return (new ReflectionMethod($runner, 'buildSystemPrompt'))->invoke($runner, $context);
 }
 
-it('keeps the product sku, type and status out of the prompt without the product view permission', function () {
+it('keeps the product sku, type and status out of the prompt without the product view permission', function (): void {
     $product = Product::factory()->simple()->create();
 
     $prompt = productContextSystemPrompt(['dashboard', 'ai-agent'], $product->id);
@@ -42,7 +47,7 @@ it('keeps the product sku, type and status out of the prompt without the product
         ->and($prompt)->not->toContain($product->sku);
 });
 
-it('adds the product context to the prompt for a user who can view products', function () {
+it('adds the product context to the prompt for a user who can view products', function (): void {
     $product = Product::factory()->simple()->create();
 
     $prompt = productContextSystemPrompt(['dashboard', 'ai-agent', 'catalog', 'catalog.products'], $product->id);
