@@ -75,10 +75,7 @@ class FindSimilarProducts implements PimTool
                 $sourceProduct = null;
 
                 if (! empty($sku)) {
-                    $sourceProduct = DB::table('products')
-                        ->select('id', 'sku', 'type', 'values', 'attribute_family_id')
-                        ->where('sku', $sku)
-                        ->first();
+                    $sourceProduct = $this->sourceProductBySku($sku);
 
                     if (! $sourceProduct) {
                         return json_encode([
@@ -301,6 +298,18 @@ class FindSimilarProducts implements PimTool
             private function words(string $text, int $limit = -1): array
             {
                 return preg_split('/[^\p{L}\p{N}]+/u', mb_strtolower($text), $limit, PREG_SPLIT_NO_EMPTY) ?: [];
+            }
+
+            /**
+             * Find the source product by exact SKU, falling back to a case-insensitive
+             * match since PostgreSQL compares strings case-sensitively, unlike MySQL.
+             */
+            private function sourceProductBySku(string $sku): ?object
+            {
+                $query = fn () => DB::table('products')->select('id', 'sku', 'type', 'values', 'attribute_family_id');
+
+                return $query()->where('sku', $sku)->first()
+                    ?? $query()->whereLike('sku', addcslashes($sku, '%_\\'))->orderBy('id')->first();
             }
 
             /**
