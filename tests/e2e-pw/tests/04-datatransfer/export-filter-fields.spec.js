@@ -164,6 +164,33 @@ test.describe('Export filter fields — reusable input components', () => {
     await expect(adminPage.locator('#app').getByText(/Export deleted successfully/i)).toBeVisible({ timeout: 20000 });
   });
 
+  test('keeps the selected file format when the job type changes', async ({ adminPage }) => {
+    const code = `file-format-switch-${generateUid()}`;
+
+    await openCreateExport(adminPage);
+    await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
+
+    await chooseFilterOption(adminPage, 'file_format', 'XLSX');
+    await selectEntityType(adminPage, 'Products');
+
+    await expect(filterValue(adminPage, 'file_format')).toHaveValue('Xlsx');
+
+    await clickSaveAndExpect(adminPage, 'Save changes', /Export created successfully/i);
+
+    await adminPage.getByRole('link', { name: 'Edit' }).click();
+    await adminPage.waitForLoadState('networkidle');
+
+    await expect(filterValue(adminPage, 'file_format')).toHaveValue('Xlsx');
+
+    await navigateTo(adminPage, 'exports');
+    await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
+    await adminPage.keyboard.press('Enter');
+    await adminPage.waitForLoadState('networkidle');
+    await adminPage.locator('span[title="Delete"]').first().click();
+    await adminPage.getByRole('button', { name: 'Delete' }).click();
+    await expect(adminPage.locator('#app').getByText(/Export deleted successfully/i)).toBeVisible({ timeout: 20000 });
+  });
+
   test('datagrid column filters render through the shared field component', async ({ adminPage }) => {
     await navigateTo(adminPage, 'exports');
     await openFilterDrawer(adminPage);

@@ -37,6 +37,7 @@
 
 ## Bug fixes
 
+- Fixed saving a new export failing with "The File Format field is required" after changing its job type. Filters that the new job type also supports, such as the file format, are now kept.
 - Fixed saving a product with an unchanged status recording a status change in its history on PostgreSQL. `status` is now cast to a boolean on every database, so code comparing it with `=== 1` or `=== 0` should use a truthy check instead.
 - Fixed the Magic AI system prompt form accepting a Max Tokens value outside the 100 to 5000 range its help text gives; the server allowed 1 to 32768. A saved prompt already outside the range keeps its value and is still used as is when generating content, but its Max Tokens must be brought within 100 to 5000 before the prompt can be saved again.
 - Fixed Magic AI offering chat models such as `gpt-4o` as image models, and image edits with `chatgpt-image-latest` or `openai/gpt-image-1` failing with "Unknown parameter: 'response_format'". The image model list now offers only models whose names match a known image model (`dall-e`, `gpt-image` or `image` for OpenAI, `imagen` or `image` for Gemini, `image` or `grok…vision` for xAI), and is empty when none match or the platform cannot be found. A platform on a custom API URL, such as a proxy or gateway, still offers its full model list when no name matches.
