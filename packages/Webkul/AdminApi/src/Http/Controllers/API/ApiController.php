@@ -25,21 +25,33 @@ class ApiController extends BaseController
     }
 
     /**
-     * Refuse `isNew` or `isDelete` option entries in a parent update the key may not create or delete.
+     * Refuse child entries of a parent update, such as options or fields, that the key may not create or delete.
      *
-     * The option routes gate adds and removals on the create and delete keys, so the parent update must too.
+     * The child routes gate adds and removals on the create and delete keys, so the parent update must too.
+     *
+     * @param  (\Closure(array<string, mixed>, int|string): bool)|null  $createsEntry  whether an entry adds a child; defaults to its `isNew` flag
      */
-    protected function deniedOptionWrites(mixed $options, string $permissionPrefix): ?JsonResponse
+    protected function deniedChildWrites(mixed $entries, string $permissionPrefix, string $errorKey, ?\Closure $createsEntry = null): ?JsonResponse
     {
-        $entries = collect(is_array($options) ? $options : [])->filter(fn (mixed $option): bool => is_array($option));
+        $isFlagged = fn (array $entry, string $flag): bool => filter_var($entry[$flag] ?? false, FILTER_VALIDATE_BOOLEAN);
 
-        $isFlagged = fn (string $flag): bool => $entries->contains(fn (array $option): bool => in_array($option[$flag] ?? null, [true, 'true'], true));
+        $createsEntry ??= fn (array $entry): bool => $isFlagged($entry, 'isNew');
 
-        if (
-            ($isFlagged('isNew') && ! $this->apiKeyAllows($permissionPrefix.'.create'))
-            || ($isFlagged('isDelete') && ! $this->apiKeyAllows($permissionPrefix.'.delete'))
-        ) {
-            return $this->validateErrorResponse(['options' => [trans('admin::app.common.unauthorized')]]);
+        foreach (is_array($entries) ? $entries : [] as $key => $entry) {
+            if (! is_array($entry)) {
+                continue;
+            }
+
+            $required = array_filter([
+                $createsEntry($entry, $key) ? $permissionPrefix.'.create' : null,
+                $isFlagged($entry, 'isDelete') ? $permissionPrefix.'.delete' : null,
+            ]);
+
+            foreach ($required as $permission) {
+                if (! $this->apiKeyAllows($permission)) {
+                    return $this->validateErrorResponse([$errorKey => [trans('admin::app.common.unauthorized')]]);
+                }
+            }
         }
 
         return null;

@@ -96,6 +96,20 @@ class AssociationTypeController extends ApiController
             ]);
         }
 
+        $existingFieldIds = $associationType->fields()->pluck('id')->map(fn (mixed $fieldId): int => (int) $fieldId);
+
+        $denied = $this->deniedChildWrites(
+            request()->input('fields'),
+            'api.catalog.association_types.fields',
+            'fields',
+            fn (array $field, int|string $fieldId): bool => filter_var($field['isNew'] ?? false, FILTER_VALIDATE_BOOLEAN)
+                || ! $existingFieldIds->contains((int) $fieldId),
+        );
+
+        if ($denied) {
+            return $denied;
+        }
+
         $requestData = $this->setLabels(request()->except(['code', 'is_user_defined']));
 
         try {

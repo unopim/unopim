@@ -100,7 +100,7 @@ class AttributeController extends ApiController
             ]);
         }
 
-        if ($denied = $this->deniedOptionWrites($request->input('options'), 'api.catalog.attributes')) {
+        if ($denied = $this->deniedChildWrites($request->input('options'), 'api.catalog.attributes', 'options')) {
             return $denied;
         }
 

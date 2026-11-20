@@ -95,7 +95,7 @@ class CategoryFieldController extends ApiController
             ]);
         }
 
-        if ($denied = $this->deniedOptionWrites($request->input('options'), 'api.catalog.category_fields')) {
+        if ($denied = $this->deniedChildWrites($request->input('options'), 'api.catalog.category_fields', 'options')) {
             return $denied;
         }
 
