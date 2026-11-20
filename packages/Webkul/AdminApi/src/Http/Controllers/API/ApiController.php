@@ -7,6 +7,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Validator;
+use Webkul\AdminApi\Http\Middleware\ScopeMiddleware;
 use Webkul\AdminApi\Traits\ApiResponse;
 use Webkul\Core\Rules\Code;
 use Webkul\Core\Traits\HtmlPurifier;
@@ -14,6 +15,14 @@ use Webkul\Core\Traits\HtmlPurifier;
 class ApiController extends BaseController
 {
     use ApiResponse, DispatchesJobs, HtmlPurifier, ValidatesRequests;
+
+    /**
+     * Determine whether the authenticated API key holds the given permission.
+     */
+    protected function apiKeyAllows(string $permission): bool
+    {
+        return app(ScopeMiddleware::class)->hasPermission($permission);
+    }
 
     /**
      * This function processes and transforms the 'labels' key in the given request data.
