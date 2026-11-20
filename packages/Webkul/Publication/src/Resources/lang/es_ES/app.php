@@ -51,5 +51,11 @@ return [
             'heading' => 'Este pasaporte ya no está disponible.',
             'notice'  => 'Este registro se conserva por motivos de transparencia, pero ya no se mantiene activamente.',
         ],
+        'release' => [
+            'banner'       => 'Publicación :sequence de este pasaporte',
+            'superseded'   => 'Este es un estado anterior del pasaporte, conservado exactamente como se publicó. Existe un estado más reciente.',
+            'current'      => 'Este es el estado actual del pasaporte.',
+            'view-current' => 'Ver el pasaporte actual',
+        ],
     ],
 ];

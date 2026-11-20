@@ -51,5 +51,11 @@ return [
             'heading' => 'Acest pașaport nu mai este disponibil.',
             'notice'  => 'Această înregistrare este păstrată pentru transparență, dar nu mai este menținută activ.',
         ],
+        'release' => [
+            'banner'       => 'Publicarea :sequence a acestui pașaport',
+            'superseded'   => 'Aceasta este o stare anterioară a pașaportului, păstrată exact așa cum a fost publicată. Există o stare mai nouă.',
+            'current'      => 'Aceasta este starea actuală a pașaportului.',
+            'view-current' => 'Vezi pașaportul actual',
+        ],
     ],
 ];

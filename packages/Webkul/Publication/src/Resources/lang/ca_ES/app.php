@@ -51,5 +51,11 @@ return [
             'heading' => 'Aquest passaport ja no està disponible.',
             'notice'  => 'Aquest registre es conserva per transparència, però ja no es manté activament.',
         ],
+        'release' => [
+            'banner'       => 'Publicació :sequence d\'aquest passaport',
+            'superseded'   => 'Aquest és un estat anterior del passaport, conservat exactament tal com es va publicar. N\'hi ha un estat més recent.',
+            'current'      => 'Aquest és l\'estat actual del passaport.',
+            'view-current' => 'Mostra el passaport actual',
+        ],
     ],
 ];

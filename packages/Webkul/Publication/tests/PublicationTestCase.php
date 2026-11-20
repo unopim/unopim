@@ -111,6 +111,22 @@ class PublicationTestCase extends TestCase
     }
 
     /**
+     * Mints a further version for the fixture's locale by changing the one value the stub payload reads.
+     */
+    protected function republishWithMaterial(PublicationVersion $previous, string $material): PublicationVersion
+    {
+        $publication = $previous->publication;
+        $product = $publication->product;
+
+        $product->values = array_replace_recursive($product->values, [
+            'locale_specific' => [$previous->locale->code => ['dpp_material_composition' => $material]],
+        ]);
+        $product->save();
+
+        return resolve(Publisher::class)->publish($product, $publication->channel, $previous->locale, 'dpp');
+    }
+
+    /**
      * Public tier is opt-in per channel; an unset flag reads as disabled.
      */
     protected function enablePublicTier(string $channelCode): void
