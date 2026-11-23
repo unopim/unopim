@@ -1,3 +1,51 @@
+# 3.1.4 — November 23rd, 2026
+
+This is a security release. Upgrade promptly and follow the upgrade steps: several actions now require a permission they did not check before, and some Magic AI platform and import settings that were accepted before are now refused.
+
+> Upgrading? This release needs action after the update — follow [Upgrading from 3.1.x to 3.1.4](UPGRADE.md#upgrading-to-314).
+
+## Security
+
+- Fixed security issues in access control, server-side request forgery and stored cross-site scripting.
+- Tightened permission checks on data transfer downloads. Export and import files, error reports, job tracker files and archives and job logs now require the job type's Execute permission, and the download links are hidden without it. A job track without a file path returns 404.
+- Tightened permission checks in the AI agent and Magic AI. Each AI tool now requires the same permission as the matching admin action, and changing or deleting several products at once requires the bulk edit or mass delete permission. Translating, generating content for or reading a product or category requires view access to it, and image-to-product requires product create.
+- AI product exports are stored on the private disk and can be downloaded only by the admin who created them.
+- Role and user imports follow the same access rules as the admin screens: each row needs the matching users or roles permission, cannot grant a permission or assign a role the importing admin does not hold, and cannot change or delete a user or role beyond that admin's access. A role import no longer deletes a role that admins still hold, and only a full-access admin can save a role or user import profile.
+- Admins can no longer edit or delete a user whose current role they could not assign, or edit or delete a role whose access goes beyond their own.
+- The REST API keeps attribute options, category field options and association type fields under the parent named in the URL. Adding, editing or deleting them through the parent update requires the matching child permission, and ids belonging to another parent are rejected.
+- OAuth signing keys are read only from the configured key path. The keypair that older releases shipped in the source tree is never used, and a stored copy of it is refused and replaced by `unopim:passport:keys`.
+- Magic AI platform calls only reach public addresses, are pinned to the validated address and never follow redirects. A saved API key is sent only to its saved provider and URL, testing a connection or listing models with a saved key requires the platform edit permission, platform `extras` are limited to an allowlist, and errors no longer echo the provider response or the key.
+- The outbound URL guard used by Magic AI and webhooks now also refuses shared address space and IPv6 prefixes that embed an IPv4 host, and webhook delivery is refused when the URL cannot be pinned to its validated address.
+- Client-side validation rules are encoded safely, so a regex pattern can no longer inject markup into admin forms.
+- Hardened the rich text editor against known XSS issues, and Magic AI translations of rich text values are purified like the product form.
+- Deleting an admin also deletes their AI agent memories instead of sharing them with every other admin's agent.
+- Executable and markup file extensions are always refused on upload.
+- Disabled session upload progress in the Docker PHP configuration.
+- Updated `symfony/http-foundation` to 8.1.9 and `enshrined/svg-sanitize` to 1.1.1.
+
+## Bug fixes
+
+- Fixed unticking rows after "select all matching" leaving select-all mode instead of excluding those rows from the mass action or export.
+- Fixed `0`, `"0"` and `false` values being dropped on product save and on import.
+- Fixed imports whose validation fails or exceeds the error limit staying pending instead of failing.
+- Fixed scoped variant-level values being dropped on import, and the `variant_structure` import header being required.
+- Fixed product media paths that are resubmitted unchanged being rejected.
+- Fixed lazy-loaded attribute groups on the product edit page ignoring the selected channel.
+- Fixed the code generator overwriting a disabled code input.
+- Fixed the family form not being marked as changed when attribute groups are reordered.
+- Fixed the applied date-range filter pill not spanning the filter panel.
+- Fixed the dashboard channel readiness widget not showing the translated channel name.
+- Fixed public product passport fields being rendered more than once.
+- Fixed configuration file downloads for an unknown path returning a server error instead of 404.
+- Fixed the REST option endpoints returning a server error for malformed payloads; they now return 422.
+- Fixed client-side regex validation losing backslashes, so a pattern such as `\d` now reaches the browser exactly as configured.
+- Fixed the installer reporting a fixed country instead of deriving it from the admin's timezone.
+- Fixed the Docker Elasticsearch readiness check ignoring the configured credentials.
+
+## Docker
+
+- Base images are pinned by digest; the PHP images run PHP 8.4.28.
+
 # 3.1.3 — September 29th, 2026
 
 ## Improvements

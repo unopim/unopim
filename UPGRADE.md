@@ -5,21 +5,160 @@
 >
 > Read the [CHANGELOG](CHANGELOG.md) and the
 > [release notes](https://github.com/unopim/unopim/releases) before you start.
-> This is a major release: it changes the PHP requirement, invalidates existing
-> API tokens, and runs migrations that cannot be reversed.
 
-- [Before you start](#before-you-start)
-- [How the upgrade works](#how-the-upgrade-works)
-- [Track A — release archive](#track-a)
-- [Track B — Git checkout](#track-b)
-- [Track C — Docker](#track-c)
-- [After the upgrade](#after-the-upgrade)
-- [Rollback](#rollback)
-- [How long will it take?](#how-long)
-- [Command reference](#command-reference)
-- [Where this is going](#roadmap)
+- [Upgrading from 3.1.x to 3.1.4](#upgrading-to-314)
+- [Upgrading from 2.x to 3.x](#upgrading-to-3x)
+  - [Before you start](#before-you-start)
+  - [How the upgrade works](#how-the-upgrade-works)
+  - [Track A — release archive](#track-a)
+  - [Track B — Git checkout](#track-b)
+  - [Track C — Docker](#track-c)
+  - [After the upgrade](#after-the-upgrade)
+  - [Rollback](#rollback)
+  - [How long will it take?](#how-long)
+  - [Command reference](#command-reference)
+  - [Where this is going](#roadmap)
 
 ---
+
+<a name="upgrading-to-314"></a>
+## 🩹 Upgrading from 3.1.x to 3.1.4
+
+3.1.4 is a security release. Several actions now require a permission they did
+not check before, and some Magic AI platform and import settings that were
+accepted before are now refused. Follow these steps in order.
+
+### 1. Back up and pull the release
+
+Take a backup of the database and storage before you start (see
+[Before you start](#before-you-start)), then pull or extract the 3.1.4 release
+the same way you installed 3.1.x.
+
+### 2. Run the migrations and regenerate the OAuth keys
+
+Run the migrations, then make sure the OAuth signing keys exist. The installer,
+`unopim:upgrade` and the Docker entrypoint already run
+`unopim:passport:keys`; run it yourself if you upgrade by hand.
+
+```bash
+php artisan migrate
+php artisan unopim:passport:keys
+```
+
+If `packages/Webkul/AdminApi/src/Secrets/Oauth` exists in your install, delete
+it. An install still on that keypair gets a new one, tokens signed with the old
+pair stop validating, and API clients must request a new token.
+
+### 3. Move old AI exports off the public disk
+
+AI exports created before this release are still in the public storage folder.
+Run this once after upgrading, or delete `storage/app/public/ai-agent/exports`:
+
+```bash
+php artisan ai-agent:cleanup --days=0
+```
+
+`--days=0` also clears every other temporary AI agent file the command manages.
+
+### 4. Review custom roles
+
+Review custom roles that use data transfer, AI agent, Magic AI or REST API keys.
+
+**Data transfer**
+
+| Action | Permission now required |
+|---|---|
+| Export listing data and link routes; downloading export or import files, error reports, job tracker files and archives and job logs | `data_transfer.export.execute` or `data_transfer.imports.execute` |
+
+Grant Execute where a role needs them.
+
+**AI agent**
+
+| Tool | Permission now required |
+|---|---|
+| `create_attribute` | `catalog.attributes.create` |
+| `export_products` | `data_transfer.export.execute` |
+| `bulk_edit` | `catalog.products.edit` and `catalog.products.bulk_edit` |
+| `update_product`, `assign_categories` on several SKUs | `catalog.products.bulk_edit` |
+| `delete_products` on several SKUs | `catalog.products.mass_delete` |
+
+**Magic AI**
+
+| Action | Permission now required |
+|---|---|
+| Translate, content and image generation | `catalog.products` or `catalog.categories` for the resource they read |
+| Image-to-product | `catalog.products.create` |
+| Model listing and connection tests with a saved key | `ai-agent.platform.edit` |
+
+**REST API**
+
+| Request | Permission now required |
+|---|---|
+| `isNew` and `isDelete` entries in `PUT /attributes/{code}` options, `PUT /category-fields/{code}` options and `PUT /association-types/{code}` fields | The matching create or delete API permission |
+| Rewriting an existing association type field | `api.catalog.association_types.fields.edit` (cannot change its `code` or `type`) |
+| `POST /association-types` with `fields` | `api.catalog.association_types.fields.create` |
+| `PUT /attributes/{code}/options` creating an unknown option code | `api.catalog.attributes.create` |
+
+A non-object option item returns 422, an option id that belongs to another
+attribute returns 422, `attribute_id` / `category_field_id` in the body are
+ignored, and a `labels` key that is not an active locale code is ignored.
+
+### 5. Check your Magic AI platforms
+
+- `extras` keys outside `deployment`, `embedding_deployment`,
+  `image_deployment`, `api_version`, `organization`, `project` and
+  `anthropic_beta` are rejected on save, and dropped from platforms saved
+  earlier when a provider call is made.
+- A platform URL that does not resolve to a public address (unresolvable hosts,
+  `.test` / `.invalid` names, loopback, private ranges and metadata addresses)
+  is refused for provider calls and model listing. Change it to a public,
+  resolvable endpoint.
+- The local Ollama default `http://localhost:11434`, used when the URL is empty
+  or set to that default, is the only exception.
+- The platform modal no longer shows the provider's own error text; it shows
+  the host and HTTP status instead.
+
+### 6. Check your webhooks
+
+Webhooks to a host that cannot be pinned to a public address are refused.
+
+### 7. Check role and user imports
+
+- Each row needs the `settings.users.users.*` or `settings.roles.*` permission
+  the matching admin screen requires, and is checked against the admin who
+  started the job. Imports started without an admin are rejected;
+  `unopim:queue:work {jobId} {userEmailId}` uses the given admin's access.
+- Only a full-access admin can save a role or user import profile.
+- A role import cannot delete a role still assigned to admins.
+- Deleting a role is refused when the role's access is wider than the acting
+  admin's.
+
+### 8. Behaviour changes to be aware of
+
+- Zero and false values are now kept on product save and import, and
+  completeness counts them as filled, so scores can rise on the next
+  recalculation.
+- Attribute and category field regex patterns now reach the browser with their
+  backslashes, so a pattern that used them may reject input the form used to
+  let through.
+- Magic AI translations of rich text attributes go through the product form's
+  HTML allowlist, so tags and attributes outside it are removed.
+- `enshrined/svg-sanitize` moved from `^0.22` to `^1.0`. UnoPim uses only
+  `new Sanitizer()` and `sanitize()`, which are unchanged; extensions that use
+  other parts of the library should check its changelog.
+
+### 9. Docker: rebuild your images
+
+Docker images are pinned by digest to PHP 8.4.28; rebuild your images to pick
+it up.
+
+---
+
+<a name="upgrading-to-3x"></a>
+## 🚀 Upgrading from 2.x to 3.x
+
+> This is a major release: it changes the PHP requirement, invalidates existing
+> API tokens, and runs migrations that cannot be reversed.
 
 <a name="before-you-start"></a>
 ## ⚠️ Before you start
