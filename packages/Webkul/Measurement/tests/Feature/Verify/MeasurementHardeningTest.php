@@ -31,6 +31,8 @@ it('M2: rejects assigning a unit that is not in the family to a measurement attr
 
     $attribute = Attribute::factory()->create(['code' => 'w_'.uniqid(), 'type' => 'measurement']);
 
+    request()->setLaravelSession(app('session.store'));
+
     request()->merge([
         'measurement_family' => $family->code,
         'measurement_unit'   => 'furlong',
@@ -44,6 +46,8 @@ it('M2: accepts a unit that belongs to the family', function () {
     $family = hardeningFamily();
 
     $attribute = Attribute::factory()->create(['code' => 'w_'.uniqid(), 'type' => 'measurement']);
+
+    request()->setLaravelSession(app('session.store'));
 
     request()->merge([
         'measurement_family' => $family->code,
