@@ -1,6 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\Exceptions;
 use Illuminate\Support\Facades\Hash;
+use Symfony\Component\Mailer\Exception\TransportException;
 use Webkul\User\Models\Admin;
 
 beforeEach(function () {
@@ -14,37 +16,37 @@ beforeEach(function () {
             'timeout'   => 1,
         ],
     ]);
+
+    Exceptions::fake();
 });
 
-it('returns a 200 warning (never a 500) when the reset mail cannot be sent', function () {
+it('gives the generic answer and reports the failure when the reset mail cannot be sent', function () {
     Admin::factory()->create([
         'email'    => 'smtp-broken@example.com',
         'password' => Hash::make('password'),
         'status'   => 1,
     ]);
 
-    $response = $this->postJson(route('admin.forget_password.store'), [
+    $this->postJson(route('admin.forget_password.store'), [
         'email' => 'smtp-broken@example.com',
-    ]);
+    ])
+        ->assertOk()
+        ->assertExactJson(['message' => trans('admin::app.users.forget-password.create.reset-link-sent')]);
 
-    $response->assertOk();
-    $response->assertJson([
-        'message' => trans('admin::app.users.forget-password.create.email-settings-error'),
-        'type'    => 'warning',
-    ]);
+    Exceptions::assertReported(TransportException::class);
 });
 
-it('flashes a warning on a non-ajax submit when the reset mail cannot be sent', function () {
+it('flashes the generic success on a non-ajax submit when the reset mail cannot be sent', function () {
     Admin::factory()->create([
         'email'    => 'smtp-broken-web@example.com',
         'password' => Hash::make('password'),
         'status'   => 1,
     ]);
 
-    $response = $this->post(route('admin.forget_password.store'), [
+    $this->post(route('admin.forget_password.store'), [
         'email' => 'smtp-broken-web@example.com',
-    ]);
-
-    $response->assertRedirect(route('admin.forget_password.create'));
-    $response->assertSessionHas('warning', trans('admin::app.users.forget-password.create.email-settings-error'));
+    ])
+        ->assertRedirect(route('admin.forget_password.create'))
+        ->assertSessionHas('success', trans('admin::app.users.forget-password.create.reset-link-sent'))
+        ->assertSessionMissing('warning');
 });

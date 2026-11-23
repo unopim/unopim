@@ -5,6 +5,7 @@ namespace Webkul\Completeness\Jobs;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Completeness\Repositories\CompletenessSettingsRepository;
@@ -97,11 +98,13 @@ class ProductCompletenessJob implements ShouldQueue
                 ->delete();
         }
 
-        if ($scoreRows !== []) {
+        $changedRows = $this->changedScoreRows($scoreRows);
+
+        if ($changedRows !== []) {
             DB::table('product_completeness')->upsert(
-                $scoreRows,
+                $changedRows,
                 ['product_id', 'channel_id', 'locale_id'],
-                ['score', 'missing_count']
+                ['score', 'missing_count', 'updated_at']
             );
         }
 
@@ -117,6 +120,48 @@ class ProductCompletenessJob implements ShouldQueue
             $castType = DB::getDriverName() === 'pgsql' ? 'INTEGER' : 'SIGNED';
             DB::statement("UPDATE {$prefix}products SET avg_completeness_score = CAST(CASE id {$cases} END AS {$castType}) WHERE id IN ({$idList})");
         }
+
+        if ($changedRows !== [] || $deleteQueue !== []) {
+            Event::dispatch('completeness.product.calculate.after', ['ids' => array_keys($avgScores)]);
+        }
+    }
+
+    /**
+     * Keep only new rows and rows whose score moved, stamped with the time of the
+     * change, so updated_at records when a product's completeness last changed.
+     *
+     * @param  array<int, array{product_id: int, channel_id: int, locale_id: int, score: int, missing_count: int}>  $scoreRows
+     * @return array<int, array<string, mixed>>
+     */
+    protected function changedScoreRows(array $scoreRows): array
+    {
+        if ($scoreRows === []) {
+            return [];
+        }
+
+        $existing = DB::table('product_completeness')
+            ->whereIn('product_id', array_values(array_unique(array_column($scoreRows, 'product_id'))))
+            ->get(['product_id', 'channel_id', 'locale_id', 'score', 'missing_count'])
+            ->keyBy(fn (object $row): string => $row->product_id.'-'.$row->channel_id.'-'.$row->locale_id);
+
+        $now = now();
+        $changedRows = [];
+
+        foreach ($scoreRows as $row) {
+            $current = $existing->get($row['product_id'].'-'.$row['channel_id'].'-'.$row['locale_id']);
+
+            if (
+                $current !== null
+                && (int) $current->score === (int) $row['score']
+                && (int) $current->missing_count === (int) $row['missing_count']
+            ) {
+                continue;
+            }
+
+            $changedRows[] = $row + ['created_at' => $now, 'updated_at' => $now];
+        }
+
+        return $changedRows;
     }
 
     protected function resolveDependencies(): void

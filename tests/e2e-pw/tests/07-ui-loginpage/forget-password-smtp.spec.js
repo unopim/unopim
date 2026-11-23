@@ -6,8 +6,9 @@ const ADMIN_STATE_PATH = path.resolve(__dirname, '../../', process.env.PW_STATE_
 
 /**
  * Broken-SMTP coverage for the admin forget-password flow.
- * The reset mail sends synchronously, so an unreachable host makes the transport throw.
- * The endpoint must degrade to a warning flash (200), never a 500 or silent green success.
+ * The reset mail is sent after the response, so an unreachable host is only logged.
+ * The visitor always gets the same generic answer, whether or not the account exists
+ * and whether or not the mail could be sent, so the page never reveals either.
  *
  * SMTP host/port are stored as core config (System Settings > Email; see
  * CoreServiceProvider, which layers `mail_host`/`mail_port` over config('mail...')
@@ -16,7 +17,8 @@ const ADMIN_STATE_PATH = path.resolve(__dirname, '../../', process.env.PW_STATE_
  * which this environment doesn't run the app's actual SMTP transport through.
  */
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@example.com';
-const WARNING = 'Email could not be sent';
+const GENERIC = 'If an account with that email exists, a password reset link has been sent.';
+const UNKNOWN_EMAIL = 'nobody-forget-password@example.com';
 const EMAIL_SETTINGS_URL = '/admin/configuration/system/system.email';
 const UNREACHABLE_HOST = '127.0.0.1';
 const UNREACHABLE_PORT = '1';
@@ -84,28 +86,28 @@ test.describe('Forget Password — broken SMTP', () => {
     await adminContext.close();
   });
 
-  test('degrades to a warning flash, never a 500, when the mail host is unreachable', async ({ browser }) => {
-    const { context, page } = await freshForgetPasswordPage(browser);
+  for (const email of [ADMIN_EMAIL, UNKNOWN_EMAIL]) {
+    test(`gives the generic answer for ${email === ADMIN_EMAIL ? 'an existing' : 'an unknown'} account when the mail host is unreachable`, async ({ browser }) => {
+      const { context, page } = await freshForgetPasswordPage(browser);
 
-    await page.locator('input[name="email"]').fill(ADMIN_EMAIL);
+      await page.locator('input[name="email"]').fill(email);
 
-    const [response] = await Promise.all([
-      page.waitForResponse(
-        (res) => res.url().includes('/admin/forget-password') && res.request().method() === 'POST',
-        { timeout: 30000 },
-      ),
-      page.locator('button[type="submit"]').click(),
-    ]);
+      const [response] = await Promise.all([
+        page.waitForResponse(
+          (res) => res.url().includes('/admin/forget-password') && res.request().method() === 'POST',
+          { timeout: 30000 },
+        ),
+        page.locator('button[type="submit"]').click(),
+      ]);
 
-    expect(response.status()).toBe(200);
-    expect(await response.json()).toMatchObject({ type: 'warning' });
+      expect(response.status()).toBe(200);
+      expect(await response.json()).toEqual({ message: GENERIC });
 
-    await expect(page.getByText(WARNING, { exact: false })).toBeVisible();
+      await expect(page.getByText(GENERIC)).toBeVisible();
 
-    expect(page.url()).toContain('/admin/forget-password');
+      expect(page.url()).toContain('/admin/forget-password');
 
-    await page.screenshot({ path: 'test-results/forget-password-smtp-warning.png' });
-
-    await context.close();
-  });
+      await context.close();
+    });
+  }
 });
