@@ -27,6 +27,10 @@ class ValidateAttributeMeasurementBeforeUpdate
      */
     public function handle($attributeId): void
     {
+        if (request()->routeIs('admin.api.*')) {
+            return;
+        }
+
         $attribute = $this->attributeRepository->find($attributeId);
 
         if (! $attribute || ! $this->measurementHelper->isMeasurementBacked($attribute->type)) {

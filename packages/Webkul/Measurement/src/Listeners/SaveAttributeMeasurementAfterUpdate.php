@@ -26,6 +26,10 @@ class SaveAttributeMeasurementAfterUpdate
      */
     public function handle($attribute): void
     {
+        if (request()->routeIs('admin.api.*')) {
+            return;
+        }
+
         if (! $attribute || ! $this->measurementHelper->isMeasurementBacked($attribute->type)) {
             return;
         }
