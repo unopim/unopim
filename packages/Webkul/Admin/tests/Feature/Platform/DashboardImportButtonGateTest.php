@@ -49,3 +49,41 @@ it('shows the dashboard Import Data button when the imports section is visible',
         ->assertOk()
         ->assertSee(route('admin.settings.data_transfer.imports.index'), false);
 });
+
+it('hides the dashboard Export Data button when the exports section is hidden', function () {
+    $this->setPlatformModules('records');
+
+    CoreConfig::query()->create([
+        'code'         => ModuleGate::HIDDEN_SECTIONS_KEY,
+        'value'        => 'data_transfer.export',
+        'channel_code' => null,
+        'locale_code'  => null,
+    ]);
+
+    $this->loginAsAdmin();
+
+    app()->forgetScopedInstances();
+
+    $this->get(route('admin.dashboard.index'))
+        ->assertOk()
+        ->assertDontSee(route('admin.settings.data_transfer.exports.index'), false);
+});
+
+it('shows the dashboard Export Data button when the exports section is visible', function () {
+    $this->setPlatformModules('records');
+
+    CoreConfig::query()->create([
+        'code'         => ModuleGate::HIDDEN_SECTIONS_KEY,
+        'value'        => '',
+        'channel_code' => null,
+        'locale_code'  => null,
+    ]);
+
+    $this->loginAsAdmin();
+
+    app()->forgetScopedInstances();
+
+    $this->get(route('admin.dashboard.index'))
+        ->assertOk()
+        ->assertSee(route('admin.settings.data_transfer.exports.index'), false);
+});

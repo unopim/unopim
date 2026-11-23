@@ -88,6 +88,21 @@ it('does not persist a measurement configuration whose unit is not part of the f
     $response->assertSessionHas('error', trans('measurement::app.messages.attribute.unit_not_in_family'));
 });
 
+it('does not persist a measurement configuration whose family does not exist', function (): void {
+    $code = 'meas_'.uniqid();
+
+    $response = $this->post(route('admin.catalog.attributes.store'), [
+        'code'               => $code,
+        'type'               => 'measurement',
+        'measurement_family' => 'missing_family_'.uniqid(),
+        'measurement_unit'   => 'meter',
+    ]);
+
+    expect(Attribute::where('code', $code)->exists())->toBeFalse();
+
+    $response->assertSessionHas('error', trans('measurement::app.messages.attribute.family_not_found'));
+});
+
 it('ignores posted measurement fields for a non-measurement attribute', function (): void {
     $family = quickCreateLengthFamily();
 

@@ -26,7 +26,6 @@
 - The AI chat caches its instructions and tool definitions and tracks cached tokens in analytics.
 - The AI category tree tool can be scoped to a family and ranks categories by relevance at any depth.
 - AI agent extensions can register result cards, composer controls and tool decorators.
-- Completeness score colour thresholds are configurable under Settings → Completeness: a green-from and a red-below percentage (default 90 and 60), applied to the product grid, the radial progress and the dashboard. Upgrade note: the new defaults replace the old hard-coded cutoffs, so scores recolour on upgrade unless you set your own.
 - The Add Attribute modal now collects the measurement family and unit for a measurement type and saves them on create, so the attribute is ready to use without a follow-up edit and no longer flashes the "family and unit required" warning.
 
 ## Improvements

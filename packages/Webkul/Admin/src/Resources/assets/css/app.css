@@ -837,16 +837,13 @@ body .tox .tox-dialog__footer .tox-button--secondary:hover:not(:disabled) {
     box-shadow: 0 0 0 3px rgb(var(--c-primary-600) / 0.2);
 }
 
-.multiselect__tag-icon:after {
-    @apply text-unopim-primary text-primary-600 dark:bg-cherry-600 dark:text-slate-50;
+.multiselect__tag-icon:after,
+.multiselect__tag-icon:hover:after {
+    @apply text-primary-600 dark:bg-cherry-600 dark:text-slate-50;
 }
 
 .multiselect__tag-icon:hover {
     @apply bg-transparent;
-}
-
-.multiselect__tag-icon:hover:after {
-    @apply text-unopim-primary text-primary-600 dark:text-slate-50;
 }
 
 .multiselect--active .multiselect__content-wrapper {
@@ -1172,3 +1169,4 @@ body.unsaved-bar-open .ap-launcher {
     transform: translateY(100%);
     opacity: 0;
 }
+

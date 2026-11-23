@@ -7,7 +7,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Webkul\Admin\Http\Controllers\Concerns\RejectsUndeclaredUploads;
@@ -213,8 +212,6 @@ class ConfigurationController extends Controller
             session()->flash('success', trans('admin::app.configuration.index.save-message'));
 
             return redirect()->back();
-        } catch (ValidationException $exception) {
-            throw $exception;
         } catch (\Throwable $th) {
             Log::error($th->getMessage(), ['exception' => $th]);
             session()->flash('error', trans('admin::app.catalog.products.index.magic-ai-validate-error'));

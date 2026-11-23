@@ -100,6 +100,7 @@ return [
         'icon'       => '',
     ], [
         'key'        => 'data_transfer.export',
+        'hideable'   => true,
         'name'       => 'admin::app.components.layouts.sidebar.exports',
         'route'      => 'admin.settings.data_transfer.exports.index',
         'sort'       => 3,

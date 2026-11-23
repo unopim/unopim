@@ -23,6 +23,10 @@ class ValidateAttributeMeasurementBeforeCreate
      */
     public function handle(): void
     {
+        if (request()->routeIs('admin.api.*')) {
+            return;
+        }
+
         if (! $this->measurementHelper->isMeasurementBacked(request('type'))) {
             return;
         }
