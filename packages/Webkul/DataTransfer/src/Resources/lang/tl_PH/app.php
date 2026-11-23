@@ -61,6 +61,7 @@ return [
                     'duplicate-code'                       => 'Ang code ng tampok na :code ay ginagamit na.',
                     'code_not_found_to_delete'             => 'Hindi natagpuan ang code ng tampok para burahin.',
                     'code_is_system_and_cannot_be_deleted' => 'Hindi maaaring burahin ang system feature.',
+                    'templates-unsupported'                => 'Maaari lamang i-enable ang mga template sa mga katangiang text at textarea na walang pag-validate ng input at hindi natatangi.',
                 ],
             ],
         ],
@@ -176,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Masyadong malaki ang export na ito para patakbuhin: tinatayang :rows na hilera × :columns na kolum (~:estimated) ay lumalampas sa magagamit na espasyo (~:available). Paliitin ang export sa pamamagitan ng pagpili ng mas kaunting channel/locale (at attribute) at subukang muli.',
-        'fields'           => [
+        'export-too-large'      => 'Masyadong malaki ang export na ito para patakbuhin: tinatayang :rows na hilera × :columns na kolum (~:estimated) ay lumalampas sa magagamit na espasyo (~:available). Paliitin ang export sa pamamagitan ng pagpili ng mas kaunting channel/locale (at attribute) at subukang muli.',
+        'xls-too-many-columns'  => 'Ang export na ito ay may higit sa :limit na column, ang pinakamarami na kayang hawakan ng isang XLS file. Piliin ang XLSX o CSV, o pumili ng mas kaunting attribute, at subukang muli.',
+        'xls-too-many-rows'     => 'Ang export na ito ay may higit sa :limit na row, ang pinakamarami na kayang hawakan ng isang XLS file. Piliin ang XLSX o CSV, o paliitin ang export, at subukang muli.',
+        'xls-too-large'         => 'Masyadong malaki ang export na ito para i-convert sa XLS: ang :rows row × :columns column ay higit sa :limit cell na kayang i-convert ng server na ito. Pumili ng XLSX o CSV, o paliitin ang export, at subukang muli.',
+        'xls-conversion-failed' => 'Hindi mapalitan ang export file ng XLS na bersyon nito. Subukang muli, o pumili ng XLSX o CSV.',
+        'fields'                => [
             'file-format'            => 'Format ng File',
             'with-media'             => 'May Media',
             'with-associations'      => 'May mga Asosasyon',
@@ -186,6 +191,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'I-render ang mga template',
+            'render-templates-info'  => 'I-export ang mga na-render na value ng template sa halip na ang raw na source ng template. Ang muling pag-import ng na-render na file ay papalitan ang naka-save na source ng template ng plain text.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

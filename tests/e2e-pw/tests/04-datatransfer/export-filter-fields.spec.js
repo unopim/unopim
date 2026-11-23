@@ -30,6 +30,16 @@ async function chooseFilterOption(page, name, option) {
   await page.getByRole('option', { name: option }).locator('span').first().click();
 }
 
+async function deleteExport(page, code) {
+  await navigateTo(page, 'exports');
+  await page.getByRole('textbox', { name: 'Search' }).fill(code);
+  await page.keyboard.press('Enter');
+  await page.waitForLoadState('networkidle');
+  await page.locator('span[title="Delete"]').first().click();
+  await page.getByRole('button', { name: 'Delete' }).click();
+  await expect(page.locator('#app').getByText(/Export deleted successfully/i)).toBeVisible({ timeout: 20000 });
+}
+
 /**
  * Waits for the locator's bounding box to hold steady across two animation
  * frames before clicking it, since async option lists can still be
@@ -155,13 +165,83 @@ test.describe('Export filter fields — reusable input components', () => {
     await expect(filterValue(adminPage, 'file_format')).toHaveValue('Xlsx');
     await expect(filterValue(adminPage, 'status')).toHaveValue('enable');
 
-    await navigateTo(adminPage, 'exports');
-    await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
-    await adminPage.keyboard.press('Enter');
+    await deleteExport(adminPage, code);
+  });
+
+  test('keeps the selected file format when the job type changes', async ({ adminPage }) => {
+    const code = `file-format-switch-${generateUid()}`;
+
+    await openCreateExport(adminPage);
+    await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
+
+    await chooseFilterOption(adminPage, 'file_format', 'XLSX');
+    await selectEntityType(adminPage, 'Products');
+
+    await expect(filterValue(adminPage, 'file_format')).toHaveValue('Xlsx');
+
+    await clickSaveAndExpect(adminPage, 'Save changes', /Export created successfully/i);
+
+    await adminPage.getByRole('link', { name: 'Edit' }).click();
     await adminPage.waitForLoadState('networkidle');
-    await adminPage.locator('span[title="Delete"]').first().click();
-    await adminPage.getByRole('button', { name: 'Delete' }).click();
-    await expect(adminPage.locator('#app').getByText(/Export deleted successfully/i)).toBeVisible({ timeout: 20000 });
+
+    await expect(filterValue(adminPage, 'file_format')).toHaveValue('Xlsx');
+
+    await deleteExport(adminPage, code);
+  });
+
+  test('clears filters the new job type does not support and keeps the CSV settings', async ({ adminPage }) => {
+    const code = `filter-switch-${generateUid()}`;
+    const fieldSeparator = adminPage.locator('input[name="field_separator"]');
+
+    await openCreateExport(adminPage);
+    await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
+    await selectEntityType(adminPage, 'Products');
+
+    await chooseFilterOption(adminPage, 'file_format', 'CSV');
+    await chooseFilterOption(adminPage, 'status', 'Enable');
+    await fieldSeparator.fill(';');
+
+    await selectEntityType(adminPage, 'Categories');
+
+    await expect(filter(adminPage, 'status')).toHaveCount(0);
+    await expect(filterValue(adminPage, 'file_format')).toHaveValue('Csv');
+    await expect(fieldSeparator).toBeVisible();
+    await expect(fieldSeparator).toHaveValue(';');
+
+    await selectEntityType(adminPage, 'Products');
+
+    await expect(filter(adminPage, 'status').first()).toBeAttached();
+    await expect(filterValue(adminPage, 'status')).toHaveValue('');
+    await expect(filterValue(adminPage, 'file_format')).toHaveValue('Csv');
+    await expect(fieldSeparator).toHaveValue(';');
+
+    await clickSaveAndExpect(adminPage, 'Save changes', /Export created successfully/i);
+
+    await adminPage.getByRole('link', { name: 'Edit' }).click();
+    await adminPage.waitForLoadState('networkidle');
+
+    await expect(filterValue(adminPage, 'status')).toHaveValue('');
+    await expect(filterValue(adminPage, 'file_format')).toHaveValue('Csv');
+
+    await deleteExport(adminPage, code);
+  });
+
+  test('clears a kept filter whose value the new job type does not allow', async ({ adminPage }) => {
+    await openCreateExport(adminPage);
+    await selectEntityType(adminPage, 'Products');
+
+    await chooseFilterOption(adminPage, 'status', 'Disable');
+    await expect(filterValue(adminPage, 'status')).toHaveValue('disable');
+
+    await selectEntityType(adminPage, 'Locales');
+
+    await expect(filter(adminPage, 'status').first()).toBeAttached();
+    await expect(filterValue(adminPage, 'status')).toHaveValue('');
+
+    await chooseFilterOption(adminPage, 'status', 'Enable');
+    await selectEntityType(adminPage, 'Products');
+
+    await expect(filterValue(adminPage, 'status')).toHaveValue('enable');
   });
 
   test('datagrid column filters render through the shared field component', async ({ adminPage }) => {
@@ -299,12 +379,6 @@ test.describe('Attribute conditions — a config-driven filter field', () => {
 
     await expect(conditionsRoot(adminPage).locator('input[placeholder="Value"]')).toHaveValue('Shirt');
 
-    await navigateTo(adminPage, 'exports');
-    await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
-    await adminPage.keyboard.press('Enter');
-    await adminPage.waitForLoadState('networkidle');
-    await adminPage.locator('span[title="Delete"]').first().click();
-    await adminPage.getByRole('button', { name: 'Delete' }).click();
-    await expect(adminPage.locator('#app').getByText(/Export deleted successfully/i)).toBeVisible({ timeout: 20000 });
+    await deleteExport(adminPage, code);
   });
 });

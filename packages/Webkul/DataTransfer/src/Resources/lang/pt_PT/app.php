@@ -61,6 +61,7 @@ return [
                     'duplicate-code'                       => 'O código do atributo :code já está em uso.',
                     'code_not_found_to_delete'             => 'Código de atributo não encontrado para exclusão.',
                     'code_is_system_and_cannot_be_deleted' => 'O atributo do sistema não pode ser excluído.',
+                    'templates-unsupported'                => 'Os modelos só podem ser ativados em atributos de texto e área de texto que não tenham validação de entrada e não sejam únicos.',
                 ],
             ],
         ],
@@ -176,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Esta exportação é demasiado grande para ser executada: cerca de :rows linhas × :columns colunas (~:estimated) excedem o espaço disponível (~:available). Reduza a exportação selecionando menos canais/locais (e atributos) e tente novamente.',
-        'fields'           => [
+        'export-too-large'      => 'Esta exportação é demasiado grande para ser executada: cerca de :rows linhas × :columns colunas (~:estimated) excedem o espaço disponível (~:available). Reduza a exportação selecionando menos canais/locais (e atributos) e tente novamente.',
+        'xls-too-many-columns'  => 'Esta exportação tem mais de :limit colunas, o máximo que um ficheiro XLS suporta. Escolha XLSX ou CSV, ou selecione menos atributos, e tente novamente.',
+        'xls-too-many-rows'     => 'Esta exportação tem mais de :limit linhas, o máximo que um ficheiro XLS suporta. Escolha XLSX ou CSV, ou reduza a exportação, e tente novamente.',
+        'xls-too-large'         => 'Esta exportação é demasiado grande para ser convertida em XLS: :rows linhas × :columns colunas excedem as :limit células que este servidor consegue converter. Escolha XLSX ou CSV, ou restrinja a exportação, e tente novamente.',
+        'xls-conversion-failed' => 'Não foi possível substituir o ficheiro de exportação pela versão XLS. Tente novamente ou escolha XLSX ou CSV.',
+        'fields'                => [
             'file-format'            => 'Formato de ficheiro',
             'with-media'             => 'Com multimédia',
             'with-associations'      => 'Com associações',
@@ -186,6 +191,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'Processar modelos',
+            'render-templates-info'  => 'Exportar os valores processados dos modelos em vez da fonte bruta do modelo. Reimportar um ficheiro processado substitui a fonte guardada do modelo por texto simples.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

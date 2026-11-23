@@ -61,6 +61,7 @@ return [
                     'duplicate-code'                       => 'Mã thuộc tính :code đã được sử dụng.',
                     'code_not_found_to_delete'             => 'Không tìm thấy mã thuộc tính để xóa.',
                     'code_is_system_and_cannot_be_deleted' => 'Không thể xóa thuộc tính hệ thống.',
+                    'templates-unsupported'                => 'Chỉ có thể bật mẫu cho các thuộc tính văn bản và văn bản lớn không có xác thực nhập liệu và không phải là duy nhất.',
                 ],
             ],
         ],
@@ -176,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Bản xuất này quá lớn để chạy: ước tính :rows hàng × :columns cột (~:estimated) vượt quá dung lượng khả dụng (~:available). Hãy thu hẹp bản xuất bằng cách chọn ít kênh/ngôn ngữ (và thuộc tính) hơn rồi thử lại.',
-        'fields'           => [
+        'export-too-large'      => 'Bản xuất này quá lớn để chạy: ước tính :rows hàng × :columns cột (~:estimated) vượt quá dung lượng khả dụng (~:available). Hãy thu hẹp bản xuất bằng cách chọn ít kênh/ngôn ngữ (và thuộc tính) hơn rồi thử lại.',
+        'xls-too-many-columns'  => 'Bản xuất này có hơn :limit cột, mức tối đa mà tệp XLS có thể chứa. Hãy chọn XLSX hoặc CSV, hoặc chọn ít thuộc tính hơn, rồi thử lại.',
+        'xls-too-many-rows'     => 'Bản xuất này có hơn :limit hàng, mức tối đa mà tệp XLS có thể chứa. Hãy chọn XLSX hoặc CSV, hoặc thu hẹp bản xuất, rồi thử lại.',
+        'xls-too-large'         => 'Bản xuất này quá lớn để chuyển đổi sang XLS: :rows hàng × :columns cột vượt quá :limit ô mà máy chủ này có thể chuyển đổi. Hãy chọn XLSX hoặc CSV, hoặc thu hẹp bản xuất, rồi thử lại.',
+        'xls-conversion-failed' => 'Không thể thay thế tệp xuất bằng phiên bản XLS của nó. Hãy thử lại, hoặc chọn XLSX hoặc CSV.',
+        'fields'                => [
             'file-format'            => 'Định dạng tệp',
             'with-media'             => 'Kèm phương tiện',
             'with-associations'      => 'Kèm liên kết',
@@ -186,6 +191,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'Kết xuất mẫu',
+            'render-templates-info'  => 'Xuất giá trị mẫu đã kết xuất thay vì mã nguồn mẫu gốc. Nhập lại tệp đã kết xuất sẽ thay thế mã nguồn mẫu đã lưu bằng văn bản thuần.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

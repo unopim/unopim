@@ -100,6 +100,8 @@ class AttributeOptionController extends Controller
 
         $requestData = $request->input('locales') ?? [];
 
+        $requestData['attribute_id'] = $attributeId;
+
         $attribute = $this->attributeRepository->find($attributeId);
 
         if ($attribute && in_array($attribute->swatch_type, SwatchTypeEnum::getValues(), true)) {

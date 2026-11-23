@@ -1,4 +1,5 @@
 const { test, expect } = require('@playwright/test');
+const { fillSecret } = require('../../utils/secret-helpers');
 
 // Self-logs-in against the target base URL. The admin login route is rate limited
 // (5/min), so assertions are grouped into as few tests as possible to keep the
@@ -11,7 +12,7 @@ test.describe('admin breadcrumbs', () => {
     test.beforeEach(async ({ page }) => {
         await page.goto('/admin/login');
         await page.getByRole('textbox', { name: 'Email Address' }).fill(process.env.ADMIN_EMAIL || 'admin@example.com');
-        await page.getByRole('textbox', { name: 'Password' }).fill(process.env.ADMIN_PASSWORD || 'admin123');
+        await fillSecret(page.getByRole('textbox', { name: 'Password' }), process.env.ADMIN_PASSWORD || 'admin123');
         await page.getByRole('button', { name: 'Sign In' }).click();
         await page.waitForURL(/\/admin\/dashboard/, { timeout: 20000 });
     });

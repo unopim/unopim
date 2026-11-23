@@ -16,12 +16,12 @@ class CategoryTableSeeder extends Seeder
 {
     /**
      * Seed the application's database.
-     *
-     * @param  array  $parameters
      */
-    public function run($parameters = []): void
+    public function run(array $parameters = []): void
     {
-        DB::table('categories')->delete();
+        if (DB::table('categories')->exists()) {
+            return;
+        }
 
         $now = Date::now();
 

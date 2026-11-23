@@ -122,3 +122,63 @@ it('renders an extension point after the webhook settings on the edit form', fun
     expect($rendered)->toBeInstanceOf(Webhook::class)
         ->and($rendered->is($webhook))->toBeTrue();
 });
+
+it('pins every delivery to the address its url validated to', function () {
+    $sent = [];
+
+    Http::fake(function (Request $request, array $options) use (&$sent) {
+        $sent[] = $options;
+
+        return Http::response(['ok' => true], 200);
+    });
+
+    $webhook = Webhook::create(['name' => 'Pinned Hook', 'url' => 'https://8.8.8.8/hook', 'is_active' => true, 'events' => ['vendor.thing.created']]);
+
+    app(WebhookService::class)->deliverEvent($webhook, 'vendor.thing.created', ['id' => 7], 'THING-7', 'Robot');
+
+    expect($sent)->toHaveCount(1)
+        ->and($sent[0]['allow_redirects'])->toBeFalse()
+        ->and($sent[0]['curl'][CURLOPT_RESOLVE])->toBe(['8.8.8.8:443:8.8.8.8']);
+});
+
+it('sends nothing to a webhook url that cannot be validated and pinned', function (string $url) {
+    $webhook = Webhook::create(['name' => 'Unpinnable Hook', 'url' => $url, 'is_active' => true, 'events' => ['vendor.thing.created']]);
+
+    expect(app(WebhookService::class)->deliverEvent($webhook, 'vendor.thing.created', ['id' => 7]))->toBeNull();
+
+    Http::assertNothingSent();
+})->with([
+    'unresolvable' => ['https://unresolvable.invalid/hook'],
+    'metadata'     => ['http://169.254.169.254/latest'],
+]);
+
+it('refuses to probe a webhook url that cannot be validated and pinned', function (string $url) {
+    $this->actingAs(Admin::factory()->create(['role_id' => Role::factory()->create(['permission_type' => 'all'])->id]), 'admin');
+
+    $this->postJson(route('webhook.test'), ['url' => $url])
+        ->assertUnprocessable()
+        ->assertJson(['success' => false, 'message' => trans('webhook::app.webhooks.validation.unsafe-url')]);
+
+    Http::assertNothingSent();
+})->with([
+    'unresolvable' => ['https://unresolvable.invalid/hook'],
+    'metadata'     => ['http://169.254.169.254/latest'],
+]);
+
+it('probes a webhook url pinned to the address it validated to', function () {
+    $sent = [];
+
+    Http::fake(function (Request $request, array $options) use (&$sent) {
+        $sent[] = $options;
+
+        return Http::response(['ok' => true], 200);
+    });
+
+    $this->actingAs(Admin::factory()->create(['role_id' => Role::factory()->create(['permission_type' => 'all'])->id]), 'admin');
+
+    $this->postJson(route('webhook.test'), ['url' => 'https://8.8.8.8/hook'])->assertOk();
+
+    expect($sent)->toHaveCount(1)
+        ->and($sent[0]['allow_redirects'])->toBeFalse()
+        ->and($sent[0]['curl'][CURLOPT_RESOLVE])->toBe(['8.8.8.8:443:8.8.8.8']);
+});

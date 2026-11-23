@@ -1,8 +1,11 @@
 const { test, expect } = require('../../utils/fixtures');
+const { keepSecretsOutOfArtifacts, fillSecret } = require('../../utils/secret-helpers');
 const { navigateTo, clickSave } = require('../../utils/helpers');
 const { ensureAiPlatform } = require('../../utils/magic-ai-helpers');
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
+
+keepSecretsOutOfArtifacts(test);
 
 test.describe('UnoPim Agenting PIM Chat Widget', () => {
 
@@ -304,7 +307,7 @@ test('5.0 - Setup: Create OpenAI platform for chat tests', async ({ adminPageWit
     await adminPageWithWidget.locator('select[name="provider"]').selectOption({ label: 'OpenAI' });
   }
   await adminPageWithWidget.locator('input[name="label"]').fill('OpenAI Chat Test');
-  await adminPageWithWidget.locator('input[name="api_key"]').fill(OPENAI_API_KEY);
+  await fillSecret(adminPageWithWidget.locator('input[name="api_key"]'), OPENAI_API_KEY);
 
   // Click outside API key field to trigger model fetch via AJAX
   await adminPageWithWidget.locator('input[name="label"]').click();

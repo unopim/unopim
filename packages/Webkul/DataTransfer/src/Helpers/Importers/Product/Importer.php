@@ -46,6 +46,8 @@ use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Repositories\ProductAssociationRepository;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Type\AbstractType;
+use Webkul\Product\Validator\ProductTemplatesValidator;
+use Webkul\Product\Validator\Rule\TemplateExpressionRule;
 
 class Importer extends AbstractImporter
 {
@@ -348,6 +350,8 @@ class Importer extends AbstractImporter
      */
     protected ?MeasurementHelper $measurementHelper = null;
 
+    protected ?ProductTemplatesValidator $templatesValidator = null;
+
     /**
      * Create a new helper instance.
      */
@@ -376,6 +380,8 @@ class Importer extends AbstractImporter
         if (self::$staticInitCacheJobId !== (string) $import->id) {
             self::$staticInitCache = null;
             self::$staticInitCacheJobId = (string) $import->id;
+
+            $this->templatesValidator = null;
 
             $this->initAttributes();
         }
@@ -454,6 +460,14 @@ class Importer extends AbstractImporter
     protected function measurementHelper(): MeasurementHelper
     {
         return $this->measurementHelper ??= resolve(MeasurementHelper::class);
+    }
+
+    /**
+     * Get the product templates validator instance.
+     */
+    protected function templatesValidator(): ProductTemplatesValidator
+    {
+        return $this->templatesValidator ??= resolve(ProductTemplatesValidator::class);
     }
 
     /**
@@ -1280,9 +1294,14 @@ class Importer extends AbstractImporter
             foreach ($validator->errors()->getMessages() as $attributeCode => $message) {
                 $errorCode = array_key_first($failedAttributes[$attributeCode] ?? []);
 
-                $this->skipRow($rowNumber, $errorCode, $attributeCode, current($message));
+                $this->skipRow($rowNumber, $errorCode, $attributeCode, str_replace('%', '%%', current($message)));
             }
         }
+
+        $this->validateTemplateReferences($rowData, $rowNumber, array_diff_key(
+            array_intersect_key($rowData, $validationRules),
+            $validator->failed(),
+        ));
 
         $this->validatUniqueAttributeValues([...$validatableRow, 'sku' => $rowData['sku']], $rowNumber);
 
@@ -1338,6 +1357,28 @@ class Importer extends AbstractImporter
         $this->isUniqueVariation($rowData, $rowNumber);
 
         return ! $this->errorHelper->isRowInvalid($rowNumber);
+    }
+
+    /**
+     * Skip the row when its templates reference attributes outside the row family or form a circular reference.
+     */
+    protected function validateTemplateReferences(array $rowData, int $rowNumber, array $sources): void
+    {
+        $sources = array_filter($sources, fn (mixed $value): bool => is_string($value) && str_contains($value, '{{'));
+
+        if ($sources === []) {
+            return;
+        }
+
+        $type = $rowData['type'];
+
+        $familyCode = $rowData[self::ATTRIBUTE_FAMILY_CODE];
+
+        $familyCodes = array_keys($this->getTypeFamilyAttributesByCode($type, $familyCode, $this->getProductTypeFamilyAttributes($type, $familyCode)));
+
+        foreach ($this->templatesValidator()->sourceErrors($sources, $familyCodes) as $code => $messages) {
+            $this->skipRow($rowNumber, TemplateExpressionRule::class, (string) $code, str_replace('%', '%%', current($messages)));
+        }
     }
 
     /**

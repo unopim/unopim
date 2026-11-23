@@ -48,7 +48,7 @@
                     $fieldNames = collect($exporterConfig[$export->entity_type]['filters']['fields'] ?? [])->pluck('name');
                     $scopeFields = $fieldNames->intersect(['channels', 'locales', 'currencies', 'attributes']);
                     $productFilterFields = $fieldNames->intersect(['attribute_families', 'categories', 'completeness', 'time_condition', 'status', 'sku']);
-                    $outputFields = $fieldNames->intersect(['file_format', 'with_media', 'with_associations', 'header_row', 'use_labels', 'date_format', 'file_path']);
+                    $outputFields = $fieldNames->intersect(['file_format', 'with_media', 'with_associations', 'header_row', 'use_labels', 'render_templates', 'date_format', 'file_path']);
                     $supportsConditions = $fieldNames->contains('custom_attributes');
                     $otherFilterFields = \Webkul\DataTransfer\Helpers\ExportFilterFields::usesGenericCard($exporterConfig[$export->entity_type] ?? null)
                         ? $fieldNames->diff(\Webkul\DataTransfer\Helpers\ExportFilterFields::KNOWN)
@@ -231,7 +231,7 @@
                                     :entity-type="$export->entity_type"
                                     :values="$exportFilters"
                                     :exporter-config="$exporterConfig"
-                                    only="file_format,with_media,with_associations,header_row,use_labels,date_format,file_path"
+                                    only="file_format,with_media,with_associations,header_row,use_labels,render_templates,date_format,file_path"
                                 />
                                 {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.card.accordion.filters.output.after') !!}
                             </div>

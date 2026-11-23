@@ -516,7 +516,9 @@
 
                             let urlUnchangedSinceRequest = this.form.api_url === requestedUrl;
 
-                            if (models.length && response.data.api_url && urlUnchangedSinceRequest) {
+                            let usedStoredKey = /^\*+$/.test(this.form.api_key || '');
+
+                            if (models.length && response.data.api_url && urlUnchangedSinceRequest && ! usedStoredKey) {
                                 this.form.api_url = response.data.api_url;
                             }
 

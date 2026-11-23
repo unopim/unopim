@@ -61,6 +61,7 @@ return [
                     'duplicate-code'                       => 'Kod značajke :code već se koristi.',
                     'code_not_found_to_delete'             => 'Kod značajke nije pronađen za brisanje.',
                     'code_is_system_and_cannot_be_deleted' => 'Značajka sustava ne može se izbrisati.',
+                    'templates-unsupported'                => 'Predlošci se mogu omogućiti samo za tekstualne atribute i atribute tekstualnog polja koji nemaju validaciju unosa i nisu jedinstveni.',
                 ],
             ],
         ],
@@ -176,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Ovaj izvoz je prevelik za pokretanje: procijenjeno :rows redaka × :columns stupaca (~:estimated) premašuje dostupan prostor (~:available). Suzite izvoz odabirom manje kanala/jezika (i atributa) i pokušajte ponovno.',
-        'fields'           => [
+        'export-too-large'      => 'Ovaj izvoz je prevelik za pokretanje: procijenjeno :rows redaka × :columns stupaca (~:estimated) premašuje dostupan prostor (~:available). Suzite izvoz odabirom manje kanala/jezika (i atributa) i pokušajte ponovno.',
+        'xls-too-many-columns'  => 'Ovaj izvoz ima više od :limit stupaca, što je najviše što XLS datoteka može sadržavati. Odaberite XLSX ili CSV ili manje atributa i pokušajte ponovno.',
+        'xls-too-many-rows'     => 'Ovaj izvoz ima više od :limit redaka, što je najviše što XLS datoteka može sadržavati. Odaberite XLSX ili CSV ili suzite izvoz i pokušajte ponovno.',
+        'xls-too-large'         => 'Ovaj izvoz je prevelik za pretvorbu u XLS: :rows redaka × :columns stupaca premašuje :limit ćelija koje ovaj poslužitelj može pretvoriti. Odaberite XLSX ili CSV ili suzite izvoz i pokušajte ponovno.',
+        'xls-conversion-failed' => 'Datoteku izvoza nije bilo moguće zamijeniti njezinom XLS verzijom. Pokušajte ponovno ili odaberite XLSX ili CSV.',
+        'fields'                => [
             'file-format'            => 'Format datoteke',
             'with-media'             => 'S medijima',
             'with-associations'      => 'S povezivanjima',
@@ -186,6 +191,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'Prikaži predloške',
+            'render-templates-info'  => 'Izvezi prikazane vrijednosti predložaka umjesto izvornog teksta predloška. Ponovni uvoz prikazane datoteke zamjenjuje spremljeni izvorni tekst predloška običnim tekstom.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

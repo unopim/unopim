@@ -61,6 +61,7 @@ return [
                     'duplicate-code'                       => 'Nitelik kodu :code zaten kullanımda.',
                     'code_not_found_to_delete'             => 'Silinecek nitelik kodu bulunamadı.',
                     'code_is_system_and_cannot_be_deleted' => 'Sistem niteliği silinemez.',
+                    'templates-unsupported'                => 'Şablonlar yalnızca girdi doğrulaması olmayan ve benzersiz olmayan metin ve metin alanı özniteliklerinde etkinleştirilebilir.',
                 ],
             ],
         ],
@@ -176,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Bu dışa aktarma çalıştırılamayacak kadar büyük: tahmini :rows satır × :columns sütun (~:estimated) kullanılabilir alanı (~:available) aşıyor. Daha az kanal/yerel (ve öznitelik) seçerek dışa aktarmayı daraltın ve tekrar deneyin.',
-        'fields'           => [
+        'export-too-large'      => 'Bu dışa aktarma çalıştırılamayacak kadar büyük: tahmini :rows satır × :columns sütun (~:estimated) kullanılabilir alanı (~:available) aşıyor. Daha az kanal/yerel (ve öznitelik) seçerek dışa aktarmayı daraltın ve tekrar deneyin.',
+        'xls-too-many-columns'  => 'Bu dışa aktarımda bir XLS dosyasının alabileceği en fazla sayı olan :limit sütundan fazlası var. XLSX veya CSV seçin ya da daha az nitelik seçip tekrar deneyin.',
+        'xls-too-many-rows'     => 'Bu dışa aktarımda bir XLS dosyasının alabileceği en fazla sayı olan :limit satırdan fazlası var. XLSX veya CSV seçin ya da dışa aktarımı daraltıp tekrar deneyin.',
+        'xls-too-large'         => 'Bu dışa aktarma XLS\'ye dönüştürülemeyecek kadar büyük: :rows satır × :columns sütun, bu sunucunun dönüştürebileceği :limit hücreyi aşıyor. XLSX veya CSV\'yi seçin ya da dışa aktarmayı daraltın ve yeniden deneyin.',
+        'xls-conversion-failed' => 'Dışa aktarma dosyası XLS sürümüyle değiştirilemedi. Yeniden deneyin ya da XLSX veya CSV\'yi seçin.',
+        'fields'                => [
             'file-format'            => 'Dosya biçimi',
             'with-media'             => 'Medya ile',
             'with-associations'      => 'İlişkilendirmelerle',
@@ -186,6 +191,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'Şablonları oluştur',
+            'render-templates-info'  => 'Ham şablon kaynağı yerine oluşturulmuş şablon değerlerini dışa aktar. Oluşturulmuş bir dosyanın yeniden içe aktarılması, kayıtlı şablon kaynağını düz metinle değiştirir.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

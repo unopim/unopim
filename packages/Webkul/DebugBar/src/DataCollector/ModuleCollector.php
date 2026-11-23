@@ -5,7 +5,6 @@ namespace Webkul\DebugBar\DataCollector;
 use DebugBar\DataCollector\AssetProvider;
 use DebugBar\DataCollector\DataCollector;
 use DebugBar\DataCollector\DataCollectorInterface;
-use DebugBar\DataCollector\PDO\PDOCollector;
 use DebugBar\DataCollector\Renderable;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Events\QueryExecuted;
@@ -25,10 +24,8 @@ class ModuleCollector extends DataCollector implements AssetProvider, DataCollec
 
     public $count = 0;
 
-    public function __construct(
-        Dispatcher $events,
-        PDOCollector $pdoCollector
-    ) {
+    public function __construct(Dispatcher $events)
+    {
         $events->listen('eloquent.*', function ($event, $models): void {
             if (Str::contains($event, 'eloquent.retrieved')) {
                 foreach (array_filter($models) as $model) {
@@ -46,11 +43,11 @@ class ModuleCollector extends DataCollector implements AssetProvider, DataCollec
         });
 
         app()['db']->listen(
-            function ($query, $bindings = null, $time = null, $connectionName = null) use ($pdoCollector): void {
+            function (QueryExecuted $query): void {
                 $this->queries[] = [
                     'sql'          => $this->addQueryBindings($query),
                     'duration'     => $query->time,
-                    'duration_str' => $pdoCollector->formatDuration($query->time),
+                    'duration_str' => $this->getDataFormatter()->formatDuration($query->time / 1000),
                     'connection'   => $query->connection->getDatabaseName(),
                 ];
             }

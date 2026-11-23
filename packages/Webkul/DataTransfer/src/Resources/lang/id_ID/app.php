@@ -61,6 +61,7 @@ return [
                     'duplicate-code'                       => 'Kode atribut :code sudah digunakan.',
                     'code_not_found_to_delete'             => 'Kode atribut tidak ditemukan untuk dihapus.',
                     'code_is_system_and_cannot_be_deleted' => 'Atribut sistem tidak dapat dihapus.',
+                    'templates-unsupported'                => 'Templat hanya dapat diaktifkan pada atribut teks dan textarea yang tidak memiliki validasi input dan tidak unik.',
                 ],
             ],
         ],
@@ -176,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Ekspor ini terlalu besar untuk dijalankan: perkiraan :rows baris × :columns kolom (~:estimated) melebihi ruang yang tersedia (~:available). Persempit ekspor dengan memilih lebih sedikit saluran/lokal (dan atribut) lalu coba lagi.',
-        'fields'           => [
+        'export-too-large'      => 'Ekspor ini terlalu besar untuk dijalankan: perkiraan :rows baris × :columns kolom (~:estimated) melebihi ruang yang tersedia (~:available). Persempit ekspor dengan memilih lebih sedikit saluran/lokal (dan atribut) lalu coba lagi.',
+        'xls-too-many-columns'  => 'Ekspor ini memiliki lebih dari :limit kolom, jumlah maksimum yang dapat ditampung file XLS. Pilih XLSX atau CSV, atau pilih lebih sedikit atribut, lalu coba lagi.',
+        'xls-too-many-rows'     => 'Ekspor ini memiliki lebih dari :limit baris, jumlah maksimum yang dapat ditampung file XLS. Pilih XLSX atau CSV, atau persempit ekspor, lalu coba lagi.',
+        'xls-too-large'         => 'Ekspor ini terlalu besar untuk dikonversi ke XLS: :rows baris × :columns kolom melebihi :limit sel yang dapat dikonversi server ini. Pilih XLSX atau CSV, atau persempit ekspor, lalu coba lagi.',
+        'xls-conversion-failed' => 'File ekspor tidak dapat diganti dengan versi XLS-nya. Coba lagi, atau pilih XLSX atau CSV.',
+        'fields'                => [
             'file-format'            => 'Format file',
             'with-media'             => 'Dengan media',
             'with-associations'      => 'Dengan asosiasi',
@@ -186,6 +191,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'Render templat',
+            'render-templates-info'  => 'Ekspor nilai templat yang telah dirender alih-alih sumber templat mentah. Mengimpor ulang file yang telah dirender akan mengganti sumber templat yang tersimpan dengan teks biasa.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

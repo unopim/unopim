@@ -61,6 +61,7 @@ return [
                     'duplicate-code'                       => 'Le code d\'attribut :code est déjà utilisé.',
                     'code_not_found_to_delete'             => 'Code d\'attribut introuvable pour la suppression.',
                     'code_is_system_and_cannot_be_deleted' => 'L\'attribut système ne peut pas être supprimé.',
+                    'templates-unsupported'                => 'Les modèles ne peuvent être activés que sur les attributs de type texte et zone de texte qui n\'ont pas de validation du champ et qui ne sont pas uniques.',
                 ],
             ],
         ],
@@ -176,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Cet export est trop volumineux pour être exécuté : environ :rows lignes × :columns colonnes (~:estimated) dépassent l\'espace disponible (~:available). Réduisez l\'export en sélectionnant moins de canaux/locales (et d\'attributs), puis réessayez.',
-        'fields'           => [
+        'export-too-large'      => 'Cet export est trop volumineux pour être exécuté : environ :rows lignes × :columns colonnes (~:estimated) dépassent l\'espace disponible (~:available). Réduisez l\'export en sélectionnant moins de canaux/locales (et d\'attributs), puis réessayez.',
+        'xls-too-many-columns'  => 'Cet export contient plus de :limit colonnes, le maximum qu\'un fichier XLS peut contenir. Choisissez XLSX ou CSV, ou sélectionnez moins d\'attributs, puis réessayez.',
+        'xls-too-many-rows'     => 'Cet export contient plus de :limit lignes, le maximum qu\'un fichier XLS peut contenir. Choisissez XLSX ou CSV, ou réduisez l\'export, puis réessayez.',
+        'xls-too-large'         => 'Cet export est trop volumineux pour être converti en XLS : :rows lignes × :columns colonnes dépassent les :limit cellules que ce serveur peut convertir. Choisissez XLSX ou CSV, ou réduisez l\'export, puis réessayez.',
+        'xls-conversion-failed' => 'Le fichier d\'export n\'a pas pu être remplacé par sa version XLS. Réessayez, ou choisissez XLSX ou CSV.',
+        'fields'                => [
             'file-format'            => 'Format de fichier',
             'with-media'             => 'Avec médias',
             'with-associations'      => 'Avec associations',
@@ -186,6 +191,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'Générer les modèles',
+            'render-templates-info'  => 'Exporter les valeurs générées des modèles au lieu de la source brute du modèle. Réimporter un fichier généré remplace la source enregistrée du modèle par du texte brut.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

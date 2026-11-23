@@ -38,21 +38,7 @@
         @unoPimVite(['src/Resources/assets/css/app.css', 'src/Resources/assets/js/app.js'])
 
 
-        @if ($favicon = core()->getConfigData('general.design.admin_logo.favicon'))
-            <link
-                type="image/x-icon"
-                href="{{ Storage::url($favicon) }}"
-                rel="shortcut icon"
-                sizes="16x16"
-            >
-        @else
-            <link
-                type="image/x-icon"
-                href="{{ unopim_asset('images/favicon.svg') }}"
-                rel="shortcut icon"
-                sizes="16x16"
-            />
-        @endif
+        <x-admin::layouts.favicon />
 
         @stack('styles')
 

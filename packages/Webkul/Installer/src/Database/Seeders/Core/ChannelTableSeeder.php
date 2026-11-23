@@ -13,13 +13,9 @@ class ChannelTableSeeder extends Seeder
      */
     public function run(array $parameters = []): void
     {
-        DB::table('channels')->delete();
-
-        DB::table('channel_translations')->delete();
-
-        DB::table('channel_currencies')->delete();
-
-        DB::table('channel_locales')->delete();
+        if (DB::table('channels')->exists()) {
+            return;
+        }
 
         DB::table('channels')->insert([
             [

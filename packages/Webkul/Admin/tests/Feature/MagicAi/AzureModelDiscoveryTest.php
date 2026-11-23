@@ -53,7 +53,9 @@ it('surfaces an Azure discovery failure instead of reporting an empty catalogue'
     ]);
 
     expect(fn () => AiProvider::Azure->fetchModels('bad-key', 'https://1.1.1.1', $client))
-        ->toThrow(RuntimeException::class, 'Access denied due to invalid subscription key.');
+        ->toThrow(function (RuntimeException $e): void {
+            expect($e->getMessage())->toContain('401')->not->toContain('Access denied due to invalid subscription key.');
+        });
 });
 
 it('returns nothing for Azure when no endpoint is configured', function () {

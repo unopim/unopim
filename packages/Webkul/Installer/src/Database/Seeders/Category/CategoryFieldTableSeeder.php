@@ -19,7 +19,9 @@ class CategoryFieldTableSeeder extends Seeder
      */
     public function run(array $parameters = []): void
     {
-        DB::table('category_fields')->delete();
+        if (DB::table('category_fields')->exists()) {
+            return;
+        }
 
         $now = Date::now();
 

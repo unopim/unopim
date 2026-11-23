@@ -61,6 +61,7 @@ return [
                     'duplicate-code'                       => 'Attributcode :code wird bereits verwendet.',
                     'code_not_found_to_delete'             => 'Attributcode zum Löschen nicht gefunden.',
                     'code_is_system_and_cannot_be_deleted' => 'Systemattribut kann nicht gelöscht werden.',
+                    'templates-unsupported'                => 'Vorlagen können nur für Text- und Textbereich-Attribute aktiviert werden, die keine Eingabevalidierung haben und nicht eindeutig sind.',
                 ],
             ],
         ],
@@ -176,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Dieser Export ist zu groß: geschätzte :rows Zeilen × :columns Spalten (~:estimated) überschreiten den verfügbaren Speicherplatz (~:available). Schränken Sie den Export ein, indem Sie weniger Kanäle/Sprachen (und Attribute) auswählen, und versuchen Sie es erneut.',
-        'fields'           => [
+        'export-too-large'      => 'Dieser Export ist zu groß: geschätzte :rows Zeilen × :columns Spalten (~:estimated) überschreiten den verfügbaren Speicherplatz (~:available). Schränken Sie den Export ein, indem Sie weniger Kanäle/Sprachen (und Attribute) auswählen, und versuchen Sie es erneut.',
+        'xls-too-many-columns'  => 'Dieser Export hat mehr als :limit Spalten, das Maximum, das eine XLS-Datei aufnehmen kann. Wählen Sie XLSX oder CSV oder weniger Attribute aus und versuchen Sie es erneut.',
+        'xls-too-many-rows'     => 'Dieser Export hat mehr als :limit Zeilen, das Maximum, das eine XLS-Datei aufnehmen kann. Wählen Sie XLSX oder CSV oder grenzen Sie den Export ein und versuchen Sie es erneut.',
+        'xls-too-large'         => 'Dieser Export ist zu groß für die Umwandlung in XLS: :rows Zeilen × :columns Spalten sind mehr als die :limit Zellen, die dieser Server umwandeln kann. Wählen Sie XLSX oder CSV oder grenzen Sie den Export ein und versuchen Sie es erneut.',
+        'xls-conversion-failed' => 'Die Exportdatei konnte nicht durch ihre XLS-Version ersetzt werden. Versuchen Sie es erneut oder wählen Sie XLSX oder CSV.',
+        'fields'                => [
             'file-format'            => 'Dateiformat',
             'with-media'             => 'Mit Medien',
             'with-associations'      => 'Mit Verknüpfungen',
@@ -186,6 +191,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'Vorlagen rendern',
+            'render-templates-info'  => 'Gerenderte Vorlagenwerte statt der unverarbeiteten Vorlagenquelle exportieren. Beim erneuten Import einer gerenderten Datei wird die gespeicherte Vorlagenquelle durch reinen Text ersetzt.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

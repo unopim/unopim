@@ -61,6 +61,7 @@ return [
                     'duplicate-code'                       => 'Attributkoden :code används redan.',
                     'code_not_found_to_delete'             => 'Attributkoden för borttagning hittades inte.',
                     'code_is_system_and_cannot_be_deleted' => 'Systemattributet kan inte tas bort.',
+                    'templates-unsupported'                => 'Mallar kan endast aktiveras för text- och textområdesattribut som saknar inmatningsvalidering och inte är unika.',
                 ],
             ],
         ],
@@ -176,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Den här exporten är för stor för att köras: uppskattade :rows rader × :columns kolumner (~:estimated) överskrider det tillgängliga utrymmet (~:available). Begränsa exporten genom att välja färre kanaler/språk (och attribut) och försök igen.',
-        'fields'           => [
+        'export-too-large'      => 'Den här exporten är för stor för att köras: uppskattade :rows rader × :columns kolumner (~:estimated) överskrider det tillgängliga utrymmet (~:available). Begränsa exporten genom att välja färre kanaler/språk (och attribut) och försök igen.',
+        'xls-too-many-columns'  => 'Den här exporten har fler än :limit kolumner, vilket är det maximala en XLS-fil kan innehålla. Välj XLSX eller CSV, eller välj färre attribut, och försök igen.',
+        'xls-too-many-rows'     => 'Den här exporten har fler än :limit rader, vilket är det maximala en XLS-fil kan innehålla. Välj XLSX eller CSV, eller begränsa exporten, och försök igen.',
+        'xls-too-large'         => 'Den här exporten är för stor för att konverteras till XLS: :rows rader × :columns kolumner är fler än de :limit celler som den här servern kan konvertera. Välj XLSX eller CSV, eller begränsa exporten, och försök igen.',
+        'xls-conversion-failed' => 'Exportfilen kunde inte ersättas med sin XLS-version. Försök igen, eller välj XLSX eller CSV.',
+        'fields'                => [
             'file-format'            => 'Filformat',
             'with-media'             => 'Med media',
             'with-associations'      => 'Med kopplingar',
@@ -186,6 +191,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'Rendera mallar',
+            'render-templates-info'  => 'Exportera renderade mallvärden i stället för den råa mallkällan. Om en renderad fil importeras igen ersätts den sparade mallkällan med vanlig text.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

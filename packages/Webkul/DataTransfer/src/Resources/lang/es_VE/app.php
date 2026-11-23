@@ -61,6 +61,7 @@ return [
                     'duplicate-code'                       => 'El código de atributo :code ya está en uso.',
                     'code_not_found_to_delete'             => 'Código de atributo no encontrado para eliminación.',
                     'code_is_system_and_cannot_be_deleted' => 'El atributo del sistema no se puede eliminar.',
+                    'templates-unsupported'                => 'Las plantillas solo se pueden habilitar en atributos de texto y área de texto que no tengan validación de entrada y no sean únicos.',
                 ],
             ],
         ],
@@ -176,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Esta exportación es demasiado grande para ejecutarse: se estiman :rows filas × :columns columnas (~:estimated), que superan el espacio disponible (~:available). Reduzca la exportación seleccionando menos canales/idiomas (y atributos) e inténtelo de nuevo.',
-        'fields'           => [
+        'export-too-large'      => 'Esta exportación es demasiado grande para ejecutarse: se estiman :rows filas × :columns columnas (~:estimated), que superan el espacio disponible (~:available). Reduzca la exportación seleccionando menos canales/idiomas (y atributos) e inténtelo de nuevo.',
+        'xls-too-many-columns'  => 'Esta exportación tiene más de :limit columnas, el máximo que admite un archivo XLS. Elija XLSX o CSV, o seleccione menos atributos, e inténtelo de nuevo.',
+        'xls-too-many-rows'     => 'Esta exportación tiene más de :limit filas, el máximo que admite un archivo XLS. Elija XLSX o CSV, o reduzca la exportación, e inténtelo de nuevo.',
+        'xls-too-large'         => 'Esta exportación es demasiado grande para convertirla a XLS: :rows filas × :columns columnas supera las :limit celdas que este servidor puede convertir. Elija XLSX o CSV, o reduzca la exportación, e inténtelo de nuevo.',
+        'xls-conversion-failed' => 'No se pudo reemplazar el archivo de exportación por su versión XLS. Inténtelo de nuevo o elija XLSX o CSV.',
+        'fields'                => [
             'file-format'            => 'Formato de archivo',
             'with-media'             => 'Con medios',
             'with-associations'      => 'Con asociaciones',
@@ -186,6 +191,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'Renderizar plantillas',
+            'render-templates-info'  => 'Exportar los valores renderizados de las plantillas en lugar de la fuente original de la plantilla. Volver a importar un archivo renderizado reemplaza la fuente guardada de la plantilla por texto sin formato.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

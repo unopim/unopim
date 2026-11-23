@@ -2,38 +2,10 @@
 
 use Illuminate\Support\Facades\DB;
 use Laravel\Ai\Tools\Request;
-use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Tools\RememberFact;
-use Webkul\MagicAI\Models\MagicAIPlatform;
-use Webkul\User\Models\Admin;
-use Webkul\User\Models\Role;
-
-function rememberFactContext(array $permissions): ChatContext
-{
-    $role = Role::factory()->create([
-        'permission_type' => 'custom',
-        'permissions'     => $permissions,
-    ]);
-
-    return new ChatContext(
-        message: 'Remember this',
-        history: [],
-        productId: null,
-        productSku: null,
-        productName: null,
-        locale: 'en_US',
-        channel: 'default',
-        platform: new MagicAIPlatform(['provider' => 'openai', 'models' => 'gpt-4o']),
-        model: 'gpt-4o',
-        uploadedImagePaths: [],
-        uploadedFilePaths: [],
-        currentPage: null,
-        user: Admin::factory()->create(['role_id' => $role->id]),
-    );
-}
 
 it('keeps a shared-scope memory private when the user cannot edit system prompts', function (string $scope) {
-    $context = rememberFactContext(['ai-agent']);
+    $context = aiAgentToolContext(['ai-agent']);
 
     $result = json_decode(app(RememberFact::class)->register($context)->handle(new Request([
         'key'   => 'planted_rule',
@@ -49,7 +21,7 @@ it('keeps a shared-scope memory private when the user cannot edit system prompts
 })->with(['global', 'catalog']);
 
 it('stores a shared-scope memory for a user who can edit system prompts', function () {
-    $context = rememberFactContext(['ai-agent', 'ai-agent.system-prompt', 'ai-agent.system-prompt.edit']);
+    $context = aiAgentToolContext(['ai-agent', 'ai-agent.system-prompt', 'ai-agent.system-prompt.edit']);
 
     app(RememberFact::class)->register($context)->handle(new Request([
         'key'   => 'brand_tone',

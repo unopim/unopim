@@ -58,7 +58,7 @@ it('generates content through the default platform', function () {
 
 it('generates content for every configurable platform provider', function (AiProvider $provider) {
     $this->loginWithPermissions('all');
-    defaultPlatform($provider)->update(['api_url' => $provider->defaultUrl() ?: 'https://vendor.test/v1']);
+    defaultPlatform($provider)->update(['api_url' => $provider->defaultUrl() ?: 'https://9.9.9.9/v1']);
 
     MagicContentAgent::fake(['<p>Generated.</p>']);
 
