@@ -24,11 +24,17 @@ return [
     'file-outside-attribute-path'      => 'Die Datei :value gehört nicht zu diesem Datensatz. Laden Sie sie für das Feld :attribute erneut hoch.',
     'password-surrounding-whitespace'  => ':attribute darf nicht mit einem Leerzeichen beginnen oder enden.',
     'password-whitespace-only'         => ':attribute darf nicht ausschließlich aus Leerzeichen bestehen.',
+    'hideable-sections'                => ':attribute enthält einen Bereich, der nicht ausgeblendet werden kann.',
     'active-content-detected'          => ':attribute konnte nicht hochgeladen werden, da es aktive Inhalte enthält (:reason).',
     'uploaded-file-not-allowed'        => ':attribute darf keine hochgeladenen Dateien enthalten. Laden Sie Dateien stattdessen über den Medien-Endpunkt hoch.',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'eingebettetes JavaScript oder eine automatisch ausgeführte PDF-Aktion',
         'embedded_vba_macro'            => 'ein eingebettetes VBA-Makro',
         'auto_executing_ole_object'     => 'ein automatisch ausgeführtes eingebettetes Objekt',
+    ],
+    'platform-modules'                => [
+        'empty'    => 'Wählen Sie mindestens ein Plattformmodul aus.',
+        'unknown'  => 'Das Plattformmodul „:module“ ist nicht installiert.',
+        'requires' => ':module kann nur zusammen mit :requires eingeschaltet werden.',
     ],
 ];

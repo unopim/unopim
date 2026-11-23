@@ -69,8 +69,6 @@ it('reproduces the QA numbers through applyPrecision', function () {
     $amount = $helper->applyPrecision('346.57689', 'amount');
     $base = $helper->applyPrecision('346.57689', 'base');
 
-    dump(['strategy' => 'round', 'amount_decimals' => 2, 'base_decimals' => 3, 'input' => '346.57689', 'amount_out' => $amount, 'base_out' => $base]);
-
     expect($amount)->toBe('346.58')
         ->and($base)->toBe('346.577');
 });
@@ -91,8 +89,6 @@ it('stores one user entry as two differently rounded numbers on the product', fu
     ], $product->id);
 
     $stored = Product::find($product->id)->values['common'][$attribute->code];
-
-    dump(['stored_meter' => $stored]);
 
     expect($stored['amount'])->toBe('346.58')
         ->and($stored['base_data'])->toBe('346.577');
@@ -115,8 +111,6 @@ it('shows base_data is the converted value and not the entered value', function 
 
     $stored = Product::find($product->id)->values['common'][$attribute->code];
 
-    dump(['stored_cm' => $stored]);
-
     expect($stored['amount'])->toBe('346.58')
         ->and($stored['base_data'])->toBe('3.466')
         ->and($stored['base_unit'])->toBe('meter');
@@ -130,8 +124,6 @@ it('rounds only at persistence and not on the raw calculation', function () {
     $helper = app(MeasurementHelper::class);
 
     $raw = $helper->calculateBaseValue('346.57689', 'cm', $family);
-
-    dump(['raw_base_value_before_precision' => $raw]);
 
     expect($raw)->toBe(3.4657689);
 
@@ -150,8 +142,6 @@ it('applies the trim strategy to both amount and base', function () {
     $amount = $helper->applyPrecision('346.57689', 'amount');
     $base = $helper->applyPrecision('346.57689', 'base');
 
-    dump(['strategy' => 'trim', 'amount_out' => $amount, 'base_out' => $base]);
-
     expect($amount)->toBe('346.57')
         ->and($base)->toBe('346.576');
 });
@@ -165,8 +155,6 @@ it('documents the help text currently shipped for the three settings', function 
         'base'          => trans('measurement::app.config.catalog.measurement.precision.base'),
         'base-info'     => trans('measurement::app.config.catalog.measurement.precision.base-info'),
     ];
-
-    dump($strings);
 
     expect($strings['strategy'])->toBe('Decimal strategy')
         ->and($strings['amount'])->toBe('Amount decimals')
@@ -197,8 +185,6 @@ it('shows fewer decimals than it stores because display formatting is hardcoded 
         $attribute,
         ['format' => 'datagrid']
     );
-
-    dump(['stored_amount' => $stored['amount'], 'datagrid_display' => $displayed]);
 
     expect($stored['amount'])->toBe('1.234568')
         ->and($displayed)->toBe('1.2346 Meter');

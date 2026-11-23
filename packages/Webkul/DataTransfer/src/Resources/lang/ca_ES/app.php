@@ -32,6 +32,8 @@ return [
                     'incorrect-family-for-variant'             => 'La família ha de ser la mateixa que la família parent',
                     'parent-not-exist'                         => 'El parent no existeix.',
                     'variant-structure-not-found'              => 'L\'estructura de variants :code no existeix per a aquesta família d\'atributs.',
+                    'variant-structure-levels-mismatch'        => 'L\'estructura de variants :code només té un nivell, per tant no pot contenir files variant_group. Establiu-ne els nivells a 2 o importeu les variants com a productes simples sota el producte configurable.',
+                    'variant-structure-two-levels-mismatch'    => 'L\'estructura de variants :code té dos nivells, per tant les files de productes simples han d\'anar sota una fila variant_group, no directament sota el producte configurable.',
                 ],
             ],
         ],
@@ -59,6 +61,7 @@ return [
                     'duplicate-code'                       => 'El codi d\'atribut :code ja està en ús.',
                     'code_not_found_to_delete'             => 'Codi d\'atribut no trobat per a supressió.',
                     'code_is_system_and_cannot_be_deleted' => 'L\'atribut del sistema no es pot eliminar.',
+                    'templates-unsupported'                => 'Les plantilles només es poden habilitar en atributs de text i àrea de text que no tinguin validació d\'entrada i no siguin únics.',
                 ],
             ],
         ],
@@ -174,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Aquesta exportació és massa gran per executar-se: s\'estimen :rows files × :columns columnes (~:estimated), que superen l\'espai disponible (~:available). Reduïu l\'exportació seleccionant menys canals/idiomes (i atributs) i torneu-ho a provar.',
-        'fields'           => [
+        'export-too-large'      => 'Aquesta exportació és massa gran per executar-se: s\'estimen :rows files × :columns columnes (~:estimated), que superen l\'espai disponible (~:available). Reduïu l\'exportació seleccionant menys canals/idiomes (i atributs) i torneu-ho a provar.',
+        'xls-too-many-columns'  => 'Aquesta exportació té més de :limit columnes, el màxim que pot contenir un fitxer XLS. Trieu XLSX o CSV, o seleccioneu menys atributs, i torneu-ho a provar.',
+        'xls-too-many-rows'     => 'Aquesta exportació té més de :limit files, el màxim que pot contenir un fitxer XLS. Trieu XLSX o CSV, o reduïu l\'exportació, i torneu-ho a provar.',
+        'xls-too-large'         => 'Aquesta exportació és massa gran per convertir-la a XLS: :rows files × :columns columnes supera les :limit cel·les que aquest servidor pot convertir. Trieu XLSX o CSV, o reduïu l\'exportació, i torneu-ho a provar.',
+        'xls-conversion-failed' => 'No s\'ha pogut substituir el fitxer d\'exportació per la seva versió XLS. Torneu-ho a provar o trieu XLSX o CSV.',
+        'fields'                => [
             'file-format'            => 'Format de fitxer',
             'with-media'             => 'Amb mèdia',
             'with-associations'      => 'Amb associacions',
@@ -184,6 +191,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'Renderitza les plantilles',
+            'render-templates-info'  => 'Exporta els valors renderitzats de les plantilles en lloc de la font original de la plantilla. Tornar a importar un fitxer renderitzat substitueix la font de la plantilla desada per text pla.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
@@ -308,10 +317,11 @@ return [
         ],
     ],
     'job' => [
-        'started'   => 'Inici de l\'execució de la feina',
-        'completed' => 'Finalització de l\'execució de la feina',
-        'stalled'   => 'La tasca ha deixat de respondre durant més de :minutes minuts i s\'ha marcat com a fallida. Probablement el procés que l\'executava s\'ha aturat.',
-        'reaped'    => 'S\'han marcat :count tasques aturades com a fallides.',
-        'stopped'   => 'La importació s\'ha aturat després de la validació amb :count errors. No s\'ha importat cap fila.',
+        'started'         => 'Inici de l\'execució de la feina',
+        'completed'       => 'Finalització de l\'execució de la feina',
+        'stalled'         => 'La tasca ha deixat de respondre durant més de :minutes minuts i s\'ha marcat com a fallida. Probablement el procés que l\'executava s\'ha aturat.',
+        'reaped'          => 'S\'han marcat :count tasques aturades com a fallides.',
+        'stopped'         => 'La importació s\'ha aturat després de la validació amb :count errors. No s\'ha importat cap fila.',
+        'module-disabled' => 'El tipus de tasca :type pertany a un mòdul de la plataforma que està desactivat, per això no es pot executar.',
     ],
 ];

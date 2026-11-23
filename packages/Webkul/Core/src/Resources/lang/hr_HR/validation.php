@@ -24,11 +24,17 @@ return [
     'file-outside-attribute-path'      => 'Datoteka :value ne pripada ovom zapisu. Ponovno je učitajte za polje :attribute.',
     'password-surrounding-whitespace'  => 'Polje :attribute ne smije počinjati ni završavati razmakom.',
     'password-whitespace-only'         => 'Polje :attribute ne može se sastojati samo od razmaka.',
+    'hideable-sections'                => ':attribute sadrži odjeljak koji se ne može sakriti.',
     'active-content-detected'          => 'Datoteka :attribute nije mogla biti učitana jer sadrži aktivni sadržaj (:reason).',
     'uploaded-file-not-allowed'        => ':attribute ne smije sadržavati učitane datoteke. Umjesto toga učitajte datoteke putem medijske krajnje točke.',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'ugrađeni JavaScript ili PDF radnja koja se automatski pokreće',
         'embedded_vba_macro'            => 'ugrađena VBA makronaredba',
         'auto_executing_ole_object'     => 'ugrađeni objekt koji se automatski pokreće',
+    ],
+    'platform-modules'                => [
+        'empty'    => 'Odaberite barem jedan modul platforme.',
+        'unknown'  => 'Modul platforme ":module" nije instaliran.',
+        'requires' => ':module može se uključiti samo zajedno s :requires.',
     ],
 ];

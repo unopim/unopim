@@ -32,6 +32,8 @@ return [
                     'incorrect-family-for-variant'             => 'The family must be same as the parent family',
                     'parent-not-exist'                         => 'The parent does not exist.',
                     'variant-structure-not-found'              => 'The variant structure :code does not exist for this attribute family.',
+                    'variant-structure-levels-mismatch'        => 'The variant structure :code has only one level, so it cannot hold variant_group rows. Set its levels to 2 or import the variants as simple products under the configurable product.',
+                    'variant-structure-two-levels-mismatch'    => 'The variant structure :code has two levels, so simple rows must sit under a variant_group row, not directly under the configurable product.',
                 ],
             ],
         ],
@@ -59,6 +61,7 @@ return [
                     'duplicate-code'                       => 'Attribute code :code is already in use.',
                     'code_not_found_to_delete'             => 'Attribute code not found for deletion.',
                     'code_is_system_and_cannot_be_deleted' => 'System attribute cannot be deleted.',
+                    'templates-unsupported'                => 'Templates can only be enabled on text and textarea attributes that have no input validation and are not unique.',
                 ],
             ],
         ],
@@ -174,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'This export is too large to run: an estimated :rows rows × :columns columns (~:estimated) exceeds the available space (~:available). Narrow the export by selecting fewer channels/locales (and attributes) and try again.',
-        'fields'           => [
+        'export-too-large'      => 'This export is too large to run: an estimated :rows rows × :columns columns (~:estimated) exceeds the available space (~:available). Narrow the export by selecting fewer channels/locales (and attributes) and try again.',
+        'xls-too-many-columns'  => 'This export has more than :limit columns, the most an XLS file can hold. Choose XLSX or CSV, or select fewer attributes, and try again.',
+        'xls-too-many-rows'     => 'This export has more than :limit rows, the most an XLS file can hold. Choose XLSX or CSV, or narrow the export, and try again.',
+        'xls-too-large'         => 'This export is too large to convert to XLS: :rows rows × :columns columns is more than the :limit cells this server can convert. Choose XLSX or CSV, or narrow the export, and try again.',
+        'xls-conversion-failed' => 'The export file could not be replaced with its XLS version. Try again, or choose XLSX or CSV.',
+        'fields'                => [
             'file-format'            => 'File Format',
             'with-media'             => 'With Media',
             'with-associations'      => 'With Associations',
@@ -184,6 +191,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'Render Templates',
+            'render-templates-info'  => 'Export rendered template values instead of the raw template source. Re-importing a rendered file replaces the stored template source with plain text.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
@@ -308,10 +317,11 @@ return [
         ],
     ],
     'job' => [
-        'started'   => 'Job execution started',
-        'completed' => 'Job execution completed',
-        'stalled'   => 'The job stopped responding for more than :minutes minutes and was marked as failed. Its worker was most likely terminated.',
-        'reaped'    => 'Marked :count stalled jobs as failed.',
-        'stopped'   => 'Import stopped after validation with :count errors. No rows were imported.',
+        'started'         => 'Job execution started',
+        'completed'       => 'Job execution completed',
+        'stalled'         => 'The job stopped responding for more than :minutes minutes and was marked as failed. Its worker was most likely terminated.',
+        'reaped'          => 'Marked :count stalled jobs as failed.',
+        'stopped'         => 'Import stopped after validation with :count errors. No rows were imported.',
+        'module-disabled' => 'The :type job type belongs to a platform module that is switched off, so it cannot run.',
     ],
 ];

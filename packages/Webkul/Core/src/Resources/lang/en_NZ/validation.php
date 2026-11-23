@@ -24,11 +24,17 @@ return [
     'file-outside-attribute-path'      => 'The file :value does not belong to this record. Upload it again for the :attribute field.',
     'password-surrounding-whitespace'  => 'The :attribute cannot begin or end with a space.',
     'password-whitespace-only'         => 'The :attribute cannot consist only of spaces.',
+    'hideable-sections'                => 'The :attribute contains a section that cannot be hidden.',
     'active-content-detected'          => 'The :attribute could not be uploaded because it contains active content (:reason).',
     'uploaded-file-not-allowed'        => 'The :attribute must not contain uploaded files. Upload files through the media endpoint instead.',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'embedded JavaScript or an auto-run PDF action',
         'embedded_vba_macro'            => 'an embedded VBA macro',
         'auto_executing_ole_object'     => 'an auto-executing embedded object',
+    ],
+    'platform-modules'                => [
+        'empty'    => 'Select at least one platform module.',
+        'unknown'  => 'The platform module ":module" is not installed.',
+        'requires' => ':module can only be switched on together with :requires.',
     ],
 ];

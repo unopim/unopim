@@ -24,7 +24,9 @@ describe('User Importer', function () {
 
     it('can validate a row for user import (including role permissions)', function () {
         $jobTrack = JobTrack::factory()->create([
-            'action' => Import::ACTION_APPEND,
+            'user_id' => auth()->guard('admin')->id(),
+            'meta'    => ['batch_count' => 0, 'updated_by' => auth()->guard('admin')->id()],
+            'action'  => Import::ACTION_APPEND,
         ]);
 
         $importer = app(Importer::class);
@@ -62,7 +64,9 @@ describe('User Importer', function () {
 
     it('can create a role and user during importBatch', function () {
         $jobTrack = JobTrack::factory()->create([
-            'action' => Import::ACTION_APPEND,
+            'user_id' => auth()->guard('admin')->id(),
+            'meta'    => ['batch_count' => 0, 'updated_by' => auth()->guard('admin')->id()],
+            'action'  => Import::ACTION_APPEND,
         ]);
 
         $roleName = 'New Manager '.uniqid();
@@ -124,7 +128,9 @@ describe('User Importer', function () {
         ]);
 
         $jobTrack = JobTrack::factory()->create([
-            'action' => Import::ACTION_APPEND,
+            'user_id' => auth()->guard('admin')->id(),
+            'meta'    => ['batch_count' => 0, 'updated_by' => auth()->guard('admin')->id()],
+            'action'  => Import::ACTION_APPEND,
         ]);
 
         $usersData = [
@@ -174,6 +180,8 @@ describe('User Importer', function () {
         $jobTrack = JobTrack::factory()->create([
             'job_instances_id' => $jobInstance->id,
             'action'           => Import::ACTION_APPEND,
+            'user_id'          => auth()->guard('admin')->id(),
+            'meta'             => ['batch_count' => 0, 'updated_by' => auth()->guard('admin')->id()],
         ]);
 
         $importer = app(Importer::class);
@@ -234,7 +242,9 @@ describe('User Importer', function () {
         ]);
 
         $jobTrack = JobTrack::factory()->create([
-            'action' => Import::ACTION_DELETE,
+            'user_id' => auth()->guard('admin')->id(),
+            'meta'    => ['batch_count' => 0, 'updated_by' => auth()->guard('admin')->id()],
+            'action'  => Import::ACTION_DELETE,
         ]);
 
         $importer = app(Importer::class);

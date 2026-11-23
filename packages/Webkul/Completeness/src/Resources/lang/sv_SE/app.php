@@ -69,4 +69,16 @@ return [
             ],
         ],
     ],
+
+    'configuration' => [
+        'score-thresholds' => [
+            'title'           => 'Färger för fullständighetspoäng',
+            'info'            => 'Ange de poäng där fullständighetsindikatorer blir gröna eller röda.',
+            'green-from'      => 'Grön från (%)',
+            'green-from-info' => 'Poäng som är lika med eller över detta värde visas i grönt.',
+            'red-below'       => 'Röd under (%)',
+            'red-below-info'  => 'Poäng under detta värde visas i rött. Poäng däremellan visas i gult.',
+            'order-error'     => 'Gränsen för grönt måste vara högre än gränsen för rött.',
+        ],
+    ],
 ];

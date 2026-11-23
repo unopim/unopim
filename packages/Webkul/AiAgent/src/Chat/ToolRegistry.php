@@ -8,6 +8,8 @@ use Laravel\Ai\Tools\ToolNameResolver;
 use UnexpectedValueException;
 use Webkul\AiAgent\Chat\Contracts\AuthorizesContext;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
+use Webkul\Core\Platform\Module;
+use Webkul\Core\Platform\ModuleGate;
 
 /**
  * Collects PIM tool classes and builds the laravel/ai Tool[] array for each request.
@@ -22,10 +24,10 @@ class ToolRegistry
     /** @var array<class-string<PimTool>, PimTool> */
     protected array $tools = [];
 
-    /** @var list<callable(Tool, ChatContext, array{name: string, group: string, write: bool, permission: ?string, guidance: ?string}): Tool> */
+    /** @var list<callable(Tool, ChatContext, array{name: string, group: string, write: bool, permission: ?string, guidance: ?string, module: ?string}): Tool> */
     protected array $decorators = [];
 
-    /** @var array<class-string<PimTool>, array{name: string, group: string, write: bool, permission: ?string, guidance: ?string}> */
+    /** @var array<class-string<PimTool>, array{name: string, group: string, write: bool, permission: ?string, guidance: ?string, module: ?string}> */
     protected array $metadata = [];
 
     /**
@@ -35,7 +37,7 @@ class ToolRegistry
      * wrapped tool's handle() carries its in-handle permission checks, so the
      * returned tool must keep the same name or build() throws.
      *
-     * @param  callable(Tool, ChatContext, array{name: string, group: string, write: bool, permission: ?string, guidance: ?string}): Tool  $decorator
+     * @param  callable(Tool, ChatContext, array{name: string, group: string, write: bool, permission: ?string, guidance: ?string, module: ?string}): Tool  $decorator
      */
     public function decorate(callable $decorator): void
     {
@@ -44,8 +46,11 @@ class ToolRegistry
 
     /**
      * Register a PIM tool with optional metadata (name, group, write,
-     * permission, guidance). Registering the same class again replaces the
+     * permission, guidance, module). Registering the same class again replaces the
      * previous instance and metadata, so packages can override core tools.
+     *
+     * A tool tagged with a platform `module` is only offered while that module is
+     * switched on; an untagged tool is always offered, like untagged menus and ACL.
      */
     public function register(PimTool $tool, array $metadata = []): static
     {
@@ -59,6 +64,7 @@ class ToolRegistry
             'write'      => (bool) ($metadata['write'] ?? false),
             'permission' => isset($metadata['permission']) ? (string) $metadata['permission'] : null,
             'guidance'   => isset($metadata['guidance']) ? (string) $metadata['guidance'] : null,
+            'module'     => $this->moduleValue($metadata['module'] ?? null),
         ];
 
         return $this;
@@ -95,7 +101,7 @@ class ToolRegistry
     /**
      * Metadata for a single tool, or null when not registered.
      *
-     * @return array{name: string, group: string, write: bool, permission: ?string, guidance: ?string}|null
+     * @return array{name: string, group: string, write: bool, permission: ?string, guidance: ?string, module: ?string}|null
      */
     public function metadata(string $classOrName): ?array
     {
@@ -105,7 +111,8 @@ class ToolRegistry
     }
 
     /**
-     * Tool names grouped by their metadata group, in registration order.
+     * Tool names grouped by their metadata group, in registration order, for tools
+     * whose platform module is switched on.
      *
      * @return array<string, string[]>
      */
@@ -113,7 +120,7 @@ class ToolRegistry
     {
         $groups = [];
 
-        foreach ($this->metadata as $meta) {
+        foreach ($this->activeMetadata() as $meta) {
             $groups[$meta['group']][] = $meta['name'];
         }
 
@@ -121,7 +128,7 @@ class ToolRegistry
     }
 
     /**
-     * Names of all registered tools that can mutate data (write=true).
+     * Names of the active tools that can mutate data (write=true).
      *
      * @return string[]
      */
@@ -129,12 +136,12 @@ class ToolRegistry
     {
         return array_values(array_map(
             fn (array $meta): string => $meta['name'],
-            array_filter($this->metadata, fn (array $meta) => $meta['write']),
+            array_filter($this->activeMetadata(), fn (array $meta): bool => $meta['write']),
         ));
     }
 
     /**
-     * Names of all registered read-only tools (write=false).
+     * Names of the active read-only tools (write=false).
      *
      * @return string[]
      */
@@ -142,12 +149,12 @@ class ToolRegistry
     {
         return array_values(array_map(
             fn (array $meta): string => $meta['name'],
-            array_filter($this->metadata, fn (array $meta): bool => ! $meta['write']),
+            array_filter($this->activeMetadata(), fn (array $meta): bool => ! $meta['write']),
         ));
     }
 
     /**
-     * Per-tool prompt guidance keyed by tool name (tools without guidance omitted).
+     * Per-tool prompt guidance of the active tools, keyed by tool name (tools without guidance omitted).
      *
      * @return array<string, string>
      */
@@ -155,7 +162,7 @@ class ToolRegistry
     {
         $notes = [];
 
-        foreach ($this->metadata as $meta) {
+        foreach ($this->activeMetadata() as $meta) {
             if ($meta['guidance'] !== null && $meta['guidance'] !== '') {
                 $notes[$meta['name']] = $meta['guidance'];
             }
@@ -167,10 +174,10 @@ class ToolRegistry
     /**
      * Build the laravel/ai Tool[] array for a given chat context.
      *
-     * Tools whose `permission` metadata the user lacks, and tools whose
-     * authorize() hook rejects the context, are excluded up front so the
-     * LLM never sees them (the per-tool in-handle checks remain as defense
-     * in depth).
+     * Tools of a switched-off platform module, tools whose `permission` metadata
+     * the user lacks, and tools whose authorize() hook rejects the context, are
+     * excluded up front so the LLM never sees them (the per-tool in-handle checks
+     * remain as defense in depth).
      *
      * @return Tool[]
      */
@@ -178,7 +185,13 @@ class ToolRegistry
     {
         $built = [];
 
+        $active = $this->activeMetadata();
+
         foreach ($this->tools as $class => $tool) {
+            if (! isset($active[$class])) {
+                continue;
+            }
+
             $permission = $this->metadata[$class]['permission'];
 
             if ($permission !== null && ! $context->hasPermission($permission)) {
@@ -217,6 +230,30 @@ class ToolRegistry
     public function count(): int
     {
         return count($this->tools);
+    }
+
+    /**
+     * Metadata of the untagged tools and of the tools whose platform module is switched on.
+     *
+     * @return array<class-string<PimTool>, array{name: string, group: string, write: bool, permission: ?string, guidance: ?string, module: ?string}>
+     */
+    protected function activeMetadata(): array
+    {
+        $gate = app(ModuleGate::class);
+
+        return array_filter($this->metadata, fn (array $meta): bool => $meta['module'] === null || $gate->enabled($meta['module']));
+    }
+
+    /**
+     * Normalise a `module` metadata value to its string form; null when the tool is untagged.
+     */
+    protected function moduleValue(mixed $module): ?string
+    {
+        if ($module instanceof Module) {
+            return $module->value;
+        }
+
+        return is_string($module) && $module !== '' ? $module : null;
     }
 
     /**

@@ -14,6 +14,8 @@ use Webkul\ElasticSearch\Cursor\MatchingIdCursor;
 
 class CategoryDataGrid extends DataGrid
 {
+    protected bool $plainTextColumns = true;
+
     /**
      * Create a new datagrid instance.
      */

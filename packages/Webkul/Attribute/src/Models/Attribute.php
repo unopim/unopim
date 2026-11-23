@@ -12,6 +12,7 @@ use Webkul\Attribute\Database\Factories\AttributeFactory;
 use Webkul\Attribute\Presenters\AttributeHistoryPresenter;
 use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Core\Eloquent\TranslatableModel;
+use Webkul\Core\Helpers\ClientValidationRules;
 use Webkul\Core\Helpers\MediaContent;
 use Webkul\Core\Rules\BooleanString;
 use Webkul\Core\Rules\Decimal;
@@ -22,6 +23,7 @@ use Webkul\HistoryControl\Interfaces\PresentableHistoryInterface;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\Product\Validator\Rule\AttributeOptionRule;
 use Webkul\Product\Validator\Rule\Elasticsearch\UniqueAttributeValue;
+use Webkul\Product\Validator\Rule\TemplateExpressionRule;
 
 #[Fillable([
     'code',
@@ -37,6 +39,7 @@ use Webkul\Product\Validator\Rule\Elasticsearch\UniqueAttributeValue;
     'value_per_channel',
     'is_filterable',
     'ai_translate',
+    'enable_templates',
     'usable_in_grid',
     'allowed_extensions',
     'max_file_size',
@@ -156,45 +159,24 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
     }
 
     /**
-     * Returns attribute validation rules
+     * Returns the client-side validation rules as a JSON object literal for a Vue `:rules` binding.
      */
     public function getValidationsField(): string
     {
-        $validations = [];
+        $uploadKilobytes = match ($this->type) {
+            'file'  => $this->resolvedMaxKilobytes((int) (core()->getConfigData('catalog.products.attribute.file_attribute_upload_size') ?? 2048)),
+            'image' => $this->resolvedMaxKilobytes((int) (core()->getConfigData('catalog.products.attribute.image_attribute_upload_size') ?? 2048)),
+            default => 0,
+        };
 
-        if ($this->is_required) {
-            $validations[] = 'required: true';
-        }
-
-        if ($this->type == 'price') {
-            $validations[] = 'decimal: true';
-        }
-
-        if ($this->type == 'file') {
-            $retVal = $this->resolvedMaxKilobytes((int) (core()->getConfigData('catalog.products.attribute.file_attribute_upload_size') ?? 2048));
-
-            if ($retVal) {
-                $validations[] = 'size:'.$retVal;
-            }
-        }
-
-        if ($this->type == 'image') {
-            $retVal = $this->resolvedMaxKilobytes((int) (core()->getConfigData('catalog.products.attribute.image_attribute_upload_size') ?? 2048));
-
-            if ($retVal) {
-                $validations[] = 'size:'.$retVal.', mimes: ["image/bmp", "image/jpeg", "image/jpg", "image/png", "image/webp"]';
-            }
-        }
-
-        if ($this->validation) {
-            $validations[] = match ($this->validation) {
-                'regex'  => 'regex: "'.$this->regex_pattern.'"',
-                'number' => 'numeric: true',
-                default  => $this->validation.': true'
-            };
-        }
-
-        return '{ '.implode(', ', array_filter($validations)).' }';
+        return ClientValidationRules::forField(
+            (bool) $this->is_required,
+            $this->type,
+            $uploadKilobytes,
+            $this->validation,
+            $this->regex_pattern,
+            $this->type === 'price' ? ['decimal' => true] : [],
+        );
     }
 
     /**
@@ -249,7 +231,30 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
             $validations[] = new Sku;
         }
 
+        if ($this->canHoldTemplate()) {
+            $validations[] = new TemplateExpressionRule($this);
+        }
+
         return $validations;
+    }
+
+    /**
+     * Determine if templates are enabled and allowed by the attribute's type, validation and uniqueness.
+     */
+    public function canHoldTemplate(): bool
+    {
+        return (bool) $this->enable_templates
+            && in_array($this->type, [self::TEXT_TYPE, self::TEXTAREA_TYPE], true)
+            && blank($this->validation)
+            && ! $this->is_unique;
+    }
+
+    /**
+     * Determine if the attribute is a textarea with the WYSIWYG editor enabled.
+     */
+    public function isRichText(): bool
+    {
+        return $this->type === self::TEXTAREA_TYPE && (bool) $this->enable_wysiwyg;
     }
 
     /**
@@ -440,6 +445,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
             'value_per_channel' => AttributeHistoryPresenter::class,
             'is_filterable'     => AttributeHistoryPresenter::class,
             'ai_translate'      => AttributeHistoryPresenter::class,
+            'enable_templates'  => AttributeHistoryPresenter::class,
         ];
     }
 

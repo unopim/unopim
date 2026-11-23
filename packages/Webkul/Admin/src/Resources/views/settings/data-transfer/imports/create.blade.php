@@ -66,7 +66,7 @@
     
                             @php
                                 $options = [];
-                                foreach(config('importers') as $index => $importer) {
+                                foreach($importerConfig as $index => $importer) {
                                         $options[] = [
                                             'id'    => $index,
                                             'label' => trans($importer['title'])
@@ -272,6 +272,8 @@
                     fn ($entity) => (bool) ($entity['has_file_options'] ?? false),
                     $importerConfig,
                 );
+
+                $selectedEntityType = old('entity_type') ?? (isset($importerConfig['categories']) ? 'categories' : array_key_first($importerConfig));
             @endphp
 
             app.component('v-import-profile', {
@@ -279,8 +281,8 @@
 
                 data() {
                     return {
-                        entityType: "{{ old('entity_type') ?? 'categories' }}",
-                        enableFileShow: @json($fileOptions[old('entity_type') ?? 'categories'] ?? false),
+                        entityType: "{{ $selectedEntityType }}",
+                        enableFileShow: @json($fileOptions[$selectedEntityType] ?? false),
                         importerConfig: @json($importerConfig),
                         fileOptions: @json($fileOptions),
                     };

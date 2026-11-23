@@ -222,6 +222,8 @@ return [
         'console' => [
             'confirm-drop'        => 'Eliminar estas tabelas e reinstalar?',
             'drop-aborted'        => 'Instalação cancelada. Nenhuma tabela foi eliminada.',
+            'invalid-modules'     => 'Módulos de plataforma inválidos ":modules". Valores permitidos: :allowed.',
+            'select-modules'      => 'Que módulos da plataforma pretende ativar?',
             'force-required'      => 'Não está definido nenhum prefixo de tabela, pelo que todas as tabelas que nenhuma outra instalação reclame seriam eliminadas. Execute novamente com --force para as eliminar ou defina DB_PREFIX.',
             'outside-references'  => 'Existem tabelas fora do prefixo de tabela que referenciam as tabelas a eliminar: :references. Remova primeiro estas chaves estrangeiras.',
             'tables-to-drop'      => 'Estas :count tabelas serão eliminadas: :tables',

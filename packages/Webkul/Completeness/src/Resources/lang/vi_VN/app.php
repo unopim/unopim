@@ -69,4 +69,16 @@ return [
             ],
         ],
     ],
+
+    'configuration' => [
+        'score-thresholds' => [
+            'title'           => 'Màu điểm mức độ hoàn thiện',
+            'info'            => 'Đặt mức điểm mà tại đó chỉ báo mức độ hoàn thiện chuyển sang xanh lá hoặc đỏ.',
+            'green-from'      => 'Xanh lá từ (%)',
+            'green-from-info' => 'Điểm bằng hoặc cao hơn giá trị này được hiển thị màu xanh lá.',
+            'red-below'       => 'Đỏ khi dưới (%)',
+            'red-below-info'  => 'Điểm thấp hơn giá trị này được hiển thị màu đỏ. Điểm ở giữa được hiển thị màu vàng.',
+            'order-error'     => 'Ngưỡng xanh lá phải cao hơn ngưỡng đỏ.',
+        ],
+    ],
 ];

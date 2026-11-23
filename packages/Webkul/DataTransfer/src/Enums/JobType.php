@@ -76,4 +76,20 @@ enum JobType: string
             ? 'data_transfer.export.execute'
             : 'data_transfer.imports.execute';
     }
+
+    /**
+     * Downloading a track's files needs the execute permission of both the track's type and its job
+     * instance's type, so a disagreeing or unknown type can never lower the requirement.
+     *
+     * @return list<string>
+     */
+    public static function downloadPermissions(JobTrackContract $jobTrack): array
+    {
+        $jobTypes = array_filter([
+            self::fromTrack($jobTrack),
+            self::tryFrom((string) $jobTrack->jobInstance?->type),
+        ]);
+
+        return array_values(array_unique(array_map(fn (self $jobType): string => $jobType->executePermission(), $jobTypes)));
+    }
 }

@@ -66,7 +66,7 @@
 
                                     @php
                                         $options = [];
-                                        foreach (config('exporters') as $index => $export) {
+                                        foreach ($exporterConfig as $index => $export) {
                                             $options[] = ['id' => $index, 'label' => trans($export['title'])];
                                         }
                                         $optionsJson = json_encode($options);
@@ -114,6 +114,22 @@
                         {!! view_render_event('unopim.admin.settings.data_transfer.exports.create.card.scope.after') !!}
 
                         <div
+                            v-if="hasOtherFilters"
+                            class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow"
+                        >
+                            <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
+                                @lang('admin::app.settings.data-transfer.exports.create.filters')
+                            </p>
+
+                            <x-admin::data-transfer.filter-fields
+                                ::entity-type="entityType"
+                                :exporter-config="$exporterConfig"
+                                :except="\Webkul\DataTransfer\Helpers\ExportFilterFields::knownList()"
+                                grid-class="grid grid-cols-2 max-sm:grid-cols-1 gap-x-5"
+                            />
+                        </div>
+
+                        <div
                             v-if="hasProductFilters"
                             class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow"
                         >
@@ -136,15 +152,10 @@
                             />
 
                             <template v-if="supportsCategories">
-                                <x-admin::form.control-group>
-                                    <x-admin::form.control-group.label>
-                                        @lang('data_transfer::app.exporters.products.filters.categories')
-                                    </x-admin::form.control-group.label>
-
-                                    <x-admin::data-transfer.category-tree
-                                        :value="old('filters.categories') ?? []"
-                                    />
-                                </x-admin::form.control-group>
+                                <x-admin::data-transfer.category-tree
+                                    :label="trans('data_transfer::app.exporters.products.filters.categories')"
+                                    :value="old('filters.categories') ?? []"
+                                />
                             </template>
 
                             <x-admin::data-transfer.filter-fields
@@ -186,7 +197,7 @@
                             <x-admin::data-transfer.filter-fields
                                 ::entity-type="entityType"
                                 :exporter-config="$exporterConfig"
-                                only="file_format,with_media,with_associations,header_row,use_labels,date_format,file_path"
+                                only="file_format,with_media,with_associations,header_row,use_labels,render_templates,date_format,file_path"
                             />
                             {!! view_render_event('unopim.admin.settings.data_transfer.exports.create.card.accordion.filters.output.after') !!}
                         </div>
@@ -231,10 +242,12 @@
 
         <script type="module">
             @php
-                $selectedEntityType = old('entity_type', 'categories');
+                $defaultEntityType = isset($exporterConfig['categories']) ? 'categories' : array_key_first($exporterConfig);
+
+                $selectedEntityType = old('entity_type', $defaultEntityType);
 
                 if (! isset($exporterConfig[$selectedEntityType]['filters']['fields'])) {
-                    $selectedEntityType = 'categories';
+                    $selectedEntityType = $defaultEntityType;
                 }
 
                 $setsKey = app(\Webkul\Admin\Fields\FieldConfig::class)->payload($exporterConfig)['key'];
@@ -269,7 +282,15 @@
                     },
 
                     hasOutputFields() {
-                        return this.filterFields.some(field => ['file_format', 'with_media', 'with_associations', 'header_row', 'use_labels', 'date_format', 'file_path'].includes(field.name));
+                        return this.filterFields.some(field => ['file_format', 'with_media', 'with_associations', 'header_row', 'use_labels', 'render_templates', 'date_format', 'file_path'].includes(field.name));
+                    },
+
+                    hasOtherFilters() {
+                        const known = @json(\Webkul\DataTransfer\Helpers\ExportFilterFields::KNOWN);
+
+                        const genericTypes = @json(\Webkul\DataTransfer\Helpers\ExportFilterFields::genericCardTypes($exporterConfig));
+
+                        return genericTypes.includes(this.entityType) && this.filterFields.some(field => ! known.includes(field.name));
                     },
 
                     supportsConditions() {
@@ -291,24 +312,69 @@
 
                         this.filterFields = this.fieldsFor(configKey);
 
-                        if (this.filterFields.filter(field => field.name == 'file_format').length == 0) {
-                            this.selectedFileFormat = '';
-                        }
-
                         this.$emitter.emit('entity-type-changed', value);
 
-                        let formValues = this.$refs.exportCreateForm.values;
+                        const form = this.$refs.exportCreateForm;
 
-                        let resetState = {
-                            values: {code: formValues.code},
-                            errors: this.$refs.exportCreateForm.errors,
-                        };
+                        const filters = this.retainedFilters(form.values);
 
-                        this.$refs.exportCreateForm.resetForm(resetState);
+                        this.selectedFileFormat = filters.file_format ?? '';
+
+                        form.resetForm({
+                            values: {
+                                ...this.withoutFilters(form.values),
+                                ...Object.fromEntries(Object.entries(filters).map(([name, value]) => [`filters[${name}]`, value])),
+                            },
+                            errors: this.withoutFilters(form.errors),
+                        });
+
+                        this.$emitter.emit('filter-values-reset', filters);
                     },
                 },
 
                 methods: {
+                    filterName(key) {
+                        return key.match(/^filters\[(.+)\]$/)?.[1] ?? null;
+                    },
+
+                    withoutFilters(entries) {
+                        return Object.fromEntries(
+                            Object.entries(entries ?? {}).filter(([key]) => key !== 'filters' && ! this.filterName(key))
+                        );
+                    },
+
+                    retainedFilters(values) {
+                        const retained = {};
+
+                        for (const [key, value] of Object.entries(values ?? {})) {
+                            const name = this.filterName(key);
+
+                            const field = this.filterFields.find(candidate => candidate.name === name);
+
+                            if (field && this.acceptsValue(field, value)) {
+                                retained[name] = value;
+                            }
+                        }
+
+                        return retained;
+                    },
+
+                    acceptsValue(field, value) {
+                        const values = Array.isArray(value) ? value : [value];
+
+                        if (! values.length || values.some(item => item === null || item === undefined || item === '')) {
+                            return false;
+                        }
+
+                        if (! Array.isArray(field.options) || ! field.options.length) {
+                            return true;
+                        }
+
+                        const allowed = field.options.map(option => String(option.value));
+
+                        return values.every(item => allowed.includes(String(item)));
+                    },
+
                     fieldsFor(entityType) {
                         return (window.unopim?.fieldSets?.[this.setsKey] ?? {})[entityType] ?? [];
                     },

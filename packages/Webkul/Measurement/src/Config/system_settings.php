@@ -3,6 +3,7 @@
 return [
     [
         'key'    => 'system.measurement',
+        'module' => 'pim',
         'name'   => 'measurement::app.config.catalog.measurement.title',
         'info'   => 'measurement::app.config.catalog.measurement.info',
         'icon'   => 'icon-attribute',
