@@ -131,11 +131,11 @@
                     <div class="relative group/item">
                         <a
                             href="{{ $menuItem['url'] }}"
-                            class="flex gap-2.5 p-1.5 items-center cursor-pointer {{ $menu->getActive($menuItem) == 'active' ? 'bg-unopim-primary-muted bg-primary-100 rounded-lg' : ' hover:bg-unopim-primary-soft hover:bg-primary-50 dark:hover:bg-cherry-800 ' }} peer"
+                            class="flex gap-2.5 p-1.5 items-center cursor-pointer {{ $menu->getActive($menuItem) == 'active' ? 'bg-unopim-primary-muted bg-primary-100 dark:bg-unopim-primary-900/40 rounded-lg' : ' hover:bg-unopim-primary-soft hover:bg-primary-50 dark:hover:bg-cherry-800 ' }} peer"
                         >
-                            <span class="{{ $menuItem['icon'] }} text-2xl {{ $menu->getActive($menuItem) ? 'text-unopim-primary text-primary-700' : ''}}"></span>
+                            <span class="{{ $menuItem['icon'] }} text-2xl {{ $menu->getActive($menuItem) ? 'text-unopim-primary text-primary-700 dark:text-primary-400' : ''}}"></span>
 
-                            <p class="text-gray-600 dark:text-gray-300 font-semibold whitespace-nowrap {{ $menu->getActive($menuItem) ? 'text-unopim-primary text-primary-700' : 'text-gray-600'}}">
+                            <p class="font-semibold whitespace-nowrap {{ $menu->getActive($menuItem) ? 'text-unopim-primary text-primary-700 dark:text-primary-400' : 'text-gray-600 dark:text-gray-300'}}">
                                 @lang($menuItem['name'])
                             </p>
                         </a>
@@ -145,7 +145,7 @@
                                 @foreach ($menuItem['children'] as $subMenuItem)
                                     <a
                                         href="{{ $subMenuItem['url'] }}"
-                                        class="text-sm {{ $menu->getActive($subMenuItem) ? 'text-unopim-primary dark:text-unopim-primary text-primary-700 dark:text-primary-700':'text-gray-600 dark:text-gray-300' }} whitespace-nowrap py-1 hover:text-unopim-primary hover:text-primary-700 hover:bg-gray-950"
+                                        class="text-sm {{ $menu->getActive($subMenuItem) ? 'text-unopim-primary text-primary-700 dark:text-primary-400':'text-gray-600 dark:text-gray-300' }} whitespace-nowrap py-1 hover:text-unopim-primary hover:text-primary-700 dark:hover:text-primary-400"
                                     >
                                         @lang($subMenuItem['name'])
                                     </a>
