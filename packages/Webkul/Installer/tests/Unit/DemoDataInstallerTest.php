@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Event;
 use Webkul\Installer\Database\Seeders\Demo\DemoAssociationSeeder;
 use Webkul\Installer\Database\Seeders\Demo\DemoAttributeSeeder;
 use Webkul\Installer\Database\Seeders\Demo\DemoCategorySeeder;
@@ -105,6 +106,21 @@ describe('DemoDataInstaller::seed (issue #794)', function () {
             ->and($messages)->toContain('Seeding demo catalog...')
             ->and($messages)->toContain('Seeding product associations...')
             ->and($messages)->toContain('Recalculating product completeness...');
+    });
+
+    it('announces a successful seed so cached dashboard figures are dropped', function () {
+        $calls = [];
+        bindDemoSeederSpies($calls);
+
+        Event::fake(['installer.demo_data.seeded']);
+
+        config(['elasticsearch.enabled' => 'false']);
+        Artisan::shouldReceive('registerCommand')->andReturnNull();
+        Artisan::shouldReceive('call')->andReturn(0);
+
+        expect(demoInstaller(alreadySeeded: false)->seed())->toBe(['success' => true]);
+
+        Event::assertDispatched('installer.demo_data.seeded');
     });
 
     it('reports the seeder failure message instead of bubbling the exception', function () {

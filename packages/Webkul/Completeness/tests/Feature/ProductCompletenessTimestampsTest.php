@@ -4,6 +4,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Webkul\Admin\Helpers\Dashboard;
 use Webkul\Attribute\Models\AttributeFamilyProxy;
 use Webkul\Attribute\Models\AttributeProxy;
@@ -99,4 +100,12 @@ it('counts a freshly scored product as enriched this week on the dashboard', fun
     Cache::forget('dashboard.product_stats');
 
     expect(app(Dashboard::class)->getProductStats()['enrichedThisWeek'])->toBeGreaterThanOrEqual(1);
+});
+
+it('announces the products whose completeness was calculated', function () {
+    Event::fake(['completeness.product.calculate.after']);
+
+    ProductCompletenessJob::dispatchSync([$this->product->id]);
+
+    Event::assertDispatched('completeness.product.calculate.after');
 });
