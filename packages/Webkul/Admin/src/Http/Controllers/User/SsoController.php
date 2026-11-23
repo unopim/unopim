@@ -61,7 +61,7 @@ class SsoController extends Controller
             return redirect()->route('admin.session.create')->withInput(['email' => $exception->email]);
         }
 
-        return redirect()->intended($this->firstAllowedUrl());
+        return redirect()->to($this->intendedOrLandingUrl());
     }
 
     protected function resolveProvider(string $provider): ?SsoProvider

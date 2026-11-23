@@ -2,7 +2,9 @@
 
 namespace Webkul\Admin\Traits;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 trait ResolvesLandingUrl
 {
@@ -76,5 +78,75 @@ trait ResolvesLandingUrl
         return $route !== null
             && in_array('GET', $route->methods(), true)
             && preg_match('/\{\w+\}/', ($route->getDomain() ?? '').'/'.$route->uri()) === 0;
+    }
+
+    /**
+     * Consume the remembered page and return it when safe, else the landing URL.
+     */
+    protected function intendedOrLandingUrl(): string
+    {
+        return $this->safeIntendedUrl(session()->pull('url.intended')) ?? $this->firstAllowedUrl();
+    }
+
+    /**
+     * Return the URL when it is safe to send a freshly signed-in admin to it:
+     * same scheme, host and port as the application URL, no credentials, and
+     * resolving to a GET route behind the admin middleware. Otherwise null.
+     */
+    protected function safeIntendedUrl(mixed $url): ?string
+    {
+        if (! is_string($url) || $url === '') {
+            return null;
+        }
+
+        $target = parse_url($url);
+        $app = parse_url((string) config('app.url'));
+
+        if (
+            ! is_array($target)
+            || ! is_array($app)
+            || isset($target['user'])
+            || isset($target['pass'])
+            || $this->originOf($target) !== $this->originOf($app)
+        ) {
+            return null;
+        }
+
+        $basePath = rtrim($app['path'] ?? '', '/');
+        $path = $target['path'] ?? '/';
+
+        if ($basePath !== '') {
+            if (! str_starts_with($path, $basePath.'/')) {
+                return null;
+            }
+
+            $path = substr($path, strlen($basePath));
+        }
+
+        try {
+            $route = Route::getRoutes()->match(Request::create($path, 'GET'));
+        } catch (HttpExceptionInterface) {
+            return null;
+        }
+
+        return in_array('admin', $route->gatherMiddleware(), true) ? $url : null;
+    }
+
+    /**
+     * Build a comparable scheme://host:port origin, filling in the default port.
+     *
+     * @param  array{scheme?: string, host?: string, port?: int}  $parts
+     */
+    private function originOf(array $parts): string
+    {
+        $scheme = strtolower($parts['scheme'] ?? '');
+
+        $port = $parts['port'] ?? match ($scheme) {
+            'https' => 443,
+            'http'  => 80,
+            default => 0,
+        };
+
+        return $scheme.'://'.strtolower($parts['host'] ?? '').':'.$port;
     }
 }
