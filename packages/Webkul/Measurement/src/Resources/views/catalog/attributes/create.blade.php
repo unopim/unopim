@@ -60,9 +60,13 @@
         </div>
     </script>
 
+    @include('measurement::catalog.attributes._units-mixin')
+
     <script type="module">
         app.component('v-measurement-create', {
             template: '#v-measurement-create-template',
+
+            mixins: [window.measurementUnitsMixin],
 
             props: [
                 'selectedType',
@@ -75,8 +79,6 @@
                 return {
                     family: null,
                     unit: null,
-                    unitsList: null,
-                    unitsCache: {},
                 };
             },
 
@@ -96,56 +98,15 @@
                 },
 
                 family(newValue) {
-                    let selectedFamily = null;
+                    const selectedFamily = this.parseSelectedFamily(newValue);
 
-                    if (
-                        typeof newValue === 'string'
-                        && newValue.trim() !== ''
-                    ) {
-                        try {
-                            selectedFamily = JSON.parse(newValue);
-                        } catch (e) {
-                            return;
-                        }
-                    } else if (
-                        newValue
-                        && typeof newValue === 'object'
-                    ) {
-                        selectedFamily = newValue;
+                    if (selectedFamily === undefined) {
+                        return;
                     }
 
                     this.unit = null;
 
                     this.fetchUnits(selectedFamily ? selectedFamily.id : null);
-                },
-            },
-
-            methods: {
-                async fetchUnits(familyCode) {
-                    if (! familyCode) {
-                        this.unitsList = [];
-
-                        return;
-                    }
-
-                    if (this.unitsCache[familyCode]) {
-                        this.unitsList = this.unitsCache[familyCode];
-
-                        return;
-                    }
-
-                    try {
-                        const response = await this.$axios.get(this.familyUnitsUrl, {
-                            params: { family: familyCode },
-                        });
-
-                        this.unitsCache[familyCode] = response.data.units || [];
-                        this.unitsList = this.unitsCache[familyCode];
-                    } catch (error) {
-                        console.error('Error loading measurement units:', error);
-
-                        this.unitsList = [];
-                    }
                 },
             },
         });

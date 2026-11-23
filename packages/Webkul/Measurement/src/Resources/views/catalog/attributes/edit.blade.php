@@ -68,9 +68,13 @@
         </div>
     </script>
 
+    @include('measurement::catalog.attributes._units-mixin')
+
     <script type="module">
         app.component('v-measurement', {
             template: '#v-measurement-template',
+
+            mixins: [window.measurementUnitsMixin],
 
             props: [
                 'attributeId',
@@ -84,12 +88,10 @@
                     familyOptions: null,
                     measurementFamily: null,
                     measurementUnit: null,
-                    unitsList: null,
                     oldFamily: null,
                     oldUnit: null,
                     isInitialLoad: true,
                     isSavedFamily: false,
-                    unitsCache: {},
                 };
             },
 
@@ -150,57 +152,14 @@
 
                     this.isInitialLoad = false;
                 },
-
-                /**
-                 * Units belong to one family and are fetched per selection, so the
-                 * page does not carry the units of every family in the catalogue.
-                 */
-                async fetchUnits(familyCode) {
-                    if (! familyCode) {
-                        this.unitsList = [];
-
-                        return;
-                    }
-
-                    if (this.unitsCache[familyCode]) {
-                        this.unitsList = this.unitsCache[familyCode];
-
-                        return;
-                    }
-
-                    try {
-                        const response = await this.$axios.get(this.familyUnitsUrl, {
-                            params: { family: familyCode },
-                        });
-
-                        this.unitsCache[familyCode] = response.data.units || [];
-                        this.unitsList = this.unitsCache[familyCode];
-                    } catch (error) {
-                        console.error('Error loading measurement units:', error);
-
-                        this.unitsList = [];
-                    }
-                },
             },
 
             watch: {
                 oldFamily(newValue) {
-                    let selectedFamily = null;
+                    const selectedFamily = this.parseSelectedFamily(newValue);
 
-                    if (
-                        typeof newValue === 'string'
-                        && newValue.trim() !== ''
-                    ) {
-                        try {
-                            selectedFamily = JSON.parse(newValue);
-                        } catch (e) {
-                            return;
-                        }
-                    } else if (
-                        newValue
-                        && typeof newValue === 'object'
-                    ) {
-                        selectedFamily = newValue;
+                    if (selectedFamily === undefined) {
+                        return;
                     }
 
                     if (this.isInitialLoad) {
