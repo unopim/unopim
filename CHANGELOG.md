@@ -35,6 +35,7 @@ This is a security release. Upgrade promptly and follow the upgrade steps: sever
 - Fixed imports whose validation fails or exceeds the error limit staying pending instead of failing.
 - Fixed scoped variant-level values being dropped on import, and the `variant_structure` import header being required.
 - Fixed product media paths that are resubmitted unchanged being rejected.
+- Fixed uploads ignoring an attribute's allowed file extensions.
 - Fixed lazy-loaded attribute groups on the product edit page ignoring the selected channel.
 - Fixed the code generator overwriting a disabled code input.
 - Fixed the family form not being marked as changed when attribute groups are reordered.
