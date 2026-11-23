@@ -7,12 +7,12 @@ use Webkul\DataTransfer\Models\JobInstances;
 use Webkul\DataTransfer\Models\JobTrack;
 use Webkul\DataTransfer\Services\JobLogger;
 
-function createFilelessProductJobInstance(): JobInstances
+function createFilelessProductJobInstance(string $type = 'system'): JobInstances
 {
     return JobInstances::create([
-        'code'                => 'bulk_product_update',
+        'code'                => $type === 'system' ? 'bulk_product_update' : 'fileless_product_import',
         'entity_type'         => 'products',
-        'type'                => 'system',
+        'type'                => $type,
         'action'              => 'update',
         'validation_strategy' => 'skip-errors',
         'allowed_errors'      => 0,
@@ -70,6 +70,22 @@ it('does not let a fileless system job (bulk_product_update) be re-run via impor
 
     Bus::assertNotDispatched(ImportTrackBatch::class);
 
-    $response->assertRedirect();
-    $response->assertSessionHas('error');
+    $response->assertNotFound();
+});
+
+it('sends a fileless product import back to its profile instead of re-running it', function () {
+    Bus::fake();
+
+    $jobInstance = createFilelessProductJobInstance('import');
+
+    $response = $this->put(
+        route('admin.settings.data_transfer.imports.import_now', $jobInstance->id)
+    );
+
+    expect(JobTrack::where('job_instances_id', $jobInstance->id)->count())->toBe(0);
+
+    Bus::assertNotDispatched(ImportTrackBatch::class);
+
+    $response->assertRedirect(route('admin.settings.data_transfer.imports.import-view', $jobInstance->id));
+    $response->assertSessionHas('error', trans('admin::app.settings.data-transfer.imports.rerun-no-file'));
 });

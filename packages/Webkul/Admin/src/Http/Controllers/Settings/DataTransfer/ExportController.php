@@ -125,7 +125,7 @@ class ExportController extends Controller
     {
         $exporterConfig = $this->visibleJobTypes('exporters');
 
-        $export = $this->findVisibleJobInstance($id);
+        $export = $this->findVisibleJobInstance($id, self::TYPE);
 
         return view('admin::settings.data-transfer.exports.edit', compact('export', 'exporterConfig'));
     }
@@ -139,7 +139,7 @@ class ExportController extends Controller
 
         $exporters = array_keys($exporterConfig);
 
-        $export = $this->findVisibleJobInstance($id);
+        $export = $this->findVisibleJobInstance($id, self::TYPE);
 
         $this->validate(request(), [
             'code'                => ['required'],
@@ -201,7 +201,7 @@ class ExportController extends Controller
      */
     public function destroy($id): JsonResponse
     {
-        $export = $this->findVisibleJobInstance($id);
+        $export = $this->findVisibleJobInstance($id, self::TYPE);
 
         try {
             if (! empty($export->file_path)) {
@@ -239,7 +239,7 @@ class ExportController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $export = $jobInstance = $this->findVisibleJobInstance($id);
+        $export = $jobInstance = $this->findVisibleJobInstance($id, self::TYPE);
 
         $export->unsetRelations();
 
@@ -251,7 +251,7 @@ class ExportController extends Controller
      */
     public function exportNow(int $id): RedirectResponse
     {
-        $jobInstance = $this->findVisibleJobInstance($id);
+        $jobInstance = $this->findVisibleJobInstance($id, self::TYPE);
 
         try {
             // Get the authenticated user's ID
@@ -296,7 +296,7 @@ class ExportController extends Controller
      */
     public function validateExport(int $id): JsonResponse
     {
-        $export = $this->findVisibleJobInstance($id);
+        $export = $this->findVisibleJobInstance($id, self::TYPE);
 
         $isValid = $this->jobHelper
             ->setExport($export)
@@ -313,7 +313,7 @@ class ExportController extends Controller
      */
     public function start(int $id): JsonResponse
     {
-        $export = $this->findVisibleJobInstance($id);
+        $export = $this->findVisibleJobInstance($id, self::TYPE);
 
         if (! $export->processed_rows_count) {
             return new JsonResponse([
@@ -373,7 +373,7 @@ class ExportController extends Controller
      */
     public function link(int $id): JsonResponse
     {
-        $export = $this->findVisibleJobInstance($id);
+        $export = $this->findVisibleJobInstance($id, self::TYPE);
 
         if (! $export->processed_rows_count) {
             return new JsonResponse([
@@ -434,7 +434,7 @@ class ExportController extends Controller
      */
     public function indexData(int $id): JsonResponse
     {
-        $export = $this->findVisibleJobInstance($id);
+        $export = $this->findVisibleJobInstance($id, self::TYPE);
 
         if (! $export->processed_rows_count) {
             return new JsonResponse([
@@ -544,7 +544,7 @@ class ExportController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $export = $this->findVisibleJobInstance($id);
+        $export = $this->findVisibleJobInstance($id, self::TYPE);
 
         return Storage::disk('private')->download($export->file_path);
     }
@@ -558,7 +558,7 @@ class ExportController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $export = $this->findVisibleJobInstance($id);
+        $export = $this->findVisibleJobInstance($id, self::TYPE);
 
         return Storage::disk('private')->download($export->error_file_path);
     }

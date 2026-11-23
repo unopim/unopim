@@ -39,11 +39,13 @@ trait GatesJobTypes
     }
 
     /**
-     * Find a job instance, responding 404 when it is missing or its module is switched off.
+     * Find a job instance, responding 404 when it is missing, is not of the given type or its module is switched off.
      */
-    protected function findVisibleJobInstance(int|string $id): JobInstances
+    protected function findVisibleJobInstance(int|string $id, ?string $type = null): JobInstances
     {
         $jobInstance = app(JobInstancesRepository::class)->findOrFail($id);
+
+        abort_if($type !== null && $jobInstance->type !== $type, 404);
 
         $this->abortIfHiddenJobType($jobInstance->entity_type);
 
