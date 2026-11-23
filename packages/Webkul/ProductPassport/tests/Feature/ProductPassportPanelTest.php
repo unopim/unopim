@@ -85,6 +85,45 @@ it('shows per-locale passport status with missing field counts', function (): vo
         ]);
 });
 
+it('returns the missing fields themselves so the panel can refresh without a reload', function (): void {
+    [$product, $channel, $incomplete, $complete] = $this->productWithTwoDppLocales();
+
+    $this->enablePassportPublishing($channel->code);
+
+    $this->loginWithPermissions('all');
+
+    $rows = collect($this->getJson(route('admin.catalog.products.passport.show', ['product' => $product, 'channel' => $channel->code]))
+        ->assertOk()
+        ->json('rows'));
+
+    $blocked = $rows->firstWhere('locale_code', $incomplete->code);
+    $ready = $rows->firstWhere('locale_code', $complete->code);
+
+    expect($blocked['missing_fields'])->toHaveCount($blocked['missing_count'])
+        ->and($blocked['missing_fields'][0])->toHaveKeys(['code', 'label', 'source', 'action_url', 'attribute_id'])
+        ->and($blocked['locale_id'])->toBe($incomplete->id)
+        ->and($ready['missing_fields'])->toBe([]);
+});
+
+it('renders the missing-fields cell as a component that re-reads readiness after a save', function (): void {
+    [$product, $channel, $incomplete] = $this->productWithTwoDppLocales();
+
+    $this->enablePassportPublishing($channel->code);
+
+    $this->loginWithPermissions('all');
+
+    $this->get(route('admin.catalog.products.edit', [
+        'id'      => $product->id,
+        'channel' => $channel->code,
+        'locale'  => $incomplete->code,
+    ]))
+        ->assertOk()
+        ->assertSee('<v-passport-missing', false)
+        // The state is a JS expression holding single quotes, so it must sit in a double-quoted attribute.
+        ->assertSee(':initial="JSON.parse(', false)
+        ->assertSee(json_encode(route('admin.catalog.products.passport.show', ['product' => $product->id, 'channel' => $channel->code])), false);
+});
+
 it('refuses to publish a locale that fails the completeness gate', function (): void {
     [$product, $channel, $incomplete] = $this->productWithTwoDppLocales();
 
@@ -142,6 +181,7 @@ it('shows actionable DPP requirements and disables blocked publish actions', fun
     ]))
         ->assertOk()
         ->assertSee('data-requirement="dpp"', false)
+        ->assertSee('data-attribute-id=', false)
         ->assertSee(trans('passport::app.catalog.products.edit.passport.required-badge'))
         ->assertSee('Material Composition')
         ->assertSee('passport-publish-all-btn primary-button shrink-0', false)

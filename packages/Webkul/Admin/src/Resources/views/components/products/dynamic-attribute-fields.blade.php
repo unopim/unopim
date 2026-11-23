@@ -175,6 +175,7 @@
             <div class="self-end mb-2 text-xs flex gap-1 items-center">
                 <x-admin::products.attribute-requirements
                     :requirements="$requirementIndicators[$field->id] ?? []"
+                    :attribute-id="$field->id"
                 />
 
                 @if ($hasTemplateAssist)

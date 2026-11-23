@@ -2,11 +2,13 @@
 
 namespace Webkul\ProductPassport\View\Composers;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Illuminate\View\View;
 use Webkul\Core\Models\ChannelProxy;
+use Webkul\Product\Models\Product;
 use Webkul\ProductPassport\DataTransferObjects\PassportReadiness;
 use Webkul\ProductPassport\Enums\PassportFieldSource;
 use Webkul\ProductPassport\Services\PassportFeature;
@@ -67,63 +69,17 @@ class PassportPanelComposer
             ? null
             : route('publication.public.dpp.carrier', ['uuid' => $publication->uuid]);
 
-        $assessments = $this->readiness->assessMany($product, $channel, $channel->locales);
+        $readiness = $this->readinessRows($product, $channel);
 
-        $attributeGroupCodes = $this->attributeGroupCodes(
-            (int) $product->attribute_family_id,
-            $assessments
-                ->flatMap(fn (PassportReadiness $assessment): Collection => $assessment->missingFields)
-                ->where('source_type', PassportFieldSource::Attribute)
-                ->pluck('attribute_id')
-                ->filter()
-                ->map(fn ($id): int => (int) $id)
-                ->unique()
-                ->values()
-                ->all(),
-        );
-
-        $canEditTemplate = bouncer()->hasPermission('catalog.passport.template.edit');
-        $canViewTemplate = bouncer()->hasPermission('catalog.passport.template.view');
-
-        $rows = $channel->locales->map(function ($locale) use ($product, $channel, $currentByLocale, $signedLink, $carrierLink, $assessments, $attributeGroupCodes, $canEditTemplate, $canViewTemplate): array {
+        $rows = $channel->locales->map(function ($locale) use ($product, $channel, $currentByLocale, $signedLink, $carrierLink, $readiness): array {
             $version = $currentByLocale->get($locale->id);
-            $assessment = $assessments->get($locale->id);
-            $templateEditUrl = $assessment->template !== null && $canEditTemplate
-                ? route('admin.catalog.passports.templates.edit', $assessment->template->id)
-                : null;
-            $missingFields = $assessment->missingFields->map(function ($field) use ($product, $channel, $locale, $attributeGroupCodes, $templateEditUrl): array {
-                $attributeId = $field->source_type === PassportFieldSource::Attribute
-                    ? (int) $field->attribute_id
-                    : null;
-                $groupCode = $attributeId !== null ? ($attributeGroupCodes[$attributeId] ?? null) : null;
-
-                return [
-                    'code'       => $field->code,
-                    'label'      => $field->getTranslatedValueWithFallback('label', $locale->code) ?: $field->code,
-                    'source'     => $field->source_type->label(),
-                    'action_url' => $attributeId !== null && $groupCode !== null
-                        ? route('admin.catalog.products.edit', [
-                            'id'      => $product->id,
-                            'channel' => $channel->code,
-                            'locale'  => $locale->code,
-                            'group'   => $groupCode,
-                        ]).'#attribute-'.$attributeId
-                        : $templateEditUrl,
-                ];
-            })->all();
 
             return [
                 'locale_id'       => $locale->id,
                 'locale_code'     => $locale->code,
                 'version'         => $version?->version,
                 'published_at'    => $version?->published_at,
-                'ready'           => $assessment->isReady(),
-                'missing_count'   => $assessment->template === null ? null : count($missingFields),
-                'missing_fields'  => $missingFields,
-                'template_url'    => $templateEditUrl
-                    ?? ($canViewTemplate
-                        ? route('admin.catalog.passports.templates.index')
-                        : null),
+                ...$readiness->get($locale->id),
                 // Signed links are the only way to reveal operator/authority tiers; minted server-side, only once a version is live.
                 'operator_link'  => $version !== null ? $signedLink($locale->code, 'operator') : null,
                 'authority_link' => $version !== null ? $signedLink($locale->code, 'authority') : null,
@@ -150,24 +106,92 @@ class PassportPanelComposer
             ->get();
 
         $view->with([
-            'passportChannel'        => $channel,
-            'passportRows'           => $rows,
-            'passportPublishedCount' => $rows->whereNotNull('version')->count(),
-            'passportViews'          => $passportViews,
-            'passportVersions'       => $versions,
-            'passportHistoryTotal'   => $publication === null ? 0 : $publication->versions()->count(),
-            'passportRepublishUrl'   => $publication === null ? null : route('admin.catalog.passports.republish', $publication->id),
-            'passportCanPublish'     => bouncer()->hasPermission('catalog.passport.publish'),
-            'passportOffline'        => $publication !== null && ! $publication->status->acceptsNewVersions(),
-            'passportStatusLabel'    => $publication === null ? null : trans($publication->status->label()),
-            'passportHistoryUrl'     => $publication === null ? null : route('admin.catalog.passports.versions', $publication->id),
-            'passportEnabled'        => true,
-            'passportAutoPublish'    => $this->feature->autoPublishEnabledFor($channel),
-            'passportPublicAccess'   => $this->publicAccess->enabledForChannel($channel->code),
-            'passportSettingsUrl'    => bouncer()->hasPermission('configuration.system_settings.publication')
+            'passportChannel'         => $channel,
+            'passportRows'            => $rows,
+            'passportCurrentLocaleId' => core()->getRequestedLocale()?->id,
+            'passportReadinessUrl'    => route('admin.catalog.products.passport.show', ['product' => $product->id, 'channel' => $channel->code]),
+            'passportPublishedCount'  => $rows->whereNotNull('version')->count(),
+            'passportViews'           => $passportViews,
+            'passportVersions'        => $versions,
+            'passportHistoryTotal'    => $publication === null ? 0 : $publication->versions()->count(),
+            'passportRepublishUrl'    => $publication === null ? null : route('admin.catalog.passports.republish', $publication->id),
+            'passportCanPublish'      => bouncer()->hasPermission('catalog.passport.publish'),
+            'passportOffline'         => $publication !== null && ! $publication->status->acceptsNewVersions(),
+            'passportStatusLabel'     => $publication === null ? null : trans($publication->status->label()),
+            'passportHistoryUrl'      => $publication === null ? null : route('admin.catalog.passports.versions', $publication->id),
+            'passportEnabled'         => true,
+            'passportAutoPublish'     => $this->feature->autoPublishEnabledFor($channel),
+            'passportPublicAccess'    => $this->publicAccess->enabledForChannel($channel->code),
+            'passportSettingsUrl'     => bouncer()->hasPermission('configuration.system_settings.publication')
                 ? route('admin.settings.system.edit', ['key' => 'digital_product_passport.publication'])
                 : null,
         ]);
+    }
+
+    /**
+     * What the panel needs to know about readiness, per locale id: whether the locale can be published, and
+     * which required fields are still missing (with a link to fix each). Shared by the initial render and the
+     * JSON endpoint the panel re-reads after the product form is saved, so both always agree.
+     *
+     * @return Collection<int, array{ready: bool, missing_count: ?int, missing_fields: list<array<string, mixed>>, template_url: ?string}>
+     */
+    public function readinessRows(Product $product, Model $channel): Collection
+    {
+        $assessments = $this->readiness->assessMany($product, $channel, $channel->locales);
+
+        $attributeGroupCodes = $this->attributeGroupCodes(
+            (int) $product->attribute_family_id,
+            $assessments
+                ->flatMap(fn (PassportReadiness $assessment): Collection => $assessment->missingFields)
+                ->where('source_type', PassportFieldSource::Attribute)
+                ->pluck('attribute_id')
+                ->filter()
+                ->map(fn ($id): int => (int) $id)
+                ->unique()
+                ->values()
+                ->all(),
+        );
+
+        $canEditTemplate = bouncer()->hasPermission('catalog.passport.template.edit');
+        $canViewTemplate = bouncer()->hasPermission('catalog.passport.template.view');
+
+        return $channel->locales->mapWithKeys(function ($locale) use ($product, $channel, $assessments, $attributeGroupCodes, $canEditTemplate, $canViewTemplate): array {
+            $assessment = $assessments->get($locale->id);
+            $templateEditUrl = $assessment->template !== null && $canEditTemplate
+                ? route('admin.catalog.passports.templates.edit', $assessment->template->id)
+                : null;
+            $missingFields = $assessment->missingFields->map(function ($field) use ($product, $channel, $locale, $attributeGroupCodes, $templateEditUrl): array {
+                $attributeId = $field->source_type === PassportFieldSource::Attribute
+                    ? (int) $field->attribute_id
+                    : null;
+                $groupCode = $attributeId !== null ? ($attributeGroupCodes[$attributeId] ?? null) : null;
+
+                return [
+                    'code'         => $field->code,
+                    'attribute_id' => $attributeId,
+                    'label'        => $field->getTranslatedValueWithFallback('label', $locale->code) ?: $field->code,
+                    'source'       => $field->source_type->label(),
+                    'action_url'   => $attributeId !== null && $groupCode !== null
+                        ? route('admin.catalog.products.edit', [
+                            'id'      => $product->id,
+                            'channel' => $channel->code,
+                            'locale'  => $locale->code,
+                            'group'   => $groupCode,
+                        ]).'#attribute-'.$attributeId
+                        : $templateEditUrl,
+                ];
+            })->all();
+
+            return [$locale->id => [
+                'ready'          => $assessment->isReady(),
+                'missing_count'  => $assessment->template === null ? null : count($missingFields),
+                'missing_fields' => $missingFields,
+                'template_url'   => $templateEditUrl
+                    ?? ($canViewTemplate
+                        ? route('admin.catalog.passports.templates.index')
+                        : null),
+            ]];
+        });
     }
 
     /**

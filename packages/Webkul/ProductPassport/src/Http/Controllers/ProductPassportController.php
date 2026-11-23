@@ -11,6 +11,7 @@ use Webkul\Product\Models\Product;
 use Webkul\ProductPassport\Services\PassportFeature;
 use Webkul\ProductPassport\Services\PassportPayloadBuilder;
 use Webkul\ProductPassport\Services\PassportReadinessService;
+use Webkul\ProductPassport\View\Composers\PassportPanelComposer;
 use Webkul\Publication\DataTransferObjects\PublicationContext;
 use Webkul\Publication\Models\PublicationProxy;
 
@@ -19,6 +20,7 @@ class ProductPassportController extends Controller
     public function __construct(
         private readonly PassportFeature $feature,
         private readonly PassportReadinessService $readiness,
+        private readonly PassportPanelComposer $panel,
     ) {}
 
     public function show(Product $product): JsonResponse
@@ -41,18 +43,14 @@ class ProductPassportController extends Controller
 
         $currentByLocale = $publication?->versions->keyBy('locale_id') ?? collect();
 
-        $assessments = $this->readiness->assessMany($product, $channel, $channel->locales);
+        $readiness = $this->panel->readinessRows($product, $channel);
 
-        $rows = $channel->locales->map(function ($locale) use ($currentByLocale, $assessments): array {
-            $assessment = $assessments->get($locale->id);
-
-            return [
-                'locale_code'   => $locale->code,
-                'version'       => $currentByLocale->get($locale->id)?->version,
-                'ready'         => $assessment->isReady(),
-                'missing_count' => $assessment->template === null ? null : $assessment->missingFields->count(),
-            ];
-        });
+        $rows = $channel->locales->map(fn ($locale): array => [
+            'locale_id'   => $locale->id,
+            'locale_code' => $locale->code,
+            'version'     => $currentByLocale->get($locale->id)?->version,
+            ...$readiness->get($locale->id),
+        ]);
 
         return new JsonResponse(['rows' => $rows]);
     }
