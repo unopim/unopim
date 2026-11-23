@@ -26,7 +26,7 @@ This is a security release. Upgrade promptly and follow the upgrade steps: sever
 ## Bug fixes
 
 - Fixed unticking rows after "select all matching" leaving select-all mode instead of excluding those rows from the mass action or export.
-- Fixed `0`, `"0"` and `false` values being dropped on product save and on import.
+- Fixed `0`, `"0"` and `false` values being dropped on product save and on import. Import values are kept as given, so the CSV text `false` is still imported as text.
 - Fixed imports whose validation fails or exceeds the error limit staying pending instead of failing.
 - Fixed scoped variant-level values being dropped on import, and the `variant_structure` import header being required.
 - Fixed product media paths that are resubmitted unchanged being rejected.
