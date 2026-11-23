@@ -19,6 +19,7 @@ use Webkul\AdminApi\Http\Requests\Catalog\StoreSwatchMediaRequest;
 use Webkul\Attribute\Contracts\AttributeOption;
 use Webkul\Attribute\Repositories\AttributeOptionRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
+use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Category\Validator\Catalog\CategoryMediaValidator;
 use Webkul\Core\Filesystem\FileStorer;
@@ -405,7 +406,9 @@ class MediaFileController extends ApiController
             return [];
         }
 
-        return array_values(array_filter(array_map('trim', explode(',', (string) $value))));
+        $paths = is_array($value) ? $value : explode(',', (string) $value);
+
+        return array_values(array_filter(array_map(fn (mixed $path): string => trim((string) $path), $paths)));
     }
 
     /**
@@ -421,10 +424,7 @@ class MediaFileController extends ApiController
     }
 
     /**
-     * Persist the uploaded file path into the product's values JSON under the
-     * correct scope (common / locale / channel / channel-locale), using the
-     * attribute's scope flags and the request's channel/locale (falling back
-     * to defaults).
+     * Persist the uploaded file paths at the attribute's scope, appending to a gallery and replacing any other media.
      */
     protected function assignMediaToProductAttribute($product, string $attributeCode, string $filePath): void
     {
@@ -432,25 +432,15 @@ class MediaFileController extends ApiController
             return;
         }
 
-        $attribute = $this->attributeRepository->findOneByField('code', $attributeCode);
+        [$attribute, $values, $path] = $this->resolveProductMediaSlot($product, $attributeCode);
 
         if (! $attribute) {
             return;
         }
 
-        $values = $product->values ?? [];
-        $channel = request()->input('channel') ?: core()->getDefaultChannelCode();
-        $locale = request()->input('locale') ?: core()->getDefaultLocaleCodeFromDefaultChannel();
-
-        if ($attribute->value_per_channel && $attribute->value_per_locale) {
-            $values['channel_locale_specific'][$channel][$locale][$attributeCode] = $filePath;
-        } elseif ($attribute->value_per_channel) {
-            $values['channel_specific'][$channel][$attributeCode] = $filePath;
-        } elseif ($attribute->value_per_locale) {
-            $values['locale_specific'][$locale][$attributeCode] = $filePath;
-        } else {
-            $values['common'][$attributeCode] = $filePath;
-        }
+        Arr::set($values, $path, $attribute->type === AttributeTypes::GALLERY_ATTRIBUTE_TYPE
+            ? array_values(array_unique([...$this->splitPaths(Arr::get($values, $path)), ...$this->splitPaths($filePath)]))
+            : $filePath);
 
         $product->values = $values;
         $product->save();
