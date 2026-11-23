@@ -34,6 +34,9 @@ class ForgetPasswordController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     *
+     * The link is sent after the response and a mail failure is only logged, so
+     * neither the answer nor its timing reveals whether the account exists.
      */
     public function store(): RedirectResponse|JsonResponse
     {
@@ -41,27 +44,15 @@ class ForgetPasswordController extends Controller
             'email' => 'required|email',
         ]);
 
-        try {
-            $this->broker()->sendResetLink(
-                request(['email'])
-            );
-        } catch (\Throwable $e) {
-            report($e);
+        $credentials = request()->only('email');
 
-            // 200 warning, not a 500: a mail-transport failure is operator config, shown to the admin while logged.
-            $warning = trans('admin::app.users.forget-password.create.email-settings-error');
-
-            if (request()->wantsJson()) {
-                return response()->json([
-                    'message' => $warning,
-                    'type'    => 'warning',
-                ]);
+        dispatch(function () use ($credentials): void {
+            try {
+                $this->broker()->sendResetLink($credentials);
+            } catch (\Throwable $e) {
+                report($e);
             }
-
-            session()->flash('warning', $warning);
-
-            return redirect()->route('admin.forget_password.create');
-        }
+        })->afterResponse();
 
         $message = trans('admin::app.users.forget-password.create.reset-link-sent');
 
