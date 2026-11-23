@@ -736,11 +736,6 @@ return [
         'name'  => 'admin::app.acl.tracker',
         'route' => 'admin.settings.data_transfer.tracker.log.download',
         'sort'  => 1,
-    ], [
-        'key'   => 'data_transfer',
-        'name'  => 'admin::app.acl.data-transfer',
-        'route' => 'admin.settings.data_transfer.systems.edit',
-        'sort'  => 8,
     ],
 
     /*

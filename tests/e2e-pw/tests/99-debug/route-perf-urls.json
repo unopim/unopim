@@ -340,10 +340,6 @@
     "url": "/admin/data-transfer/exports/stats/1"
   },
   {
-    "name": "admin.settings.data_transfer.systems.edit",
-    "url": "/admin/data-transfer/exports/system/edit/1"
-  },
-  {
     "name": "admin.settings.data_transfer.imports.index",
     "url": "/admin/data-transfer/imports"
   },
