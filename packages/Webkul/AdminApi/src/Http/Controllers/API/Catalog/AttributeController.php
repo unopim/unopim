@@ -16,6 +16,7 @@ use Webkul\Attribute\Repositories\AttributeOptionRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Rules\ValidSwatchValue;
 use Webkul\Core\Rules\Code;
+use Webkul\Core\Rules\WithoutUploadedFiles;
 
 class AttributeController extends ApiController
 {
@@ -255,6 +256,13 @@ class AttributeController extends ApiController
                         'attribute_id' => $attribute->id,
                     ], $optionInputs));
                 } else {
+                    $validator = Validator::make($optionInputs, ['swatch_value' => [new WithoutUploadedFiles]]);
+                    if ($validator->fails()) {
+                        $errors[] = $validator->errors();
+
+                        continue;
+                    }
+
                     $this->attributeOptionRepository->update($optionInputs, $attributeOption->id);
                 }
             }
@@ -315,7 +323,7 @@ class AttributeController extends ApiController
                 }),
                 new Code,
             ],
-            'swatch_value' => [new ValidSwatchValue($attributeId)],
+            'swatch_value' => [new WithoutUploadedFiles, new ValidSwatchValue($attributeId)],
         ];
 
         return Validator::make($requestData, $rules);
