@@ -21,6 +21,10 @@ This is a security release. Upgrade promptly and follow the upgrade steps: sever
 - Deleting an admin also deletes their AI agent memories instead of sharing them with every other admin's agent.
 - Executable and markup file extensions are always refused on upload.
 - Disabled session upload progress in the Docker PHP configuration.
+- Signing out now ends the session and issues a new CSRF token, so requests still in flight cannot keep the admin signed in.
+- Changing or resetting a password signs the account out everywhere else, including when another admin changes it.
+- The forgot-password form gives the same answer, in about the same time, whether or not the account exists. Mail failures are logged instead of shown.
+- After signing in or resetting a password, admins only return to an admin page on the same scheme, host and port as the application; otherwise they land on their first permitted page.
 - Updated `symfony/http-foundation` to 8.1.9 and `enshrined/svg-sanitize` to 1.1.1.
 
 ## Bug fixes
@@ -41,6 +45,10 @@ This is a security release. Upgrade promptly and follow the upgrade steps: sever
 - Fixed client-side regex validation losing backslashes, so a pattern such as `\d` now reaches the browser exactly as configured.
 - Fixed the installer reporting a fixed country instead of deriving it from the admin's timezone.
 - Fixed the Docker Elasticsearch readiness check ignoring the configured credentials.
+- Fixed saving a product without its associations section deleting its related, up-sell and cross-sell links.
+- Fixed the password show/hide toggle on the sign-in and reset-password forms not working from the keyboard, and the sign-in form labels not being linked to their fields.
+- Fixed dashboard figures staying stale for up to an hour after imports, bulk edits or demo data installation.
+- Fixed the dashboard "Enriched" figure always showing 0.
 
 ## Docker
 

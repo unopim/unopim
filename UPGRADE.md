@@ -144,6 +144,10 @@ Webhooks to a host that cannot be pinned to a public address are refused.
   let through.
 - Magic AI translations of rich text attributes go through the product form's
   HTML allowlist, so tags and attributes outside it are removed.
+- Admins stay signed in through the upgrade. From now on, changing or
+  resetting a password signs that account out of every other session.
+- The forgot-password form no longer reports mail errors; check the
+  application log if reset emails do not arrive.
 - `enshrined/svg-sanitize` moved from `^0.22` to `^1.0`. UnoPim uses only
   `new Sanitizer()` and `sanitize()`, which are unchanged; extensions that use
   other parts of the library should check its changelog.
