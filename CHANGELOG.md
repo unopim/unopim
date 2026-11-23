@@ -1,4 +1,4 @@
-# 3.1.4 — November 20th, 2026
+# 3.1.4 — November 23th, 2026
 
 This is a security release. Upgrade promptly and read the upgrade notes: several actions now require a permission they did not check before, and some Magic AI platform and import settings that were accepted before are now refused.
 
