@@ -7,6 +7,9 @@ use Webkul\DataTransfer\Models\JobInstances;
 use Webkul\DataTransfer\Models\JobTrack;
 use Webkul\DataTransfer\Services\JobLogger;
 
+/**
+ * Create a product job instance without a source file.
+ */
 function createFilelessProductJobInstance(string $type = 'system'): JobInstances
 {
     return JobInstances::create([
@@ -38,11 +41,11 @@ function createRerunTrack(JobInstances $jobInstance): JobTrack
     ]);
 }
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->loginAsAdmin();
 });
 
-it('validate() fails gracefully instead of a fatal error when the import source file is missing', function () {
+it('validate() fails gracefully instead of a fatal error when the import source file is missing', function (): void {
     $jobInstance = createFilelessProductJobInstance();
     $jobTrack = createRerunTrack($jobInstance);
 
@@ -57,7 +60,7 @@ it('validate() fails gracefully instead of a fatal error when the import source 
         ->and($jobTrack->errors)->not->toBeNull();
 });
 
-it('does not let a fileless system job (bulk_product_update) be re-run via importNow', function () {
+it('does not let a fileless system job (bulk_product_update) be re-run via importNow', function (): void {
     Bus::fake();
 
     $jobInstance = createFilelessProductJobInstance();
@@ -73,7 +76,7 @@ it('does not let a fileless system job (bulk_product_update) be re-run via impor
     $response->assertNotFound();
 });
 
-it('sends a fileless product import back to its profile instead of re-running it', function () {
+it('sends a fileless product import back to its profile instead of re-running it', function (): void {
     Bus::fake();
 
     $jobInstance = createFilelessProductJobInstance('import');

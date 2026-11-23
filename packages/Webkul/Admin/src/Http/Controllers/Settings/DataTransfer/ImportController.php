@@ -143,7 +143,7 @@ class ImportController extends Controller
     {
         $importerConfig = $this->visibleJobTypes(self::IMPORTERS);
 
-        $import = $this->findVisibleJobInstance($id, self::TYPE);
+        $import = $this->findVisibleJobInstance($id, JobType::IMPORT);
 
         $acceptedArchiveTypes = $this->allowedArchiveExtensionsLabel();
 
@@ -159,7 +159,7 @@ class ImportController extends Controller
 
         $importers = array_keys($importerConfig);
 
-        $import = $this->findVisibleJobInstance($id, self::TYPE);
+        $import = $this->findVisibleJobInstance($id, JobType::IMPORT);
 
         $this->validate(request(), [
             'code'                => ['required'],
@@ -247,7 +247,7 @@ class ImportController extends Controller
      */
     public function destroy($id): JsonResponse
     {
-        $import = $this->findVisibleJobInstance($id, self::TYPE);
+        $import = $this->findVisibleJobInstance($id, JobType::IMPORT);
 
         try {
             if (! empty($import->file_path)) {
@@ -281,7 +281,7 @@ class ImportController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $import = $jobInstance = $this->findVisibleJobInstance($id, self::TYPE);
+        $import = $jobInstance = $this->findVisibleJobInstance($id, JobType::IMPORT);
 
         $import->unsetRelations();
 
@@ -295,7 +295,7 @@ class ImportController extends Controller
     {
         $jobTrackInstance = null;
 
-        $import = $this->findVisibleJobInstance($id, self::TYPE);
+        $import = $this->findVisibleJobInstance($id, JobType::IMPORT);
 
         try {
             $requiresFile = (bool) config(self::IMPORTERS.'.'.$import->entity_type.'.has_file_options', false);
@@ -348,7 +348,7 @@ class ImportController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $import = $this->findVisibleJobTrack($id);
+        $import = $this->findVisibleJobTrack($id, JobType::IMPORT);
 
         $isValid = $this->importHelper
             ->setImport($import)
@@ -369,7 +369,7 @@ class ImportController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $import = $this->findVisibleJobTrack($id);
+        $import = $this->findVisibleJobTrack($id, JobType::IMPORT);
 
         if (! $import->processed_rows_count) {
             return new JsonResponse([
@@ -433,7 +433,7 @@ class ImportController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $import = $this->findVisibleJobTrack($id);
+        $import = $this->findVisibleJobTrack($id, JobType::IMPORT);
 
         if (! $import->processed_rows_count) {
             return new JsonResponse([
@@ -498,7 +498,7 @@ class ImportController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $import = $this->findVisibleJobTrack($id);
+        $import = $this->findVisibleJobTrack($id, JobType::IMPORT);
 
         if (! $import->processed_rows_count) {
             return new JsonResponse([
@@ -711,7 +711,7 @@ class ImportController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $import = $this->findVisibleJobInstance($id, self::TYPE);
+        $import = $this->findVisibleJobInstance($id, JobType::IMPORT);
 
         return Storage::disk('private')->download($import->file_path);
     }
@@ -725,7 +725,7 @@ class ImportController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $import = $this->findVisibleJobTrack($id);
+        $import = $this->findVisibleJobTrack($id, JobType::IMPORT);
 
         return Storage::disk('private')->download($import->error_file_path);
     }
