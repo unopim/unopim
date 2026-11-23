@@ -69,13 +69,24 @@ async function openQuickCreate(page, code, type) {
   await page.getByRole('option', { name: type }).first().click();
 }
 
+/**
+ * The visible vue-multiselect control wrapping the named measurement field.
+ * Its inner search input stays hidden until the control is opened, so assert
+ * visibility on the wrapper rather than the input.
+ */
+function measurementControl(page, name) {
+  return page
+    .locator(`input[name="${name}"][type="text"]`)
+    .locator('xpath=ancestor::div[contains(concat(" ", normalize-space(@class), " "), " multiselect ")][1]');
+}
+
 test.describe('Measurement - Add Attribute modal', () => {
   test('choosing the measurement type shows the family field', async ({ adminPage }) => {
     test.setTimeout(60000);
 
     await openQuickCreate(adminPage, `meas_${generateUid()}`, 'Measurement');
 
-    await expect(adminPage.locator('input[name="measurement_family"]')).toBeVisible({ timeout: 15000 });
+    await expect(measurementControl(adminPage, 'measurement_family')).toBeVisible({ timeout: 15000 });
   });
 
   test('choosing a family loads its units', async ({ adminPage }) => {
@@ -83,10 +94,10 @@ test.describe('Measurement - Add Attribute modal', () => {
 
     await openQuickCreate(adminPage, `meas_${generateUid()}`, 'Measurement');
 
-    await adminPage.locator('input[name="measurement_family"]').waitFor({ state: 'attached', timeout: 15000 });
+    await adminPage.locator('input[name="measurement_family"][type="text"]').waitFor({ state: 'attached', timeout: 15000 });
     await selectMultiselectOption(adminPage, 'measurement_family', MEASUREMENT_FAMILY);
 
-    await expect(adminPage.locator('input[name="measurement_unit"]')).toBeVisible({ timeout: 15000 });
+    await expect(measurementControl(adminPage, 'measurement_unit')).toBeVisible({ timeout: 15000 });
   });
 
   test('saving keeps the family and unit on the edit page', async ({ adminPage }) => {
@@ -97,10 +108,10 @@ test.describe('Measurement - Add Attribute modal', () => {
     await openQuickCreate(adminPage, code, 'Measurement');
     await fillLocalizedField(adminPage, `Measurement ${generateUid()}`);
 
-    await adminPage.locator('input[name="measurement_family"]').waitFor({ state: 'attached', timeout: 15000 });
+    await adminPage.locator('input[name="measurement_family"][type="text"]').waitFor({ state: 'attached', timeout: 15000 });
     await selectMultiselectOption(adminPage, 'measurement_family', MEASUREMENT_FAMILY);
 
-    await adminPage.locator('input[name="measurement_unit"]').waitFor({ state: 'attached', timeout: 15000 });
+    await adminPage.locator('input[name="measurement_unit"][type="text"]').waitFor({ state: 'attached', timeout: 15000 });
     const unitLabel = await selectFirstMultiselectOption(adminPage, 'measurement_unit');
 
     await Promise.all([
@@ -127,12 +138,12 @@ test.describe('Measurement - Add Attribute modal', () => {
     await openQuickCreate(adminPage, code, 'Measurement');
     await fillLocalizedField(adminPage, `Text ${generateUid()}`);
 
-    await adminPage.locator('input[name="measurement_family"]').waitFor({ state: 'attached', timeout: 15000 });
+    await adminPage.locator('input[name="measurement_family"][type="text"]').waitFor({ state: 'attached', timeout: 15000 });
     await selectMultiselectOption(adminPage, 'measurement_family', MEASUREMENT_FAMILY);
 
     await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__tags').click();
     await adminPage.locator('input[name="type"][type="text"]').fill('Text');
-    await adminPage.getByRole('option', { name: 'Text', exact: true }).first().click();
+    await adminPage.getByRole('option', { name: /^Text\b/ }).first().click();
 
     await expect(adminPage.locator('input[name="measurement_family"]')).toHaveCount(0);
     await expect(adminPage.locator('input[name="measurement_unit"]')).toHaveCount(0);
