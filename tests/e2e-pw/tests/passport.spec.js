@@ -109,13 +109,13 @@ test.describe.serial('Digital Product Passport', () => {
     const page = adminPage;
     await page.goto(`/p/${publicationUuid}`, { waitUntil: 'domcontentloaded' });
 
-    const current = await page.getAttribute('html', 'lang');
+    const current = (await page.getAttribute('html', 'lang')).replace('-', '_');
     const other = localeCodes.find((code) => code !== current);
 
     // The locale links live inside a collapsed <details> switcher; open it before clicking.
     await page.locator('.switcher summary').click();
     await page.locator('.switcher .locale-list').getByRole('link', { name: other, exact: true }).click();
-    await expect(page.locator('html')).toHaveAttribute('lang', other, { timeout: 15000 });
+    await expect(page.locator('html')).toHaveAttribute('lang', other.replace('_', '-'), { timeout: 15000 });
   });
 
   test('withdraws from the grid, flashes success and drops the action', async ({ adminPage }) => {
