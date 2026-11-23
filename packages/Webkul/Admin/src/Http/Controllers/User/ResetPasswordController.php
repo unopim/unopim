@@ -13,11 +13,12 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Traits\ResolvesLandingUrl;
 use Webkul\Core\Rules\PasswordWithoutSurroundingWhitespace;
 
 class ResetPasswordController extends Controller
 {
-    use ResetsPasswords;
+    use ResetsPasswords, ResolvesLandingUrl;
 
     /**
      * Display the password reset view for the given token.
@@ -55,11 +56,15 @@ class ResetPasswordController extends Controller
             );
 
             if ($response == Password::PASSWORD_RESET) {
+                $redirectUrl = auth()->guard('admin')->check()
+                    ? $this->intendedOrLandingUrl()
+                    : route('admin.session.create');
+
                 if ($wantsJson) {
-                    return response()->json(['redirect_url' => route('admin.dashboard.index')]);
+                    return response()->json(['redirect_url' => $redirectUrl]);
                 }
 
-                return redirect()->route('admin.dashboard.index');
+                return redirect()->to($redirectUrl);
             }
 
             $error = trans('admin::app.users.reset-password.invalid-link');
