@@ -24,10 +24,6 @@ class WarnMissingMeasurementConfigAfterCreate
      */
     public function handle($attribute): void
     {
-        if (request()->routeIs('admin.api.*')) {
-            return;
-        }
-
         if (
             ! $attribute
             || ! request()->hasSession()

@@ -1,6 +1,6 @@
 @php
     $measurementBackedTypes = collect(config('attribute_types'))
-        ->filter(fn ($type): bool => ! empty($type['measurement_backed']))
+        ->filter(fn (array $type): bool => ! empty($type['measurement_backed']))
         ->keys()
         ->values()
         ->toArray();
@@ -121,7 +121,6 @@
             },
 
             methods: {
-
                 async fetchUnits(familyCode) {
                     if (! familyCode) {
                         this.unitsList = [];

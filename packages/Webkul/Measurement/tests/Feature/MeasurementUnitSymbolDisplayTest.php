@@ -36,6 +36,9 @@ function enableUnitSymbolDisplay(): void
     Cache::flush();
 }
 
+/**
+ * Save the display unit symbol setting as off.
+ */
 function disableUnitSymbolDisplay(): void
 {
     CoreConfig::updateOrCreate(

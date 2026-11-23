@@ -9,6 +9,7 @@ use Webkul\Measurement\Listeners\SaveAttributeMeasurementAfterUpdate;
 use Webkul\Measurement\Listeners\ValidateAttributeMeasurementBeforeCreate;
 use Webkul\Measurement\Listeners\ValidateAttributeMeasurementBeforeUpdate;
 use Webkul\Measurement\Listeners\WarnMissingMeasurementConfigAfterCreate;
+use Webkul\Theme\ViewRenderEventManager;
 
 class MeasurementEventServiceProvider extends ServiceProvider
 {
@@ -37,7 +38,7 @@ class MeasurementEventServiceProvider extends ServiceProvider
 
         Event::listen(
             'unopim.admin.catalog.attributes.quick_create.type_fields.after',
-            function ($viewRenderEventManager): void {
+            function (ViewRenderEventManager $viewRenderEventManager): void {
                 $viewRenderEventManager->addTemplate(
                     'measurement::catalog.attributes.create'
                 );

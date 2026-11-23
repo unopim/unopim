@@ -23,7 +23,7 @@ class ValidateAttributeMeasurementBeforeCreate
      */
     public function handle(): void
     {
-        if (request()->routeIs('admin.api.*')) {
+        if (! request()->hasSession()) {
             return;
         }
 

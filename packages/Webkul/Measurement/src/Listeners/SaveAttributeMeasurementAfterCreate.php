@@ -21,7 +21,7 @@ class SaveAttributeMeasurementAfterCreate
      */
     public function handle(?Attribute $attribute): void
     {
-        if (request()->routeIs('admin.api.*')) {
+        if (! request()->hasSession()) {
             return;
         }
 

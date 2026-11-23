@@ -8,6 +8,9 @@ beforeEach(function (): void {
     $this->loginAsAdmin();
 });
 
+/**
+ * Create a Length measurement family with meter and centimeter units.
+ */
 function quickCreateLengthFamily(): MeasurementFamily
 {
     return MeasurementFamily::factory()->create([

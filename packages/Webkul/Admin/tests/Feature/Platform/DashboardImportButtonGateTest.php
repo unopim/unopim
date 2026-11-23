@@ -6,13 +6,13 @@ use Webkul\Core\Tests\Concerns\InteractsWithPlatformModules;
 
 uses(InteractsWithPlatformModules::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     config(['platform_modules.records' => ['name' => 'records', 'requires' => []]]);
 
     CoreConfig::query()->where('code', ModuleGate::HIDDEN_SECTIONS_KEY)->delete();
 });
 
-it('hides the dashboard Import Data button when the imports section is hidden', function () {
+it('hides the dashboard Import Data button when the imports section is hidden', function (): void {
     $this->setPlatformModules('records');
 
     CoreConfig::query()->create([
@@ -31,7 +31,7 @@ it('hides the dashboard Import Data button when the imports section is hidden', 
         ->assertDontSee(route('admin.settings.data_transfer.imports.index'), false);
 });
 
-it('shows the dashboard Import Data button when the imports section is visible', function () {
+it('shows the dashboard Import Data button when the imports section is visible', function (): void {
     $this->setPlatformModules('records');
 
     CoreConfig::query()->create([
@@ -50,7 +50,7 @@ it('shows the dashboard Import Data button when the imports section is visible',
         ->assertSee(route('admin.settings.data_transfer.imports.index'), false);
 });
 
-it('hides the dashboard Export Data button when the exports section is hidden', function () {
+it('hides the dashboard Export Data button when the exports section is hidden', function (): void {
     $this->setPlatformModules('records');
 
     CoreConfig::query()->create([
@@ -69,7 +69,7 @@ it('hides the dashboard Export Data button when the exports section is hidden', 
         ->assertDontSee(route('admin.settings.data_transfer.exports.index'), false);
 });
 
-it('shows the dashboard Export Data button when the exports section is visible', function () {
+it('shows the dashboard Export Data button when the exports section is visible', function (): void {
     $this->setPlatformModules('records');
 
     CoreConfig::query()->create([

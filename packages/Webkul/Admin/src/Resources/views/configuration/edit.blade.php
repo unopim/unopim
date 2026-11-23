@@ -1,3 +1,5 @@
+@inject('coreConfigRepository', 'Webkul\Core\Repositories\CoreConfigRepository')
+
 @php
     $channels = core()->getAllChannels();
 
@@ -62,6 +64,8 @@
                     @else
                         <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
                             @foreach ($item['fields'] as $field)
+                                @continue (! $coreConfigRepository->isFieldVisible($field))
+
                                 @if (
                                     $field['type'] == 'blade'
                                     && view()->exists($path = $field['path'])

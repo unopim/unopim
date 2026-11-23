@@ -2,6 +2,7 @@
 
 use Webkul\AdminApi\Tests\Traits\ApiHelperTrait;
 use Webkul\Attribute\Models\Attribute;
+use Webkul\Core\Models\Locale;
 use Webkul\Measurement\Models\MeasurementFamily;
 
 uses(ApiHelperTrait::class);
@@ -156,6 +157,20 @@ it('adds, shows, updates and deletes a unit', function () {
     $this->withHeaders($this->headers)
         ->deleteJson(route('admin.api.measurement-units.delete', [$family->code, 'ghost']))
         ->assertStatus(404);
+});
+
+it('updates a measurement-type attribute over the API without redirecting', function (): void {
+    $attribute = Attribute::factory()->create(['type' => 'measurement']);
+
+    $localeCode = Locale::where('status', 1)->first()->code;
+
+    $this->withHeaders($this->headers)
+        ->putJson(route('admin.api.attributes.update', $attribute->code), [
+            'is_required' => $attribute->is_required,
+            'labels'      => [$localeCode => 'Measurement Attribute'],
+        ])
+        ->assertOk()
+        ->assertJson(['success' => true]);
 });
 
 it('returns units by family code', function () {

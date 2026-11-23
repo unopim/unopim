@@ -5,14 +5,14 @@ use Webkul\DataTransfer\Services\JobTypeGate;
 
 uses(InteractsWithPlatformModules::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     config(['platform_modules.records' => ['name' => 'records', 'requires' => []]]);
 });
 
 $shared = ['users', 'roles', 'channels', 'locales', 'currencies', 'attributes', 'attribute-groups', 'attribute-options'];
 $pimOnly = ['products', 'categories', 'category-fields', 'attribute-families', 'product-associations'];
 
-it('keeps shared import/export types available when PIM is off', function () use ($shared) {
+it('keeps shared import/export types available when PIM is off', function () use ($shared): void {
     $this->setPlatformModules('records');
 
     $gate = app(JobTypeGate::class);
@@ -27,7 +27,7 @@ it('keeps shared import/export types available when PIM is off', function () use
     }
 });
 
-it('removes PIM-data import/export types when PIM is off', function () use ($pimOnly) {
+it('removes PIM-data import/export types when PIM is off', function () use ($pimOnly): void {
     $this->setPlatformModules('records');
 
     $gate = app(JobTypeGate::class);
@@ -42,7 +42,7 @@ it('removes PIM-data import/export types when PIM is off', function () use ($pim
     }
 });
 
-it('keeps every type available when PIM is on', function () use ($shared, $pimOnly) {
+it('keeps every type available when PIM is on', function () use ($shared, $pimOnly): void {
     $this->setPlatformModules('pim');
 
     $gate = app(JobTypeGate::class);

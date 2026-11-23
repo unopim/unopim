@@ -27,7 +27,7 @@ class ValidateAttributeMeasurementBeforeUpdate
      */
     public function handle($attributeId): void
     {
-        if (request()->routeIs('admin.api.*')) {
+        if (! request()->hasSession()) {
             return;
         }
 
