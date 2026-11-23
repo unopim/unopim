@@ -14,7 +14,7 @@ This is a security release. Upgrade promptly and follow the upgrade steps: sever
 - Admins can no longer edit or delete a user whose current role they could not assign, or edit or delete a role whose access goes beyond their own.
 - The REST API keeps attribute options, category field options and association type fields under the parent named in the URL. Adding, editing or deleting them through the parent update requires the matching child permission, and ids belonging to another parent are rejected.
 - OAuth signing keys are read only from the configured key path. The keypair that older releases shipped in the source tree is never used, and a stored copy of it is refused and replaced by `unopim:passport:keys`.
-- Magic AI platform calls only reach public addresses, are pinned to the validated address and never follow redirects. A saved API key is sent only to its saved provider and URL, testing a connection or listing models with a saved key requires the platform edit permission, platform `extras` are limited to an allowlist, and errors no longer echo the provider response or the key.
+- Magic AI platform calls only reach public addresses, are pinned to the validated address and never follow redirects. A saved API key is sent only to its saved provider and URL, testing a connection or listing models with a saved key requires the platform edit permission, platform `extras` are limited to an allowlist, and connection tests and model listing no longer echo the provider response or the key.
 - The outbound URL guard used by Magic AI and webhooks now also refuses shared address space and IPv6 prefixes that embed an IPv4 host, and webhook delivery is refused when the URL cannot be pinned to its validated address.
 - Client-side validation rules are encoded safely, so a regex pattern can no longer inject markup into admin forms.
 - Hardened the rich text editor against known XSS issues, and Magic AI translations of rich text values are purified like the product form.
@@ -25,7 +25,7 @@ This is a security release. Upgrade promptly and follow the upgrade steps: sever
 - Changing or resetting a password signs the account out everywhere else, including when another admin changes it.
 - The forgot-password form gives the same answer, in about the same time, whether or not the account exists. Mail failures are logged instead of shown.
 - After signing in or resetting a password, admins only return to an admin page on the same scheme, host and port as the application; otherwise they land on their first permitted page.
-- Updated `symfony/http-foundation` to 8.1.9 and `enshrined/svg-sanitize` to 1.1.1.
+- Updated `symfony/http-foundation` to 8.1.11 and `enshrined/svg-sanitize` to 1.1.1, and patched other vulnerable Composer packages.
 
 ## Bug fixes
 
