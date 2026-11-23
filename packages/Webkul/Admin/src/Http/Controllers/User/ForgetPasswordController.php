@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Password;
 use Illuminate\View\View;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Http\Requests\ForgetPasswordRequest;
 use Webkul\Admin\Traits\ResolvesLandingUrl;
 
 class ForgetPasswordController extends Controller
@@ -35,16 +36,13 @@ class ForgetPasswordController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * The link is sent after the response and a mail failure is only logged, so
-     * neither the answer nor its timing reveals whether the account exists.
+     * The answer never reveals whether the account exists, and a mail failure is
+     * only logged. The link is sent after the response, which also hides the
+     * timing where the server flushes the response first (PHP-FPM, Octane).
      */
-    public function store(): RedirectResponse|JsonResponse
+    public function store(ForgetPasswordRequest $request): RedirectResponse|JsonResponse
     {
-        $this->validate(request(), [
-            'email' => 'required|email',
-        ]);
-
-        $credentials = request()->only('email');
+        $credentials = $request->only('email');
 
         dispatch(function () use ($credentials): void {
             try {
@@ -56,7 +54,7 @@ class ForgetPasswordController extends Controller
 
         $message = trans('admin::app.users.forget-password.create.reset-link-sent');
 
-        if (request()->wantsJson()) {
+        if ($request->wantsJson()) {
             return response()->json(['message' => $message]);
         }
 
