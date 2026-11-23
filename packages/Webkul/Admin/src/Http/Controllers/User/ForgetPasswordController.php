@@ -8,9 +8,12 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Password;
 use Illuminate\View\View;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Traits\ResolvesLandingUrl;
 
 class ForgetPasswordController extends Controller
 {
+    use ResolvesLandingUrl;
+
     /**
      * Show the form for creating a new resource.
      *
@@ -20,21 +23,13 @@ class ForgetPasswordController extends Controller
     {
         if (auth()->guard('admin')->check()) {
             return redirect()->route('admin.dashboard.index');
-        } else {
-            $previous = url()->previous();
-            $appHost = parse_url(config('app.url'), PHP_URL_HOST);
-            $previousHost = parse_url($previous, PHP_URL_HOST);
-
-            if ($previousHost === $appHost && str_contains($previous, 'admin')) {
-                $intendedUrl = $previous;
-            } else {
-                $intendedUrl = route('admin.dashboard.index');
-            }
-
-            session()->put('url.intended', $intendedUrl);
-
-            return view('admin::users.forget-password.create');
         }
+
+        if ($intendedUrl = $this->safeIntendedUrl(url()->previous())) {
+            session()->put('url.intended', $intendedUrl);
+        }
+
+        return view('admin::users.forget-password.create');
     }
 
     /**
