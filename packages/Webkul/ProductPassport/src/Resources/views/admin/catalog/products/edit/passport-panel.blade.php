@@ -43,6 +43,8 @@
             id="passport-panel"
             data-product-id="{{ $product->id }}"
             data-current-locale-id="{{ $passportCurrentLocaleId }}"
+            data-current-locale-code="{{ core()->getRequestedLocaleCode() }}"
+            data-channel-code="{{ $passportChannel->code }}"
             data-republish-url="{{ $passportRepublishUrl }}"
             class="grid gap-2.5"
         >
@@ -365,6 +367,7 @@
                     <a
                         v-if="field.action_url"
                         :href="field.action_url"
+                        data-passport-field-link
                         class="font-medium text-primary-600 hover:text-primary-700 dark:text-primary-300"
                         title="{{ trans('passport::app.templates.builder.edit') }}"
                     >
@@ -514,6 +517,51 @@
                 all.title = everyReady ? allLabel : blockedLabel;
                 all.dataset.localeIds = JSON.stringify(rows.filter(function (row) { return row.ready; }).map(function (row) { return row.locale_id; }));
             }
+        });
+
+        {{-- A missing attribute that is already on this page is revealed in place; anything else (other locale, group not loaded yet) falls through to the link's normal navigation. --}}
+        document.addEventListener('click', function (event) {
+            var link = event.target.closest ? event.target.closest('a[data-passport-field-link]') : null;
+            var panel = document.getElementById('passport-panel');
+
+            if (! link || ! panel || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey) {
+                return;
+            }
+
+            var target = new URL(link.href, window.location.href);
+
+            if (
+                target.pathname !== window.location.pathname
+                || target.searchParams.get('locale') !== panel.dataset.currentLocaleCode
+                || target.searchParams.get('channel') !== panel.dataset.channelCode
+                || ! target.hash
+            ) {
+                return;
+            }
+
+            var field = document.getElementById(target.hash.slice(1));
+
+            if (! field) {
+                return;
+            }
+
+            event.preventDefault();
+
+            window.app.config.globalProperties.$emitter?.emit('section-drawer:close', 'passport');
+
+            if (window.revealInvalidField) {
+                window.revealInvalidField(field);
+            } else {
+                field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            setTimeout(function () {
+                var input = field.querySelector('input:not([type="hidden"]), textarea, select');
+
+                if (input) {
+                    input.focus({ preventScroll: true });
+                }
+            }, 400);
         });
 
         function applyLocaleState(locales) {
