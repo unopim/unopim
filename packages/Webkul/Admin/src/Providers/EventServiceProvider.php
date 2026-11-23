@@ -31,7 +31,7 @@ class EventServiceProvider extends ServiceProvider
         ],
 
         'completeness.product.calculate.after' => [
-            [DashboardCache::class, 'flush'],
+            [DashboardCache::class, 'flushProducts'],
         ],
 
         'installer.demo_data.seeded' => [

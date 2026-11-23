@@ -121,7 +121,7 @@ class ProductCompletenessJob implements ShouldQueue
             DB::statement("UPDATE {$prefix}products SET avg_completeness_score = CAST(CASE id {$cases} END AS {$castType}) WHERE id IN ({$idList})");
         }
 
-        if ($changedRows !== [] || $deleteQueue !== [] || $avgScores !== []) {
+        if ($changedRows !== [] || $deleteQueue !== []) {
             Event::dispatch('completeness.product.calculate.after', ['ids' => array_keys($avgScores)]);
         }
     }

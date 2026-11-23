@@ -13,4 +13,12 @@ class DashboardCache
     {
         Dashboard::invalidateAllCache();
     }
+
+    /**
+     * Drop only the product figures after a completeness recalculation.
+     */
+    public function flushProducts(): void
+    {
+        Dashboard::invalidateProductCache();
+    }
 }

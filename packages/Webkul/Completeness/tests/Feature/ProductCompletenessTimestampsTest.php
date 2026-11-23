@@ -109,3 +109,13 @@ it('announces the products whose completeness was calculated', function () {
 
     Event::assertDispatched('completeness.product.calculate.after');
 });
+
+it('stays quiet when a recalculation changes no score', function () {
+    ProductCompletenessJob::dispatchSync([$this->product->id]);
+
+    Event::fake(['completeness.product.calculate.after']);
+
+    ProductCompletenessJob::dispatchSync([$this->product->id]);
+
+    Event::assertNotDispatched('completeness.product.calculate.after');
+});
