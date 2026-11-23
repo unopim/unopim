@@ -69,6 +69,16 @@ final class ModuleGate
     }
 
     /**
+     * Whether more than one platform module is registered. Section hiding has
+     * nothing to gate on a PIM-only install, so the `hidden_sections` field
+     * is offered only here.
+     */
+    public function hasMultipleModules(): bool
+    {
+        return count((array) config('platform_modules')) > 1;
+    }
+
+    /**
      * The module keys present in the `platform_modules` registry; PIM is always present and first.
      *
      * @return list<string>

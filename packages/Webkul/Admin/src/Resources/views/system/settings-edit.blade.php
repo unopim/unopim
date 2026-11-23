@@ -1,3 +1,5 @@
+@inject('coreConfigRepository', 'Webkul\Core\Repositories\CoreConfigRepository')
+
 @php
     $channels = core()->getAllChannels();
 
@@ -29,10 +31,7 @@
         @php ($item = $group)
 
         @foreach ($group['fields'] as $field)
-            @continue (
-                ($field['name'] ?? null) === 'hidden_sections'
-                && count((array) config('platform_modules')) <= 1
-            )
+            @continue (! $coreConfigRepository->isFieldVisible($field))
 
             @if ($field['type'] == 'blade' && view()->exists($path = $field['path']))
                 {!! view($path, compact('field', 'item'))->render() !!}
