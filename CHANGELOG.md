@@ -50,13 +50,6 @@ This is a security release. Upgrade promptly and follow the upgrade steps: sever
 - Fixed dashboard figures staying stale for up to an hour after imports, bulk edits or demo data installation.
 - Fixed the dashboard "Enriched" figure always showing 0.
 
-## Known issues
-
-These are fixed in 3.2:
-
-- Deleting a variant structure that products still use unlinks those products from it.
-- Editing one association link can drop the additional data stored for other locales on the links of that type.
-
 ## Docker
 
 - Base images are pinned by digest; the PHP images run PHP 8.4.28.
