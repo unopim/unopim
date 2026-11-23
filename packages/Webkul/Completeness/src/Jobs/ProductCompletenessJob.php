@@ -5,6 +5,7 @@ namespace Webkul\Completeness\Jobs;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Completeness\Repositories\CompletenessSettingsRepository;
@@ -118,6 +119,10 @@ class ProductCompletenessJob implements ShouldQueue
             $productsTable = DB::getQueryGrammar()->wrapTable('products');
             $castType = DB::getDriverName() === 'pgsql' ? 'INTEGER' : 'SIGNED';
             DB::statement("UPDATE {$productsTable} SET avg_completeness_score = CAST(CASE id {$cases} END AS {$castType}) WHERE id IN ({$idList})");
+        }
+
+        if ($changedRows !== [] || $deleteQueue !== [] || $avgScores !== []) {
+            Event::dispatch('completeness.product.calculate.after', ['ids' => array_keys($avgScores)]);
         }
     }
 

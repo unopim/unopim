@@ -5,6 +5,7 @@ namespace Webkul\Installer\Helpers;
 use Closure;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Throwable;
 use Webkul\Completeness\Console\RecalculateCompletenessCommand;
 use Webkul\ElasticSearch\Console\Command\CategoryIndexer;
@@ -129,6 +130,8 @@ class DemoDataInstaller
                     'error'   => 'Demo seeding completed but the default attribute family has no group mappings — refusing to leave the catalog in an unusable state.',
                 ];
             }
+
+            Event::dispatch('installer.demo_data.seeded');
 
             return ['success' => true];
         } catch (Throwable $e) {
