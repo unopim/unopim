@@ -42,6 +42,7 @@ return [
             'empty'               => 'A calculated attribute needs a formula.',
             'circular'            => 'The formula creates a circular dependency: :cycle',
             'referenced-by'       => 'This attribute cannot be deleted because it is used by the formula of: :attributes',
+            'not-applicable'      => 'A calculated attribute cannot be required, unique or filterable.',
         ],
     ],
 

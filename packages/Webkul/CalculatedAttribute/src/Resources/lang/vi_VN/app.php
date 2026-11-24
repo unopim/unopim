@@ -42,6 +42,7 @@ return [
             'empty'               => 'Thuộc tính được tính cần có một công thức.',
             'circular'            => 'Công thức tạo ra phụ thuộc vòng: :cycle',
             'referenced-by'       => 'Không thể xóa thuộc tính này vì nó được dùng trong công thức của: :attributes',
+            'not-applicable'      => 'Thuộc tính tính toán không thể là bắt buộc, duy nhất hoặc có thể lọc.',
         ],
     ],
 

@@ -42,6 +42,7 @@ return [
             'empty'               => 'Een berekend attribuut heeft een formule nodig.',
             'circular'            => 'De formule veroorzaakt een circulaire afhankelijkheid: :cycle',
             'referenced-by'       => 'Dit attribuut kan niet worden verwijderd omdat het wordt gebruikt door de formule van: :attributes',
+            'not-applicable'      => 'Een berekend attribuut kan niet verplicht, uniek of filterbaar zijn.',
         ],
     ],
 

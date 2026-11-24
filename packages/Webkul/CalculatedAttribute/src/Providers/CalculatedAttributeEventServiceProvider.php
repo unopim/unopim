@@ -14,6 +14,7 @@ use Webkul\CalculatedAttribute\Rules\ValidFormula;
 use Webkul\CalculatedAttribute\Services\AttributeRegistry;
 use Webkul\CalculatedAttribute\Services\CategoryPathResolver;
 use Webkul\CalculatedAttribute\Services\FormulaValidator;
+use Webkul\Theme\ViewRenderEventManager;
 
 class CalculatedAttributeEventServiceProvider extends ServiceProvider
 {
@@ -52,14 +53,14 @@ class CalculatedAttributeEventServiceProvider extends ServiceProvider
             'unopim.admin.catalog.attributes.create_form_controls.after',
             'unopim.admin.catalog.attributes.edit.card.label.after',
         ] as $event) {
-            Event::listen($event, function ($viewRenderEventManager, $attribute = null): void {
+            Event::listen($event, function (ViewRenderEventManager $viewRenderEventManager, mixed $attribute = null): void {
                 $viewRenderEventManager->addTemplate('calculated_attribute::catalog.attributes.formula');
             });
         }
 
         Event::listen(
             'unopim.admin.products.dynamic-attribute-fields.control.calculated.before',
-            function ($viewRenderEventManager): void {
+            function (ViewRenderEventManager $viewRenderEventManager): void {
                 $viewRenderEventManager->addTemplate('calculated_attribute::catalog.products.calculated-field');
             }
         );
@@ -128,7 +129,18 @@ class CalculatedAttributeEventServiceProvider extends ServiceProvider
 
                 $presence = $attribute === null ? ['required'] : ['sometimes', 'required'];
 
-                return ['formula' => array_merge($presence, ['string', new ValidFormula($code)])];
+                $notApplicable = static function (string $field, mixed $value, \Closure $fail): void {
+                    if (filter_var($value, FILTER_VALIDATE_BOOLEAN)) {
+                        $fail(trans('calculated_attribute::app.formula.errors.not-applicable'));
+                    }
+                };
+
+                return [
+                    'formula'       => array_merge($presence, ['string', new ValidFormula($code)]),
+                    'is_required'   => ['sometimes', 'nullable', $notApplicable],
+                    'is_unique'     => ['sometimes', 'nullable', $notApplicable],
+                    'is_filterable' => ['sometimes', 'nullable', $notApplicable],
+                ];
             }
         );
     }

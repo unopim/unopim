@@ -42,6 +42,7 @@ return [
             'empty'               => 'En beregnet attributt trenger en formel.',
             'circular'            => 'Formelen skaper en sirkulær avhengighet: :cycle',
             'referenced-by'       => 'Denne attributten kan ikke slettes fordi den brukes av formelen til: :attributes',
+            'not-applicable'      => 'Et beregnet attributt kan ikke være obligatorisk, unikt eller filtrerbart.',
         ],
     ],
 

@@ -173,7 +173,7 @@ it('leaves the stored formula alone when an update does not mention it', functio
     app(AttributeRegistry::class)->flush();
 
     $this->withHeaders($headers)
-        ->json('PATCH', route('admin.api.attributes.patch', $code), ['is_required' => 1])
+        ->json('PATCH', route('admin.api.attributes.patch', $code), ['is_required' => 0])
         ->assertOk();
 
     $this->assertDatabaseHas('attributes', [

@@ -42,6 +42,7 @@ return [
             'empty'               => 'Un atribut calculat necessita una fórmula.',
             'circular'            => 'La fórmula crea una dependència circular: :cycle',
             'referenced-by'       => "Aquest atribut no es pot eliminar perquè l'utilitza la fórmula de: :attributes",
+            'not-applicable'      => 'Un atribut calculat no pot ser obligatori, únic ni filtrable.',
         ],
     ],
 

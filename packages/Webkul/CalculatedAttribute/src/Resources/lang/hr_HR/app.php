@@ -42,6 +42,7 @@ return [
             'empty'               => 'Izračunati atribut treba formulu.',
             'circular'            => 'Formula stvara kružnu ovisnost: :cycle',
             'referenced-by'       => 'Ovaj atribut nije moguće izbrisati jer ga koristi formula atributa: :attributes',
+            'not-applicable'      => 'Izračunati atribut ne može biti obavezan, jedinstven ni filtrirajući.',
         ],
     ],
 

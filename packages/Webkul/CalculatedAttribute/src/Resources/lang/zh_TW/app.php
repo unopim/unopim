@@ -42,6 +42,7 @@ return [
             'empty'               => '計算屬性需要一個公式。',
             'circular'            => '此公式造成循環相依：:cycle',
             'referenced-by'       => '無法刪除此屬性，因為下列屬性的公式正在使用它：:attributes',
+            'not-applicable'      => '計算屬性不能設為必填、唯一或可篩選。',
         ],
     ],
 

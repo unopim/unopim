@@ -42,6 +42,7 @@ return [
             'empty'               => 'Hesaplanan bir öznitelik için formül gereklidir.',
             'circular'            => 'Formül döngüsel bir bağımlılık oluşturuyor: :cycle',
             'referenced-by'       => 'Bu öznitelik silinemez, çünkü şunların formülünde kullanılıyor: :attributes',
+            'not-applicable'      => 'Hesaplanan bir öznitelik zorunlu, benzersiz veya filtrelenebilir olamaz.',
         ],
     ],
 

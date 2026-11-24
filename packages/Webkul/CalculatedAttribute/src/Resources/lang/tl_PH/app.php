@@ -42,6 +42,7 @@ return [
             'empty'               => 'Kailangan ng pormula ang isang kinakalkulang attribute.',
             'circular'            => 'Lumilikha ang pormula ng paikot na dependency: :cycle',
             'referenced-by'       => 'Hindi matatanggal ang attribute na ito dahil ginagamit ito ng pormula ng: :attributes',
+            'not-applicable'      => 'Ang kinakalkulang attribute ay hindi maaaring kailangan, natatangi o nafi-filter.',
         ],
     ],
 

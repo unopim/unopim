@@ -42,6 +42,7 @@ return [
             'empty'               => 'Un attribut calculé nécessite une formule.',
             'circular'            => 'La formule crée une dépendance circulaire : :cycle',
             'referenced-by'       => 'Cet attribut ne peut pas être supprimé car il est utilisé par la formule de : :attributes',
+            'not-applicable'      => 'Un attribut calculé ne peut pas être obligatoire, unique ou filtrable.',
         ],
     ],
 

@@ -42,6 +42,7 @@ return [
             'empty'               => 'Ein berechnetes Attribut braucht eine Formel.',
             'circular'            => 'Die Formel erzeugt eine zirkuläre Abhängigkeit: :cycle',
             'referenced-by'       => 'Dieses Attribut kann nicht gelöscht werden, weil es in der Formel folgender Attribute verwendet wird: :attributes',
+            'not-applicable'      => 'Ein berechnetes Attribut kann nicht erforderlich, eindeutig oder filterbar sein.',
         ],
     ],
 

@@ -42,6 +42,7 @@ return [
             'empty'               => 'Atribut terhitung memerlukan sebuah rumus.',
             'circular'            => 'Rumus menciptakan ketergantungan melingkar: :cycle',
             'referenced-by'       => 'Atribut ini tidak dapat dihapus karena digunakan oleh rumus dari: :attributes',
+            'not-applicable'      => 'Atribut terhitung tidak dapat bersifat wajib, unik, atau dapat difilter.',
         ],
     ],
 

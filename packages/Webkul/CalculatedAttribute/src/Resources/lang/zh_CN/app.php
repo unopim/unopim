@@ -42,6 +42,7 @@ return [
             'empty'               => '计算属性需要一个公式。',
             'circular'            => '该公式造成了循环依赖：:cycle',
             'referenced-by'       => '无法删除该属性，因为以下属性的公式正在使用它：:attributes',
+            'not-applicable'      => '计算属性不能设为必填、唯一或可筛选。',
         ],
     ],
 

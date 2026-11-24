@@ -42,6 +42,7 @@ return [
             'empty'               => 'Laskettu attribuutti tarvitsee kaavan.',
             'circular'            => 'Kaava muodostaa kehäriippuvuuden: :cycle',
             'referenced-by'       => 'Tätä attribuuttia ei voi poistaa, koska sitä käyttää seuraavien kaava: :attributes',
+            'not-applicable'      => 'Laskettu attribuutti ei voi olla pakollinen, yksilöllinen eikä suodatettava.',
         ],
     ],
 

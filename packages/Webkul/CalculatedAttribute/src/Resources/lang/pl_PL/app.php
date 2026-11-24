@@ -42,6 +42,7 @@ return [
             'empty'               => 'Atrybut obliczany wymaga formuły.',
             'circular'            => 'Formuła tworzy zależność cykliczną: :cycle',
             'referenced-by'       => 'Tego atrybutu nie można usunąć, ponieważ używa go formuła: :attributes',
+            'not-applicable'      => 'Atrybut obliczany nie może być wymagany, unikalny ani filtrowalny.',
         ],
     ],
 

@@ -42,6 +42,7 @@ return [
             'empty'               => '계산 속성에는 수식이 필요합니다.',
             'circular'            => '수식이 순환 종속성을 만듭니다: :cycle',
             'referenced-by'       => '이 속성은 다음 속성의 수식에서 사용되므로 삭제할 수 없습니다: :attributes',
+            'not-applicable'      => '계산된 속성은 필수, 고유 또는 필터 가능으로 설정할 수 없습니다.',
         ],
     ],
 

@@ -42,6 +42,7 @@ return [
             'empty'               => 'Un atribut calculat are nevoie de o formulă.',
             'circular'            => 'Formula creează o dependență circulară: :cycle',
             'referenced-by'       => 'Acest atribut nu poate fi șters deoarece este folosit de formula pentru: :attributes',
+            'not-applicable'      => 'Un atribut calculat nu poate fi obligatoriu, unic sau filtrabil.',
         ],
     ],
 
