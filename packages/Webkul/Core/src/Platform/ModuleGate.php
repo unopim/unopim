@@ -75,7 +75,7 @@ final class ModuleGate
      */
     public function hasMultipleModules(): bool
     {
-        return count((array) config('platform_modules')) > 1;
+        return count($this->registered()) > 1;
     }
 
     /**

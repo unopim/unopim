@@ -24,15 +24,20 @@ async function openMultiselect(page, name) {
   return wrapper;
 }
 
+/**
+ * Strip the trailing "Press enter to select" hint vue-multiselect appends to an option label.
+ */
 function cleanOptionLabel(text) {
   return (text || '').trim().replace(/\s*Press enter to select\s*$/i, '').trim();
 }
 
+/**
+ * Type into the named multiselect and pick the option matching the given label.
+ */
 async function selectMultiselectOption(page, name, label) {
   const wrapper = await openMultiselect(page, name);
 
   await wrapper.locator('input.multiselect__input').first().fill(label).catch(() => {});
-  await page.waitForTimeout(400);
 
   const option = page.getByRole('option', { name: label }).first();
   await option.waitFor({ state: 'visible', timeout: 10000 });
@@ -41,9 +46,11 @@ async function selectMultiselectOption(page, name, label) {
   await closeDropdown(page);
 }
 
+/**
+ * Open the named multiselect, pick its first option, and return that option's label.
+ */
 async function selectFirstMultiselectOption(page, name) {
   await openMultiselect(page, name);
-  await page.waitForTimeout(600);
 
   const first = page.locator('.multiselect__content-wrapper:visible li.multiselect__element').first();
   await first.waitFor({ state: 'visible', timeout: 12000 });

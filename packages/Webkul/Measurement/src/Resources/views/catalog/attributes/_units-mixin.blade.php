@@ -41,6 +41,10 @@
                     return null;
                 },
 
+                /**
+                 * Units belong to one family and are fetched per selection, so the
+                 * page does not carry the units of every family in the catalogue.
+                 */
                 async fetchUnits(familyCode) {
                     if (! familyCode) {
                         this.unitsList = [];

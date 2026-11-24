@@ -31,3 +31,17 @@ it('shows the hidden-sections field when an optional module (DAM) is registered'
     $response->assertOk();
     $response->assertSee('hidden_sections');
 });
+
+it('hides the hidden-sections field on the configuration page when only PIM is registered', function (): void {
+    config(['platform_modules' => [
+        'pim' => ['name' => 'core::app.platform-modules.pim', 'requires' => [], 'route_prefixes' => []],
+    ]]);
+
+    $this->loginAsAdmin();
+
+    $response = $this->get(route('admin.configuration.edit', ['slug' => 'general', 'slug2' => 'platform']));
+
+    $response->assertOk();
+    $response->assertSee('modules');
+    $response->assertDontSee('hidden_sections');
+});
