@@ -32,6 +32,14 @@ class NullDerivedValueResolver implements DerivedValueResolver
     /**
      * {@inheritdoc}
      */
+    public function resolveScopes(ProductContext $product, array $channelsAndLocales, ?array $codes = null): array
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function mergeInto(array $values, ProductContext $product, ?string $channel, ?string $locale): array
     {
         return $values;

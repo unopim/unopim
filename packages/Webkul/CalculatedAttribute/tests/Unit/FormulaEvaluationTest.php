@@ -317,3 +317,73 @@ it('merges computed values into the scope each attribute declares', function ():
     expect($merged['common']['sku_upper'])->toBe('AB-1');
     expect($merged['locale_specific']['de_DE']['localised'])->toBe('ab-1');
 });
+
+/**
+ * A resolver that records each attribute it actually evaluates, so the tests
+ * can tell a computed value from one reused out of the memo.
+ */
+function calcCountingResolver(array $attributes): CalculatedValueResolver
+{
+    $registry = new InMemoryAttributeRegistry($attributes);
+
+    $language = new SafeExpressionLanguage(new FormulaFunctions(new FakeCategoryPaths));
+
+    return new class($language, new FormulaCompiler($language, $registry), $registry) extends CalculatedValueResolver
+    {
+        /** @var array<int, string> */
+        public array $evaluated = [];
+
+        protected function evaluate(
+            string $code,
+            ProductContext $product,
+            ?string $channel,
+            ?string $locale,
+            array &$resolved,
+            int $depth,
+        ): mixed {
+            if (! array_key_exists($code, $resolved)) {
+                $this->evaluated[] = $code;
+            }
+
+            return parent::evaluate($code, $product, $channel, $locale, $resolved, $depth);
+        }
+    };
+}
+
+it('evaluates an unscoped attribute once across every channel and locale', function (): void {
+    $resolver = calcCountingResolver([
+        'common_key' => ['type' => 'calculated', 'formula' => 'upper(sku)'],
+        'per_locale' => ['type' => 'calculated', 'formula' => "concat('-', common_key, locale)", 'per_locale' => true],
+    ]);
+
+    $scopes = $resolver->resolveScopes(
+        new ProductContext(sku: 'ab'),
+        ['default' => ['de_DE', 'en_US'], 'print' => ['de_DE', 'en_US']],
+    );
+
+    expect($scopes['print']['en_US'])->toBe(['common_key' => 'AB', 'per_locale' => 'AB-en_US'])
+        ->and($scopes['default']['de_DE']['per_locale'])->toBe('AB-de_DE')
+        ->and(array_count_values($resolver->evaluated))->toBe(['common_key' => 1, 'per_locale' => 2]);
+});
+
+it('derives only the requested codes, plus what they read', function (): void {
+    $resolver = calcCountingResolver([
+        'base'     => ['type' => 'calculated', 'formula' => 'upper(sku)'],
+        'wanted'   => ['type' => 'calculated', 'formula' => "concat('-', base, 'x')"],
+        'unwanted' => ['type' => 'calculated', 'formula' => 'lower(sku)'],
+    ]);
+
+    $scopes = $resolver->resolveScopes(new ProductContext(sku: 'ab'), ['default' => ['en_US']], ['wanted', 'sku']);
+
+    expect($scopes['default']['en_US'])->toBe(['wanted' => 'AB-x'])
+        ->and($resolver->evaluated)->not->toContain('unwanted');
+});
+
+it('derives nothing when no requested code is calculated', function (): void {
+    $resolver = calcCountingResolver([
+        'calc' => ['type' => 'calculated', 'formula' => 'upper(sku)'],
+    ]);
+
+    expect($resolver->resolveScopes(new ProductContext(sku: 'ab'), ['default' => ['en_US']], ['sku', 'name']))->toBe([])
+        ->and($resolver->evaluated)->toBe([]);
+});

@@ -32,6 +32,19 @@ interface DerivedValueResolver
     public function resolve(ProductContext $product, ?string $channel, ?string $locale): array;
 
     /**
+     * Derive values for one product across several channel/locale scopes.
+     *
+     * Meant for callers that walk every scope of a product, such as the
+     * exporter. An implementation may compute a value once and reuse it for
+     * every scope the attribute does not vary by.
+     *
+     * @param  array<string, array<int, string>>  $channelsAndLocales  channel code => locale codes
+     * @param  array<int, string>|null  $codes  restrict to these attribute codes; null for all
+     * @return array<string, array<string, array<string, mixed>>> channel => locale => code => value
+     */
+    public function resolveScopes(ProductContext $product, array $channelsAndLocales, ?array $codes = null): array;
+
+    /**
      * Merge derived values into a `values` array under each attribute's own
      * scope, leaving stored values untouched.
      *

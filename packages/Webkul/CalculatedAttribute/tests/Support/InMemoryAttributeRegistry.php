@@ -40,6 +40,7 @@ class InMemoryAttributeRegistry extends AttributeRegistry
         ];
 
         $this->allowedNames = null;
+        $this->hasCalculated = null;
 
         $this->version++;
 
@@ -53,6 +54,7 @@ class InMemoryAttributeRegistry extends AttributeRegistry
     public function flush(): void
     {
         $this->allowedNames = null;
+        $this->hasCalculated = null;
 
         $this->version++;
     }

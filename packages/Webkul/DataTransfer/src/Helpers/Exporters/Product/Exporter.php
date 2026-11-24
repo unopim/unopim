@@ -651,6 +651,8 @@ class Exporter extends AbstractExporter
             $commonFields = $this->getCommonFields($rowData);
             unset($commonFields['sku']);
 
+            $derivedValues = $this->derivedValuesForProduct($rowData, $productValues);
+
             foreach ($this->channelsAndLocales as $channel => $locales) {
                 foreach ($locales as $locale) {
                     $localeSpecificFields = $this->getLocaleSpecificFields($rowData, $locale);
@@ -668,7 +670,7 @@ class Exporter extends AbstractExporter
                         $mergedFields = $this->renderTemplateValues($mergedFields, $productValues, $product->sku, $channel, $locale);
                     }
 
-                    $mergedFields = $this->applyDerivedValues($mergedFields, $rowData, $productValues, $channel, $locale);
+                    $mergedFields = array_merge($mergedFields, $derivedValues[$channel][$locale] ?? []);
 
                     $values = $this->setAttributesValues($mergedFields, $filePath, $locale);
 
@@ -690,43 +692,35 @@ class Exporter extends AbstractExporter
     }
 
     /**
-     * Overlay the product's derived attribute values onto one flattened export
-     * row.
+     * The product's derived attribute values for every exported scope,
+     * computed once per product before its rows are written.
      *
-     * Applied here, after the scopes have been flattened for this row:
-     * setAttributesValues() then treats them exactly like stored values, so
-     * they pick up the same escaping and the same selected-attribute filtering
-     * with no special-casing downstream.
+     * Only the selected attribute codes are derived (all of them when the
+     * profile selects none), and a value is computed once for every scope the
+     * attribute does not vary by. The result is overlaid on each row after the
+     * scopes have been flattened, so setAttributesValues() treats derived and
+     * stored values alike — same escaping, same column filtering.
      *
-     * Resolved lazily and skipped entirely when nothing is derived, so an
-     * installation without such attributes pays nothing beyond one memoised
-     * array check — the same lazy pattern as measurementHelper().
+     * Skipped outright when nothing is derived, so an installation without
+     * such attributes pays one memoised check per batch.
      *
-     * @param  array<string, mixed>  $mergedFields  scope-flattened values for this row
      * @param  array<string, mixed>  $rowData  the product's export row data
      * @param  array<string, mixed>  $productValues  variant-resolved product values
-     * @return array<string, mixed>
+     * @return array<string, array<string, array<string, mixed>>> channel => locale => code => value
      */
-    protected function applyDerivedValues(
-        array $mergedFields,
-        array $rowData,
-        array $productValues,
-        string $channel,
-        string $locale,
-    ): array {
+    protected function derivedValuesForProduct(array $rowData, array $productValues): array
+    {
         $resolver = $this->derivedValueResolver();
 
         if (! $resolver->hasDerivedValues()) {
-            return $mergedFields;
+            return [];
         }
 
-        $derived = $resolver->resolve(
+        return $resolver->resolveScopes(
             ProductContext::fromExportRow($rowData, $productValues),
-            $channel,
-            $locale
+            $this->channelsAndLocales,
+            $this->selectedAttributeCodes === [] ? null : $this->selectedAttributeCodes,
         );
-
-        return array_merge($mergedFields, $derived);
     }
 
     protected function derivedValueResolver(): DerivedValueResolver

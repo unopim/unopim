@@ -64,6 +64,57 @@ class CalculatedValueResolver implements DerivedValueResolver
     }
 
     /**
+     * {@inheritdoc}
+     *
+     * Each value is computed once per scope it can differ in: an attribute that
+     * is neither per channel nor per locale is evaluated once for the product
+     * and reused for every row, a per-locale one once per locale, and so on.
+     * Values for scopes already computed are seeded into the memo, so a
+     * formula building on such an attribute does not re-evaluate it either.
+     */
+    public function resolveScopes(ProductContext $product, array $channelsAndLocales, ?array $codes = null): array
+    {
+        $calculated = $this->registry->calculatedCodes();
+
+        $targets = $codes === null ? $calculated : array_values(array_intersect($calculated, $codes));
+
+        if ($targets === []) {
+            return [];
+        }
+
+        $shared = [];
+        $scopes = [];
+
+        foreach ($channelsAndLocales as $channel => $locales) {
+            $channel = (string) $channel;
+
+            foreach ($locales === [] ? [null] : $locales as $locale) {
+                $resolved = [];
+
+                foreach ($shared as $code => $byKey) {
+                    $key = $this->registry->scopeKey($code, $channel, $locale);
+
+                    if (array_key_exists($key, $byKey)) {
+                        $resolved[$code] = $byKey[$key];
+                    }
+                }
+
+                foreach ($targets as $code) {
+                    $this->evaluate($code, $product, $channel, $locale, $resolved, 0);
+                }
+
+                foreach ($resolved as $code => $value) {
+                    $shared[$code][$this->registry->scopeKey($code, $channel, $locale)] = $value;
+                }
+
+                $scopes[$channel][(string) $locale] = array_intersect_key($resolved, array_flip($targets));
+            }
+        }
+
+        return $scopes;
+    }
+
+    /**
      * Compute a single calculated attribute. Returns null when the attribute is
      * not calculated or its formula cannot be evaluated.
      */
@@ -95,7 +146,7 @@ class CalculatedValueResolver implements DerivedValueResolver
      */
     public function hasDerivedValues(): bool
     {
-        return $this->registry->calculatedCodes() !== [];
+        return $this->registry->hasCalculated();
     }
 
     /**
@@ -124,9 +175,11 @@ class CalculatedValueResolver implements DerivedValueResolver
             return $values;
         }
 
-        foreach ($channelsAndLocales as $channel => $locales) {
-            foreach ($locales === [] ? [null] : $locales as $locale) {
-                $values = $this->mergeInto($values, $product, (string) $channel, $locale);
+        foreach ($this->resolveScopes($product, $channelsAndLocales) as $channel => $byLocale) {
+            foreach ($byLocale as $locale => $resolved) {
+                foreach ($resolved as $code => $value) {
+                    $this->registry->placeValue($values, $code, $value, (string) $channel, $locale === '' ? null : (string) $locale);
+                }
             }
         }
 

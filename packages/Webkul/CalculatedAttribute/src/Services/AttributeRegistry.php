@@ -35,6 +35,8 @@ class AttributeRegistry
      */
     protected ?array $allowedNames = null;
 
+    protected ?bool $hasCalculated = null;
+
     /**
      * Incremented on every flush. Anything caching work derived from the
      * snapshot compares this instead of subscribing to events of its own.
@@ -62,10 +64,49 @@ class AttributeRegistry
      */
     public function calculatedCodes(): array
     {
+        if (! $this->hasCalculated()) {
+            return [];
+        }
+
         return array_keys(array_filter(
             $this->all(),
             fn (array $meta): bool => $meta['type'] === Attribute::CALCULATED_FIELD_TYPE
         ));
+    }
+
+    /**
+     * Whether any calculated attribute exists at all.
+     *
+     * Answered with one count query and remembered for the snapshot, so the
+     * product page, the API and every export batch can ask it without loading
+     * the attribute table on an installation that does not use the feature.
+     * The column check is skipped too: a `calculated` row can only have been
+     * saved once this package's migration added the column.
+     */
+    public function hasCalculated(): bool
+    {
+        if ($this->attributes !== null) {
+            return $this->hasCalculated ??= in_array(
+                Attribute::CALCULATED_FIELD_TYPE,
+                array_column($this->attributes, 'type'),
+                true
+            );
+        }
+
+        return $this->hasCalculated ??= $this->attributeRepository
+            ->count(['type' => Attribute::CALCULATED_FIELD_TYPE]) > 0;
+    }
+
+    /**
+     * The scope a computed value is shared across: the channel only when the
+     * attribute is per channel, the locale only when it is per locale.
+     */
+    public function scopeKey(string $code, ?string $channel, ?string $locale): string
+    {
+        $meta = $this->all()[$code] ?? null;
+
+        return ($meta['per_channel'] ?? false ? (string) $channel : '*')
+            .'|'.($meta['per_locale'] ?? false ? (string) $locale : '*');
     }
 
     public function isCalculated(string $code): bool
@@ -256,6 +297,7 @@ class AttributeRegistry
     {
         $this->attributes = null;
         $this->allowedNames = null;
+        $this->hasCalculated = null;
         $this->version++;
     }
 }
