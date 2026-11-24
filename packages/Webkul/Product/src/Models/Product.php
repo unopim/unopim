@@ -298,6 +298,10 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
             return $image;
         }
 
+        if (! $this->parent_id) {
+            return null;
+        }
+
         return $this->getOwnDisplayImage($imageAttributes, $currentChannelCode, $currentLocaleCode, $this->resolvedValues());
     }
 
@@ -349,10 +353,42 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
     }
 
     /**
+     * Kept as a public BC shim for extensions that called this directly: finds
+     * a representative image by walking down into this product's variants,
+     * without checking its own value first or walking up to an ancestor.
+     * Internal callers use `getOwnOrVariantDisplayImage()` instead, which also
+     * checks the product's own value first.
+     */
+    public function getVariantDisplayImage(?string $currentChannelCode = null, ?string $currentLocaleCode = null, mixed $imageAttributes = null): ?string
+    {
+        if (! $this->id) {
+            return null;
+        }
+
+        $imageAttributes ??= $this->getImageAttributes();
+
+        $currentChannelCode ??= core()->getRequestedChannelCode();
+
+        $currentLocaleCode ??= core()->getRequestedLocaleCode();
+
+        foreach ($this->variants as $variant) {
+            if ($variantImage = $variant->getOwnOrVariantDisplayImage($imageAttributes, $currentChannelCode, $currentLocaleCode)) {
+                return $variantImage;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Normalize product data with product image displaye url
      */
     public function normalizeWithImage(?string $currentChannelCode = null, ?string $currentLocaleCode = null, mixed $imageAttributes = null): array
     {
+        $currentChannelCode ??= core()->getRequestedChannelCode();
+
+        $currentLocaleCode ??= core()->getRequestedLocaleCode();
+
         $image = $this->getProductDisplayImage($currentChannelCode, $currentLocaleCode, $imageAttributes);
 
         $image = $image

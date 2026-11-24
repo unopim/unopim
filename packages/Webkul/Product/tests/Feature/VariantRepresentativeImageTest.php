@@ -132,3 +132,20 @@ it('asks the bound fallback resolver only when no classic image was found', func
     expect($withoutImage->normalizeWithImage()['image'])->toBe('https://dam.example.test/assets/'.$withoutImage->id.'/thumbnail');
     expect($withImage->normalizeWithImage()['image'])->toBe(Storage::url('product/9/own.jpg'));
 });
+
+it('does not ask the bound fallback resolver when a parent image is inherited', function () {
+    Attribute::firstOrCreate(['code' => 'image'], ['type' => 'image']);
+
+    app()->bind(ProductImageFallbackResolverContract::class, fn (): ProductImageFallbackResolverContract => new class implements ProductImageFallbackResolverContract
+    {
+        public function resolveFallbackUrl(ProductContract $product, ?string $currentChannelCode = null, ?string $currentLocaleCode = null): ?string
+        {
+            throw new RuntimeException('Fallback resolver should not be asked when an inherited image was found.');
+        }
+    });
+
+    $parent = productWithImage(['type' => ProductType::Configurable->value], 'product/11/parent.jpg');
+    $child = productWithImage(['type' => ProductType::Simple->value, 'parent_id' => $parent->id]);
+
+    expect($child->normalizeWithImage()['image'])->toBe(Storage::url('product/11/parent.jpg'));
+});
