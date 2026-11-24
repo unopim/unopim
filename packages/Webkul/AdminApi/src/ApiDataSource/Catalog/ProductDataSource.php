@@ -106,7 +106,7 @@ class ProductDataSource extends ApiDataSource
         $mergedValuesById = $this->variantValueResolver()->resolveBatch($rows);
 
         return array_map(
-            fn ($item) => $this->normalizeProduct(
+            fn (array $item): array => $this->normalizeProduct(
                 $item,
                 $withCompleteness,
                 $completenessByProduct,

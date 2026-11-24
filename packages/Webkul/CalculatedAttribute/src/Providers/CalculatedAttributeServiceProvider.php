@@ -2,6 +2,7 @@
 
 namespace Webkul\CalculatedAttribute\Providers;
 
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Webkul\Attribute\Contracts\DerivedValueResolver as DerivedValueResolverContract;
@@ -72,7 +73,7 @@ class CalculatedAttributeServiceProvider extends ServiceProvider
 
         $this->app->scoped(
             CategoryPathProvider::class,
-            fn ($app): CategoryPathResolver => $app->make(CategoryPathResolver::class)
+            fn (Application $app): CategoryPathResolver => $app->make(CategoryPathResolver::class)
         );
 
         $this->app->scoped(FormulaFunctions::class);
@@ -89,7 +90,7 @@ class CalculatedAttributeServiceProvider extends ServiceProvider
 
         $this->app->bind(
             DerivedValueResolverContract::class,
-            fn ($app): CalculatedValueResolver => $app->make(CalculatedValueResolver::class)
+            fn (Application $app): CalculatedValueResolver => $app->make(CalculatedValueResolver::class)
         );
     }
 }
