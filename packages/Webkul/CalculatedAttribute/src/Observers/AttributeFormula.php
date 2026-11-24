@@ -8,14 +8,16 @@ use Webkul\Attribute\Models\Attribute;
 /**
  * Decides what actually lands in the `formula` column.
  *
- * On the model rather than in a controller, because three write paths reach it
- * — the admin form, the REST create and the REST update — and a formula left
- * behind by a type change would keep being evaluated for an attribute that no
- * longer has one.
+ * The column is added by this package's migration, so it is deliberately not
+ * fillable on the core model: a core install without the package, or with it
+ * not yet migrated, must not try to write it. The submitted formula is taken
+ * from the request here instead and assigned directly, which every write path
+ * reaching the model shares — the admin form, the REST create and the REST
+ * update. It has already been validated by the time the model saves.
  *
- * An attribute of some other type is left alone entirely when it carries no
- * `formula` at all, so a save made before this package's migration has run does
- * not try to write a column that is not there yet.
+ * A formula left behind by a type change would keep being evaluated for an
+ * attribute that no longer has one, so it is cleared. An attribute of some
+ * other type that never had the column loaded is left alone entirely.
  */
 class AttributeFormula
 {
@@ -23,17 +25,19 @@ class AttributeFormula
     {
         $isCalculated = $attribute->type === Attribute::CALCULATED_FIELD_TYPE;
 
-        if (! $isCalculated && ! array_key_exists('formula', $attribute->getAttributes())) {
-            return;
-        }
-
         if (! $isCalculated) {
-            $attribute->formula = null;
+            if (array_key_exists('formula', $attribute->getAttributes())) {
+                $attribute->formula = null;
+            }
 
             return;
         }
 
-        $formula = trim((string) $attribute->formula);
+        $submitted = request()->exists('formula')
+            ? request()->input('formula')
+            : $attribute->getAttributes()['formula'] ?? null;
+
+        $formula = trim(is_string($submitted) ? $submitted : '');
 
         $attribute->formula = $formula === '' ? null : $formula;
     }

@@ -43,7 +43,6 @@ use Webkul\Product\Validator\Rule\TemplateExpressionRule;
     'usable_in_grid',
     'allowed_extensions',
     'max_file_size',
-    'formula',
 ])]
 class Attribute extends TranslatableModel implements AttributeContract, HistoryContract, PresentableHistoryInterface
 {
