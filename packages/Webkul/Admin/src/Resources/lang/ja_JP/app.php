@@ -3065,6 +3065,7 @@ return [
         'passports'                => '製品パスポート',
         'publish'                  => '公開',
         'withdraw'                 => '取り下げ',
+        'redact'                   => '墨消し（元に戻せません）',
         'addresses'                => '住所',
         'attribute-families'       => '属性ファミリー',
         'attribute-groups'         => '属性グループ',

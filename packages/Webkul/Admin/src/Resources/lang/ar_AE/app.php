@@ -3064,6 +3064,7 @@ return [
         'passports'                => 'جوازات المنتج',
         'publish'                  => 'نشر',
         'withdraw'                 => 'سحب',
+        'redact'                   => 'حذف نهائي (لا رجعة فيه)',
         'addresses'                => 'عناوين',
         'attribute-families'       => 'عائلات السمات',
         'attribute-groups'         => 'مجموعات السمات',

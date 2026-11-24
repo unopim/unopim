@@ -300,6 +300,12 @@ deliberately:
 
 Remove `RESPONSE_CACHE_ENABLED`. It no longer has any effect.
 
+### Grant the passport Redact permission to API integrations
+
+Redacting a passport through the API now needs the **Redact** permission instead of
+**Withdraw**. For custom integrations that redact, tick **Redact** under
+Configuration → Integrations.
+
 ### Re-cache configuration and routes
 
 The upgrade runs `optimize:clear` and does not re-cache, so the new release

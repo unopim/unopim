@@ -3068,6 +3068,7 @@ return [
         'passports'                => '产品护照',
         'publish'                  => '发布',
         'withdraw'                 => '撤回',
+        'redact'                   => '删除数据（不可恢复）',
         'addresses'                => '地址',
         'attribute-families'       => '属性家庭',
         'attribute-groups'         => '属性组',

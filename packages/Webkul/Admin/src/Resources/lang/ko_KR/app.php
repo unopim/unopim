@@ -3068,6 +3068,7 @@ return [
         'passports'                => '제품 여권',
         'publish'                  => '게시',
         'withdraw'                 => '회수',
+        'redact'                   => '삭제 처리 (되돌릴 수 없음)',
         'addresses'                => '주소',
         'attribute-families'       => '속성 가족',
         'attribute-groups'         => '속성 그룹',

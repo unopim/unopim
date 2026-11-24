@@ -3065,6 +3065,7 @@ return [
         'passports'                => 'Produktpässe',
         'publish'                  => 'Veröffentlichen',
         'withdraw'                 => 'Zurückziehen',
+        'redact'                   => 'Schwärzen (unwiderruflich)',
         'addresses'                => 'Adressen',
         'attribute-families'       => 'Attributfamilien',
         'attribute-groups'         => 'Attributgruppen',

@@ -3063,6 +3063,7 @@ return [
         'passports'                => 'Passeports produit',
         'publish'                  => 'Publier',
         'withdraw'                 => 'Retirer',
+        'redact'                   => 'Caviarder (irréversible)',
         'addresses'                => 'Adresses',
         'attribute-families'       => 'Familles d\'attributs',
         'attribute-groups'         => 'Groupes d\'attributs',

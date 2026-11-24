@@ -3065,6 +3065,7 @@ return [
         'passports'                => 'Produktpas',
         'publish'                  => 'Udgiv',
         'withdraw'                 => 'Træk tilbage',
+        'redact'                   => 'Slet permanent (uigenkaldeligt)',
         'addresses'                => 'Adresser',
         'attribute-families'       => 'Attributfamilier',
         'attribute-groups'         => 'Attributgrupper',

@@ -521,9 +521,9 @@ return [
         'route' => 'admin.api.passports.reinstate',
         'sort'  => 8,
     ], [
-        'key'   => 'api.catalog.passports.withdraw',
-        'name'  => 'admin::app.acl.withdraw',
+        'key'   => 'api.catalog.passports.redact',
+        'name'  => 'admin::app.acl.redact',
         'route' => 'admin.api.passports.redact',
-        'sort'  => 9,
+        'sort'  => 10,
     ],
 ];

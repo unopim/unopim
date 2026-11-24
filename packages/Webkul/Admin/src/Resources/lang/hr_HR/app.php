@@ -3065,6 +3065,7 @@ return [
         'passports'                => 'Putovnice proizvoda',
         'publish'                  => 'Objavi',
         'withdraw'                 => 'Povuci',
+        'redact'                   => 'Trajno izbriši (nepovratno)',
         'addresses'                => 'Adrese',
         'attribute-families'       => 'Attributne obitelji',
         'attribute-groups'         => 'Attributne grupe',

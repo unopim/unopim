@@ -3068,6 +3068,7 @@ return [
         'passports'                => 'Паспорти товарів',
         'publish'                  => 'Опублікувати',
         'withdraw'                 => 'Відкликати',
+        'redact'                   => 'Видалити дані (незворотно)',
         'addresses'                => 'Адреси',
         'attribute-families'       => 'Сім’ї властивостей',
         'attribute-groups'         => 'Групи властивостей',

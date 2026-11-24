@@ -3068,6 +3068,7 @@ return [
         'passports'                => 'Ürün Pasaportları',
         'publish'                  => 'Yayınla',
         'withdraw'                 => 'Geri Çek',
+        'redact'                   => 'Kalıcı Olarak Sil (geri alınamaz)',
         'addresses'                => 'Adresler',
         'attribute-families'       => 'Özellik Aileleri',
         'attribute-groups'         => 'Özellik Grupları',

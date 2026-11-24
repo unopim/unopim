@@ -37,6 +37,7 @@
 
 ## Bug fixes
 
+- Fixed the API passport redact endpoint accepting the Withdraw permission. Redact now has its own permission, which integrations that redact must be granted after upgrading.
 - Fixed `php artisan db:seed` deleting custom attributes, attribute groups, options, families, categories, channels, locales, currencies and admin users on an existing install, and failing once products existed. It now keeps existing data: it adds back any missing default attributes, attribute groups, options and default family mappings, fills the other tables only when they are empty, and no longer duplicates the Magic AI prompts or recreates measurement families. Use `unopim:install` to reset to defaults.
 - Fixed saving a new export failing with "The File Format field is required" after changing its job type. Filters that the new job type also supports, such as the file format, are now kept.
 - Fixed exports in the XLS format writing an XLSX workbook with an `.xls` name, which Excel opened with a format warning. The file is now a genuine Excel 97-2003 workbook. An XLS export is rejected before any batch runs when it needs more than 65,536 rows, 256 columns or 500,000 cells, the most that can be converted within a queue worker's timeout and memory, and the export is marked as failed with the reason. Larger product exports, such as about 3,300 products with 150 columns in one channel and locale, that previously produced the mislabelled XLSX file must use the XLSX or CSV format.

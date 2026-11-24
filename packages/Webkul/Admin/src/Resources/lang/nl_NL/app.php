@@ -3068,6 +3068,7 @@ return [
         'passports'                => 'Productpaspoorten',
         'publish'                  => 'Publiceren',
         'withdraw'                 => 'Intrekken',
+        'redact'                   => 'Definitief wissen (onomkeerbaar)',
         'addresses'                => 'Adressen',
         'attribute-families'       => 'Attribuutsets',
         'attribute-groups'         => 'Attribuutgroepen',
