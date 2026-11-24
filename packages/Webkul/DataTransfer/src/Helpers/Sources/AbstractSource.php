@@ -135,4 +135,6 @@ abstract class AbstractSource
     {
         return $this->totalColumns;
     }
+
+    public function reopen(): void {}
 }
