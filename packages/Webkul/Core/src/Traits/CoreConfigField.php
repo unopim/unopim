@@ -99,6 +99,31 @@ trait CoreConfigField
     }
 
     /**
+     * The value that overrides the field from outside the database, read from the
+     * config key named by the field's `locked_by` option (typically mapped from an
+     * environment variable), or null when nothing overrides it.
+     */
+    public function getLockedValue(array $field): mixed
+    {
+        if (empty($field['locked_by'])) {
+            return null;
+        }
+
+        $value = config((string) $field['locked_by']);
+
+        return $value === null || $value === '' ? null : $value;
+    }
+
+    /**
+     * Whether the field is overridden from outside the database, so it is shown
+     * read-only and a save never overwrites it.
+     */
+    public function isLocked(array $field): bool
+    {
+        return $this->getLockedValue($field) !== null;
+    }
+
+    /**
      * Get dependent field or value based on arguments.
      *
      * @param  string  $fieldOrValue

@@ -73,6 +73,16 @@ return [
     ],
 
     [
+        'key'          => 'system.oidc_sso',
+        'name'         => 'admin::app.settings.system-settings.oidc-sso.title',
+        'info'         => 'admin::app.settings.system-settings.oidc-sso.info',
+        'icon'         => 'icon-configuration',
+        'config_group' => 'general.oidc_sso.settings',
+        'acl'          => 'configuration.system_settings.oidc_sso',
+        'sort'         => 4,
+    ],
+
+    [
         'key'          => 'system.platform',
         'name'         => 'admin::app.configuration.index.general.platform.title',
         'info'         => 'admin::app.configuration.index.general.platform.info',

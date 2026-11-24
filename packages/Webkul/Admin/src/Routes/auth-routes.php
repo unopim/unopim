@@ -7,6 +7,7 @@ use Webkul\Admin\Http\Controllers\User\ForgetPasswordController;
 use Webkul\Admin\Http\Controllers\User\ResetPasswordController;
 use Webkul\Admin\Http\Controllers\User\SessionController;
 use Webkul\Admin\Http\Controllers\User\SsoController;
+use Webkul\Admin\Http\Middleware\EnforceSsoOnly;
 use Webkul\User\Models\Admin;
 
 Route::get('/', [Controller::class, 'redirectToLogin']);
@@ -38,7 +39,7 @@ Route::group(['prefix' => config('app.admin_url')], function () {
             /**
              * Login post route to admin auth controller.
              */
-            Route::post('', 'store')->name('admin.session.store')->middleware('throttle:admin-login');
+            Route::post('', 'store')->name('admin.session.store')->middleware(['throttle:admin-login', EnforceSsoOnly::class]);
         });
 
         Route::controller(SsoController::class)->middleware('throttle:admin-sso')->group(function () {
@@ -58,7 +59,7 @@ Route::group(['prefix' => config('app.admin_url')], function () {
     /**
      * Forget password routes.
      */
-    Route::controller(ForgetPasswordController::class)->prefix('forget-password')->group(function () {
+    Route::controller(ForgetPasswordController::class)->prefix('forget-password')->middleware(EnforceSsoOnly::class)->group(function () {
         Route::get('', 'create')->name('admin.forget_password.create');
 
         Route::post('', 'store')->name('admin.forget_password.store')->middleware('throttle:admin-forgot-password');
@@ -67,7 +68,7 @@ Route::group(['prefix' => config('app.admin_url')], function () {
     /**
      * Reset password routes.
      */
-    Route::controller(ResetPasswordController::class)->prefix('reset-password')->group(function () {
+    Route::controller(ResetPasswordController::class)->prefix('reset-password')->middleware(EnforceSsoOnly::class)->group(function () {
         Route::get('', fn () => redirect()->route('admin.forget_password.create'));
 
         Route::get('{token}', 'create')->name('admin.reset_password.create');

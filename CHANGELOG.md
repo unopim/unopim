@@ -26,6 +26,7 @@
 - The AI chat caches its instructions and tool definitions and tracks cached tokens in analytics.
 - The AI category tree tool can be scoped to a family and ranks categories by relevance at any depth.
 - AI agent extensions can register result cards, composer controls and tool decorators.
+- Admins can sign in through any OpenID Connect provider such as Authentik or Keycloak. The provider is configured under System Settings → OpenID Connect SSO or with `UNOPIM_OIDC_*` environment variables, which take precedence and lock the matching fields. ID tokens are verified against the provider's published RS256/ES256 keys. Optional switches create admins on first sign-in, map identity provider groups to roles (refusing users without a mapped group), end the provider session on logout, and turn off password sign-in (`UNOPIM_OIDC_ONLY`). An existing admin is only linked by email when the provider marks the email as verified.
 
 ## Improvements
 

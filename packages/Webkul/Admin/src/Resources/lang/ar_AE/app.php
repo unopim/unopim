@@ -13,6 +13,8 @@ return [
             'password'                   => 'كلمة المرور',
             'sso-divider'                => 'or',
             'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'sso-sign-in-with-oidc'      => 'تسجيل الدخول باستخدام OpenID Connect',
+            'sso-only'                   => 'تسجيل الدخول بكلمة المرور معطّل. يرجى استخدام تسجيل الدخول الموحد.',
             'submit-btn'                 => 'تسجيل الدخول',
             'title'                      => 'تسجيل الدخول',
             'powered-by'                 => 'مدعوم من :unopim,',
@@ -2071,6 +2073,10 @@ return [
                 'title' => 'Microsoft SSO',
                 'info'  => 'تسجيل الدخول الموحّد عبر Microsoft Entra ID لتسجيل دخول المشرف.',
             ],
+            'oidc-sso'           => [
+                'title' => 'OpenID Connect SSO',
+                'info'  => 'تسجيل دخول موحد لدخول المسؤولين مع أي مزوّد OpenID Connect.',
+            ],
         ],
 
         'appearance' => [
@@ -2147,6 +2153,7 @@ return [
     'configuration' => [
         'index' => [
             'delete'          => 'يمسح',
+            'env-locked'      => 'مُعيَّن بواسطة متغير بيئة على الخادم ولا يمكن تغييره هنا.',
             'no-result-found' => 'لم يتم العثور على نتائج',
             'save-btn'        => 'حفظ التكوين',
             'save-message'    => 'تم حفظ التكوين بنجاح',
@@ -2225,6 +2232,35 @@ return [
                         'redirect-uri-info'   => 'سجّل هذا الرابط بالضبط في تسجيل تطبيق Microsoft Entra ID ضمن المصادقة ← عناوين إعادة التوجيه، باستخدام منصة الويب.',
                         'redirect-uri-copy'   => 'نسخ',
                         'redirect-uri-copied' => 'تم النسخ إلى الحافظة',
+                    ],
+                ],
+
+                'oidc-sso' => [
+                    'info'   => 'قم بإعداد تسجيل الدخول الموحد عبر OpenID Connect لدخول المسؤولين، مثلًا باستخدام Authentik أو Keycloak.',
+                    'title'  => 'OpenID Connect SSO',
+
+                    'settings' => [
+                        'title'               => 'إعدادات OpenID Connect SSO',
+                        'info'                => 'أدخل بيانات العميل من مزوّد الهوية لديك. القيم المعيّنة عبر متغيرات البيئة UNOPIM_OIDC_* لها الأولوية وتظهر هنا للقراءة فقط.',
+                        'enabled'             => 'تفعيل OpenID Connect SSO',
+                        'redirect-uri-info'   => 'سجّل عنوان URL هذا كما هو تمامًا كعنوان إعادة توجيه للعميل لدى مزوّد الهوية.',
+                        'issuer'              => 'عنوان URL للمُصدِر',
+                        'issuer-info'         => 'عنوان URL لمُصدِر المزوّد لديك. تتم قراءة مستند الاكتشاف من /.well-known/openid-configuration.',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'scopes'              => 'النطاقات',
+                        'label'               => 'نص الزر',
+                        'verified-email'      => 'اشتراط بريد إلكتروني موثّق',
+                        'verified-email-info' => 'رفض عمليات تسجيل الدخول التي لم يُعلَّم بريدها الإلكتروني كموثّق. ربط مستخدم موجود عبر البريد الإلكتروني يتطلب دائمًا بريدًا موثّقًا.',
+                        'auto-provision'      => 'إنشاء المستخدمين عند أول تسجيل دخول',
+                        'auto-provision-info' => 'إنشاء مستخدم مسؤول عندما يسجّل شخص غير معروف الدخول لأول مرة. يتطلب ربط أدوار أو دورًا افتراضيًا.',
+                        'default-role'        => 'الدور الافتراضي',
+                        'default-role-info'   => 'اسم الدور الذي يُمنح للمستخدمين الجدد عند عدم إعداد ربط الأدوار.',
+                        'groups-claim'        => 'مطالبة المجموعات',
+                        'role-map'            => 'ربط الأدوار',
+                        'role-map-info'       => 'كائن JSON يربط مجموعات المزوّد بأسماء الأدوار. عند تعيينه تُرفض عمليات الدخول دون مجموعة مرتبطة ويُحدَّث الدور عند كل تسجيل دخول؛ ويُعتمد أول إدخال مطابق.',
+                        'rp-logout'           => 'تسجيل الخروج لدى المزوّد أيضًا',
+                        'rp-logout-info'      => 'بعد تسجيل الخروج من UnoPim، إنهاء الجلسة لدى مزوّد الهوية أيضًا.',
                     ],
                 ],
 

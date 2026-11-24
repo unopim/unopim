@@ -13,6 +13,8 @@ return [
             'password'                   => 'Adgangskode',
             'sso-divider'                => 'or',
             'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'sso-sign-in-with-oidc'      => 'Log ind med OpenID Connect',
+            'sso-only'                   => 'Log ind med adgangskode er slået fra. Brug single sign-on.',
             'submit-btn'                 => 'Log ind',
             'title'                      => 'Log ind',
             'powered-by'                 => 'Drevet af :unopim,',
@@ -2071,6 +2073,10 @@ return [
                 'title' => 'Microsoft SSO',
                 'info'  => 'Microsoft Entra ID single sign-on til administratorlogin.',
             ],
+            'oidc-sso'           => [
+                'title' => 'OpenID Connect SSO',
+                'info'  => 'Single sign-on til administratorlogin med enhver OpenID Connect-udbyder.',
+            ],
         ],
 
         'appearance' => [
@@ -2147,6 +2153,7 @@ return [
     'configuration' => [
         'index' => [
             'delete'          => 'Slet',
+            'env-locked'      => 'Angivet af en miljøvariabel på serveren og kan ikke ændres her.',
             'no-result-found' => 'Ingen resultater fundet',
             'save-btn'        => 'Gem konfiguration',
             'save-message'    => 'Konfiguration gemt med succes',
@@ -2225,6 +2232,35 @@ return [
                         'redirect-uri-info'   => 'Registrer denne nøjagtige URL i din Microsoft Entra ID-appregistrering under Godkendelse → Omdirigerings-URI\'er med Web-platformen.',
                         'redirect-uri-copy'   => 'Kopiér',
                         'redirect-uri-copied' => 'Kopieret til udklipsholder',
+                    ],
+                ],
+
+                'oidc-sso' => [
+                    'info'   => 'Opsæt OpenID Connect single sign-on til administratorlogin, f.eks. med Authentik eller Keycloak.',
+                    'title'  => 'OpenID Connect SSO',
+
+                    'settings' => [
+                        'title'               => 'OpenID Connect SSO-indstillinger',
+                        'info'                => 'Angiv klientoplysningerne fra din identitetsudbyder. Værdier angivet via UNOPIM_OIDC_*-miljøvariabler har forrang og er skrivebeskyttede her.',
+                        'enabled'             => 'Aktivér OpenID Connect SSO',
+                        'redirect-uri-info'   => 'Registrér præcis denne URL som omdirigerings-URI for klienten hos din identitetsudbyder.',
+                        'issuer'              => 'Udsteder-URL',
+                        'issuer-info'         => 'Udsteder-URL\'en for din udbyder. Dens discovery-dokument læses fra /.well-known/openid-configuration.',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'scopes'              => 'Scopes',
+                        'label'               => 'Knaptekst',
+                        'verified-email'      => 'Kræv bekræftet e-mail',
+                        'verified-email-info' => 'Afvis login, hvor e-mailen ikke er markeret som bekræftet. At knytte en eksisterende bruger via e-mail kræver altid en bekræftet e-mail.',
+                        'auto-provision'      => 'Opret brugere ved første login',
+                        'auto-provision-info' => 'Opret en administratorbruger, når en ukendt person logger ind første gang. Kræver en rolletilknytning eller en standardrolle.',
+                        'default-role'        => 'Standardrolle',
+                        'default-role-info'   => 'Navnet på rollen, som nye brugere får, når der ikke er angivet en rolletilknytning.',
+                        'groups-claim'        => 'Gruppe-claim',
+                        'role-map'            => 'Rolletilknytning',
+                        'role-map-info'       => 'JSON-objekt, der knytter udbyderens grupper til rollenavne. Hvis det er angivet, afvises login uden en tilknyttet gruppe, og rollen opdateres ved hvert login; den første matchende post vinder.',
+                        'rp-logout'           => 'Log også ud hos udbyderen',
+                        'rp-logout-info'      => 'Afslut også sessionen hos identitetsudbyderen efter log ud fra UnoPim.',
                     ],
                 ],
 

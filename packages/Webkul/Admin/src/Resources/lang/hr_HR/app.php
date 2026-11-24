@@ -13,6 +13,8 @@ return [
             'password'                   => 'Lozinka',
             'sso-divider'                => 'or',
             'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'sso-sign-in-with-oidc'      => 'Prijava putem OpenID Connecta',
+            'sso-only'                   => 'Prijava lozinkom je onemogućena. Koristite jedinstvenu prijavu.',
             'submit-btn'                 => 'Prijavite se',
             'title'                      => 'Prijavite se',
             'powered-by'                 => 'Pokreće :unopim,',
@@ -2071,6 +2073,10 @@ return [
                 'title' => 'Microsoft SSO',
                 'info'  => 'Microsoft Entra ID jedinstvena prijava za administratorsku prijavu.',
             ],
+            'oidc-sso'           => [
+                'title' => 'OpenID Connect SSO',
+                'info'  => 'Jedinstvena prijava za administratore s bilo kojim OpenID Connect pružateljem.',
+            ],
         ],
 
         'appearance' => [
@@ -2147,6 +2153,7 @@ return [
     'configuration' => [
         'index' => [
             'delete'          => 'Izbriši',
+            'env-locked'      => 'Postavljeno varijablom okruženja na poslužitelju i ne može se ovdje mijenjati.',
             'no-result-found' => 'Nema rezultata',
             'save-btn'        => 'Spremi konfiguraciju',
             'save-message'    => 'Konfiguracija uspješno spremljena',
@@ -2225,6 +2232,35 @@ return [
                         'redirect-uri-info'   => 'Registrirajte točno ovaj URL u registraciji aplikacije Microsoft Entra ID pod Autentifikacija → URI-ji preusmjeravanja, koristeći Web platformu.',
                         'redirect-uri-copy'   => 'Kopiraj',
                         'redirect-uri-copied' => 'Kopirano u međuspremnik',
+                    ],
+                ],
+
+                'oidc-sso' => [
+                    'info'   => 'Konfigurirajte OpenID Connect jedinstvenu prijavu za administratore, npr. s Authentikom ili Keycloakom.',
+                    'title'  => 'OpenID Connect SSO',
+
+                    'settings' => [
+                        'title'               => 'Postavke OpenID Connect SSO-a',
+                        'info'                => 'Unesite podatke klijenta od svog pružatelja identiteta. Vrijednosti postavljene varijablama okruženja UNOPIM_OIDC_* imaju prednost i ovdje su samo za čitanje.',
+                        'enabled'             => 'Omogući OpenID Connect SSO',
+                        'redirect-uri-info'   => 'Registrirajte točno ovaj URL kao URI preusmjeravanja klijenta kod svog pružatelja identiteta.',
+                        'issuer'              => 'URL izdavatelja',
+                        'issuer-info'         => 'URL izdavatelja vašeg pružatelja. Njegov discovery dokument čita se s /.well-known/openid-configuration.',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'scopes'              => 'Opsezi',
+                        'label'               => 'Tekst gumba',
+                        'verified-email'      => 'Zahtijevaj potvrđenu e-poštu',
+                        'verified-email-info' => 'Odbij prijave čija e-pošta nije označena kao potvrđena. Povezivanje postojećeg korisnika putem e-pošte uvijek zahtijeva potvrđenu adresu.',
+                        'auto-provision'      => 'Stvori korisnike pri prvoj prijavi',
+                        'auto-provision-info' => 'Stvori administratorskog korisnika kada se nepoznata osoba prvi put prijavi. Potrebno je mapiranje uloga ili zadana uloga.',
+                        'default-role'        => 'Zadana uloga',
+                        'default-role-info'   => 'Naziv uloge koja se dodjeljuje novim korisnicima kada mapiranje uloga nije konfigurirano.',
+                        'groups-claim'        => 'Claim grupa',
+                        'role-map'            => 'Mapiranje uloga',
+                        'role-map-info'       => 'JSON objekt koji grupe pružatelja povezuje s nazivima uloga. Ako je postavljen, prijave bez mapirane grupe se odbijaju, a uloga se ažurira pri svakoj prijavi; vrijedi prvi odgovarajući unos.',
+                        'rp-logout'           => 'Odjava i kod pružatelja',
+                        'rp-logout-info'      => 'Nakon odjave iz UnoPima završi i sesiju kod pružatelja identiteta.',
                     ],
                 ],
 

@@ -8,6 +8,8 @@ $debugPayload = ['general' => ['debug' => ['settings' => ['allowed_ips' => '203.
 
 $ssoPayload = ['general' => ['microsoft_sso' => ['settings' => ['tenant' => 'attacker-tenant']]]];
 
+$oidcPayload = ['general' => ['oidc_sso' => ['settings' => ['issuer' => 'https://attacker.example.test/']]]];
+
 it('denies writing email settings through the legacy configuration route', function () use ($restricted, $emailPayload) {
     $this->loginWithPermissions(permissions: $restricted);
 
@@ -42,6 +44,38 @@ it('denies writing microsoft sso settings through the legacy configuration route
         'code'  => 'general.microsoft_sso.settings.tenant',
         'value' => 'attacker-tenant',
     ]);
+});
+
+it('denies writing oidc sso settings through the legacy configuration route', function () use ($restricted, $oidcPayload) {
+    $this->loginWithPermissions(permissions: $restricted);
+
+    $this->post(route('admin.configuration.store', ['slug' => 'general', 'slug2' => 'oidc_sso']), $oidcPayload)
+        ->assertStatus(403);
+
+    $this->assertDatabaseMissing('core_config', [
+        'code'  => 'general.oidc_sso.settings.issuer',
+        'value' => 'https://attacker.example.test/',
+    ]);
+});
+
+it('allows writing oidc sso settings with the oidc sso grant only', function () use ($oidcPayload, $ssoPayload) {
+    config()->set('services.oidc_sso.issuer', null);
+
+    $this->loginWithPermissions(permissions: [
+        'dashboard',
+        'configuration',
+        'configuration.system_settings',
+        'configuration.system_settings.oidc_sso',
+    ]);
+
+    $this->put(route('admin.settings.system.update', 'system.oidc_sso'), $oidcPayload)->assertRedirect();
+
+    $this->assertDatabaseHas('core_config', [
+        'code'  => 'general.oidc_sso.settings.issuer',
+        'value' => 'https://attacker.example.test/',
+    ]);
+
+    $this->put(route('admin.settings.system.update', 'system.microsoft_sso'), $ssoPayload)->assertStatus(403);
 });
 
 it('denies the slug-less configuration post that targets every section at once', function () use ($restricted, $emailPayload, $debugPayload, $ssoPayload) {

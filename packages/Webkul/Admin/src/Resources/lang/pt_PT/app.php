@@ -13,6 +13,8 @@ return [
             'password'                   => 'Palavra-passe',
             'sso-divider'                => 'or',
             'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'sso-sign-in-with-oidc'      => 'Iniciar sessão com OpenID Connect',
+            'sso-only'                   => 'O início de sessão com palavra-passe está desativado. Utilize o início de sessão único.',
             'submit-btn'                 => 'Entrar',
             'title'                      => 'Entrar',
             'powered-by'                 => 'Desenvolvido por :unopim,',
@@ -2073,6 +2075,10 @@ return [
                 'title' => 'Microsoft SSO',
                 'info'  => 'Início de sessão único da Microsoft Entra ID para o acesso de administrador.',
             ],
+            'oidc-sso'           => [
+                'title' => 'OpenID Connect SSO',
+                'info'  => 'Início de sessão único para o acesso de administração com qualquer fornecedor OpenID Connect.',
+            ],
         ],
 
         'appearance' => [
@@ -2149,6 +2155,7 @@ return [
     'configuration' => [
         'index' => [
             'delete'          => 'Excluir',
+            'env-locked'      => 'Definido por uma variável de ambiente do servidor e não pode ser alterado aqui.',
             'no-result-found' => 'Nenhum resultado encontrado',
             'save-btn'        => 'Guardar Configuração',
             'save-message'    => 'Configuração guardada com sucesso',
@@ -2227,6 +2234,35 @@ return [
                         'redirect-uri-info'   => 'Registe exatamente este URL no registo da aplicação Microsoft Entra ID em Autenticação → URIs de redirecionamento, usando a plataforma Web.',
                         'redirect-uri-copy'   => 'Copiar',
                         'redirect-uri-copied' => 'Copiado para a área de transferência',
+                    ],
+                ],
+
+                'oidc-sso' => [
+                    'info'   => 'Configure o início de sessão único OpenID Connect para o acesso de administração, por exemplo com Authentik ou Keycloak.',
+                    'title'  => 'OpenID Connect SSO',
+
+                    'settings' => [
+                        'title'               => 'Definições do OpenID Connect SSO',
+                        'info'                => 'Introduza os dados do cliente do seu fornecedor de identidade. Os valores definidos por variáveis de ambiente UNOPIM_OIDC_* têm prioridade e aqui são só de leitura.',
+                        'enabled'             => 'Ativar OpenID Connect SSO',
+                        'redirect-uri-info'   => 'Registe exatamente este URL como URI de redirecionamento do cliente no seu fornecedor de identidade.',
+                        'issuer'              => 'URL do emissor',
+                        'issuer-info'         => 'O URL do emissor do seu fornecedor. O documento de descoberta é lido de /.well-known/openid-configuration.',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'scopes'              => 'Âmbitos',
+                        'label'               => 'Texto do botão',
+                        'verified-email'      => 'Exigir e-mail verificado',
+                        'verified-email-info' => 'Recusar inícios de sessão cujo e-mail não esteja marcado como verificado. Associar um utilizador existente por e-mail exige sempre um e-mail verificado.',
+                        'auto-provision'      => 'Criar utilizadores no primeiro início de sessão',
+                        'auto-provision-info' => 'Criar um utilizador administrador quando uma pessoa desconhecida inicia sessão pela primeira vez. Requer um mapeamento de funções ou uma função predefinida.',
+                        'default-role'        => 'Função predefinida',
+                        'default-role-info'   => 'Nome da função atribuída a novos utilizadores quando não está configurado nenhum mapeamento de funções.',
+                        'groups-claim'        => 'Claim de grupos',
+                        'role-map'            => 'Mapeamento de funções',
+                        'role-map-info'       => 'Objeto JSON que associa grupos do fornecedor a nomes de função. Se definido, os inícios de sessão sem grupo mapeado são recusados e a função é atualizada em cada início de sessão; prevalece a primeira entrada correspondente.',
+                        'rp-logout'           => 'Terminar sessão no fornecedor',
+                        'rp-logout-info'      => 'Depois de terminar sessão no UnoPim, terminar também a sessão no fornecedor de identidade.',
                     ],
                 ],
 

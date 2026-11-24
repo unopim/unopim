@@ -45,6 +45,10 @@ class CoreConfigRepository extends Repository
             foreach ($recursiveData as $fieldName => $value) {
                 $field = core()->getConfigField($fieldName);
 
+                if ($field && $this->isLocked($field)) {
+                    continue;
+                }
+
                 // Fall back to default_value, else empty string so explicitly cleared fields are persisted.
                 if (is_null($value)) {
                     $value = isset($field['default_value']) && $field['default_value'] !== '' ? $field['default_value'] : '';

@@ -1080,6 +1080,11 @@ return [
         'route' => null,
         'sort'  => 4,
     ], [
+        'key'   => 'configuration.system_settings.oidc_sso',
+        'name'  => 'admin::app.settings.system-settings.oidc-sso.title',
+        'route' => null,
+        'sort'  => 4,
+    ], [
         'key'   => 'configuration.system_settings.platform',
         'name'  => 'admin::app.configuration.index.general.platform.title',
         'route' => null,

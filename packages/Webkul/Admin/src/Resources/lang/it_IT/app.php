@@ -13,6 +13,8 @@ return [
             'password'                   => 'Password',
             'sso-divider'                => 'or',
             'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'sso-sign-in-with-oidc'      => 'Accedi con OpenID Connect',
+            'sso-only'                   => 'L’accesso con password è disattivato. Usa il single sign-on.',
             'submit-btn'                 => 'Accedi',
             'title'                      => 'Accedi',
             'powered-by'                 => 'Alimentato da :unopim,',
@@ -2071,6 +2073,10 @@ return [
                 'title' => 'Microsoft SSO',
                 'info'  => 'Single Sign-On Microsoft Entra ID per il login dell\'amministratore.',
             ],
+            'oidc-sso'           => [
+                'title' => 'OpenID Connect SSO',
+                'info'  => 'Single sign-on per l’accesso amministratore con qualsiasi provider OpenID Connect.',
+            ],
         ],
 
         'appearance' => [
@@ -2147,6 +2153,7 @@ return [
     'configuration' => [
         'index' => [
             'delete'          => 'Elimina',
+            'env-locked'      => 'Impostato da una variabile d’ambiente del server e non modificabile qui.',
             'no-result-found' => 'Nessun risultato trovato',
             'save-btn'        => 'Salva Configurazione',
             'save-message'    => 'Configurazione salvata con successo',
@@ -2225,6 +2232,35 @@ return [
                         'redirect-uri-info'   => 'Registra esattamente questo URL nella registrazione dell\'app Microsoft Entra ID in Autenticazione → URI di reindirizzamento, usando la piattaforma Web.',
                         'redirect-uri-copy'   => 'Copia',
                         'redirect-uri-copied' => 'Copiato negli appunti',
+                    ],
+                ],
+
+                'oidc-sso' => [
+                    'info'   => 'Configura il single sign-on OpenID Connect per l’accesso amministratore, ad esempio con Authentik o Keycloak.',
+                    'title'  => 'OpenID Connect SSO',
+
+                    'settings' => [
+                        'title'               => 'Impostazioni OpenID Connect SSO',
+                        'info'                => 'Inserisci i dati del client del tuo identity provider. I valori impostati tramite le variabili d’ambiente UNOPIM_OIDC_* hanno la precedenza e qui sono di sola lettura.',
+                        'enabled'             => 'Abilita OpenID Connect SSO',
+                        'redirect-uri-info'   => 'Registra esattamente questo URL come URI di reindirizzamento del client presso il tuo identity provider.',
+                        'issuer'              => 'URL dell’emittente',
+                        'issuer-info'         => 'L’URL dell’emittente del tuo provider. Il documento di discovery viene letto da /.well-known/openid-configuration.',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'scopes'              => 'Ambiti',
+                        'label'               => 'Testo del pulsante',
+                        'verified-email'      => 'Richiedi email verificata',
+                        'verified-email-info' => 'Rifiuta gli accessi la cui email non è contrassegnata come verificata. Collegare un utente esistente tramite email richiede sempre un’email verificata.',
+                        'auto-provision'      => 'Crea utenti al primo accesso',
+                        'auto-provision-info' => 'Crea un utente amministratore quando una persona sconosciuta accede per la prima volta. Richiede una mappatura dei ruoli o un ruolo predefinito.',
+                        'default-role'        => 'Ruolo predefinito',
+                        'default-role-info'   => 'Nome del ruolo assegnato ai nuovi utenti quando non è configurata alcuna mappatura dei ruoli.',
+                        'groups-claim'        => 'Claim dei gruppi',
+                        'role-map'            => 'Mappatura dei ruoli',
+                        'role-map-info'       => 'Oggetto JSON che associa i gruppi del provider ai nomi dei ruoli. Se impostato, gli accessi senza un gruppo mappato vengono rifiutati e il ruolo viene aggiornato a ogni accesso; vince la prima voce corrispondente.',
+                        'rp-logout'           => 'Esci anche dal provider',
+                        'rp-logout-info'      => 'Dopo l’uscita da UnoPim, termina anche la sessione presso l’identity provider.',
                     ],
                 ],
 

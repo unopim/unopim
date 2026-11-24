@@ -13,6 +13,8 @@ return [
             'password'                   => 'Password',
             'sso-divider'                => 'or',
             'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'sso-sign-in-with-oidc'      => 'Sign in with OpenID Connect',
+            'sso-only'                   => 'Password sign-in is disabled. Please use single sign-on.',
             'submit-btn'                 => 'Sign In',
             'title'                      => 'Sign In',
             'powered-by'                 => 'Powered by :unopim,',
@@ -2071,6 +2073,10 @@ return [
                 'title' => 'Microsoft SSO',
                 'info'  => 'Microsoft Entra ID single sign-on for admin login.',
             ],
+            'oidc-sso'           => [
+                'title' => 'OpenID Connect SSO',
+                'info'  => 'Single sign-on for admin login with any OpenID Connect provider.',
+            ],
         ],
 
         'appearance' => [
@@ -2147,6 +2153,7 @@ return [
     'configuration' => [
         'index' => [
             'delete'          => 'Delete',
+            'env-locked'      => 'Set by a server environment variable and cannot be changed here.',
             'no-result-found' => 'No results found',
             'save-btn'        => 'Save Configuration',
             'save-message'    => 'Configuration saved successfully',
@@ -2225,6 +2232,35 @@ return [
                         'redirect-uri-info'   => 'Register this exact URL in your Microsoft Entra ID app registration under Authentication → Redirect URIs, using the Web platform.',
                         'redirect-uri-copy'   => 'Copy',
                         'redirect-uri-copied' => 'Copied to clipboard',
+                    ],
+                ],
+
+                'oidc-sso' => [
+                    'info'   => 'Configure OpenID Connect single sign-on for admin login, e.g. with Authentik or Keycloak.',
+                    'title'  => 'OpenID Connect SSO',
+
+                    'settings' => [
+                        'title'               => 'OpenID Connect SSO Settings',
+                        'info'                => 'Enter the client details from your identity provider. Values set through UNOPIM_OIDC_* environment variables take precedence and are read-only here.',
+                        'enabled'             => 'Enable OpenID Connect SSO',
+                        'redirect-uri-info'   => 'Register this exact URL as a redirect URI of the client at your identity provider.',
+                        'issuer'              => 'Issuer URL',
+                        'issuer-info'         => 'The issuer URL of your provider. Its discovery document is read from /.well-known/openid-configuration.',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'scopes'              => 'Scopes',
+                        'label'               => 'Button Label',
+                        'verified-email'      => 'Require verified email',
+                        'verified-email-info' => 'Refuse sign-ins whose email is not marked as verified. Linking an existing user by email always requires a verified email.',
+                        'auto-provision'      => 'Create users on first sign-in',
+                        'auto-provision-info' => 'Create an admin user when an unknown person signs in for the first time. Needs a role mapping or a default role.',
+                        'default-role'        => 'Default Role',
+                        'default-role-info'   => 'Role name given to new users when no role mapping is configured.',
+                        'groups-claim'        => 'Groups Claim',
+                        'role-map'            => 'Role Mapping',
+                        'role-map-info'       => 'JSON object mapping provider groups to role names. If set, sign-ins without a mapped group are refused and the role is updated at every sign-in; the first matching entry wins.',
+                        'rp-logout'           => 'Sign out at the provider',
+                        'rp-logout-info'      => 'After signing out of UnoPim, also end the session at the identity provider.',
                     ],
                 ],
 

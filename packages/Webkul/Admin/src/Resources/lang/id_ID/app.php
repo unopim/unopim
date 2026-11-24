@@ -13,6 +13,8 @@ return [
             'password'                   => 'Kata sandi',
             'sso-divider'                => 'or',
             'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'sso-sign-in-with-oidc'      => 'Masuk dengan OpenID Connect',
+            'sso-only'                   => 'Masuk dengan kata sandi dinonaktifkan. Gunakan single sign-on.',
             'submit-btn'                 => 'Masuk',
             'title'                      => 'Masuk',
             'powered-by'                 => 'Didukung oleh :unopim,',
@@ -2071,6 +2073,10 @@ return [
                 'title' => 'Microsoft SSO',
                 'info'  => 'Single sign-on Microsoft Entra ID untuk login admin.',
             ],
+            'oidc-sso'           => [
+                'title' => 'OpenID Connect SSO',
+                'info'  => 'Single sign-on untuk login admin dengan penyedia OpenID Connect apa pun.',
+            ],
         ],
 
         'appearance' => [
@@ -2147,6 +2153,7 @@ return [
     'configuration' => [
         'index' => [
             'delete'          => 'Menghapus',
+            'env-locked'      => 'Ditetapkan oleh variabel lingkungan di server dan tidak dapat diubah di sini.',
             'no-result-found' => 'Tidak ada hasil yang ditemukan',
             'save-btn'        => 'Simpan konfigurasi',
             'save-message'    => 'Konfigurasi berhasil disimpan',
@@ -2225,6 +2232,35 @@ return [
                         'redirect-uri-info'   => 'Daftarkan URL persis ini di registrasi aplikasi Microsoft Entra ID Anda pada Autentikasi → URI Pengalihan, menggunakan platform Web.',
                         'redirect-uri-copy'   => 'Salin',
                         'redirect-uri-copied' => 'Disalin ke papan klip',
+                    ],
+                ],
+
+                'oidc-sso' => [
+                    'info'   => 'Atur single sign-on OpenID Connect untuk login admin, misalnya dengan Authentik atau Keycloak.',
+                    'title'  => 'OpenID Connect SSO',
+
+                    'settings' => [
+                        'title'               => 'Pengaturan OpenID Connect SSO',
+                        'info'                => 'Masukkan detail klien dari penyedia identitas Anda. Nilai yang ditetapkan melalui variabel lingkungan UNOPIM_OIDC_* lebih diutamakan dan hanya dapat dibaca di sini.',
+                        'enabled'             => 'Aktifkan OpenID Connect SSO',
+                        'redirect-uri-info'   => 'Daftarkan URL ini persis sebagai URI pengalihan klien di penyedia identitas Anda.',
+                        'issuer'              => 'URL Penerbit',
+                        'issuer-info'         => 'URL penerbit penyedia Anda. Dokumen discovery dibaca dari /.well-known/openid-configuration.',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'scopes'              => 'Cakupan',
+                        'label'               => 'Label Tombol',
+                        'verified-email'      => 'Wajibkan email terverifikasi',
+                        'verified-email-info' => 'Tolak login yang emailnya tidak ditandai terverifikasi. Menautkan pengguna yang sudah ada melalui email selalu memerlukan email terverifikasi.',
+                        'auto-provision'      => 'Buat pengguna saat login pertama',
+                        'auto-provision-info' => 'Buat pengguna admin saat orang yang belum dikenal login untuk pertama kali. Memerlukan pemetaan peran atau peran default.',
+                        'default-role'        => 'Peran Default',
+                        'default-role-info'   => 'Nama peran yang diberikan kepada pengguna baru bila pemetaan peran tidak dikonfigurasi.',
+                        'groups-claim'        => 'Klaim Grup',
+                        'role-map'            => 'Pemetaan Peran',
+                        'role-map-info'       => 'Objek JSON yang memetakan grup penyedia ke nama peran. Jika diisi, login tanpa grup yang dipetakan ditolak dan peran diperbarui pada setiap login; entri pertama yang cocok yang berlaku.',
+                        'rp-logout'           => 'Keluar juga di penyedia',
+                        'rp-logout-info'      => 'Setelah keluar dari UnoPim, akhiri juga sesi di penyedia identitas.',
                     ],
                 ],
 

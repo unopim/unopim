@@ -32,6 +32,20 @@
 
     $value = core()->getConfigData($nameKey) ?? ($coreConfigRepository->getDefaultValue($field) ?? '');
 
+    if ($coreConfigRepository->isLocked($field)) {
+        $lockedValue = $coreConfigRepository->getLockedValue($field);
+
+        $field['locked'] = true;
+
+        $field['locked_info'] = trans('admin::app.configuration.index.env-locked');
+
+        $value = match ($field['type'] ?? '') {
+            'password' => '********',
+            'boolean'  => filter_var($lockedValue, FILTER_VALIDATE_BOOLEAN) ? '1' : '0',
+            default    => is_scalar($lockedValue) ? (string) $lockedValue : '',
+        };
+    }
+
     // For select fields, ensure value is always a string so v-select-handler matching works
     if (($field['type'] ?? '') === 'select' && $value !== '') {
         $value = (string) $value;
@@ -86,6 +100,7 @@
                     type="text"
                     ::id="name"
                     ::name="name"
+                    ::disabled="field.locked"
                     ::value="value"
                     ::rules="validations"
                     ::label="label"
@@ -99,6 +114,7 @@
                     type="textarea"
                     ::id="name"
                     ::name="name"
+                    ::disabled="field.locked"
                     ::value="value"
                     ::rules="validations"
                     ::label="label"
@@ -112,6 +128,7 @@
                     type="password"
                     ::id="name"
                     ::name="name"
+                    ::disabled="field.locked"
                     ::value="maskedPassword"
                     ::rules="validations"
                     ::label="label"
@@ -125,6 +142,7 @@
                     type="number"
                     ::id="name"
                     ::name="name"
+                    ::disabled="field.locked"
                     ::rules="validations"
                     ::value="value"
                     ::label="label"
@@ -187,6 +205,7 @@
 
             <template v-if="field.type == 'boolean'">
                 <input
+                    v-if="! field.locked"
                     type="hidden"
                     :name="name"
                     :value="0"
@@ -200,12 +219,20 @@
                         :id="name"
                         class="peer sr-only"
                         :checked="parseInt(value || 0)"
+                        :disabled="field.locked"
                         @input="emitChangeEvent($event.target.checked ? '1' : '0', name)"
                     >
 
                     <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-primary-700"></div>
                 </label>
             </template>
+
+            <p
+                v-if="field.locked"
+                class="mt-1 text-xs text-gray-500 dark:text-gray-400"
+                v-text="field.locked_info"
+            >
+            </p>
 
             <span class="contents" :data-error-slot="name"></span>
 

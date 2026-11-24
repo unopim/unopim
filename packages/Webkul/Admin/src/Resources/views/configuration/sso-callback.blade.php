@@ -1,5 +1,7 @@
 @php
-    $callbackUrl = route('admin.session.sso.callback', ['provider' => 'microsoft']);
+    $callbackUrl = route('admin.session.sso.callback', ['provider' => $field['provider'] ?? 'microsoft']);
+
+    $callbackHint = $field['hint'] ?? 'admin::app.configuration.index.general.microsoft-sso.settings.redirect-uri-info';
 @endphp
 
 <x-admin::form.control-group class="!mb-4">
@@ -21,7 +23,7 @@
             class="icon-copy text-2xl cursor-pointer absolute top-2/4 -translate-y-2/4 ltr:right-2 rtl:left-2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-200"
             role="button"
             tabindex="0"
-            onclick="copyMicrosoftSsoRedirectUri(this)"
+            onclick="copySsoRedirectUri(this)"
             title="@lang('admin::app.configuration.index.general.microsoft-sso.settings.redirect-uri-copy')"
             aria-label="@lang('admin::app.configuration.index.general.microsoft-sso.settings.redirect-uri-copy')"
             data-copied-title="@lang('admin::app.configuration.index.general.microsoft-sso.settings.redirect-uri-copied')"
@@ -30,13 +32,13 @@
     </div>
 
     <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-        @lang('admin::app.configuration.index.general.microsoft-sso.settings.redirect-uri-info')
+        @lang($callbackHint)
     </p>
 </x-admin::form.control-group>
 
 @pushOnce('scripts')
     <script>
-        function copyMicrosoftSsoRedirectUri(trigger) {
+        function copySsoRedirectUri(trigger) {
             const field = trigger.parentElement.querySelector('input');
 
             field.select();
