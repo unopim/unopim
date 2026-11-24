@@ -15,7 +15,7 @@ use function Pest\Laravel\getJson;
 beforeEach(function () {
     $this->admin = $this->loginAsAdmin();
 
-    Cache::forget('dashboard.channel_readiness');
+    Cache::forget('dashboard.channel_readiness_by_locale');
 });
 
 /**
@@ -90,7 +90,7 @@ it('resolves labels for the requesting admin locale even when the cache was warm
     seedReadinessRow($channel);
 
     expect(fetchReadinessByCode()['erp']['label'])->toBe('ERP System')
-        ->and(Cache::has('dashboard.channel_readiness'))->toBeTrue();
+        ->and(Cache::has('dashboard.channel_readiness_by_locale'))->toBeTrue();
 
     $germanLocale = Locale::where('code', 'de_DE')->first()
         ?? Locale::factory()->create(['code' => 'de_DE']);

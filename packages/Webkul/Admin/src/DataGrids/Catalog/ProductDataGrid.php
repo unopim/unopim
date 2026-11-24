@@ -196,7 +196,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             return 'products.avg_completeness_score as completeness';
         }
 
-        /** raw statements bypass the builder, so quoting/prefixing is applied here */
         return DB::raw(DB::getQueryGrammar()->wrap('product_completeness.score').' as completeness');
     }
 

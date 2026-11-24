@@ -90,7 +90,6 @@ class CompletenessFilter extends AbstractPropertyFilter
             return DB::getQueryGrammar()->wrap('product_completeness.score');
         }
 
-        /** raw statements bypass the builder, so quoting/prefixing is applied here */
         return DB::getQueryGrammar()->wrap(sprintf('%s.%s', $this->getSearchTablePath($options), self::COLUMN));
     }
 }

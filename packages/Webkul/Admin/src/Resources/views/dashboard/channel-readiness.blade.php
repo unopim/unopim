@@ -18,11 +18,12 @@
             <div class="bg-white dark:bg-cherry-900 rounded-lg box-shadow p-4">
                 <template v-if="channels.length > 0">
                     <div class="space-y-4">
-                        <a
+                        <component
+                            :is="esEnabled ? 'div' : 'a'"
                             v-for="ch in channels"
                             :key="ch.channel"
-                            :href="productsUrl(ch)"
-                            :title="incompleteLinkTitle(ch)"
+                            :href="esEnabled ? undefined : productsUrl(ch)"
+                            :title="esEnabled ? undefined : incompleteLinkTitle(ch)"
                             class="block rounded-md -m-1 p-1 transition-colors hover:bg-gray-50 dark:hover:bg-cherry-800"
                         >
                             <div class="flex items-center justify-between mb-1.5">
@@ -52,7 +53,7 @@
                                     @{{ ch.percentage }}%
                                 </span>
                             </div>
-                        </a>
+                        </component>
                     </div>
                 </template>
 
@@ -74,6 +75,7 @@
                 return {
                     channels: [],
                     isLoading: true,
+                    esEnabled: @json((bool) config('elasticsearch.enabled')),
                 }
             },
 

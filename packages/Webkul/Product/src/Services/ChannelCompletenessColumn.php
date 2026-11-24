@@ -47,7 +47,10 @@ class ChannelCompletenessColumn
     /**
      * Elasticsearch indexes the cross-channel average only, so per-channel
      * scoping stays off while it is enabled and both the displayed column and
-     * the filtered rows keep reading that average.
+     * the filtered rows keep reading that average. `channel-readiness.blade.php`
+     * hides the drill-down link under the same condition, since the widget's
+     * own percentage is still computed per channel/locale from
+     * `product_completeness` and would otherwise disagree with the list.
      */
     protected function resolveScope(?string $channelCode): ?array
     {

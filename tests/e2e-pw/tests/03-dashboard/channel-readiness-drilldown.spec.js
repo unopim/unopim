@@ -53,7 +53,6 @@ test('the grid request carries the channel from the link, not a stored view scop
 
   await stubReadiness(adminPage);
 
-  // The grid keys its stored state by the absolute `src` route it was rendered with.
   await adminPage.addInitScript((stale) => {
     window.localStorage.setItem('datagrids', JSON.stringify([{
       src: window.location.origin + '/admin/catalog/products',
@@ -72,7 +71,6 @@ test('the grid request carries the channel from the link, not a stored view scop
   const link = adminPage.locator(`a[href*="channel=${row.channel}"]`).first();
   await expect(link).toBeVisible();
 
-  // `pagination` is only on the grid's own ajax call, never on the page navigation.
   const gridRequest = adminPage.waitForRequest(
     (req) => /catalog\/products\?/.test(req.url()) && /pagination/.test(req.url()),
     { timeout: 20000 }
@@ -89,8 +87,6 @@ test('the grid request carries the channel from the link, not a stored view scop
 });
 
 test('every row the drill-down lists scores below the readiness threshold in that channel', async ({ adminPage }) => {
-  // A channel that really resolves, so the grid applies the per-channel column
-  // rather than falling back to the cross-channel average.
   const row = { channel: REAL_CHANNEL, locale: REAL_LOCALE, total: 10, ready: 1, percentage: 10 };
 
   await adminPage.route('**/admin/dashboard/stats*', (route) => {
@@ -120,7 +116,6 @@ test('every row the drill-down lists scores below the readiness threshold in tha
   expect(new URL((await gridResponse).url()).searchParams.get('channel')).toBe(row.channel);
 
   for (const record of body.records ?? []) {
-    // The column renders as a pill; rows without a completeness setting carry no score.
     const score = String(record.completeness ?? '').match(/(\d+(?:\.\d+)?)\s*%/);
 
     if (score) {

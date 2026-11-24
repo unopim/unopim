@@ -22,11 +22,11 @@ class RefreshDashboardCacheCommand extends Command
     public function handle(Dashboard $dashboardHelper): int
     {
         $warmers = [
-            'dashboard.total_catalogs'       => fn () => $dashboardHelper->getTotalCatalogs(),
-            'dashboard.total_configurations' => fn () => $dashboardHelper->getTotalConfigurations(),
-            'dashboard.product_stats'        => fn () => $dashboardHelper->getProductStats(),
-            'dashboard.needs_attention'      => fn () => $dashboardHelper->getNeedsAttention(),
-            'dashboard.channel_readiness'    => fn () => $dashboardHelper->getChannelReadiness(),
+            'dashboard.total_catalogs'              => fn () => $dashboardHelper->getTotalCatalogs(),
+            'dashboard.total_configurations'        => fn () => $dashboardHelper->getTotalConfigurations(),
+            'dashboard.product_stats'               => fn () => $dashboardHelper->getProductStats(),
+            'dashboard.needs_attention'             => fn () => $dashboardHelper->getNeedsAttention(),
+            'dashboard.channel_readiness_by_locale' => fn () => $dashboardHelper->getChannelReadiness(),
         ];
 
         if (! app(ModuleGate::class)->enabled(Module::Pim)) {

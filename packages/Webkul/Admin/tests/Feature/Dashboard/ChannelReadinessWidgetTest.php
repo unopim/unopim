@@ -34,7 +34,7 @@ function channelWithLocales(string $code, int $localeCount = 1): Channel
 
 function readinessFor(string $channelCode, ?string $localeCode = null): ?array
 {
-    Cache::forget('dashboard.channel_readiness');
+    Cache::forget('dashboard.channel_readiness_by_locale');
 
     request()->merge(['locale' => $localeCode]);
 
@@ -85,9 +85,25 @@ it('falls back to a locale the channel carries when the requested one is foreign
 })->skip(fn () => Locale::query()->count() < 2, 'needs at least two locales');
 
 it('serves the channel readiness payload from the dashboard stats endpoint', function () {
-    Cache::forget('dashboard.channel_readiness');
+    Cache::forget('dashboard.channel_readiness_by_locale');
 
     $this->getJson(route('admin.dashboard.stats', ['type' => 'channel-readiness']))
         ->assertOk()
         ->assertJsonStructure(['statistics']);
+});
+
+it('renders the drill-down as a plain link when Elasticsearch is disabled', function () {
+    config(['elasticsearch.enabled' => false]);
+
+    $this->get(route('admin.dashboard.index'))
+        ->assertOk()
+        ->assertSee('esEnabled: false', false);
+});
+
+it('hides the drill-down link when Elasticsearch is enabled, since the list would use the average', function () {
+    config(['elasticsearch.enabled' => true]);
+
+    $this->get(route('admin.dashboard.index'))
+        ->assertOk()
+        ->assertSee('esEnabled: true', false);
 });
