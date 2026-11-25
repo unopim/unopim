@@ -688,6 +688,14 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     }
 
     /**
+     * Allow sorting by any existing attribute too, since products sort by attributes that are not shown as columns.
+     */
+    protected function isSortableColumn(string $column): bool
+    {
+        return parent::isSortableColumn($column) || $this->attributeService->findAttributeByCode($column) !== null;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function processRequestedSorting($requestedSort)

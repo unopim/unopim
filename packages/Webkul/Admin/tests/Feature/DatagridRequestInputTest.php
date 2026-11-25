@@ -2,7 +2,9 @@
 
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
+use Webkul\Attribute\Models\Attribute;
 use Webkul\Core\Models\Locale;
 use Webkul\DataGrid\DataGrid;
 use Webkul\Product\Models\Product;
@@ -33,7 +35,7 @@ function datagridOrderBy(string $route, array $query, string $table): string
     DB::listen(function (QueryExecuted $executed) use (&$orderBy, $table): void {
         $sql = strtolower(str_replace(['"', '`'], '', $executed->sql));
 
-        if (str_contains($sql, 'from '.$table) && str_contains($sql, ' order by ')) {
+        if (str_contains($sql, 'from '.DB::getTablePrefix().$table) && str_contains($sql, ' order by ')) {
             $orderBy = trim(substr($sql, strrpos($sql, ' order by ') + 10));
         }
     });
@@ -126,6 +128,30 @@ describe('DataGrid sort input', function (): void {
         $orderBy = datagridOrderBy('admin.settings.locales.index', ['sort' => ['column' => ['code'], 'order' => 'asc']], 'locales');
 
         expect($orderBy)->toStartWith('status asc');
+    });
+});
+
+describe('Product grid sort input', function (): void {
+    it('sorts by an attribute that is not shown as a column', function (): void {
+        $code = 'grid_sort_'.Str::lower(Str::random(6));
+
+        Attribute::factory()->create(['code' => $code, 'type' => 'text']);
+
+        Product::factory()->simple()->create();
+
+        $orderBy = datagridOrderBy('admin.catalog.products.index', ['sort' => ['column' => $code, 'order' => 'asc']], 'products');
+
+        expect($orderBy)->toContain($code)
+            ->and($orderBy)->not->toStartWith(DB::getTablePrefix().'products.updated_at');
+    });
+
+    it('falls back to the default sort for a name that is neither a column nor an attribute', function (): void {
+        Product::factory()->simple()->create();
+
+        $orderBy = datagridOrderBy('admin.catalog.products.index', ['sort' => ['column' => 'not_an_attribute', 'order' => 'asc']], 'products');
+
+        expect($orderBy)->toStartWith(DB::getTablePrefix().'products.updated_at asc')
+            ->and($orderBy)->not->toContain('not_an_attribute');
     });
 });
 

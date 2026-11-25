@@ -315,7 +315,7 @@ abstract class DataGrid
         $order = is_string($requestedSort['order'] ?? null) ? strtolower($requestedSort['order']) : null;
 
         return array_filter([
-            'column' => is_string($column) && in_array($column, $this->getSortableColumns(), true) ? $column : null,
+            'column' => is_string($column) && $this->isSortableColumn($column) ? $column : null,
             'order'  => in_array($order, ['asc', 'desc'], true) ? $order : null,
         ], fn (?string $value): bool => $value !== null);
     }
@@ -333,6 +333,14 @@ abstract class DataGrid
             'per_page' => in_array($perPage, $this->getPerPageOptions(), true) ? $perPage : null,
             'page'     => $page === false ? null : $page,
         ], fn (?int $value): bool => $value !== null);
+    }
+
+    /**
+     * Whether a request may sort the grid by the given column index.
+     */
+    protected function isSortableColumn(string $column): bool
+    {
+        return in_array($column, $this->getSortableColumns(), true);
     }
 
     /**
