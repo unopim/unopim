@@ -12,7 +12,7 @@ beforeEach(function () {
 /**
  * @param  array<string, mixed>  $values
  */
-function apiProductWithValues(array $values): Product
+function apiProductReferencingCatalogValues(array $values): Product
 {
     $product = Product::factory()->create();
 
@@ -27,7 +27,7 @@ function apiProductWithValues(array $values): Product
 it('refuses to delete a category assigned to a product', function () {
     $category = Category::factory()->create();
 
-    apiProductWithValues(['categories' => [$category->code]]);
+    apiProductReferencingCatalogValues(['categories' => [$category->code]]);
 
     $this->withHeaders($this->headers)
         ->json('DELETE', route('admin.api.categories.delete', ['code' => $category->code]))
@@ -44,7 +44,7 @@ it('refuses to delete an attribute option used by a product', function () {
     $attribute = Attribute::factory()->create(['type' => 'select']);
     $option = $attribute->options()->first();
 
-    apiProductWithValues(['common' => [$attribute->code => $option->code]]);
+    apiProductReferencingCatalogValues(['common' => [$attribute->code => $option->code]]);
 
     $this->withHeaders($this->headers)
         ->json('DELETE', route('admin.api.attribute_options.delete_option', [$attribute->code, $option->code]))
@@ -61,7 +61,7 @@ it('refuses to remove a used option through the attribute update', function () {
     $attribute = Attribute::factory()->create(['type' => 'select']);
     $option = $attribute->options()->first();
 
-    apiProductWithValues(['common' => [$attribute->code => $option->code]]);
+    apiProductReferencingCatalogValues(['common' => [$attribute->code => $option->code]]);
 
     $this->withHeaders($this->headers)
         ->json('PATCH', route('admin.api.attributes.patch', ['code' => $attribute->code]), [

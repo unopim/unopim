@@ -12,7 +12,7 @@ beforeEach(function () {
 /**
  * @param  array<string, mixed>  $values
  */
-function productWithValues(array $values): Product
+function productReferencingCatalogValues(array $values): Product
 {
     $product = Product::factory()->create();
 
@@ -27,7 +27,7 @@ function productWithValues(array $values): Product
 it('refuses to delete a category assigned to a product', function () {
     $category = Category::factory()->create();
 
-    productWithValues(['categories' => [$category->code]]);
+    productReferencingCatalogValues(['categories' => [$category->code]]);
 
     $this->deleteJson(route('admin.catalog.categories.delete', $category->id))
         ->assertBadRequest()
@@ -40,7 +40,7 @@ it('refuses to delete a category whose child category is assigned to a product',
     $parent = Category::factory()->create();
     $child = Category::factory()->create(['parent_id' => $parent->id]);
 
-    productWithValues(['categories' => [$child->code]]);
+    productReferencingCatalogValues(['categories' => [$child->code]]);
 
     $this->deleteJson(route('admin.catalog.categories.delete', $parent->id))->assertBadRequest();
 
@@ -51,7 +51,7 @@ it('refuses to delete a category whose child category is assigned to a product',
 it('refuses to mass delete categories when one is assigned to a product', function () {
     $category = Category::factory()->create();
 
-    productWithValues(['categories' => [$category->code]]);
+    productReferencingCatalogValues(['categories' => [$category->code]]);
 
     $this->postJson(route('admin.catalog.categories.mass_delete', ['indices' => [$category->id]]))
         ->assertBadRequest()
@@ -63,7 +63,7 @@ it('refuses to mass delete categories when one is assigned to a product', functi
 it('still deletes a category no product uses', function () {
     $category = Category::factory()->create();
 
-    productWithValues(['categories' => [Category::factory()->create()->code]]);
+    productReferencingCatalogValues(['categories' => [Category::factory()->create()->code]]);
 
     $this->deleteJson(route('admin.catalog.categories.delete', $category->id))->assertOk();
 
@@ -76,7 +76,7 @@ it('refuses to delete an attribute option used by a product', function (string $
 
     $value = $type === 'select' ? $option->code : [$option->code];
 
-    productWithValues(match ($scope) {
+    productReferencingCatalogValues(match ($scope) {
         'common'                  => ['common' => [$attribute->code => $value]],
         'channel_locale_specific' => ['channel_locale_specific' => ['default' => ['en_US' => [$attribute->code => $value]]]],
     });
@@ -96,7 +96,7 @@ it('still deletes an attribute option whose code only appears in another attribu
     $attribute = Attribute::factory()->create(['type' => 'select']);
     $option = $attribute->options()->first();
 
-    productWithValues(['common' => ['other_attribute' => $option->code]]);
+    productReferencingCatalogValues(['common' => ['other_attribute' => $option->code]]);
 
     $this->deleteJson(route('admin.catalog.attributes.options.delete', [$attribute->id, $option->id]))->assertOk();
 
