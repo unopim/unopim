@@ -184,12 +184,13 @@ it('renders templates in quick exports when Elasticsearch is enabled', function 
         ->and($queued['de_DE']['tpl_qexp_title'])->toBe('Sonnenbrille by Acme');
 });
 
-it('renders a variant template with values inherited from its parent while exporting own values only', function () {
+it('renders a variant template with values inherited from its parent and exports every inherited value', function () {
     $parent = Product::factory()->configurable()->create(['values' => [
         'common' => [
             'tpl_qexp_brand' => 'Acme',
             'tpl_qexp_title' => '{{ tpl_qexp_brand }}!',
         ],
+        'categories' => ['parent_cat'],
     ]]);
 
     $variant = Product::factory()->create([
@@ -208,7 +209,8 @@ it('renders a variant template with values inherited from its parent while expor
 
     expect($variantRows['en_US']['tpl_qexp_title'])->toBe('Acme Blue')
         ->and($variantRows['de_DE']['tpl_qexp_title'])->toBe('Acme Blau')
-        ->and($variantRows['en_US']['tpl_qexp_brand'])->toBe('')
+        ->and($variantRows['en_US']['tpl_qexp_brand'])->toBe('Acme')
+        ->and($variantRows['en_US']['categories'])->toBe('parent_cat')
         ->and($rows[$parent->sku][$this->channel->code]['en_US']['tpl_qexp_title'])->toBe('Acme!')
         ->and($variant->fresh()->values)->toBe($storedVariant);
 });

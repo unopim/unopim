@@ -1129,7 +1129,9 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $channelsAndLocales = $this->getAllChannelsAndLocales();
 
-        $templateContexts = $this->resolveTemplateContexts($gridData);
+        $inheritedValues = $this->resolveInheritedValues($gridData);
+
+        $templateContexts = $this->resolveTemplateContexts($gridData, $inheritedValues);
 
         foreach ($gridData as $product) {
             $productArray = (array) $product;
@@ -1137,7 +1139,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 $productArray['values'] = json_decode($productArray['values'], true);
             }
 
-            $productValues = $this->getProductValues($productArray);
+            $productValues = $inheritedValues[$productArray['product_id']] ?? $this->getProductValues($productArray);
 
             $templateContext = $templateContexts[$productArray['product_id']] ?? null;
 
@@ -1166,32 +1168,46 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     }
 
     /**
-     * Resolve the merged parent and variant values of the rows that hold a template, keyed by product id.
+     * Resolve the values a variant inherits from its parent chain (own, parent, grandparent), keyed by product id.
+     *
+     * Only rows that have a parent are returned; every other row exports its own values.
      */
-    protected function resolveTemplateContexts(iterable $products): array
+    protected function resolveInheritedValues(iterable $products): array
     {
         $rows = [];
 
         foreach ($products as $product) {
-            if (is_string($product->values ?? null) && str_contains($product->values, '{{')) {
-                $rows[$product->product_id] = [
-                    'id'        => $product->product_id,
-                    'parent_id' => $product->parent_id ?? null,
-                    'values'    => $product->values,
-                ];
+            if (empty($product->parent_id)) {
+                continue;
             }
+
+            $rows[] = [
+                'id'        => $product->product_id,
+                'parent_id' => $product->parent_id,
+                'values'    => $product->values,
+            ];
         }
 
-        if ($rows === []) {
-            return [];
+        return $rows === [] ? [] : $this->variantValueResolver->resolveBatch($rows);
+    }
+
+    /**
+     * Resolve the merged parent and variant values of the rows that hold a template, keyed by product id.
+     */
+    protected function resolveTemplateContexts(iterable $products, array $inheritedValues = []): array
+    {
+        $contexts = [];
+
+        foreach ($products as $product) {
+            if (! is_string($product->values ?? null) || ! str_contains($product->values, '{{')) {
+                continue;
+            }
+
+            $contexts[$product->product_id] = $inheritedValues[$product->product_id]
+                ?? $this->getProductValues(['values' => $product->values]);
         }
 
-        $mergedValues = $this->variantValueResolver->resolveBatch($rows);
-
-        return array_map(
-            fn (array $row): array => $mergedValues[$row['id']] ?? $this->getProductValues($row),
-            $rows,
-        );
+        return $contexts;
     }
 
     /**
