@@ -42,6 +42,7 @@ return [
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'Anda tidak dapat menghapus kategori akar yang dikaitkan dengan suatu saluran',
+                    'used-by-products'              => 'Kategori ini atau salah satu subkategorinya ditetapkan ke produk dan tidak dapat dihapus.',
                 ],
             ],
         ],
@@ -107,6 +108,7 @@ return [
                     'duplicate-code'           => 'Kode opsi atribut :code sudah digunakan.',
                     'code_not_found_to_delete' => 'Kode opsi atribut tidak ditemukan untuk dihapus.',
                     'ambiguous-code-to-delete' => 'Kode opsi :code ada pada lebih dari satu atribut; tambahkan attribute_code.',
+                    'used-by-products'         => 'Opsi atribut :code digunakan oleh produk dan tidak dapat dihapus.',
                     'locale-not-exist'         => 'Lokal ":code" tidak ada.',
                     'invalid-attribute'        => 'Atribut ":code" tidak ada.',
                 ],

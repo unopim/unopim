@@ -42,6 +42,7 @@ return [
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'チャネルに関連付けられているルートカテゴリーは削除できません',
+                    'used-by-products'              => 'このカテゴリまたはその子カテゴリは商品に割り当てられているため、削除できません。',
                 ],
             ],
         ],
@@ -107,6 +108,7 @@ return [
                     'duplicate-code'           => '属性オプションコード :code はすでに使用されています。',
                     'code_not_found_to_delete' => '削除する属性オプションコードが見つかりません。',
                     'ambiguous-code-to-delete' => 'オプションコード :code は複数の属性に存在します。attribute_code を追加してください。',
+                    'used-by-products'         => '属性オプション :code は商品で使用されているため、削除できません。',
                     'locale-not-exist'         => 'ロケール ":code" は存在しません。',
                     'invalid-attribute'        => '属性 ":code" は存在しません。',
                 ],

@@ -3,6 +3,7 @@
 namespace Webkul\Category\Repositories;
 
 use Illuminate\Contracts\Container\Container;
+use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Webkul\Category\Contracts\Category;
@@ -526,6 +527,31 @@ class CategoryRepository extends Repository
     {
         return $this->with(['parent_category']);
 
+    }
+
+    /**
+     * Determine whether any product is assigned to the category or to one of its descendants,
+     * which a delete of the category removes with it.
+     */
+    public function isUsedByProducts(int $categoryId): bool
+    {
+        $codes = $this->model->descendantsAndSelf($categoryId)->pluck('code');
+
+        foreach ($codes->chunk(100) as $chunk) {
+            $isUsed = ProductProxy::query()
+                ->where(function (Builder $query) use ($chunk): void {
+                    foreach ($chunk as $code) {
+                        $query->orWhereJsonContains('values->categories', $code);
+                    }
+                })
+                ->exists();
+
+            if ($isUsed) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

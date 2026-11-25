@@ -42,6 +42,7 @@ return [
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'Et voi poistaa juurikategoriaa, joka on liitetty kanavaan',
+                    'used-by-products'              => 'Tämä kategoria tai jokin sen alakategorioista on liitetty tuotteisiin, eikä sitä voi poistaa.',
                 ],
             ],
         ],
@@ -107,6 +108,7 @@ return [
                     'duplicate-code'           => 'Attribuuttivaihtoehdon koodi :code on jo käytössä.',
                     'code_not_found_to_delete' => 'Attribuuttivaihtoehdon koodia ei löytynyt poistettavaksi.',
                     'ambiguous-code-to-delete' => 'Vaihtoehtokoodi :code on käytössä useammassa kuin yhdessä attribuutissa; lisää attribute_code.',
+                    'used-by-products'         => 'Ominaisuuden vaihtoehto :code on tuotteiden käytössä, eikä sitä voi poistaa.',
                     'locale-not-exist'         => 'Kieltä ":code" ei ole olemassa.',
                     'invalid-attribute'        => 'Attribuuttia ":code" ei ole olemassa.',
                 ],

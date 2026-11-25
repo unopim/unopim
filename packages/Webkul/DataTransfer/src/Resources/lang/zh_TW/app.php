@@ -42,6 +42,7 @@ return [
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => '無法刪除與渠道相關的根分類',
+                    'used-by-products'              => '此分類或其子分類已指派給商品，無法刪除。',
                 ],
             ],
         ],
@@ -107,6 +108,7 @@ return [
                     'duplicate-code'           => '屬性選項代碼 :code 已被使用。',
                     'code_not_found_to_delete' => '未找到要刪除的屬性選項代碼。',
                     'ambiguous-code-to-delete' => '選項代碼 :code 存在於多個屬性中；請新增 attribute_code。',
+                    'used-by-products'         => '屬性選項 :code 正被商品使用，無法刪除。',
                     'locale-not-exist'         => '區域設置“:code”不存在。',
                     'invalid-attribute'        => '屬性“:code”不存在。',
                 ],

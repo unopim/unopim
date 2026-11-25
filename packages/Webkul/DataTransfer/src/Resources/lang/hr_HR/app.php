@@ -42,6 +42,7 @@ return [
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'Ne možete izbrisati korijensku kategoriju koja je povezana s kanalom',
+                    'used-by-products'              => 'Ova kategorija ili neka od njezinih potkategorija dodijeljena je proizvodima i ne može se izbrisati.',
                 ],
             ],
         ],
@@ -107,6 +108,7 @@ return [
                     'duplicate-code'           => 'Kod opcije značajki :code već se koristi.',
                     'code_not_found_to_delete' => 'Kod opcije značajki nije pronađen za brisanje.',
                     'ambiguous-code-to-delete' => 'Kod opcije :code postoji na više od jedne značajke; dodajte attribute_code.',
+                    'used-by-products'         => 'Opciju atributa :code koriste proizvodi i ne može se izbrisati.',
                     'locale-not-exist'         => 'Lokalizacija ":code" ne postoji.',
                     'invalid-attribute'        => 'Značajka ":code" ne postoji.',
                 ],

@@ -42,6 +42,7 @@ return [
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'لا يمكنك حذف الفئة الجذرية المرتبطة بالقناة',
+                    'used-by-products'              => 'هذه الفئة أو إحدى فئاتها الفرعية مُعيَّنة لمنتجات ولا يمكن حذفها.',
                 ],
             ],
         ],
@@ -107,6 +108,7 @@ return [
                     'duplicate-code'           => 'كود خيار السمة :code مستخدم بالفعل.',
                     'code_not_found_to_delete' => 'لم يتم العثور على كود خيار السمة للحذف.',
                     'ambiguous-code-to-delete' => 'كود الخيار :code موجود في أكثر من سمة؛ أضف attribute_code.',
+                    'used-by-products'         => 'خيار السمة :code مستخدم في منتجات ولا يمكن حذفه.',
                     'locale-not-exist'         => 'اللغة المحلية ":code" غير موجودة.',
                     'invalid-attribute'        => 'السمة ":code" غير موجودة.',
                 ],

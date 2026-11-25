@@ -42,6 +42,7 @@ return [
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'आप किसी चैनल से संबद्ध रूट श्रेणी को नहीं हटा सकते',
+                    'used-by-products'              => 'यह श्रेणी या इसकी कोई उप-श्रेणी उत्पादों को असाइन की गई है और इसे हटाया नहीं जा सकता।',
                 ],
             ],
         ],
@@ -107,6 +108,7 @@ return [
                     'duplicate-code'           => 'विशेषता विकल्प कोड :code पहले से ही उपयोग में है।',
                     'code_not_found_to_delete' => 'हटाने के लिए विशेषता विकल्प कोड नहीं मिला।',
                     'ambiguous-code-to-delete' => 'विकल्प कोड :code एक से अधिक विशेषताओं में मौजूद है; attribute_code जोड़ें।',
+                    'used-by-products'         => 'एट्रिब्यूट विकल्प :code का उपयोग उत्पादों द्वारा किया जा रहा है और इसे हटाया नहीं जा सकता।',
                     'locale-not-exist'         => 'लोकेल ":code" मौजूद नहीं है।',
                     'invalid-attribute'        => 'विशेषता ":code" मौजूद नहीं है।',
                 ],

@@ -42,6 +42,7 @@ return [
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'Nie można usunąć głównej kategorii powiązanej z kanałem',
+                    'used-by-products'              => 'Ta kategoria lub jedna z jej podkategorii jest przypisana do produktów i nie można jej usunąć.',
                 ],
             ],
         ],
@@ -107,6 +108,7 @@ return [
                     'duplicate-code'           => 'Kod opcji atrybutu :code jest już w użyciu.',
                     'code_not_found_to_delete' => 'Nie znaleziono kodu opcji atrybutu do usunięcia.',
                     'ambiguous-code-to-delete' => 'Kod opcji :code istnieje w więcej niż jednym atrybucie; dodaj attribute_code.',
+                    'used-by-products'         => 'Opcja atrybutu :code jest używana przez produkty i nie można jej usunąć.',
                     'locale-not-exist'         => 'Ustawienia regionalne ":code" nie istnieją.',
                     'invalid-attribute'        => 'Atrybut ":code" nie istnieje.',
                 ],

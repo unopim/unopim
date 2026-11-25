@@ -27,6 +27,8 @@ class Importer extends AbstractImporter
 
     public const ERROR_INVALID_ATTRIBUTE = 'invalid_attribute';
 
+    public const ERROR_USED_BY_PRODUCTS = 'option_used_by_products';
+
     /**
      * Permanent entity columns
      */
@@ -63,6 +65,7 @@ class Importer extends AbstractImporter
         self::ERROR_AMBIGUOUS_CODE_FOR_DELETE => 'data_transfer::app.importers.attribute-options.validation.errors.ambiguous-code-to-delete',
         self::ERROR_NOT_FOUND_LOCALE          => 'data_transfer::app.importers.attribute-options.validation.errors.locale-not-exist',
         self::ERROR_INVALID_ATTRIBUTE         => 'data_transfer::app.importers.attribute-options.validation.errors.invalid-attribute',
+        self::ERROR_USED_BY_PRODUCTS          => 'data_transfer::app.importers.attribute-options.validation.errors.used-by-products',
     ];
 
     protected array $locales = [];
@@ -116,6 +119,19 @@ class Importer extends AbstractImporter
             $id = $this->getAttributeOptionIdForDelete($rowData);
 
             if ($id) {
+                $option = $this->attributeOptionRepository->find($id);
+
+                if ($option && $this->attributeOptionRepository->isUsedByProducts($option)) {
+                    $this->skipRow(
+                        $rowNumber,
+                        self::ERROR_USED_BY_PRODUCTS,
+                        'code',
+                        trans($this->messages[self::ERROR_USED_BY_PRODUCTS], ['code' => $rowData['code']])
+                    );
+
+                    return false;
+                }
+
                 return true;
             }
 

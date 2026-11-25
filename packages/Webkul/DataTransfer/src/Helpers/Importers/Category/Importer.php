@@ -46,6 +46,8 @@ class Importer extends AbstractImporter
 
     const ERROR_RELATED_TO_CHANNEL = 'channel_related_category_root';
 
+    const ERROR_USED_BY_PRODUCTS = 'category_used_by_products';
+
     /**
      * Permanent entity columns
      */
@@ -84,6 +86,7 @@ class Importer extends AbstractImporter
         self::ERROR_NOT_FOUND_LOCALE          => 'data_transfer::app.importers.products.validation.errors.locale-not-exist',
         self::ERROR_NOT_UNIQUE_VALUE          => 'data_transfer::app.importers.products.validation.errors.not-unique-value',
         self::ERROR_RELATED_TO_CHANNEL        => 'data_transfer::app.importers.categories.validation.errors.channel-related-category-root',
+        self::ERROR_USED_BY_PRODUCTS          => 'data_transfer::app.importers.categories.validation.errors.used-by-products',
     ];
 
     /**
@@ -203,6 +206,12 @@ class Importer extends AbstractImporter
 
             if (in_array($id, $this->nonDeletableCategories)) {
                 $this->skipRow($rowNumber, self::ERROR_RELATED_TO_CHANNEL, $rowData['code']);
+
+                return false;
+            }
+
+            if ($this->categoryRepository->isUsedByProducts($id)) {
+                $this->skipRow($rowNumber, self::ERROR_USED_BY_PRODUCTS, $rowData['code']);
 
                 return false;
             }

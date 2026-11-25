@@ -389,6 +389,12 @@ class CategoryController extends Controller
             ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
+        if ($this->categoryRepository->isUsedByProducts($category->id)) {
+            return new JsonResponse([
+                'message' => trans('admin::app.catalog.categories.delete-category-in-use'),
+            ], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
         try {
             Event::dispatch('catalog.category.delete.before', $id);
 
@@ -428,6 +434,10 @@ class CategoryController extends Controller
                 $suppressFlash = false;
 
                 return new JsonResponse(['message' => trans('admin::app.catalog.categories.delete-category-root')], JsonResponse::HTTP_BAD_REQUEST);
+            }
+
+            if ($this->categoryRepository->isUsedByProducts($category->id)) {
+                return new JsonResponse(['message' => trans('admin::app.catalog.categories.delete-category-in-use')], JsonResponse::HTTP_BAD_REQUEST);
             }
 
             try {

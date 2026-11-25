@@ -42,6 +42,7 @@ return [
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'No pots eliminar la categoria arrel associada amb un canal',
+                    'used-by-products'              => 'Aquesta categoria o alguna de les seves subcategories està assignada a productes i no es pot eliminar.',
                 ],
             ],
         ],
@@ -107,6 +108,7 @@ return [
                     'duplicate-code'           => 'El codi d\'opció d\'atribut :code ja està en ús.',
                     'code_not_found_to_delete' => 'Codi d\'opció d\'atribut no trobat per a supressió.',
                     'ambiguous-code-to-delete' => 'El codi d\'opció :code existeix en més d\'un atribut; afegiu attribute_code.',
+                    'used-by-products'         => 'L\'opció d\'atribut :code la fan servir productes i no es pot eliminar.',
                     'locale-not-exist'         => 'L\'idioma ":code" no existeix.',
                     'invalid-attribute'        => 'L\'atribut ":code" no existeix.',
                 ],

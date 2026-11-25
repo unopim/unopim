@@ -55,6 +55,68 @@ class AttributeOptionRepository extends Repository
         return $option;
     }
 
+    /**
+     * Determine whether any product holds the option as a value of its attribute, in any scope.
+     *
+     * A text match narrows the candidates portably across database engines; the decoded values
+     * then confirm the code belongs to this attribute, as a single value, a list or a comma-separated string.
+     */
+    public function isUsedByProducts(AttributeOption $option): bool
+    {
+        $attributeCode = $option->attribute->code;
+
+        $optionCode = mb_strtolower($option->code);
+
+        $valuesColumn = DB::rawQueryGrammar()->castToText(DB::getQueryGrammar()->wrap('values'));
+
+        return DB::table('products')
+            ->select('id', 'values')
+            ->whereRaw("LOWER({$valuesColumn}) LIKE ?", ['%'.$optionCode.'%'])
+            ->lazyById(200)
+            ->contains(fn (object $product): bool => in_array(
+                $optionCode,
+                $this->productOptionCodes(json_decode((string) $product->values, true) ?? [], $attributeCode),
+                true,
+            ));
+    }
+
+    /**
+     * Collect the lower-cased option codes a product holds for the attribute across every value scope.
+     *
+     * @param  array<string, mixed>  $values
+     * @return array<int, string>
+     */
+    protected function productOptionCodes(array $values, string $attributeCode): array
+    {
+        $scopedValues = [$values['common'][$attributeCode] ?? null];
+
+        foreach (['locale_specific', 'channel_specific'] as $scope) {
+            foreach ((array) ($values[$scope] ?? []) as $bucket) {
+                $scopedValues[] = is_array($bucket) ? ($bucket[$attributeCode] ?? null) : null;
+            }
+        }
+
+        foreach ((array) ($values['channel_locale_specific'] ?? []) as $channelBucket) {
+            foreach ((array) $channelBucket as $bucket) {
+                $scopedValues[] = is_array($bucket) ? ($bucket[$attributeCode] ?? null) : null;
+            }
+        }
+
+        $codes = [];
+
+        foreach ($scopedValues as $value) {
+            $items = is_array($value) ? $value : (is_string($value) ? explode(',', $value) : []);
+
+            foreach ($items as $item) {
+                if (is_scalar($item)) {
+                    $codes[] = mb_strtolower(trim((string) $item));
+                }
+            }
+        }
+
+        return $codes;
+    }
+
     public function updateSortOrder(array $optionIds, string $direction, int $toIndex, int $attributeId): bool
     {
         $option = $this->where('id', $toIndex)->where('attribute_id', $attributeId)->first();

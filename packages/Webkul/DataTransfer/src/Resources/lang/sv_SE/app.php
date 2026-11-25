@@ -42,6 +42,7 @@ return [
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'Du kan inte radera rotkategorin som är associerad med en kanal',
+                    'used-by-products'              => 'Den här kategorin eller någon av dess underkategorier är tilldelad produkter och kan inte tas bort.',
                 ],
             ],
         ],
@@ -107,6 +108,7 @@ return [
                     'duplicate-code'           => 'Attributalternativkoden :code används redan.',
                     'code_not_found_to_delete' => 'Attributalternativkoden för borttagning hittades inte.',
                     'ambiguous-code-to-delete' => 'Alternativkoden :code finns på mer än ett attribut; lägg till attribute_code.',
+                    'used-by-products'         => 'Attributalternativet :code används av produkter och kan inte tas bort.',
                     'locale-not-exist'         => 'Språkinställningen ":code" existerar inte.',
                     'invalid-attribute'        => 'Attributet ":code" existerar inte.',
                 ],

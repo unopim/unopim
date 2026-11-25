@@ -42,6 +42,7 @@ return [
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'Du kan ikke slette rodkategorien, der er knyttet til en kanal',
+                    'used-by-products'              => 'Denne kategori eller en af dens underkategorier er tildelt produkter og kan ikke slettes.',
                 ],
             ],
         ],
@@ -107,6 +108,7 @@ return [
                     'duplicate-code'           => 'Attributindstillingskoden :code er allerede i brug.',
                     'code_not_found_to_delete' => 'Attributindstillingskode blev ikke fundet til sletning.',
                     'ambiguous-code-to-delete' => 'Indstillingskoden :code findes på mere end én attribut; tilføj attribute_code.',
+                    'used-by-products'         => 'Attributmuligheden :code bruges af produkter og kan ikke slettes.',
                     'locale-not-exist'         => 'Sprog ":code" findes ikke.',
                     'invalid-attribute'        => 'Attributten ":code" findes ikke.',
                 ],
