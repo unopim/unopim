@@ -434,10 +434,15 @@ abstract class AbstractImporter
 
     /**
      * Link resource data.
+     *
+     * An importer that sets $linkingRequired provides its own linkBatch(); it is not declared here
+     * so the existing implementations in extensions keep their signatures.
      */
     public function linkData(ImportJobBatchContract $importBatch): bool
     {
-        $this->linkBatch($importBatch);
+        if (method_exists($this, 'linkBatch')) {
+            $this->linkBatch($importBatch);
+        }
 
         return true;
     }

@@ -39,7 +39,7 @@ class LinkBatch implements ShouldQueue
 
         $logger->info("LinkBatch #{$this->importBatch->id} started processing.");
 
-        $importHelper->getTypeImporter()->linkBatch($this->importBatch);
+        $importHelper->getTypeImporter()->linkData($this->importBatch);
 
         $logger->info("LinkBatch #{$this->importBatch->id} completed.");
     }
