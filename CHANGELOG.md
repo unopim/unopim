@@ -9,6 +9,8 @@
 - Gravatar URLs no longer expose `md5(email)`. The avatar proxy, its cache keys and its route now use a SHA-256 hash; legacy 32-character URLs return 404 and the cache refills once. Cache keys, ETags, upload directories and draft ids that only need a fast digest use xxh128.
 - AI agent tools and Magic AI endpoints that write data now require the matching create or edit permission instead of the view permission of the area: creating attributes and families, adding attribute options, rolling back an AI changeset, saving Magic AI translations, the Magic AI settings, export links and memories stored for every user.
 - Editing roles and users, and importing them, can no longer leave the installation without an active user holding full access. An admin can only manage users whose current role they could assign, and role and user imports require role and user rights.
+- The Email, Microsoft SSO and OpenID Connect SSO settings can only be viewed and changed by admins whose role has full access, both in System Settings and through the legacy configuration route. Whoever controls the outgoing mail server or the identity provider can take over an administrator account through a password reset or a sign-in, so granting one of these sections to a custom role no longer gives access to it.
+- An admin already linked to an SSO account is no longer re-linked by email through another SSO provider.
 - Fixed the job tracker archive download listing every file on the private disk when a job track had no file path; it now returns 404.
 
 ## New features
