@@ -10,6 +10,7 @@ use Webkul\Admin\Contracts\SsoProvider;
 use Webkul\Admin\Exceptions\SsoAuthenticationException;
 use Webkul\Admin\Sso\OidcProvider;
 use Webkul\Admin\Sso\OidcSettings;
+use Webkul\Admin\Sso\SsoAuthenticator;
 use Webkul\Admin\Sso\SsoIdentity;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\User\Contracts\Admin;
@@ -31,6 +32,7 @@ class OidcIdentityListener
         protected RoleRepository $roleRepository,
         protected LocaleRepository $localeRepository,
         protected RoleAccessGuard $roleAccessGuard,
+        protected SsoAuthenticator $authenticator,
     ) {}
 
     /**
@@ -89,19 +91,12 @@ class OidcIdentityListener
 
     protected function linkedAdmin(SsoIdentity $identity): ?Admin
     {
-        return $this->adminRepository->getModel()
-            ->newQuery()
-            ->where('sso_provider', 'oidc')
-            ->where('sso_identifier', $identity->identifier)
-            ->first();
+        return $this->authenticator->adminBySubject('oidc', $identity->identifier);
     }
 
     protected function adminByEmail(SsoIdentity $identity): ?Admin
     {
-        return $this->adminRepository->getModel()
-            ->newQuery()
-            ->whereRaw('LOWER(email) = ?', [mb_strtolower(trim($identity->email))])
-            ->first();
+        return $this->authenticator->adminByEmail($identity->email);
     }
 
     /**
@@ -128,7 +123,10 @@ class OidcIdentityListener
     /**
      * Create the admin with an unusable random password, linked to the subject.
      * Without a role map the role comes from the configured default role; with
-     * neither, nothing is created and the login is refused.
+     * neither, nothing is created and the login is refused. The login is also
+     * refused when the address already belongs to an admin under the column
+     * collation, look-alikes included, since that admin's account must not be
+     * matched or shadowed.
      *
      * @throws SsoAuthenticationException
      */
@@ -140,7 +138,7 @@ class OidcIdentityListener
 
         $role ??= $this->roleByName($this->settings->defaultRole());
 
-        if (! $role) {
+        if (! $role || $this->authenticator->emailCollidesWithAdmin($identity->email)) {
             throw SsoAuthenticationException::rejected($identity->email);
         }
 
@@ -162,7 +160,7 @@ class OidcIdentityListener
                 'sso_identifier'     => $identity->identifier,
             ]);
         } catch (UniqueConstraintViolationException) {
-            return;
+            throw SsoAuthenticationException::rejected($identity->email);
         }
     }
 

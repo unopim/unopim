@@ -121,6 +121,28 @@ it('matches on the subject id after the directory changes the email', function (
     $this->assertAuthenticatedAs($admin, 'admin');
 });
 
+it('never links an admin whose email only collates with the directory address', function () {
+    $admin = Admin::factory()->create([
+        'email'    => 'jose@corp.com',
+        'password' => Hash::make('password'),
+        'status'   => 1,
+    ]);
+
+    microsoftSsoConfig();
+
+    fakeMicrosoftEndpoints([
+        'id'                => 'object-id-look-alike',
+        'mail'              => 'jose@cörp.com',
+        'userPrincipalName' => 'jose@cörp.com',
+    ]);
+
+    callbackWith(ssoHandshake())->assertRedirect(route('admin.session.create'));
+
+    $this->assertGuest('admin');
+
+    expect($admin->fresh()->sso_identifier)->toBeNull();
+});
+
 it('refuses to re-bind an admin linked through another sso driver', function () {
     $admin = Admin::factory()->create([
         'email'          => 'oidc-bound@example.com',

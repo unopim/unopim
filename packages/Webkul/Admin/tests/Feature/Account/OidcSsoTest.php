@@ -550,6 +550,32 @@ it('refuses to re-bind an admin linked through another sso driver', function () 
         ->and($admin->fresh()->sso_identifier)->toBe('object-id-1');
 });
 
+it('never links or provisions over an admin whose email only collates with the asserted one', function (bool $provisions) {
+    $admin = oidcAdmin(['email' => 'jose@corp.com']);
+
+    oidcConfigure(['auto_provision' => $provisions, 'default_role' => oidcRole()->name]);
+
+    oidcFakeIdp(oidcIdToken(['email' => 'jose@cörp.com']));
+
+    oidcCallback();
+
+    expect($admin->fresh()->sso_identifier)->toBeNull()
+        ->and(auth()->guard('admin')->id())->not->toBe($admin->id);
+})->with([
+    'provisioning off' => false,
+    'provisioning on'  => true,
+]);
+
+it('never treats a subject that differs only in case as the linked one', function () {
+    $admin = oidcAdmin(['sso_provider' => 'oidc', 'sso_identifier' => 'SUBJECT-1']);
+
+    oidcFakeIdp();
+
+    oidcAssertRejected(oidcCallback());
+
+    expect($admin->fresh()->sso_identifier)->toBe('SUBJECT-1');
+});
+
 it('refuses an unknown user while provisioning is off', function () {
     oidcFakeIdp(oidcIdToken(['email' => 'stranger@example.com']));
 
