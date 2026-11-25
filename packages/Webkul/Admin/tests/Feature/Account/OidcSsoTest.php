@@ -1,6 +1,7 @@
 <?php
 
 use Firebase\JWT\JWT;
+use GuzzleHttp\Promise\PromiseInterface;
 use Illuminate\Http\Client\Request as HttpRequest;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
@@ -15,8 +16,8 @@ use Webkul\User\Models\Role;
 beforeEach(function (): void {
     Http::preventStrayRequests();
 
-    Cache::forget('unopim.sso.oidc.discovery.'.sha1(oidcIssuer()));
-    Cache::forget('unopim.sso.oidc.jwks.'.sha1(oidcIssuer().'|'.oidcIdpUrl('jwks/')));
+    Cache::forget('unopim.sso.oidc.discovery.'.hash('sha256', oidcIssuer()));
+    Cache::forget('unopim.sso.oidc.jwks.'.hash('sha256', oidcIssuer().'|'.oidcIdpUrl('jwks/')));
 
     oidcConfigure();
 });
@@ -283,6 +284,49 @@ it('builds the authorization request from discovery with pkce, nonce and openid 
         ->and($query['nonce'])->toBe($handshake['nonce'])
         ->and($query['code_challenge_method'])->toBe('S256')
         ->and($query['redirect_uri'])->toBe(route('admin.session.sso.callback', ['provider' => 'oidc']));
+});
+
+it('signs in straight from the identity provider app tile without visiting the login page', function () {
+    $admin = oidcAdmin(['sso_provider' => 'oidc', 'sso_identifier' => 'subject-1']);
+
+    $nonce = null;
+
+    Http::fake([
+        oidcIssuer().'.well-known/openid-configuration' => Http::response(oidcDiscovery()),
+        oidcIdpUrl('token/')                            => function () use (&$nonce): PromiseInterface {
+            return Http::response(['access_token' => 'access-token', 'token_type' => 'Bearer', 'id_token' => oidcIdToken(['nonce' => $nonce])]);
+        },
+        oidcIdpUrl('jwks/')                             => Http::response(oidcJwks('rsa-1')),
+    ]);
+
+    $location = $this->get(route('admin.session.sso.redirect', ['provider' => 'oidc']))
+        ->assertRedirect()
+        ->headers->get('Location');
+
+    parse_str(parse_url($location, PHP_URL_QUERY), $query);
+
+    $nonce = $query['nonce'];
+
+    $this->get(route('admin.session.sso.callback', [
+        'provider' => 'oidc',
+        'state'    => $query['state'],
+        'code'     => 'auth-code',
+    ]))->assertRedirect(route('admin.dashboard.index'));
+
+    $this->assertAuthenticatedAs($admin, 'admin');
+});
+
+it('sends an admin who is already signed in straight to the landing page', function () {
+    $this->loginAsAdmin(oidcAdmin(['use_gravatar' => false]));
+
+    oidcFakeIdp();
+
+    $this->get(route('admin.session.sso.redirect', ['provider' => 'oidc']))
+        ->assertRedirect(route('admin.dashboard.index'));
+
+    expect(session('sso_handshake.oidc'))->toBeNull();
+
+    Http::assertNothingSent();
 });
 
 it('refuses a discovery document naming a different issuer', function () {
