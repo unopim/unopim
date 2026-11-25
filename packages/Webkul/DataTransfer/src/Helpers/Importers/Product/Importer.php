@@ -2,6 +2,7 @@
 
 namespace Webkul\DataTransfer\Helpers\Importers\Product;
 
+use Elastic\Elasticsearch\Exception\ElasticsearchException;
 use Illuminate\Http\File;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
@@ -1876,7 +1877,11 @@ class Importer extends AbstractImporter
 
         $this->deletedItemsCount = count($idsToDelete);
 
+        $idsToUnindex = config('elasticsearch.enabled') ? $this->withVariantIds($idsToDelete) : [];
+
         $this->productRepository->deleteWhere([['id', 'IN', $idsToDelete]]);
+
+        $this->removeFromIndex($idsToUnindex);
 
         /**
          * Remove product images from the storage
@@ -1892,6 +1897,72 @@ class Importer extends AbstractImporter
         }
 
         return true;
+    }
+
+    /**
+     * Add the ids of every variant below the given products, which the parent_id cascade deletes with them.
+     *
+     * @param  array<int, int>  $productIds
+     * @return array<int, int>
+     */
+    protected function withVariantIds(array $productIds): array
+    {
+        $allIds = $productIds;
+
+        $parentIds = $productIds;
+
+        while ($parentIds !== []) {
+            $parentIds = array_values(array_diff(
+                DB::table('products')->whereIn('parent_id', $parentIds)->pluck('id')->map(fn ($id): int => (int) $id)->all(),
+                $allIds,
+            ));
+
+            $allIds = [...$allIds, ...$parentIds];
+        }
+
+        return $allIds;
+    }
+
+    /**
+     * Remove the given products from the elasticsearch products index.
+     *
+     * The bulk query delete fires no model events, so the index observer never sees these rows go.
+     *
+     * @param  array<int, int>  $productIds
+     */
+    protected function removeFromIndex(array $productIds): void
+    {
+        if ($productIds === [] || ! config('elasticsearch.enabled')) {
+            return;
+        }
+
+        $productIndex = strtolower(config('elasticsearch.prefix').'_products');
+
+        $body = [];
+
+        foreach ($productIds as $productId) {
+            $body[] = ['delete' => ['_index' => $productIndex, '_id' => $productId]];
+        }
+
+        try {
+            $response = ElasticSearch::bulk(['body' => $body]);
+        } catch (ElasticsearchException $e) {
+            Log::channel('elasticsearch')->error('Exception while deleting imported products from '.$productIndex.' index: ', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return;
+        }
+
+        if (! empty($response['errors'])) {
+            foreach ($response['items'] as $result) {
+                if (isset($result['delete']['error'])) {
+                    Log::channel('elasticsearch')->error('Error while deleting product id: '.$result['delete']['_id'].' from '.$productIndex.' index: ', [
+                        'error' => $result['delete']['error'],
+                    ]);
+                }
+            }
+        }
     }
 
     /**
