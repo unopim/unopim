@@ -69,6 +69,7 @@ return [
         'icon'         => 'icon-configuration',
         'config_group' => 'general.microsoft_sso.settings',
         'acl'          => 'configuration.system_settings.microsoft_sso',
+        'full_access'  => true,
         'sort'         => 4,
     ],
 

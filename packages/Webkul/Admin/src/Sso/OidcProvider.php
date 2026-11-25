@@ -192,7 +192,10 @@ class OidcProvider extends AbstractOAuthProvider implements SsoLogoutProvider
     /**
      * Builds the identity from the verified ID token, completed by the userinfo
      * endpoint when the token lacks the email, its verification flag, or the
-     * groups a configured role map needs. The ID token's claims win over userinfo.
+     * groups a configured role map needs. The ID token's claims win over userinfo,
+     * except that the email and its `email_verified` flag are always taken as a
+     * pair from the one document that supplies the email, so a flag asserted for
+     * one address can never vouch for another.
      */
     protected function fetchIdentity(SsoToken $token): ?SsoIdentity
     {
@@ -203,13 +206,18 @@ class OidcProvider extends AbstractOAuthProvider implements SsoLogoutProvider
         }
 
         if ($this->needsUserInfo($claims)) {
-            $userInfo = $this->fetchUserInfo($token->accessToken);
+            $userInfo = $this->fetchUserInfo($token->accessToken) ?? [];
 
-            if ($userInfo !== null && ($userInfo['sub'] ?? null) !== $claims['sub']) {
+            if ($userInfo !== [] && ($userInfo['sub'] ?? null) !== $claims['sub']) {
                 return null;
             }
 
-            $claims = $claims + ($userInfo ?? []);
+            $emailSource = isset($claims['email']) ? $claims : $userInfo;
+
+            $claims = array_merge($claims + $userInfo, [
+                'email'          => $emailSource['email'] ?? null,
+                'email_verified' => $emailSource['email_verified'] ?? null,
+            ]);
         }
 
         $email = $claims['email'] ?? null;

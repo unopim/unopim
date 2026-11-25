@@ -404,6 +404,27 @@ it('reads the email from userinfo when the id token has none', function () {
         && $request->header('Authorization')[0] === 'Bearer access-token');
 });
 
+it('never pairs an email from one document with the verification flag of the other', function (array $tokenClaims, array $userInfo) {
+    $admin = oidcAdmin();
+
+    oidcConfigure(['require_verified_email' => false]);
+
+    oidcFakeIdp(oidcIdToken($tokenClaims), ['userinfo' => array_merge(['sub' => 'subject-1'], $userInfo)]);
+
+    oidcAssertRejected(oidcCallback());
+
+    expect($admin->fresh()->sso_identifier)->toBeNull();
+})->with([
+    'email in the id token, flag only in userinfo' => [
+        ['email' => 'oidc-user@example.com', 'email_verified' => null],
+        ['email' => 'someone-else@example.com', 'email_verified' => true],
+    ],
+    'flag in the id token, email only in userinfo' => [
+        ['email' => null, 'email_verified' => true],
+        ['email' => 'oidc-user@example.com', 'email_verified' => false],
+    ],
+]);
+
 it('refuses userinfo that describes a different subject', function () {
     oidcAdmin();
 

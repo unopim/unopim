@@ -92,6 +92,25 @@ it('allows a full-access admin to write oidc sso settings', function () use ($oi
     ]);
 });
 
+it('denies writing microsoft sso settings with only the delegated microsoft sso grant', function () use ($ssoPayload) {
+    $this->loginWithPermissions(permissions: [
+        'dashboard',
+        'configuration',
+        'configuration.system_settings',
+        'configuration.system_settings.microsoft_sso',
+    ]);
+
+    $this->put(route('admin.settings.system.update', 'system.microsoft_sso'), $ssoPayload)->assertStatus(403);
+
+    $this->post(route('admin.configuration.store', ['slug' => 'general', 'slug2' => 'microsoft_sso']), $ssoPayload)
+        ->assertStatus(403);
+
+    $this->assertDatabaseMissing('core_config', [
+        'code'  => 'general.microsoft_sso.settings.tenant',
+        'value' => 'attacker-tenant',
+    ]);
+});
+
 it('denies the slug-less configuration post that targets every section at once', function () use ($restricted, $emailPayload, $debugPayload, $ssoPayload) {
     $this->loginWithPermissions(permissions: $restricted);
 
