@@ -58,7 +58,7 @@ it('denies writing oidc sso settings through the legacy configuration route', fu
     ]);
 });
 
-it('allows writing oidc sso settings with the oidc sso grant only', function () use ($oidcPayload, $ssoPayload) {
+it('denies writing oidc sso settings with only the delegated oidc sso grant', function () use ($oidcPayload) {
     config()->set('services.oidc_sso.issuer', null);
 
     $this->loginWithPermissions(permissions: [
@@ -68,14 +68,28 @@ it('allows writing oidc sso settings with the oidc sso grant only', function () 
         'configuration.system_settings.oidc_sso',
     ]);
 
+    $this->put(route('admin.settings.system.update', 'system.oidc_sso'), $oidcPayload)->assertStatus(403);
+
+    $this->post(route('admin.configuration.store', ['slug' => 'general', 'slug2' => 'oidc_sso']), $oidcPayload)
+        ->assertStatus(403);
+
+    $this->assertDatabaseMissing('core_config', [
+        'code'  => 'general.oidc_sso.settings.issuer',
+        'value' => 'https://attacker.example.test/',
+    ]);
+});
+
+it('allows a full-access admin to write oidc sso settings', function () use ($oidcPayload) {
+    config()->set('services.oidc_sso.issuer', null);
+
+    $this->loginWithPermissions(permissionType: 'all', permissions: []);
+
     $this->put(route('admin.settings.system.update', 'system.oidc_sso'), $oidcPayload)->assertRedirect();
 
     $this->assertDatabaseHas('core_config', [
         'code'  => 'general.oidc_sso.settings.issuer',
         'value' => 'https://attacker.example.test/',
     ]);
-
-    $this->put(route('admin.settings.system.update', 'system.microsoft_sso'), $ssoPayload)->assertStatus(403);
 });
 
 it('denies the slug-less configuration post that targets every section at once', function () use ($restricted, $emailPayload, $debugPayload, $ssoPayload) {

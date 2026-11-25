@@ -335,7 +335,7 @@ class OidcProvider extends AbstractOAuthProvider implements SsoLogoutProvider
      */
     protected function signingKeys(array $discovery, bool $refresh): array
     {
-        $cacheKey = 'unopim.sso.oidc.jwks.'.sha1($discovery['issuer'].'|'.$discovery['jwks_uri']);
+        $cacheKey = 'unopim.sso.oidc.jwks.'.hash('sha256', $discovery['issuer'].'|'.$discovery['jwks_uri']);
 
         if ($refresh) {
             Cache::forget($cacheKey);
@@ -390,7 +390,7 @@ class OidcProvider extends AbstractOAuthProvider implements SsoLogoutProvider
         }
 
         return Cache::remember(
-            'unopim.sso.oidc.discovery.'.sha1($issuer),
+            'unopim.sso.oidc.discovery.'.hash('sha256', $issuer),
             self::CACHE_TTL_SECONDS,
             function () use ($issuer): ?array {
                 $document = $this->fetchJson(rtrim($issuer, '/').'/.well-known/openid-configuration');

@@ -121,6 +121,31 @@ it('matches on the subject id after the directory changes the email', function (
     $this->assertAuthenticatedAs($admin, 'admin');
 });
 
+it('refuses to re-bind an admin linked through another sso driver', function () {
+    $admin = Admin::factory()->create([
+        'email'          => 'oidc-bound@example.com',
+        'password'       => Hash::make('password'),
+        'status'         => 1,
+        'sso_provider'   => 'oidc',
+        'sso_identifier' => 'oidc-subject',
+    ]);
+
+    microsoftSsoConfig();
+
+    fakeMicrosoftEndpoints([
+        'id'                => 'object-id-other',
+        'mail'              => 'oidc-bound@example.com',
+        'userPrincipalName' => 'oidc-bound@example.com',
+    ]);
+
+    callbackWith(ssoHandshake())->assertRedirect(route('admin.session.create'));
+
+    $this->assertGuest('admin');
+
+    expect($admin->fresh()->sso_provider)->toBe('oidc')
+        ->and($admin->fresh()->sso_identifier)->toBe('oidc-subject');
+});
+
 it('refuses a reassigned email that belongs to another linked subject id', function () {
     Admin::factory()->create([
         'email'          => 'recycled@example.com',

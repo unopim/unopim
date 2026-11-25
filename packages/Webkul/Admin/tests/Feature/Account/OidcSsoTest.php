@@ -474,6 +474,17 @@ it('refuses to hijack an admin linked to a different subject through its email',
     expect($admin->fresh()->sso_identifier)->toBe('original-subject');
 });
 
+it('refuses to re-bind an admin linked through another sso driver', function () {
+    $admin = oidcAdmin(['sso_provider' => 'microsoft', 'sso_identifier' => 'object-id-1']);
+
+    oidcFakeIdp();
+
+    oidcAssertRejected(oidcCallback());
+
+    expect($admin->fresh()->sso_provider)->toBe('microsoft')
+        ->and($admin->fresh()->sso_identifier)->toBe('object-id-1');
+});
+
 it('refuses an unknown user while provisioning is off', function () {
     oidcFakeIdp(oidcIdToken(['email' => 'stranger@example.com']));
 
@@ -703,6 +714,32 @@ it('renders environment-locked fields read-only and never prints the secret', fu
     expect($html)->toContain(e(oidcIssuer()))
         ->and($html)->toContain('&quot;locked&quot;:true')
         ->and($html)->not->toContain('unopim-secret');
+});
+
+it('reserves the openid connect settings for full-access admins', function () {
+    $role = Role::factory()->create([
+        'permission_type' => 'custom',
+        'permissions'     => ['configuration', 'configuration.system_settings', 'configuration.system_settings.oidc_sso'],
+    ]);
+
+    $this->loginAsAdmin(oidcAdmin(['email' => 'delegated@example.com', 'role_id' => $role->id, 'use_gravatar' => false]));
+
+    $payload = ['general' => ['oidc_sso' => ['settings' => ['issuer' => 'https://attacker.example.test/']]]];
+
+    $this->get(route('admin.settings.system.index'))
+        ->assertOk()
+        ->assertDontSee(trans('admin::app.settings.system-settings.oidc-sso.title'));
+
+    $this->get(route('admin.settings.system.edit', 'system.oidc_sso'))->assertForbidden();
+
+    $this->put(route('admin.settings.system.update', 'system.oidc_sso'), $payload)->assertForbidden();
+
+    $this->post(route('admin.configuration.store', ['slug' => 'general', 'slug2' => 'oidc_sso']), $payload)->assertForbidden();
+
+    $this->assertDatabaseMissing('core_config', [
+        'code'  => 'general.oidc_sso.settings.issuer',
+        'value' => 'https://attacker.example.test/',
+    ]);
 });
 
 it('ignores environment-locked fields on save', function () {

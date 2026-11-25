@@ -79,6 +79,7 @@ return [
         'icon'         => 'icon-configuration',
         'config_group' => 'general.oidc_sso.settings',
         'acl'          => 'configuration.system_settings.oidc_sso',
+        'full_access'  => true,
         'sort'         => 4,
     ],
 

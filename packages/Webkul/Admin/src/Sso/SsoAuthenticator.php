@@ -48,7 +48,9 @@ class SsoAuthenticator
     /**
      * Prefer the provider's immutable subject id. Email is only used to link an
      * account the first time, because directories reassign addresses and a reused
-     * address would otherwise inherit the previous holder's admin account.
+     * address would otherwise inherit the previous holder's admin account. An
+     * account already bound to a subject, by this or any other driver, is never
+     * re-bound by email, so one driver cannot take over another driver's binding.
      */
     protected function resolveAdmin(SsoIdentity $identity, SsoProvider $provider): ?Admin
     {
@@ -71,11 +73,7 @@ class SsoAuthenticator
             return null;
         }
 
-        if (
-            $admin->sso_provider === $provider->getCode()
-            && $admin->sso_identifier !== null
-            && $admin->sso_identifier !== $identity->identifier
-        ) {
+        if ($admin->sso_identifier !== null) {
             throw SsoAuthenticationException::rejected($identity->email);
         }
 

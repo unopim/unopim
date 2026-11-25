@@ -4,6 +4,7 @@ namespace Webkul\Admin;
 
 use Webkul\Core\Platform\ModuleGate;
 use Webkul\Core\Tree;
+use Webkul\User\Services\RoleAccessGuard;
 
 class SystemSettings
 {
@@ -186,11 +187,44 @@ class SystemSettings
                 return false;
             }
 
-            if (empty($item['acl'])) {
+            return $this->allows($item);
+        }));
+    }
+
+    /**
+     * Whether the current admin may open a registry row. Its `acl` must be granted,
+     * and a row flagged `full_access` is reserved for admins whose role grants every
+     * permission: such a row holds a trust anchor, like the identity provider that
+     * decides who signs in with which role, so a delegated permission on it would
+     * let its holder grant themselves any role.
+     *
+     * @param  array<string, mixed>  $item
+     */
+    public function allows(array $item): bool
+    {
+        if (! empty($item['acl']) && ! bouncer()->hasPermission((string) $item['acl'])) {
+            return false;
+        }
+
+        return empty($item['full_access']) || $this->currentAdminHasFullAccess();
+    }
+
+    /**
+     * Whether a registry row owning this ACL key is reserved for full-access admins.
+     */
+    public function requiresFullAccess(string $aclKey): bool
+    {
+        foreach ((array) config('system_settings', []) as $item) {
+            if (($item['acl'] ?? null) === $aclKey && ! empty($item['full_access'])) {
                 return true;
             }
+        }
 
-            return bouncer()->hasPermission((string) $item['acl']);
-        }));
+        return false;
+    }
+
+    public function currentAdminHasFullAccess(): bool
+    {
+        return app(RoleAccessGuard::class)->hasFullAccess(auth()->guard('admin')->user()?->role);
     }
 }
