@@ -56,6 +56,11 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     protected const MAX_SEARCH_FIELDS = 10;
 
     /**
+     * Whether a request may narrow the grid to the products listed in `productIds`.
+     */
+    protected bool $acceptsProductIds = true;
+
+    /**
      * Prepare query builder.
      *
      * @var object
@@ -1426,7 +1431,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'from'                 => $paginator['from'],
                 'to'                   => $paginator['to'],
                 'total'                => $paginator['total'],
-                'per_page_options'     => [10, 20, 30, 40, 50],
+                'per_page_options'     => $this->getPerPageOptions(),
                 'per_page'             => $paginator['per_page'],
                 'current_page'         => $paginator['current_page'],
                 'last_page'            => $paginator['last_page'],
