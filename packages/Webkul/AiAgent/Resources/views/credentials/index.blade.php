@@ -9,7 +9,7 @@
         </p>
 
         <div class="flex gap-x-2.5 items-center">
-            @if (bouncer()->hasPermission('ai-agent.credentials.create'))
+            @if (bouncer()->hasPermission('ai-agent.credentials'))
                 <a href="{{ route('ai-agent.credentials.create') }}" class="primary-button">
                     @lang('ai-agent::app.credentials.create-btn')
                 </a>

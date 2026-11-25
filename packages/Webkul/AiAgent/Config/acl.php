@@ -126,6 +126,36 @@ return [
     [
         'key'   => 'ai-agent.credentials',
         'name'  => 'ai-agent::app.acl.credentials',
+        'route' => 'ai-agent.credentials.create',
+        'sort'  => 7,
+    ],
+    [
+        'key'   => 'ai-agent.credentials',
+        'name'  => 'ai-agent::app.acl.credentials',
+        'route' => 'ai-agent.credentials.store',
+        'sort'  => 7,
+    ],
+    [
+        'key'   => 'ai-agent.credentials',
+        'name'  => 'ai-agent::app.acl.credentials',
+        'route' => 'ai-agent.credentials.edit',
+        'sort'  => 7,
+    ],
+    [
+        'key'   => 'ai-agent.credentials',
+        'name'  => 'ai-agent::app.acl.credentials',
+        'route' => 'ai-agent.credentials.update',
+        'sort'  => 7,
+    ],
+    [
+        'key'   => 'ai-agent.credentials',
+        'name'  => 'ai-agent::app.acl.credentials',
+        'route' => 'ai-agent.credentials.destroy',
+        'sort'  => 7,
+    ],
+    [
+        'key'   => 'ai-agent.credentials',
+        'name'  => 'ai-agent::app.acl.credentials',
         'route' => 'ai-agent.credentials.index',
         'sort'  => 7,
     ],
