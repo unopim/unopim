@@ -195,13 +195,7 @@ class ApiKeysController extends Controller
     }
 
     /**
-     * Regenerates the secret key for the specified OAuth client.
-     *
-     * This function retrieves the OAuth client ID from the request parameters,
-     * finds the corresponding client in the database, and then regenerates its secret key.
-     * If the client is not found, it returns a JSON response with a 404 status code and an error message.
-     *
-     * @return JsonResponse The JSON response containing the regenerated secret key.
+     * Regenerate the OAuth client secret of an integration owned by an API user.
      */
     public function regenerateSecretKey(RegenerateSecretKeyRequest $request): JsonResponse
     {
@@ -209,12 +203,12 @@ class ApiKeysController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $data = $request->validated();
+        $apiKey = $this->apiKeyRepository->findOneByField('oauth_client_id', $request->validated('oauth_client_id'));
 
-        $client = $this->clients->find($data['oauth_client_id']);
+        $client = $apiKey?->oauthClients;
 
-        if (! $client) {
-            return new JsonResponse(['message' => trans('admin::app.integrations.api-keys.client-not-found')], JsonResponse::HTTP_NOT_FOUND);
+        if (! $client || ! $apiKey->admins?->isApiUser()) {
+            return new JsonResponse(['message' => trans('admin::app.configuration.integrations.client-not-found')], JsonResponse::HTTP_NOT_FOUND);
         }
 
         $client = $this->regenerateSecret($client);
