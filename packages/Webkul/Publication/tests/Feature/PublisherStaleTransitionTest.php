@@ -28,8 +28,7 @@ it('does not let a stale Published model withdraw a publication redacted meanwhi
     $publisher->redactAll($version->publication->fresh(), Admin::factory()->create()->id, 'erasure');
     expect($version->publication->fresh()->status)->toBe(PublicationStatus::Redacted);
 
-    // Request A now withdraws with its stale in-memory model.
-    expect(fn () => $publisher->withdraw($stale))
+    expect(fn (): mixed => $publisher->withdraw($stale))
         ->toThrow(InvalidPublicationTransitionException::class);
 
     expect($version->publication->fresh()->status)->toBe(PublicationStatus::Redacted);
