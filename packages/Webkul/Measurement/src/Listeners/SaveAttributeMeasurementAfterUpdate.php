@@ -28,7 +28,7 @@ class SaveAttributeMeasurementAfterUpdate
             return;
         }
 
-        if (! $attribute || ! $this->measurementHelper->isMeasurementBacked($attribute->type)) {
+        if (! $attribute instanceof Attribute || ! $this->measurementHelper->isMeasurementBacked($attribute->type)) {
             return;
         }
 

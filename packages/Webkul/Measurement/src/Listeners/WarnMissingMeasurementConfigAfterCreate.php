@@ -25,7 +25,7 @@ class WarnMissingMeasurementConfigAfterCreate
     public function handle(?Attribute $attribute): void
     {
         if (
-            ! $attribute
+            ! $attribute instanceof Attribute
             || ! request()->hasSession()
             || ! $this->measurementHelper->isMeasurementBacked($attribute->type)
             || $this->attributeMeasurementRepository->getByAttributeId($attribute->id)

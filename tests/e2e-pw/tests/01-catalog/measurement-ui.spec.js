@@ -70,7 +70,6 @@ async function createMeasurementAttribute(page, { familyCode = MEASUREMENT_FAMIL
     await page.keyboard.press('Enter');
   }
 
-  // The quick-create modal requires the family and unit for a measurement type.
   await page.locator('input[name="measurement_family"]').first().waitFor({ state: 'attached', timeout: 25000 });
   await selectMultiselectOption(page, 'measurement_family', familyCode);
 

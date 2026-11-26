@@ -5,6 +5,7 @@ namespace Webkul\Measurement\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Measurement\Http\Requests\FamilyOptionsForm;
 use Webkul\Measurement\Http\Requests\FamilyUnitOptionsForm;
 use Webkul\Measurement\Services\AttributeMeasurementService;
 
@@ -19,10 +20,8 @@ class AttributeController extends Controller
      * when a measurement type is picked so the attributes index does not query
      * families on every load.
      */
-    public function familyOptions(): JsonResponse
+    public function familyOptions(FamilyOptionsForm $request): JsonResponse
     {
-        abort_unless(bouncer()->hasPermission('catalog.attributes'), 403, trans('admin::app.common.unauthorized'));
-
         return new JsonResponse([
             'families' => $this->attributeMeasurementService->familyOptions(),
         ]);

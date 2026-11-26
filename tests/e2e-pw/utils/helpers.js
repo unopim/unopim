@@ -410,7 +410,6 @@ async function selectMultiselectOption(page, name, label, { filter = true } = {}
 
   if (filter) {
     await wrapper.locator('input.multiselect__input').first().fill(label).catch(() => {});
-    await page.waitForTimeout(400);
   }
 
   const option = page.getByRole('option', { name: label }).first();
@@ -425,7 +424,6 @@ async function selectMultiselectOption(page, name, label, { filter = true } = {}
  */
 async function selectFirstMultiselectOption(page, name) {
   await openMultiselect(page, name);
-  await page.waitForTimeout(600);
 
   const first = page.locator('.multiselect__content-wrapper:visible li.multiselect__element').first();
   await first.waitFor({ state: 'visible', timeout: 12000 });

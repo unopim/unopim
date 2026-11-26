@@ -14,7 +14,7 @@ class SaveAttributeMeasurementAfterCreate
     ) {}
 
     /**
-     * Save the measurement configuration the create form now collects.
+     * Save the measurement family and unit collected by the quick-create modal.
      *
      * The family and unit are validated in the "before" listener, so here the
      * values are already known good and only the save remains.
@@ -25,7 +25,7 @@ class SaveAttributeMeasurementAfterCreate
             return;
         }
 
-        if (! $attribute || ! $this->measurementHelper->isMeasurementBacked($attribute->type)) {
+        if (! $attribute instanceof Attribute || ! $this->measurementHelper->isMeasurementBacked($attribute->type)) {
             return;
         }
 
