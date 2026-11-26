@@ -16,6 +16,7 @@ use Webkul\AdminApi\Http\Requests\Catalog\StoreAttributeRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\UpdateAttributeRequest;
 use Webkul\Attribute\Repositories\AttributeOptionRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
+use Webkul\Attribute\Rules\ConfinedSwatchPath;
 use Webkul\Attribute\Rules\ValidSwatchValue;
 use Webkul\Core\Rules\Code;
 use Webkul\Core\Rules\WithoutUploadedFiles;
@@ -71,6 +72,14 @@ class AttributeController extends ApiController
 
         $requestData = $this->setLabels($requestData);
 
+        foreach (is_array($requestData['options'] ?? null) ? $requestData['options'] : [] as $option) {
+            $validator = Validator::make(is_array($option) ? $option : [], ['swatch_value' => $this->swatchRules()]);
+
+            if ($validator->fails()) {
+                return $this->validateErrorResponse($validator);
+            }
+        }
+
         try {
             Event::dispatch('catalog.attribute.create.before');
             $attribute = $this->attributeRepository->create($requestData);
@@ -110,7 +119,7 @@ class AttributeController extends ApiController
             ?? $this->invalidOptionEntries(
                 $requestData['options'] ?? null,
                 fn (array $option): ValidatorContract => $this->optionValidate($option, $attribute->id),
-                ['swatch_value' => [new ValidSwatchValue($attribute->id)]],
+                ['swatch_value' => $this->swatchRules($attribute->id)],
             );
 
         if ($denied) {
@@ -275,8 +284,7 @@ class AttributeController extends ApiController
                         'attribute_id' => $attribute->id,
                     ]));
                 } else {
-                    // Swatch files are only accepted through the dedicated media endpoint.
-                    $validator = Validator::make($optionInputs, ['swatch_value' => [new WithoutUploadedFiles]]);
+                    $validator = Validator::make($optionInputs, ['swatch_value' => $this->swatchRules($attribute->id)]);
                     if ($validator->fails()) {
                         $errors[] = $validator->errors();
 
@@ -332,6 +340,21 @@ class AttributeController extends ApiController
     }
 
     /**
+     * The rules every route that writes an option's `swatch_value` shares: no uploaded file, since swatch
+     * media goes through the media endpoint, and no path outside the swatch directory.
+     *
+     * @return array<int, mixed>
+     */
+    private function swatchRules(?int $attributeId = null): array
+    {
+        return array_filter([
+            new WithoutUploadedFiles,
+            new ConfinedSwatchPath,
+            $attributeId !== null ? new ValidSwatchValue($attributeId) : null,
+        ]);
+    }
+
+    /**
      * Validates attribute option data.
      *
      * @return ValidatorContract
@@ -345,7 +368,7 @@ class AttributeController extends ApiController
                 }),
                 new Code,
             ],
-            'swatch_value' => [new WithoutUploadedFiles, new ValidSwatchValue($attributeId)],
+            'swatch_value' => $this->swatchRules($attributeId),
         ];
 
         return Validator::make($requestData, $rules);
