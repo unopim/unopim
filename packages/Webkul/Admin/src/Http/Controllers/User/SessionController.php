@@ -116,9 +116,10 @@ class SessionController extends Controller
     }
 
     /**
-     * End the admin session. When it was opened through a driver that supports
-     * RP-initiated logout, the visitor is then sent on to end the identity
-     * provider's session as well.
+     * End the admin session and replace the session id, so a request still in
+     * flight from the old page cannot write the signed-in state back. When the
+     * session was opened through a driver that supports RP-initiated logout,
+     * the visitor is then sent on to end the identity provider's session too.
      */
     public function destroy(): RedirectResponse
     {
@@ -129,6 +130,10 @@ class SessionController extends Controller
             ->first();
 
         auth()->guard('admin')->logout();
+
+        request()->session()->invalidate();
+
+        request()->session()->regenerateToken();
 
         return $logoutUrl
             ? redirect()->away($logoutUrl)

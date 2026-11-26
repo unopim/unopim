@@ -28,3 +28,20 @@ it('logs the admin out on a DELETE to the logout route', function () {
     $response->assertRedirect(route('admin.session.create'));
     $this->assertGuest('admin');
 });
+
+it('replaces the session on logout so nothing of the signed-in session survives', function (): void {
+    $admin = Admin::factory()->create([
+        'email'    => 'logout-invalidate@example.com',
+        'password' => Hash::make('password'),
+        'status'   => 1,
+    ]);
+
+    $this->actingAs($admin, 'admin')->withSession(['logout-probe' => 'signed-in']);
+
+    $sessionId = session()->getId();
+
+    $this->delete(route('admin.session.destroy'))->assertRedirect(route('admin.session.create'));
+
+    expect(session()->has('logout-probe'))->toBeFalse()
+        ->and(session()->getId())->not->toBe($sessionId);
+});
