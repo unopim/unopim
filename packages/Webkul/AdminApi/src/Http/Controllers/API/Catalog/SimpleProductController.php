@@ -96,7 +96,7 @@ class SimpleProductController extends ProductController
 
             $this->validateRichAssociationsBeforeCreate($data);
 
-            if ($data['parent']) {
+            if (! empty($data['parent'])) {
                 $data[AbstractType::PRODUCT_VALUES_KEY][AbstractType::COMMON_VALUES_KEY] = array_merge(
                     $data[AbstractType::PRODUCT_VALUES_KEY][AbstractType::COMMON_VALUES_KEY],
                     ($data['variant']['attributes'] ?? [])
