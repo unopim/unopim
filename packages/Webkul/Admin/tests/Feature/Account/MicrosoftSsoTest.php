@@ -78,6 +78,26 @@ it('logs in an existing admin via microsoft sso using email match', function () 
     Http::assertSentCount(2);
 });
 
+it('ignores a remembered page on another origin after sso sign in', function () {
+    microsoftSsoConfig();
+
+    Admin::factory()->create([
+        'email'    => 'sso-user@example.com',
+        'password' => Hash::make('password'),
+        'status'   => 1,
+    ]);
+
+    fakeMicrosoftEndpoints([
+        'id'                => 'object-id-1',
+        'mail'              => 'sso-user@example.com',
+        'userPrincipalName' => 'sso-user@example.com',
+    ]);
+
+    $this->withSession(['url.intended' => 'http://evil.example.com:6666/admin/phish']);
+
+    callbackWith(ssoHandshake())->assertRedirect(route('admin.dashboard.index'));
+});
+
 it('links the provider subject id to the admin on first sign in', function () {
     $admin = Admin::factory()->create([
         'email'    => 'linked-user@example.com',

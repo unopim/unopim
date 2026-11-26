@@ -45,9 +45,11 @@ php artisan migrate
 php artisan unopim:passport:keys
 ```
 
-If `packages/Webkul/AdminApi/src/Secrets/Oauth` exists in your install, delete
-it. An install still on that keypair gets a new one, tokens signed with the old
-pair stop validating, and API clients must request a new token.
+Keys are read only from `api.oauth_key_path` (default
+`storage/app/private/oauth`). `packages/Webkul/AdminApi/src/Secrets/Oauth` is
+never read and can be deleted. If the stored pair is the one older releases
+shipped, `unopim:passport:keys` replaces it, tokens signed with it stop
+validating, and API clients must request a new token.
 
 ### 3. Move old AI exports off the public disk
 
@@ -81,6 +83,9 @@ Grant Execute where a role needs them.
 | `bulk_edit` | `catalog.products.edit` and `catalog.products.bulk_edit` |
 | `update_product`, `assign_categories` on several SKUs | `catalog.products.bulk_edit` |
 | `delete_products` on several SKUs | `catalog.products.mass_delete` |
+| `manage_attribute_options` adding options | `catalog.attributes.edit` |
+| `manage_families` creating a family | `catalog.families.create` |
+| Rolling back an AI change set from the AI dashboard | `catalog.products.edit` |
 
 **Magic AI**
 
@@ -89,6 +94,8 @@ Grant Execute where a role needs them.
 | Translate, content and image generation | `catalog.products` or `catalog.categories` for the resource they read |
 | Image-to-product | `catalog.products.create` |
 | Model listing and connection tests with a saved key | `ai-agent.platform.edit` |
+| Saving translated values | `ai-agent` and `catalog.products.edit` |
+| Magic AI configuration section | `ai-agent.general` |
 
 **REST API**
 
@@ -115,8 +122,9 @@ ignored, and a `labels` key that is not an active locale code is ignored.
   resolvable endpoint.
 - The local Ollama default `http://localhost:11434`, used when the URL is empty
   or set to that default, is the only exception.
-- The platform modal no longer shows the provider's own error text; it shows
-  the host and HTTP status instead.
+- The platform modal no longer shows the provider's own error text. Model
+  listing shows the host and HTTP status; a failed connection test shows a
+  known-error message or a generic one.
 
 ### 6. Check your webhooks
 
@@ -135,6 +143,9 @@ Webhooks to a host that cannot be pinned to a public address are refused.
 
 ### 8. Behaviour changes to be aware of
 
+- The AI agent's `remember_fact` stores catalog-wide and global facts only for
+  admins with `ai-agent.system-prompt.edit`; for everyone else they are saved
+  as personal facts.
 - Zero and false values are now kept on product save and import, and
   completeness counts them as filled, so scores can rise on the next
   recalculation. Import values are kept as given, so the CSV text `false` is
@@ -144,6 +155,10 @@ Webhooks to a host that cannot be pinned to a public address are refused.
   let through.
 - Magic AI translations of rich text attributes go through the product form's
   HTML allowlist, so tags and attributes outside it are removed.
+- Admins stay signed in through the upgrade. From now on, changing or
+  resetting a password signs that account out of every other session.
+- The forgot-password form no longer reports mail errors; check the
+  application log if reset emails do not arrive.
 - `enshrined/svg-sanitize` moved from `^0.22` to `^1.0`. UnoPim uses only
   `new Sanitizer()` and `sanitize()`, which are unchanged; extensions that use
   other parts of the library should check its changelog.

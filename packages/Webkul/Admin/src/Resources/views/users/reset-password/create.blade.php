@@ -45,7 +45,7 @@
                     />
 
                     <x-admin::form.control-group>
-                        <x-admin::form.control-group.label class="required">
+                        <x-admin::form.control-group.label class="required" for="email">
                             @lang('admin::app.users.reset-password.email')
                         </x-admin::form.control-group.label>
 
@@ -66,7 +66,7 @@
                     </x-admin::form.control-group>
 
                     <x-admin::form.control-group class="relative w-full">
-                        <x-admin::form.control-group.label class="required">
+                        <x-admin::form.control-group.label class="required" for="password">
                             @lang('admin::app.users.reset-password.password')
                         </x-admin::form.control-group.label>
 
@@ -82,21 +82,21 @@
                             ref="password"
                         />
 
-                        <span
+                        <button
+                            type="button"
                             class="text-2xl cursor-pointer absolute top-[42px] -translate-y-2/4 ltr:right-2 rtl:left-2 icon-view text-gray-500"
                             onclick="switchVisibility('password', 'passwordIcon')"
                             id="passwordIcon"
-                            role="button"
-                            tabindex="0"
                             aria-label="{{ trans('admin::app.users.sessions.toggle-password') }}"
+                            aria-pressed="false"
                         >
-                        </span>
+                        </button>
 
                         <x-admin::form.control-group.error control-name="password" />
                     </x-admin::form.control-group>
 
                     <x-admin::form.control-group class="relative w-full">
-                        <x-admin::form.control-group.label class="required">
+                        <x-admin::form.control-group.label class="required" for="password_confirmation">
                             @lang('admin::app.users.reset-password.confirm-password')
                         </x-admin::form.control-group.label>
 
@@ -111,15 +111,15 @@
                             autocomplete="new-password"
                         />
 
-                        <span
+                        <button
+                            type="button"
                             class="text-2xl cursor-pointer absolute top-[42px] -translate-y-2/4 ltr:right-2 rtl:left-2 icon-view text-gray-500"
                             onclick="switchVisibility('password_confirmation', 'passwordConfirmationIcon')"
                             id="passwordConfirmationIcon"
-                            role="button"
-                            tabindex="0"
                             aria-label="{{ trans('admin::app.users.sessions.toggle-password') }}"
+                            aria-pressed="false"
                         >
-                        </span>
+                        </button>
 
                         <x-admin::form.control-group.error control-name="password_confirmation" />
                     </x-admin::form.control-group>
@@ -166,6 +166,7 @@
 
                 visibilityIcon.classList.toggle("icon-view");
                 visibilityIcon.classList.toggle("icon-view-close");
+                visibilityIcon.setAttribute("aria-pressed", passwordField.type === "text" ? "true" : "false");
             }
         </script>
     @endpush

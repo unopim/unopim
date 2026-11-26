@@ -142,6 +142,23 @@ abstract class AbstractType
             $productValues[self::CATEGORY_VALUES_KEY] = $data[self::CATEGORY_VALUES_KEY];
         }
 
+        $submittedSections = array_keys(array_filter(
+            [
+                self::RELATED_ASSOCIATION_KEY     => $data[self::RELATED_ASSOCIATION_KEY] ?? null,
+                self::UP_SELLS_ASSOCIATION_KEY    => $data[self::UP_SELLS_ASSOCIATION_KEY] ?? null,
+                self::CROSS_SELLS_ASSOCIATION_KEY => $data[self::CROSS_SELLS_ASSOCIATION_KEY] ?? null,
+            ],
+            fn ($skus): bool => ! empty($skus)
+        ));
+
+        if (is_array($productValues[self::ASSOCIATION_VALUES_KEY] ?? null) && ! empty($data[self::PRODUCT_VALUES_KEY])) {
+            $submittedSections = array_merge($submittedSections, array_keys($productValues[self::ASSOCIATION_VALUES_KEY]));
+        }
+
+        if (! isset($productValues[self::ASSOCIATION_VALUES_KEY]) && isset($product->values[self::ASSOCIATION_VALUES_KEY])) {
+            $productValues[self::ASSOCIATION_VALUES_KEY] = $product->values[self::ASSOCIATION_VALUES_KEY];
+        }
+
         $unifiedAssociations = $data[self::ASSOCIATION_VALUES_KEY] ?? [];
 
         if (! is_array($unifiedAssociations)) {
@@ -202,7 +219,14 @@ abstract class AbstractType
         }
 
         if ($product->id) {
-            $this->syncAssociationLinks($product, $productValues, array_keys($unifiedAssociations));
+            $this->syncAssociationLinks(
+                $product,
+                $productValues,
+                array_merge(
+                    array_keys($unifiedAssociations),
+                    array_diff(self::ASSOCIATION_SECTIONS, $submittedSections)
+                )
+            );
 
             if (! empty($resolvedRichAssociations)) {
                 $this->syncRichAssociations($product->id, $resolvedRichAssociations);

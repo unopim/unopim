@@ -28,3 +28,26 @@ it('logs the admin out on a DELETE to the logout route', function () {
     $response->assertRedirect(route('admin.session.create'));
     $this->assertGuest('admin');
 });
+
+it('gives the visitor a fresh session id and csrf token on logout', function () {
+    $admin = Admin::factory()->create([
+        'email'    => 'logout-rotate@example.com',
+        'password' => Hash::make('password'),
+        'status'   => 1,
+    ]);
+
+    $this->post(route('admin.session.store'), [
+        'email'    => $admin->email,
+        'password' => 'password',
+    ]);
+
+    $sessionId = session()->getId();
+    $token = session()->token();
+
+    $this->delete(route('admin.session.destroy'))->assertRedirect(route('admin.session.create'));
+
+    expect(session()->getId())->not->toBe($sessionId)
+        ->and(session()->token())->not->toBe($token);
+
+    $this->assertGuest('admin');
+});

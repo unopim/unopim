@@ -80,6 +80,16 @@ class Dashboard
     }
 
     /**
+     * Invalidate every dashboard cache entry, for writes that bypass the model
+     * observers (imports, bulk edits, completeness recalculation, demo seeding).
+     */
+    public static function invalidateAllCache(): void
+    {
+        self::invalidateProductCache();
+        self::invalidateConfigurationCache();
+    }
+
+    /**
      * This method calculates and returns the total number of various catalog entities.
      *
      * @return array An associative array containing the total count of each catalog entity.
