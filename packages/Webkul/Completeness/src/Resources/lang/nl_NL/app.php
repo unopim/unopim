@@ -69,4 +69,16 @@ return [
             ],
         ],
     ],
+
+    'configuration' => [
+        'score-thresholds' => [
+            'title'           => 'Kleuren voor volledigheidsscore',
+            'info'            => 'Stel de scores in waarbij volledigheidsindicatoren groen of rood worden.',
+            'green-from'      => 'Groen vanaf (%)',
+            'green-from-info' => 'Scores gelijk aan of hoger dan deze waarde worden groen weergegeven.',
+            'red-below'       => 'Rood onder (%)',
+            'red-below-info'  => 'Scores onder deze waarde worden rood weergegeven. Scores daartussen worden oranje weergegeven.',
+            'order-error'     => 'De drempel voor groen moet hoger zijn dan de drempel voor rood.',
+        ],
+    ],
 ];

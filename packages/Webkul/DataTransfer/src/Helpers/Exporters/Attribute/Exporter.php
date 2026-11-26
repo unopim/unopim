@@ -62,7 +62,7 @@ class Exporter extends AbstractExporter
     /**
      * Prepare attributes from current batch
      *
-     * @return array{code: mixed, type: mixed, locale: mixed, name: mixed, position: mixed, enable_wysiwyg: mixed, swatch_type: mixed, is_required: mixed, is_unique: mixed, validation: mixed, regex_pattern: mixed, value_per_locale: mixed, value_per_channel: mixed, is_filterable: mixed, ai_translate: mixed, productCounts: int}[]
+     * @return array{code: mixed, type: mixed, locale: mixed, name: mixed, position: mixed, enable_wysiwyg: mixed, swatch_type: mixed, is_required: mixed, is_unique: mixed, validation: mixed, regex_pattern: mixed, value_per_locale: mixed, value_per_channel: mixed, is_filterable: mixed, ai_translate: mixed, enable_templates: mixed, productCounts: int}[]
      */
     public function prepareAttributes(JobTrackBatchContract $batch, mixed $filePath): array
     {
@@ -90,6 +90,7 @@ class Exporter extends AbstractExporter
                     'value_per_channel' => $rowData['value_per_channel'] ?? null,
                     'is_filterable'     => $rowData['is_filterable'] ?? null,
                     'ai_translate'      => $rowData['ai_translate'] ?? null,
+                    'enable_templates'  => $rowData['enable_templates'] ?? null,
                     'productCounts'     => $productCounts,
                 ];
 

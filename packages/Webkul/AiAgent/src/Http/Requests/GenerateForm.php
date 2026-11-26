@@ -11,7 +11,8 @@ class GenerateForm extends FormRequest
      */
     public function authorize(): bool
     {
-        return bouncer()->hasPermission('ai-agent.generate');
+        return bouncer()->hasPermission('ai-agent.generate')
+            && bouncer()->hasPermission('catalog.products.create');
     }
 
     /**

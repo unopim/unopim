@@ -605,15 +605,31 @@ class Core
             $date = Date::now();
         }
 
-        $userTimeZone = auth('admin')?->user()?->timezone ?? config('app.timezone', 'UTC');
-
         if (is_string($date)) {
             $date = Date::parse($date);
         }
 
-        $date->setTimezone($userTimeZone);
+        $date->setTimezone($this->resolveTimezone(auth('admin')?->user()?->timezone));
 
         return $date->format($format);
+    }
+
+    /**
+     * Return the given timezone when it is valid, otherwise the application timezone.
+     */
+    public function resolveTimezone(?string $timezone): string
+    {
+        $fallback = (string) (config('app.timezone') ?: 'UTC');
+
+        if ($timezone === null || $timezone === '') {
+            return $fallback;
+        }
+
+        try {
+            return new \DateTimeZone($timezone)->getName();
+        } catch (\DateInvalidTimeZoneException) {
+            return $fallback;
+        }
     }
 
     /**

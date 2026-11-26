@@ -115,6 +115,12 @@ class Importer extends AbstractImporter
                 return false;
             }
 
+            if ($error = $this->storedAccessError($roleId)) {
+                $this->skipRow($rowNumber, self::ERROR_CANNOT_GRANT_ACCESS, 'name', trans($error));
+
+                return false;
+            }
+
             if ($this->roleRepository->find($roleId)?->admins()->exists()) {
                 $this->skipRow($rowNumber, self::ERROR_ROLE_IN_USE, $rowData['name']);
 
@@ -170,6 +176,10 @@ class Importer extends AbstractImporter
             return ['columnName' => 'name', 'errorMessage' => trans($error)];
         }
 
+        if ($error = $this->storedAccessError($this->roleStorage->get($rowData['name']))) {
+            return ['columnName' => 'name', 'errorMessage' => trans($error)];
+        }
+
         $permissions = empty($rowData['permissions']) ? [] : explode(',', $rowData['permissions']);
 
         if ($this->importAccessError(fn ($admin): ?string => $this->roleAccessGuard->grantError($admin, $rowData['permission_type'], $permissions))) {
@@ -177,6 +187,16 @@ class Importer extends AbstractImporter
         }
 
         return null;
+    }
+
+    /**
+     * Translation key explaining why an importing admin may not change or remove the stored role's current access, or null when all may.
+     */
+    protected function storedAccessError(?int $roleId): ?string
+    {
+        $role = $roleId ? $this->roleRepository->find($roleId) : null;
+
+        return $this->importAccessError(fn ($admin): ?string => $this->roleAccessGuard->currentAccessError($admin, $role));
     }
 
     /**
@@ -236,6 +256,7 @@ class Importer extends AbstractImporter
         foreach ($namesToDelete as $id => $name) {
             $reason = match (true) {
                 $permissionError !== null                                    => trans($permissionError),
+                $this->storedAccessError($id) !== null                       => trans($this->messages[self::ERROR_CANNOT_GRANT_ACCESS]),
                 ! $this->allowsFullAccessChange(roleId: $id)                 => trans($this->messages[self::ERROR_LAST_FULL_ACCESS]),
                 (bool) $this->roleRepository->find($id)?->admins()->exists() => trans($this->messages[self::ERROR_ROLE_IN_USE]),
                 default                                                      => null,

@@ -6,6 +6,8 @@ use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
 use Webkul\Product\Console\ResyncVariantsCommand;
 use Webkul\Product\Console\StripRedundantVariantValuesCommand;
+use Webkul\Product\Contracts\TemplateRenderer as TemplateRendererContract;
+use Webkul\Product\Contracts\TemplateValidator as TemplateValidatorContract;
 use Webkul\Product\Contracts\VariantStructurePlanner as VariantStructurePlannerContract;
 use Webkul\Product\Contracts\VariantValueResolver as VariantValueResolverContract;
 use Webkul\Product\Facades\ProductImage as ProductImageFacade;
@@ -47,6 +49,9 @@ use Webkul\Product\ProductVideo;
 use Webkul\Product\Services\ProductValueMapper;
 use Webkul\Product\Services\VariantStructurePlanner;
 use Webkul\Product\Services\VariantValueResolver;
+use Webkul\Product\Templates\Filters\FilterRegistry;
+use Webkul\Product\Templates\TemplateRenderer;
+use Webkul\Product\Templates\TemplateValidator;
 use Webkul\Product\ValueSetter;
 
 class ProductServiceProvider extends ServiceProvider
@@ -96,6 +101,9 @@ class ProductServiceProvider extends ServiceProvider
         // Bound (fresh per resolve), not scoped: the per-product memo must not survive a same-request mutation.
         $this->app->bind(VariantValueResolverContract::class, VariantValueResolver::class);
         $this->app->bind(VariantStructurePlannerContract::class, VariantStructurePlanner::class);
+        $this->app->bind(TemplateRendererContract::class, TemplateRenderer::class);
+        $this->app->bind(TemplateValidatorContract::class, TemplateValidator::class);
+        $this->app->singleton(FilterRegistry::class);
     }
 
     /**

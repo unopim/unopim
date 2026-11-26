@@ -3,11 +3,13 @@
 namespace Webkul\Admin\Http\Requests\MagicAI;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Webkul\Admin\Http\Requests\MagicAI\Concerns\AuthorizesPlatformCredentials;
 use Webkul\Admin\Http\Requests\MagicAI\Concerns\GuardsManagedPlatform;
 use Webkul\MagicAI\Rules\SafeProviderExtras;
 
 class PlatformTestRequest extends FormRequest
 {
+    use AuthorizesPlatformCredentials;
     use GuardsManagedPlatform;
 
     /**
@@ -15,7 +17,7 @@ class PlatformTestRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return bouncer()->hasPermission('ai-agent.platform');
+        return $this->canUsePlatformCredentials();
     }
 
     /**

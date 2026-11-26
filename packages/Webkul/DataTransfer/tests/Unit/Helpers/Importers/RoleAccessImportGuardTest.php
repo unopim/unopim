@@ -552,3 +552,48 @@ it('keeps the importer chosen when the job was created even if the profile entit
 
     expect((fn () => $this->pinnedEntityType())->call($importHelper))->toBe('users');
 });
+
+describe('stored role access', function () {
+    beforeEach(function () {
+        $this->roleManager = Admin::factory()->create(['status' => 1, 'role_id' => Role::factory()->create([
+            'name'            => 'Role manager '.uniqid(),
+            'permission_type' => 'custom',
+            'permissions'     => ['dashboard', 'data_transfer.imports', 'settings.roles.create', 'settings.roles.edit', 'settings.roles.delete', 'settings.users.users.create', 'settings.users.users.edit'],
+        ])->id]);
+    });
+
+    it('rejects a role row that rewrites or deletes a role wider than the importing admin', function (array $stored) {
+        $wide = Role::factory()->create(['name' => 'Wide '.uniqid(), ...$stored]);
+        $row = ['name' => $wide->name, 'permission_type' => 'custom', 'permissions' => 'dashboard'];
+
+        expect(importerFor(RoleImporter::class, Import::ACTION_APPEND, $this->roleManager)->validateRow($row, 1))->toBeFalse()
+            ->and(importerFor(RoleImporter::class, Import::ACTION_DELETE, $this->roleManager)->validateRow(['name' => $wide->name], 1))->toBeFalse();
+
+        writeImportBatch(RoleImporter::class, Import::ACTION_APPEND, [$row], $this->roleManager);
+        writeImportBatch(RoleImporter::class, Import::ACTION_DELETE, [['name' => $wide->name]], $this->roleManager);
+
+        expect(Role::find($wide->id))->not->toBeNull()
+            ->and(Role::find($wide->id)->permission_type)->toBe($stored['permission_type']);
+    })->with([
+        'full access'         => [['permission_type' => 'all', 'permissions' => null]],
+        'wider custom access' => [['permission_type' => 'custom', 'permissions' => ['dashboard', 'settings.users']]],
+    ]);
+
+    it('rejects a user row that rewrites a role wider than the importing admin', function () {
+        $wide = Role::factory()->create(['name' => 'Wide '.uniqid(), 'permission_type' => 'custom', 'permissions' => ['dashboard', 'settings.users']]);
+        $row = ['email' => 'wide-'.uniqid().'@example.com', 'name' => 'Wide user', 'status' => 1, 'ui_locale' => 'en_US', 'timezone' => 'UTC', 'role_name' => $wide->name, 'permission_type' => 'custom', 'permissions' => 'dashboard'];
+
+        expect(importerFor(UserImporter::class, Import::ACTION_APPEND, $this->roleManager)->validateRow($row, 1))->toBeFalse();
+
+        writeImportBatch(UserImporter::class, Import::ACTION_APPEND, [$row], $this->roleManager);
+
+        expect(Role::find($wide->id)->permissions)->toBe(['dashboard', 'settings.users']);
+    });
+
+    it('still lets the importing admin rewrite and delete a role within its own access', function () {
+        $narrow = Role::factory()->create(['name' => 'Narrow '.uniqid(), 'permission_type' => 'custom', 'permissions' => ['dashboard', 'settings.roles.edit']]);
+
+        expect(importerFor(RoleImporter::class, Import::ACTION_APPEND, $this->roleManager)->validateRow(['name' => $narrow->name, 'permission_type' => 'custom', 'permissions' => 'dashboard'], 1))->toBeTrue()
+            ->and(importerFor(RoleImporter::class, Import::ACTION_DELETE, $this->roleManager)->validateRow(['name' => $narrow->name], 1))->toBeTrue();
+    });
+});

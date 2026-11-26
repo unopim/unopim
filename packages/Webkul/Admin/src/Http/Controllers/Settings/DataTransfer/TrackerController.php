@@ -142,6 +142,8 @@ class TrackerController extends Controller
 
         $jobTrack = $this->findVisibleJobTrack($id);
 
+        $this->abortIfDownloadForbidden($jobTrack);
+
         $disk = Storage::disk('private');
 
         if (filled($jobTrack->file_path) && $disk->fileExists($jobTrack->file_path)) {
@@ -165,7 +167,22 @@ class TrackerController extends Controller
 
         $jobTrack = $this->findVisibleJobTrack($id);
 
+        $this->abortIfDownloadForbidden($jobTrack);
+
         return $this->archiveJobFiles($jobTrack);
+    }
+
+    /**
+     * Exported files and uploaded import sources both hold catalogue data, so downloading them needs the
+     * execute permission of the job type, not only tracker access.
+     */
+    protected function abortIfDownloadForbidden(JobTrackContract $jobTrack): void
+    {
+        foreach (JobType::downloadPermissions($jobTrack) as $permission) {
+            if (! bouncer()->hasPermission($permission)) {
+                abort(403, trans('admin::app.common.unauthorized'));
+            }
+        }
     }
 
     /**
@@ -228,7 +245,7 @@ class TrackerController extends Controller
     }
 
     /**
-     * Download Log file for the job
+     * Download the job log, which names imported rows and so needs the same permissions as the job files.
      */
     public function downloadLogFile(int $id)
     {
@@ -236,7 +253,7 @@ class TrackerController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $this->abortIfHiddenJobType($this->jobTrackRepository->find($id)?->jobInstance?->entity_type);
+        $this->abortIfDownloadForbidden($this->findVisibleJobTrack($id));
 
         $path = JobLogger::getJobLogPath($id);
 

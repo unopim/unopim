@@ -25,6 +25,16 @@ use Webkul\DataTransfer\Support\FormulaGuard;
 class ExportProducts implements PimTool
 {
     /**
+     * Disk the generated exports are written to; never web-served.
+     */
+    public const DISK = 'private';
+
+    /**
+     * Directory on the disk that holds one sub-directory per admin user.
+     */
+    public const DIRECTORY = 'ai-agent/exports';
+
+    /**
      * Create a new tool instance.
      */
     public function __construct(
@@ -71,7 +81,7 @@ class ExportProducts implements PimTool
 
             public function handle(Request $request): string
             {
-                if ($denied = $this->denyUnlessAllowed($this->context, 'data_transfer.export')) {
+                if ($denied = $this->denyUnlessAllowed($this->context, 'data_transfer.export.execute')) {
                     return $denied;
                 }
 
@@ -104,7 +114,8 @@ class ExportProducts implements PimTool
 
                     $extension = $format === 'xlsx' ? 'xlsx' : 'csv';
                     $filename = sprintf('export-%s.%s', now()->format('Y-m-d-His'), $extension);
-                    $relativePath = 'ai-agent/exports/'.$filename;
+                    $storedFile = Str::uuid()->toString().'.'.$extension;
+                    $relativePath = $this->outer->exportPath($this->context->user->id, $storedFile);
 
                     $this->outer->markTrackAsProcessing($jobTrack->id);
 
@@ -125,7 +136,7 @@ class ExportProducts implements PimTool
                             'format'     => $extension,
                             'tracker_id' => $jobTrack->id,
                         ],
-                        'download_url' => asset('storage/'.$relativePath),
+                        'download_url' => route('ai-agent.exports.download', ['file' => $storedFile]),
                     ]);
                 } catch (\Throwable $exception) {
                     $this->outer->markTrackAsFailed($jobTrack->id, $exception->getMessage(), $logger);
@@ -268,7 +279,15 @@ class ExportProducts implements PimTool
     }
 
     /**
-     * Write the generated CSV to the public storage disk.
+     * Path on the export disk of a file generated for the given admin user.
+     */
+    public function exportPath(int $userId, string $file): string
+    {
+        return sprintf('%s/%d/%s', self::DIRECTORY, $userId, $file);
+    }
+
+    /**
+     * Write the generated CSV to the private export disk.
      */
     public function writeCsv(string $relativePath, array $rows): void
     {
@@ -280,13 +299,13 @@ class ExportProducts implements PimTool
 
         rewind($stream);
 
-        Storage::disk('public')->put($relativePath, stream_get_contents($stream));
+        Storage::disk(self::DISK)->put($relativePath, stream_get_contents($stream));
 
         fclose($stream);
     }
 
     /**
-     * Write the generated XLSX to the public storage disk.
+     * Write the generated XLSX to the private export disk.
      *
      * Only formula-shaped values are pinned to text; everything else keeps the binder's
      * type detection so numbers stay numbers.
@@ -310,15 +329,16 @@ class ExportProducts implements PimTool
             }
         }
 
-        $fullPath = Storage::disk('public')->path($relativePath);
-        $dir = \dirname($fullPath);
-
-        if (! is_dir($dir)) {
-            mkdir($dir, 0755, true);
-        }
+        $stream = fopen('php://temp', 'w+');
 
         $writer = new Xlsx($spreadsheet);
-        $writer->save($fullPath);
+        $writer->save($stream);
+
+        rewind($stream);
+
+        Storage::disk(self::DISK)->put($relativePath, $stream);
+
+        fclose($stream);
     }
 
     /**
