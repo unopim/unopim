@@ -66,6 +66,13 @@ class Importer extends AbstractImporter
     protected array $categoryCodesInBatch = [];
 
     /**
+     * Ids of the categories in a delete file that products are assigned to, keyed by id.
+     *
+     * @var array<int, int>
+     */
+    protected array $usedCategoryIds = [];
+
+    /**
      * Permanent entity columns
      */
     protected array $permanentAttributes = ['code', 'parent', 'locale'];
@@ -163,7 +170,33 @@ class Importer extends AbstractImporter
 
         $this->getNonDeletableCategories();
 
+        $this->usedCategoryIds = $this->import->action == Import::ACTION_DELETE
+            ? array_fill_keys($this->usedCategoryIdsInSource(), true)
+            : [];
+
         parent::validateData();
+    }
+
+    /**
+     * Check every category the delete file lists against the products in one pass.
+     *
+     * @return array<int, int>
+     */
+    protected function usedCategoryIdsInSource(): array
+    {
+        $source = $this->getSource();
+
+        $categoryIds = [];
+
+        for ($source->rewind(); $source->valid(); $source->next()) {
+            $code = $source->current()['code'] ?? null;
+
+            if ($code && $id = $this->categoryStorage->get($code)) {
+                $categoryIds[] = $id;
+            }
+        }
+
+        return $categoryIds === [] ? [] : $this->categoryRepository->usedByProducts($categoryIds);
     }
 
     public function getCategoryFields(): array
@@ -210,7 +243,7 @@ class Importer extends AbstractImporter
                 return false;
             }
 
-            if ($this->categoryRepository->isUsedByProducts($id)) {
+            if (isset($this->usedCategoryIds[$id])) {
                 $this->skipRow($rowNumber, self::ERROR_USED_BY_PRODUCTS, $rowData['code']);
 
                 return false;
@@ -322,10 +355,16 @@ class Importer extends AbstractImporter
                 continue;
             }
 
-            $idsToDelete[] = $this->categoryStorage->get($rowData['code']);
+            $idsToDelete[$rowData['code']] = $this->categoryStorage->get($rowData['code']);
         }
 
-        $idsToDelete = array_unique($idsToDelete);
+        $usedIds = $idsToDelete === [] ? [] : $this->categoryRepository->usedByProducts(array_values($idsToDelete));
+
+        foreach (array_intersect($idsToDelete, $usedIds) as $code => $id) {
+            $this->jobLogger?->warning($code.': '.trans($this->messages[self::ERROR_USED_BY_PRODUCTS]));
+        }
+
+        $idsToDelete = array_unique(array_diff($idsToDelete, $usedIds));
 
         $this->deletedItemsCount = count($idsToDelete);
 

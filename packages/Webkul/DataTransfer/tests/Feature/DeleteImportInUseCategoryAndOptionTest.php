@@ -9,43 +9,71 @@ use Webkul\DataTransfer\Helpers\Importers\AttributeOption\Importer as AttributeO
 use Webkul\DataTransfer\Helpers\Importers\Category\Importer as CategoryImporter;
 use Webkul\DataTransfer\Helpers\Sources\CSV;
 use Webkul\DataTransfer\Models\JobTrack;
+use Webkul\DataTransfer\Models\JobTrackBatch;
 
 /**
- * Build a category delete importer with the storages its validateData() step would load.
+ * Validate a category delete file through the importer, the way the import job does.
  *
- * @return array{0: CategoryImporter, 1: Error}
+ * @param  array<int, string>  $codes
  */
-function inUseCategoryDeleteImporter(): array
+function validateCategoryDeleteFile(array $codes): Error
 {
+    Storage::fake('private');
+
+    $path = 'imports/category-delete.csv';
+
+    Storage::disk('private')->put($path, implode("\n", ['locale,code,parent', ...array_map(fn (string $code): string => 'en_US,'.$code.',', $codes)])."\n");
+
     $error = app(Error::class);
 
-    $importer = app(CategoryImporter::class)->setImport(JobTrack::factory()->create(['type' => 'import', 'action' => Import::ACTION_DELETE]));
+    app(CategoryImporter::class)
+        ->setImport(JobTrack::factory()->create(['type' => 'import', 'action' => Import::ACTION_DELETE]))
+        ->setErrorHelper($error)
+        ->setSource(new CSV($path))
+        ->validateData();
 
-    $importer->setErrorHelper($error);
-
-    (function (): void {
-        $this->categoryStorage->init();
-        $this->getNonDeletableCategories();
-    })->call($importer);
-
-    return [$importer, $error];
+    return $error;
 }
 
-it('rejects a category delete row while products use the category', function (): void {
-    $category = Category::factory()->create();
+it('rejects only the category delete rows whose subtree products still use', function (): void {
+    $parent = Category::factory()->create();
+    $child = Category::factory()->create(['parent_id' => $parent->id]);
+    $unused = Category::factory()->create();
 
-    productReferencingCatalogValues(['categories' => [$category->code]]);
+    productReferencingCatalogValues(['categories' => [$child->code]]);
 
-    [$importer, $error] = inUseCategoryDeleteImporter();
+    $error = validateCategoryDeleteFile([$parent->code, $child->code, $unused->code]);
 
-    expect($importer->validateRow(['code' => $category->code], 1))->toBeFalse()
-        ->and($error->getAllErrorsGroupedByCode())->toHaveKey(CategoryImporter::ERROR_USED_BY_PRODUCTS);
+    expect($error->getAllErrorsGroupedByCode())->toHaveKey(CategoryImporter::ERROR_USED_BY_PRODUCTS)
+        ->and($error->isRowInvalid(1))->toBeTrue()
+        ->and($error->isRowInvalid(2))->toBeTrue()
+        ->and($error->isRowInvalid(3))->toBeFalse();
 });
 
-it('accepts a category delete row no product uses', function (): void {
+it('accepts a category delete file no product uses', function (): void {
     $category = Category::factory()->create();
 
-    expect(inUseCategoryDeleteImporter()[0]->validateRow(['code' => $category->code], 1))->toBeTrue();
+    expect(validateCategoryDeleteFile([$category->code])->getAllErrorsGroupedByCode())
+        ->not->toHaveKey(CategoryImporter::ERROR_USED_BY_PRODUCTS);
+});
+
+it('keeps a category a product was assigned to after validation when the delete batch runs', function (): void {
+    $assignedLater = Category::factory()->create();
+    $unused = Category::factory()->create();
+
+    productReferencingCatalogValues(['categories' => [$assignedLater->code]]);
+
+    $jobTrack = JobTrack::factory()->create(['type' => 'import', 'action' => Import::ACTION_DELETE]);
+
+    $batch = JobTrackBatch::factory()->create([
+        'job_track_id' => $jobTrack->id,
+        'data'         => [['code' => $assignedLater->code], ['code' => $unused->code]],
+    ]);
+
+    app(CategoryImporter::class)->setImport($jobTrack)->importBatch($batch->refresh());
+
+    expect(Category::query()->find($assignedLater->id))->not->toBeNull()
+        ->and(Category::query()->find($unused->id))->toBeNull();
 });
 
 /**

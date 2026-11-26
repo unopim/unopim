@@ -432,10 +432,10 @@ class CategoryController extends Controller
             if ($this->isRelatedToChannel($category->id)) {
                 return new JsonResponse(['message' => trans('admin::app.catalog.categories.delete-category-root')], JsonResponse::HTTP_BAD_REQUEST);
             }
+        }
 
-            if ($this->categoryRepository->isUsedByProducts($category->id)) {
-                return new JsonResponse(['message' => trans('admin::app.catalog.categories.delete-category-in-use')], JsonResponse::HTTP_BAD_REQUEST);
-            }
+        if ($this->categoryRepository->isAnyUsedByProducts($categories->pluck('id')->all())) {
+            return new JsonResponse(['message' => trans('admin::app.catalog.categories.delete-category-in-use')], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         foreach ($categories as $category) {
