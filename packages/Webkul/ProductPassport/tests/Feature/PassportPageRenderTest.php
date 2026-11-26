@@ -49,6 +49,30 @@ it('never uses the unescaped blade echo', function (): void {
     expect($contents)->not->toContain('{!!');
 });
 
+it('renders a WYSIWYG-sourced field as real HTML instead of escaped literal tags', function (): void {
+    $version = $this->publishedRichTextPassportFixture('<p>Hand wash only.</p><ul><li>Do not bleach</li></ul>');
+
+    $this->get('/p/'.$version->publication->uuid.'/'.$version->locale->code)
+        ->assertOk()
+        ->assertSee('<p>Hand wash only.</p>', false)
+        ->assertSee('<ul><li>Do not bleach</li></ul>', false)
+        ->assertDontSee('&lt;p&gt;Hand wash only.&lt;/p&gt;', false);
+});
+
+it('still purifies a hostile WYSIWYG payload even though rich-text fields render as HTML', function (): void {
+    $version = $this->publishedRichTextPassportFixture(
+        '<p onclick="steal()">Hand wash only.</p><script>alert(document.cookie)</script><img src=x onerror=alert(1)>'
+    );
+
+    $response = $this->get('/p/'.$version->publication->uuid.'/'.$version->locale->code);
+
+    $response->assertOk()
+        ->assertSee('<p>Hand wash only.</p>', false)
+        ->assertDontSee('<script>', false)
+        ->assertDontSee('onclick', false)
+        ->assertDontSee('onerror', false);
+});
+
 it('suppresses all payload content once the passport is withdrawn', function (): void {
     $version = $this->publishedPassportFixture();
 
