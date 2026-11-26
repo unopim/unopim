@@ -59,7 +59,7 @@ Route::group(['prefix' => config('app.admin_url')], function () {
     /**
      * Forget password routes.
      */
-    Route::controller(ForgetPasswordController::class)->prefix('forget-password')->middleware(EnforceSsoOnly::class)->group(function () {
+    Route::controller(ForgetPasswordController::class)->prefix('forget-password')->middleware(EnforceSsoOnly::class)->group(function (): void {
         Route::get('', 'create')->name('admin.forget_password.create');
 
         Route::post('', 'store')->name('admin.forget_password.store')->middleware('throttle:admin-forgot-password');
@@ -68,7 +68,7 @@ Route::group(['prefix' => config('app.admin_url')], function () {
     /**
      * Reset password routes.
      */
-    Route::controller(ResetPasswordController::class)->prefix('reset-password')->middleware(EnforceSsoOnly::class)->group(function () {
+    Route::controller(ResetPasswordController::class)->prefix('reset-password')->middleware(EnforceSsoOnly::class)->group(function (): void {
         Route::get('', fn () => redirect()->route('admin.forget_password.create'));
 
         Route::get('{token}', 'create')->name('admin.reset_password.create');

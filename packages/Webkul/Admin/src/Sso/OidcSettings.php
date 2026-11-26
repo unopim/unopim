@@ -19,6 +19,9 @@ class OidcSettings
 
     public const DEFAULT_GROUPS_CLAIM = 'groups';
 
+    /**
+     * Whether sign-in is switched on and issuer, client id and client secret are all set.
+     */
     public function isEnabled(): bool
     {
         return $this->bool('enabled', false)
@@ -27,16 +30,25 @@ class OidcSettings
             && $this->clientSecret() !== '';
     }
 
+    /**
+     * Configured issuer URL, empty when unset.
+     */
     public function issuer(): string
     {
         return $this->string('issuer');
     }
 
+    /**
+     * OAuth client id registered at the provider.
+     */
     public function clientId(): string
     {
         return $this->string('client_id');
     }
 
+    /**
+     * OAuth client secret registered at the provider.
+     */
     public function clientSecret(): string
     {
         return $this->string('client_secret');
@@ -54,31 +66,49 @@ class OidcSettings
         return array_values(array_unique(['openid', ...$configured]));
     }
 
+    /**
+     * Sign-in button label, falling back to the translated default.
+     */
     public function label(): string
     {
         return $this->string('label') ?: trans('admin::app.users.sessions.sso-sign-in-with-oidc');
     }
 
+    /**
+     * Whether only addresses the provider marks as verified are accepted; on by default.
+     */
     public function requiresVerifiedEmail(): bool
     {
         return $this->bool('require_verified_email', true);
     }
 
+    /**
+     * Whether unknown users get an admin account on first sign-in.
+     */
     public function autoProvisions(): bool
     {
         return $this->bool('auto_provision', false);
     }
 
+    /**
+     * Name of the role for provisioned admins when no role map applies.
+     */
     public function defaultRole(): string
     {
         return $this->string('default_role');
     }
 
+    /**
+     * Claim that carries the user's groups, `groups` by default.
+     */
     public function groupsClaim(): string
     {
         return $this->string('groups_claim') ?: self::DEFAULT_GROUPS_CLAIM;
     }
 
+    /**
+     * Whether a group-to-role map is configured.
+     */
     public function hasRoleMap(): bool
     {
         return $this->string('role_map') !== '';
@@ -110,6 +140,9 @@ class OidcSettings
         return $map;
     }
 
+    /**
+     * Whether logout also ends the session at the provider; on by default.
+     */
     public function performsRpLogout(): bool
     {
         return $this->bool('rp_logout', true);
@@ -137,6 +170,9 @@ class OidcSettings
         return core()->getConfigData(self::CONFIG_PREFIX.$name);
     }
 
+    /**
+     * Trimmed string value, the environment winning over the stored setting.
+     */
     protected function string(string $name): string
     {
         $value = $this->raw($name);
@@ -144,11 +180,17 @@ class OidcSettings
         return is_scalar($value) ? trim((string) $value) : '';
     }
 
+    /**
+     * Boolean value, the environment winning over the stored setting, else the default.
+     */
     protected function bool(string $name, bool $default): bool
     {
         return $this->toBool($this->raw($name)) ?? $default;
     }
 
+    /**
+     * Interpret a config or environment value as a boolean, null when it is unset or unreadable.
+     */
     protected function toBool(mixed $value): ?bool
     {
         if (is_bool($value)) {

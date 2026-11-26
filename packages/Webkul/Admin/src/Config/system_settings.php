@@ -49,7 +49,6 @@ return [
         'icon'         => 'icon-at',
         'config_group' => 'emails.configure.email_settings',
         'acl'          => 'configuration.system_settings.email',
-        'full_access'  => true,
         'sort'         => 2,
     ],
 

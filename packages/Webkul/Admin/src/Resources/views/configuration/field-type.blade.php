@@ -32,6 +32,10 @@
 
     $value = core()->getConfigData($nameKey) ?? ($coreConfigRepository->getDefaultValue($field) ?? '');
 
+    if (($field['type'] ?? '') === 'password') {
+        $value = (string) $value === '' ? '' : '********';
+    }
+
     if ($coreConfigRepository->isLocked($field)) {
         $lockedValue = $coreConfigRepository->getLockedValue($field);
 

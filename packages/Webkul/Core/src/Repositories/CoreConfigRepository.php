@@ -2,7 +2,9 @@
 
 namespace Webkul\Core\Repositories;
 
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -66,6 +68,10 @@ class CoreConfigRepository extends Repository
                     $value = implode(',', $value);
                 }
 
+                if (($field['type'] ?? null) === 'password' && is_string($value)) {
+                    $value = $this->encryptSecret($value);
+                }
+
                 $coreConfigValue = $this->model->where('code', $fieldName)->get();
 
                 if (request()->hasFile($fieldName)) {
@@ -101,6 +107,63 @@ class CoreConfigRepository extends Repository
         }
 
         Event::dispatch('core.configuration.save.after');
+    }
+
+    /**
+     * Encrypt a password-type value for storage; an empty value stays empty.
+     */
+    public function encryptSecret(string $value): string
+    {
+        return $value === '' ? '' : Crypt::encryptString($value);
+    }
+
+    /**
+     * Plain value of a stored password-type setting. A value saved before
+     * secrets were encrypted is returned as is, and a payload that no longer
+     * decrypts, for example after an APP_KEY change, reads as empty instead of
+     * handing the ciphertext on as the secret.
+     */
+    public function decryptSecret(?string $stored): ?string
+    {
+        if ($stored === null || $stored === '') {
+            return $stored;
+        }
+
+        try {
+            return Crypt::decryptString($stored);
+        } catch (DecryptException) {
+            return $this->isEncryptedPayload($stored) ? '' : $stored;
+        }
+    }
+
+    /**
+     * Whether the value has the shape of a Laravel encryption payload.
+     */
+    public function isEncryptedPayload(string $value): bool
+    {
+        $payload = json_decode((string) base64_decode($value, true), true);
+
+        return is_array($payload) && isset($payload['iv'], $payload['value'], $payload['mac']);
+    }
+
+    /**
+     * Codes of every password-type field declared in config('core').
+     *
+     * @return array<int, string>
+     */
+    public function passwordFieldCodes(): array
+    {
+        $codes = [];
+
+        foreach ((array) config('core') as $section) {
+            foreach ((array) ($section['fields'] ?? []) as $field) {
+                if (($field['type'] ?? null) === 'password' && isset($section['key'], $field['name'])) {
+                    $codes[] = $section['key'].'.'.$field['name'];
+                }
+            }
+        }
+
+        return $codes;
     }
 
     /**

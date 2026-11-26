@@ -16,6 +16,9 @@ class EnforceSsoOnly
 {
     public function __construct(protected OidcSettings $settings) {}
 
+    /**
+     * Refuse the request while SSO-only mode is active, otherwise pass it on.
+     */
     public function handle(Request $request, Closure $next): Response
     {
         if (! $this->settings->isSsoOnly()) {

@@ -135,41 +135,7 @@ it('denies the slug-less configuration post that targets every section at once',
     ]);
 });
 
-it('allows writing a section the role is explicitly granted', function () use ($debugPayload) {
-    $this->loginWithPermissions(permissions: [
-        'dashboard',
-        'configuration',
-        'configuration.system_settings',
-        'configuration.system_settings.debug',
-    ]);
-
-    $this->post(route('admin.configuration.store', ['slug' => 'general', 'slug2' => 'debug']), $debugPayload)
-        ->assertRedirect();
-
-    $this->assertDatabaseHas('core_config', [
-        'code'  => 'general.debug.settings.allowed_ips',
-        'value' => '203.0.113.5',
-    ]);
-});
-
-it('isolates sections on the legacy route: the debug grant does not unlock platform', function () {
-    $this->loginWithPermissions(permissions: [
-        'dashboard',
-        'configuration',
-        'configuration.system_settings',
-        'configuration.system_settings.debug',
-    ]);
-
-    $this->post(route('admin.configuration.store', ['slug' => 'general', 'slug2' => 'platform']), [
-        'general' => ['platform' => ['settings' => ['hidden_sections' => 'dashboard']]],
-    ])->assertStatus(403);
-
-    $this->assertDatabaseMissing('core_config', [
-        'code' => 'general.platform.settings.hidden_sections',
-    ]);
-});
-
-it('denies writing email settings with only the delegated email grant', function () use ($emailPayload) {
+it('allows writing a section the role is explicitly granted', function () use ($emailPayload) {
     $this->loginWithPermissions(permissions: [
         'dashboard',
         'configuration',
@@ -177,28 +143,29 @@ it('denies writing email settings with only the delegated email grant', function
         'configuration.system_settings.email',
     ]);
 
-    $this->get(route('admin.settings.system.edit', 'system.email'))->assertStatus(403);
-
-    $this->put(route('admin.settings.system.update', 'system.email'), $emailPayload)->assertStatus(403);
-
-    $this->post(route('admin.configuration.store', ['slug' => 'emails', 'slug2' => 'configure']), $emailPayload)
-        ->assertStatus(403);
-
-    $this->assertDatabaseMissing('core_config', [
-        'code'  => 'emails.configure.email_settings.mail_host',
-        'value' => 'evil.smtp.example',
-    ]);
-});
-
-it('allows a full-access admin to write email settings', function () use ($emailPayload) {
-    $this->loginWithPermissions(permissionType: 'all', permissions: []);
-
     $this->post(route('admin.configuration.store', ['slug' => 'emails', 'slug2' => 'configure']), $emailPayload)
         ->assertRedirect();
 
     $this->assertDatabaseHas('core_config', [
         'code'  => 'emails.configure.email_settings.mail_host',
         'value' => 'evil.smtp.example',
+    ]);
+});
+
+it('isolates sections on the legacy route: the email grant does not unlock debug', function () use ($debugPayload) {
+    $this->loginWithPermissions(permissions: [
+        'dashboard',
+        'configuration',
+        'configuration.system_settings',
+        'configuration.system_settings.email',
+    ]);
+
+    $this->post(route('admin.configuration.store', ['slug' => 'general', 'slug2' => 'debug']), $debugPayload)
+        ->assertStatus(403);
+
+    $this->assertDatabaseMissing('core_config', [
+        'code'  => 'general.debug.settings.allowed_ips',
+        'value' => '203.0.113.5',
     ]);
 });
 
@@ -214,10 +181,10 @@ it('allows reading a hub-owned section with the matching permission', function (
         'dashboard',
         'configuration',
         'configuration.system_settings',
-        'configuration.system_settings.debug',
+        'configuration.system_settings.email',
     ]);
 
-    $this->get(route('admin.configuration.edit', ['slug' => 'general', 'slug2' => 'debug']))
+    $this->get(route('admin.configuration.edit', ['slug' => 'emails', 'slug2' => 'configure']))
         ->assertOk();
 });
 

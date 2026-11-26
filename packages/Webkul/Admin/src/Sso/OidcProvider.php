@@ -46,26 +46,41 @@ class OidcProvider extends AbstractOAuthProvider implements SsoLogoutProvider
 
     public function __construct(protected readonly OidcSettings $settings) {}
 
+    /**
+     * Driver code used in the SSO routes and the admin's `sso_provider`.
+     */
     public function getCode(): string
     {
         return 'oidc';
     }
 
+    /**
+     * Sign-in button label.
+     */
     public function getLabel(): string
     {
         return $this->settings->label();
     }
 
+    /**
+     * Blade view of the sign-in button icon.
+     */
     public function getIconView(): ?string
     {
         return 'admin::components.sso.icons.oidc';
     }
 
+    /**
+     * Position of the sign-in button among the enabled drivers.
+     */
     public function getSort(): int
     {
         return 10;
     }
 
+    /**
+     * Whether the provider is switched on and fully configured.
+     */
     public function isEnabled(): bool
     {
         return $this->settings->isEnabled();
@@ -95,6 +110,9 @@ class OidcProvider extends AbstractOAuthProvider implements SsoLogoutProvider
         return $this->idToken;
     }
 
+    /**
+     * Provider end-session URL for a session opened through OpenID Connect, or null to log out locally only.
+     */
     public function logoutUrl(Request $request): ?string
     {
         $idToken = $request->session()->pull(self::ID_TOKEN_SESSION_KEY);
@@ -116,6 +134,9 @@ class OidcProvider extends AbstractOAuthProvider implements SsoLogoutProvider
         ]);
     }
 
+    /**
+     * Authorization endpoint from discovery with the code flow, PKCE, state and nonce parameters.
+     */
     protected function buildAuthorizationUrl(string $state, string $codeChallenge, string $nonce): string
     {
         return $this->appendQuery((string) $this->discovery()['authorization_endpoint'], [
@@ -180,6 +201,9 @@ class OidcProvider extends AbstractOAuthProvider implements SsoLogoutProvider
         return new SsoToken(accessToken: $accessToken, idToken: $idToken);
     }
 
+    /**
+     * Verify the ID token and keep its claims and raw value for the identity and for logout.
+     */
     protected function isTokenAcceptable(SsoToken $token, string $nonce): bool
     {
         $this->idTokenClaims = $this->verifyIdToken((string) $token->idToken, $nonce);
@@ -383,9 +407,11 @@ class OidcProvider extends AbstractOAuthProvider implements SsoLogoutProvider
     }
 
     /**
-     * The provider's discovery document. Its `issuer` must name the configured
-     * issuer (a trailing slash on either side is ignored); the ID token's `iss`
-     * is then compared exactly against the document's value.
+     * The provider's discovery document. The issuer must use https, since the
+     * client secret and authorization codes travel to its endpoints. Its `issuer`
+     * must name the configured issuer (a trailing slash on either side is
+     * ignored); the ID token's `iss` is then compared exactly against the
+     * document's value.
      *
      * @return array<string, mixed>|null
      */
@@ -393,7 +419,7 @@ class OidcProvider extends AbstractOAuthProvider implements SsoLogoutProvider
     {
         $issuer = $this->settings->issuer();
 
-        if ($issuer === '') {
+        if ($issuer === '' || ! str_starts_with(strtolower($issuer), 'https://')) {
             return null;
         }
 

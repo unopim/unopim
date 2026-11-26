@@ -223,6 +223,9 @@ class SystemSettings
         return false;
     }
 
+    /**
+     * Whether the signed-in admin's role grants every permission.
+     */
     public function currentAdminHasFullAccess(): bool
     {
         return app(RoleAccessGuard::class)->hasFullAccess(auth()->guard('admin')->user()?->role);

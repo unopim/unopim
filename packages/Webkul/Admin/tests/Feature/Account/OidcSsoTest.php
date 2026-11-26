@@ -4,11 +4,13 @@ use Firebase\JWT\JWT;
 use GuzzleHttp\Promise\PromiseInterface;
 use Illuminate\Http\Client\Request as HttpRequest;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Testing\TestResponse;
 use Webkul\Admin\Sso\OidcProvider;
 use Webkul\Admin\Sso\OidcSettings;
+use Webkul\Core\Models\CoreConfig;
 use Webkul\Core\Repositories\CoreConfigRepository;
 use Webkul\User\Models\Admin;
 use Webkul\User\Models\Role;
@@ -197,7 +199,7 @@ function oidcAssertRejected(TestResponse $response): void
     test()->assertGuest('admin');
 }
 
-it('logs in an admin already linked by subject id', function () {
+it('logs in an admin already linked by subject id', function (): void {
     $admin = oidcAdmin(['email' => 'renamed@example.com', 'sso_provider' => 'oidc', 'sso_identifier' => 'subject-1']);
 
     oidcFakeIdp();
@@ -207,7 +209,7 @@ it('logs in an admin already linked by subject id', function () {
     $this->assertAuthenticatedAs($admin, 'admin');
 });
 
-it('links an existing admin by verified email on first sign in', function () {
+it('links an existing admin by verified email on first sign in', function (): void {
     $admin = oidcAdmin();
 
     oidcFakeIdp();
@@ -220,7 +222,7 @@ it('links an existing admin by verified email on first sign in', function () {
         ->and($admin->fresh()->sso_identifier)->toBe('subject-1');
 });
 
-it('sends the code with the pkce verifier and the client secret in the body', function () {
+it('sends the code with the pkce verifier and the client secret in the body', function (): void {
     oidcAdmin();
 
     oidcFakeIdp();
@@ -234,7 +236,7 @@ it('sends the code with the pkce verifier and the client secret in the body', fu
         && ! $request->hasHeader('Authorization'));
 });
 
-it('falls back to client_secret_basic when the provider does not advertise client_secret_post', function () {
+it('falls back to client_secret_basic when the provider does not advertise client_secret_post', function (): void {
     oidcAdmin();
 
     oidcFakeIdp(options: ['discovery' => ['token_endpoint_auth_methods_supported' => ['client_secret_basic']]]);
@@ -248,7 +250,7 @@ it('falls back to client_secret_basic when the provider does not advertise clien
         && $request->header('Authorization')[0] === 'Basic '.base64_encode('unopim-client:unopim-secret'));
 });
 
-it('caches discovery and signing keys across logins', function () {
+it('caches discovery and signing keys across logins', function (): void {
     oidcAdmin();
 
     oidcFakeIdp();
@@ -266,7 +268,7 @@ it('caches discovery and signing keys across logins', function () {
         ->and(oidcRecorded(oidcIdpUrl('token/')))->toBe(2);
 });
 
-it('builds the authorization request from discovery with pkce, nonce and openid scope', function () {
+it('builds the authorization request from discovery with pkce, nonce and openid scope', function (): void {
     oidcConfigure(['scopes' => 'profile, email groups']);
 
     oidcFakeIdp();
@@ -286,7 +288,7 @@ it('builds the authorization request from discovery with pkce, nonce and openid 
         ->and($query['redirect_uri'])->toBe(route('admin.session.sso.callback', ['provider' => 'oidc']));
 });
 
-it('signs in straight from the identity provider app tile without visiting the login page', function () {
+it('signs in straight from the identity provider app tile without visiting the login page', function (): void {
     $admin = oidcAdmin(['sso_provider' => 'oidc', 'sso_identifier' => 'subject-1']);
 
     $nonce = null;
@@ -316,7 +318,7 @@ it('signs in straight from the identity provider app tile without visiting the l
     $this->assertAuthenticatedAs($admin, 'admin');
 });
 
-it('sends an admin who is already signed in straight to the landing page', function () {
+it('sends an admin who is already signed in straight to the landing page', function (): void {
     $this->loginAsAdmin(oidcAdmin(['use_gravatar' => false]));
 
     oidcFakeIdp();
@@ -329,7 +331,18 @@ it('sends an admin who is already signed in straight to the landing page', funct
     Http::assertNothingSent();
 });
 
-it('refuses a discovery document naming a different issuer', function () {
+it('refuses an issuer that does not use https', function (): void {
+    oidcConfigure(['issuer' => 'http://idp.example.test/application/o/unopim/']);
+
+    oidcFakeIdp();
+
+    $this->get(route('admin.session.sso.redirect', ['provider' => 'oidc']))
+        ->assertRedirect(route('admin.session.create'));
+
+    Http::assertNothingSent();
+});
+
+it('refuses a discovery document naming a different issuer', function (): void {
     oidcAdmin();
 
     oidcFakeIdp(options: ['discovery' => ['issuer' => 'https://evil.example.test/']]);
@@ -337,7 +350,7 @@ it('refuses a discovery document naming a different issuer', function () {
     oidcAssertRejected(oidcCallback());
 });
 
-it('accepts an ES256 signed id token', function () {
+it('accepts an ES256 signed id token', function (): void {
     $admin = oidcAdmin();
 
     oidcFakeIdp(oidcIdToken(kid: 'ec-1', algorithm: 'ES256'));
@@ -347,7 +360,7 @@ it('accepts an ES256 signed id token', function () {
     $this->assertAuthenticatedAs($admin, 'admin');
 });
 
-it('refuses an id token signed by a key the provider does not publish', function () {
+it('refuses an id token signed by a key the provider does not publish', function (): void {
     oidcAdmin();
 
     $foreign = oidcKey('foreign-key')['private'];
@@ -357,7 +370,7 @@ it('refuses an id token signed by a key the provider does not publish', function
     oidcAssertRejected(oidcCallback());
 });
 
-it('refuses an id token whose claims do not check out', function (array $claims) {
+it('refuses an id token whose claims do not check out', function (array $claims): void {
     oidcAdmin();
 
     oidcFakeIdp(oidcIdToken($claims));
@@ -375,7 +388,7 @@ it('refuses an id token whose claims do not check out', function (array $claims)
     'missing subject'                 => [['sub' => '']],
 ]);
 
-it('tolerates small clock skew and several audiences with a matching azp', function () {
+it('tolerates small clock skew and several audiences with a matching azp', function (): void {
     $admin = oidcAdmin();
 
     oidcFakeIdp(oidcIdToken([
@@ -389,7 +402,7 @@ it('tolerates small clock skew and several audiences with a matching azp', funct
     $this->assertAuthenticatedAs($admin, 'admin');
 });
 
-it('refuses an unsigned id token', function () {
+it('refuses an unsigned id token', function (): void {
     oidcAdmin();
 
     oidcFakeIdp(oidcUnsignedToken());
@@ -397,7 +410,7 @@ it('refuses an unsigned id token', function () {
     oidcAssertRejected(oidcCallback());
 });
 
-it('refuses an HS256 id token signed with the client secret', function () {
+it('refuses an HS256 id token signed with the client secret', function (): void {
     oidcAdmin();
 
     oidcConfigure(['client_secret' => str_repeat('unopim-secret-', 4)]);
@@ -407,7 +420,7 @@ it('refuses an HS256 id token signed with the client secret', function () {
     oidcAssertRejected(oidcCallback());
 });
 
-it('refetches the key set once for an unknown kid after key rotation', function () {
+it('refetches the key set once for an unknown kid after key rotation', function (): void {
     $admin = oidcAdmin();
 
     oidcFakeIdp(oidcIdToken(kid: 'rsa-2'), [
@@ -423,7 +436,7 @@ it('refetches the key set once for an unknown kid after key rotation', function 
     expect(oidcRecorded(oidcIdpUrl('jwks/')))->toBe(2);
 });
 
-it('refuses an unknown kid that is still unknown after refetching', function () {
+it('refuses an unknown kid that is still unknown after refetching', function (): void {
     oidcAdmin();
 
     oidcFakeIdp(oidcIdToken(kid: 'rsa-3'), ['jwks' => Http::response(oidcJwks('rsa-1'))]);
@@ -433,7 +446,7 @@ it('refuses an unknown kid that is still unknown after refetching', function () 
     expect(oidcRecorded(oidcIdpUrl('jwks/')))->toBe(2);
 });
 
-it('reads the email from userinfo when the id token has none', function () {
+it('reads the email from userinfo when the id token has none', function (): void {
     $admin = oidcAdmin();
 
     oidcFakeIdp(oidcIdToken(['email' => null, 'email_verified' => null]), [
@@ -448,7 +461,7 @@ it('reads the email from userinfo when the id token has none', function () {
         && $request->header('Authorization')[0] === 'Bearer access-token');
 });
 
-it('never pairs an email from one document with the verification flag of the other', function (array $tokenClaims, array $userInfo) {
+it('never pairs an email from one document with the verification flag of the other', function (array $tokenClaims, array $userInfo): void {
     $admin = oidcAdmin();
 
     oidcConfigure(['require_verified_email' => false]);
@@ -469,7 +482,7 @@ it('never pairs an email from one document with the verification flag of the oth
     ],
 ]);
 
-it('refuses userinfo that describes a different subject', function () {
+it('refuses userinfo that describes a different subject', function (): void {
     oidcAdmin();
 
     oidcFakeIdp(oidcIdToken(['email' => null, 'email_verified' => null]), [
@@ -479,7 +492,7 @@ it('refuses userinfo that describes a different subject', function () {
     oidcAssertRejected(oidcCallback());
 });
 
-it('refuses an unverified email by default', function () {
+it('refuses an unverified email by default', function (): void {
     oidcAdmin();
 
     oidcFakeIdp(oidcIdToken(['email_verified' => false]));
@@ -487,7 +500,7 @@ it('refuses an unverified email by default', function () {
     oidcAssertRejected(oidcCallback());
 });
 
-it('never links an existing admin by an unverified email', function () {
+it('never links an existing admin by an unverified email', function (): void {
     $admin = oidcAdmin();
 
     oidcConfigure(['require_verified_email' => false]);
@@ -500,7 +513,7 @@ it('never links an existing admin by an unverified email', function () {
         ->and($admin->fresh()->sso_identifier)->toBeNull();
 });
 
-it('lets an admin already linked by subject id in with an unverified email once the switch is off', function () {
+it('lets an admin already linked by subject id in with an unverified email once the switch is off', function (): void {
     $admin = oidcAdmin(['sso_provider' => 'oidc', 'sso_identifier' => 'subject-1']);
 
     oidcConfigure(['require_verified_email' => false]);
@@ -512,7 +525,7 @@ it('lets an admin already linked by subject id in with an unverified email once 
     $this->assertAuthenticatedAs($admin, 'admin');
 });
 
-it('provisions an unverified email once the switch is off', function () {
+it('provisions an unverified email once the switch is off', function (): void {
     $role = oidcRole();
 
     oidcConfigure(['require_verified_email' => false, 'auto_provision' => true, 'default_role' => $role->name]);
@@ -529,7 +542,7 @@ it('provisions an unverified email once the switch is off', function () {
     $this->assertAuthenticatedAs($admin, 'admin');
 });
 
-it('refuses to hijack an admin linked to a different subject through its email', function () {
+it('refuses to hijack an admin linked to a different subject through its email', function (): void {
     $admin = oidcAdmin(['sso_provider' => 'oidc', 'sso_identifier' => 'original-subject']);
 
     oidcFakeIdp();
@@ -539,7 +552,7 @@ it('refuses to hijack an admin linked to a different subject through its email',
     expect($admin->fresh()->sso_identifier)->toBe('original-subject');
 });
 
-it('refuses to re-bind an admin linked through another sso driver', function () {
+it('refuses to re-bind an admin linked through another sso driver', function (): void {
     $admin = oidcAdmin(['sso_provider' => 'microsoft', 'sso_identifier' => 'object-id-1']);
 
     oidcFakeIdp();
@@ -550,7 +563,7 @@ it('refuses to re-bind an admin linked through another sso driver', function () 
         ->and($admin->fresh()->sso_identifier)->toBe('object-id-1');
 });
 
-it('never links or provisions over an admin whose email only collates with the asserted one', function (bool $provisions) {
+it('never links or provisions over an admin whose email only collates with the asserted one', function (bool $provisions): void {
     $admin = oidcAdmin(['email' => 'jose@corp.com']);
 
     oidcConfigure(['auto_provision' => $provisions, 'default_role' => oidcRole()->name]);
@@ -566,7 +579,7 @@ it('never links or provisions over an admin whose email only collates with the a
     'provisioning on'  => true,
 ]);
 
-it('never treats a subject that differs only in case as the linked one', function () {
+it('never treats a subject that differs only in case as the linked one', function (): void {
     $admin = oidcAdmin(['sso_provider' => 'oidc', 'sso_identifier' => 'SUBJECT-1']);
 
     oidcFakeIdp();
@@ -576,7 +589,7 @@ it('never treats a subject that differs only in case as the linked one', functio
     expect($admin->fresh()->sso_identifier)->toBe('SUBJECT-1');
 });
 
-it('refuses an unknown user while provisioning is off', function () {
+it('refuses an unknown user while provisioning is off', function (): void {
     oidcFakeIdp(oidcIdToken(['email' => 'stranger@example.com']));
 
     oidcAssertRejected(oidcCallback());
@@ -584,7 +597,7 @@ it('refuses an unknown user while provisioning is off', function () {
     $this->assertDatabaseMissing('admins', ['email' => 'stranger@example.com']);
 });
 
-it('refuses provisioning without a role mapping or default role', function () {
+it('refuses provisioning without a role mapping or default role', function (): void {
     oidcConfigure(['auto_provision' => true]);
 
     oidcFakeIdp(oidcIdToken(['email' => 'roleless@example.com']));
@@ -594,7 +607,7 @@ it('refuses provisioning without a role mapping or default role', function () {
     $this->assertDatabaseMissing('admins', ['email' => 'roleless@example.com']);
 });
 
-it('provisions a new admin with the mapped role', function () {
+it('provisions a new admin with the mapped role', function (): void {
     $editor = oidcRole();
 
     $viewer = oidcRole();
@@ -629,7 +642,27 @@ it('provisions a new admin with the mapped role', function () {
     $this->assertAuthenticatedAs($admin, 'admin');
 });
 
-it('syncs the mapped role on every login', function () {
+it('fires the admin create events for a provisioned admin', function (): void {
+    $fired = [];
+
+    Event::listen('user.admin.create.before', function () use (&$fired): void {
+        $fired[] = 'before';
+    });
+
+    Event::listen('user.admin.create.after', function (Admin $admin) use (&$fired): void {
+        $fired[] = 'after:'.$admin->sso_identifier;
+    });
+
+    oidcConfigure(['auto_provision' => true, 'default_role' => oidcRole()->name]);
+
+    oidcFakeIdp(oidcIdToken(['sub' => 'evented-subject', 'email' => 'evented@example.com']));
+
+    oidcCallback()->assertRedirect();
+
+    expect($fired)->toBe(['before', 'after:evented-subject']);
+});
+
+it('syncs the mapped role on every login', function (): void {
     $previous = oidcRole();
 
     $mapped = oidcRole();
@@ -647,7 +680,7 @@ it('syncs the mapped role on every login', function () {
     expect($admin->fresh()->role_id)->toBe($mapped->id);
 });
 
-it('reads the groups from a custom claim', function () {
+it('reads the groups from a custom claim', function (): void {
     $mapped = oidcRole();
 
     $admin = oidcAdmin(['role_id' => oidcRole()->id]);
@@ -661,7 +694,7 @@ it('reads the groups from a custom claim', function () {
     expect($admin->fresh()->role_id)->toBe($mapped->id);
 });
 
-it('refuses a login whose groups match no mapped role', function () {
+it('refuses a login whose groups match no mapped role', function (): void {
     $role = oidcRole();
 
     $admin = oidcAdmin(['role_id' => $role->id]);
@@ -675,7 +708,7 @@ it('refuses a login whose groups match no mapped role', function () {
     expect($admin->fresh()->role_id)->toBe($role->id);
 });
 
-it('refuses every login while the role map is not valid json', function () {
+it('refuses every login while the role map is not valid json', function (): void {
     oidcAdmin();
 
     oidcConfigure(['role_map' => '{not json']);
@@ -685,7 +718,7 @@ it('refuses every login while the role map is not valid json', function () {
     oidcAssertRejected(oidcCallback());
 });
 
-it('keeps the last active full-access admin from being demoted by the role map', function () {
+it('keeps the last active full-access admin from being demoted by the role map', function (): void {
     $fullAccess = oidcRole('all');
 
     $admin = oidcAdmin(['role_id' => $fullAccess->id, 'sso_provider' => 'oidc', 'sso_identifier' => 'subject-1']);
@@ -706,7 +739,7 @@ it('keeps the last active full-access admin from being demoted by the role map',
     expect($admin->fresh()->role_id)->toBe($fullAccess->id);
 });
 
-it('demotes a full-access admin when another active full-access admin remains', function () {
+it('demotes a full-access admin when another active full-access admin remains', function (): void {
     $fullAccess = oidcRole('all');
 
     $mapped = oidcRole();
@@ -724,7 +757,7 @@ it('demotes a full-access admin when another active full-access admin remains', 
     expect($admin->fresh()->role_id)->toBe($mapped->id);
 });
 
-it('refuses an inactive admin', function () {
+it('refuses an inactive admin', function (): void {
     oidcAdmin(['status' => 0]);
 
     oidcFakeIdp();
@@ -736,7 +769,7 @@ it('refuses an inactive admin', function () {
     $response->assertSessionHas('warning');
 });
 
-it('refuses an api user and leaves its role alone', function () {
+it('refuses an api user and leaves its role alone', function (): void {
     $role = oidcRole();
 
     $apiUser = oidcAdmin(['type' => 'api', 'role_id' => $role->id, 'sso_provider' => 'oidc', 'sso_identifier' => 'subject-1']);
@@ -750,7 +783,7 @@ it('refuses an api user and leaves its role alone', function () {
     expect($apiUser->fresh()->role_id)->toBe($role->id);
 });
 
-it('prefers environment values over stored settings', function () {
+it('prefers environment values over stored settings', function (): void {
     oidcConfigure(['issuer' => null, 'client_id' => null]);
 
     app(CoreConfigRepository::class)->create([
@@ -775,7 +808,7 @@ it('prefers environment values over stored settings', function () {
         ->and($settings->clientId())->toBe('stored-client');
 });
 
-it('shows the configured label on the login page', function () {
+it('shows the configured label on the login page', function (): void {
     oidcConfigure(['label' => 'Sign in with ACME Login']);
 
     $this->get(route('admin.session.create'))
@@ -784,7 +817,7 @@ it('shows the configured label on the login page', function () {
         ->assertSeeText('Sign in with ACME Login');
 });
 
-it('falls back to the translated default label and hides the button while disabled', function () {
+it('falls back to the translated default label and hides the button while disabled', function (): void {
     $this->get(route('admin.session.create'))
         ->assertSeeText(trans('admin::app.users.sessions.sso-sign-in-with-oidc'));
 
@@ -794,7 +827,7 @@ it('falls back to the translated default label and hides the button while disabl
         ->assertDontSee(route('admin.session.sso.redirect', ['provider' => 'oidc']), false);
 });
 
-it('renders environment-locked fields read-only and never prints the secret', function () {
+it('renders environment-locked fields read-only and never prints the secret', function (): void {
     $this->loginAsAdmin(oidcAdmin(['email' => 'settings-admin@example.com', 'use_gravatar' => false]));
 
     $html = $this->get(route('admin.settings.system.edit', 'system.oidc_sso'))
@@ -807,7 +840,7 @@ it('renders environment-locked fields read-only and never prints the secret', fu
         ->and($html)->not->toContain('unopim-secret');
 });
 
-it('reserves the openid connect settings for full-access admins', function () {
+it('reserves the openid connect settings for full-access admins', function (): void {
     $role = Role::factory()->create([
         'permission_type' => 'custom',
         'permissions'     => ['configuration', 'configuration.system_settings', 'configuration.system_settings.oidc_sso'],
@@ -833,7 +866,25 @@ it('reserves the openid connect settings for full-access admins', function () {
     ]);
 });
 
-it('ignores environment-locked fields on save', function () {
+it('stores the client secret encrypted and never prints it on the settings page', function (): void {
+    oidcConfigure(['client_secret' => null]);
+
+    app(CoreConfigRepository::class)->create([
+        'general' => ['oidc_sso' => ['settings' => ['client_secret' => 'stored-client-secret']]],
+    ]);
+
+    expect(CoreConfig::query()->where('code', 'general.oidc_sso.settings.client_secret')->value('value'))
+        ->not->toBe('stored-client-secret')
+        ->and(app(OidcSettings::class)->clientSecret())->toBe('stored-client-secret');
+
+    $this->loginAsAdmin(oidcAdmin(['email' => 'settings-admin@example.com', 'use_gravatar' => false]));
+
+    $this->get(route('admin.settings.system.edit', 'system.oidc_sso'))
+        ->assertOk()
+        ->assertDontSee('stored-client-secret');
+});
+
+it('ignores environment-locked fields on save', function (): void {
     $this->loginAsAdmin(oidcAdmin(['email' => 'settings-admin@example.com', 'use_gravatar' => false]));
 
     oidcConfigure(['client_id' => null]);
@@ -853,7 +904,7 @@ it('ignores environment-locked fields on save', function () {
     ]);
 });
 
-it('hides password sign-in and refuses password posts in sso-only mode', function () {
+it('hides password sign-in and refuses password posts in sso-only mode', function (): void {
     oidcConfigure(['sso_only' => true]);
 
     oidcAdmin();
@@ -878,7 +929,7 @@ it('hides password sign-in and refuses password posts in sso-only mode', functio
         ->assertRedirect(route('admin.session.create'));
 });
 
-it('keeps password sign-in while sso-only is set but the provider is not usable', function () {
+it('keeps password sign-in while sso-only is set but the provider is not usable', function (): void {
     oidcConfigure(['sso_only' => true, 'enabled' => false]);
 
     oidcAdmin();
@@ -890,7 +941,7 @@ it('keeps password sign-in while sso-only is set but the provider is not usable'
     $this->assertAuthenticated('admin');
 });
 
-it('stores the id token in the session after an oidc login', function () {
+it('stores the id token in the session after an oidc login', function (): void {
     oidcAdmin();
 
     $idToken = oidcIdToken();
@@ -900,7 +951,7 @@ it('stores the id token in the session after an oidc login', function () {
     oidcCallback()->assertSessionHas(OidcProvider::ID_TOKEN_SESSION_KEY, $idToken);
 });
 
-it('ends the provider session on logout of an oidc session', function () {
+it('ends the provider session on logout of an oidc session', function (): void {
     $admin = oidcAdmin();
 
     oidcFakeIdp();
@@ -923,7 +974,7 @@ it('ends the provider session on logout of an oidc session', function () {
         ]);
 });
 
-it('logs out locally only when rp logout is off or the session did not use oidc', function (array $session, array $settings) {
+it('logs out locally only when rp logout is off or the session did not use oidc', function (array $session, array $settings): void {
     $admin = oidcAdmin();
 
     oidcConfigure($settings);

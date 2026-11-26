@@ -128,6 +128,9 @@ class SsoAuthenticator
             ->toBase();
     }
 
+    /**
+     * Trimmed, lower-cased form used for exact email comparison.
+     */
     protected function normalizeEmail(string $email): string
     {
         return mb_strtolower(trim($email));

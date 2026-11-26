@@ -4,6 +4,7 @@ namespace Webkul\Admin\Listeners;
 
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Webkul\Admin\Contracts\SsoProvider;
@@ -89,11 +90,17 @@ class OidcIdentityListener
         }
     }
 
+    /**
+     * Admin already bound to this OpenID Connect subject.
+     */
     protected function linkedAdmin(SsoIdentity $identity): ?Admin
     {
         return $this->authenticator->adminBySubject('oidc', $identity->identifier);
     }
 
+    /**
+     * Admin whose email exactly matches the asserted address.
+     */
     protected function adminByEmail(SsoIdentity $identity): ?Admin
     {
         return $this->authenticator->adminByEmail($identity->email);
@@ -126,7 +133,8 @@ class OidcIdentityListener
      * neither, nothing is created and the login is refused. The login is also
      * refused when the address already belongs to an admin under the column
      * collation, look-alikes included, since that admin's account must not be
-     * matched or shadowed.
+     * matched or shadowed. The `user.admin.create.before/after` events fire as
+     * for an admin created on the users screen.
      *
      * @throws SsoAuthenticationException
      */
@@ -144,8 +152,10 @@ class OidcIdentityListener
 
         $localeId = $this->defaultLocaleId();
 
+        Event::dispatch('user.admin.create.before');
+
         try {
-            $this->adminRepository->create([
+            $admin = $this->adminRepository->create([
                 'name'               => $identity->name ?: Str::before($identity->email, '@'),
                 'email'              => $identity->email,
                 'password'           => bcrypt(Str::random(64)),
@@ -162,6 +172,8 @@ class OidcIdentityListener
         } catch (UniqueConstraintViolationException) {
             throw SsoAuthenticationException::rejected($identity->email);
         }
+
+        Event::dispatch('user.admin.create.after', $admin);
     }
 
     /**
@@ -199,11 +211,17 @@ class OidcIdentityListener
         });
     }
 
+    /**
+     * Role with exactly this name, null for an empty name.
+     */
     protected function roleByName(string $name): ?Role
     {
         return $name === '' ? null : $this->roleRepository->findOneByField('name', $name);
     }
 
+    /**
+     * Id of the application locale, used as UI and catalog locale for provisioned admins.
+     */
     protected function defaultLocaleId(): ?int
     {
         $locale = $this->localeRepository->findOneWhere([
