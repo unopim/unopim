@@ -2,6 +2,8 @@
 
 ## Security
 
+- Stored `validation` and `regex_pattern` settings of attributes, category fields and association type fields can no longer break out of the client-side rules expression or add rules on the server. The pattern is emitted as one JSON string literal and checked server-side through a rule object, and only the validation types the admin forms offer (`regex`, `number`, `decimal`, `email`, `url`) become a rule. The Admin API association type create and update requests now validate the nested `fields` entries and refuse `association_type_id` on them.
+
 - Hardened the TinyMCE 6.8 editor against CVE-2024-29881, CVE-2026-47759, CVE-2026-47760, CVE-2026-47761 and CVE-2026-47762 while staying on its last MIT-licensed release. The unused media plugin is removed, unsafe embeds are converted, and content is run through DOMPurify on load and paste, removing `svg`, `math`, `object` and `embed` elements, `data-*` attributes and comments. Saved WYSIWYG content is still sanitized server-side by HTMLPurifier.
 
 ## Bug fixes
@@ -11,6 +13,10 @@
 ## New features
 
 - The product grid's quick search reads the attribute codes it looks in from `products.search_fields`, so an EAN, a GTIN or a supplier article number can be searched from the one search box. An attribute marked `is_filterable` could already be filtered by substring on its own grid column with the `contains` operator; this saves adding the column and picking the operator, and covers identifier attributes that are not filterable, such as the seeded `product_number`. The SKU and the name are still searched by default, codes that do not resolve to a text attribute are skipped, and at most ten are searched.
+
+## Upgrade notes
+
+- A stored `validation` value that is not one of `regex`, `number`, `decimal`, `email` or `url` is now ignored, in the admin forms and when product, category and association values are validated, where it used to be passed on as a rule name. The legacy `numeric` spelling still works. Before upgrading, list affected fields with `select code, validation from attributes where validation is not null and validation not in ('regex', 'number', 'numeric', 'decimal', 'email', 'url')`; run the same query on `category_fields` and `association_type_fields`. Set those fields to an offered type if the rule is still wanted.
 
 # 3.1.3 — September 29th, 2026
 

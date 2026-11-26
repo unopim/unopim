@@ -3,6 +3,7 @@
 namespace Webkul\Core\Rules;
 
 use Closure;
+use ErrorException;
 use Illuminate\Contracts\Validation\ValidationRule;
 
 /**
@@ -28,8 +29,28 @@ class StoredRegexPattern implements ValidationRule
             return;
         }
 
-        if (@preg_match('"'.$this->pattern.'"', (string) $value) !== 1) {
+        if (! $this->matches((string) $value)) {
             $fail('validation.regex')->translate();
+        }
+    }
+
+    /**
+     * Whether the value matches the stored pattern. A pattern that does not
+     * compile raises a warning; it is turned into an exception around this one
+     * call only, so the field fails without any other warning being hidden.
+     */
+    protected function matches(string $value): bool
+    {
+        set_error_handler(static function (int $severity, string $message): never {
+            throw new ErrorException($message, 0, $severity);
+        });
+
+        try {
+            return preg_match('"'.$this->pattern.'"', $value) === 1;
+        } catch (ErrorException) {
+            return false;
+        } finally {
+            restore_error_handler();
         }
     }
 }

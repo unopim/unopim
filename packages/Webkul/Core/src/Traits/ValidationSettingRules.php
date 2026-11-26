@@ -14,8 +14,8 @@ use Webkul\Core\Rules\StoredRegexPattern;
  * Both settings are editable data, so neither may become code or an arbitrary
  * rule. The client-side object is compiled by Vue as an expression, so the
  * pattern is emitted as a JSON string literal with quotes, markup and
- * apostrophes hex-escaped, and a validation type that is not a plain identifier
- * is dropped. Server-side, only the known validation types map to a rule; any
+ * apostrophes hex-escaped, and only the validation types the admin forms offer
+ * become a rule. Server-side, only the known validation types map to a rule; any
  * other stored value is ignored instead of being handed to the validator,
  * where something like `exists:admin_users,email` would run a query. The
  * pattern goes to the validator as a rule object rather than a `regex:` string,
@@ -38,9 +38,10 @@ trait ValidationSettingRules
         }
 
         return match ($this->validation) {
-            'regex'             => 'regex: '.json_encode((string) $this->regex_pattern, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE),
-            'number', 'numeric' => 'numeric: true',
-            default             => preg_match('/^[a-z_]+$/', (string) $this->validation) === 1 ? $this->validation.': true' : null,
+            'regex'                   => 'regex: '.json_encode((string) $this->regex_pattern, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE),
+            'number', 'numeric'       => 'numeric: true',
+            'decimal', 'email', 'url' => $this->validation.': true',
+            default                   => null,
         };
     }
 

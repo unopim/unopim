@@ -52,9 +52,13 @@ it('hex-escapes markup and apostrophes in the regex pattern', function (string $
         ->toBe('{ regex: "\u003C\/a\u003E\u003Cimg src=x onerror=alert(1)\u003E\u0027" }');
 })->with('fields with client-side rules');
 
-it('drops a validation type that is not a plain identifier', function (string $class): void {
-    expect(clientRulesFor($class, ['validation' => 'foo: alert(document.domain), bar']))->toBe('{  }');
-})->with('fields with client-side rules');
+it('drops a validation type the admin forms do not offer', function (string $class, string $validation): void {
+    expect(clientRulesFor($class, ['validation' => $validation]))->toBe('{  }');
+})->with('fields with client-side rules')->with([
+    'expression'       => ['foo: alert(document.domain), bar'],
+    'plain identifier' => ['exists'],
+    'required rule'    => ['required'],
+]);
 
 it('passes a regex pattern with backslashes through intact', function (string $class): void {
     expect(clientRulesFor($class, ['validation' => 'regex', 'regex_pattern' => '^\d{3}-[A-Z]+$']))
@@ -115,6 +119,18 @@ it('keeps a pipe in the stored regex pattern from adding rules on the server', f
 
 it('fails the value instead of erroring when the stored regex pattern does not compile', function (string $class): void {
     expect(validatesAgainstStoredSettings($class, ['validation' => 'regex', 'regex_pattern' => 'a"b'], 'a"b'))->toBeFalse();
+})->with('fields with client-side rules');
+
+it('leaves the error handler as it found it when the stored regex pattern does not compile', function (string $class): void {
+    $probe = static fn (): bool => false;
+    set_error_handler($probe);
+
+    validatesAgainstStoredSettings($class, ['validation' => 'regex', 'regex_pattern' => 'a\\'], 'a');
+
+    $current = set_error_handler(null);
+    restore_error_handler();
+
+    expect($current)->toBe($probe);
 })->with('fields with client-side rules');
 
 it('matches the submitted value against the stored regex pattern', function (string $class, mixed $value, bool $expected): void {
