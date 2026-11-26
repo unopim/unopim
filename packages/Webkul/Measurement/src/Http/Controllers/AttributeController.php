@@ -15,6 +15,20 @@ class AttributeController extends Controller
     ) {}
 
     /**
+     * Measurement family options for the attribute quick-create modal, fetched
+     * when a measurement type is picked so the attributes index does not query
+     * families on every load.
+     */
+    public function familyOptions(): JsonResponse
+    {
+        abort_unless(bouncer()->hasPermission('catalog.attributes'), 403, trans('admin::app.common.unauthorized'));
+
+        return new JsonResponse([
+            'families' => $this->attributeMeasurementService->familyOptions(),
+        ]);
+    }
+
+    /**
      * Unit options of a single measurement family, for the attribute editor's
      * family select. Kept off {@see getAttributeMeasurement()} so the initial
      * payload stays independent of how many families the catalogue holds.

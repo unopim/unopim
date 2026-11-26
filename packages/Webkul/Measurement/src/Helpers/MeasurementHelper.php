@@ -9,7 +9,7 @@ class MeasurementHelper
     /**
      * Default for display_unit_symbol when the setting was never saved.
      */
-    public const DEFAULT_DISPLAY_UNIT_SYMBOL = true;
+    public const bool DEFAULT_DISPLAY_UNIT_SYMBOL = true;
 
     public function __construct(
         /**

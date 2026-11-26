@@ -5,14 +5,12 @@
         ->filter(fn (string $type): bool => $measurementHelper->isMeasurementBacked($type))
         ->values()
         ->toArray();
-
-    $familyOptions = app(\Webkul\Measurement\Services\AttributeMeasurementService::class)->familyOptions();
 @endphp
 
 <v-measurement-create
     :selected-type="selectedType"
     :measurement-types='@json($measurementBackedTypes)'
-    :family-options='@json($familyOptions)'
+    family-options-url="{{ route('admin.measurement.family.options') }}"
     family-units-url="{{ route('admin.measurement.family.units') }}"
 ></v-measurement-create>
 
@@ -72,12 +70,13 @@
             props: [
                 'selectedType',
                 'measurementTypes',
-                'familyOptions',
+                'familyOptionsUrl',
                 'familyUnitsUrl',
             ],
 
             data() {
                 return {
+                    familyOptions: null,
                     family: null,
                     unit: null,
                 };
@@ -90,6 +89,15 @@
             },
 
             watch: {
+                isMeasurement: {
+                    handler(isMeasurement) {
+                        if (isMeasurement) {
+                            this.fetchFamilyOptions();
+                        }
+                    },
+                    immediate: true,
+                },
+
                 selectedType() {
                     if (! this.isMeasurement) {
                         this.family = null;
@@ -108,6 +116,28 @@
                     this.unit = null;
 
                     this.fetchUnits(selectedFamily ? selectedFamily.id : null);
+                },
+            },
+
+            methods: {
+                /**
+                 * Families are loaded once, the first time a measurement type is
+                 * picked, so the attributes index never queries them up front.
+                 */
+                async fetchFamilyOptions() {
+                    if (this.familyOptions !== null) {
+                        return;
+                    }
+
+                    try {
+                        const response = await this.$axios.get(this.familyOptionsUrl);
+
+                        this.familyOptions = response.data.families || [];
+                    } catch (error) {
+                        console.error('Error loading measurement families:', error);
+
+                        this.familyOptions = [];
+                    }
                 },
             },
         });

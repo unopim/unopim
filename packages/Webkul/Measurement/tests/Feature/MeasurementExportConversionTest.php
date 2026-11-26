@@ -19,7 +19,7 @@ use Webkul\Measurement\Models\MeasurementFamily;
 use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->loginAsAdmin();
 
     $this->enableUnitSymbolDisplay();
@@ -210,14 +210,14 @@ function measurementCellFor(array $fileRows, string $channelCode, string $column
     return null;
 }
 
-describe('Issue #1196 - measurement conversion during product export', function () {
-    beforeEach(function () {
+describe('Issue #1196 - measurement conversion during product export', function (): void {
+    beforeEach(function (): void {
         $this->measurementFamily = measurementLengthFamily();
         $this->defaultChannel = Channel::first();
         $this->extraChannel = measurementExtraChannel();
     });
 
-    it('has no channel-level measurement unit configuration anywhere in the schema', function () {
+    it('has no channel-level measurement unit configuration anywhere in the schema', function (): void {
         $channelColumns = Schema::getColumnListing((new Channel)->getTable());
 
         expect(implode(',', $channelColumns))->not->toContain('unit')
@@ -232,7 +232,7 @@ describe('Issue #1196 - measurement conversion during product export', function 
             ->and($attributeMeasurementColumns)->not->toContain('channel_code');
     });
 
-    it('exposes no helper capable of converting a stored amount into an arbitrary target unit', function () {
+    it('exposes no helper capable of converting a stored amount into an arbitrary target unit', function (): void {
         $helper = app(MeasurementHelper::class);
 
         $methods = get_class_methods($helper);
@@ -246,7 +246,7 @@ describe('Issue #1196 - measurement conversion during product export', function 
             ->and((float) $helper->calculateBaseValue('250', 'centimeter', $this->measurementFamily))->toBe(2.5);
     });
 
-    it('writes the identical stored amount and unit into every channel row for a common-scoped measurement value', function () {
+    it('writes the identical stored amount and unit into every channel row for a common-scoped measurement value', function (): void {
         $measurement = measurementLengthAttribute($this->measurementFamily);
         $family = measurementProductFamily($measurement);
 
@@ -296,7 +296,7 @@ describe('Issue #1196 - measurement conversion during product export', function 
             ->and($extraRow[$measurement->code.'(unit)'])->toBe('m');
     });
 
-    it('produces the same unconverted amount in both the CSV and the XLSX file for every channel', function () {
+    it('produces the same unconverted amount in both the CSV and the XLSX file for every channel', function (): void {
         $measurement = measurementLengthAttribute($this->measurementFamily);
         $family = measurementProductFamily($measurement);
 
@@ -346,7 +346,7 @@ describe('Issue #1196 - measurement conversion during product export', function 
         }
     });
 
-    it('keeps the stored per-channel amount untouched when the second channel holds a centimeter value', function () {
+    it('keeps the stored per-channel amount untouched when the second channel holds a centimeter value', function (): void {
         $measurement = measurementLengthAttribute($this->measurementFamily, perChannel: true);
         $family = measurementProductFamily($measurement);
 
@@ -400,7 +400,7 @@ describe('Issue #1196 - measurement conversion during product export', function 
             ->and($byChannel[$this->extraChannel->code][$measurement->code.'(unit)'])->toBe('cm');
     });
 
-    it('leaves the second channel column empty when a channel-scoped value exists only for the first channel', function () {
+    it('leaves the second channel column empty when a channel-scoped value exists only for the first channel', function (): void {
         $measurement = measurementLengthAttribute($this->measurementFamily, perChannel: true);
         $family = measurementProductFamily($measurement);
 
@@ -443,7 +443,7 @@ describe('Issue #1196 - measurement conversion during product export', function 
             ->and($byChannel[$this->extraChannel->code][$measurement->code.'(unit)'])->toBeNull();
     });
 
-    it('translates only the unit label per locale and never rescales the amount', function () {
+    it('translates only the unit label per locale and never rescales the amount', function (): void {
         $measurement = measurementLengthAttribute($this->measurementFamily);
         $family = measurementProductFamily($measurement);
 
@@ -497,7 +497,7 @@ describe('Issue #1196 - measurement conversion during product export', function 
             ->and($byLocale['fr_FR'][$measurement->code.'(unit)'])->toBe('m');
     });
 
-    it('resolves the product exporter to the core class or a subclass, which reads amount and unit verbatim', function () {
+    it('resolves the product exporter to the core class or a subclass, which reads amount and unit verbatim', function (): void {
         $exporter = app(Exporter::class);
 
         expect($exporter)->toBeInstanceOf(Exporter::class);

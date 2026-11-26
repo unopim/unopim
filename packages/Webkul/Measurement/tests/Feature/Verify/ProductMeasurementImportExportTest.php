@@ -11,7 +11,7 @@ use Webkul\Measurement\Models\MeasurementFamily;
 use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->loginAsAdmin();
 
     $this->enableUnitSymbolDisplay();
@@ -110,7 +110,7 @@ function verifyImpExpExportColumns(array $attributes, array $values, ?string $lo
     return $method->invoke($exporter, $values, null, $locale);
 }
 
-it('imports a measurement column into the full { unit, amount, base_data } structure normalized to the family standard unit', function () {
+it('imports a measurement column into the full { unit, amount, base_data } structure normalized to the family standard unit', function (): void {
     [$family, $measurement, $measurementFamily] = verifyImpExpSetup();
 
     $attributeValues = verifyImpExpImport($family, [
@@ -129,7 +129,7 @@ it('imports a measurement column into the full { unit, amount, base_data } struc
         ->and($stored['family'] ?? null)->toBe($measurementFamily->code);
 });
 
-it('persists an imported measurement structure on a product and reads it back after reload', function () {
+it('persists an imported measurement structure on a product and reads it back after reload', function (): void {
     [$family, $measurement] = verifyImpExpSetup();
 
     $attributeValues = verifyImpExpImport($family, [
@@ -171,7 +171,7 @@ it('exports the amount column plus a (unit) companion column carrying the unit s
         ->and($columns[$measurement->code.'(unit)'])->toBe('cm');
 });
 
-it('round-trips a measurement value through export then re-import without drift', function () {
+it('round-trips a measurement value through export then re-import without drift', function (): void {
     [$family, $measurement] = verifyImpExpSetup();
 
     $imported = verifyImpExpImport($family, [
@@ -202,7 +202,7 @@ it('round-trips a measurement value through export then re-import without drift'
         ->and((float) ($roundTripped['base_data'] ?? 0))->toBe(2.5);
 });
 
-it('escapes a formula-operator amount on export and the import unescapes it back', function () {
+it('escapes a formula-operator amount on export and the import unescapes it back', function (): void {
     [$family, $measurement] = verifyImpExpSetup();
 
     $imported = verifyImpExpImport($family, [
@@ -233,7 +233,7 @@ it('escapes a formula-operator amount on export and the import unescapes it back
         ->and((float) ($roundTripped['amount'] ?? 0))->toBe(-5.0);
 });
 
-it('unwraps a channel/locale scoped measurement value when exporting', function () {
+it('unwraps a channel/locale scoped measurement value when exporting', function (): void {
     [, $measurement] = verifyImpExpSetup();
 
     $columns = verifyImpExpExportColumns(
@@ -251,7 +251,7 @@ it('unwraps a channel/locale scoped measurement value when exporting', function 
         ->and($columns[$measurement->code.'(unit)'])->toBe('m');
 });
 
-it('escapes a unit label that begins with a formula operator on export', function () {
+it('escapes a unit label that begins with a formula operator on export', function (): void {
     [, $measurement] = verifyImpExpSetup([
         [
             'code'                  => 'meter',
