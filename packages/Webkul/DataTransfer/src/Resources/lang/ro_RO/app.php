@@ -32,6 +32,8 @@ return [
                     'incorrect-family-for-variant'             => 'Familia trebuie să fie aceeași cu familia principală',
                     'parent-not-exist'                         => 'Părintele nu există.',
                     'variant-structure-not-found'              => 'Structura de variante :code nu există pentru această familie de atribute.',
+                    'variant-structure-levels-mismatch'        => 'Structura de variante :code are un singur nivel, deci nu poate conține rânduri variant_group. Setați nivelurile la 2 sau importați variantele ca produse simple sub produsul configurabil.',
+                    'variant-structure-two-levels-mismatch'    => 'Structura de variante :code are două niveluri, deci rândurile de produse simple trebuie plasate sub un rând variant_group, nu direct sub produsul configurabil.',
                 ],
             ],
         ],
@@ -59,6 +61,7 @@ return [
                     'duplicate-code'                       => 'Codul atributului :code este deja utilizat.',
                     'code_not_found_to_delete'             => 'Codul atributului nu a fost găsit pentru ștergere.',
                     'code_is_system_and_cannot_be_deleted' => 'Atributul de sistem nu poate fi șters.',
+                    'templates-unsupported'                => 'Șabloanele pot fi activate doar pentru atributele de tip text și câmp text care nu au validare a intrării și nu sunt unice.',
                 ],
             ],
         ],
@@ -174,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Acest export este prea mare pentru a fi rulat: aproximativ :rows rânduri × :columns coloane (~:estimated) depășesc spațiul disponibil (~:available). Restrângeți exportul selectând mai puține canale/limbi (și atribute) și încercați din nou.',
-        'fields'           => [
+        'export-too-large'      => 'Acest export este prea mare pentru a fi rulat: aproximativ :rows rânduri × :columns coloane (~:estimated) depășesc spațiul disponibil (~:available). Restrângeți exportul selectând mai puține canale/limbi (și atribute) și încercați din nou.',
+        'xls-too-many-columns'  => 'Acest export are mai mult de :limit coloane, maximul pe care îl poate conține un fișier XLS. Alegeți XLSX sau CSV ori selectați mai puține atribute și încercați din nou.',
+        'xls-too-many-rows'     => 'Acest export are mai mult de :limit rânduri, maximul pe care îl poate conține un fișier XLS. Alegeți XLSX sau CSV ori restrângeți exportul și încercați din nou.',
+        'xls-too-large'         => 'Acest export este prea mare pentru a fi convertit în XLS: :rows rânduri × :columns coloane depășesc cele :limit celule pe care acest server le poate converti. Alegeți XLSX sau CSV ori restrângeți exportul și încercați din nou.',
+        'xls-conversion-failed' => 'Fișierul de export nu a putut fi înlocuit cu versiunea sa XLS. Încercați din nou sau alegeți XLSX sau CSV.',
+        'fields'                => [
             'file-format'            => 'Format fișier',
             'with-media'             => 'Cu media',
             'with-associations'      => 'Cu asocieri',
@@ -184,6 +191,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'Randează șabloanele',
+            'render-templates-info'  => 'Exportă valorile randate ale șabloanelor în locul sursei brute a șablonului. Reimportarea unui fișier randat înlocuiește sursa salvată a șablonului cu text simplu.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
@@ -308,10 +317,11 @@ return [
         ],
     ],
     'job' => [
-        'started'   => 'Start executie job',
-        'completed' => 'Finalizare executie job',
-        'stalled'   => 'Sarcina nu a mai răspuns timp de peste :minutes minute și a fost marcată ca eșuată. Procesul care o executa a fost probabil oprit.',
-        'reaped'    => 'Au fost marcate :count sarcini blocate ca eșuate.',
-        'stopped'   => 'Importul a fost oprit după validare cu :count erori. Niciun rând nu a fost importat.',
+        'started'         => 'Start executie job',
+        'completed'       => 'Finalizare executie job',
+        'stalled'         => 'Sarcina nu a mai răspuns timp de peste :minutes minute și a fost marcată ca eșuată. Procesul care o executa a fost probabil oprit.',
+        'reaped'          => 'Au fost marcate :count sarcini blocate ca eșuate.',
+        'stopped'         => 'Importul a fost oprit după validare cu :count erori. Niciun rând nu a fost importat.',
+        'module-disabled' => 'Tipul de job :type aparține unui modul al platformei care este dezactivat, așa că nu poate rula.',
     ],
 ];

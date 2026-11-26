@@ -32,6 +32,8 @@ return [
                     'incorrect-family-for-variant'             => '가족은 부모 가족과 동일해야 함',
                     'parent-not-exist'                         => '부모가 존재하지 않음.',
                     'variant-structure-not-found'              => '이 속성 패밀리에는 변형 구조 :code 가 존재하지 않습니다.',
+                    'variant-structure-levels-mismatch'        => '변형 구조 :code 는 레벨이 하나뿐이므로 variant_group 행을 담을 수 없습니다. 레벨을 2로 설정하거나 변형을 구성 가능한 상품 아래의 단순 상품으로 가져오세요.',
+                    'variant-structure-two-levels-mismatch'    => '변형 구조 :code 는 레벨이 두 개이므로 단순 상품 행은 구성 가능한 상품 바로 아래가 아니라 variant_group 행 아래에 있어야 합니다.',
                 ],
             ],
         ],
@@ -59,6 +61,7 @@ return [
                     'duplicate-code'                       => '속성 코드 :code는 이미 사용 중입니다.',
                     'code_not_found_to_delete'             => '삭제할 속성 코드를 찾을 수 없습니다.',
                     'code_is_system_and_cannot_be_deleted' => '시스템 속성은 삭제할 수 없습니다.',
+                    'templates-unsupported'                => '템플릿은 입력 유효성 검사가 없고 고유하지 않은 텍스트 및 텍스트 영역 속성에서만 활성화할 수 있습니다.',
                 ],
             ],
         ],
@@ -174,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => '이 내보내기는 너무 커서 실행할 수 없습니다: 예상 :rows 행 × :columns 열(~:estimated)이 사용 가능한 공간(~:available)을 초과합니다. 채널/로케일(및 속성)을 줄여 범위를 좁힌 후 다시 시도하세요.',
-        'fields'           => [
+        'export-too-large'      => '이 내보내기는 너무 커서 실행할 수 없습니다: 예상 :rows 행 × :columns 열(~:estimated)이 사용 가능한 공간(~:available)을 초과합니다. 채널/로케일(및 속성)을 줄여 범위를 좁힌 후 다시 시도하세요.',
+        'xls-too-many-columns'  => '이 내보내기에는 XLS 파일이 담을 수 있는 최대치인 :limit열을 초과하는 열이 있습니다. XLSX 또는 CSV를 선택하거나 속성을 줄인 후 다시 시도하세요.',
+        'xls-too-many-rows'     => '이 내보내기에는 XLS 파일이 담을 수 있는 최대치인 :limit행을 초과하는 행이 있습니다. XLSX 또는 CSV를 선택하거나 내보내기 범위를 좁힌 후 다시 시도하세요.',
+        'xls-too-large'         => '이 내보내기는 너무 커서 XLS로 변환할 수 없습니다: :rows행 × :columns열은 이 서버가 변환할 수 있는 :limit개 셀을 초과합니다. XLSX 또는 CSV를 선택하거나 내보내기 범위를 좁힌 후 다시 시도하세요.',
+        'xls-conversion-failed' => '내보내기 파일을 XLS 버전으로 교체하지 못했습니다. 다시 시도하거나 XLSX 또는 CSV를 선택하세요.',
+        'fields'                => [
             'file-format'            => '파일 형식',
             'with-media'             => '미디어 포함',
             'with-associations'      => '연관 관계 포함',
@@ -184,6 +191,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => '템플릿 렌더링',
+            'render-templates-info'  => '원본 템플릿 소스 대신 렌더링된 템플릿 값을 내보냅니다. 렌더링된 파일을 다시 가져오면 저장된 템플릿 소스가 일반 텍스트로 바뀝니다.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
@@ -308,10 +317,11 @@ return [
         ],
     ],
     'job' => [
-        'started'   => '작업 실행 시작됨',
-        'completed' => '작업 실행 완료됨',
-        'stalled'   => '작업이 :minutes분 넘게 응답하지 않아 실패로 표시되었습니다. 작업을 실행하던 워커가 종료된 것으로 보입니다.',
-        'reaped'    => '중단된 작업 :count건을 실패로 표시했습니다.',
-        'stopped'   => '검증 결과 오류 :count건으로 가져오기를 중단했습니다. 가져온 행이 없습니다.',
+        'started'         => '작업 실행 시작됨',
+        'completed'       => '작업 실행 완료됨',
+        'stalled'         => '작업이 :minutes분 넘게 응답하지 않아 실패로 표시되었습니다. 작업을 실행하던 워커가 종료된 것으로 보입니다.',
+        'reaped'          => '중단된 작업 :count건을 실패로 표시했습니다.',
+        'stopped'         => '검증 결과 오류 :count건으로 가져오기를 중단했습니다. 가져온 행이 없습니다.',
+        'module-disabled' => '작업 유형 :type은(는) 꺼져 있는 플랫폼 모듈에 속해 있어 실행할 수 없습니다.',
     ],
 ];

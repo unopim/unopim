@@ -32,6 +32,8 @@ return [
                     'incorrect-family-for-variant'             => '家庭必须与父母家庭相同',
                     'parent-not-exist'                         => '父级不存在。',
                     'variant-structure-not-found'              => '该属性族不存在变体结构 :code。',
+                    'variant-structure-levels-mismatch'        => '变体结构 :code 只有一个层级，因此无法包含 variant_group 行。请将其层级设置为 2，或将变体作为简单产品导入到可配置产品下。',
+                    'variant-structure-two-levels-mismatch'    => '变体结构 :code 有两个层级，因此简单产品行必须位于 variant_group 行之下，而不能直接位于可配置产品之下。',
                 ],
             ],
         ],
@@ -59,6 +61,7 @@ return [
                     'duplicate-code'                       => '属性代码 :code 已被使用。',
                     'code_not_found_to_delete'             => '未找到要删除的属性代码。',
                     'code_is_system_and_cannot_be_deleted' => '无法删除系统属性。',
+                    'templates-unsupported'                => '只有没有输入验证且非唯一的文本和文本区域属性才能启用模板。',
                 ],
             ],
         ],
@@ -174,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => '此导出过大，无法运行：预计 :rows 行 × :columns 列（~:estimated）超出了可用空间（~:available）。请通过选择更少的渠道/区域（和属性）来缩小导出范围，然后重试。',
-        'fields'           => [
+        'export-too-large'      => '此导出过大，无法运行：预计 :rows 行 × :columns 列（~:estimated）超出了可用空间（~:available）。请通过选择更少的渠道/区域（和属性）来缩小导出范围，然后重试。',
+        'xls-too-many-columns'  => '此导出超过 :limit 列，这是 XLS 文件可容纳的上限。请选择 XLSX 或 CSV，或减少所选属性后重试。',
+        'xls-too-many-rows'     => '此导出超过 :limit 行，这是 XLS 文件可容纳的上限。请选择 XLSX 或 CSV，或缩小导出范围后重试。',
+        'xls-too-large'         => '此导出过大，无法转换为 XLS：:rows 行 × :columns 列超过了此服务器可转换的 :limit 个单元格。请选择 XLSX 或 CSV，或缩小导出范围后重试。',
+        'xls-conversion-failed' => '无法用 XLS 版本替换导出文件。请重试，或选择 XLSX 或 CSV。',
+        'fields'                => [
             'file-format'            => '文件格式',
             'with-media'             => '包含媒体',
             'with-associations'      => '包含关联',
@@ -184,6 +191,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => '渲染模板',
+            'render-templates-info'  => '导出渲染后的模板值，而不是原始模板源。重新导入渲染后的文件会将已保存的模板源替换为纯文本。',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
@@ -308,10 +317,11 @@ return [
         ],
     ],
     'job' => [
-        'started'   => '作业执行开始',
-        'completed' => '作业执行完成',
-        'stalled'   => '该任务超过 :minutes 分钟没有响应，已标记为失败。执行它的工作进程很可能已被终止。',
-        'reaped'    => '已将 :count 个停滞的任务标记为失败。',
-        'stopped'   => '验证发现 :count 个错误，导入已停止。未导入任何行。',
+        'started'         => '作业执行开始',
+        'completed'       => '作业执行完成',
+        'stalled'         => '该任务超过 :minutes 分钟没有响应，已标记为失败。执行它的工作进程很可能已被终止。',
+        'reaped'          => '已将 :count 个停滞的任务标记为失败。',
+        'stopped'         => '验证发现 :count 个错误，导入已停止。未导入任何行。',
+        'module-disabled' => ':type 作业类型属于已关闭的平台模块，因此无法运行。',
     ],
 ];

@@ -67,6 +67,10 @@ class UpdateProduct implements PimTool
                 }
                 $skus = array_map(trim(...), explode(',', $sku));
 
+                if ($denied = $this->denyMultiProductUnlessAllowed($this->context, $skus, 'catalog.products.bulk_edit')) {
+                    return $denied;
+                }
+
                 $updated = 0;
                 $errors = [];
 

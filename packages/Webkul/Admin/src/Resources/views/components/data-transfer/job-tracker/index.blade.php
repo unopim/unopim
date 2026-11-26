@@ -11,6 +11,8 @@
 @php
     $editRoute = $jobType->editRouteName();
 
+    $canDownloadJobFiles = collect($jobType::downloadPermissions($jobTrack))->every(fn (string $permission): bool => bouncer()->hasPermission($permission));
+
     $endpoints = [
         'pause'  => route('admin.settings.data_transfer.jobs.pause', $jobTrack->id),
         'resume' => route('admin.settings.data_transfer.jobs.resume', $jobTrack->id),

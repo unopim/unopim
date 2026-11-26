@@ -222,6 +222,8 @@ return [
         'console' => [
             'confirm-drop'        => 'Hapus tabel ini dan instal ulang?',
             'drop-aborted'        => 'Instalasi dibatalkan. Tidak ada tabel yang dihapus.',
+            'invalid-modules'     => 'Modul platform tidak valid ":modules". Nilai yang diizinkan: :allowed.',
+            'select-modules'      => 'Modul platform mana yang ingin Anda aktifkan?',
             'force-required'      => 'Awalan tabel tidak diatur, sehingga setiap tabel yang tidak diklaim oleh instalasi lain akan dihapus. Jalankan ulang dengan --force untuk menghapusnya, atau atur DB_PREFIX.',
             'outside-references'  => 'Tabel di luar awalan tabel mereferensikan tabel yang akan dihapus: :references. Hapus foreign key ini terlebih dahulu.',
             'tables-to-drop'      => ':count tabel berikut akan dihapus: :tables',

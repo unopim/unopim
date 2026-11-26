@@ -69,4 +69,16 @@ return [
             ],
         ],
     ],
+
+    'configuration' => [
+        'score-thresholds' => [
+            'title'           => 'Tamlık Puanı Renkleri',
+            'info'            => 'Tamlık göstergelerinin yeşil veya kırmızıya döndüğü puanları belirleyin.',
+            'green-from'      => 'Yeşil Başlangıcı (%)',
+            'green-from-info' => 'Bu değere eşit veya bundan yüksek puanlar yeşil gösterilir.',
+            'red-below'       => 'Kırmızı Sınırı (%)',
+            'red-below-info'  => 'Bu değerin altındaki puanlar kırmızı gösterilir. Aradaki puanlar sarı gösterilir.',
+            'order-error'     => 'Yeşil eşiği kırmızı eşiğinden yüksek olmalıdır.',
+        ],
+    ],
 ];

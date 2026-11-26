@@ -69,4 +69,16 @@ return [
             ],
         ],
     ],
+
+    'configuration' => [
+        'score-thresholds' => [
+            'title'           => 'Farben der Vollständigkeitsbewertung',
+            'info'            => 'Legen Sie fest, ab welchen Werten Vollständigkeitsanzeigen grün oder rot dargestellt werden.',
+            'green-from'      => 'Grün ab (%)',
+            'green-from-info' => 'Werte ab diesem Wert werden grün angezeigt.',
+            'red-below'       => 'Rot unter (%)',
+            'red-below-info'  => 'Werte unter diesem Wert werden rot angezeigt. Werte dazwischen erscheinen gelb.',
+            'order-error'     => 'Der Schwellenwert für Grün muss höher sein als der Schwellenwert für Rot.',
+        ],
+    ],
 ];

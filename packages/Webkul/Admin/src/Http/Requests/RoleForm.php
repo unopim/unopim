@@ -4,6 +4,8 @@ namespace Webkul\Admin\Http\Requests;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use Webkul\User\Services\RoleAccessGuard;
 
 class RoleForm extends FormRequest
 {
@@ -15,25 +17,19 @@ class RoleForm extends FormRequest
      * self-escalation path — a delegated role manager editing its own role —
      * and mirror the assignment guard in UserController.
      */
-    public function authorize(): bool
+    public function authorize(RoleAccessGuard $roleAccessGuard): bool
     {
-        $actingRole = auth()->guard('admin')->user()?->role;
+        $actor = auth()->guard('admin')->user();
 
-        if ($actingRole?->permission_type === 'all') {
-            return true;
-        }
-
-        if (strtolower((string) $this->input('permission_type')) === 'all') {
+        if (! $actor) {
             return false;
         }
 
-        $submitted = (array) $this->input('permissions', []);
-
-        if (array_filter($submitted, is_string(...)) !== $submitted) {
-            return false;
-        }
-
-        return array_diff($submitted, $actingRole?->permissions ?? []) === [];
+        return $roleAccessGuard->grantError(
+            $actor,
+            $this->input('permission_type'),
+            (array) $this->input('permissions', [])
+        ) === null;
     }
 
     /**
@@ -53,7 +49,7 @@ class RoleForm extends FormRequest
     {
         return [
             'name'            => 'required',
-            'permission_type' => $this->id ? 'required|in:all,custom' : 'required',
+            'permission_type' => ['required', Rule::in([RoleAccessGuard::FULL_ACCESS, RoleAccessGuard::CUSTOM_ACCESS])],
             'description'     => 'nullable',
             'permissions'     => 'nullable|array',
             'permissions.*'   => 'string',

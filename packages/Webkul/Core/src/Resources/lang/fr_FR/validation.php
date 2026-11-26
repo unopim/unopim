@@ -24,10 +24,16 @@ return [
     'file-outside-attribute-path'      => 'Le fichier :value n\'appartient pas à cet enregistrement. Téléversez-le à nouveau pour le champ :attribute.',
     'password-surrounding-whitespace'  => 'Le champ :attribute ne peut pas commencer ni se terminer par une espace.',
     'password-whitespace-only'         => 'Le champ :attribute ne peut pas être composé uniquement d\'espaces.',
+    'hideable-sections'                => 'Le champ :attribute contient une section qui ne peut pas être masquée.',
     'active-content-detected'          => 'Le fichier :attribute n\'a pas pu être téléversé car il contient du contenu actif (:reason).',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'du JavaScript intégré ou une action PDF à exécution automatique',
         'embedded_vba_macro'            => 'une macro VBA intégrée',
         'auto_executing_ole_object'     => 'un objet intégré à exécution automatique',
+    ],
+    'platform-modules'                => [
+        'empty'    => 'Sélectionnez au moins un module de la plateforme.',
+        'unknown'  => 'Le module de plateforme « :module » n’est pas installé.',
+        'requires' => ':module ne peut être activé qu’avec :requires.',
     ],
 ];

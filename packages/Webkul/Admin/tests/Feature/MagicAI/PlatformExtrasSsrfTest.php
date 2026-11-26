@@ -189,8 +189,54 @@ it('accepts bounded extras in either input format', function (mixed $extras) {
     ])->assertOk();
 
     expect(MagicAIPlatform::where('label', 'valid-extras')->firstOrFail()->extras)
-        ->toEqual(['organization' => 'org-example', 'options' => ['timeout' => 30]]);
+        ->toEqual(['organization' => 'org-example', 'api_version' => '2024-10-21']);
 })->with([
-    'JSON'  => ['{"organization":"org-example","options":{"timeout":30}}'],
-    'array' => [['organization' => 'org-example', 'options' => ['timeout' => 30]]],
+    'JSON'  => ['{"organization":"org-example","api_version":"2024-10-21"}'],
+    'array' => [['organization' => 'org-example', 'api_version' => '2024-10-21']],
 ]);
+
+it('rejects request extras that would swap the driver or region on test-connection', function (string $key) {
+    $this->loginAsAdmin();
+
+    $this->postJson(route('admin.magic_ai.platform.test'), [
+        'provider' => AiProvider::Azure->value,
+        'api_key'  => 'sk-test-key-1234567890',
+        'api_url'  => 'https://1.1.1.1',
+        'models'   => 'gpt-4o',
+        'extras'   => json_encode([$key => 'attacker.example']),
+    ])->assertStatus(422)->assertJsonValidationErrors('extras');
+})->with(['driver', 'region']);
+
+it('tests a reused stored key with the saved extras, never the request ones', function () {
+    $this->loginAsAdmin();
+
+    $platform = MagicAIPlatform::create([
+        'label'    => 'Stored Azure',
+        'provider' => AiProvider::Azure->value,
+        'api_url'  => 'https://1.1.1.1',
+        'api_key'  => 'sk-test-StoredAzureKey0123456789',
+        'models'   => 'gpt-4o',
+        'extras'   => ['deployment' => 'saved-deployment'],
+        'status'   => true,
+    ]);
+
+    $deployments = [];
+
+    Http::fake(function () use (&$deployments) {
+        $deployments[] = config('ai.providers.azure.deployment');
+
+        return Http::response(['choices' => [['message' => ['role' => 'assistant', 'content' => 'OK'], 'finish_reason' => 'stop']]], 200);
+    });
+
+    $this->postJson(route('admin.magic_ai.platform.test'), [
+        'id'       => $platform->id,
+        'provider' => AiProvider::Azure->value,
+        'api_key'  => '********',
+        'api_url'  => 'https://1.1.1.1',
+        'models'   => 'gpt-4o',
+        'extras'   => json_encode(['deployment' => 'request-deployment']),
+    ]);
+
+    expect($deployments)->not->toBeEmpty()
+        ->each->toBe('saved-deployment');
+});

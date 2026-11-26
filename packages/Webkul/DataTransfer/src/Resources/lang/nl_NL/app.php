@@ -32,6 +32,8 @@ return [
                     'incorrect-family-for-variant'             => 'De attribuutset moet gelijk zijn aan die van het hoofdproduct.',
                     'parent-not-exist'                         => 'Het hoofdproduct bestaat niet.',
                     'variant-structure-not-found'              => 'De variantstructuur :code bestaat niet voor deze attributenfamilie.',
+                    'variant-structure-levels-mismatch'        => 'De variantstructuur :code heeft maar één niveau en kan daarom geen variant_group-rijen bevatten. Stel de niveaus in op 2 of importeer de varianten als eenvoudige producten onder het configureerbare product.',
+                    'variant-structure-two-levels-mismatch'    => 'De variantstructuur :code heeft twee niveaus, dus eenvoudige rijen moeten onder een variant_group-rij staan en niet direct onder het configureerbare product.',
                 ],
             ],
         ],
@@ -59,6 +61,7 @@ return [
                     'duplicate-code'                       => 'Attribuutcode :code is al in gebruik.',
                     'code_not_found_to_delete'             => 'Attribuutcode niet gevonden voor verwijdering.',
                     'code_is_system_and_cannot_be_deleted' => 'Systeemattribuut kan niet worden verwijderd.',
+                    'templates-unsupported'                => 'Sjablonen kunnen alleen worden ingeschakeld voor tekst- en textarea-attributen die geen invoervalidatie hebben en niet uniek zijn.',
                 ],
             ],
         ],
@@ -174,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Deze export is te groot om uit te voeren: naar schatting :rows rijen × :columns kolommen (~:estimated) overschrijden de beschikbare ruimte (~:available). Beperk de export door minder kanalen/talen (en attributen) te selecteren en probeer het opnieuw.',
-        'fields'           => [
+        'export-too-large'      => 'Deze export is te groot om uit te voeren: naar schatting :rows rijen × :columns kolommen (~:estimated) overschrijden de beschikbare ruimte (~:available). Beperk de export door minder kanalen/talen (en attributen) te selecteren en probeer het opnieuw.',
+        'xls-too-many-columns'  => 'Deze export heeft meer dan :limit kolommen, het maximum dat een XLS-bestand kan bevatten. Kies XLSX of CSV, of selecteer minder attributen, en probeer het opnieuw.',
+        'xls-too-many-rows'     => 'Deze export heeft meer dan :limit rijen, het maximum dat een XLS-bestand kan bevatten. Kies XLSX of CSV, of beperk de export, en probeer het opnieuw.',
+        'xls-too-large'         => 'Deze export is te groot om naar XLS te converteren: :rows rijen × :columns kolommen is meer dan de :limit cellen die deze server kan converteren. Kies XLSX of CSV, of beperk de export, en probeer het opnieuw.',
+        'xls-conversion-failed' => 'Het exportbestand kon niet worden vervangen door de XLS-versie. Probeer het opnieuw, of kies XLSX of CSV.',
+        'fields'                => [
             'file-format'            => 'Bestandsformaat',
             'with-media'             => 'Met media',
             'with-associations'      => 'Met koppelingen',
@@ -184,6 +191,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'Sjablonen weergeven',
+            'render-templates-info'  => 'Weergegeven sjabloonwaarden exporteren in plaats van de ruwe sjabloonbron. Een weergegeven bestand opnieuw importeren vervangt de opgeslagen sjabloonbron door platte tekst.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
@@ -308,10 +317,11 @@ return [
         ],
     ],
     'job' => [
-        'started'   => 'De taak is gestart.',
-        'completed' => 'Taak succesvol voltooid.',
-        'stalled'   => 'De taak reageerde langer dan :minutes minuten niet en is als mislukt gemarkeerd. De uitvoerende worker is waarschijnlijk beëindigd.',
-        'reaped'    => ':count vastgelopen taken zijn als mislukt gemarkeerd.',
-        'stopped'   => 'Import gestopt na validatie met :count fouten. Er zijn geen rijen geïmporteerd.',
+        'started'         => 'De taak is gestart.',
+        'completed'       => 'Taak succesvol voltooid.',
+        'stalled'         => 'De taak reageerde langer dan :minutes minuten niet en is als mislukt gemarkeerd. De uitvoerende worker is waarschijnlijk beëindigd.',
+        'reaped'          => ':count vastgelopen taken zijn als mislukt gemarkeerd.',
+        'stopped'         => 'Import gestopt na validatie met :count fouten. Er zijn geen rijen geïmporteerd.',
+        'module-disabled' => 'Het taaktype :type hoort bij een platformmodule die is uitgeschakeld en kan daarom niet worden uitgevoerd.',
     ],
 ];

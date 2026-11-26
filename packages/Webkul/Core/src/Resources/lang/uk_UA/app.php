@@ -5,4 +5,8 @@ return [
         'template' => 'Шаблон',
         'parents'  => 'Батьки',
     ],
+
+    'platform-modules' => [
+        'pim' => 'Інформація про товари (PIM)',
+    ],
 ];

@@ -4,10 +4,13 @@ namespace Webkul\Admin\DataGrids\Settings\DataTransfer;
 
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
+use Webkul\Admin\Traits\GatesJobTypes;
 use Webkul\DataGrid\DataGrid;
 
 class ExportDataGrid extends DataGrid
 {
+    use GatesJobTypes;
+
     protected $exporters;
 
     /**
@@ -15,7 +18,7 @@ class ExportDataGrid extends DataGrid
      */
     public function __construct()
     {
-        $this->exporters = config('exporters');
+        $this->exporters = $this->visibleJobTypes('exporters');
     }
 
     /**
@@ -32,7 +35,8 @@ class ExportDataGrid extends DataGrid
                 'entity_type',
                 'action',
 
-            )->where('type', 'export');
+            )->where('type', 'export')
+            ->whereNotIn('entity_type', $this->hiddenJobTypes('exporters'));
 
         return $queryBuilder;
     }

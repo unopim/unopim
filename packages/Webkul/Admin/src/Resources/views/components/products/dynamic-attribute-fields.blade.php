@@ -9,6 +9,7 @@
     'completenessAttributes' => [],
     'lockedFields'           => [],
     'requirementIndicators'  => [],
+    'templateProductId'      => null,
 ])
 
 @php
@@ -61,6 +62,20 @@
             ->get()
             ->groupBy('attribute_id')
         : collect();
+
+    $templateCurrencies = $templateProductId
+        ? collect($channelCurrencies)
+            ->map(fn (\Webkul\Core\Contracts\Currency $currency): array => [
+                'code'   => $currency->code,
+                'symbol' => core()->currencySymbol($currency),
+            ])
+            ->values()
+            ->all()
+        : [];
+
+    $templateFilters = $templateProductId
+        ? app(\Webkul\Product\Templates\Filters\FilterRegistry::class)->suggestions()
+        : [];
 @endphp
 
 @foreach($fields as $field)
@@ -132,6 +147,10 @@
         $fieldType = $field->type;
 
         $isDisabled = $isLocked && ! $isReadOnlyMedia;
+
+        $hasTemplateAssist = $templateProductId
+            && ! $isDisabled
+            && $field->canHoldTemplate();
     @endphp
 
     {!! view_render_event('unopim.admin.products.dynamic-attribute-fields.field.before', ['field' => $field]) !!}
@@ -157,6 +176,26 @@
                 <x-admin::products.attribute-requirements
                     :requirements="$requirementIndicators[$field->id] ?? []"
                 />
+
+                @if ($hasTemplateAssist)
+                    <x-admin::products.template-assist
+                        :product-id="$templateProductId"
+                        :field="$field"
+                        :field-name="$fieldName"
+                        :locale-code="$currentLocaleCode"
+                        :currencies="$templateCurrencies"
+                        :filters="$templateFilters"
+                        :rich="$field->isRichText()"
+                    />
+
+                    <x-admin::products.template-preview
+                        :product-id="$templateProductId"
+                        :field="$field"
+                        :label="$fieldLabel"
+                        :channel-code="$currentChannelCode"
+                        :locale-code="$currentLocaleCode"
+                    />
+                @endif
 
                 @if ($isLocked && $lockLabel)
                     <a

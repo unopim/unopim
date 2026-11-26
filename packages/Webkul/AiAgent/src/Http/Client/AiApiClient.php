@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Log;
 use Webkul\AiAgent\DTOs\CredentialConfig;
 use Webkul\AiAgent\Exceptions\ApiException;
 use Webkul\AiAgent\Services\TokenEstimator;
+use Webkul\MagicAI\Support\OpenAiModel;
 use Webkul\Webhook\Validators\SafeWebhookUrl;
 
 /**
@@ -127,11 +128,10 @@ class AiApiClient
      */
     protected function execute(string $method, string $url, ?array $data = null): array
     {
-        // Pin the connection to the validated IP and block redirects to prevent SSRF TOCTOU rebinding.
-        $safeOptions = SafeWebhookUrl::httpOptions($url);
+        $safeOptions = SafeWebhookUrl::pinnedHttpOptions($url);
 
-        throw_unless(
-            isset($safeOptions['curl'][CURLOPT_RESOLVE]),
+        throw_if(
+            $safeOptions === null,
             ApiException::class,
             trans('admin::app.configuration.platform.message.unsafe-api-url'),
             422
@@ -224,8 +224,7 @@ class AiApiClient
             'max_completion_tokens' => $maxTokens,
         ];
 
-        // Reasoning models (o-series, gpt-5*) reject `temperature` — only the default is allowed.
-        if (! preg_match('/^chat-latest|^o[1-9]|^o[1-9]-|^gpt-5/i', $this->model)) {
+        if (! OpenAiModel::isReasoning($this->model)) {
             $body['temperature'] = $temperature;
         }
 

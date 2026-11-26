@@ -43,80 +43,8 @@ trait GuardsManagedPlatform
                 foreach ($violations as $field => $message) {
                     $validator->errors()->add($field, $message);
                 }
-
-                if ($violations === []) {
-                    $this->guardStoredKeyConnection($validator);
-                }
             },
         ];
-    }
-
-    /**
-     * Whether the submission stands for a saved platform's key by sending it
-     * masked together with the platform id.
-     */
-    public function replaysStoredKey(): bool
-    {
-        $apiKey = $this->input('api_key');
-
-        return is_string($apiKey)
-            && preg_match('/^\*+$/', $apiKey) === 1
-            && $this->filled('id');
-    }
-
-    /**
-     * The endpoint the outbound call goes to. A user who cannot edit
-     * platforms always replays a stored key against its saved endpoint.
-     */
-    public function outboundApiUrl(): ?string
-    {
-        $apiUrl = $this->input('api_url');
-
-        $apiUrl = is_string($apiUrl) && trim($apiUrl) !== '' ? $apiUrl : null;
-
-        if ($apiUrl !== null || ! $this->replaysStoredKey() || $this->canEditPlatforms()) {
-            return $apiUrl;
-        }
-
-        return $this->managedStoredPlatform()?->api_url;
-    }
-
-    /**
-     * Reject a replayed stored key for an unknown platform, or one a user
-     * without edit rights points at another provider or endpoint.
-     */
-    protected function guardStoredKeyConnection(Validator $validator): void
-    {
-        if (! $this->replaysStoredKey()) {
-            return;
-        }
-
-        $platform = $this->managedStoredPlatform();
-
-        if (! $platform instanceof MagicAIPlatform) {
-            $validator->errors()->add('id', trans('admin::app.configuration.platform.message.not-found'));
-
-            return;
-        }
-
-        if ($this->canEditPlatforms()) {
-            return;
-        }
-
-        $provider = $this->input('provider');
-
-        if (! app(ManagedPlatform::class)->isPlatformConnection(
-            $platform,
-            is_string($provider) ? $provider : null,
-            $this->outboundApiUrl(),
-        )) {
-            $validator->errors()->add('api_url', trans('admin::app.configuration.platform.message.managed-connection-locked'));
-        }
-    }
-
-    protected function canEditPlatforms(): bool
-    {
-        return bouncer()->hasPermission('ai-agent.platform.edit');
     }
 
     /**

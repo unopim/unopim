@@ -124,6 +124,8 @@
 
             <v-webhook-test></v-webhook-test>
         </div>
+
+        {!! view_render_event('unopim.admin.webhook.form.settings.after', ['webhook' => $webhook ?? null]) !!}
     </div>
 </div>
 

@@ -32,6 +32,8 @@ return [
                     'incorrect-family-for-variant'             => '家族應與主家族相同',
                     'parent-not-exist'                         => '父類別不存在。',
                     'variant-structure-not-found'              => '該屬性族不存在變體結構 :code。',
+                    'variant-structure-levels-mismatch'        => '變體結構 :code 只有一個層級，因此無法包含 variant_group 列。請將其層級設定為 2，或將變體作為簡單產品匯入至可配置產品下。',
+                    'variant-structure-two-levels-mismatch'    => '變體結構 :code 有兩個層級，因此簡單產品列必須位於 variant_group 列之下，而不能直接位於可配置產品之下。',
                 ],
             ],
         ],
@@ -59,6 +61,7 @@ return [
                     'duplicate-code'                       => '屬性代碼 :code 已被使用。',
                     'code_not_found_to_delete'             => '未找到要刪除的屬性代碼。',
                     'code_is_system_and_cannot_be_deleted' => '無法刪除系統屬性。',
+                    'templates-unsupported'                => '只有沒有輸入驗證且非唯一的文本和文本區屬性才能啟用範本。',
                 ],
             ],
         ],
@@ -174,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => '此匯出過大，無法執行：預計 :rows 列 × :columns 欄（~:estimated）超出可用空間（~:available）。請選擇較少的渠道/語系（與屬性）以縮小匯出範圍，然後重試。',
-        'fields'           => [
+        'export-too-large'      => '此匯出過大，無法執行：預計 :rows 列 × :columns 欄（~:estimated）超出可用空間（~:available）。請選擇較少的渠道/語系（與屬性）以縮小匯出範圍，然後重試。',
+        'xls-too-many-columns'  => '此匯出超過 :limit 欄，這是 XLS 檔案可容納的上限。請選擇 XLSX 或 CSV，或減少所選屬性後重試。',
+        'xls-too-many-rows'     => '此匯出超過 :limit 列，這是 XLS 檔案可容納的上限。請選擇 XLSX 或 CSV，或縮小匯出範圍後重試。',
+        'xls-too-large'         => '此匯出過大，無法轉換為 XLS：:rows 列 × :columns 欄超過了此伺服器可轉換的 :limit 個儲存格。請選擇 XLSX 或 CSV，或縮小匯出範圍後重試。',
+        'xls-conversion-failed' => '無法以 XLS 版本取代匯出檔案。請重試，或選擇 XLSX 或 CSV。',
+        'fields'                => [
             'file-format'            => '檔案格式',
             'with-media'             => '包含媒體',
             'with-associations'      => '包含關聯',
@@ -184,6 +191,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => '轉譯範本',
+            'render-templates-info'  => '匯出轉譯後的範本值，而非原始範本來源。重新匯入轉譯後的檔案會以純文字取代已儲存的範本來源。',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
@@ -308,10 +317,11 @@ return [
         ],
     ],
     'job' => [
-        'started'   => '任務已開始',
-        'completed' => '任務已完成',
-        'stalled'   => '此工作超過 :minutes 分鐘沒有回應，已標記為失敗。執行它的工作程序很可能已被終止。',
-        'reaped'    => '已將 :count 個停滯的工作標記為失敗。',
-        'stopped'   => '驗證發現 :count 個錯誤，匯入已停止。未匯入任何資料列。',
+        'started'         => '任務已開始',
+        'completed'       => '任務已完成',
+        'stalled'         => '此工作超過 :minutes 分鐘沒有回應，已標記為失敗。執行它的工作程序很可能已被終止。',
+        'reaped'          => '已將 :count 個停滯的工作標記為失敗。',
+        'stopped'         => '驗證發現 :count 個錯誤，匯入已停止。未匯入任何資料列。',
+        'module-disabled' => ':type 工作類型屬於已關閉的平台模組，因此無法執行。',
     ],
 ];

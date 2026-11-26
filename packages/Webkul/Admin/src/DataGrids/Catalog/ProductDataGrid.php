@@ -14,12 +14,15 @@ use Webkul\Attribute\Models\Attribute as AttributeModel;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Services\AttributeService;
+use Webkul\Completeness\Enums\ScoreLevel;
+use Webkul\Completeness\Services\ScoreThresholds;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\DataGrid\Column;
 use Webkul\DataGrid\Contracts\ExportableInterface;
 use Webkul\DataGrid\DataGrid;
 use Webkul\ElasticSearch\Cursor\MatchingIdCursor;
 use Webkul\ElasticSearch\Enums\FilterOperators;
+use Webkul\Product\Contracts\TemplateRenderer;
 use Webkul\Product\Contracts\VariantValueResolver;
 use Webkul\Product\Factories\ElasticSearch\Cursor\ResultCursorFactory;
 use Webkul\Product\Factories\ProductQueryBuilderFactory;
@@ -73,6 +76,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     protected $attributeColumns = [];
 
     protected ?array $variantStructureCodes = null;
+
+    protected ?TemplateRenderer $templateRenderer = null;
 
     protected $productQueryBuilder;
 
@@ -176,6 +181,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
      */
     public function getPropertyColumns()
     {
+        $scoreThresholds = app(ScoreThresholds::class);
+
         return [
             'sku' => [
                 'index'      => 'sku',
@@ -280,20 +287,20 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'categories' => ProductPropertyFilters::get(ProductPropertyFilters::CATEGORIES),
 
             'completeness' => ProductPropertyFilters::get(ProductPropertyFilters::COMPLETENESS) + [
-                'closure' => function ($row) {
+                'closure' => function (object $row) use ($scoreThresholds): string {
                     if (is_null($row->completeness)) {
                         return '<span class="label-info break-words">'.trans('completeness::app.catalog.products.index.datagrid.missing-completeness-setting').'</span>';
                     }
 
-                    $score = number_format((float) $row->completeness);
+                    $rounded = round((float) $row->completeness);
 
-                    if ($score < 30) {
-                        $bgClass = 'pill-low';
-                    } elseif ($score < 70) {
-                        $bgClass = 'pill-medium';
-                    } else {
-                        $bgClass = 'pill-high';
-                    }
+                    $score = number_format($rounded);
+
+                    $bgClass = match ($scoreThresholds->level($rounded)) {
+                        ScoreLevel::Success => 'pill-high',
+                        ScoreLevel::Warning => 'pill-medium',
+                        ScoreLevel::Danger  => 'pill-low',
+                    };
 
                     return '<span class="inline-flex items-center justify-center text-center px-2 py-1 w-10 rounded-md text-xs fon-base text-white '.$bgClass.'">'
                         .$score.'%</span>';
@@ -688,15 +695,19 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         if ($attributePath = $this->getAttributePathForSort($sortColumn)) {
             $attribute = $this->attributeService->findAttributeByCode($sortColumn);
 
-            $castType = $attribute && ($attribute->type === 'price' || $attribute->validation === 'numeric')
-                ? 'DECIMAL'
+            $castType = $attribute && (
+                $attribute->type === 'price'
+                || $attribute->type === AttributeModel::MEASUREMENT_FIELD_TYPE
+                || in_array($attribute->validation, ['numeric', 'number', 'decimal'], true)
+            )
+                ? 'DECIMAL(30,10)'
                 : null;
 
-            $jsonCondition = DB::rawQueryGrammar()->jsonExtract(DB::getTablePrefix().'products.values', ...$attributePath);
+            $jsonCondition = $this->inheritedJsonExtract($attributePath);
 
             if ($castType) {
                 return $this->queryBuilder->orderByRaw(
-                    "CAST($jsonCondition AS $castType) $sortOrder",
+                    $this->numericSortExpression($jsonCondition, $castType)." $sortOrder",
                 );
             }
 
@@ -706,6 +717,64 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         }
 
         return $this->queryBuilder->orderBy($sortColumn, $sortOrder);
+    }
+
+    /**
+     * Build the SQL expression that reads an attribute for sorting the way the grid displays it.
+     *
+     * Variants do not store values they inherit, so the product's own JSON is NULL for them and
+     * ordering by it alone leaves those rows in arbitrary order. The nearest non-null value up
+     * the parent chain (own, parent, grandparent) is used instead, matching VariantValueResolver.
+     */
+    protected function inheritedJsonExtract(array $attributePath): string
+    {
+        $grammar = DB::rawQueryGrammar();
+        $prefix = DB::getTablePrefix();
+
+        $this->joinGrandparentForSort();
+
+        $extracts = array_map(
+            fn (string $table): string => $grammar->jsonExtract($prefix.$table.'.values', ...$attributePath),
+            ['products', 'parent_products', 'grandparent_products']
+        );
+
+        return 'COALESCE('.implode(', ', $extracts).')';
+    }
+
+    /**
+     * Cast a JSON-extracted value to a number for ordering.
+     *
+     * MySQL turns a non-numeric or empty string into 0 with a warning, but PostgreSQL raises an
+     * error that would break the whole grid, so there only numeric-looking values are cast and
+     * the rest sort as NULL.
+     */
+    protected function numericSortExpression(string $expression, string $castType): string
+    {
+        if (DB::getDriverName() === 'pgsql') {
+            return "CASE WHEN CAST($expression AS TEXT) ~ '^-?[0-9]+(\\.[0-9]+)?$' "
+                ."THEN CAST($expression AS $castType) END";
+        }
+
+        return "CAST($expression AS $castType)";
+    }
+
+    /**
+     * Join the grandparent product once so sub-variants can inherit through two levels.
+     */
+    protected function joinGrandparentForSort(): void
+    {
+        foreach ($this->queryBuilder->joins ?? [] as $join) {
+            if (str_contains((string) $join->table, 'grandparent_products')) {
+                return;
+            }
+        }
+
+        $this->queryBuilder->leftJoin(
+            'products as grandparent_products',
+            'parent_products.parent_id',
+            '=',
+            'grandparent_products.id'
+        );
     }
 
     /**
@@ -930,6 +999,12 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $sortOrder = strtolower($params['order'] ?? $this->sortOrder) === 'asc' ? 'asc' : 'desc';
 
+        if ($this->isMeasurementColumn($params['column'] ?? $this->elasticSearchSortColumn)) {
+            $this->prepareQuery->orderBy(['_script' => $this->numericScriptSort($sort, $sortOrder)]);
+
+            return;
+        }
+
         $this->prepareQuery->orderBy([
             $sort => [
                 'order'         => $sortOrder,
@@ -937,6 +1012,32 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'unmapped_type' => 'keyword',
             ],
         ]);
+    }
+
+    protected function isMeasurementColumn(?string $code): bool
+    {
+        return $code
+            && $this->attributeService->findAttributeByCode($code)?->type === AttributeModel::MEASUREMENT_FIELD_TYPE;
+    }
+
+    /**
+     * `base_data` is indexed as a keyword, so a plain sort is alphabetical ("18.5" before "2.1").
+     * Sort on its numeric value instead, keeping rows without a value last in both directions.
+     */
+    protected function numericScriptSort(string $field, string $order): array
+    {
+        return [
+            'type'   => 'number',
+            'order'  => $order,
+            'script' => [
+                'lang'   => 'painless',
+                'source' => 'doc[params.field].size() == 0 ? params.missing : Double.parseDouble(doc[params.field].value)',
+                'params' => [
+                    'field'   => $field,
+                    'missing' => $order === 'asc' ? PHP_FLOAT_MAX : -PHP_FLOAT_MAX,
+                ],
+            ],
+        ];
     }
 
     /**
@@ -972,6 +1073,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 $path .= '.'.$currencyCode;
             }
 
+            if ($attributeType === AttributeModel::MEASUREMENT_FIELD_TYPE) {
+                $path .= '.base_data';
+            }
+
             return $path;
         }
 
@@ -985,6 +1090,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             $path[] = $currencyCode;
         }
 
+        if ($attributeType === AttributeModel::MEASUREMENT_FIELD_TYPE) {
+            $path[] = 'base_data';
+        }
+
         return $path;
     }
 
@@ -996,6 +1105,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $this->queryBuilder = $this->queryBuilder->select(
             'products.sku',
             'products.id as product_id',
+            'products.parent_id',
             'products.status',
             'products.type',
             'products.created_at',
@@ -1019,6 +1129,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $channelsAndLocales = $this->getAllChannelsAndLocales();
 
+        $templateContexts = $this->resolveTemplateContexts($gridData);
+
         foreach ($gridData as $product) {
             $productArray = (array) $product;
             if (! empty($productArray['values']) && is_string($productArray['values'])) {
@@ -1027,13 +1139,19 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
             $productValues = $this->getProductValues($productArray);
 
-            unset($productArray[AbstractType::PRODUCT_VALUES_KEY], $productArray['raw_values'], $productArray['completeness']);
+            $templateContext = $templateContexts[$productArray['product_id']] ?? null;
+
+            unset($productArray[AbstractType::PRODUCT_VALUES_KEY], $productArray['raw_values'], $productArray['completeness'], $productArray['parent_id']);
 
             foreach ($channelsAndLocales as [$channelCode, $localeCode]) {
                 $data = $this->getInitialData($channelCode, $localeCode);
 
+                $scopedValues = $templateContext === null
+                    ? $productValues
+                    : $this->renderTemplateValues($productValues, $templateContext, $channelCode, $localeCode);
+
                 $data += $this->formatProductColumnsData($productArray);
-                $data += $this->formatProductValues($productValues, $localeCode, $channelCode);
+                $data += $this->formatProductValues($scopedValues, $localeCode, $channelCode);
 
                 $columns = $this->getColumnsFromData($data, $columns);
 
@@ -1045,6 +1163,78 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'columns' => $columns,
             'records' => $exportableData,
         ];
+    }
+
+    /**
+     * Resolve the merged parent and variant values of the rows that hold a template, keyed by product id.
+     */
+    protected function resolveTemplateContexts(iterable $products): array
+    {
+        $rows = [];
+
+        foreach ($products as $product) {
+            if (is_string($product->values ?? null) && str_contains($product->values, '{{')) {
+                $rows[$product->product_id] = [
+                    'id'        => $product->product_id,
+                    'parent_id' => $product->parent_id ?? null,
+                    'values'    => $product->values,
+                ];
+            }
+        }
+
+        if ($rows === []) {
+            return [];
+        }
+
+        $mergedValues = $this->variantValueResolver->resolveBatch($rows);
+
+        return array_map(
+            fn (array $row): array => $mergedValues[$row['id']] ?? $this->getProductValues($row),
+            $rows,
+        );
+    }
+
+    /**
+     * Replace the template sources in the product values with their rendered output for the channel and locale.
+     */
+    protected function renderTemplateValues(array $productValues, array $context, string $channel, string $locale): array
+    {
+        $scopes = [
+            [AbstractType::COMMON_VALUES_KEY],
+            [AbstractType::LOCALE_VALUES_KEY, $locale],
+            [AbstractType::CHANNEL_VALUES_KEY, $channel],
+            [AbstractType::CHANNEL_LOCALE_VALUES_KEY, $channel, $locale],
+        ];
+
+        foreach ($scopes as $scope) {
+            $values = data_get($productValues, $scope);
+
+            if (! is_array($values)) {
+                continue;
+            }
+
+            foreach ($values as $code => $source) {
+                $attribute = is_string($source) && str_contains($source, '{{')
+                    ? $this->attributeService->findAttributeByCode((string) $code)
+                    : null;
+
+                if ($attribute !== null) {
+                    $values[$code] = $this->templateRenderer()->render($source, $attribute, $context, $channel, $locale)->output;
+                }
+            }
+
+            data_set($productValues, $scope, $values);
+        }
+
+        return $productValues;
+    }
+
+    /**
+     * Get the template renderer instance.
+     */
+    protected function templateRenderer(): TemplateRenderer
+    {
+        return $this->templateRenderer ??= app(TemplateRenderer::class);
     }
 
     /**
@@ -1185,6 +1375,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $mergedValuesByProductId = $this->resolveMergedValuesForPage($paginator['data']);
 
         foreach ($paginator['data'] as $record) {
+            $values = $mergedValuesByProductId[$record->product_id] ?? $this->decodeRawValues($record);
+
             $record = $this->sanitizeRow($record);
 
             foreach ($this->columns as $column) {
@@ -1199,7 +1391,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 }
             }
 
-            $this->processRawValues($record, $mergedValuesByProductId[$record->product_id] ?? null);
+            $this->processRawValues($record, $values);
 
             unset($record->parent_id);
 
@@ -1269,6 +1461,23 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     }
 
     /**
+     * Decode the row's stored values before the row is sanitized, since stripping
+     * tags from the encoded JSON corrupts it whenever a value contains "<".
+     */
+    protected function decodeRawValues(object $record): ?array
+    {
+        $rawValues = $record->raw_values ?? null;
+
+        if (! is_string($rawValues) || $rawValues === '') {
+            return null;
+        }
+
+        $decoded = json_decode($rawValues, true);
+
+        return is_array($decoded) ? $decoded : null;
+    }
+
+    /**
      * Process raw values and update record.
      *
      * @param  array|null  $mergedValues  The row's `values`, already merged with its
@@ -1314,7 +1523,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 continue;
             }
 
-            $record->{$code} = $value;
+            $record->{$code} = $this->stripHtmlTags($value);
         }
     }
 

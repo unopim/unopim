@@ -4,6 +4,7 @@ namespace Webkul\User\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Webkul\Core\Platform\ModuleGate;
 
 class Bouncer
 {
@@ -29,6 +30,8 @@ class Bouncer
 
             return to_route('admin.session.create');
         }
+
+        abort_unless(resolve(ModuleGate::class)->allowsRoute(Route::currentRouteName()), 404);
 
         /**
          * If somehow the user deleted all permissions, then it should be
@@ -93,8 +96,10 @@ class Bouncer
             return;
         }
 
+        $gate = resolve(ModuleGate::class);
+
         foreach ($acl->alternateRoles[$routeName] ?? [] as $permission) {
-            if (bouncer()->hasPermission($permission)) {
+            if ($gate->allowsKey($permission) && bouncer()->hasPermission($permission)) {
                 return;
             }
         }

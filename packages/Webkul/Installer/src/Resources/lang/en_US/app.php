@@ -244,6 +244,8 @@ return [
         'console' => [
             'confirm-drop'        => 'Drop these tables and reinstall?',
             'drop-aborted'        => 'Installation aborted. No tables were dropped.',
+            'invalid-modules'     => 'Invalid platform modules ":modules". Allowed values: :allowed.',
+            'select-modules'      => 'Which platform modules do you want to enable?',
             'force-required'      => 'No table prefix is set, so every table that no other install claims would be dropped. Re-run with --force to drop them, or set DB_PREFIX.',
             'outside-references'  => 'Tables outside the table prefix reference the tables to drop: :references. Remove these foreign keys first.',
             'tables-to-drop'      => 'These :count tables will be dropped: :tables',
