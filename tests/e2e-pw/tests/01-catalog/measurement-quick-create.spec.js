@@ -1,66 +1,13 @@
 const { test, expect } = require('../../utils/fixtures');
-const { clickSave, generateUid, closeDropdown, fillLocalizedField } = require('../../utils/helpers');
+const {
+  clickSave,
+  generateUid,
+  fillLocalizedField,
+  selectMultiselectOption,
+  selectFirstMultiselectOption,
+} = require('../../utils/helpers');
 
 const MEASUREMENT_FAMILY = 'Length';
-
-/**
- * Open the multiselect that wraps the given named input and return its wrapper.
- */
-async function openMultiselect(page, name) {
-  const input = page.locator(`input[name="${name}"]`).first();
-  await input.waitFor({ state: 'attached', timeout: 15000 });
-
-  const wrapper = input.locator(
-    'xpath=ancestor::div[contains(concat(" ", normalize-space(@class), " "), " multiselect ")][1]'
-  );
-
-  await wrapper.scrollIntoViewIfNeeded().catch(() => {});
-
-  const tags = wrapper.locator('.multiselect__tags');
-  await (await tags.count() ? tags.first() : wrapper).click();
-
-  await wrapper.locator('.multiselect__content-wrapper').first().waitFor({ state: 'visible', timeout: 10000 });
-
-  return wrapper;
-}
-
-/**
- * Strip the trailing "Press enter to select" hint vue-multiselect appends to an option label.
- */
-function cleanOptionLabel(text) {
-  return (text || '').trim().replace(/\s*Press enter to select\s*$/i, '').trim();
-}
-
-/**
- * Type into the named multiselect and pick the option matching the given label.
- */
-async function selectMultiselectOption(page, name, label) {
-  const wrapper = await openMultiselect(page, name);
-
-  await wrapper.locator('input.multiselect__input').first().fill(label).catch(() => {});
-
-  const option = page.getByRole('option', { name: label }).first();
-  await option.waitFor({ state: 'visible', timeout: 10000 });
-  await option.scrollIntoViewIfNeeded().catch(() => {});
-  await option.click();
-  await closeDropdown(page);
-}
-
-/**
- * Open the named multiselect, pick its first option, and return that option's label.
- */
-async function selectFirstMultiselectOption(page, name) {
-  await openMultiselect(page, name);
-
-  const first = page.locator('.multiselect__content-wrapper:visible li.multiselect__element').first();
-  await first.waitFor({ state: 'visible', timeout: 12000 });
-
-  const label = cleanOptionLabel(await first.innerText());
-  await first.click();
-  await closeDropdown(page);
-
-  return label;
-}
 
 /**
  * Open the quick-create "Create Attribute" modal and pick a type.

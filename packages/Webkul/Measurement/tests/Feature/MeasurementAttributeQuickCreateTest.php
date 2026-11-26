@@ -56,7 +56,7 @@ it('saves the measurement configuration posted with a measurement attribute on c
         ->and($saved->family_code)->toBe($family->code)
         ->and($saved->unit_code)->toBe('meter');
 
-    $response->assertSessionMissing('warning');
+    $response->assertSessionMissing('info');
 });
 
 it('warns and stores no configuration when a measurement attribute is created without family and unit', function (): void {

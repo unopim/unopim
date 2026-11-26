@@ -1,6 +1,14 @@
 const path = require('path');
 const { test, expect } = require('../../utils/fixtures');
-const { clickSave, generateUid, closeDropdown } = require('../../utils/helpers');
+const {
+  clickSave,
+  generateUid,
+  closeDropdown,
+  cleanOptionLabel,
+  openMultiselect,
+  selectMultiselectOption,
+  selectFirstMultiselectOption,
+} = require('../../utils/helpers');
 const { deleteProductBySku } = require('../../utils/product-helpers');
 
 const STORAGE_STATE = path.resolve(__dirname, '../..', process.env.PW_STATE_DIR || '.state', 'admin-auth.json');
@@ -29,57 +37,6 @@ async function newAdminContext(browser) {
 async function gotoAdmin(page, p) {
   await page.goto(adminUrl(p), { waitUntil: 'domcontentloaded' });
   await page.waitForLoadState('load').catch(() => {});
-}
-
-async function openMultiselect(page, name) {
-  const input = page.locator(`input[name="${name}"]`).first();
-  await input.waitFor({ state: 'attached', timeout: 15000 });
-
-  const wrapper = input.locator(
-    'xpath=ancestor::div[contains(concat(" ", normalize-space(@class), " "), " multiselect ")][1]'
-  );
-
-  await wrapper.scrollIntoViewIfNeeded().catch(() => {});
-
-  const tags = wrapper.locator('.multiselect__tags');
-  await (await tags.count() ? tags.first() : wrapper).click();
-
-  await wrapper.locator('.multiselect__content-wrapper').first().waitFor({ state: 'visible', timeout: 10000 });
-
-  return wrapper;
-}
-
-function cleanOptionLabel(text) {
-  return (text || '').trim().replace(/\s*Press enter to select\s*$/i, '').trim();
-}
-
-async function selectMultiselectOption(page, name, label, { filter = true } = {}) {
-  const wrapper = await openMultiselect(page, name);
-
-  if (filter) {
-    await wrapper.locator('input.multiselect__input').first().fill(label).catch(() => {});
-    await page.waitForTimeout(400);
-  }
-
-  const option = page.getByRole('option', { name: label }).first();
-  await option.waitFor({ state: 'visible', timeout: 10000 });
-  await option.scrollIntoViewIfNeeded().catch(() => {});
-  await option.click();
-  await closeDropdown(page);
-}
-
-async function selectFirstMultiselectOption(page, name) {
-  await openMultiselect(page, name);
-  await page.waitForTimeout(600);
-
-  const first = page.locator('.multiselect__content-wrapper:visible li.multiselect__element').first();
-  await first.waitFor({ state: 'visible', timeout: 12000 });
-
-  const label = cleanOptionLabel(await first.innerText());
-  await first.click();
-  await closeDropdown(page);
-
-  return label;
 }
 
 async function clickCreate(page, label) {
@@ -113,21 +70,19 @@ async function createMeasurementAttribute(page, { familyCode = MEASUREMENT_FAMIL
     await page.keyboard.press('Enter');
   }
 
-  await Promise.all([
-    page.waitForURL(/\/attributes\/edit\//, { timeout: 30000 }),
-    page.getByRole('button', { name: 'Save Attribute' }).click(),
-  ]);
-
-  await expect(page.getByRole('heading', { name: 'Edit Attribute' })).toBeVisible({ timeout: 20000 });
-
+  // The quick-create modal requires the family and unit for a measurement type.
   await page.locator('input[name="measurement_family"]').first().waitFor({ state: 'attached', timeout: 25000 });
   await selectMultiselectOption(page, 'measurement_family', familyCode);
 
   await page.locator('input[name="measurement_unit"]').first().waitFor({ state: 'attached', timeout: 15000 });
   const unitLabel = await selectFirstMultiselectOption(page, 'measurement_unit');
 
-  await clickSave(page, 'Save Attribute');
-  await expect(page.locator('#app').getByText(/updated successfully/i).first()).toBeVisible({ timeout: 25000 });
+  await Promise.all([
+    page.waitForURL(/\/attributes\/edit\//, { timeout: 30000 }),
+    page.getByRole('button', { name: 'Save Attribute' }).click(),
+  ]);
+
+  await expect(page.getByRole('heading', { name: 'Edit Attribute' })).toBeVisible({ timeout: 20000 });
 
   return { code, name, unitLabel };
 }

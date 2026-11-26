@@ -47,7 +47,7 @@ it('shows the dashboard Import Data button when the imports section is visible',
 
     $this->get(route('admin.dashboard.index'))
         ->assertOk()
-        ->assertSee(route('admin.settings.data_transfer.imports.index'), false);
+        ->assertSee(trans('admin::app.dashboard.index.import-data'));
 });
 
 it('hides the dashboard Export Data button when the exports section is hidden', function (): void {
@@ -85,5 +85,5 @@ it('shows the dashboard Export Data button when the exports section is visible',
 
     $this->get(route('admin.dashboard.index'))
         ->assertOk()
-        ->assertSee(route('admin.settings.data_transfer.exports.index'), false);
+        ->assertSee(trans('admin::app.dashboard.index.export-data'));
 });

@@ -21,10 +21,8 @@ class WarnMissingMeasurementConfigAfterCreate
      *
      * Flashed as `info` because the ajax form treats a flashed `warning` as a
      * rejected save and would keep the admin on the create page.
-     *
-     * @param  Attribute|null  $attribute
      */
-    public function handle($attribute): void
+    public function handle(?Attribute $attribute): void
     {
         if (
             ! $attribute

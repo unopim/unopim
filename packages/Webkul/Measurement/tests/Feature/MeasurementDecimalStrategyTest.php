@@ -13,12 +13,7 @@ use Webkul\Product\Repositories\ProductRepository;
 beforeEach(function () {
     $this->loginAsAdmin();
 
-    CoreConfig::updateOrCreate(
-        ['code' => 'system.measurement.display_unit_symbol'],
-        ['value' => '1']
-    );
-
-    Cache::flush();
+    $this->enableUnitSymbolDisplay();
 });
 
 function measurementPrecisionSetting(string $field, string $value): void

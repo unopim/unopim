@@ -1,12 +1,10 @@
 <?php
 
-use Illuminate\Support\Facades\Cache;
 use OpenSpout\Reader\CSV\Reader as CsvReader;
 use OpenSpout\Reader\XLSX\Reader as XlsxReader;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Core\Models\Channel;
-use Webkul\Core\Models\CoreConfig;
 use Webkul\Core\Models\Locale;
 use Webkul\DataTransfer\Helpers\Export;
 use Webkul\DataTransfer\Helpers\Exporters\Product\Exporter;
@@ -24,11 +22,7 @@ use Webkul\Product\Models\Product;
 beforeEach(function () {
     $this->loginAsAdmin();
 
-    CoreConfig::updateOrCreate(
-        ['code' => 'system.measurement.display_unit_symbol'],
-        ['value' => '1']
-    );
-    Cache::flush();
+    $this->enableUnitSymbolDisplay();
 
     $cache = new ReflectionProperty(Exporter::class, 'staticInitCache');
     $cache->setAccessible(true);

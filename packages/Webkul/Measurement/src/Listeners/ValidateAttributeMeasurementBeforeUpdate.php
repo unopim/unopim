@@ -22,10 +22,8 @@ class ValidateAttributeMeasurementBeforeUpdate
      *
      * The actual save happens in the "after" listener so the measurement audit
      * can be grouped into the same history version as the attribute update.
-     *
-     * @param  int|string  $attributeId
      */
-    public function handle($attributeId): void
+    public function handle(int|string $attributeId): void
     {
         if (! request()->hasSession()) {
             return;

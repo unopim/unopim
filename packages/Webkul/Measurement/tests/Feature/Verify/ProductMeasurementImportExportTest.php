@@ -1,9 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Cache;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
-use Webkul\Core\Models\CoreConfig;
 use Webkul\DataTransfer\Helpers\Exporters\Product\Exporter as CoreExporter;
 use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
 use Webkul\DataTransfer\Helpers\Importers\Product\Importer as CoreImporter;
@@ -16,11 +14,7 @@ use Webkul\Product\Models\Product;
 beforeEach(function () {
     $this->loginAsAdmin();
 
-    CoreConfig::updateOrCreate(
-        ['code' => 'system.measurement.display_unit_symbol'],
-        ['value' => '1']
-    );
-    Cache::flush();
+    $this->enableUnitSymbolDisplay();
 
     foreach ([CoreImporter::class, CoreExporter::class] as $class) {
         $cache = new ReflectionProperty($class, 'staticInitCache');

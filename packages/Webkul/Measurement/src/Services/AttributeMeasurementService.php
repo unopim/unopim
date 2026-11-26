@@ -2,6 +2,7 @@
 
 namespace Webkul\Measurement\Services;
 
+use Webkul\Measurement\Models\MeasurementFamily;
 use Webkul\Measurement\Repositories\AttributeMeasurementRepository;
 use Webkul\Measurement\Repositories\MeasurementFamilyRepository;
 
@@ -52,7 +53,7 @@ class AttributeMeasurementService
             ->newQuery()
             ->orderBy('id')
             ->get(['id', 'code'])
-            ->map(fn ($family): array => [
+            ->map(fn (MeasurementFamily $family): array => [
                 'id'    => $family->code,
                 'label' => $family->code,
             ])

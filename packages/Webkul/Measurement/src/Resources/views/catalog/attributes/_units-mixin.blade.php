@@ -4,7 +4,9 @@
          * Shared family/unit behaviour for the attribute create and edit forms:
          * per-family unit fetching (cached), mixed into both so it can't drift.
          */
-        window.measurementUnitsMixin = {
+        window.unopim = window.unopim || {};
+
+        window.unopim.measurementUnits = {
             data() {
                 return {
                     unitsList: null,

@@ -74,7 +74,7 @@
         app.component('v-measurement', {
             template: '#v-measurement-template',
 
-            mixins: [window.measurementUnitsMixin],
+            mixins: [window.unopim.measurementUnits],
 
             props: [
                 'attributeId',

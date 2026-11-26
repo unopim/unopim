@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Cache;
 use Webkul\Admin\Traits\AttributeColumnTrait;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
-use Webkul\Core\Models\CoreConfig;
 use Webkul\DataTransfer\Helpers\Exporters\Product\Exporter as CoreExporter;
 use Webkul\DataTransfer\Helpers\Importers\Product\Importer as CoreImporter;
 use Webkul\DataTransfer\Models\JobTrack;
@@ -25,29 +24,6 @@ beforeEach(function () {
         $cache->setValue(null, null);
     }
 });
-
-function enableUnitSymbolDisplay(): void
-{
-    CoreConfig::updateOrCreate(
-        ['code' => 'system.measurement.display_unit_symbol'],
-        ['value' => '1']
-    );
-
-    Cache::flush();
-}
-
-/**
- * Save the display unit symbol setting as off.
- */
-function disableUnitSymbolDisplay(): void
-{
-    CoreConfig::updateOrCreate(
-        ['code' => 'system.measurement.display_unit_symbol'],
-        ['value' => '0']
-    );
-
-    Cache::flush();
-}
 
 function temperatureAttribute(): Attribute
 {
@@ -110,7 +86,7 @@ it('registers the display unit symbol setting switched on by default', function 
 });
 
 it('shows the unit name while the setting is off', function () {
-    disableUnitSymbolDisplay();
+    $this->disableUnitSymbolDisplay();
 
     $attribute = temperatureAttribute();
 
@@ -118,7 +94,7 @@ it('shows the unit name while the setting is off', function () {
 });
 
 it('shows the unit symbol while the setting is on', function () {
-    enableUnitSymbolDisplay();
+    $this->enableUnitSymbolDisplay();
 
     $attribute = temperatureAttribute();
 
@@ -126,7 +102,7 @@ it('shows the unit symbol while the setting is on', function () {
 });
 
 it('falls back to the unit name when the setting is on but the unit has no symbol', function () {
-    enableUnitSymbolDisplay();
+    $this->enableUnitSymbolDisplay();
 
     $attribute = temperatureAttribute();
 
@@ -134,7 +110,7 @@ it('falls back to the unit name when the setting is on but the unit has no symbo
 });
 
 it('labels the product unit dropdown with the unit name while the setting is off', function () {
-    disableUnitSymbolDisplay();
+    $this->disableUnitSymbolDisplay();
 
     $attribute = temperatureAttribute();
 
@@ -144,7 +120,7 @@ it('labels the product unit dropdown with the unit name while the setting is off
 });
 
 it('labels the product unit dropdown with symbols while the setting is on', function () {
-    enableUnitSymbolDisplay();
+    $this->enableUnitSymbolDisplay();
 
     $attribute = temperatureAttribute();
 
@@ -156,7 +132,7 @@ it('labels the product unit dropdown with symbols while the setting is on', func
 });
 
 it('renders the datagrid value with the unit name while the setting is off', function () {
-    disableUnitSymbolDisplay();
+    $this->disableUnitSymbolDisplay();
 
     $attribute = temperatureAttribute();
 
@@ -170,7 +146,7 @@ it('renders the datagrid value with the unit name while the setting is off', fun
 });
 
 it('renders the datagrid value with the unit symbol while the setting is on', function () {
-    enableUnitSymbolDisplay();
+    $this->enableUnitSymbolDisplay();
 
     $attribute = temperatureAttribute();
 
@@ -184,7 +160,7 @@ it('renders the datagrid value with the unit symbol while the setting is on', fu
 });
 
 it('labels the product datagrid unit filter with symbols while the setting is on', function () {
-    enableUnitSymbolDisplay();
+    $this->enableUnitSymbolDisplay();
 
     $attribute = temperatureAttribute();
 
@@ -205,7 +181,7 @@ it('labels the product datagrid unit filter with symbols while the setting is on
 });
 
 it('exports the unit column with the unit name while the setting is off', function () {
-    disableUnitSymbolDisplay();
+    $this->disableUnitSymbolDisplay();
 
     $attribute = temperatureAttribute();
 
@@ -213,7 +189,7 @@ it('exports the unit column with the unit name while the setting is off', functi
 });
 
 it('exports the unit column with the unit symbol while the setting is on', function () {
-    enableUnitSymbolDisplay();
+    $this->enableUnitSymbolDisplay();
 
     $attribute = temperatureAttribute();
 
@@ -222,7 +198,7 @@ it('exports the unit column with the unit symbol while the setting is on', funct
 });
 
 it('exports the datagrid quick export unit column with the unit symbol while the setting is on', function () {
-    enableUnitSymbolDisplay();
+    $this->enableUnitSymbolDisplay();
 
     $attribute = temperatureAttribute();
 
@@ -235,7 +211,7 @@ it('exports the datagrid quick export unit column with the unit symbol while the
 });
 
 it('re-imports a symbol export to the original unit code', function () {
-    enableUnitSymbolDisplay();
+    $this->enableUnitSymbolDisplay();
 
     $attribute = temperatureAttribute();
 

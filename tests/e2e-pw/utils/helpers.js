@@ -373,6 +373,70 @@ async function visiblePaginationSymbols(page) {
     : ['\u00ab', '\u2039', '\u203a', '\u00bb'];
 }
 
+/**
+ * Open the vue-multiselect that wraps the given named input and return its wrapper.
+ */
+async function openMultiselect(page, name) {
+  const input = page.locator(`input[name="${name}"]`).first();
+  await input.waitFor({ state: 'attached', timeout: 15000 });
+
+  const wrapper = input.locator(
+    'xpath=ancestor::div[contains(concat(" ", normalize-space(@class), " "), " multiselect ")][1]'
+  );
+
+  await wrapper.scrollIntoViewIfNeeded().catch(() => {});
+
+  const tags = wrapper.locator('.multiselect__tags');
+  await (await tags.count() ? tags.first() : wrapper).click();
+
+  await wrapper.locator('.multiselect__content-wrapper').first().waitFor({ state: 'visible', timeout: 10000 });
+
+  return wrapper;
+}
+
+/**
+ * Strip the trailing "Press enter to select" hint vue-multiselect appends to an option label.
+ */
+function cleanOptionLabel(text) {
+  return (text || '').trim().replace(/\s*Press enter to select\s*$/i, '').trim();
+}
+
+/**
+ * Pick the option matching the given label in the named multiselect, typing the
+ * label into its search box first unless `filter` is false.
+ */
+async function selectMultiselectOption(page, name, label, { filter = true } = {}) {
+  const wrapper = await openMultiselect(page, name);
+
+  if (filter) {
+    await wrapper.locator('input.multiselect__input').first().fill(label).catch(() => {});
+    await page.waitForTimeout(400);
+  }
+
+  const option = page.getByRole('option', { name: label }).first();
+  await option.waitFor({ state: 'visible', timeout: 10000 });
+  await option.scrollIntoViewIfNeeded().catch(() => {});
+  await option.click();
+  await closeDropdown(page);
+}
+
+/**
+ * Open the named multiselect, pick its first option, and return that option's label.
+ */
+async function selectFirstMultiselectOption(page, name) {
+  await openMultiselect(page, name);
+  await page.waitForTimeout(600);
+
+  const first = page.locator('.multiselect__content-wrapper:visible li.multiselect__element').first();
+  await first.waitFor({ state: 'visible', timeout: 12000 });
+
+  const label = cleanOptionLabel(await first.innerText());
+  await first.click();
+  await closeDropdown(page);
+
+  return label;
+}
+
 module.exports = {
   ROUTES,
   waitForAppReady,
@@ -395,4 +459,8 @@ module.exports = {
   generateUid,
   fillLocalizedField,
   resolveEditableProductId,
+  openMultiselect,
+  cleanOptionLabel,
+  selectMultiselectOption,
+  selectFirstMultiselectOption,
 };

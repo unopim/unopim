@@ -1,7 +1,8 @@
 @php
-    $measurementBackedTypes = collect(config('attribute_types'))
-        ->filter(fn (array $type): bool => ! empty($type['measurement_backed']))
-        ->keys()
+    $measurementHelper = app(\Webkul\Measurement\Helpers\MeasurementHelper::class);
+
+    $measurementBackedTypes = collect(array_keys(config('attribute_types')))
+        ->filter(fn (string $type): bool => $measurementHelper->isMeasurementBacked($type))
         ->values()
         ->toArray();
 
@@ -66,7 +67,7 @@
         app.component('v-measurement-create', {
             template: '#v-measurement-create-template',
 
-            mixins: [window.measurementUnitsMixin],
+            mixins: [window.unopim.measurementUnits],
 
             props: [
                 'selectedType',
