@@ -16,6 +16,9 @@ class CSV extends AbstractSource
      */
     protected int $maxLineLength = 0;
 
+    /**
+     * Resolved path of the source file.
+     */
     protected string $path;
 
     /**
@@ -130,6 +133,9 @@ class CSV extends AbstractSource
         return is_array($parsed) ? $parsed : [];
     }
 
+    /**
+     * Open a fresh handle on the source file, replacing the current one.
+     */
     public function reopen(): void
     {
         $reader = @fopen($this->path, 'r');

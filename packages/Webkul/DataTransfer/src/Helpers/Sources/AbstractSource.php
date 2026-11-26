@@ -136,5 +136,11 @@ abstract class AbstractSource
         return $this->totalColumns;
     }
 
+    /**
+     * Reopen the reader so a forked process gets its own read offset.
+     *
+     * Sources that read from a file handle must override this, or parallel
+     * validation workers share one offset and validate each other's rows.
+     */
     public function reopen(): void {}
 }

@@ -22,6 +22,8 @@ afterEach(function (): void {
 
 /**
  * Write a two column product CSV, adding a line with an extra column after each listed row.
+ *
+ * @param  array<int, int>  $malformedAfter
  */
 function writeParallelValidationCsv(string $fileName, int $rowCount, array $malformedAfter = []): void
 {
@@ -40,6 +42,8 @@ function writeParallelValidationCsv(string $fileName, int $rowCount, array $malf
 
 /**
  * Build an importer whose row check rejects the given skus and makes a worker fail on one sku.
+ *
+ * @param  array<int, string>  $badSkus
  */
 function parallelValidationImporter(array $badSkus, ?string $faultySku = null, string $fault = 'none'): Importer
 {

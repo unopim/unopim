@@ -33,6 +33,7 @@ use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
 use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Helpers\Importers\AbstractImporter;
 use Webkul\DataTransfer\Helpers\Importers\FieldProcessor;
+use Webkul\DataTransfer\Helpers\Sources\AbstractSource;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 use Webkul\ElasticSearch\Indexing\Normalizer\ProductNormalizer;
 use Webkul\ElasticSearch\Observers\Product as ElasticProductObserver;
@@ -721,7 +722,7 @@ class Importer extends AbstractImporter
     /**
      * Validate all rows sequentially (fallback/small import path).
      */
-    protected function sequentialValidateRows($source): void
+    protected function sequentialValidateRows(AbstractSource $source): void
     {
         $source->rewind();
 
@@ -754,7 +755,7 @@ class Importer extends AbstractImporter
      * All preloaded caches (SKUs, products, categories, unique values) are
      * inherited by children via copy-on-write — no duplication overhead.
      */
-    protected function parallelValidateRows($source, int $totalRows, int $workerCount): void
+    protected function parallelValidateRows(AbstractSource $source, int $totalRows, int $workerCount): void
     {
         $chunkSize = (int) ceil($totalRows / $workerCount);
         $tempDir = storage_path('app/import_validation_'.$this->import->id.'_'.uniqid());
@@ -922,6 +923,11 @@ class Importer extends AbstractImporter
         }
     }
 
+    /**
+     * Read a worker's result, or null when its exit status, payload or row count can't be trusted.
+     *
+     * @return array{invalid: array<int, int>, processed?: int, visited: int}|null
+     */
     protected function readWorkerResult(string $resultFile, ?int $exitStatus, int $expectedRows): ?array
     {
         if ($exitStatus === null || ! pcntl_wifexited($exitStatus) || pcntl_wexitstatus($exitStatus) !== 0) {
@@ -947,7 +953,7 @@ class Importer extends AbstractImporter
      * Re-reads source and creates DB batch records for all valid rows.
      * Replaces the parent::saveValidatedBatches() call.
      */
-    protected function createBatchesFromValidRows($source): void
+    protected function createBatchesFromValidRows(AbstractSource $source): void
     {
         $batchSize = $this->getEffectiveBatchSize();
 
