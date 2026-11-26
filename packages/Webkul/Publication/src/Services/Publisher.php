@@ -254,7 +254,7 @@ class Publisher
 
             $publication->setRawAttributes($locked->getAttributes(), true);
 
-            DB::afterCommit(fn () => $event::dispatch($publication));
+            DB::afterCommit(fn (): mixed => $event::dispatch($publication));
         });
     }
 
