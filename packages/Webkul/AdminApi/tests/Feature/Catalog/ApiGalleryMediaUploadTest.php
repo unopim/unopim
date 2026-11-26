@@ -210,7 +210,8 @@ it('returns every path of a gallery saved as a list', function (): void {
 it('deletes every file of a gallery saved as a list', function (): void {
     $gallery = apiGalleryMediaAttribute('gallery');
 
-    $paths = ['product/existing/one.png', 'product/existing/two.png'];
+    $folder = 'product/'.$this->product->id.'/'.$gallery->code;
+    $paths = [$folder.'/'.str_repeat('a', 40).'/one.png', $folder.'/'.str_repeat('b', 40).'/two.png'];
 
     foreach ($paths as $path) {
         Storage::put($path, 'x');

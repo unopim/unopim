@@ -12,9 +12,8 @@ class StoreProductMediaRequest extends ProductMediaRequest
     public function rules(): array
     {
         return [
-            'file'      => 'required',
-            'sku'       => 'required',
-            'attribute' => 'required',
+            'file' => 'required',
+            'sku'  => 'required',
             ...parent::rules(),
         ];
     }
