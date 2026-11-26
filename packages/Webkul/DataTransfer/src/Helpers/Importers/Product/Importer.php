@@ -3,6 +3,7 @@
 namespace Webkul\DataTransfer\Helpers\Importers\Product;
 
 use Elastic\Elasticsearch\Exception\ElasticsearchException;
+use Elastic\Transport\Exception\TransportException;
 use Illuminate\Http\File;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
@@ -81,6 +82,11 @@ class Importer extends AbstractImporter
      * Product type grouped
      */
     public const PRODUCT_TYPE_GROUPED = 'grouped';
+
+    /**
+     * Documents sent per bulk request when removing deleted products from the index.
+     */
+    protected const INDEX_DELETE_CHUNK_SIZE = 500;
 
     /**
      * Error code for invalid product type
@@ -1912,10 +1918,13 @@ class Importer extends AbstractImporter
         $parentIds = $productIds;
 
         while ($parentIds !== []) {
-            $parentIds = array_values(array_diff(
-                DB::table('products')->whereIn('parent_id', $parentIds)->pluck('id')->map(fn ($id): int => (int) $id)->all(),
-                $allIds,
-            ));
+            $childIds = [];
+
+            foreach (array_chunk($parentIds, 1000) as $parentIdChunk) {
+                $childIds = [...$childIds, ...DB::table('products')->whereIn('parent_id', $parentIdChunk)->pluck('id')->map(fn (int|string $id): int => (int) $id)->all()];
+            }
+
+            $parentIds = array_values(array_diff($childIds, $allIds));
 
             $allIds = [...$allIds, ...$parentIds];
         }
@@ -1938,15 +1947,20 @@ class Importer extends AbstractImporter
 
         $productIndex = strtolower(config('elasticsearch.prefix').'_products');
 
-        $body = [];
-
-        foreach ($productIds as $productId) {
-            $body[] = ['delete' => ['_index' => $productIndex, '_id' => $productId]];
-        }
+        $items = [];
+        $errors = false;
 
         try {
-            $response = ElasticSearch::bulk(['body' => $body]);
-        } catch (ElasticsearchException $e) {
+            foreach (array_chunk($productIds, self::INDEX_DELETE_CHUNK_SIZE) as $productIdChunk) {
+                $body = array_map(fn (int $productId): array => ['delete' => ['_index' => $productIndex, '_id' => $productId]], $productIdChunk);
+
+                $response = ElasticSearch::bulk(['body' => $body]);
+
+                $errors = $errors || ! empty($response['errors']);
+
+                $items = [...$items, ...($response['items'] ?? [])];
+            }
+        } catch (ElasticsearchException|TransportException $e) {
             Log::channel('elasticsearch')->error('Exception while deleting imported products from '.$productIndex.' index: ', [
                 'error' => $e->getMessage(),
             ]);
@@ -1954,8 +1968,8 @@ class Importer extends AbstractImporter
             return;
         }
 
-        if (! empty($response['errors'])) {
-            foreach ($response['items'] as $result) {
+        if ($errors) {
+            foreach ($items as $result) {
                 if (isset($result['delete']['error'])) {
                     Log::channel('elasticsearch')->error('Error while deleting product id: '.$result['delete']['_id'].' from '.$productIndex.' index: ', [
                         'error' => $result['delete']['error'],
