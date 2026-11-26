@@ -56,8 +56,9 @@ trait HtmlPurifier
         $config->set('HTML.SafeObject', true);
 
         if ($definition = $config->maybeGetRawHTMLDefinition()) {
-            $definition->addAttribute('iframe', 'src*', 'URI#embedded');
-            $definition->addBlankElement('iframe')->attr_transform_post[] = new SandboxIframe;
+            $iframe = $definition->addBlankElement('iframe');
+            $iframe->attr['src*'] = 'URI#embedded';
+            $iframe->attr_transform_post[] = new SandboxIframe;
         }
 
         return $config;
