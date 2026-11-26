@@ -11,7 +11,7 @@
 @endphp
 
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}" dir="{{ in_array(app()->getLocale(), ['ar_AE']) ? 'rtl' : 'ltr' }}" class="{{ $darkModePreference === 'dark' || $darkModePreference === '1' ? 'dark' : '' }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ in_array(app()->getLocale(), ['ar_AE']) ? 'rtl' : 'ltr' }}" class="{{ $darkModePreference === 'dark' || $darkModePreference === '1' ? 'dark' : '' }}">
     <head>
         <title>{{ $title ?? '' }}</title>
 
@@ -21,7 +21,7 @@
         <meta name="base-url" content="{{ rtrim(config('app.url'), '/') }}">
         <meta name="admin-url" content="{{ trim(parse_url(url(config('app.admin_url')), PHP_URL_PATH), '/') }}">
         <meta name="currency-code" content="{{ core()->getBaseCurrencyCode() }}">
-        <meta http-equiv="content-language" content="{{ app()->getLocale() }}">
+        <meta http-equiv="content-language" content="{{ str_replace('_', '-', app()->getLocale()) }}">
 
         <script>
             (() => {
