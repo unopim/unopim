@@ -6,6 +6,7 @@
 
 ## Bug fixes
 
+- Fixed the category API ignoring the parent rules on updates and creates: a PUT or PATCH that did not send `parent` no longer detaches the category to the root, and an unknown parent code now returns 422 on create, PUT and PATCH instead of silently creating or moving the category to the root. A parent that is the category itself or one of its descendants returns 422 with the same message as the admin panel instead of a 500. Clients that sent the string `"null"` as the parent used to get a root category and now get a 422; send JSON `null` to detach a category.
 - Fixed a product quick search none of whose fields resolves to an attribute returning the entire catalogue instead of no products. The database path dropped the empty condition group; the Elasticsearch path emitted an empty `should`, which Elasticsearch answers with a match_all because it applies `minimum_should_match` only once there are `should` clauses to count. Both now refuse the term, with `1 = 0` and with `match_none`.
 
 ## New features

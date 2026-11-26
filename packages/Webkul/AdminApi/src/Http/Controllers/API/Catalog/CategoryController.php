@@ -11,6 +11,7 @@ use Webkul\AdminApi\Http\Controllers\API\ApiController;
 use Webkul\AdminApi\Http\Requests\Catalog\PartialUpdateCategoryRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\StoreCategoryRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\UpdateCategoryRequest;
+use Webkul\Category\Models\Category;
 use Webkul\Category\Repositories\CategoryFieldRepository;
 use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Category\Validator\Catalog\CategoryValidator;
@@ -144,11 +145,9 @@ class CategoryController extends ApiController
 
         $requestData = request()->only(['parent', 'additional_data']);
 
-        if (array_key_exists('parent', $requestData)) {
-            $requestData['parent_id'] = $this->getParentIdByCode($requestData['parent']);
+        if ($invalidParent = $this->resolveParentChange($requestData, $category)) {
+            return $invalidParent;
         }
-
-        unset($requestData['parent']);
         $id = $category->id;
 
         $validator = $this->categoryValidator->validate($requestData, $id);
@@ -211,11 +210,9 @@ class CategoryController extends ApiController
 
         $requestData = request()->only(['parent', 'additional_data']);
 
-        if (array_key_exists('parent', $requestData)) {
-            $requestData['parent_id'] = $this->getParentIdByCode($requestData['parent']);
+        if ($invalidParent = $this->resolveParentChange($requestData, $category)) {
+            return $invalidParent;
         }
-
-        unset($requestData['parent']);
 
         $validator = $this->categoryValidator->validate($requestData, $category->id);
         if ($validator instanceof Validator && $validator->fails()) {
@@ -264,6 +261,31 @@ class CategoryController extends ApiController
      *
      * @return int|null The ID of the category if found, otherwise null.
      */
+    /**
+     * Turn the request's `parent` code into `parent_id`, leaving it out when the request sends no parent.
+     *
+     * Answers 422 when the category would become its own parent or a child of one of its descendants,
+     * which the nested set cannot represent; the admin panel rejects the same move.
+     */
+    private function resolveParentChange(array &$requestData, Category $category): ?JsonResponse
+    {
+        if (array_key_exists('parent', $requestData)) {
+            $parent = $requestData['parent'] === null || $requestData['parent'] === ''
+                ? null
+                : $this->categoryRepository->findOneByField('code', $requestData['parent']);
+
+            if ($parent && ($parent->id === $category->id || $parent->isDescendantOf($category))) {
+                return $this->validateErrorResponse(['parent' => [trans('admin::app.catalog.categories.invalid-parent')]]);
+            }
+
+            $requestData['parent_id'] = $parent?->id;
+        }
+
+        unset($requestData['parent']);
+
+        return null;
+    }
+
     private function getParentIdByCode(?string $code)
     {
         if ($code === null || $code === '') {

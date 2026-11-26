@@ -114,3 +114,32 @@ it('rejects an unknown parent code on PATCH and keeps the current parent', funct
 
     expect(apiCatParentCodeOf($childCode))->toBe($parentCode);
 });
+
+it('refuses to create a category under an unknown parent code', function (): void {
+    $code = 'orphan_'.uniqid();
+
+    $this->withHeaders($this->headers)
+        ->postJson(route('admin.api.categories.store'), ['code' => $code, 'parent' => 'missing_'.uniqid(), 'additional_data' => apiCatParentNames('Orphan')])
+        ->assertUnprocessable();
+
+    expect(Category::where('code', $code)->exists())->toBeFalse();
+});
+
+it('rejects a parent that is the category itself or its descendant with 422', function (string $verb, string $route, string $target): void {
+    [$parentCode, $childCode] = apiCatParentCreateChild($this, uniqid());
+
+    $payload = ['parent' => $target === 'self' ? $parentCode : $childCode];
+
+    $this->withHeaders($this->headers)
+        ->{$verb}(route($route, ['code' => $parentCode]), $payload)
+        ->assertUnprocessable()
+        ->assertJsonPath('errors.parent.0', trans('admin::app.catalog.categories.invalid-parent'));
+
+    expect(apiCatParentCodeOf($parentCode))->toBeNull()
+        ->and(apiCatParentCodeOf($childCode))->toBe($parentCode);
+})->with([
+    'PUT self'         => ['putJson', 'admin.api.categories.update', 'self'],
+    'PUT descendant'   => ['putJson', 'admin.api.categories.update', 'descendant'],
+    'PATCH self'       => ['patchJson', 'admin.api.categories.patch', 'self'],
+    'PATCH descendant' => ['patchJson', 'admin.api.categories.patch', 'descendant'],
+]);
