@@ -25,7 +25,6 @@ it('does not let a stale Published model withdraw a publication redacted meanwhi
     $stale = $version->publication->fresh();
     expect($stale->status)->toBe(PublicationStatus::Published);
 
-    // Request B redacts it through a fresh model.
     $publisher->redactAll($version->publication->fresh(), Admin::factory()->create()->id, 'erasure');
     expect($version->publication->fresh()->status)->toBe(PublicationStatus::Redacted);
 
