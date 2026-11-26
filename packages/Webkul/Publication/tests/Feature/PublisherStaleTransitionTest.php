@@ -51,5 +51,6 @@ it('does not let a stale Withdrawn model reinstate a publication redacted meanwh
     expect(fn (): mixed => $publisher->reinstate($stale))
         ->toThrow(InvalidPublicationTransitionException::class);
 
-    expect($version->publication->fresh()->status)->toBe(PublicationStatus::Redacted);
+    expect($version->publication->fresh()->status)->toBe(PublicationStatus::Redacted)
+        ->and($stale->status)->toBe(PublicationStatus::Redacted);
 });
