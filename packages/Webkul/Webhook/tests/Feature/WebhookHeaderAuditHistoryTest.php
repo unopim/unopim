@@ -11,12 +11,12 @@ use Webkul\Webhook\Services\WebhookService;
 
 uses(UserAssertions::class);
 
-/** Creates a webhook with the given custom headers. */
-function createAuditedWebhook(array $headers): Webhook
+/** Creates a webhook with the given custom headers and URL. */
+function createAuditedWebhook(array $headers, string $url = 'https://8.8.8.8/hook'): Webhook
 {
     return Webhook::create([
         'name'      => 'Audited hook',
-        'url'       => 'https://8.8.8.8/hook',
+        'url'       => $url,
         'is_active' => true,
         'events'    => ['product.created'],
         'headers'   => $headers,
@@ -72,8 +72,8 @@ it('masks header values in the audit written on create and keeps the header name
     [$created] = webhookAuditRows($webhook);
 
     expect(auditedHeaders($created, 'new_values'))->toBe([
-        'Authorization' => Webhook::MASKED_HEADER_VALUE,
-        'X-Shop'        => Webhook::MASKED_HEADER_VALUE,
+        'Authorization' => Webhook::MASKED_VALUE,
+        'X-Shop'        => Webhook::MASKED_VALUE,
     ])
         ->and($created->new_values)->not->toContain('create-secret')
         ->and(json_decode($created->new_values, true)['url'])->toBe('https://8.8.8.8/hook');
@@ -86,10 +86,10 @@ it('masks both the old and the new header values in the audit written on update'
 
     $updated = collect(webhookAuditRows($webhook))->firstWhere('event', 'updated');
 
-    expect(auditedHeaders($updated, 'old_values'))->toBe(['Authorization' => Webhook::MASKED_HEADER_VALUE])
+    expect(auditedHeaders($updated, 'old_values'))->toBe(['Authorization' => Webhook::MASKED_VALUE])
         ->and(auditedHeaders($updated, 'new_values'))->toBe([
-            'Authorization' => Webhook::MASKED_HEADER_VALUE,
-            'X-Api-Key'     => Webhook::MASKED_HEADER_VALUE,
+            'Authorization' => Webhook::MASKED_VALUE,
+            'X-Api-Key'     => Webhook::MASKED_VALUE,
         ])
         ->and($updated->old_values.$updated->new_values)->not->toContain('secret');
 });
@@ -113,7 +113,7 @@ it('masks every kind of credential header a user may add', function (string $nam
 
     [$created] = webhookAuditRows($webhook);
 
-    expect(auditedHeaders($created, 'new_values'))->toBe([$name => Webhook::MASKED_HEADER_VALUE])
+    expect(auditedHeaders($created, 'new_values'))->toBe([$name => Webhook::MASKED_VALUE])
         ->and(json_decode($created->new_values, true)['headers'])->not->toContain($value);
 })->with([
     'bearer token'          => ['Authorization', 'Bearer eyJhbGciOiJIUzI1NiJ9.payload.signature'],
@@ -131,7 +131,7 @@ it('masks the old value when a user removes a header', function (): void {
 
     $updated = collect(webhookAuditRows($webhook))->firstWhere('event', 'updated');
 
-    expect(auditedHeaders($updated, 'old_values'))->toBe(['Authorization' => Webhook::MASKED_HEADER_VALUE])
+    expect(auditedHeaders($updated, 'old_values'))->toBe(['Authorization' => Webhook::MASKED_VALUE])
         ->and(auditedHeaders($updated, 'new_values'))->toBe([])
         ->and($updated->old_values)->not->toContain('removed-secret');
 });
@@ -148,7 +148,7 @@ it('masks the header values in the audit written when a user deletes the webhook
         ->where('event', 'deleted')
         ->sole();
 
-    expect(auditedHeaders($deleted, 'old_values'))->toBe(['Authorization' => Webhook::MASKED_HEADER_VALUE])
+    expect(auditedHeaders($deleted, 'old_values'))->toBe(['Authorization' => Webhook::MASKED_VALUE])
         ->and($deleted->old_values)->not->toContain('deleted-secret');
 });
 
@@ -206,7 +206,7 @@ it('masks the header value an admin saves through the webhook edit form', functi
     $updated = collect(webhookAuditRows($webhook))->firstWhere('event', 'updated');
 
     expect($webhook->fresh()->headers)->toBe(['Authorization' => 'Bearer form-secret'])
-        ->and(auditedHeaders($updated, 'new_values'))->toBe(['Authorization' => Webhook::MASKED_HEADER_VALUE])
+        ->and(auditedHeaders($updated, 'new_values'))->toBe(['Authorization' => Webhook::MASKED_VALUE])
         ->and($updated->new_values)->not->toContain('form-secret');
 });
 
@@ -222,8 +222,8 @@ it('masks header values already stored in webhook audits and leaves other audits
 
     $masked = DB::table('audits')->find($webhookAudit);
 
-    expect(auditedHeaders($masked, 'old_values'))->toBe(['Authorization' => Webhook::MASKED_HEADER_VALUE])
-        ->and(auditedHeaders($masked, 'new_values'))->toBe(['Authorization' => Webhook::MASKED_HEADER_VALUE])
+    expect(auditedHeaders($masked, 'old_values'))->toBe(['Authorization' => Webhook::MASKED_VALUE])
+        ->and(auditedHeaders($masked, 'new_values'))->toBe(['Authorization' => Webhook::MASKED_VALUE])
         ->and(json_decode($masked->new_values, true)['name'])->toBe('Stored hook')
         ->and($masked->old_values.$masked->new_values)->not->toContain('stored-')
         ->and(json_decode(DB::table('audits')->find($otherAudit)->new_values, true))->toBe(['headers' => 'not a webhook']);
@@ -265,3 +265,130 @@ it('leaves stored header values it cannot read as a header map untouched', funct
     'invalid json' => ['{not json'],
     'plain string' => ['"Bearer"'],
 ]);
+
+it('masks the credentials and query values of the URL in the audit written on create', function (): void {
+    $webhook = createAuditedWebhook([], 'https://hook-user:hook-pass@8.8.8.8/hook?token=url-secret');
+
+    [$created] = webhookAuditRows($webhook);
+    $mask = Webhook::MASKED_VALUE;
+
+    expect(json_decode($created->new_values, true)['url'])->toBe("https://{$mask}@8.8.8.8/hook?token={$mask}")
+        ->and($created->new_values)->not->toContain('hook-user')
+        ->and($created->new_values)->not->toContain('hook-pass')
+        ->and($created->new_values)->not->toContain('url-secret');
+});
+
+it('masks both the old and the new URL in the audit written on update', function (): void {
+    $webhook = createAuditedWebhook([], 'https://8.8.8.8/hook?token=old-url-secret');
+
+    $webhook->update(['url' => 'https://8.8.8.8/hook?token=new-url-secret']);
+
+    $updated = collect(webhookAuditRows($webhook))->firstWhere('event', 'updated');
+    $masked = 'https://8.8.8.8/hook?token='.Webhook::MASKED_VALUE;
+
+    expect(json_decode($updated->old_values, true)['url'])->toBe($masked)
+        ->and(json_decode($updated->new_values, true)['url'])->toBe($masked)
+        ->and($updated->old_values.$updated->new_values)->not->toContain('url-secret');
+});
+
+it('masks every credential a URL may carry', function (string $url, string $expected): void {
+    expect(Webhook::maskUrl($url))->toBe(str_replace('MASK', Webhook::MASKED_VALUE, $expected));
+})->with([
+    'user and password'  => ['https://user:pass@example.com/hook', 'https://MASK@example.com/hook'],
+    'user only'          => ['https://token@example.com/hook', 'https://MASK@example.com/hook'],
+    'query token'        => ['https://example.com/hook?token=abc', 'https://example.com/hook?token=MASK'],
+    'several values'     => ['https://example.com/hook?a=1&secret=2', 'https://example.com/hook?a=MASK&secret=MASK'],
+    'value without key'  => ['https://example.com/hook?=abc', 'https://example.com/hook?=MASK'],
+    'everything'         => ['http://u:p@example.com:8080/a/b?key=v#part', 'http://MASK@example.com:8080/a/b?key=MASK#part'],
+    'chat path token'    => ['https://chat.example.com/services/T0A1B2C3D/B0E4F5G6H/Xy12AbCdEf34GhIjKl56MnOp', 'https://chat.example.com/services/T0A1B2C3D/B0E4F5G6H/MASK'],
+    'id and token path'  => ['https://example.com/api/webhooks/123456789012345678/AbCdEf_12-GhIjKlMnOpQrStUvWxYz0123456789', 'https://example.com/api/webhooks/123456789012345678/MASK'],
+    'uuid path segment'  => ['https://example.com/hook/0f8fad5b-d9cb-469f-a165-70867728950e/', 'https://example.com/hook/MASK/'],
+]);
+
+it('leaves a URL without credentials readable', function (mixed $url): void {
+    expect(Webhook::maskUrl($url))->toBe($url);
+})->with([
+    'plain url'       => ['https://8.8.8.8/hook'],
+    'at sign in path' => ['https://example.com/p@th/hook'],
+    'query flag'      => ['https://example.com/hook?debug'],
+    'readable path'   => ['https://8.8.8.8/api/v1/webhooks/orders'],
+    'long word'       => ['https://example.com/notifications-receiver-endpoint'],
+    'numeric id'      => ['https://example.com/api/webhooks/123456789012345678'],
+    'token-like host' => ['https://wh824cd96eb956450f94.free.beeceptor.com/hook'],
+    'null'            => [null],
+    'not a string'    => [42],
+]);
+
+it('still stores and calls the real URL with its credentials', function (): void {
+    Http::fake(['*' => Http::response(['ok' => true], 200)]);
+    $webhook = createAuditedWebhook([], 'https://8.8.8.8/hook?token=delivered-url-secret');
+
+    app(WebhookService::class)->deliverEvent($webhook, 'product.created', ['sku' => 'url-check'], 'url-check', 'Robot');
+
+    expect($webhook->fresh()->url)->toBe('https://8.8.8.8/hook?token=delivered-url-secret');
+
+    Http::assertSent(fn (Request $request): bool => $request->url() === 'https://8.8.8.8/hook?token=delivered-url-secret');
+});
+
+it('masks the URL token an admin saves through the webhook edit form', function (): void {
+    $this->loginAsAdmin();
+    $webhook = createAuditedWebhook([]);
+
+    $this->put(route('webhook.update', $webhook->id), [
+        'name'      => 'Audited hook',
+        'url'       => 'https://8.8.8.8/hook?token=form-url-secret',
+        'is_active' => 1,
+        'events'    => ['product.created'],
+    ])->assertRedirect(route('webhook.edit', $webhook->id));
+
+    $updated = collect(webhookAuditRows($webhook))->firstWhere('event', 'updated');
+
+    expect($webhook->fresh()->url)->toBe('https://8.8.8.8/hook?token=form-url-secret')
+        ->and(json_decode($updated->new_values, true)['url'])->toBe('https://8.8.8.8/hook?token='.Webhook::MASKED_VALUE)
+        ->and($updated->old_values.$updated->new_values)->not->toContain('form-url-secret');
+});
+
+it('masks URL credentials already stored in webhook audits and is safe to run twice', function (): void {
+    $auditId = insertRawAudit(
+        Webhook::class,
+        ['url' => 'https://user:stored-pass@8.8.8.8/hook'],
+        ['url' => 'https://8.8.8.8/hook?token=stored-url-secret', 'name' => 'Stored hook'],
+    );
+    $migration = maskWebhookHeadersMigration();
+    $mask = Webhook::MASKED_VALUE;
+
+    $migration->up();
+    $afterFirstRun = DB::table('audits')->find($auditId);
+
+    $migration->up();
+    $afterSecondRun = DB::table('audits')->find($auditId);
+
+    expect(json_decode($afterFirstRun->old_values, true)['url'])->toBe("https://{$mask}@8.8.8.8/hook")
+        ->and(json_decode($afterFirstRun->new_values, true)['url'])->toBe("https://8.8.8.8/hook?token={$mask}")
+        ->and(json_decode($afterFirstRun->new_values, true)['name'])->toBe('Stored hook')
+        ->and($afterFirstRun->old_values.$afterFirstRun->new_values)->not->toContain('stored-')
+        ->and($afterSecondRun->new_values)->toBe($afterFirstRun->new_values)
+        ->and($afterSecondRun->old_values)->toBe($afterFirstRun->old_values);
+});
+
+it('leaves stored URLs without credentials untouched', function (): void {
+    $auditId = insertRawAudit(Webhook::class, ['url' => 'https://8.8.8.8/old'], ['url' => 'https://8.8.8.8/new']);
+    $before = DB::table('audits')->find($auditId);
+
+    maskWebhookHeadersMigration()->up();
+
+    $after = DB::table('audits')->find($auditId);
+
+    expect($after->old_values)->toBe($before->old_values)
+        ->and($after->new_values)->toBe($before->new_values);
+});
+
+it('masks a token in the URL path in the audit written on create', function (): void {
+    $webhook = createAuditedWebhook([], 'https://8.8.8.8/services/T0A1B2C3D/B0E4F5G6H/PathToken12Secret34Value');
+
+    [$created] = webhookAuditRows($webhook);
+
+    expect(json_decode($created->new_values, true)['url'])->toBe('https://8.8.8.8/services/T0A1B2C3D/B0E4F5G6H/'.Webhook::MASKED_VALUE)
+        ->and($created->new_values)->not->toContain('PathToken12Secret34Value')
+        ->and($webhook->fresh()->url)->toBe('https://8.8.8.8/services/T0A1B2C3D/B0E4F5G6H/PathToken12Secret34Value');
+});

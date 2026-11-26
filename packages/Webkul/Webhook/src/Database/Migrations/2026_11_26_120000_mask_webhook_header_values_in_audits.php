@@ -34,11 +34,19 @@ return new class extends Migration
         foreach (self::COLUMNS as $column) {
             $values = json_decode((string) $audit->{$column}, true);
 
-            if (! is_array($values) || ! array_key_exists('headers', $values)) {
+            if (! is_array($values)) {
                 continue;
             }
 
-            $masked = [...$values, 'headers' => Webhook::maskHeaders($values['headers'])];
+            $masked = $values;
+
+            if (array_key_exists('headers', $values)) {
+                $masked['headers'] = Webhook::maskHeaders($values['headers']);
+            }
+
+            if (array_key_exists('url', $values)) {
+                $masked['url'] = Webhook::maskUrl($values['url']);
+            }
 
             if ($masked !== $values) {
                 $changes[$column] = json_encode($masked, JSON_UNESCAPED_UNICODE);

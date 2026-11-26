@@ -26,7 +26,7 @@ class Webhook extends Model implements HistoryAuditable, PresentableHistoryInter
         transformAudit as protected transformHistoryAudit;
     }
 
-    public const string MASKED_HEADER_VALUE = '••••••••';
+    public const string MASKED_VALUE = '••••••••';
 
     protected $auditExclude = ['secret'];
 
@@ -47,7 +47,7 @@ class Webhook extends Model implements HistoryAuditable, PresentableHistoryInter
     }
 
     /**
-     * Mask custom header values before they reach the audit trail, keeping the header names.
+     * Mask custom header values and URL credentials before they reach the audit trail, keeping header names and readable URL parts.
      *
      * @param  array<string, mixed>  $data
      * @return array<string, mixed>
@@ -59,6 +59,10 @@ class Webhook extends Model implements HistoryAuditable, PresentableHistoryInter
         foreach (['old_values', 'new_values'] as $bucket) {
             if (isset($data[$bucket]['headers'])) {
                 $data[$bucket]['headers'] = static::maskHeaders($data[$bucket]['headers']);
+            }
+
+            if (isset($data[$bucket]['url'])) {
+                $data[$bucket]['url'] = static::maskUrl($data[$bucket]['url']);
             }
         }
 
@@ -76,7 +80,45 @@ class Webhook extends Model implements HistoryAuditable, PresentableHistoryInter
             return $headers;
         }
 
-        return json_encode(array_map(fn (): string => self::MASKED_HEADER_VALUE, $decoded), JSON_UNESCAPED_UNICODE);
+        return json_encode(array_map(fn (): string => self::MASKED_VALUE, $decoded), JSON_UNESCAPED_UNICODE);
+    }
+
+    /**
+     * Mask the userinfo, token-like path segments and query-string values of a URL, keeping scheme, host and readable path parts.
+     */
+    public static function maskUrl(mixed $url): mixed
+    {
+        if (! is_string($url)) {
+            return $url;
+        }
+
+        $url = preg_replace_callback(
+            '#^([a-z][a-z0-9+.-]*://)([^/@?\#]+@)?([^/?\#]*)([^?\#]*)#i',
+            fn (array $parts): string => $parts[1]
+                .($parts[2] !== '' ? self::MASKED_VALUE.'@' : '')
+                .$parts[3]
+                .static::maskPathTokens($parts[4]),
+            $url,
+        );
+
+        return preg_replace('/([?&][^=&#]*)=[^&#]*/', '$1='.self::MASKED_VALUE, $url);
+    }
+
+    /**
+     * Mask path segments that look like generated tokens, as in Slack or Discord webhook URLs.
+     *
+     * A token segment is at least 16 URL-safe characters mixing letters and digits, so readable
+     * words and numeric ids stay visible.
+     */
+    protected static function maskPathTokens(string $path): string
+    {
+        return preg_replace_callback(
+            '#(?<=/)[A-Za-z0-9_-]{16,}(?=/|$)#',
+            fn (array $segment): string => preg_match('/\d/', $segment[0]) && preg_match('/[A-Za-z]/', $segment[0])
+                ? self::MASKED_VALUE
+                : $segment[0],
+            $path,
+        );
     }
 
     protected function casts(): array
