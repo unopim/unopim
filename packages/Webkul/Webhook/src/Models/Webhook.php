@@ -22,7 +22,11 @@ use Webkul\Webhook\Presenters\WebhookPresenter;
 #[Table(name: 'webhooks')]
 class Webhook extends Model implements HistoryAuditable, PresentableHistoryInterface
 {
-    use HistoryTrait;
+    use HistoryTrait {
+        transformAudit as protected transformHistoryAudit;
+    }
+
+    public const string MASKED_HEADER_VALUE = '••••••••';
 
     protected $auditExclude = ['secret'];
 
@@ -40,6 +44,39 @@ class Webhook extends Model implements HistoryAuditable, PresentableHistoryInter
     public function getPrimaryModelIdForHistory(): int
     {
         return $this->id;
+    }
+
+    /**
+     * Mask custom header values before they reach the audit trail, keeping the header names.
+     *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    public function transformAudit(array $data): array
+    {
+        $data = $this->transformHistoryAudit($data);
+
+        foreach (['old_values', 'new_values'] as $bucket) {
+            if (isset($data[$bucket]['headers'])) {
+                $data[$bucket]['headers'] = static::maskHeaders($data[$bucket]['headers']);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Replace every value in a JSON header map with a mask; anything that is not a JSON map is returned as is.
+     */
+    public static function maskHeaders(mixed $headers): mixed
+    {
+        $decoded = is_string($headers) ? json_decode($headers, true) : null;
+
+        if (! is_array($decoded)) {
+            return $headers;
+        }
+
+        return json_encode(array_map(fn (): string => self::MASKED_HEADER_VALUE, $decoded), JSON_UNESCAPED_UNICODE);
     }
 
     protected function casts(): array

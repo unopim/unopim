@@ -10,6 +10,7 @@
 - AI agent tools and Magic AI endpoints that write data now require the matching create or edit permission instead of the view permission of the area: creating attributes and families, adding attribute options, rolling back an AI changeset, saving Magic AI translations, the Magic AI settings, export links and memories stored for every user.
 - Editing roles and users, and importing them, can no longer leave the installation without an active user holding full access. An admin can only manage users whose current role they could assign, and role and user imports require role and user rights.
 - Fixed the job tracker archive download listing every file on the private disk when a job track had no file path; it now returns 404.
+- Webhook history no longer shows custom header values such as `Authorization` tokens. They are masked, and the upgrade masks those already stored.
 
 ## New features
 
