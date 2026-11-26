@@ -2,16 +2,18 @@
 
 namespace Webkul\ProductPassport\Http\Controllers;
 
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Webkul\Admin\Helpers\BadgeVariants;
 use Webkul\Core\Models\ChannelProxy;
+use Webkul\Core\Models\Locale;
 use Webkul\Product\Models\Product;
 use Webkul\ProductPassport\Services\PassportFeature;
 use Webkul\ProductPassport\Services\PassportPayloadBuilder;
 use Webkul\ProductPassport\Services\PassportReadinessService;
-use Webkul\ProductPassport\View\Composers\PassportPanelComposer;
 use Webkul\Publication\DataTransferObjects\PublicationContext;
 use Webkul\Publication\Models\PublicationProxy;
 
@@ -20,9 +22,11 @@ class ProductPassportController extends Controller
     public function __construct(
         private readonly PassportFeature $feature,
         private readonly PassportReadinessService $readiness,
-        private readonly PassportPanelComposer $panel,
     ) {}
 
+    /**
+     * Return per-locale passport readiness for the product edit panel.
+     */
     public function show(Product $product): JsonResponse
     {
         abort_unless(bouncer()->hasPermission('catalog.passport.view'), 403);
@@ -38,21 +42,21 @@ class ProductPassportController extends Controller
             ->where('product_id', $product->id)
             ->where('channel_id', $channel->id)
             ->where('type', 'dpp')
-            ->with(['versions' => fn ($query) => $query->where('is_current', true)->with('locale')])
+            ->with(['versions' => fn (Relation $query) => $query->where('is_current', true)->with('locale')])
             ->first();
 
         $currentByLocale = $publication?->versions->keyBy('locale_id') ?? collect();
 
-        $readiness = $this->panel->readinessRows($product, $channel);
+        $readiness = $this->readiness->rowsFor($product, $channel);
 
-        $rows = $channel->locales->map(fn ($locale): array => [
+        $rows = $channel->locales->map(fn (Locale $locale): array => [
             'locale_id'   => $locale->id,
             'locale_code' => $locale->code,
             'version'     => $currentByLocale->get($locale->id)?->version,
             ...$readiness->get($locale->id),
         ]);
 
-        return new JsonResponse(['rows' => $rows]);
+        return new JsonResponse(['rows' => $rows, 'variants' => BadgeVariants::all()]);
     }
 
     /**

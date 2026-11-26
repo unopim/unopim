@@ -2,15 +2,12 @@
 
 namespace Webkul\ProductPassport\View\Composers;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\URL;
 use Illuminate\View\View;
 use Webkul\Core\Models\ChannelProxy;
+use Webkul\Core\Models\Locale;
 use Webkul\Product\Models\Product;
-use Webkul\ProductPassport\DataTransferObjects\PassportReadiness;
-use Webkul\ProductPassport\Enums\PassportFieldSource;
 use Webkul\ProductPassport\Services\PassportFeature;
 use Webkul\ProductPassport\Services\PassportReadinessService;
 use Webkul\Publication\Models\PublicationProxy;
@@ -31,6 +28,13 @@ class PassportPanelComposer
         private readonly PublicAccessGate $publicAccess,
     ) {}
 
+    /**
+     * Bind the passport panel's locale rows, links and counters to the product edit view.
+     *
+     * Signed operator/authority links are the only way to reveal those tiers, so they are minted
+     * server-side and only once a version is live. The preview link is admin-only and side-effect
+     * free, so it is offered whether or not a version exists yet.
+     */
     public function compose(View $view): void
     {
         $product = $view->getData()['product'];
@@ -54,7 +58,7 @@ class PassportPanelComposer
             ->where('product_id', $product->id)
             ->where('channel_id', $channel->id)
             ->where('type', 'dpp')
-            ->with(['versions' => fn ($query) => $query->where('is_current', true)->with('locale')])
+            ->with(['versions' => fn (Relation $query) => $query->where('is_current', true)->with('locale')])
             ->first();
 
         $currentByLocale = $publication?->versions->keyBy('locale_id') ?? collect();
@@ -69,9 +73,9 @@ class PassportPanelComposer
             ? null
             : route('publication.public.dpp.carrier', ['uuid' => $publication->uuid]);
 
-        $readiness = $this->readinessRows($product, $channel);
+        $readiness = $this->readiness->rowsFor($product, $channel);
 
-        $rows = $channel->locales->map(function ($locale) use ($product, $channel, $currentByLocale, $signedLink, $carrierLink, $readiness): array {
+        $rows = $channel->locales->map(function (Locale $locale) use ($product, $channel, $currentByLocale, $signedLink, $carrierLink, $readiness): array {
             $version = $currentByLocale->get($locale->id);
 
             return [
@@ -80,11 +84,9 @@ class PassportPanelComposer
                 'version'         => $version?->version,
                 'published_at'    => $version?->published_at,
                 ...$readiness->get($locale->id),
-                // Signed links are the only way to reveal operator/authority tiers; minted server-side, only once a version is live.
                 'operator_link'  => $version !== null ? $signedLink($locale->code, 'operator') : null,
                 'authority_link' => $version !== null ? $signedLink($locale->code, 'authority') : null,
                 'carrier_link'   => $version !== null ? $carrierLink : null,
-                // Admin-only, side-effect-free render of the current product data; available whether or not a version exists yet.
                 'preview_url'    => route('admin.catalog.products.passport.preview', [
                     'product'    => $product->id,
                     'channel_id' => $channel->id,
@@ -126,99 +128,5 @@ class PassportPanelComposer
                 ? route('admin.settings.system.edit', ['key' => 'digital_product_passport.publication'])
                 : null,
         ]);
-    }
-
-    /**
-     * What the panel needs to know about readiness, per locale id: whether the locale can be published, and
-     * which required fields are still missing (with a link to fix each). Shared by the initial render and the
-     * JSON endpoint the panel re-reads after the product form is saved, so both always agree.
-     *
-     * @return Collection<int, array{ready: bool, missing_count: ?int, missing_fields: list<array<string, mixed>>, template_url: ?string}>
-     */
-    public function readinessRows(Product $product, Model $channel): Collection
-    {
-        $assessments = $this->readiness->assessMany($product, $channel, $channel->locales);
-
-        $attributeGroupCodes = $this->attributeGroupCodes(
-            (int) $product->attribute_family_id,
-            $assessments
-                ->flatMap(fn (PassportReadiness $assessment): Collection => $assessment->missingFields)
-                ->where('source_type', PassportFieldSource::Attribute)
-                ->pluck('attribute_id')
-                ->filter()
-                ->map(fn ($id): int => (int) $id)
-                ->unique()
-                ->values()
-                ->all(),
-        );
-
-        $canEditTemplate = bouncer()->hasPermission('catalog.passport.template.edit');
-        $canViewTemplate = bouncer()->hasPermission('catalog.passport.template.view');
-
-        return $channel->locales->mapWithKeys(function ($locale) use ($product, $channel, $assessments, $attributeGroupCodes, $canEditTemplate, $canViewTemplate): array {
-            $assessment = $assessments->get($locale->id);
-            $templateEditUrl = $assessment->template !== null && $canEditTemplate
-                ? route('admin.catalog.passports.templates.edit', $assessment->template->id)
-                : null;
-            $missingFields = $assessment->missingFields->map(function ($field) use ($product, $channel, $locale, $attributeGroupCodes, $templateEditUrl): array {
-                $attributeId = $field->source_type === PassportFieldSource::Attribute
-                    ? (int) $field->attribute_id
-                    : null;
-                $groupCode = $attributeId !== null ? ($attributeGroupCodes[$attributeId] ?? null) : null;
-
-                return [
-                    'code'         => $field->code,
-                    'attribute_id' => $attributeId,
-                    'label'        => $field->getTranslatedValueWithFallback('label', $locale->code) ?: $field->code,
-                    'source'       => $field->source_type->label(),
-                    'action_url'   => $attributeId !== null && $groupCode !== null
-                        ? route('admin.catalog.products.edit', [
-                            'id'      => $product->id,
-                            'channel' => $channel->code,
-                            'locale'  => $locale->code,
-                            'group'   => $groupCode,
-                        ]).'#attribute-'.$attributeId
-                        : $templateEditUrl,
-                ];
-            })->all();
-
-            return [$locale->id => [
-                'ready'          => $assessment->isReady(),
-                'missing_count'  => $assessment->template === null ? null : count($missingFields),
-                'missing_fields' => $missingFields,
-                'template_url'   => $templateEditUrl
-                    ?? ($canViewTemplate
-                        ? route('admin.catalog.passports.templates.index')
-                        : null),
-            ]];
-        });
-    }
-
-    /**
-     * @param  list<int>  $attributeIds
-     * @return array<int, string>
-     */
-    private function attributeGroupCodes(int $familyId, array $attributeIds): array
-    {
-        if ($attributeIds === []) {
-            return [];
-        }
-
-        return DB::table('attribute_group_mappings as mappings')
-            ->join(
-                'attribute_family_group_mappings as family_groups',
-                'family_groups.id',
-                '=',
-                'mappings.attribute_family_group_id',
-            )
-            ->join('attribute_groups as groups', 'groups.id', '=', 'family_groups.attribute_group_id')
-            ->where('family_groups.attribute_family_id', $familyId)
-            ->whereIn('mappings.attribute_id', $attributeIds)
-            ->orderBy('family_groups.position')
-            ->orderBy('mappings.position')
-            ->get(['mappings.attribute_id', 'groups.code'])
-            ->unique('attribute_id')
-            ->mapWithKeys(fn ($row): array => [(int) $row->attribute_id => $row->code])
-            ->all();
     }
 }

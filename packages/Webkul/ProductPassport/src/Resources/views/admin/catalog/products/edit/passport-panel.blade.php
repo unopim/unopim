@@ -327,15 +327,24 @@
 
 @pushOnce('scripts')
 <script type="text/x-template" id="v-passport-missing-template">
-    <a
-        v-if="row.missing_count === null"
-        :href="row.template_url || undefined"
-        title="{{ trans('passport::app.templates.builder.edit') }}"
-    >
-        <x-admin::badge variant="danger">
+    <template v-if="row.missing_count === null">
+        <a
+            v-if="row.template_url"
+            :href="row.template_url"
+            title="{{ trans('passport::app.templates.builder.edit') }}"
+        >
+            <x-admin::badge variant="danger">
+                @lang('passport::app.catalog.products.edit.passport.missing-template')
+            </x-admin::badge>
+        </a>
+
+        <x-admin::badge
+            v-else
+            variant="danger"
+        >
             @lang('passport::app.catalog.products.edit.passport.missing-template')
         </x-admin::badge>
-    </a>
+    </template>
 
     <x-admin::dropdown
         v-else-if="row.missing_count > 0"
@@ -398,7 +407,6 @@
 </script>
 
 <script type="module">
-    {{-- One shared request per save, however many locale rows ask for it. --}}
     let inflight = null;
 
     app.component('v-passport-missing', {
@@ -436,9 +444,14 @@
             fetch() {
                 inflight ??= this.$axios.get(@json($passportReadinessUrl))
                     .then(({ data }) => {
-                        window.dispatchEvent(new CustomEvent('passport:readiness', { detail: data.rows }));
+                        window.dispatchEvent(new CustomEvent('passport:readiness', { detail: data }));
 
                         return data.rows;
+                    })
+                    .catch((error) => {
+                        this.$emitter.emit('add-flash', { type: 'error', message: @json(trans('admin::app.components.form.ajax-error')) });
+
+                        throw error;
                     })
                     .finally(() => { inflight = null; });
 
@@ -458,7 +471,6 @@
 
 <script>
     (function () {
-        {{-- Delegate on document, not #passport-panel: Vue's mount detaches a listener bound directly to the panel element. --}}
         var publishRoute = '{{ route('admin.catalog.passports.publish', $product->id) }}';
         var channelId    = {{ $passportChannel->id }};
         var csrfToken    = '{{ csrf_token() }}';
@@ -470,9 +482,9 @@
             window.app.config.globalProperties.$emitter?.emit('add-flash', { type: type, message: message });
         }
 
-        {{-- Re-reads readiness after the product form is saved (see v-passport-missing); the gates (public tier off, withdrawn) never change here, so gated buttons are left alone. --}}
         window.addEventListener('passport:readiness', function (event) {
-            var rows = event.detail || [];
+            var rows = (event.detail && event.detail.rows) || [];
+            var variants = (event.detail && event.detail.variants) || {};
             var publishLabel = @json(trans('passport::app.catalog.products.edit.passport.publish'));
             var blockedLabel = @json(trans('passport::app.catalog.products.edit.passport.publish-blocked'));
             var allLabel = @json(trans('passport::app.catalog.products.edit.passport.publish-all'));
@@ -488,23 +500,24 @@
                 button.title = row.ready ? publishLabel : blockedLabel;
             });
 
-            {{-- The "Required for DPP" badges next to attribute fields belong to the locale being edited. --}}
             var panel = document.getElementById('passport-panel');
             var current = panel ? rows.find(function (row) { return String(row.locale_id) === panel.dataset.currentLocaleId; }) : null;
 
             if (current && current.missing_count !== null) {
-                var missingIds = current.missing_fields.map(function (field) { return String(field.attribute_id); });
-                var variants = {
-                    danger: ['bg-red-100', 'text-red-700', 'dark:bg-red-900', 'dark:text-red-200'],
-                    info: ['bg-blue-100', 'text-blue-700', 'dark:bg-blue-900', 'dark:text-blue-200'],
-                };
+                var variantClasses = Object.keys(variants).reduce(function (all, name) {
+                    return all.concat(variants[name].split(' '));
+                }, []);
 
                 document.querySelectorAll('[data-requirement="dpp"][data-attribute-id]').forEach(function (badge) {
-                    var missing = missingIds.indexOf(badge.dataset.attributeId) !== -1;
+                    var indicator = current.requirements[badge.dataset.attributeId];
 
-                    badge.classList.remove.apply(badge.classList, variants[missing ? 'info' : 'danger']);
-                    badge.classList.add.apply(badge.classList, variants[missing ? 'danger' : 'info']);
-                    badge.title = missing ? blockedLabel : badge.textContent.trim();
+                    if (! indicator || ! variants[indicator.variant]) {
+                        return;
+                    }
+
+                    badge.classList.remove.apply(badge.classList, variantClasses);
+                    badge.classList.add.apply(badge.classList, variants[indicator.variant].split(' '));
+                    badge.title = indicator.title;
                 });
             }
 
@@ -519,7 +532,6 @@
             }
         });
 
-        {{-- A missing attribute that is already on this page is revealed in place; anything else (other locale, group not loaded yet) falls through to the link's normal navigation. --}}
         document.addEventListener('click', function (event) {
             var link = event.target.closest ? event.target.closest('a[data-passport-field-link]') : null;
             var panel = document.getElementById('passport-panel');
@@ -549,11 +561,7 @@
 
             window.app.config.globalProperties.$emitter?.emit('section-drawer:close', 'passport');
 
-            if (window.revealInvalidField) {
-                window.revealInvalidField(field);
-            } else {
-                field.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
+            window.revealInvalidField(field);
 
             setTimeout(function () {
                 var input = field.querySelector('input:not([type="hidden"]), textarea, select');

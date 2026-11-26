@@ -428,6 +428,35 @@ test.describe.serial('EU battery Digital Product Passport', { tag: '@global-stat
     await expect(page.getByText(/updated successfully|saved successfully/i).first()).toBeVisible();
   });
 
+  test('saving the product refreshes the passport count, publish buttons and badge in place', async ({ page }) => {
+    await page.goto(`/admin/catalog/products/edit/${fixture.product_id}`);
+    await closeAgentShell(page);
+
+    const capacity = page.locator('input[name="values[common][battery_rated_capacity]"]').first();
+    const badge = capacity.locator('xpath=ancestor::div[.//*[@data-requirement="dpp"]][1]').locator('[data-requirement="dpp"]').first();
+    const localeRow = page.locator('[data-section-id="passport"] tr[data-locale-code]').first();
+    const publish = localeRow.locator('.passport-publish-btn');
+    const missing = localeRow.getByRole('button', { name: 'Missing Fields' });
+    const save = async () => {
+      await page.getByRole('button', { name: /Save changes|Save Product/ }).last().click();
+      await expect(page.getByText(/updated successfully|saved successfully/i).first()).toBeVisible();
+    };
+
+    await capacity.fill('');
+    await save();
+
+    await expect(badge).toHaveClass(/bg-red-100/);
+    await expect(missing).toBeAttached();
+    await expect(publish).toBeDisabled();
+
+    await capacity.fill(CONSUMER_FIELD.value);
+    await save();
+
+    await expect(badge).toHaveClass(/bg-blue-100/);
+    await expect(missing).toHaveCount(0);
+    await expect(publish).toBeEnabled();
+  });
+
   test('keeps the locale table scroll inside the DPP drawer on mobile', async ({ page }) => {
     await page.setViewportSize({ width: 478, height: 860 });
     await page.goto(`/admin/catalog/products/edit/${fixture.product_id}`);
