@@ -14,6 +14,7 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
 use Symfony\Component\HttpFoundation\Response;
 use Webkul\AdminApi\Http\Controllers\API\ApiController;
+use Webkul\AdminApi\Http\Requests\Catalog\CategoryMediaRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\ProductMediaRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\StoreCategoryMediaRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\StoreProductMediaRequest;
@@ -93,7 +94,7 @@ class MediaFileController extends ApiController
             try {
                 $this->assignMediaToProductAttribute($product, $attribute, $filePath);
             } catch (ValidationException $e) {
-                $this->deleteFiles($storedPaths);
+                $this->deleteFiles($storedPaths, 'product/'.$productId.'/'.$attribute.'/');
 
                 return $this->validateErrorResponse($e->validator->errors()->messages());
             }
@@ -260,13 +261,8 @@ class MediaFileController extends ApiController
             return $this->modelNotFoundResponse(trans('admin::app.catalog.products.upload-failure'));
         }
 
-        $mediaFolder = 'product/'.$product->id.'/'.request('attribute').'/';
-
         try {
-            $this->deleteFiles(array_values(array_filter(
-                $stored,
-                fn (string $storedPath): bool => $this->isInsideFolder($storedPath, $mediaFolder),
-            )));
+            $this->deleteFiles($stored, 'product/'.$product->id.'/'.request('attribute').'/');
             Arr::forget($values, $path);
             $product->values = $values;
             $product->save();
@@ -280,7 +276,7 @@ class MediaFileController extends ApiController
     /**
      * Return the stored media path for a category field.
      */
-    public function getCategoryMedia(): JsonResponse
+    public function getCategoryMedia(CategoryMediaRequest $request): JsonResponse
     {
         $category = $this->categoryRepository->findOneByField('code', request('code'));
         if (! $category) {
@@ -298,7 +294,7 @@ class MediaFileController extends ApiController
     /**
      * Delete a category field's media file(s) from storage and clear the value.
      */
-    public function deleteCategoryMedia(): JsonResponse
+    public function deleteCategoryMedia(CategoryMediaRequest $request): JsonResponse
     {
         $category = $this->categoryRepository->findOneByField('code', request('code'));
         if (! $category) {
@@ -316,7 +312,7 @@ class MediaFileController extends ApiController
         }
 
         try {
-            $this->deleteFiles($stored);
+            $this->deleteFiles($stored, 'category/'.$category->id.'/'.$field.'/');
             Arr::forget($values, $key);
             $category->additional_data = $values;
             $category->save();
@@ -356,7 +352,7 @@ class MediaFileController extends ApiController
         }
 
         try {
-            $this->deleteFiles($stored);
+            $this->deleteFiles($stored, 'attribute_option/');
             $this->attributeOptionRepository->update(['swatch_value' => null], $option->id);
 
             return $this->successResponse(trans('admin::app.catalog.attribute-options.delete-success'));
@@ -442,12 +438,14 @@ class MediaFileController extends ApiController
     }
 
     /**
+     * Delete the stored files that sit inside the record's own media folder, leaving any other path on disk.
+     *
      * @param  array<int, string>  $paths
      */
-    private function deleteFiles(array $paths): void
+    private function deleteFiles(array $paths, string $folder): void
     {
         foreach ($paths as $path) {
-            if (Storage::exists($path)) {
+            if ($this->isInsideFolder($path, $folder) && Storage::exists($path)) {
                 Storage::delete($path);
             }
         }

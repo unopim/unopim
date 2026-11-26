@@ -2,9 +2,7 @@
 
 namespace Webkul\AdminApi\Http\Requests\Catalog;
 
-use Webkul\AdminApi\Http\Requests\ApiFormRequest;
-
-class StoreCategoryMediaRequest extends ApiFormRequest
+class StoreCategoryMediaRequest extends CategoryMediaRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -14,9 +12,8 @@ class StoreCategoryMediaRequest extends ApiFormRequest
     public function rules(): array
     {
         return [
-            'file'           => 'required',
-            'code'           => 'required',
-            'category_field' => 'required',
+            'file' => 'required',
+            ...parent::rules(),
         ];
     }
 }
