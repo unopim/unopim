@@ -26,7 +26,7 @@ class ModuleCollector extends DataCollector implements AssetProvider, DataCollec
 
     public function __construct(Dispatcher $events)
     {
-        $events->listen('eloquent.*', function ($event, $models): void {
+        $events->listen('eloquent.*', function (string $event, array $models): void {
             if (Str::contains($event, 'eloquent.retrieved')) {
                 foreach (array_filter($models) as $model) {
                     $class = $model::class;
@@ -36,8 +36,8 @@ class ModuleCollector extends DataCollector implements AssetProvider, DataCollec
             }
         });
 
-        $events->listen('composing:*', function ($view, $data = []): void {
-            $view = $data ? $data[0] : $view;
+        $events->listen('composing:*', function (string|object $view, array $data = []): void {
+            $view = $data !== [] ? $data[0] : $view;
 
             $this->views[] = $this->trimViewName($view->getName(), $view->getPath());
         });
@@ -247,7 +247,7 @@ class ModuleCollector extends DataCollector implements AssetProvider, DataCollec
     {
         return [
             'modules'       => [
-                'icon'    => 'cubes',
+                'icon'    => 'box',
                 'widget'  => 'PhpDebugBar.Widgets.ModulesWidget',
                 'map'     => 'modules',
                 'default' => '[]',
