@@ -174,7 +174,7 @@ class ApiKeysController extends Controller
 
         $apiKey = $this->apiKeyRepository->findOrFail($request->input('apiId'));
 
-        if (! $apiKey->admins?->isApiUser()) {
+        if ($apiKey->revoked || ! $apiKey->admins?->isApiUser()) {
             abort(404);
         }
 
@@ -207,7 +207,7 @@ class ApiKeysController extends Controller
 
         $client = $apiKey?->oauthClients;
 
-        if (! $client || ! $apiKey->admins?->isApiUser()) {
+        if (! $client || $apiKey->revoked || ! $apiKey->admins?->isApiUser()) {
             return new JsonResponse(['message' => trans('admin::app.configuration.integrations.client-not-found')], JsonResponse::HTTP_NOT_FOUND);
         }
 
@@ -242,7 +242,7 @@ class ApiKeysController extends Controller
 
         $robot = $apiKey->admins;
 
-        if (! $robot?->isApiUser()) {
+        if ($apiKey->revoked || ! $robot?->isApiUser()) {
             abort(404);
         }
 
