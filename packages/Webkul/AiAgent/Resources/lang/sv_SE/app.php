@@ -87,6 +87,7 @@ return [
         'create-success' => 'Autentiseringsuppgift skapad.',
         'update-success' => 'Autentiseringsuppgift uppdaterad.',
         'delete-success' => 'Autentiseringsuppgift borttagen.',
+        'delete-in-use'  => 'Dessa inloggningsuppgifter används av en eller flera agenter och kan inte tas bort.',
         'test-success'   => 'Anslutningen verifierades.',
         'test-failed'    => 'Anslutningen misslyckades. Kontrollera dina autentiseringsuppgifter.',
         'general'        => 'Allmänt',

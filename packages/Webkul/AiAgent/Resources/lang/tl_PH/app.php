@@ -87,6 +87,7 @@ return [
         'create-success' => 'Matagumpay na nalikha ang kredensyal.',
         'update-success' => 'Matagumpay na na-update ang kredensyal.',
         'delete-success' => 'Matagumpay na nabura ang kredensyal.',
+        'delete-in-use'  => 'Ginagamit ng isa o higit pang agent ang kredensyal na ito kaya hindi ito maaaring burahin.',
         'test-success'   => 'Matagumpay na na-verify ang koneksyon.',
         'test-failed'    => 'Nabigo ang koneksyon. Pakitingnan ang iyong mga kredensyal.',
         'general'        => 'Pangkalahatan',

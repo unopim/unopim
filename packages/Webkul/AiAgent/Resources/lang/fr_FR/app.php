@@ -87,6 +87,7 @@ return [
         'create-success' => 'Identifiant créé avec succès.',
         'update-success' => 'Identifiant mis à jour avec succès.',
         'delete-success' => 'Identifiant supprimé avec succès.',
+        'delete-in-use'  => 'Cet identifiant est utilisé par un ou plusieurs agents et ne peut pas être supprimé.',
         'test-success'   => 'Connexion vérifiée avec succès.',
         'test-failed'    => 'La connexion a échoué. Veuillez vérifier vos identifiants.',
         'general'        => 'Général',

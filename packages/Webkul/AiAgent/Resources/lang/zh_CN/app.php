@@ -87,6 +87,7 @@ return [
         'create-success' => '凭证创建成功。',
         'update-success' => '凭证更新成功。',
         'delete-success' => '凭证删除成功。',
+        'delete-in-use'  => '此凭据正被一个或多个智能体使用，无法删除。',
         'test-success'   => '连接验证成功。',
         'test-failed'    => '连接失败，请检查您的凭证。',
         'general'        => '常规',

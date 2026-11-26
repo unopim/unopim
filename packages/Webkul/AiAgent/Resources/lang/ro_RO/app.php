@@ -87,6 +87,7 @@ return [
         'create-success' => 'Acreditare creată cu succes.',
         'update-success' => 'Acreditare actualizată cu succes.',
         'delete-success' => 'Acreditare ștearsă cu succes.',
+        'delete-in-use'  => 'Această credențială este folosită de unul sau mai mulți agenți și nu poate fi ștearsă.',
         'test-success'   => 'Conexiune verificată cu succes.',
         'test-failed'    => 'Conexiunea a eșuat. Verificați acreditările.',
         'general'        => 'General',

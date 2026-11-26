@@ -87,6 +87,7 @@ return [
         'create-success' => 'Kimlik bilgisi başarıyla oluşturuldu.',
         'update-success' => 'Kimlik bilgisi başarıyla güncellendi.',
         'delete-success' => 'Kimlik bilgisi başarıyla silindi.',
+        'delete-in-use'  => 'Bu kimlik bilgisi bir veya daha fazla ajan tarafından kullanıldığı için silinemez.',
         'test-success'   => 'Bağlantı başarıyla doğrulandı.',
         'test-failed'    => 'Bağlantı başarısız oldu. Lütfen kimlik bilgilerinizi kontrol edin.',
         'general'        => 'Genel',

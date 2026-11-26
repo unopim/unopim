@@ -87,6 +87,7 @@ return [
         'create-success' => 'Credencial creada correctament.',
         'update-success' => 'Credencial actualitzada correctament.',
         'delete-success' => 'Credencial eliminada correctament.',
+        'delete-in-use'  => 'Aquesta credencial la fan servir un o més agents i no es pot eliminar.',
         'test-success'   => 'Connexió verificada correctament.',
         'test-failed'    => 'La connexió ha fallat. Si us plau, comproveu les vostres credencials.',
         'general'        => 'General',

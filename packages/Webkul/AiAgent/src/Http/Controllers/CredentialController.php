@@ -10,6 +10,7 @@ use Webkul\AiAgent\DataGrids\Credential\CredentialDataGrid;
 use Webkul\AiAgent\DTOs\CredentialConfig;
 use Webkul\AiAgent\Http\Client\AiApiClient;
 use Webkul\AiAgent\Http\Requests\CredentialForm;
+use Webkul\AiAgent\Repositories\AgentRepository;
 use Webkul\AiAgent\Repositories\CredentialRepository;
 
 class CredentialController extends Controller
@@ -17,6 +18,7 @@ class CredentialController extends Controller
     public function __construct(
         protected CredentialRepository $credentialRepository,
         protected AiApiClient $apiClient,
+        protected AgentRepository $agentRepository,
     ) {
         $this->middleware(function ($request, $next) {
             abort_unless(bouncer()->hasPermission('ai-agent.credentials'), 403, trans('ai-agent::app.common.unauthorized'));
@@ -116,6 +118,12 @@ class CredentialController extends Controller
      */
     public function destroy(int $id): JsonResponse
     {
+        if ($this->agentRepository->findWhere(['credentialId' => $id])->isNotEmpty()) {
+            return new JsonResponse([
+                'message' => trans('ai-agent::app.credentials.delete-in-use'),
+            ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
         $this->credentialRepository->delete($id);
 
         return new JsonResponse([

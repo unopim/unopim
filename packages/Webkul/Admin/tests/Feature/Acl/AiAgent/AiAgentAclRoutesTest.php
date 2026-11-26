@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Webkul\AiAgent\Models\Agent;
 use Webkul\AiAgent\Models\Credential;
 
 /**
@@ -131,6 +132,21 @@ it('redirects to the credentials listing after deleting a credential', function 
         ->assertJsonPath('redirect_url', route('ai-agent.credentials.index'));
 
     expect(Credential::query()->find($credential->id))->toBeNull();
+});
+
+it('refuses to delete a credential that agents still use', function (): void {
+    $this->loginWithPermissions(permissions: ['ai-agent', 'ai-agent.credentials']);
+
+    $credential = makeAiAgentCredential();
+
+    $agent = Agent::query()->create(['name' => 'Uses the credential', 'credentialId' => $credential->id]);
+
+    $this->deleteJson(route('ai-agent.credentials.destroy', $credential->id))
+        ->assertUnprocessable()
+        ->assertJsonPath('message', trans('ai-agent::app.credentials.delete-in-use'));
+
+    expect(Credential::query()->find($credential->id))->not->toBeNull()
+        ->and(Agent::query()->find($agent->id))->not->toBeNull();
 });
 
 it('forbids the credentials routes without the credentials permission', function (string $method, string $route, bool $withId): void {

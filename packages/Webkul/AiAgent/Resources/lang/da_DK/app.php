@@ -87,6 +87,7 @@ return [
         'create-success' => 'Legitimationsoplysning oprettet.',
         'update-success' => 'Legitimationsoplysning opdateret.',
         'delete-success' => 'Legitimationsoplysning slettet.',
+        'delete-in-use'  => 'Disse legitimationsoplysninger bruges af en eller flere agenter og kan ikke slettes.',
         'test-success'   => 'Forbindelse verificeret.',
         'test-failed'    => 'Forbindelse mislykkedes. Kontroller venligst dine legitimationsoplysninger.',
         'general'        => 'Generelt',

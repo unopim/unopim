@@ -87,6 +87,7 @@ return [
         'create-success' => 'Kredensial berhasil dibuat.',
         'update-success' => 'Kredensial berhasil diperbarui.',
         'delete-success' => 'Kredensial berhasil dihapus.',
+        'delete-in-use'  => 'Kredensial ini digunakan oleh satu atau beberapa agen dan tidak dapat dihapus.',
         'test-success'   => 'Koneksi berhasil diverifikasi.',
         'test-failed'    => 'Koneksi gagal. Silakan periksa kredensial Anda.',
         'general'        => 'Umum',

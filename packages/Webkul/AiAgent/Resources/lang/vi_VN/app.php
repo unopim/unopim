@@ -87,6 +87,7 @@ return [
         'create-success' => 'Thông tin xác thực đã được tạo thành công.',
         'update-success' => 'Thông tin xác thực đã được cập nhật thành công.',
         'delete-success' => 'Thông tin xác thực đã được xóa thành công.',
+        'delete-in-use'  => 'Thông tin xác thực này đang được một hoặc nhiều tác tử sử dụng nên không thể xóa.',
         'test-success'   => 'Kết nối đã được xác minh thành công.',
         'test-failed'    => 'Kết nối thất bại. Vui lòng kiểm tra thông tin xác thực của bạn.',
         'general'        => 'Chung',

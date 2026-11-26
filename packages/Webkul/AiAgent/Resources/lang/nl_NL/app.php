@@ -87,6 +87,7 @@ return [
         'create-success' => 'Inloggegevens succesvol aangemaakt.',
         'update-success' => 'Inloggegevens succesvol bijgewerkt.',
         'delete-success' => 'Inloggegevens succesvol verwijderd.',
+        'delete-in-use'  => 'Deze inloggegevens worden door een of meer agents gebruikt en kunnen niet worden verwijderd.',
         'test-success'   => 'Verbinding succesvol geverifieerd.',
         'test-failed'    => 'Verbinding mislukt. Controleer je inloggegevens.',
         'general'        => 'Algemeen',
