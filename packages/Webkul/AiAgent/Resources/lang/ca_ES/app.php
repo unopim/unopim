@@ -77,6 +77,7 @@ return [
         'no-platform'                   => 'No s\'ha configurat cap plataforma d\'IA. Si us plau, configureu una plataforma a la configuració de Magic AI.',
         'process-attached-files'        => 'Processar els fitxers adjunts.',
         'token-budget-exhausted'        => 'S\'ha esgotat el pressupost diari de tokens d\'IA (:used/:budget tokens). El pressupost es restablirà demà. Contacteu amb l\'administrador per augmentar el límit.',
+        'rollback-nothing-restored'     => 'No hi ha res a desfer: el producte ja no existeix, els valors generats s’han modificat des de llavors o aquest canvi no té valors desats per restaurar.',
     ],
 
     'credentials' => [

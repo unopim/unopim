@@ -77,6 +77,7 @@ return [
         'no-platform'                   => 'Walang naka-configure na AI platform. Mag-set up ng platform sa mga setting ng Magic AI.',
         'process-attached-files'        => 'Iproseso ang mga nakakabit na file.',
         'token-budget-exhausted'        => 'Naubos na ang pang-araw-araw na AI token budget (:used/:budget tokens). Mare-reset ang budget bukas. Makipag-ugnayan sa iyong administrator upang dagdagan ang limitasyon.',
+        'rollback-nothing-restored'     => 'Walang maibabalik: wala na ang produkto, binago na mula noon ang mga nabuong value, o walang naka-save na value ang pagbabagong ito na maibabalik.',
     ],
 
     'credentials' => [

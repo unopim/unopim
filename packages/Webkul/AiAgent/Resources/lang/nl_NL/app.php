@@ -77,6 +77,7 @@ return [
         'no-platform'                   => 'Geen AI-platform geconfigureerd. Stel een platform in via de Magic AI-instellingen.',
         'process-attached-files'        => 'Verwerk de bijgevoegde bestanden.',
         'token-budget-exhausted'        => 'Dagelijks AI-tokenbudget uitgeput (:used/:budget tokens). Het budget wordt morgen gereset. Neem contact op met je beheerder om de limiet te verhogen.',
+        'rollback-nothing-restored'     => 'Niets om terug te draaien: het product bestaat niet meer, de gegenereerde waarden zijn sindsdien bewerkt of deze wijziging heeft geen opgeslagen waarden om te herstellen.',
     ],
 
     'credentials' => [

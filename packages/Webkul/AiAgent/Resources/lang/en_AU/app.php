@@ -77,6 +77,7 @@ return [
         'no-platform'                   => 'No AI platform configured. Please set up a platform in Magic AI settings.',
         'process-attached-files'        => 'Process the attached file(s).',
         'token-budget-exhausted'        => 'Daily AI token budget exhausted (:used/:budget tokens). Budget resets tomorrow. Contact your administrator to increase the limit.',
+        'rollback-nothing-restored'     => 'Nothing to roll back: the product no longer exists, its generated values were edited since, or this change has no stored values to restore.',
     ],
 
     'credentials' => [

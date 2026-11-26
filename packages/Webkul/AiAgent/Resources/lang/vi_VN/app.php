@@ -77,6 +77,7 @@ return [
         'no-platform'                   => 'Chưa cấu hình nền tảng AI. Vui lòng thiết lập nền tảng trong cài đặt Magic AI.',
         'process-attached-files'        => 'Xử lý (các) tệp đính kèm.',
         'token-budget-exhausted'        => 'Ngân sách token AI hàng ngày đã hết (:used/:budget token). Ngân sách sẽ được đặt lại vào ngày mai. Liên hệ quản trị viên để tăng giới hạn.',
+        'rollback-nothing-restored'     => 'Không có gì để hoàn tác: sản phẩm không còn tồn tại, các giá trị được tạo đã bị chỉnh sửa sau đó, hoặc thay đổi này không có giá trị đã lưu để khôi phục.',
     ],
 
     'credentials' => [

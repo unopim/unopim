@@ -129,3 +129,42 @@ it('keeps the existing name when only the description was generated', function (
 
     expect(storedProductValues($product->id)['channel_locale_specific']['default']['en_US'])->toBe(['name' => 'Existing name']);
 });
+
+it('keeps an ai value someone edited after the enrichment', function (): void {
+    $product = Product::factory()->simple()->withInitialValues()->create();
+
+    runAutoEnrich($product, ['name' => 'AI name', 'description' => '<p>AI description</p>']);
+
+    $values = storedProductValues($product->id);
+    $values['channel_locale_specific']['default']['en_US']['name'] = 'Edited by hand';
+    DB::table('products')->where('id', $product->id)->update(['values' => json_encode($values)]);
+
+    rollBackLatestAutoEnrich();
+
+    expect(storedProductValues($product->id)['channel_locale_specific']['default']['en_US'])->toBe(['name' => 'Edited by hand']);
+});
+
+it('refuses the rollback and keeps the changeset applied when nothing can be restored', function (Closure $breakChangeset): void {
+    $product = Product::factory()->simple()->withInitialValues()->create();
+
+    runAutoEnrich($product, ['name' => 'AI name']);
+
+    $changesetId = DB::table('ai_agent_changesets')->latest('id')->value('id');
+
+    $breakChangeset($product, $changesetId);
+
+    $this->postJson(route('ai-agent.dashboard.rollback', $changesetId))
+        ->assertUnprocessable()
+        ->assertJsonPath('message', trans('ai-agent::app.common.rollback-nothing-restored'));
+
+    expect(DB::table('ai_agent_changesets')->where('id', $changesetId)->value('status'))->toBe('applied');
+})->with([
+    'product deleted' => [function (Product $product): void {
+        DB::table('products')->where('id', $product->id)->delete();
+    }],
+    'changeset without stored values' => [function (Product $product, int $changesetId): void {
+        $changes = json_decode((string) DB::table('ai_agent_changesets')->where('id', $changesetId)->value('changes'), true);
+        unset($changes['previous_values']);
+        DB::table('ai_agent_changesets')->where('id', $changesetId)->update(['changes' => json_encode($changes)]);
+    }],
+]);

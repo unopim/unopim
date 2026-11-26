@@ -77,6 +77,7 @@ return [
         'no-platform'                   => 'AI platformu yapılandırılmamış. Lütfen Magic AI ayarlarında bir platform kurun.',
         'process-attached-files'        => 'Eklenen dosyaları işle.',
         'token-budget-exhausted'        => 'Günlük AI token bütçesi tükendi (:used/:budget token). Bütçe yarın sıfırlanacaktır. Limiti artırmak için yöneticinizle iletişime geçin.',
+        'rollback-nothing-restored'     => 'Geri alınacak bir şey yok: ürün artık mevcut değil, oluşturulan değerler o zamandan beri düzenlendi veya bu değişiklikte geri yüklenecek kayıtlı değer yok.',
     ],
 
     'credentials' => [

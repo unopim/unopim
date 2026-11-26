@@ -77,6 +77,7 @@ return [
         'no-platform'                   => 'Ingen AI-plattform konfigurert. Vennligst sett opp en plattform i Magic AI-innstillingene.',
         'process-attached-files'        => 'Behandle vedlagte filer.',
         'token-budget-exhausted'        => 'Daglig AI-tokenbudsjett oppbrukt (:used/:budget tokens). Budsjettet tilbakestilles i morgen. Kontakt administratoren for å øke grensen.',
+        'rollback-nothing-restored'     => 'Ingenting å tilbakestille: Produktet finnes ikke lenger, de genererte verdiene er redigert siden, eller endringen har ingen lagrede verdier å gjenopprette.',
     ],
 
     'credentials' => [

@@ -77,6 +77,7 @@ return [
         'no-platform'                   => 'Nie skonfigurowano platformy AI. Skonfiguruj platformę w ustawieniach Magic AI.',
         'process-attached-files'        => 'Przetwórz załączone pliki.',
         'token-budget-exhausted'        => 'Dzienny budżet tokenów AI wyczerpany (:used/:budget tokenów). Budżet zostanie zresetowany jutro. Skontaktuj się z administratorem, aby zwiększyć limit.',
+        'rollback-nothing-restored'     => 'Nie ma czego wycofać: produkt już nie istnieje, wygenerowane wartości zostały od tego czasu zmienione lub ta zmiana nie ma zapisanych wartości do przywrócenia.',
     ],
 
     'credentials' => [

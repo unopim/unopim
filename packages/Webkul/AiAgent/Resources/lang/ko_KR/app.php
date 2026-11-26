@@ -77,6 +77,7 @@ return [
         'no-platform'                   => 'AI 플랫폼이 구성되지 않았습니다. Magic AI 설정에서 플랫폼을 설정해 주세요.',
         'process-attached-files'        => '첨부된 파일을 처리합니다.',
         'token-budget-exhausted'        => '일일 AI 토큰 예산이 소진되었습니다 (:used/:budget 토큰). 예산은 내일 초기화됩니다. 한도를 늘리려면 관리자에게 문의하세요.',
+        'rollback-nothing-restored'     => '롤백할 내용이 없습니다. 제품이 더 이상 없거나, 생성된 값이 이후에 수정되었거나, 이 변경에 복원할 값이 저장되어 있지 않습니다.',
     ],
 
     'credentials' => [

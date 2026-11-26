@@ -77,6 +77,7 @@ return [
         'no-platform'                   => 'AI プラットフォームが設定されていません。Magic AI 設定でプラットフォームを設定してください。',
         'process-attached-files'        => '添付ファイルを処理します。',
         'token-budget-exhausted'        => '1日のAIトークン予算を使い切りました（:used/:budget トークン）。予算は明日リセットされます。上限を引き上げるには管理者にお問い合わせください。',
+        'rollback-nothing-restored'     => 'ロールバックできる内容がありません。商品が存在しないか、生成された値がその後編集されたか、この変更には復元する値が保存されていません。',
     ],
 
     'credentials' => [
