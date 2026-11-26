@@ -122,8 +122,9 @@ it('refuses to regenerate the secret of a deleted integration', function (): voi
         ->assertNotFound()
         ->assertJson(['message' => trans('admin::app.configuration.integrations.client-not-found')]);
 
-    expect($apiKey->revoked)->toBeTrue()
-        ->and(regenerateSecretStoredHash($client))->toBe($storedHash);
+    $this->assertDatabaseHas($apiKey->getTable(), ['id' => $apiKey->id, 'revoked' => true]);
+
+    expect(regenerateSecretStoredHash($client))->toBe($storedHash);
 });
 
 it('refuses to generate a new client for a deleted integration', function (): void {
