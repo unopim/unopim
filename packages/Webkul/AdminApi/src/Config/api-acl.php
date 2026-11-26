@@ -516,10 +516,10 @@ return [
         'route' => 'admin.api.passports.withdraw',
         'sort'  => 9,
     ], [
-        'key'   => 'api.catalog.passports.publish',
-        'name'  => 'admin::app.acl.publish',
+        'key'   => 'api.catalog.passports.withdraw',
+        'name'  => 'admin::app.acl.withdraw',
         'route' => 'admin.api.passports.reinstate',
-        'sort'  => 8,
+        'sort'  => 9,
     ], [
         'key'   => 'api.catalog.passports.redact',
         'name'  => 'admin::app.acl.redact',

@@ -13,6 +13,9 @@ function enablePassport(): void
     );
 }
 
+/**
+ * Create a published publication with a current version.
+ */
 function publishedPublicationWithCurrentVersion(): Publication
 {
     $publication = Publication::factory()->create(['status' => PublicationStatus::Published]);
@@ -78,7 +81,7 @@ it('rejects redacting a publication with no current versions', function () {
         ->assertStatus(422);
 });
 
-it('forbids reinstate without publish permission', function () {
+it('forbids reinstate with a view-only key', function () {
     $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.passports']);
     $publication = Publication::factory()->create(['status' => PublicationStatus::Withdrawn]);
 
@@ -92,6 +95,33 @@ it('maps redact to its own scope key, distinct from withdraw', function (): void
 
     expect($roles['admin.api.passports.redact'])->toBe('api.catalog.passports.redact')
         ->and($roles['admin.api.passports.withdraw'])->toBe('api.catalog.passports.withdraw');
+});
+
+it('authorises reinstate with the withdraw scope, like the admin panel', function (): void {
+    expect(app('api-acl')->roles['admin.api.passports.reinstate'])->toBe('api.catalog.passports.withdraw');
+});
+
+it('forbids reinstate with a publish-only key and keeps the passport withdrawn', function (): void {
+    $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.passports.publish']);
+    $publication = Publication::factory()->create(['status' => PublicationStatus::Withdrawn]);
+
+    $this->withHeaders($headers)
+        ->json('POST', route('admin.api.passports.reinstate', $publication->id))
+        ->assertForbidden();
+
+    expect($publication->fresh()->status)->toBe(PublicationStatus::Withdrawn);
+});
+
+it('reinstates with a withdraw-only key', function (): void {
+    $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.passports.withdraw']);
+    $publication = Publication::factory()->create(['status' => PublicationStatus::Withdrawn]);
+
+    $this->withHeaders($headers)
+        ->json('POST', route('admin.api.passports.reinstate', $publication->id))
+        ->assertOk()
+        ->assertJson(['success' => true]);
+
+    expect($publication->fresh()->status)->toBe(PublicationStatus::Published);
 });
 
 it('forbids redact with a withdraw-only key and keeps the payload', function (): void {

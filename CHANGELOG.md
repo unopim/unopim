@@ -10,7 +10,7 @@
 - AI agent tools and Magic AI endpoints that write data now require the matching create or edit permission instead of the view permission of the area: creating attributes and families, adding attribute options, rolling back an AI changeset, saving Magic AI translations, the Magic AI settings, export links and memories stored for every user.
 - Editing roles and users, and importing them, can no longer leave the installation without an active user holding full access. An admin can only manage users whose current role they could assign, and role and user imports require role and user rights.
 - Fixed the job tracker archive download listing every file on the private disk when a job track had no file path; it now returns 404.
-- Redacting a passport through the API now needs its own Redact permission instead of Withdraw.
+- Redacting a passport through the API now needs its own Redact permission instead of Withdraw, and reinstating needs Withdraw instead of Publish, as in the admin panel.
 
 ## New features
 
@@ -38,7 +38,7 @@
 
 ## Bug fixes
 
-- Fixed the API passport publish endpoint returning 202 for requests the admin refuses. It now returns 422, like the admin.
+- Fixed the API passport publish endpoint returning 202 for requests the admin refuses. It now returns 422, like the admin, and rejects locales that do not belong to the channel.
 - Fixed `php artisan db:seed` deleting custom attributes, attribute groups, options, families, categories, channels, locales, currencies and admin users on an existing install, and failing once products existed. It now keeps existing data: it adds back any missing default attributes, attribute groups, options and default family mappings, fills the other tables only when they are empty, and no longer duplicates the Magic AI prompts or recreates measurement families. Use `unopim:install` to reset to defaults.
 - Fixed saving a new export failing with "The File Format field is required" after changing its job type. Filters that the new job type also supports, such as the file format, are now kept.
 - Fixed exports in the XLS format writing an XLSX workbook with an `.xls` name, which Excel opened with a format warning. The file is now a genuine Excel 97-2003 workbook. An XLS export is rejected before any batch runs when it needs more than 65,536 rows, 256 columns or 500,000 cells, the most that can be converted within a queue worker's timeout and memory, and the export is marked as failed with the reason. Larger product exports, such as about 3,300 products with 150 columns in one channel and locale, that previously produced the mislabelled XLSX file must use the XLSX or CSV format.

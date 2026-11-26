@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Webkul\Core\Models\ChannelProxy;
 use Webkul\Product\Models\Product;
 use Webkul\ProductPassport\DataGrids\Catalog\PublicationDataGrid;
+use Webkul\ProductPassport\DataTransferObjects\PassportPublishRefusal;
 use Webkul\ProductPassport\Http\Requests\BulkPublishPassportRequest;
 use Webkul\ProductPassport\Http\Requests\MassPublishPassportRequest;
 use Webkul\ProductPassport\Http\Requests\MassTransitionPassportRequest;
@@ -17,7 +18,7 @@ use Webkul\ProductPassport\Http\Requests\RepublishPassportVersionRequest;
 use Webkul\ProductPassport\Jobs\BulkPublishPassportsJob;
 use Webkul\ProductPassport\Jobs\BulkTransitionPassportsJob;
 use Webkul\ProductPassport\Services\PassportFeature;
-use Webkul\ProductPassport\Services\PassportReadinessService;
+use Webkul\ProductPassport\Services\PassportPublishGuard;
 use Webkul\Publication\Enums\PublicationStatus;
 use Webkul\Publication\Enums\PublishAttemptStatus;
 use Webkul\Publication\Exceptions\InvalidPublicationTransitionException;
@@ -36,8 +37,8 @@ class PublicationController extends Controller
 
     public function __construct(
         private readonly PassportFeature $feature,
-        private readonly PassportReadinessService $readiness,
         private readonly PublicAccessGate $publicAccess,
+        private readonly PassportPublishGuard $publishGuard,
     ) {}
 
     public function index(): View|JsonResponse|BinaryFileResponse
@@ -85,62 +86,15 @@ class PublicationController extends Controller
             trans('passport::app.catalog.products.edit.passport.publishing-disabled'),
         );
 
-        if (! $this->publicAccess->enabledForChannel($channel->code)) {
-            return new JsonResponse([
-                'message' => trans('passport::app.publications.public-access-disabled'),
-            ], 422);
-        }
-
         $localeIds = $request->collect('locale_ids')
-            ->map(fn ($id): int => (int) $id)
+            ->map(fn (mixed $id): int => (int) $id)
             ->values()
             ->all();
 
-        $locales = $channel->locales()
-            ->whereIn('locales.id', $localeIds)
-            ->get();
+        $refusal = $this->publishGuard->refusal($product, $channel, $localeIds);
 
-        $assessments = $this->readiness->assessMany($product, $channel, $locales);
-
-        $blockedLocales = $locales
-            ->map(function ($locale) use ($assessments): array {
-                $assessment = $assessments->get($locale->id);
-
-                return [
-                    'locale_code'    => $locale->code,
-                    'status'         => $assessment->template === null ? 'missing_template' : 'missing_fields',
-                    'missing_fields' => $assessment->missingFields
-                        ->map(fn ($field): array => [
-                            'code'   => $field->code,
-                            'label'  => $field->getTranslatedValueWithFallback('label', $locale->code) ?: $field->code,
-                            'source' => $field->source_type->value,
-                        ])
-                        ->all(),
-                    'ready' => $assessment->isReady(),
-                ];
-            })
-            ->where('ready', false)
-            ->values()
-            ->map(function (array $locale): array {
-                unset($locale['ready']);
-
-                return $locale;
-            });
-
-        if ($blockedLocales->isNotEmpty()) {
-            return new JsonResponse([
-                'message'         => trans('passport::app.catalog.products.edit.passport.publish-blocked'),
-                'errors'          => [
-                    'locale_ids' => [trans('passport::app.catalog.products.edit.passport.publish-blocked')],
-                ],
-                'blocked_locales' => $blockedLocales,
-            ], 422);
-        }
-
-        if (! $this->publicationAcceptsPublishing($product->id, $channel->id)) {
-            return new JsonResponse([
-                'message' => trans('passport::app.publications.publish-withdrawn'),
-            ], 422);
+        if ($refusal instanceof PassportPublishRefusal) {
+            return new JsonResponse($refusal->toArray(), 422);
         }
 
         $adminId = auth()->guard('admin')->id();
@@ -375,21 +329,6 @@ class PublicationController extends Controller
                 ['count' => $total],
             ),
         ]);
-    }
-
-    /**
-     * Whether the product's passport for this channel can still take new versions.
-     * A passport that does not exist yet is publishable — publish() creates it.
-     */
-    private function publicationAcceptsPublishing(int $productId, int $channelId): bool
-    {
-        $status = Publication::query()
-            ->where('product_id', $productId)
-            ->where('channel_id', $channelId)
-            ->where('type', 'dpp')
-            ->value('status');
-
-        return ! $status instanceof PublicationStatus || $status->acceptsNewVersions();
     }
 
     /**

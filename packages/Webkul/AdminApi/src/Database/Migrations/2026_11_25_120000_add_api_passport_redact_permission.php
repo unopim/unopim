@@ -27,6 +27,11 @@ return new class extends Migration
         });
     }
 
+    /**
+     * Run the callback for every custom api key with its decoded permissions.
+     *
+     * @param  callable(object, array<int, string>): void  $callback
+     */
     private function eachCustomKey(callable $callback): void
     {
         DB::table('api_keys')
@@ -41,6 +46,11 @@ return new class extends Migration
             });
     }
 
+    /**
+     * Save the given permissions on the api key.
+     *
+     * @param  array<int, string>  $permissions
+     */
     private function store(object $apiKey, array $permissions): void
     {
         DB::table('api_keys')

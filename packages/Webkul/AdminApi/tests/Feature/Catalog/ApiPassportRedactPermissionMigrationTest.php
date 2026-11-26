@@ -34,7 +34,11 @@ function passportApiKeyPermissions(int $id): mixed
     return $raw === null ? null : json_decode($raw, true);
 }
 
-/** One api key per backfill scenario, keyed by scenario. */
+/**
+ * One api key per backfill scenario, keyed by scenario.
+ *
+ * @return array<string, int>
+ */
 function seedPassportApiKeys(): array
 {
     return [

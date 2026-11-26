@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
+use Illuminate\Testing\TestResponse;
 use Webkul\Attribute\Models\AttributeFamilyProxy;
 use Webkul\Attribute\Models\AttributeProxy;
 use Webkul\Core\Models\Channel;
@@ -14,6 +15,8 @@ use Webkul\ProductPassport\Models\PassportTemplate;
 use Webkul\Publication\Enums\PublicationStatus;
 use Webkul\Publication\Jobs\PublishPassportForProductChannelJob;
 use Webkul\Publication\Models\Publication;
+use Webkul\User\Models\Admin;
+use Webkul\User\Models\Role;
 
 function enablePassportFeatureGlobally(): void
 {
@@ -32,14 +35,18 @@ function setApiPassportPublicTier(string $channelCode, bool $enabled): void
     );
 }
 
-/** A channel with one locale, the passport feature on and the public tier on. */
+/**
+ * A channel with one locale, the passport feature on and the public tier on.
+ *
+ * @return array{0: Channel, 1: Locale}
+ */
 function apiPassportChannel(): array
 {
     enablePassportFeatureGlobally();
 
     $channel = ChannelProxy::factory()->create();
     $locale = $channel->locales()->first()
-        ?: tap(Locale::factory()->create(), fn ($createdLocale) => $channel->locales()->attach($createdLocale));
+        ?: tap(Locale::factory()->create(), fn (Locale $createdLocale): mixed => $channel->locales()->attach($createdLocale));
 
     setApiPassportPublicTier($channel->code, true);
 
@@ -91,8 +98,12 @@ function apiPassportProduct(bool $withTemplate = true, bool $filled = true, ?str
     return ProductProxy::factory()->create(['attribute_family_id' => $family->id, 'values' => $values]);
 }
 
-/** Posts an API publish request for the product. */
-function postApiPassportPublish(mixed $test, Product $product, int $channelId, array $localeIds): mixed
+/**
+ * Posts an API publish request for the product.
+ *
+ * @param  array<int, int>  $localeIds
+ */
+function postApiPassportPublish(mixed $test, Product $product, int $channelId, array $localeIds): TestResponse
 {
     return $test->withHeaders($test->headers)
         ->json('POST', route('admin.api.passports.publish', $product->sku), [
@@ -198,6 +209,37 @@ it('refuses to publish a withdrawn or redacted passport', function (PublicationS
     'withdrawn' => [PublicationStatus::Withdrawn],
     'redacted'  => [PublicationStatus::Redacted],
 ]);
+
+it('refuses with the same body as the admin publish', function (string $case): void {
+    [$channel, $locale] = apiPassportChannel();
+    $product = apiPassportProduct(filled: $case !== 'blocked locale');
+
+    match ($case) {
+        'public tier off' => setApiPassportPublicTier($channel->code, false),
+        'withdrawn'       => Publication::factory()->create(['product_id' => $product->id, 'channel_id' => $channel->id, 'type' => 'dpp', 'status' => PublicationStatus::Withdrawn]),
+        default           => null,
+    };
+
+    Queue::fake();
+
+    $admin = Admin::factory()->create(['role_id' => Role::factory()->create(['permission_type' => 'all'])->id]);
+
+    $adminBody = $this->actingAs($admin, 'admin')
+        ->postJson(route('admin.catalog.passports.publish', $product->id), ['channel_id' => $channel->id, 'locale_ids' => [$locale->id]])
+        ->assertUnprocessable()
+        ->json();
+
+    $apiBody = postApiPassportPublish($this, $product, $channel->id, [$locale->id])
+        ->assertUnprocessable()
+        ->assertJsonPath('success', false)
+        ->json();
+
+    unset($apiBody['success']);
+
+    expect($apiBody)->toBe($adminBody);
+
+    Queue::assertNotPushed(PublishPassportForProductChannelJob::class);
+})->with(['public tier off', 'blocked locale', 'withdrawn']);
 
 it('validates the publish payload', function () {
     enablePassportFeatureGlobally();
