@@ -32,6 +32,8 @@ return [
                     'incorrect-family-for-variant'             => 'Gia đình phải giống như gia đình chính',
                     'parent-not-exist'                         => 'Cha mẹ không tồn tại.',
                     'variant-structure-not-found'              => 'Cấu trúc biến thể :code không tồn tại cho họ thuộc tính này.',
+                    'variant-structure-levels-mismatch'        => 'Cấu trúc biến thể :code chỉ có một cấp nên không thể chứa các dòng variant_group. Hãy đặt số cấp thành 2 hoặc nhập các biến thể dưới dạng sản phẩm đơn giản thuộc sản phẩm có thể cấu hình.',
+                    'variant-structure-two-levels-mismatch'    => 'Cấu trúc biến thể :code có hai cấp, vì vậy các dòng sản phẩm đơn giản phải nằm dưới một dòng variant_group, không nằm trực tiếp dưới sản phẩm có thể cấu hình.',
                 ],
             ],
         ],
@@ -59,6 +61,7 @@ return [
                     'duplicate-code'                       => 'Mã thuộc tính :code đã được sử dụng.',
                     'code_not_found_to_delete'             => 'Không tìm thấy mã thuộc tính để xóa.',
                     'code_is_system_and_cannot_be_deleted' => 'Không thể xóa thuộc tính hệ thống.',
+                    'templates-unsupported'                => 'Chỉ có thể bật mẫu cho các thuộc tính văn bản và văn bản lớn không có xác thực nhập liệu và không phải là duy nhất.',
                 ],
             ],
         ],
@@ -174,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Bản xuất này quá lớn để chạy: ước tính :rows hàng × :columns cột (~:estimated) vượt quá dung lượng khả dụng (~:available). Hãy thu hẹp bản xuất bằng cách chọn ít kênh/ngôn ngữ (và thuộc tính) hơn rồi thử lại.',
-        'fields'           => [
+        'export-too-large'      => 'Bản xuất này quá lớn để chạy: ước tính :rows hàng × :columns cột (~:estimated) vượt quá dung lượng khả dụng (~:available). Hãy thu hẹp bản xuất bằng cách chọn ít kênh/ngôn ngữ (và thuộc tính) hơn rồi thử lại.',
+        'xls-too-many-columns'  => 'Bản xuất này có hơn :limit cột, mức tối đa mà tệp XLS có thể chứa. Hãy chọn XLSX hoặc CSV, hoặc chọn ít thuộc tính hơn, rồi thử lại.',
+        'xls-too-many-rows'     => 'Bản xuất này có hơn :limit hàng, mức tối đa mà tệp XLS có thể chứa. Hãy chọn XLSX hoặc CSV, hoặc thu hẹp bản xuất, rồi thử lại.',
+        'xls-too-large'         => 'Bản xuất này quá lớn để chuyển đổi sang XLS: :rows hàng × :columns cột vượt quá :limit ô mà máy chủ này có thể chuyển đổi. Hãy chọn XLSX hoặc CSV, hoặc thu hẹp bản xuất, rồi thử lại.',
+        'xls-conversion-failed' => 'Không thể thay thế tệp xuất bằng phiên bản XLS của nó. Hãy thử lại, hoặc chọn XLSX hoặc CSV.',
+        'fields'                => [
             'file-format'            => 'Định dạng tệp',
             'with-media'             => 'Kèm phương tiện',
             'with-associations'      => 'Kèm liên kết',
@@ -184,6 +191,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'Kết xuất mẫu',
+            'render-templates-info'  => 'Xuất giá trị mẫu đã kết xuất thay vì mã nguồn mẫu gốc. Nhập lại tệp đã kết xuất sẽ thay thế mã nguồn mẫu đã lưu bằng văn bản thuần.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
@@ -308,10 +317,11 @@ return [
         ],
     ],
     'job' => [
-        'started'   => 'Bắt đầu công việc',
-        'completed' => 'Công việc đã hoàn thành',
-        'stalled'   => 'Tác vụ đã ngừng phản hồi hơn :minutes phút và được đánh dấu là thất bại. Tiến trình chạy nó nhiều khả năng đã bị dừng.',
-        'reaped'    => 'Đã đánh dấu :count tác vụ bị treo là thất bại.',
-        'stopped'   => 'Đã dừng nhập sau khi xác thực có :count lỗi. Không có dòng nào được nhập.',
+        'started'         => 'Bắt đầu công việc',
+        'completed'       => 'Công việc đã hoàn thành',
+        'stalled'         => 'Tác vụ đã ngừng phản hồi hơn :minutes phút và được đánh dấu là thất bại. Tiến trình chạy nó nhiều khả năng đã bị dừng.',
+        'reaped'          => 'Đã đánh dấu :count tác vụ bị treo là thất bại.',
+        'stopped'         => 'Đã dừng nhập sau khi xác thực có :count lỗi. Không có dòng nào được nhập.',
+        'module-disabled' => 'Loại tác vụ :type thuộc về một mô-đun nền tảng đang bị tắt nên không thể chạy.',
     ],
 ];

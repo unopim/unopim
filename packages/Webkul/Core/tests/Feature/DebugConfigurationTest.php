@@ -1,5 +1,6 @@
 <?php
 
+use Fruitcake\LaravelDebugbar\LaravelDebugbar;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -38,7 +39,10 @@ it('enables debug for an allow-listed IP when IP-based debug is on', function ()
         fn ($request) => response('ok')
     );
 
-    expect(config('app.debug'))->toBeTrue();
+    expect(config('app.debug'))->toBeTrue()
+        ->and(app(LaravelDebugbar::class)->isEnabled())->toBeTrue();
+
+    app(LaravelDebugbar::class)->disable();
 });
 
 it('does not enable debug for a non allow-listed IP', function () {

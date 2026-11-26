@@ -28,6 +28,10 @@
 
 <div {{ $headerAttributes->merge(['class' => 'flex min-h-9 items-center justify-between gap-4 max-sm:flex-wrap']) }}>
     <x-admin::page-title :title="$title" :breadcrumb="$breadcrumb">
+        @isset($heading)
+            <x-slot:heading>{{ $heading }}</x-slot>
+        @endisset
+
         {{ $subtitle ?? '' }}
     </x-admin::page-title>
 

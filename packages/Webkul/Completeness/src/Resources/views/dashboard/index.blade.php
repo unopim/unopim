@@ -1,3 +1,5 @@
+@include('completeness::score-thresholds')
+
 <x-admin::graphs.radial-progress />
 
 <!-- Percentage Metrics Vue Component -->
@@ -132,18 +134,19 @@
 
             methods: {
                 getSuggestionMessage(channelAverage) {
-                    switch (true) {
-                        case channelAverage < 30:
-                            return `@lang('completeness::app.dashboard.index.completeness.suggestion.low')`;
-                        case channelAverage < 70:
-                            return `@lang('completeness::app.dashboard.index.completeness.suggestion.medium')`;
-                        case channelAverage < 100:
-                            return `@lang('completeness::app.dashboard.index.completeness.suggestion.high')`;
-                        case channelAverage === 100:
-                            return `@lang('completeness::app.dashboard.index.completeness.suggestion.perfect')`;
-                        default:
-                            return '';
+                    if (typeof channelAverage !== 'number') {
+                        return '';
                     }
+
+                    if (channelAverage >= 100) {
+                        return `@lang('completeness::app.dashboard.index.completeness.suggestion.perfect')`;
+                    }
+
+                    return {
+                        danger: `@lang('completeness::app.dashboard.index.completeness.suggestion.low')`,
+                        warning: `@lang('completeness::app.dashboard.index.completeness.suggestion.medium')`,
+                        success: `@lang('completeness::app.dashboard.index.completeness.suggestion.high')`,
+                    }[this.$completeness.level(channelAverage)];
                 }
             }
         });

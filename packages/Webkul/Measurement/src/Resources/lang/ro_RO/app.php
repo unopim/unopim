@@ -124,6 +124,8 @@ return [
                     'base'           => 'Zecimale ale valorii de bază',
                     'base-info'      => 'Numărul de zecimale păstrate pentru valoarea convertită în unitatea standard.',
                 ],
+                'display-unit-symbol'      => 'Afișează simbolurile unităților',
+                'display-unit-symbol-info' => 'Afișează valorile de măsură cu simbolul unității (de exemplu 100 °C) în locul numelui unității, în administrare și în exporturi. Unitățile fără simbol își păstrează numele.',
             ],
         ],
     ],

@@ -69,4 +69,16 @@ return [
             ],
         ],
     ],
+
+    'configuration' => [
+        'score-thresholds' => [
+            'title'           => 'Farger for fullstendighetspoeng',
+            'info'            => 'Angi poengsummene der fullstendighetsindikatorer blir grønne eller røde.',
+            'green-from'      => 'Grønn fra (%)',
+            'green-from-info' => 'Poengsummer lik eller over denne verdien vises i grønt.',
+            'red-below'       => 'Rød under (%)',
+            'red-below-info'  => 'Poengsummer under denne verdien vises i rødt. Poengsummer imellom vises i gult.',
+            'order-error'     => 'Grensen for grønn må være høyere enn grensen for rød.',
+        ],
+    ],
 ];

@@ -1,5 +1,6 @@
 const { test, expect } = require('../../utils/fixtures');
 const { clickSave, navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
+const { fillSecret } = require('../../utils/secret-helpers');
 
 /**
  * Helper: Fill the user creation modal.
@@ -234,7 +235,7 @@ test.describe('User Management', () => {
     await row.locator('span[title="Edit"]').first().click();
     await adminPage.waitForLoadState('networkidle');
     await adminPage.locator('label[for="status"]').click();
-    await adminPage.locator('input[name="current_password"]').fill(process.env.ADMIN_PASSWORD || 'admin123');
+    await fillSecret(adminPage.locator('input[name="current_password"]'), process.env.ADMIN_PASSWORD || 'admin123');
     await clickSaveAndExpect(adminPage, 'Save User', /User updated successfully/i);
 
     // Cleanup

@@ -2,7 +2,9 @@
 
 namespace Webkul\AdminApi\Http\Controllers\API\Catalog;
 
+use Illuminate\Contracts\Validation\Validator as ValidatorContract;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -96,6 +98,16 @@ class CategoryFieldController extends ApiController
 
         $requestData = request()->except(['code', 'type']);
         $requestData = $this->setLabels($requestData);
+
+        $denied = $this->deniedChildWrites($requestData['options'] ?? null, 'api.catalog.category_fields', 'options')
+            ?? $this->invalidOptionEntries(
+                $requestData['options'] ?? null,
+                fn (array $option): ValidatorContract => $this->optionValidate($option, $categoryField->id),
+            );
+
+        if ($denied) {
+            return $denied;
+        }
         $requestData['enable_wysiwyg'] = $categoryField->type == 'textarea' ? $requestData['enable_wysiwyg'] : 0;
         $id = $categoryField->id;
 
@@ -210,9 +222,9 @@ class CategoryFieldController extends ApiController
                     continue;
                 }
 
-                $this->categoryFieldOptionRepository->create(array_merge([
+                $this->categoryFieldOptionRepository->create(array_merge(Arr::except($optionInputs, ['category_field_id']), [
                     'category_field_id' => $categoryField->id,
-                ], $optionInputs));
+                ]));
             }
 
             if (! empty($errors)) {
@@ -266,7 +278,9 @@ class CategoryFieldController extends ApiController
                     continue;
                 }
 
-                $this->categoryFieldOptionRepository->update($optionInputs, $categoryFieldOption->id);
+                $this->categoryFieldOptionRepository->update(array_merge(Arr::except($optionInputs, ['category_field_id']), [
+                    'category_field_id' => $categoryField->id,
+                ]), $categoryFieldOption->id);
             }
 
             if (! empty($errors)) {
@@ -314,7 +328,7 @@ class CategoryFieldController extends ApiController
     /**
      * Validates the category field option data.
      *
-     * @return \Illuminate\Contracts\Validation\Validator The Validator instance with the applied rules.
+     * @return ValidatorContract The Validator instance with the applied rules.
      */
     private function optionValidate(array $requestData, int $categoryFieldId)
     {

@@ -125,6 +125,8 @@ return [
                     'base'           => 'Decimaler for basisværdi',
                     'base-info'      => 'Antal decimaler, der bevares for værdien konverteret til standardenheden.',
                 ],
+                'display-unit-symbol'      => 'Vis enhedssymboler',
+                'display-unit-symbol-info' => 'Vis måleværdier med enhedens symbol (for eksempel 100 °C) i stedet for enhedens navn, i administrationen og i eksporter. Enheder uden symbol beholder deres navn.',
             ],
         ],
     ],

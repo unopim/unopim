@@ -32,6 +32,8 @@ return [
                     'incorrect-family-for-variant'             => 'Familien skal være den samme som forældrefamilien',
                     'parent-not-exist'                         => 'Forælderen findes ikke.',
                     'variant-structure-not-found'              => 'Variantstrukturen :code findes ikke for denne attributfamilie.',
+                    'variant-structure-levels-mismatch'        => 'Variantstrukturen :code har kun ét niveau, så den kan ikke indeholde variant_group-rækker. Sæt dens niveauer til 2, eller importer varianterne som simple produkter under det konfigurerbare produkt.',
+                    'variant-structure-two-levels-mismatch'    => 'Variantstrukturen :code har to niveauer, så simple rækker skal ligge under en variant_group-række og ikke direkte under det konfigurerbare produkt.',
                 ],
             ],
         ],
@@ -59,6 +61,7 @@ return [
                     'duplicate-code'                       => 'Attributkoden :code er allerede i brug.',
                     'code_not_found_to_delete'             => 'Attributkode blev ikke fundet til sletning.',
                     'code_is_system_and_cannot_be_deleted' => 'Systemattribut kan ikke slettes.',
+                    'templates-unsupported'                => 'Skabeloner kan kun aktiveres på tekst- og tekstområdeattributter, der ikke har indtastningsvalidering og ikke er unikke.',
                 ],
             ],
         ],
@@ -174,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Denne eksport er for stor til at køre: anslået :rows rækker × :columns kolonner (~:estimated) overstiger den tilgængelige plads (~:available). Indsnævr eksporten ved at vælge færre kanaler/sprog (og attributter), og prøv igen.',
-        'fields'           => [
+        'export-too-large'      => 'Denne eksport er for stor til at køre: anslået :rows rækker × :columns kolonner (~:estimated) overstiger den tilgængelige plads (~:available). Indsnævr eksporten ved at vælge færre kanaler/sprog (og attributter), og prøv igen.',
+        'xls-too-many-columns'  => 'Denne eksport har mere end :limit kolonner, hvilket er det maksimale en XLS-fil kan indeholde. Vælg XLSX eller CSV, eller vælg færre attributter, og prøv igen.',
+        'xls-too-many-rows'     => 'Denne eksport har mere end :limit rækker, hvilket er det maksimale en XLS-fil kan indeholde. Vælg XLSX eller CSV, eller indsnævr eksporten, og prøv igen.',
+        'xls-too-large'         => 'Denne eksport er for stor til at blive konverteret til XLS: :rows rækker × :columns kolonner er mere end de :limit celler, denne server kan konvertere. Vælg XLSX eller CSV, eller indsnævr eksporten, og prøv igen.',
+        'xls-conversion-failed' => 'Eksportfilen kunne ikke erstattes med dens XLS-version. Prøv igen, eller vælg XLSX eller CSV.',
+        'fields'                => [
             'file-format'            => 'Filformat',
             'with-media'             => 'Med medier',
             'with-associations'      => 'Med tilknytninger',
@@ -184,6 +191,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'Gengiv skabeloner',
+            'render-templates-info'  => 'Eksportér gengivne skabelonværdier i stedet for den rå skabelonkilde. Genimport af en gengivet fil erstatter den gemte skabelonkilde med almindelig tekst.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
@@ -308,10 +317,11 @@ return [
         ],
     ],
     'job' => [
-        'started'   => 'Job udførelsen startet',
-        'completed' => 'Job udførelsen afsluttet',
-        'stalled'   => 'Jobbet holdt op med at svare i mere end :minutes minutter og blev markeret som mislykket. Arbejdsprocessen blev sandsynligvis afbrudt.',
-        'reaped'    => ':count fastlåste job blev markeret som mislykkede.',
-        'stopped'   => 'Importen blev stoppet efter validering med :count fejl. Ingen rækker blev importeret.',
+        'started'         => 'Job udførelsen startet',
+        'completed'       => 'Job udførelsen afsluttet',
+        'stalled'         => 'Jobbet holdt op med at svare i mere end :minutes minutter og blev markeret som mislykket. Arbejdsprocessen blev sandsynligvis afbrudt.',
+        'reaped'          => ':count fastlåste job blev markeret som mislykkede.',
+        'stopped'         => 'Importen blev stoppet efter validering med :count fejl. Ingen rækker blev importeret.',
+        'module-disabled' => 'Jobtypen :type hører til et platformmodul, der er slået fra, så den kan ikke køre.',
     ],
 ];

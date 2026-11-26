@@ -5,6 +5,7 @@ namespace Webkul\DataTransfer\Helpers\Exporters\Product;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Event;
+use Webkul\Attribute\Contracts\Attribute as AttributeContract;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Rules\AttributeTypes;
@@ -23,9 +24,11 @@ use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
 use Webkul\DataTransfer\Models\JobTrack;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 use Webkul\Measurement\Helpers\MeasurementHelper;
+use Webkul\Product\Contracts\TemplateRenderer;
 use Webkul\Product\Contracts\VariantValueResolver;
 use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Templates\Results\RenderResult;
 
 class Exporter extends AbstractExporter
 {
@@ -33,10 +36,12 @@ class Exporter extends AbstractExporter
 
     /**
      * Static cache for channels/locales/currencies/attributes.
-     * Shared across all ExportBatch jobs within the same worker process,
+     * Shared across the ExportBatch jobs of one export within the same worker process,
      * avoiding redundant DB queries on every batch.
      */
     protected static ?array $staticInitCache = null;
+
+    protected static ?string $staticInitCacheJobId = null;
 
     /**
      * @var array
@@ -77,6 +82,11 @@ class Exporter extends AbstractExporter
     protected ?MeasurementHelper $measurementHelper = null;
 
     /**
+     * Whether unit columns hold symbols instead of names, read once per exporter instance.
+     */
+    protected ?bool $displayUnitSymbol = null;
+
+    /**
      * Attribute codes selected in the export profile. When empty every
      * attribute value is exported.
      *
@@ -93,6 +103,12 @@ class Exporter extends AbstractExporter
     protected $optionLabelMaps = [];
 
     protected ?VariantValueResolver $variantValueResolver = null;
+
+    protected array $templateAttributes = [];
+
+    protected ?TemplateRenderer $templateRenderer = null;
+
+    protected array $templateProblems = [];
 
     /**
      * Create a new instance.
@@ -113,12 +129,25 @@ class Exporter extends AbstractExporter
     }
 
     /**
+     * Get the template renderer instance.
+     */
+    protected function templateRenderer(): TemplateRenderer
+    {
+        return $this->templateRenderer ??= app(TemplateRenderer::class);
+    }
+
+    /**
      * Initializes the channels and locales for the export process.
      * Uses a static in-process cache so that the DB queries run only once
-     * per worker process regardless of how many ExportBatch jobs are handled.
+     * per export, while the next export reloads them and sees attribute changes.
      */
     public function initilize(): void
     {
+        if (self::$staticInitCacheJobId !== (string) $this->export?->id) {
+            self::$staticInitCache = null;
+            self::$staticInitCacheJobId = (string) $this->export?->id;
+        }
+
         if (self::$staticInitCache === null) {
             $channels = $this->channelRepository->with(['locales', 'currencies'])->all();
             $channelsAndLocales = [];
@@ -141,6 +170,7 @@ class Exporter extends AbstractExporter
                 'currencies'         => array_values($currencies),
                 'attributes'         => $attributes,
                 'attributeMeta'      => $this->buildAttributeMeta($attributes),
+                'templateAttributes' => $this->buildTemplateAttributes($attributes),
             ];
         }
 
@@ -149,8 +179,80 @@ class Exporter extends AbstractExporter
         $this->currencies = self::$staticInitCache['currencies'];
         $this->attributes = self::$staticInitCache['attributes'];
         $this->attributeMeta = self::$staticInitCache['attributeMeta'];
+        $this->templateAttributes = self::$staticInitCache['templateAttributes'];
 
         $this->applyScopeFilters();
+    }
+
+    /**
+     * Key the attributes that can hold a template by their code.
+     */
+    protected function buildTemplateAttributes(iterable $attributes): array
+    {
+        return collect($attributes)
+            ->filter(fn (AttributeContract $attribute): bool => $attribute->canHoldTemplate())
+            ->keyBy('code')
+            ->all();
+    }
+
+    /**
+     * Determine if the export job renders templates instead of exporting their source.
+     */
+    protected function shouldRenderTemplates(): bool
+    {
+        return (string) ($this->getFilters()['render_templates'] ?? '0') === '1';
+    }
+
+    /**
+     * Replace the exported template sources with their rendered output and collect their render problems for the batch log.
+     */
+    protected function renderTemplateValues(array $fields, array $values, string $sku, string $channel, string $locale): array
+    {
+        foreach ($this->templateAttributes as $code => $attribute) {
+            $source = $fields[$code] ?? null;
+
+            if (! is_string($source) || ! str_contains($source, '{{') || ! $this->isAttributeValueExported($code)) {
+                continue;
+            }
+
+            $result = $this->templateRenderer()->render($source, $attribute, $values, $channel, $locale);
+
+            $this->collectTemplateProblems($result, $code, $sku, $channel, $locale);
+
+            $fields[$code] = $result->output;
+        }
+
+        return $fields;
+    }
+
+    private function collectTemplateProblems(RenderResult $result, string $code, string $sku, string $channel, string $locale): void
+    {
+        foreach (['error' => $result->errorMessages(), 'warning' => $result->warningMessages()] as $level => $messages) {
+            foreach ($messages as $message) {
+                $this->templateProblems[$level][$code][$message] ??= [
+                    'attribute'      => $code,
+                    'count'          => 0,
+                    'sample_sku'     => $sku,
+                    'sample_channel' => $channel,
+                    'sample_locale'  => $locale,
+                ];
+
+                $this->templateProblems[$level][$code][$message]['count']++;
+            }
+        }
+    }
+
+    private function logTemplateProblems(): void
+    {
+        foreach ($this->templateProblems as $level => $attributes) {
+            foreach ($attributes as $messages) {
+                foreach ($messages as $message => $context) {
+                    $this->jobLogger?->log($level, (string) $message, $context);
+                }
+            }
+        }
+
+        $this->templateProblems = [];
     }
 
     protected function buildAttributeMeta($attributes): array
@@ -513,6 +615,7 @@ class Exporter extends AbstractExporter
         );
 
         $withAssociations = (bool) ($this->getFilters()['with_associations'] ?? false);
+        $renderTemplates = $this->shouldRenderTemplates();
 
         foreach ($productsByIds as $product) {
             $productValues = $mergedValuesById[$product->id] ?? ($product->values ?? []);
@@ -557,6 +660,10 @@ class Exporter extends AbstractExporter
                         $channelLocaleSpecificFields
                     );
 
+                    if ($renderTemplates) {
+                        $mergedFields = $this->renderTemplateValues($mergedFields, $productValues, $product->sku, $channel, $locale);
+                    }
+
                     $values = $this->setAttributesValues($mergedFields, $filePath, $locale);
 
                     $row = array_merge($baseFields, [
@@ -572,6 +679,8 @@ class Exporter extends AbstractExporter
 
             $this->createdItemsCount++;
         }
+
+        $this->logTemplateProblems();
     }
 
     public function getSuperAttributes(array $data): ?string
@@ -706,7 +815,7 @@ class Exporter extends AbstractExporter
      *
      * Measurement attributes are withheld from the generic pass so it emits an
      * empty placeholder column in its usual position, then filled in here as the
-     * amount plus a companion "<code>(unit)" column holding the unit label.
+     * amount plus a companion "<code>(unit)" column holding the unit label or symbol.
      */
     protected function setAttributesValues(array $values, mixed $filePath, ?string $locale = null): array
     {
@@ -727,6 +836,8 @@ class Exporter extends AbstractExporter
 
         $measurementHelper = $this->measurementHelper();
 
+        $displayUnitSymbol = $this->displayUnitSymbol ??= $measurementHelper->displaysUnitSymbol();
+
         foreach ($measurementMeta as $meta) {
             $code = $meta['code'];
 
@@ -739,7 +850,7 @@ class Exporter extends AbstractExporter
             $attributeValues[$code] = EscapeFormulaOperators::escapeValue($amount);
 
             $attributeValues["{$code}(unit)"] = EscapeFormulaOperators::escapeValue(
-                $measurementHelper->getUnitLabel($unit, $meta['attribute'], $locale)
+                $measurementHelper->getUnitDisplayLabel($unit, $meta['attribute'], $locale, $displayUnitSymbol)
             );
         }
 

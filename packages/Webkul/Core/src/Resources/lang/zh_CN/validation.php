@@ -24,10 +24,16 @@ return [
     'file-outside-attribute-path'      => '文件 :value 不属于此记录。请为 :attribute 字段重新上传。',
     'password-surrounding-whitespace'  => ':attribute 不能以空格开头或结尾。',
     'password-whitespace-only'         => ':attribute 不能只由空格组成。',
+    'hideable-sections'                => ':attribute 包含无法隐藏的模块。',
     'active-content-detected'          => '无法上传 :attribute，因为它包含活动内容 (:reason)。',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => '嵌入的 JavaScript 或自动运行的 PDF 操作',
         'embedded_vba_macro'            => '嵌入的 VBA 宏',
         'auto_executing_ole_object'     => '自动执行的嵌入对象',
+    ],
+    'platform-modules'                => [
+        'empty'    => '请至少选择一个平台模块。',
+        'unknown'  => '平台模块“:module”未安装。',
+        'requires' => ':module 只能与 :requires 一同启用。',
     ],
 ];

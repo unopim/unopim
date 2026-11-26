@@ -222,6 +222,8 @@ return [
         'console' => [
             'confirm-drop'        => 'Usunąć te tabele i zainstalować ponownie?',
             'drop-aborted'        => 'Instalacja została przerwana. Żadne tabele nie zostały usunięte.',
+            'invalid-modules'     => 'Nieprawidłowe moduły platformy ":modules". Dozwolone wartości: :allowed.',
+            'select-modules'      => 'Które moduły platformy chcesz włączyć?',
             'force-required'      => 'Nie ustawiono prefiksu tabel, więc zostałyby usunięte wszystkie tabele, do których nie rości sobie praw żadna inna instalacja. Uruchom ponownie z opcją --force, aby je usunąć, lub ustaw DB_PREFIX.',
             'outside-references'  => 'Tabele spoza prefiksu tabel odwołują się do tabel przeznaczonych do usunięcia: :references. Najpierw usuń te klucze obce.',
             'tables-to-drop'      => 'Te tabele (:count) zostaną usunięte: :tables',

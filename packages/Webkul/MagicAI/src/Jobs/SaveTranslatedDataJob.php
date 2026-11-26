@@ -5,12 +5,13 @@ namespace Webkul\MagicAI\Jobs;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Webkul\Attribute\Repositories\AttributeRepository;
+use Webkul\MagicAI\Jobs\Concerns\PurifiesTranslatedContent;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Services\ProductValueMapper;
 
 class SaveTranslatedDataJob implements ShouldQueue
 {
-    use Queueable;
+    use PurifiesTranslatedContent, Queueable;
 
     /**
      * Create a new job instance.
@@ -50,7 +51,7 @@ class SaveTranslatedDataJob implements ShouldQueue
                 $attribute,
                 $this->channel,
                 $locale,
-                $transData['content']
+                $this->purifyTranslatedContent($attribute, $transData['content'])
             );
         }
 

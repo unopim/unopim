@@ -17,7 +17,9 @@ describe('Role Importer', function () {
 
     it('can validate a row for role import', function () {
         $jobTrack = JobTrack::factory()->create([
-            'action' => Import::ACTION_APPEND,
+            'user_id' => auth()->guard('admin')->id(),
+            'meta'    => ['batch_count' => 0, 'updated_by' => auth()->guard('admin')->id()],
+            'action'  => Import::ACTION_APPEND,
         ]);
 
         $importer = app(Importer::class);
@@ -42,7 +44,9 @@ describe('Role Importer', function () {
 
     it('can save role data during importBatch', function () {
         $jobTrack = JobTrack::factory()->create([
-            'action' => Import::ACTION_APPEND,
+            'user_id' => auth()->guard('admin')->id(),
+            'meta'    => ['batch_count' => 0, 'updated_by' => auth()->guard('admin')->id()],
+            'action'  => Import::ACTION_APPEND,
         ]);
 
         $rolesData = [
@@ -92,7 +96,9 @@ describe('Role Importer', function () {
         ]);
 
         $jobTrack = JobTrack::factory()->create([
-            'action' => Import::ACTION_DELETE,
+            'user_id' => auth()->guard('admin')->id(),
+            'meta'    => ['batch_count' => 0, 'updated_by' => auth()->guard('admin')->id()],
+            'action'  => Import::ACTION_DELETE,
         ]);
 
         $batch = JobTrackBatch::factory()->create([

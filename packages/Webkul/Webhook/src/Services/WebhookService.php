@@ -2,6 +2,7 @@
 
 namespace Webkul\Webhook\Services;
 
+use Closure;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
@@ -16,8 +17,8 @@ use Webkul\Webhook\Repositories\WebhookRepository;
 use Webkul\Webhook\Validators\SafeWebhookUrl;
 
 /**
- * Sends product data to every active webhook subscribed to the fired event
- * and records a per-webhook delivery log.
+ * Sends product data, or any registered entity's event through deliverEvent(), to every
+ * active webhook subscribed to the fired event and records a per-webhook delivery log.
  */
 class WebhookService
 {
@@ -72,6 +73,56 @@ class WebhookService
     public function sendBatchBySkus(array $skus): ?Response
     {
         return $this->deliverChunked('sku', $skus);
+    }
+
+    /**
+     * Deliver one entity of any registered event to a single webhook, signed, SSRF-guarded and logged like products.
+     *
+     * @param  array<string, mixed>  $data  The entity body, sent as the only element of the envelope's `data` list.
+     * @param  string|null  $code  Identifier written to the delivery log.
+     * @param  string|null  $actor  Name written to the delivery log; defaults to the authenticated admin.
+     */
+    public function deliverEvent(Webhook $webhook, string $event, array $data, ?string $code = null, ?string $actor = null): ?Response
+    {
+        return $this->deliverEvents($webhook, $event, [['code' => $code, 'data' => $data, 'actor' => $actor]]);
+    }
+
+    /**
+     * Deliver several entities of one registered event to a single webhook in one request, with a log row per entity.
+     *
+     * @param  list<array{code?: ?string, data: array<string, mixed>, actor?: ?string}>  $items  Each entity's body, its
+     *                                                                                           log identifier and the name
+     *                                                                                           logged as its author.
+     */
+    public function deliverEvents(Webhook $webhook, string $event, array $items): ?Response
+    {
+        if ($items === []) {
+            return null;
+        }
+
+        $envelope = [
+            'event'         => $event,
+            'timestamp'     => now()->toDateTimeString(),
+            'user_timezone' => $this->actingTimezone(),
+        ];
+
+        $payload = $envelope + ['data' => array_values(array_map(fn (array $item): array => $item['data'], $items))];
+
+        return $this->deliver($webhook, $payload, null, $event, logWriter: function (int $status, ?int $httpCode, mixed $response) use ($webhook, $event, $items, $envelope): void {
+            $fallbackActor = null;
+
+            foreach ($items as $item) {
+                $this->logsRepository->create([
+                    'webhook_id' => $webhook->id,
+                    'user'       => $item['actor'] ?? ($fallbackActor ??= $this->actingName()),
+                    'sku'        => $item['code'] ?? null,
+                    'event'      => $event,
+                    'status'     => $status,
+                    'http_code'  => $httpCode,
+                    'extra'      => ['payload' => $envelope + ['data' => [$item['data']]], 'response' => $response],
+                ]);
+            }
+        });
     }
 
     /**
@@ -183,12 +234,15 @@ class WebhookService
      *
      * @param  Collection|null  $batchProducts  When set, a
      *                                          log row is written per product.
+     * @param  Closure(int, ?int, mixed): void|null  $logWriter  When set, writes the delivery logs instead.
      */
-    protected function deliver(Webhook $webhook, array $payload, ?string $sku, string $event, $batchProducts = null): ?Response
+    protected function deliver(Webhook $webhook, array $payload, ?string $sku, string $event, $batchProducts = null, ?Closure $logWriter = null): ?Response
     {
-        $safety = SafeWebhookUrl::validate($webhook->url);
+        $pinned = SafeWebhookUrl::pinnedHttpOptions((string) $webhook->url);
 
-        if (! $safety['valid']) {
+        if ($pinned === null) {
+            $safety = SafeWebhookUrl::validate($webhook->url);
+
             Log::warning('Webhook dispatch blocked — unsafe URL', [
                 'webhook_id' => $webhook->id,
                 'reason'     => $safety['reason'],
@@ -202,7 +256,7 @@ class WebhookService
         $exception = null;
 
         try {
-            $response = Http::withOptions(SafeWebhookUrl::httpOptions($webhook->url))
+            $response = Http::withOptions($pinned)
                 ->withHeaders($this->buildHeaders($webhook, $event, $body))
                 ->withBody($body, 'application/json')
                 ->post($webhook->url);
@@ -217,7 +271,9 @@ class WebhookService
         $httpCode = $response?->status() ?? ($exception?->getCode() ?: null);
         $logResponse = $this->normalizeResponseForLog($response ?? $exception);
 
-        if ($batchProducts !== null) {
+        if ($logWriter instanceof Closure) {
+            $logWriter($status, $httpCode, $logResponse);
+        } elseif ($batchProducts !== null) {
             $this->storeBatchLogs($webhook, $batchProducts, $status, $httpCode, $event, $logResponse, $payload);
         } else {
             $this->storeLogs($webhook, $sku, $status, $httpCode, $event, $logResponse, $payload);

@@ -6,6 +6,7 @@ use Webkul\AiAgent\Http\Controllers\ChatController;
 use Webkul\AiAgent\Http\Controllers\ConversationController;
 use Webkul\AiAgent\Http\Controllers\DashboardController;
 use Webkul\AiAgent\Http\Controllers\ExecutionController;
+use Webkul\AiAgent\Http\Controllers\ExportController;
 use Webkul\AiAgent\Http\Controllers\GenerateController;
 
 // Route middleware: ['admin'] only — NOT ['web', 'admin']
@@ -83,6 +84,10 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
         Route::get('chat/magic-ai-config', [ChatController::class, 'magicAiConfig'])
             ->name('chat.magic-ai-config');
+
+        Route::get('exports/{file}', [ExportController::class, 'download'])
+            ->where('file', '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\\.(csv|xlsx)')
+            ->name('exports.download');
 
         // ── Conversations (persistent sessions) ────────────
         Route::get('conversations', [ConversationController::class, 'index'])

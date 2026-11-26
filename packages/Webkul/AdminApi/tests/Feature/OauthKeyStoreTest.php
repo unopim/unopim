@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\File;
 use Laravel\Passport\Passport;
+use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\ResourceServer;
 use Webkul\AdminApi\Providers\AdminApiServiceProvider;
 use Webkul\AdminApi\Services\OauthKeyStore;
 
@@ -73,37 +75,80 @@ it('points passport at the resolved key path', function () {
     expect(Passport::keyPath('oauth-public.key'))->toBe($this->keyPath.'/oauth-public.key');
 });
 
-it('reads the previous location until the migration command has run', function () {
-    $legacyPath = seedLegacyKeys();
-
-    app()->register(AdminApiServiceProvider::class, true);
-
-    expect(Passport::keyPath('oauth-public.key'))->toBe($legacyPath.'/oauth-public.key');
-
-    $this->artisan('unopim:passport:keys')->assertSuccessful();
-
-    app()->register(AdminApiServiceProvider::class, true);
-
-    expect(Passport::keyPath('oauth-public.key'))->toBe($this->keyPath.'/oauth-public.key');
-});
-
-it('never writes to the previous location', function () {
+it('never signs with a keypair left at the previous location', function (): void {
     seedLegacyKeys();
 
-    $store = app(OauthKeyStore::class);
+    app()->register(AdminApiServiceProvider::class, true);
 
-    expect($store->path())->toBe($this->keyPath)
-        ->and($store->resolvedPath())->toBe($store->legacyPath());
+    expect(Passport::keyPath('oauth-public.key'))->toBe($this->keyPath.'/oauth-public.key')
+        ->and(app(OauthKeyStore::class)->resolvedPath())->toBe($this->keyPath);
 });
 
-it('adopts a keypair left behind by an earlier release', function () {
+it('refuses to build the oauth servers until the keys exist', function (string $server): void {
+    seedLegacyKeys();
+
+    app()->register(AdminApiServiceProvider::class, true);
+
+    app()->forgetInstance($server);
+
+    expect(fn (): object => app($server))->toThrow(RuntimeException::class, trans('admin::app.configuration.integrations.oauth-keys-missing'));
+})->with([AuthorizationServer::class, ResourceServer::class]);
+
+it('generates a fresh keypair instead of adopting one from the previous location', function (): void {
     $legacyPath = seedLegacyKeys();
 
     $legacyPublicKey = file_get_contents($legacyPath.'/oauth-public.key');
 
     $this->artisan('unopim:passport:keys')->assertSuccessful();
 
-    expect(file_get_contents($this->keyPath.'/oauth-public.key'))->toBe($legacyPublicKey);
+    expect(file_get_contents($this->keyPath.'/oauth-public.key'))->not->toBe($legacyPublicKey)
+        ->and(file_get_contents($legacyPath.'/oauth-public.key'))->toBe($legacyPublicKey);
+});
+
+/**
+ * Writes a keypair at the configured path and binds a key store that treats it as revoked.
+ */
+function revokeStoredKeys(): string
+{
+    (new OauthKeyStore)->generate();
+
+    $publicKey = (string) file_get_contents(test()->keyPath.'/oauth-public.key');
+    $fingerprint = hash('sha256', (string) preg_replace('/\s+/', '', $publicKey));
+
+    app()->instance(OauthKeyStore::class, new class($fingerprint) extends OauthKeyStore
+    {
+        public function __construct(private string $fingerprint) {}
+
+        protected function revokedPublicKeys(): array
+        {
+            return [$this->fingerprint];
+        }
+    });
+
+    return $publicKey;
+}
+
+it('refuses to build the oauth servers with a revoked keypair', function (string $server): void {
+    File::makeDirectory($this->keyPath, 0700, true);
+
+    revokeStoredKeys();
+
+    app()->register(AdminApiServiceProvider::class, true);
+
+    app()->forgetInstance($server);
+
+    expect(fn (): object => app($server))->toThrow(RuntimeException::class, trans('admin::app.configuration.integrations.oauth-keys-missing'));
+})->with([AuthorizationServer::class, ResourceServer::class]);
+
+it('replaces a revoked keypair', function (): void {
+    File::makeDirectory($this->keyPath, 0700, true);
+
+    $revokedPublicKey = revokeStoredKeys();
+
+    $this->artisan('unopim:passport:keys')->assertSuccessful();
+
+    expect(file_get_contents($this->keyPath.'/oauth-public.key'))->not->toBe($revokedPublicKey)
+        ->and(app(OauthKeyStore::class)->isRevoked())->toBeFalse();
 });
 
 it('reports a failure instead of throwing when the key path is unwritable', function () {

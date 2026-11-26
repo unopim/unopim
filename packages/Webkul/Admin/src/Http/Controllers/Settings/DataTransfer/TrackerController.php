@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\JobTrackerGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Traits\GatesJobTypes;
 use Webkul\DataTransfer\Contracts\JobTrack as JobTrackContract;
 use Webkul\DataTransfer\Enums\JobType;
 use Webkul\DataTransfer\Helpers\Export;
@@ -20,6 +21,8 @@ use ZipArchive;
 
 class TrackerController extends Controller
 {
+    use GatesJobTypes;
+
     /**
      * Create a new controller instance.
      *
@@ -56,7 +59,7 @@ class TrackerController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $import = $this->jobTrackRepository->findOrFail($batchId);
+        $import = $this->findVisibleJobTrack($batchId);
 
         if ($this->jobHealth->isStalled($import)) {
             $this->jobHealth->fail($import);
@@ -137,11 +140,13 @@ class TrackerController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $jobTrack = $this->jobTrackRepository->findOrFail($id);
+        $jobTrack = $this->findVisibleJobTrack($id);
+
+        $this->abortIfDownloadForbidden($jobTrack);
 
         $disk = Storage::disk('private');
 
-        if ($disk->fileExists($jobTrack->file_path)) {
+        if (filled($jobTrack->file_path) && $disk->fileExists($jobTrack->file_path)) {
             return $disk->download($jobTrack->file_path);
         }
 
@@ -160,7 +165,24 @@ class TrackerController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        return $this->archiveJobFiles($this->jobTrackRepository->findOrFail($id));
+        $jobTrack = $this->findVisibleJobTrack($id);
+
+        $this->abortIfDownloadForbidden($jobTrack);
+
+        return $this->archiveJobFiles($jobTrack);
+    }
+
+    /**
+     * Exported files and uploaded import sources both hold catalogue data, so downloading them needs the
+     * execute permission of the job type, not only tracker access.
+     */
+    protected function abortIfDownloadForbidden(JobTrackContract $jobTrack): void
+    {
+        foreach (JobType::downloadPermissions($jobTrack) as $permission) {
+            if (! bouncer()->hasPermission($permission)) {
+                abort(403, trans('admin::app.common.unauthorized'));
+            }
+        }
     }
 
     /**
@@ -168,6 +190,12 @@ class TrackerController extends Controller
      */
     protected function archiveJobFiles(JobTrackContract $jobTrack): mixed
     {
+        $folderPath = trim((string) $jobTrack->file_path, " \t\n\r\0\x0B/");
+
+        if ($folderPath === '') {
+            abort(404, trans('admin::app.settings.data-transfer.tracker.nothing-to-archive'));
+        }
+
         $zip = new ZipArchive;
 
         // Slug the parts and basename the result so a job code containing "../"
@@ -184,8 +212,6 @@ class TrackerController extends Controller
         if (! is_dir(dirname($zipFilePath))) {
             mkdir(dirname($zipFilePath), 0755, true);
         }
-
-        $folderPath = $jobTrack->file_path;
 
         $disk = Storage::disk('private');
 
@@ -219,13 +245,15 @@ class TrackerController extends Controller
     }
 
     /**
-     * Download Log file for the job
+     * Download the job log, which names imported rows and so needs the same permissions as the job files.
      */
     public function downloadLogFile(int $id)
     {
         if (! bouncer()->hasPermission('data_transfer.job_tracker')) {
             abort(403, trans('admin::app.common.unauthorized'));
         }
+
+        $this->abortIfDownloadForbidden($this->findVisibleJobTrack($id));
 
         $path = JobLogger::getJobLogPath($id);
 

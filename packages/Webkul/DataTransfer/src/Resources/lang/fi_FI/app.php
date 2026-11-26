@@ -32,6 +32,8 @@ return [
                     'incorrect-family-for-variant'             => 'Perheen on oltava sama kuin vanhemman perhe',
                     'parent-not-exist'                         => 'Vanhempaa ei ole olemassa.',
                     'variant-structure-not-found'              => 'Varianttirakennetta :code ei ole tälle attribuuttiperheelle.',
+                    'variant-structure-levels-mismatch'        => 'Varianttirakenteessa :code on vain yksi taso, joten se ei voi sisältää variant_group-rivejä. Aseta sen tasoiksi 2 tai tuo variantit yksinkertaisina tuotteina konfiguroitavan tuotteen alle.',
+                    'variant-structure-two-levels-mismatch'    => 'Varianttirakenteessa :code on kaksi tasoa, joten yksinkertaisten rivien on oltava variant_group-rivin alla eikä suoraan konfiguroitavan tuotteen alla.',
                 ],
             ],
         ],
@@ -59,6 +61,7 @@ return [
                     'duplicate-code'                       => 'Attribuuttikoodi :code on jo käytössä.',
                     'code_not_found_to_delete'             => 'Attribuuttikoodia ei löytynyt poistettavaksi.',
                     'code_is_system_and_cannot_be_deleted' => 'Järjestelmäattribuuttia ei voi poistaa.',
+                    'templates-unsupported'                => 'Mallipohjat voidaan ottaa käyttöön vain teksti- ja tekstikenttäattribuuteille, joilla ei ole syötteen validointia ja jotka eivät ole ainutlaatuisia.',
                 ],
             ],
         ],
@@ -174,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Tämä vienti on liian suuri suoritettavaksi: arvioidut :rows riviä × :columns saraketta (~:estimated) ylittävät käytettävissä olevan tilan (~:available). Rajaa vientiä valitsemalla vähemmän kanavia/kieliä (ja attribuutteja) ja yritä uudelleen.',
-        'fields'           => [
+        'export-too-large'      => 'Tämä vienti on liian suuri suoritettavaksi: arvioidut :rows riviä × :columns saraketta (~:estimated) ylittävät käytettävissä olevan tilan (~:available). Rajaa vientiä valitsemalla vähemmän kanavia/kieliä (ja attribuutteja) ja yritä uudelleen.',
+        'xls-too-many-columns'  => 'Tässä viennissä on yli :limit saraketta, mikä on XLS-tiedoston enimmäismäärä. Valitse XLSX tai CSV tai valitse vähemmän attribuutteja ja yritä uudelleen.',
+        'xls-too-many-rows'     => 'Tässä viennissä on yli :limit riviä, mikä on XLS-tiedoston enimmäismäärä. Valitse XLSX tai CSV tai rajaa vientiä ja yritä uudelleen.',
+        'xls-too-large'         => 'Tämä vienti on liian suuri muunnettavaksi XLS-muotoon: :rows riviä × :columns saraketta on enemmän kuin :limit solua, jotka tämä palvelin pystyy muuntamaan. Valitse XLSX tai CSV tai rajaa vientiä ja yritä uudelleen.',
+        'xls-conversion-failed' => 'Vientitiedostoa ei voitu korvata sen XLS-versiolla. Yritä uudelleen tai valitse XLSX tai CSV.',
+        'fields'                => [
             'file-format'            => 'Tiedostomuoto',
             'with-media'             => 'Median kanssa',
             'with-associations'      => 'Liitoksineen',
@@ -184,6 +191,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'Muodosta mallipohjat',
+            'render-templates-info'  => 'Vie muodostetut mallipohja-arvot alkuperäisen mallipohjalähteen sijaan. Muodostetun tiedoston tuominen uudelleen korvaa tallennetun mallipohjalähteen pelkällä tekstillä.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
@@ -308,10 +317,11 @@ return [
         ],
     ],
     'job' => [
-        'started'   => 'Työn suoritus aloitettiin',
-        'completed' => 'Työn suoritus saatiin päätökseen',
-        'stalled'   => 'Työ lakkasi vastaamasta yli :minutes minuutin ajan ja merkittiin epäonnistuneeksi. Sen suoritusprosessi todennäköisesti keskeytyi.',
-        'reaped'    => ':count jumittunutta työtä merkittiin epäonnistuneiksi.',
-        'stopped'   => 'Tuonti pysäytettiin validoinnin jälkeen, virheitä :count. Yhtään riviä ei tuotu.',
+        'started'         => 'Työn suoritus aloitettiin',
+        'completed'       => 'Työn suoritus saatiin päätökseen',
+        'stalled'         => 'Työ lakkasi vastaamasta yli :minutes minuutin ajan ja merkittiin epäonnistuneeksi. Sen suoritusprosessi todennäköisesti keskeytyi.',
+        'reaped'          => ':count jumittunutta työtä merkittiin epäonnistuneiksi.',
+        'stopped'         => 'Tuonti pysäytettiin validoinnin jälkeen, virheitä :count. Yhtään riviä ei tuotu.',
+        'module-disabled' => 'Työtyyppi :type kuuluu alustan moduuliin, joka on poistettu käytöstä, joten sitä ei voi suorittaa.',
     ],
 ];

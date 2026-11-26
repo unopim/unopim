@@ -12,6 +12,9 @@ use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Bridge\UserRepository as PassportUserRepository;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Passport;
+use Laravel\Passport\PersonalAccessTokenFactory;
+use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\ResourceServer;
 use Webkul\AdminApi\Cache\StructureCache;
 use Webkul\AdminApi\Console\ApiClientCommand;
 use Webkul\AdminApi\Console\PassportKeysCommand;
@@ -207,11 +210,18 @@ class AdminApiServiceProvider extends ServiceProvider
      * never writes to disk and containers booting in parallel cannot race each
      * other into a mismatched pair. Their permissions vary by host umask, so
      * league/oauth2-server v9's 600/660 check is skipped to keep the API
-     * bootable.
+     * bootable. A missing pair fails closed with an instruction to run the
+     * command instead of falling back to any other location.
      */
     protected function activatePassportApiClient(): void
     {
-        Passport::loadKeysFrom($this->app->make(OauthKeyStore::class)->resolvedPath());
+        Passport::loadKeysFrom($this->app->make(OauthKeyStore::class)->path());
+
+        foreach ([AuthorizationServer::class, ResourceServer::class, PersonalAccessTokenFactory::class] as $server) {
+            $this->app->beforeResolving($server, function (): void {
+                $this->app->make(OauthKeyStore::class)->ensureExists();
+            });
+        }
 
         Passport::$validateKeyPermissions = false;
 

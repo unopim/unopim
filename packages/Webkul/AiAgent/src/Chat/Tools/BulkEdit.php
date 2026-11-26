@@ -55,7 +55,11 @@ class BulkEdit implements PimTool
 
             public function handle(Request $request): string
             {
-                if ($denied = $this->denyUnlessAllowed($this->context, 'catalog.products.mass_update')) {
+                if ($denied = $this->denyUnlessAllowed($this->context, 'catalog.products.edit')) {
+                    return $denied;
+                }
+
+                if ($denied = $this->denyUnlessAllowed($this->context, 'catalog.products.bulk_edit')) {
                     return $denied;
                 }
 

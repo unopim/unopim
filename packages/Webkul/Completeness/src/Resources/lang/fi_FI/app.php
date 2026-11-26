@@ -69,4 +69,16 @@ return [
             ],
         ],
     ],
+
+    'configuration' => [
+        'score-thresholds' => [
+            'title'           => 'Täydellisyyspisteiden värit',
+            'info'            => 'Määritä pisteet, joilla täydellisyysilmaisimet muuttuvat vihreiksi tai punaisiksi.',
+            'green-from'      => 'Vihreä alkaen (%)',
+            'green-from-info' => 'Tämän arvon suuruiset tai suuremmat pisteet näytetään vihreänä.',
+            'red-below'       => 'Punainen alle (%)',
+            'red-below-info'  => 'Tätä arvoa pienemmät pisteet näytetään punaisena. Niiden väliin jäävät näytetään keltaisena.',
+            'order-error'     => 'Vihreän raja-arvon on oltava suurempi kuin punaisen raja-arvon.',
+        ],
+    ],
 ];

@@ -32,13 +32,17 @@ class AppearanceController extends Controller
     }
 
     /**
-     * Update logo and favicon.
+     * Update the light and dark mode logo and favicon.
      */
     public function update(AppearanceForm $request): RedirectResponse
     {
         $this->handleUpload($request, 'logo_image', 'general.design.admin_logo.logo_image');
 
+        $this->handleUpload($request, 'logo_image_dark', 'general.design.admin_logo.logo_image_dark');
+
         $this->handleUpload($request, 'favicon', 'general.design.admin_logo.favicon');
+
+        $this->handleUpload($request, 'favicon_dark', 'general.design.admin_logo.favicon_dark');
 
         $this->flushConfigCache();
 

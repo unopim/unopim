@@ -10,7 +10,11 @@
         <x-admin::breadcrumbs :leaf="$title" />
     @endif
 
-    <x-admin::heading :title="$title" :subtitle="$subtitle" as="h1" :size="$size" />
+    @isset($heading)
+        <x-admin::heading :subtitle="$subtitle" as="h1" :size="$size">{{ $heading }}</x-admin::heading>
+    @else
+        <x-admin::heading :title="$title" :subtitle="$subtitle" as="h1" :size="$size" />
+    @endisset
 
     {{ $slot }}
 </div>

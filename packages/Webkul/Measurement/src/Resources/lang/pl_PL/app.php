@@ -124,6 +124,8 @@ return [
                     'base'           => 'Miejsca dziesiętne wartości bazowej',
                     'base-info'      => 'Liczba miejsc dziesiętnych zachowywana dla wartości przeliczonej na jednostkę standardową.',
                 ],
+                'display-unit-symbol'      => 'Wyświetlaj symbole jednostek',
+                'display-unit-symbol-info' => 'Wyświetla wartości miar z symbolem jednostki (na przykład 100 °C) zamiast nazwy jednostki, w panelu administracyjnym i w eksportach. Jednostki bez symbolu zachowują swoją nazwę.',
             ],
         ],
     ],

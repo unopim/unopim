@@ -413,6 +413,7 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
         return [
             'additional' => 'array',
             'values'     => 'array',
+            'status'     => 'boolean',
         ];
     }
 }

@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Files\Image as AiImage;
 use Laravel\Ai\Image;
+use Laravel\Ai\Responses\ImageResponse;
 use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
@@ -17,6 +18,7 @@ use Webkul\Attribute\Models\Attribute;
 use Webkul\Core\Filesystem\FileStorer;
 use Webkul\Core\Helpers\Database\GrammarQueryManager;
 use Webkul\MagicAI\Enums\AiProvider;
+use Webkul\MagicAI\Services\ScopedProviderConfig;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\ProductRepository;
 
@@ -96,15 +98,6 @@ class EditImage implements PimTool
                 }
 
                 try {
-                    $configKey = $aiProvider->configKey();
-                    config([
-                        "ai.providers.{$configKey}.key" => $this->context->platform->api_key,
-                    ]);
-
-                    if ($this->context->platform->api_url) {
-                        config(["ai.providers.{$configKey}.url" => $this->context->platform->api_url]);
-                    }
-
                     $imageModel = $this->outer->resolveImageModel($this->context);
 
                     $sizeMap = [
@@ -113,16 +106,26 @@ class EditImage implements PimTool
                         '1792x1024' => '3:2',
                     ];
 
-                    $response = Image::of($instruction)
-                        ->attachments([
-                            AiImage::fromPath($imagePath),
-                        ])
-                        ->size($sizeMap[$size] ?? '1:1')
-                        ->quality('high')
-                        ->generate(
-                            provider: $aiProvider->toLab(),
-                            model: $imageModel,
-                        );
+                    $overrides = ['key' => $this->context->platform->api_key];
+
+                    if ($this->context->platform->api_url) {
+                        $overrides['url'] = $this->context->platform->api_url;
+                    }
+
+                    $response = ScopedProviderConfig::run(
+                        $aiProvider->configKey(),
+                        $overrides,
+                        fn (): ImageResponse => Image::of($instruction)
+                            ->attachments([
+                                AiImage::fromPath($imagePath),
+                            ])
+                            ->size($sizeMap[$size] ?? '1:1')
+                            ->quality('high')
+                            ->generate(
+                                provider: $aiProvider->toLab(),
+                                model: $imageModel,
+                            ),
+                    );
 
                     if (empty($response->images)) {
                         return json_encode(['error' => 'Image editing returned no results.']);

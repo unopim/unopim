@@ -5,11 +5,11 @@
 @php
     $trail = isset($menu) ? $menu->getActiveTrail() : [];
 
-    $currentUrl = trim(Request::url(), '/');
+    $currentPath = trim((string) parse_url(Request::url(), PHP_URL_PATH), '/');
 
     $deepest = end($trail) ?: null;
 
-    $leafIsCurrent = $deepest && trim($deepest['url'], '/') === $currentUrl;
+    $leafIsCurrent = $deepest && trim((string) parse_url($deepest['url'], PHP_URL_PATH), '/') === $currentPath;
 
     $ancestors = $leafIsCurrent ? array_slice($trail, 0, -1) : $trail;
 

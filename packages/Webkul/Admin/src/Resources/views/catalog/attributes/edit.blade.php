@@ -144,6 +144,40 @@
                                         :checked="(bool) $selectedOption"
                                     />
                                 </x-admin::form.control-group>
+
+                                @if (in_array($attribute->type, ['text', 'textarea']))
+                                    <x-admin::form.control-group>
+                                        <x-admin::form.control-group.label>
+                                            @lang('admin::app.catalog.attributes.create.enable-templates')
+                                        </x-admin::form.control-group.label>
+
+                                        <input
+                                            type="hidden"
+                                            name="enable_templates"
+                                            value="0"
+                                        />
+
+                                        <x-admin::form.control-group.control
+                                            type="switch"
+                                            id="enable_templates"
+                                            name="enable_templates"
+                                            :value="1"
+                                            v-model="enableTemplates"
+                                            ::checked="enableTemplates"
+                                            ::disabled="! templatesSupported"
+                                            :label="trans('admin::app.catalog.attributes.create.enable-templates')"
+                                        />
+
+                                        <p
+                                            v-if="! templatesSupported"
+                                            class="mt-1 text-xs text-gray-500 dark:text-gray-400"
+                                        >
+                                            @lang('admin::app.catalog.attributes.create.templates-unsupported')
+                                        </p>
+
+                                        <x-admin::form.control-group.error control-name="enable_templates" />
+                                    </x-admin::form.control-group>
+                                @endif
                         </div>
 
                         {!! view_render_event('unopim.admin.catalog.attributes.edit.card.label.after', ['attribute' => $attribute]) !!}
@@ -749,6 +783,10 @@
 
                         selectedAttributeType: "{{ $attribute->type }}",
 
+                        isUnique: @json((bool) $attribute->is_unique),
+
+                        enableTemplates: @json((bool) (old('enable_templates') ?? $attribute->enable_templates)),
+
                         swatchValue: [
                             {
                                 image: [],
@@ -777,10 +815,21 @@
                     },
                     swatchType(value) {
                         this.selectedSwatchType = this.parseValue(value)?.id;
+                    },
+                    templatesSupported(supported) {
+                        if (! supported) {
+                            this.enableTemplates = false;
+                        }
                     }
                 },
 
                 computed: {
+                    templatesSupported() {
+                        return ['text', 'textarea'].includes(this.selectedAttributeType)
+                            && ['', 'none', null, undefined].includes(this.selectedValidationType)
+                            && ! this.isUnique;
+                    },
+
                     isSortable() {
                         return this.$refs.optionsDataGrid.applied.filters.columns.filter(
                             item => item.index === 'all' && item.value == ''

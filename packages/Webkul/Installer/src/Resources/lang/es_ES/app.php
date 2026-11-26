@@ -222,6 +222,8 @@ return [
         'console' => [
             'confirm-drop'        => '¿Eliminar estas tablas y reinstalar?',
             'drop-aborted'        => 'Instalación cancelada. No se eliminó ninguna tabla.',
+            'invalid-modules'     => 'Módulos de plataforma no válidos ":modules". Valores permitidos: :allowed.',
+            'select-modules'      => '¿Qué módulos de la plataforma desea activar?',
             'force-required'      => 'No se ha definido ningún prefijo de tabla, por lo que se eliminarían todas las tablas que ninguna otra instalación reclame. Vuelva a ejecutar con --force para eliminarlas, o defina DB_PREFIX.',
             'outside-references'  => 'Hay tablas fuera del prefijo de tabla que hacen referencia a las tablas que se van a eliminar: :references. Elimine primero estas claves foráneas.',
             'tables-to-drop'      => 'Se eliminarán estas :count tablas: :tables',

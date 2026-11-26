@@ -2,7 +2,9 @@
 
 namespace Webkul\AdminApi\Http\Controllers\API\Catalog;
 
+use Illuminate\Contracts\Validation\Validator as ValidatorContract;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Validator;
@@ -102,6 +104,17 @@ class AttributeController extends ApiController
         $requestData = $request->except(['type', 'code', 'swatch_type', 'value_per_locale', 'value_per_channel', 'is_unique']);
 
         $requestData = $this->setLabels($requestData);
+
+        $denied = $this->deniedChildWrites($requestData['options'] ?? null, 'api.catalog.attributes', 'options')
+            ?? $this->invalidOptionEntries(
+                $requestData['options'] ?? null,
+                fn (array $option): ValidatorContract => $this->optionValidate($option, $attribute->id),
+                ['swatch_value' => [new ValidSwatchValue($attribute->id)]],
+            );
+
+        if ($denied) {
+            return $denied;
+        }
         $id = $attribute->id;
 
         try {
@@ -196,9 +209,9 @@ class AttributeController extends ApiController
                     continue;
                 }
 
-                $this->attributeOptionRepository->create(array_merge([
+                $this->attributeOptionRepository->create(array_merge(Arr::except($optionInputs, ['attribute_id']), [
                     'attribute_id' => $attribute->id,
-                ], $optionInputs));
+                ]));
             }
 
             if (! empty($errors)) {
@@ -244,6 +257,12 @@ class AttributeController extends ApiController
                 $attributeOption = $this->attributeOptionRepository
                     ->findOneWhere(['code' => $optionInputs['code'], 'attribute_id' => $attribute->id]);
                 if (! $attributeOption) {
+                    if (! $this->apiKeyAllows('api.catalog.attributes.create')) {
+                        $errors[$optionInputs['code']] = [trans('admin::app.common.unauthorized')];
+
+                        continue;
+                    }
+
                     $validator = $this->optionValidate($optionInputs, $attribute->id);
                     if ($validator->fails()) {
                         $errors[] = $validator->errors();
@@ -251,11 +270,13 @@ class AttributeController extends ApiController
                         continue;
                     }
 
-                    $this->attributeOptionRepository->create(array_merge([
+                    $this->attributeOptionRepository->create(array_merge(Arr::except($optionInputs, ['attribute_id']), [
                         'attribute_id' => $attribute->id,
-                    ], $optionInputs));
+                    ]));
                 } else {
-                    $this->attributeOptionRepository->update($optionInputs, $attributeOption->id);
+                    $this->attributeOptionRepository->update(array_merge(Arr::except($optionInputs, ['attribute_id']), [
+                        'attribute_id' => $attribute->id,
+                    ]), $attributeOption->id);
                 }
             }
 
@@ -304,7 +325,7 @@ class AttributeController extends ApiController
     /**
      * Validates attribute option data.
      *
-     * @return \Illuminate\Contracts\Validation\Validator
+     * @return ValidatorContract
      */
     private function optionValidate(array $requestData, int $attributeId)
     {

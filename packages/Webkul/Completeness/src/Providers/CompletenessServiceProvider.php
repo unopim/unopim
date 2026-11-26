@@ -19,6 +19,8 @@ class CompletenessServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../Config/completeness.php', 'completeness');
 
+        $this->mergeConfigFrom(__DIR__.'/../Config/system_settings.php', 'system_settings');
+
         Route::middleware('web')->group(__DIR__.'/../Routes/web.php');
 
         $this->loadViewsFrom(__DIR__.'/../Resources/views', 'completeness');
@@ -38,5 +40,13 @@ class CompletenessServiceProvider extends ServiceProvider
                 RecalculateCompletenessCommand::class,
             ]);
         }
+    }
+
+    /**
+     * Register services.
+     */
+    public function register(): void
+    {
+        $this->mergeConfigFrom(__DIR__.'/../Config/acl.php', 'acl');
     }
 }
