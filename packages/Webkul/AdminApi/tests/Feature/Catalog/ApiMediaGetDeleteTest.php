@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeOption;
@@ -44,9 +45,89 @@ it('returns 404 deleting product media that does not exist', function () {
 });
 
 it('returns 404 for product media on an unknown sku', function () {
+    $attribute = Attribute::factory()->create(['type' => 'image', 'value_per_channel' => 0, 'value_per_locale' => 0]);
+
     $this->withHeaders($this->headers)
-        ->json('GET', route('admin.api.media-files.product.get', ['sku' => 'nope', 'attribute' => 'x']))
+        ->json('GET', route('admin.api.media-files.product.get', ['sku' => 'nope', 'attribute' => $attribute->code]))
         ->assertNotFound();
+});
+
+it('refuses to read or delete media through an attribute that does not hold media', function (string $method, string $route): void {
+    $attribute = Attribute::factory()->create(['type' => 'text', 'value_per_channel' => 0, 'value_per_locale' => 0]);
+    $product = Product::factory()->create();
+    $path = 'category/1/logo.png';
+    Storage::put($path, 'x');
+    $product->values = array_merge($product->values ?? [], ['common' => [$attribute->code => $path]]);
+    $product->save();
+
+    $this->withHeaders($this->headers)
+        ->json($method, route($route, ['sku' => $product->sku, 'attribute' => $attribute->code]))
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['attribute']);
+
+    Storage::assertExists($path);
+    expect($product->fresh()->values['common'][$attribute->code])->toBe($path);
+})->with([
+    'get'    => ['GET', 'admin.api.media-files.product.get'],
+    'delete' => ['DELETE', 'admin.api.media-files.product.delete'],
+]);
+
+it('refuses to read or delete media of an attribute that does not exist', function (string $method, string $route): void {
+    $product = Product::factory()->create();
+
+    $this->withHeaders($this->headers)
+        ->json($method, route($route, ['sku' => $product->sku, 'attribute' => 'missing_media_attribute']))
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['attribute']);
+})->with([
+    'get'    => ['GET', 'admin.api.media-files.product.get'],
+    'delete' => ['DELETE', 'admin.api.media-files.product.delete'],
+]);
+
+it('refuses an upload to an attribute that does not hold media', function (): void {
+    $attribute = Attribute::factory()->create(['type' => 'text', 'value_per_channel' => 0, 'value_per_locale' => 0]);
+    $product = Product::factory()->create();
+
+    $this->withHeaders($this->headers)
+        ->post(route('admin.api.media-files.product.store'), [
+            'sku'       => $product->sku,
+            'attribute' => $attribute->code,
+            'file'      => UploadedFile::fake()->image('first.png'),
+        ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['attribute']);
+
+    expect($product->fresh()->values['common'][$attribute->code] ?? null)->toBeNull();
+});
+
+it('deletes only the files inside the product media folder and still clears the value', function (): void {
+    $attribute = Attribute::factory()->create(['type' => 'gallery', 'value_per_channel' => 0, 'value_per_locale' => 0]);
+    $product = Product::factory()->create();
+    $otherProduct = Product::factory()->create();
+    $folder = 'product/'.$product->id.'/'.$attribute->code;
+    $owned = $folder.'/'.str_repeat('a', 40).'/own.png';
+    $foreign = [
+        'category/1/logo.png',
+        'product/'.$otherProduct->id.'/'.$attribute->code.'/other.png',
+        $folder.'/../../../channel/logo.png',
+        $folder.'/..\\..\\..\\swatch.png',
+        '/'.$folder.'/leading.png',
+    ];
+
+    foreach ([$owned, 'category/1/logo.png', 'product/'.$otherProduct->id.'/'.$attribute->code.'/other.png', 'channel/logo.png'] as $path) {
+        Storage::put($path, 'x');
+    }
+
+    $product->values = array_merge($product->values ?? [], ['common' => [$attribute->code => [$owned, ...$foreign]]]);
+    $product->save();
+
+    $this->withHeaders($this->headers)
+        ->json('DELETE', route('admin.api.media-files.product.delete', ['sku' => $product->sku, 'attribute' => $attribute->code]))
+        ->assertOk();
+
+    Storage::assertMissing($owned);
+    Storage::assertExists(['category/1/logo.png', 'product/'.$otherProduct->id.'/'.$attribute->code.'/other.png', 'channel/logo.png']);
+    expect($product->fresh()->values['common'][$attribute->code] ?? null)->toBeNull();
 });
 
 it('gets and deletes swatch media', function () {

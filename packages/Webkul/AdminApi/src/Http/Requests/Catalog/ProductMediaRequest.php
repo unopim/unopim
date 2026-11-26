@@ -7,10 +7,20 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 use Webkul\AdminApi\Http\Requests\ApiFormRequest;
 use Webkul\Attribute\Repositories\AttributeRepository;
+use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Core\Models\ChannelProxy;
 
 class ProductMediaRequest extends ApiFormRequest
 {
+    /**
+     * Attribute types whose values are product media files.
+     */
+    public const array MEDIA_ATTRIBUTE_TYPES = [
+        AttributeTypes::IMAGE_ATTRIBUTE_TYPE,
+        AttributeTypes::FILE_ATTRIBUTE_TYPE,
+        AttributeTypes::GALLERY_ATTRIBUTE_TYPE,
+    ];
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -19,8 +29,9 @@ class ProductMediaRequest extends ApiFormRequest
     public function rules(): array
     {
         return [
-            'channel' => ['nullable', 'string', Rule::exists('channels', 'code')],
-            'locale'  => ['nullable', 'string', Rule::exists('locales', 'code')->where('status', 1)],
+            'attribute' => ['required', 'string', Rule::exists('attributes', 'code')->whereIn('type', self::MEDIA_ATTRIBUTE_TYPES)],
+            'channel'   => ['nullable', 'string', Rule::exists('channels', 'code')],
+            'locale'    => ['nullable', 'string', Rule::exists('locales', 'code')->where('status', 1)],
         ];
     }
 

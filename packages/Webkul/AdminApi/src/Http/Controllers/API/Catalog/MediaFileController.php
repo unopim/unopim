@@ -260,8 +260,13 @@ class MediaFileController extends ApiController
             return $this->modelNotFoundResponse(trans('admin::app.catalog.products.upload-failure'));
         }
 
+        $mediaFolder = 'product/'.$product->id.'/'.request('attribute').'/';
+
         try {
-            $this->deleteFiles($stored);
+            $this->deleteFiles(array_values(array_filter(
+                $stored,
+                fn (string $storedPath): bool => $this->isInsideFolder($storedPath, $mediaFolder),
+            )));
             Arr::forget($values, $path);
             $product->values = $values;
             $product->save();
@@ -424,6 +429,16 @@ class MediaFileController extends ApiController
         $paths = is_array($value) ? $value : explode(',', (string) $value);
 
         return array_values(array_filter(array_map(fn (mixed $path): string => trim((string) $path), $paths)));
+    }
+
+    /**
+     * Whether a stored path points to a file inside the given folder, with no way to step out of it.
+     */
+    private function isInsideFolder(string $path, string $folder): bool
+    {
+        return str_starts_with($path, $folder)
+            && ! str_contains($path, '..')
+            && ! str_contains($path, '\\');
     }
 
     /**
