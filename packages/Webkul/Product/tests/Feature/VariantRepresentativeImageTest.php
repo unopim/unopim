@@ -58,7 +58,7 @@ it('never writes the borrowed image back onto the parent values', function () {
     expect($parent->refresh()->values['common']['image'] ?? null)->toBeNull();
 });
 
-it('shows a configurable parents own image on a child with none of its own', function () {
+it('shows a configurable parents own image on a child with none of its own', function (): void {
     Attribute::firstOrCreate(['code' => 'image'], ['type' => 'image']);
 
     $parent = productWithImage(['type' => ProductType::Configurable->value], 'product/5/parent.jpg');
@@ -67,7 +67,7 @@ it('shows a configurable parents own image on a child with none of its own', fun
     expect($child->getProductDisplayImage())->toBe('product/5/parent.jpg');
 });
 
-it('prefers its own image over an inherited parent image', function () {
+it('prefers its own image over an inherited parent image', function (): void {
     Attribute::firstOrCreate(['code' => 'image'], ['type' => 'image']);
 
     $parent = productWithImage(['type' => ProductType::Configurable->value], 'product/6/parent.jpg');
@@ -76,7 +76,7 @@ it('prefers its own image over an inherited parent image', function () {
     expect($child->getProductDisplayImage())->toBe('product/6/child.jpg');
 });
 
-it('walks up through a sub-configurable to the top level parents own image', function () {
+it('walks up through a sub-configurable to the top level parents own image', function (): void {
     Attribute::firstOrCreate(['code' => 'image'], ['type' => 'image']);
 
     $parent = productWithImage(['type' => ProductType::Configurable->value], 'product/7/parent.jpg');
@@ -86,7 +86,7 @@ it('walks up through a sub-configurable to the top level parents own image', fun
     expect($child->getProductDisplayImage())->toBe('product/7/parent.jpg');
 });
 
-it('prefers a sibling variants own image over a top level parents generic image', function () {
+it('prefers a sibling variants own image over a top level parents generic image', function (): void {
     Attribute::firstOrCreate(['code' => 'image'], ['type' => 'image']);
 
     $parent = productWithImage(['type' => ProductType::Configurable->value], 'product/10/parent.jpg');
@@ -96,7 +96,7 @@ it('prefers a sibling variants own image over a top level parents generic image'
     expect($subParent->refresh()->getProductDisplayImage())->toBe('product/10/child.jpg');
 });
 
-it('never writes an inherited parent image back onto the childs own values', function () {
+it('never writes an inherited parent image back onto the childs own values', function (): void {
     Attribute::firstOrCreate(['code' => 'image'], ['type' => 'image']);
 
     $parent = productWithImage(['type' => ProductType::Configurable->value], 'product/8/parent.jpg');
@@ -107,7 +107,7 @@ it('never writes an inherited parent image back onto the childs own values', fun
     expect($child->refresh()->values['common']['image'] ?? null)->toBeNull();
 });
 
-it('returns null from normalizeWithImage when nothing is bound and no image exists', function () {
+it('returns null from normalizeWithImage when nothing is bound and no image exists', function (): void {
     Attribute::firstOrCreate(['code' => 'image'], ['type' => 'image']);
 
     $product = productWithImage(['type' => ProductType::Simple->value]);
@@ -115,7 +115,7 @@ it('returns null from normalizeWithImage when nothing is bound and no image exis
     expect($product->normalizeWithImage()['image'])->toBeNull();
 });
 
-it('asks the bound fallback resolver only when no classic image was found', function () {
+it('asks the bound fallback resolver only when no classic image was found', function (): void {
     Attribute::firstOrCreate(['code' => 'image'], ['type' => 'image']);
 
     app()->bind(ProductImageFallbackResolverContract::class, fn (): ProductImageFallbackResolverContract => new class implements ProductImageFallbackResolverContract
@@ -133,7 +133,7 @@ it('asks the bound fallback resolver only when no classic image was found', func
     expect($withImage->normalizeWithImage()['image'])->toBe(Storage::url('product/9/own.jpg'));
 });
 
-it('does not ask the bound fallback resolver when a parent image is inherited', function () {
+it('does not ask the bound fallback resolver when a parent image is inherited', function (): void {
     Attribute::firstOrCreate(['code' => 'image'], ['type' => 'image']);
 
     app()->bind(ProductImageFallbackResolverContract::class, fn (): ProductImageFallbackResolverContract => new class implements ProductImageFallbackResolverContract

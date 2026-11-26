@@ -24,6 +24,10 @@ interface ProductImageFallbackResolver
 {
     /**
      * Resolve a ready-to-use display image URL for the product, or null.
+     *
+     * Called once per product, including per row in the product picker,
+     * association links and variant lists, so implementations should cache
+     * or batch their lookups.
      */
     public function resolveFallbackUrl(Product $product, ?string $currentChannelCode = null, ?string $currentLocaleCode = null): ?string;
 }

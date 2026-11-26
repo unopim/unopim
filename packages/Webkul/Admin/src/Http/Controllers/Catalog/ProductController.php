@@ -428,7 +428,7 @@ class ProductController extends Controller
 
         $parent->loadMissing('parent');
 
-        $paginator->getCollection()->each(fn (Product $child) => $child->setRelation('parent', $parent));
+        $paginator->getCollection()->each(fn (Product $child): Product => $child->setRelation('parent', $parent));
 
         $optionCodes = $paginator->getCollection()
             ->flatMap(fn (Product $child) => array_map(

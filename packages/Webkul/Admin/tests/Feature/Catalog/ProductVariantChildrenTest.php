@@ -135,7 +135,7 @@ it('lists a variant_group\'s direct simple children when parent_id is passed', f
         ->and($options[0]['sku'])->toBe($leaf->sku);
 });
 
-it('shows the configurable\'s inherited image on a variant_group child with none of its own', function () {
+it('shows the configurable\'s inherited image on a variant_group child with none of its own', function (): void {
     [$configurable, $color, , $colorCode] = makeConfigurableForVariantChildren();
 
     Storage::fake('public');
