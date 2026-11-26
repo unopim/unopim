@@ -143,13 +143,12 @@ class CategoryController extends ApiController
         }
 
         $requestData = request()->only(['parent', 'additional_data']);
-        $parentId = null;
-        if (isset($requestData['parent'])) {
-            $parentId = $this->getParentIdByCode($requestData['parent']);
+
+        if (array_key_exists('parent', $requestData)) {
+            $requestData['parent_id'] = $this->getParentIdByCode($requestData['parent']);
         }
 
         unset($requestData['parent']);
-        $requestData['parent_id'] = $parentId;
         $id = $category->id;
 
         $validator = $this->categoryValidator->validate($requestData, $id);
@@ -228,7 +227,7 @@ class CategoryController extends ApiController
 
             Event::dispatch('catalog.category.update.before', $category->id);
 
-            if (isset($requestData['parent_id'])) {
+            if (array_key_exists('parent_id', $requestData)) {
                 $category->parent_id = $requestData['parent_id'];
             }
 

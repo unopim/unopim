@@ -279,7 +279,7 @@ it('should return 404 if category not found for patch', function () {
     $nonExistingCode = 'non-existing-code';
     $response = $this->withHeaders($this->headers)
         ->json('PATCH', route('admin.api.categories.patch', ['code' => 'non-existing-code']), [
-            'parent' => 'null',
+            'parent' => null,
         ]);
     $response->assertStatus(404)
         ->assertJsonStructure([
@@ -294,7 +294,7 @@ it('should successfully patch the category', function () {
     $category = Category::factory()->create(['code' => 'existing-code']);
     $response = $this->withHeaders($this->headers)
         ->json('PATCH', route('admin.api.categories.patch', ['code' => 'existing-code']), [
-            'parent' => 'null',
+            'parent' => null,
         ]);
     $response->assertStatus(200)
         ->assertJsonStructure([
@@ -310,7 +310,7 @@ it('should return 401 if user is unauthorized', function () {
 
     $response = $this->withHeaders($this->headers)
         ->json('PATCH', route('admin.api.categories.patch', ['code' => 'existing-code']), [
-            'parent' => 'null',
+            'parent' => null,
         ]);
     $response->assertStatus(401)
         ->assertJsonFragment(['error' => trans('admin::app.errors.401.message')]);
