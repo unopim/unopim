@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Storage;
 use Webkul\DataTransfer\Helpers\Sources\CSV;
 
 describe('CSV Source Optimizations', function () {
-    it('removes UTF-8 BOM from first header column', function () {
+    it('removes UTF-8 BOM from first header column', function (): void {
         $csvContent = "\xEF\xBB\xBFchannel;locale;sku\n";
         $csvContent .= "default;de_DE;sku-1\n";
 
@@ -25,7 +25,7 @@ describe('CSV Source Optimizations', function () {
         Storage::disk('private')->delete('test-csv-bom-header.csv');
     });
 
-    it('removes UTF-8 BOM before a quoted first header column', function () {
+    it('removes UTF-8 BOM before a quoted first header column', function (): void {
         Storage::disk('private')->put('test-csv-bom-quoted.csv', "\xEF\xBB\xBF\"sku\",\"name\"\n\"sku-1\",\"Battery\"\n");
 
         $source = new CSV('test-csv-bom-quoted.csv', ',');
@@ -43,10 +43,10 @@ describe('CSV Source Optimizations', function () {
         Storage::disk('private')->delete('test-csv-bom-quoted.csv');
     });
 
-    it('still rejects a file that holds only a UTF-8 BOM', function () {
+    it('still rejects a file that holds only a UTF-8 BOM', function (): void {
         Storage::disk('private')->put('test-csv-bom-only.csv', "\xEF\xBB\xBF");
 
-        expect(fn () => new CSV('test-csv-bom-only.csv', ','))
+        expect(fn (): CSV => new CSV('test-csv-bom-only.csv', ','))
             ->toThrow(LogicException::class, trans('data_transfer::app.validation.errors.file-empty'));
 
         Storage::disk('private')->delete('test-csv-bom-only.csv');

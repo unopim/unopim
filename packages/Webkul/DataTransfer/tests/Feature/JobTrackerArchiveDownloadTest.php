@@ -103,8 +103,8 @@ describe('Job tracker archive download', function () {
         $jobInstance->delete();
     });
 
-    it('downloads a file tracked on the public disk by an earlier release', function () {
-        [$jobInstance, $jobTrack, $folder] = exportedJob([]);
+    it('downloads a file tracked on the public disk by an earlier release', function (): void {
+        [$jobInstance, $jobTrack] = exportedJob([]);
 
         $path = 'exports/legacy-'.uniqid().'/products.csv';
 
@@ -120,7 +120,7 @@ describe('Job tracker archive download', function () {
         $jobInstance->delete();
     });
 
-    it('returns not found for a job without a file path', function (string $route) {
+    it('returns not found for a job without a file path', function (string $route): void {
         [$jobInstance, $jobTrack] = exportedJob([]);
 
         $jobTrack->update(['file_path' => null]);
@@ -133,15 +133,14 @@ describe('Job tracker archive download', function () {
         'admin.settings.data_transfer.tracker.archive.download',
     ]);
 
-    it('refuses a file path that climbs out of the storage disks', function () {
+    it('refuses a file path that climbs out of the storage disks', function (): void {
         [$jobInstance, $jobTrack] = exportedJob([]);
 
         $jobTrack->update(['file_path' => '../../.env']);
 
         $response = $this->get(route('admin.settings.data_transfer.tracker.download', $jobTrack->id));
 
-        expect($response->status())->not->toBe(200);
-        expect($response->headers->get('content-disposition'))->toBeNull();
+        $response->assertNotFound();
 
         $jobInstance->delete();
     });
