@@ -47,7 +47,7 @@ it('does not let a stale Withdrawn model reinstate a publication redacted meanwh
 
     $publisher->redactAll($version->publication->fresh(), Admin::factory()->create()->id, 'erasure');
 
-    expect(fn () => $publisher->reinstate($stale))
+    expect(fn (): mixed => $publisher->reinstate($stale))
         ->toThrow(InvalidPublicationTransitionException::class);
 
     expect($version->publication->fresh()->status)->toBe(PublicationStatus::Redacted);
