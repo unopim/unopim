@@ -134,6 +134,42 @@ return [
         'min_input_window' => (int) env('AI_AGENT_MIN_INPUT_WINDOW', 1024),
     ],
 
+    /**
+     * Image models the generate and edit image tools choose from.
+     *
+     * Per provider, the tools take the first `preferred` model the platform
+     * lists, then any listed model matching `patterns`, then `fallback`.
+     * Models matching `retired` are never used, not even when set as the image
+     * generation model, so retiring a model only needs a pattern here.
+     */
+    'image_models' => [
+        'providers' => [
+            'openai' => [
+                'patterns'  => ['/^(chat)?gpt-image/i'],
+                'preferred' => ['gpt-image-2.6-flare', 'gpt-image-2.6-sunburst', 'gpt-image-2.5-flare', 'gpt-image-2'],
+                'fallback'  => 'gpt-image-2.6-flare',
+            ],
+            'gemini' => [
+                'patterns'  => ['/(^|-)image(-|$)/i', '/nano-banana/i'],
+                'preferred' => ['gemini-nano-banana-2.1', 'gemini-3.1-flash-image', 'gemini-3-pro-image', 'gemini-2.5-flash-image'],
+                'fallback'  => 'gemini-nano-banana-2.1',
+            ],
+            'xai' => [
+                'patterns'  => ['/(^|-)image(-|$)/i'],
+                'preferred' => ['grok-imagine-image-2.0', 'grok-imagine-image'],
+                'fallback'  => 'grok-imagine-image-2.0',
+            ],
+        ],
+
+        'retired' => [
+            '/^dall-?e/i',
+            '/^imagen-/i',
+            '/^gpt-image-1(?!\d)/i',
+            '/^gemini-2\.0-flash.*image/i',
+            '/^gemini-3-pro-image-preview/i',
+        ],
+    ],
+
     'category_tree' => [
         'relevance_candidate_limit' => (int) env('AI_AGENT_CATEGORY_TREE_RELEVANCE_CANDIDATE_LIMIT', 1000),
         'relevance_batch_size'      => (int) env('AI_AGENT_CATEGORY_TREE_RELEVANCE_BATCH_SIZE', 100),

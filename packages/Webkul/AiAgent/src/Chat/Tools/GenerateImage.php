@@ -12,6 +12,7 @@ use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
+use Webkul\AiAgent\Chat\ImageModelSelector;
 use Webkul\Core\Filesystem\FileStorer;
 use Webkul\MagicAI\Enums\AiProvider;
 use Webkul\MagicAI\Models\MagicAIPlatform;
@@ -214,58 +215,12 @@ class GenerateImage implements PimTool
 
         $configuredModel = (string) core()->getConfigData('general.magic_ai.image_generation.ai_model');
 
-        if ($configuredModel !== '' && in_array($configuredModel, $platform->model_list ?? [], true)) {
+        if ($configuredModel !== ''
+            && in_array($configuredModel, $platform->model_list ?? [], true)
+            && ! ImageModelSelector::isRetired($configuredModel)) {
             return $configuredModel;
         }
 
-        $imageModelPatterns = match ($provider) {
-            'openai'  => ['dall-e', 'gpt-image'],
-            'gemini'  => ['gemini-2', 'imagen'],
-            'xai'     => ['grok'],
-            default   => [],
-        };
-
-        // 1. If the user explicitly selected an image-capable model, use it
-        if ($context->model !== '' && $context->model !== '0') {
-            foreach ($imageModelPatterns as $pattern) {
-                if (stripos($context->model, $pattern) !== false) {
-                    return $context->model;
-                }
-            }
-        }
-
-        // 2. Scan the platform's model list — prefer known valid image models
-        $knownImageModels = match ($provider) {
-            'openai'  => ['gpt-image-1', 'gpt-image-1-mini', 'gpt-image-1.5', 'dall-e-3', 'dall-e-2'],
-            'gemini'  => ['gemini-2.0-flash-preview-image-generation', 'gemini-2.5-flash-image'],
-            'xai'     => ['grok-2-image'],
-            default   => [],
-        };
-
-        $models = $platform->model_list ?? [];
-
-        // First pass: prefer known valid models
-        foreach ($knownImageModels as $known) {
-            if (in_array($known, $models, true)) {
-                return $known;
-            }
-        }
-
-        // Second pass: any model matching image patterns
-        foreach ($models as $model) {
-            foreach ($imageModelPatterns as $pattern) {
-                if (stripos((string) $model, $pattern) !== false) {
-                    return $model;
-                }
-            }
-        }
-
-        // 3. Fallback defaults
-        return match ($provider) {
-            'openai'  => 'gpt-image-1',
-            'gemini'  => 'gemini-2.0-flash-preview-image-generation',
-            'xai'     => 'grok-2-image',
-            default   => $context->model,
-        };
+        return ImageModelSelector::select($provider, $context->model, $platform->model_list ?? []);
     }
 }
