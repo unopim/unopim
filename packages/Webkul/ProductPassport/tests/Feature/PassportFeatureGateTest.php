@@ -84,6 +84,8 @@ it('hides the passports menu item from a role that has the parent permission but
 
     expect(passportMenuItems())->not->toHaveKey('passport');
 
+    expect(app('unopim.admin.menu')['tree']->items)->not->toHaveKey('catalog');
+
     $this->get(route('admin.catalog.passports.index'))->assertForbidden();
 });
 

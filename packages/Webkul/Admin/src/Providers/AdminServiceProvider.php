@@ -199,33 +199,13 @@ class AdminServiceProvider extends ServiceProvider
 
         $visible = array_filter($items, fn (array $item): bool => $gate->allowsKey($item['key']));
 
-        $acl = resolve('acl');
+        $allowed = array_filter($visible, fn (array $item): bool => bouncer()->hasPermission($item['key']));
 
-        $allowed = array_filter($visible, function (array $item) use ($acl, $gate, $items): bool {
-            if (! bouncer()->hasPermission($item['key'])) {
-                return false;
-            }
+        $deniedByRoute = array_filter($allowed, fn (array $item): bool => $this->isRouteDenied($item, $items));
 
-            $route = $item['route'] ?? null;
+        $allowed = array_diff_key($allowed, $deniedByRoute);
 
-            $prefix = $item['key'].'.';
-
-            $isParent = array_any($items, fn (array $other): bool => str_starts_with((string) $other['key'], $prefix));
-
-            if ($isParent || ! $acl || ! $route || ! isset($acl->roles[$route])) {
-                return true;
-            }
-
-            foreach ([$acl->roles[$route], ...($acl->alternateRoles[$route] ?? [])] as $permission) {
-                if ($gate->allowsKey($permission) && bouncer()->hasPermission($permission)) {
-                    return true;
-                }
-            }
-
-            return false;
-        });
-
-        $visibleKeys = array_column($visible, 'key');
+        $visibleKeys = array_diff(array_column($visible, 'key'), array_column($deniedByRoute, 'key'));
 
         $allowedKeys = array_column($allowed, 'key');
 
@@ -253,10 +233,33 @@ class AdminServiceProvider extends ServiceProvider
     }
 
     /**
+     * Whether the item's page would answer 403 although the user holds the item's own key,
+     * because the route is mapped to a narrower permission (e.g. `catalog.passport.view`).
+     *
+     * Only leaves are checked: a parent takes its URL from its first allowed child, so its own
+     * route says nothing about what the user can open. A parent whose children are all denied is
+     * dropped by {@see lostAllChildren()}.
+     *
+     * @param  array<string, mixed>  $item
+     * @param  array<int, array<string, mixed>>  $items
+     */
+    protected function isRouteDenied(array $item, array $items): bool
+    {
+        $prefix = $item['key'].'.';
+
+        if (array_any($items, fn (array $other): bool => str_starts_with((string) $other['key'], $prefix))) {
+            return false;
+        }
+
+        return ! bouncer()->canAccessRoute($item['route'] ?? null);
+    }
+
+    /**
      * Whether the module gate removed children of a menu parent and none of its children survived
      * the gate and permissions; such a parent would otherwise stay in the sidebar as an empty heading.
      *
      * A parent the gate took nothing from is kept as before, so permission-only menus are unchanged.
+     * Children denied by their route's narrower permission are passed as removed from `$visibleKeys`.
      *
      * @param  array<int, array<string, mixed>>  $items
      * @param  list<string>  $allowedKeys
