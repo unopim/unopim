@@ -724,3 +724,34 @@ it('still requires an id list on attribute mass delete when all matching are not
         ->assertUnprocessable()
         ->assertJsonValidationErrors('indices');
 });
+
+it('refuses to store a validation type the attribute form does not offer', function (string $validation) {
+    $this->loginAsAdmin();
+
+    postJson(route('admin.catalog.attributes.store'), ['code' => 'bad_validation_attr', 'type' => 'text', 'validation' => $validation])
+        ->assertStatus(422)
+        ->assertJsonValidationErrors('validation');
+
+    $this->assertDatabaseMissing($this->getFullTableName(Attribute::class), ['code' => 'bad_validation_attr']);
+})->with(['trailing backslash' => ['x\\'], 'rule name' => ['exists:admin_users,email']]);
+
+it('refuses to update an attribute to a validation type the form does not offer', function () {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create(['type' => 'text']);
+
+    $this->putJson(route('admin.catalog.attributes.update', $attribute->id), ['code' => $attribute->code, 'type' => 'text', 'validation' => 'x\\'])
+        ->assertStatus(422)
+        ->assertJsonValidationErrors('validation');
+
+    expect($attribute->fresh()->validation)->not->toBe('x\\');
+});
+
+it('still saves an offered, legacy or empty validation type on an attribute', function (?string $validation) {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create(['type' => 'text']);
+
+    $this->putJson(route('admin.catalog.attributes.update', $attribute->id), ['code' => $attribute->code, 'type' => 'text', 'validation' => $validation])
+        ->assertRedirect();
+})->with(['email', 'numeric', 'none', null]);

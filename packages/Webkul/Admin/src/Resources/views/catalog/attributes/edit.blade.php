@@ -743,9 +743,9 @@
 
                         selectedSwatchType: "{{ $attribute->swatch_type == '' ? 'text' : $attribute->swatch_type }}",
 
-                        validationType: "{{ $attribute->validation }}",
+                        validationType: {!! json_encode((string) $attribute->validation, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!},
 
-                        selectedValidationType: "{{ $attribute->validation }}",
+                        selectedValidationType: {!! json_encode((string) $attribute->validation, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!},
 
                         selectedAttributeType: "{{ $attribute->type }}",
 

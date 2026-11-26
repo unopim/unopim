@@ -199,3 +199,37 @@ it('keeps an existing field on its association type when an update names another
         ->and((bool) $field->is_required)->toBeTrue()
         ->and($other->fields()->count())->toBe(0);
 });
+
+it('keeps the code and type of an existing field when a nested entry names others', function () {
+    $repo = app(AssociationTypeRepository::class);
+
+    $type = $repo->create([
+        'code'            => 'bundle_'.uniqid(),
+        'status'          => 1,
+        'position'        => 1,
+        'is_user_defined' => 1,
+        'en_US'           => ['name' => 'Bundle'],
+        'fields'          => [
+            ['code' => 'note', 'type' => 'text', 'status' => 1, 'en_US' => ['name' => 'Note']],
+        ],
+    ]);
+
+    $field = $type->fields->first();
+
+    $repo->update([
+        'code'            => $type->code,
+        'status'          => 1,
+        'position'        => 1,
+        'is_user_defined' => 1,
+        'en_US'           => ['name' => 'Bundle'],
+        'fields'          => [
+            $field->id => ['isNew' => 'false', 'code' => 'renamed', 'type' => 'textarea', 'is_required' => 1],
+        ],
+    ], $type->id);
+
+    $field->refresh();
+
+    expect($field->code)->toBe('note')
+        ->and($field->type)->toBe('text')
+        ->and((bool) $field->is_required)->toBeTrue();
+});

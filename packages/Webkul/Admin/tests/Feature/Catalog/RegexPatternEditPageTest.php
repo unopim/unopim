@@ -30,3 +30,25 @@ it('keeps a stored regex pattern inside the value attribute of its edit control'
         ->not->toContain('<span>{{ constructor')
         ->toContain('value="'.e(BREAKOUT_REGEX_PATTERN).'"');
 })->with('regex pattern edit pages');
+
+it('renders a stored validation type ending in a backslash as one script string literal', function (string $url): void {
+    $this->loginAsAdmin();
+
+    $html = get($url)->assertOk()->getContent();
+
+    expect($html)
+        ->toContain('validationType: "x\\\\"')
+        ->toContain('selectedValidationType: "x\\\\"')
+        ->not->toContain('validationType: "x\\"');
+})->with([
+    'attribute' => [
+        fn (): string => route('admin.catalog.attributes.edit', [
+            'id' => Attribute::factory()->create(['type' => 'text', 'validation' => 'x\\'])->id,
+        ]),
+    ],
+    'category field' => [
+        fn (): string => route('admin.catalog.category_fields.edit', [
+            'id' => CategoryField::factory()->create(['type' => 'text', 'validation' => 'x\\'])->id,
+        ]),
+    ],
+]);

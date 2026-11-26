@@ -695,9 +695,9 @@
 
                         swatchType: "{{ $categoryField->swatch_type == '' ? 'dropdown' : $categoryField->swatch_type }}",
 
-                        validationType: "{{ $categoryField->validation }}",
+                        validationType: {!! json_encode((string) $categoryField->validation, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!},
 
-                        selectedValidationType: "{{ $categoryField->validation }}",
+                        selectedValidationType: {!! json_encode((string) $categoryField->validation, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!},
 
                         swatchValue: [
                             {

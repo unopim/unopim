@@ -101,7 +101,12 @@ class AssociationTypeRepository extends Repository
                     continue;
                 }
 
-                $this->associationTypeFieldRepository->update(Arr::except($fieldData, ['association_type_id']), $resolvedId);
+                /**
+                 * An existing field keeps its identity: renaming or retyping it
+                 * would orphan the values products store under its code, and the
+                 * single-field endpoint refuses both, so this path does too.
+                 */
+                $this->associationTypeFieldRepository->update(Arr::except($fieldData, ['association_type_id', 'code', 'type']), $resolvedId);
             }
 
             return $associationType;

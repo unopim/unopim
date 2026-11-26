@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Catalog\AttributeDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
@@ -15,6 +16,7 @@ use Webkul\Attribute\Enums\SwatchTypeEnum;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Rules\NotSupportedAttributes;
 use Webkul\Attribute\Rules\SwatchTypes;
+use Webkul\Category\Rules\ValidationTypes;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Core\Rules\Code;
 use Webkul\Product\Repositories\ProductRepository;
@@ -72,6 +74,7 @@ class AttributeController extends Controller
         $this->validate(request(), [
             'code'        => ['required', 'unique:attributes,code', new Code, new NotSupportedAttributes],
             'type'        => 'required',
+            'validation'  => $this->validationRules(),
             'swatch_type' => [
                 'required_if:type,select,multiselect',
                 'prohibited_unless:type,select,multiselect',
@@ -128,6 +131,7 @@ class AttributeController extends Controller
         $this->validate(request(), [
             'code'        => ['required', 'unique:attributes,code,'.$id, new Code],
             'type'        => 'required',
+            'validation'  => $this->validationRules(),
             'swatch_type' => [
                 'required_if:type,select,multiselect',
                 'prohibited_unless:type,select,multiselect',
@@ -278,5 +282,18 @@ class AttributeController extends Controller
         return response()->json([
             'data'  => $superAttributes,
         ]);
+    }
+
+    /**
+     * Rules for the stored validation type. Only the types the attribute form
+     * offers may be saved ("none" clears it; "numeric" is the legacy spelling
+     * of "number" that seeded attributes still carry), so the value can never
+     * reach the edit page as anything but a known type.
+     *
+     * @return array<int, mixed>
+     */
+    protected function validationRules(): array
+    {
+        return ['nullable', Rule::in([...ValidationTypes::VALIDATION_TYPES, 'numeric', 'none'])];
     }
 }
