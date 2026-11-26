@@ -74,10 +74,10 @@ it('archives only the files under the track folder', function () {
     expect($names)->toBe(['one.csv']);
 });
 
-it('links the job tracker heading back to the job tracker list', function () {
+it('links the job tracker heading back to the job tracker list', function (): void {
     $track = fileTrack('imports/other-admin/source.csv');
 
-    get(route('admin.settings.data_transfer.tracker.view', $track->id))
-        ->assertOk()
-        ->assertSee('href="'.route('admin.settings.data_transfer.tracker.index').'"', false);
+    $response = get(route('admin.settings.data_transfer.tracker.view', $track->id))->assertOk();
+
+    expect($response->getContent())->toMatch('#<a\s+href="'.preg_quote(route('admin.settings.data_transfer.tracker.index'), '#').'"\s+class="text-gray-600 hover:bg-primary-100#');
 });
