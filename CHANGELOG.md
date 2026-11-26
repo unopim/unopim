@@ -10,6 +10,7 @@
 - AI agent tools and Magic AI endpoints that write data now require the matching create or edit permission instead of the view permission of the area: creating attributes and families, adding attribute options, rolling back an AI changeset, saving Magic AI translations, the Magic AI settings, export links and memories stored for every user.
 - Editing roles and users, and importing them, can no longer leave the installation without an active user holding full access. An admin can only manage users whose current role they could assign, and role and user imports require role and user rights.
 - Fixed the job tracker archive download listing every file on the private disk when a job track had no file path; it now returns 404.
+- Configuration and System Settings saves now reject a file posted at a config code that is not declared as a `file` or `image` field with a 422 validation error, and store nothing. A stored upload could otherwise replace a validated text value. Packages whose `blade` or custom config fields upload files must declare those fields with `'type' => 'file'` or `'type' => 'image'`.
 
 ## New features
 
@@ -64,6 +65,7 @@
 - Fixed a REST category PATCH without a `parent` field moving the category to the root.
 - Fixed REST attribute option endpoints returning 500 on malformed payloads, and an option update changing another attribute's option with the same code.
 - Fixed unknown configuration download paths returning 500 instead of 404.
+- Fixed a configuration save writing the values of every earlier save handled by the same worker again, which under Octane could restore stale settings or fail on a stale upload.
 - Fixed the code generator overwriting the disabled code of an existing attribute or category field option.
 - Fixed generated codes ending in an underscore when the label exceeded 191 characters.
 - Fixed the family form not being marked as changed when attribute groups were reordered.

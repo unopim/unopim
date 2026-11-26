@@ -243,12 +243,7 @@ class ProductPassportTestCase extends TestCase
     }
 
     /**
-     * Writes a `core_config` row directly rather than through
-     * `CoreConfigRepository::create()` — that repository's
-     * `recursiveArray()` uses a `static $data` cache that re-writes every
-     * code seen by the *first* call in the same process on any *second*
-     * call, which is exactly the kind of cross-test leakage a shared test
-     * helper must not risk.
+     * Writes `core_config` rows directly, bypassing the configuration form flattening.
      *
      * @param  array<string, mixed>  $values
      */

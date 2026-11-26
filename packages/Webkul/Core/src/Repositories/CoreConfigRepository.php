@@ -145,30 +145,17 @@ class CoreConfigRepository extends Repository
     }
 
     /**
-     * Recursive array.
+     * Flatten submitted form data into config codes and their values.
      *
-     * @param  string  $method
      * @return array
      */
-    public function recursiveArray(array $formData, $method)
+    public function recursiveArray(array $formData, string $method)
     {
-        static $data = [];
+        $data = [];
 
-        static $recursiveArrayData = [];
+        $this->collectFieldGroups($formData, $method, $data);
 
-        foreach ($formData as $form => $formValue) {
-            $value = $method.'.'.$form;
-
-            if (is_array($formValue)) {
-                $dim = $this->countDim($formValue);
-
-                if ($dim > 1) {
-                    $this->recursiveArray($formValue, $value);
-                } elseif ($dim == 1) {
-                    $data[$value] = $formValue;
-                }
-            }
-        }
+        $recursiveArrayData = [];
 
         foreach ($data as $key => $value) {
             $field = core()->getConfigField($key);
@@ -183,6 +170,28 @@ class CoreConfigRepository extends Repository
         }
 
         return $recursiveArrayData;
+    }
+
+    /**
+     * Collect the innermost arrays of the form data, keyed by their dotted path.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    protected function collectFieldGroups(array $formData, string $method, array &$data): void
+    {
+        foreach ($formData as $form => $formValue) {
+            if (! is_array($formValue)) {
+                continue;
+            }
+
+            $path = $method.'.'.$form;
+
+            if ($this->countDim($formValue) > 1) {
+                $this->collectFieldGroups($formValue, $path, $data);
+            } else {
+                $data[$path] = $formValue;
+            }
+        }
     }
 
     /**
