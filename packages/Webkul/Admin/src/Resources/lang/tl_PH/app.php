@@ -13,6 +13,8 @@ return [
             'password'                   => 'Password',
             'sso-divider'                => 'or',
             'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'sso-sign-in-with-oidc'      => 'Mag-sign in gamit ang OpenID Connect',
+            'sso-only'                   => 'Naka-off ang pag-sign in gamit ang password. Gamitin ang single sign-on.',
             'submit-btn'                 => 'Mag-sign In',
             'title'                      => 'Mag-sign In',
             'powered-by'                 => 'Pinapatakbo ng :unopim,',
@@ -2073,6 +2075,10 @@ return [
                 'title' => 'Microsoft SSO',
                 'info'  => 'Microsoft Entra ID single sign-on para sa pag-login ng admin.',
             ],
+            'oidc-sso'           => [
+                'title' => 'OpenID Connect SSO',
+                'info'  => 'Single sign-on para sa admin login gamit ang anumang OpenID Connect provider.',
+            ],
         ],
 
         'appearance' => [
@@ -2149,6 +2155,7 @@ return [
     'configuration' => [
         'index' => [
             'delete'          => 'Tanggalin',
+            'env-locked'      => 'Itinakda ng environment variable sa server at hindi mababago rito.',
             'no-result-found' => 'Walang resulta',
             'save-btn'        => 'I-save ang Configurations',
             'save-message'    => 'Nai-save na ang Configuration',
@@ -2227,6 +2234,35 @@ return [
                         'redirect-uri-info'   => 'Irehistro ang eksaktong URL na ito sa iyong Microsoft Entra ID app registration sa ilalim ng Authentication → Redirect URIs, gamit ang Web platform.',
                         'redirect-uri-copy'   => 'Kopyahin',
                         'redirect-uri-copied' => 'Nakopya sa clipboard',
+                    ],
+                ],
+
+                'oidc-sso' => [
+                    'info'   => 'I-configure ang OpenID Connect single sign-on para sa admin login, halimbawa gamit ang Authentik o Keycloak.',
+                    'title'  => 'OpenID Connect SSO',
+
+                    'settings' => [
+                        'title'               => 'Mga Setting ng OpenID Connect SSO',
+                        'info'                => 'Ilagay ang mga detalye ng client mula sa iyong identity provider. Mas inuuna ang mga value na itinakda sa mga environment variable na UNOPIM_OIDC_* at read-only ang mga ito rito.',
+                        'enabled'             => 'Paganahin ang OpenID Connect SSO',
+                        'redirect-uri-info'   => 'Irehistro ang eksaktong URL na ito bilang redirect URI ng client sa iyong identity provider.',
+                        'issuer'              => 'URL ng Issuer',
+                        'issuer-info'         => 'Ang issuer URL ng iyong provider. Binabasa ang discovery document nito mula sa /.well-known/openid-configuration.',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'scopes'              => 'Mga Scope',
+                        'label'               => 'Label ng Button',
+                        'verified-email'      => 'Kailanganin ang beripikadong email',
+                        'verified-email-info' => 'Tanggihan ang mga sign-in na ang email ay hindi minarkahang beripikado. Laging kailangan ang beripikadong email para i-link ang umiiral na user gamit ang email.',
+                        'auto-provision'      => 'Gumawa ng user sa unang sign-in',
+                        'auto-provision-info' => 'Gumawa ng admin user kapag unang nag-sign in ang isang hindi kilalang tao. Kailangan ng role mapping o default na role.',
+                        'default-role'        => 'Default na Role',
+                        'default-role-info'   => 'Pangalan ng role na ibinibigay sa mga bagong user kapag walang naka-configure na role mapping.',
+                        'groups-claim'        => 'Claim ng mga Grupo',
+                        'role-map'            => 'Role Mapping',
+                        'role-map-info'       => 'JSON object na nagmamapa ng mga grupo ng provider sa mga pangalan ng role. Kapag itinakda, tinatanggihan ang mga sign-in na walang naka-map na grupo at ina-update ang role sa bawat sign-in; ang unang tumugmang entry ang nasusunod.',
+                        'rp-logout'           => 'Mag-sign out din sa provider',
+                        'rp-logout-info'      => 'Pagkatapos mag-sign out sa UnoPim, tapusin din ang session sa identity provider.',
                     ],
                 ],
 

@@ -8,6 +8,8 @@ $debugPayload = ['general' => ['debug' => ['settings' => ['allowed_ips' => '203.
 
 $ssoPayload = ['general' => ['microsoft_sso' => ['settings' => ['tenant' => 'attacker-tenant']]]];
 
+$oidcPayload = ['general' => ['oidc_sso' => ['settings' => ['issuer' => 'https://attacker.example.test/']]]];
+
 it('denies writing email settings through the legacy configuration route', function () use ($restricted, $emailPayload) {
     $this->loginWithPermissions(permissions: $restricted);
 
@@ -44,6 +46,71 @@ it('denies writing microsoft sso settings through the legacy configuration route
     ]);
 });
 
+it('denies writing oidc sso settings through the legacy configuration route', function () use ($restricted, $oidcPayload) {
+    $this->loginWithPermissions(permissions: $restricted);
+
+    $this->post(route('admin.configuration.store', ['slug' => 'general', 'slug2' => 'oidc_sso']), $oidcPayload)
+        ->assertStatus(403);
+
+    $this->assertDatabaseMissing('core_config', [
+        'code'  => 'general.oidc_sso.settings.issuer',
+        'value' => 'https://attacker.example.test/',
+    ]);
+});
+
+it('denies writing oidc sso settings with only the delegated oidc sso grant', function () use ($oidcPayload) {
+    config()->set('services.oidc_sso.issuer', null);
+
+    $this->loginWithPermissions(permissions: [
+        'dashboard',
+        'configuration',
+        'configuration.system_settings',
+        'configuration.system_settings.oidc_sso',
+    ]);
+
+    $this->put(route('admin.settings.system.update', 'system.oidc_sso'), $oidcPayload)->assertStatus(403);
+
+    $this->post(route('admin.configuration.store', ['slug' => 'general', 'slug2' => 'oidc_sso']), $oidcPayload)
+        ->assertStatus(403);
+
+    $this->assertDatabaseMissing('core_config', [
+        'code'  => 'general.oidc_sso.settings.issuer',
+        'value' => 'https://attacker.example.test/',
+    ]);
+});
+
+it('allows a full-access admin to write oidc sso settings', function () use ($oidcPayload) {
+    config()->set('services.oidc_sso.issuer', null);
+
+    $this->loginWithPermissions(permissionType: 'all', permissions: []);
+
+    $this->put(route('admin.settings.system.update', 'system.oidc_sso'), $oidcPayload)->assertRedirect();
+
+    $this->assertDatabaseHas('core_config', [
+        'code'  => 'general.oidc_sso.settings.issuer',
+        'value' => 'https://attacker.example.test/',
+    ]);
+});
+
+it('denies writing microsoft sso settings with only the delegated microsoft sso grant', function () use ($ssoPayload) {
+    $this->loginWithPermissions(permissions: [
+        'dashboard',
+        'configuration',
+        'configuration.system_settings',
+        'configuration.system_settings.microsoft_sso',
+    ]);
+
+    $this->put(route('admin.settings.system.update', 'system.microsoft_sso'), $ssoPayload)->assertStatus(403);
+
+    $this->post(route('admin.configuration.store', ['slug' => 'general', 'slug2' => 'microsoft_sso']), $ssoPayload)
+        ->assertStatus(403);
+
+    $this->assertDatabaseMissing('core_config', [
+        'code'  => 'general.microsoft_sso.settings.tenant',
+        'value' => 'attacker-tenant',
+    ]);
+});
+
 it('denies the slug-less configuration post that targets every section at once', function () use ($restricted, $emailPayload, $debugPayload, $ssoPayload) {
     $this->loginWithPermissions(permissions: $restricted);
 
@@ -68,13 +135,63 @@ it('denies the slug-less configuration post that targets every section at once',
     ]);
 });
 
-it('allows writing a section the role is explicitly granted', function () use ($emailPayload) {
+it('allows writing a section the role is explicitly granted', function () use ($debugPayload) {
+    $this->loginWithPermissions(permissions: [
+        'dashboard',
+        'configuration',
+        'configuration.system_settings',
+        'configuration.system_settings.debug',
+    ]);
+
+    $this->post(route('admin.configuration.store', ['slug' => 'general', 'slug2' => 'debug']), $debugPayload)
+        ->assertRedirect();
+
+    $this->assertDatabaseHas('core_config', [
+        'code'  => 'general.debug.settings.allowed_ips',
+        'value' => '203.0.113.5',
+    ]);
+});
+
+it('isolates sections on the legacy route: the debug grant does not unlock platform', function () {
+    $this->loginWithPermissions(permissions: [
+        'dashboard',
+        'configuration',
+        'configuration.system_settings',
+        'configuration.system_settings.debug',
+    ]);
+
+    $this->post(route('admin.configuration.store', ['slug' => 'general', 'slug2' => 'platform']), [
+        'general' => ['platform' => ['settings' => ['hidden_sections' => 'dashboard']]],
+    ])->assertStatus(403);
+
+    $this->assertDatabaseMissing('core_config', [
+        'code' => 'general.platform.settings.hidden_sections',
+    ]);
+});
+
+it('denies writing email settings with only the delegated email grant', function () use ($emailPayload) {
     $this->loginWithPermissions(permissions: [
         'dashboard',
         'configuration',
         'configuration.system_settings',
         'configuration.system_settings.email',
     ]);
+
+    $this->get(route('admin.settings.system.edit', 'system.email'))->assertStatus(403);
+
+    $this->put(route('admin.settings.system.update', 'system.email'), $emailPayload)->assertStatus(403);
+
+    $this->post(route('admin.configuration.store', ['slug' => 'emails', 'slug2' => 'configure']), $emailPayload)
+        ->assertStatus(403);
+
+    $this->assertDatabaseMissing('core_config', [
+        'code'  => 'emails.configure.email_settings.mail_host',
+        'value' => 'evil.smtp.example',
+    ]);
+});
+
+it('allows a full-access admin to write email settings', function () use ($emailPayload) {
+    $this->loginWithPermissions(permissionType: 'all', permissions: []);
 
     $this->post(route('admin.configuration.store', ['slug' => 'emails', 'slug2' => 'configure']), $emailPayload)
         ->assertRedirect();
@@ -82,23 +199,6 @@ it('allows writing a section the role is explicitly granted', function () use ($
     $this->assertDatabaseHas('core_config', [
         'code'  => 'emails.configure.email_settings.mail_host',
         'value' => 'evil.smtp.example',
-    ]);
-});
-
-it('isolates sections on the legacy route: the email grant does not unlock debug', function () use ($debugPayload) {
-    $this->loginWithPermissions(permissions: [
-        'dashboard',
-        'configuration',
-        'configuration.system_settings',
-        'configuration.system_settings.email',
-    ]);
-
-    $this->post(route('admin.configuration.store', ['slug' => 'general', 'slug2' => 'debug']), $debugPayload)
-        ->assertStatus(403);
-
-    $this->assertDatabaseMissing('core_config', [
-        'code'  => 'general.debug.settings.allowed_ips',
-        'value' => '203.0.113.5',
     ]);
 });
 
@@ -114,10 +214,10 @@ it('allows reading a hub-owned section with the matching permission', function (
         'dashboard',
         'configuration',
         'configuration.system_settings',
-        'configuration.system_settings.email',
+        'configuration.system_settings.debug',
     ]);
 
-    $this->get(route('admin.configuration.edit', ['slug' => 'emails', 'slug2' => 'configure']))
+    $this->get(route('admin.configuration.edit', ['slug' => 'general', 'slug2' => 'debug']))
         ->assertOk();
 });
 

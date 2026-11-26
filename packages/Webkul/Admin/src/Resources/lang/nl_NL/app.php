@@ -13,6 +13,8 @@ return [
             'password'                   => 'Wachtwoord',
             'sso-divider'                => 'of',
             'sso-sign-in-with-microsoft' => 'Aanmelden met Microsoft',
+            'sso-sign-in-with-oidc'      => 'Aanmelden met OpenID Connect',
+            'sso-only'                   => 'Aanmelden met wachtwoord is uitgeschakeld. Gebruik single sign-on.',
             'submit-btn'                 => 'Inloggen',
             'title'                      => 'Inloggen',
             'powered-by'                 => 'Aangedreven door :unopim,',
@@ -2073,6 +2075,10 @@ return [
                 'title' => 'Microsoft SSO',
                 'info'  => 'Microsoft Entra ID eenmalige aanmelding voor beheerderslogin.',
             ],
+            'oidc-sso'           => [
+                'title' => 'OpenID Connect SSO',
+                'info'  => 'Single sign-on voor de beheerdersaanmelding met elke OpenID Connect-provider.',
+            ],
         ],
 
         'appearance' => [
@@ -2149,6 +2155,7 @@ return [
     'configuration' => [
         'index' => [
             'delete'          => 'Verwijderen',
+            'env-locked'      => 'Ingesteld via een omgevingsvariabele op de server en hier niet te wijzigen.',
             'no-result-found' => 'Geen resultaat gevonden.',
             'save-btn'        => 'Configuratie opslaan',
             'save-message'    => 'Configuratie succesvol opgeslagen.',
@@ -2227,6 +2234,35 @@ return [
                         'redirect-uri-info'   => 'Registreer exact deze URL in uw Microsoft Entra ID-app-registratie onder Verificatie → Omleidings-URI\'s, met het Web-platform.',
                         'redirect-uri-copy'   => 'Kopiëren',
                         'redirect-uri-copied' => 'Gekopieerd naar klembord',
+                    ],
+                ],
+
+                'oidc-sso' => [
+                    'info'   => 'Stel OpenID Connect single sign-on in voor de beheerdersaanmelding, bijvoorbeeld met Authentik of Keycloak.',
+                    'title'  => 'OpenID Connect SSO',
+
+                    'settings' => [
+                        'title'               => 'OpenID Connect SSO-instellingen',
+                        'info'                => 'Vul de clientgegevens van uw identiteitsprovider in. Waarden die via UNOPIM_OIDC_*-omgevingsvariabelen zijn ingesteld, hebben voorrang en zijn hier alleen-lezen.',
+                        'enabled'             => 'OpenID Connect SSO inschakelen',
+                        'redirect-uri-info'   => 'Registreer precies deze URL als omleidings-URI van de client bij uw identiteitsprovider.',
+                        'issuer'              => 'Issuer-URL',
+                        'issuer-info'         => 'De issuer-URL van uw provider. Het discoverydocument wordt gelezen van /.well-known/openid-configuration.',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'scopes'              => 'Scopes',
+                        'label'               => 'Knoptekst',
+                        'verified-email'      => 'Geverifieerd e-mailadres vereisen',
+                        'verified-email-info' => 'Aanmeldingen weigeren waarvan het e-mailadres niet als geverifieerd is gemarkeerd. Een bestaande gebruiker via e-mail koppelen vereist altijd een geverifieerd adres.',
+                        'auto-provision'      => 'Gebruikers aanmaken bij eerste aanmelding',
+                        'auto-provision-info' => 'Een beheerder aanmaken wanneer een onbekende persoon zich voor het eerst aanmeldt. Vereist een roltoewijzing of een standaardrol.',
+                        'default-role'        => 'Standaardrol',
+                        'default-role-info'   => 'Naam van de rol voor nieuwe gebruikers als er geen roltoewijzing is ingesteld.',
+                        'groups-claim'        => 'Groepen-claim',
+                        'role-map'            => 'Roltoewijzing',
+                        'role-map-info'       => 'JSON-object dat groepen van de provider aan rolnamen koppelt. Indien ingesteld, worden aanmeldingen zonder gekoppelde groep geweigerd en wordt de rol bij elke aanmelding bijgewerkt; het eerste overeenkomende item wint.',
+                        'rp-logout'           => 'Ook afmelden bij de provider',
+                        'rp-logout-info'      => 'Na het afmelden bij UnoPim ook de sessie bij de identiteitsprovider beëindigen.',
                     ],
                 ],
 

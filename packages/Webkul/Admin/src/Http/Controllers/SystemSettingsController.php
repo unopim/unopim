@@ -89,7 +89,7 @@ class SystemSettingsController extends Controller
         abort_if($this->systemSettings->isHidden($entry), 404);
 
         abort_unless(
-            empty($entry['acl']) || bouncer()->hasPermission((string) $entry['acl']),
+            $this->systemSettings->allows($entry),
             403,
             trans('admin::app.errors.403.message')
         );

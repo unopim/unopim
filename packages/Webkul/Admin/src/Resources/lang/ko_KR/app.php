@@ -13,6 +13,8 @@ return [
             'password'                   => '비밀번호',
             'sso-divider'                => 'or',
             'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'sso-sign-in-with-oidc'      => 'OpenID Connect로 로그인',
+            'sso-only'                   => '비밀번호 로그인이 비활성화되어 있습니다. 싱글 사인온을 사용하세요.',
             'submit-btn'                 => '로그인',
             'title'                      => '로그인',
             'powered-by'                 => ':unopim 제공,',
@@ -2073,6 +2075,10 @@ return [
                 'title' => 'Microsoft SSO',
                 'info'  => '관리자 로그인을 위한 Microsoft Entra ID 통합 인증(SSO).',
             ],
+            'oidc-sso'           => [
+                'title' => 'OpenID Connect SSO',
+                'info'  => '모든 OpenID Connect 공급자를 통한 관리자 로그인용 싱글 사인온.',
+            ],
         ],
 
         'appearance' => [
@@ -2149,6 +2155,7 @@ return [
     'configuration' => [
         'index' => [
             'delete'          => '삭제',
+            'env-locked'      => '서버 환경 변수로 설정되어 여기에서 변경할 수 없습니다.',
             'no-result-found' => '결과를 찾을 수 없음',
             'save-btn'        => '구성 저장',
             'save-message'    => '구성 성공적으로 저장됨',
@@ -2227,6 +2234,35 @@ return [
                         'redirect-uri-info'   => '이 URL을 그대로 Microsoft Entra ID 앱 등록의 인증 → 리디렉션 URI에 Web 플랫폼으로 등록하세요.',
                         'redirect-uri-copy'   => '복사',
                         'redirect-uri-copied' => '클립보드에 복사되었습니다',
+                    ],
+                ],
+
+                'oidc-sso' => [
+                    'info'   => 'Authentik 또는 Keycloak 등으로 관리자 로그인용 OpenID Connect 싱글 사인온을 구성합니다.',
+                    'title'  => 'OpenID Connect SSO',
+
+                    'settings' => [
+                        'title'               => 'OpenID Connect SSO 설정',
+                        'info'                => 'ID 공급자의 클라이언트 정보를 입력하세요. UNOPIM_OIDC_* 환경 변수로 설정된 값이 우선하며 여기에서는 읽기 전용입니다.',
+                        'enabled'             => 'OpenID Connect SSO 사용',
+                        'redirect-uri-info'   => '이 URL을 그대로 ID 공급자의 클라이언트 리디렉션 URI로 등록하세요.',
+                        'issuer'              => '발급자 URL',
+                        'issuer-info'         => '공급자의 발급자 URL입니다. 디스커버리 문서는 /.well-known/openid-configuration에서 읽습니다.',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'scopes'              => '범위',
+                        'label'               => '버튼 레이블',
+                        'verified-email'      => '인증된 이메일 필수',
+                        'verified-email-info' => '이메일이 인증됨으로 표시되지 않은 로그인을 거부합니다. 기존 사용자를 이메일로 연결하려면 항상 인증된 이메일이 필요합니다.',
+                        'auto-provision'      => '첫 로그인 시 사용자 생성',
+                        'auto-provision-info' => '알 수 없는 사람이 처음 로그인하면 관리자 사용자를 생성합니다. 역할 매핑이나 기본 역할이 필요합니다.',
+                        'default-role'        => '기본 역할',
+                        'default-role-info'   => '역할 매핑이 구성되지 않았을 때 새 사용자에게 부여할 역할 이름입니다.',
+                        'groups-claim'        => '그룹 클레임',
+                        'role-map'            => '역할 매핑',
+                        'role-map-info'       => '공급자 그룹을 역할 이름에 매핑하는 JSON 객체입니다. 설정하면 매핑된 그룹이 없는 로그인은 거부되고 로그인할 때마다 역할이 갱신됩니다. 처음 일치하는 항목이 적용됩니다.',
+                        'rp-logout'           => '공급자에서도 로그아웃',
+                        'rp-logout-info'      => 'UnoPim에서 로그아웃한 후 ID 공급자의 세션도 종료합니다.',
                     ],
                 ],
 

@@ -13,6 +13,8 @@ return [
             'password'                   => 'パスワード',
             'sso-divider'                => 'or',
             'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'sso-sign-in-with-oidc'      => 'OpenID Connect でサインイン',
+            'sso-only'                   => 'パスワードでのサインインは無効です。シングルサインオンを使用してください。',
             'submit-btn'                 => 'サインイン',
             'title'                      => 'サインイン',
             'powered-by'                 => ':unopim によって提供,',
@@ -2071,6 +2073,10 @@ return [
                 'title' => 'Microsoft SSO',
                 'info'  => '管理者ログイン用の Microsoft Entra ID シングルサインオン。',
             ],
+            'oidc-sso'           => [
+                'title' => 'OpenID Connect SSO',
+                'info'  => '任意の OpenID Connect プロバイダーによる管理者ログインのシングルサインオン。',
+            ],
         ],
 
         'appearance' => [
@@ -2147,6 +2153,7 @@ return [
     'configuration' => [
         'index' => [
             'delete'          => '削除',
+            'env-locked'      => 'サーバーの環境変数で設定されているため、ここでは変更できません。',
             'no-result-found' => '結果が見つかりません',
             'save-btn'        => '設定を保存',
             'save-message'    => '設定が正常に保存されました',
@@ -2225,6 +2232,35 @@ return [
                         'redirect-uri-info'   => 'この URL をそのまま Microsoft Entra ID のアプリ登録の「認証」→「リダイレクト URI」に、Web プラットフォームとして登録してください。',
                         'redirect-uri-copy'   => 'コピー',
                         'redirect-uri-copied' => 'クリップボードにコピーしました',
+                    ],
+                ],
+
+                'oidc-sso' => [
+                    'info'   => 'Authentik や Keycloak などを使って、管理者ログイン用の OpenID Connect シングルサインオンを設定します。',
+                    'title'  => 'OpenID Connect SSO',
+
+                    'settings' => [
+                        'title'               => 'OpenID Connect SSO 設定',
+                        'info'                => 'ID プロバイダーのクライアント情報を入力してください。環境変数 UNOPIM_OIDC_* で設定された値が優先され、ここでは読み取り専用になります。',
+                        'enabled'             => 'OpenID Connect SSO を有効にする',
+                        'redirect-uri-info'   => 'この URL をそのまま ID プロバイダーのクライアントのリダイレクト URI として登録してください。',
+                        'issuer'              => '発行者 URL',
+                        'issuer-info'         => 'プロバイダーの発行者 URL。ディスカバリードキュメントは /.well-known/openid-configuration から読み込まれます。',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'scopes'              => 'スコープ',
+                        'label'               => 'ボタンのラベル',
+                        'verified-email'      => '確認済みメールを必須にする',
+                        'verified-email-info' => 'メールアドレスが確認済みとされていないサインインを拒否します。既存ユーザーをメールで紐付けるには、常に確認済みのメールが必要です。',
+                        'auto-provision'      => '初回サインイン時にユーザーを作成',
+                        'auto-provision-info' => '未登録の人が初めてサインインしたときに管理者ユーザーを作成します。ロールのマッピングまたはデフォルトロールが必要です。',
+                        'default-role'        => 'デフォルトロール',
+                        'default-role-info'   => 'ロールのマッピングが設定されていない場合に新規ユーザーへ付与するロール名。',
+                        'groups-claim'        => 'グループクレーム',
+                        'role-map'            => 'ロールのマッピング',
+                        'role-map-info'       => 'プロバイダーのグループをロール名に対応付ける JSON オブジェクト。設定すると、対応するグループのないサインインは拒否され、ロールはサインインのたびに更新されます。最初に一致した項目が優先されます。',
+                        'rp-logout'           => 'プロバイダーでもサインアウト',
+                        'rp-logout-info'      => 'UnoPim からサインアウトした後、ID プロバイダーのセッションも終了します。',
                     ],
                 ],
 

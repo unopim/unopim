@@ -18,93 +18,98 @@
                     @lang('admin::app.users.sessions.subtitle')
                 </p>
 
-                <x-admin::form :action="route('admin.session.store')" :track-dirty="false" ajax="true">
-                    <x-admin::form.control-group>
-                        <x-admin::form.control-group.label class="required">
-                            @lang('admin::app.users.sessions.email')
-                        </x-admin::form.control-group.label>
+                @if ($passwordSignIn ?? true)
+                    <x-admin::form :action="route('admin.session.store')" :track-dirty="false" ajax="true">
+                        <x-admin::form.control-group>
+                            <x-admin::form.control-group.label class="required">
+                                @lang('admin::app.users.sessions.email')
+                            </x-admin::form.control-group.label>
 
-                        <x-admin::form.control-group.control
-                            type="email"
-                            class="w-full"
-                            id="email"
-                            name="email"
-                            rules="required|email"
-                            :value="old('email')"
-                            :label="trans('admin::app.users.sessions.email')"
-                            :placeholder="trans('admin::app.users.sessions.email')"
-                            autocomplete="username"
-                            autofocus
-                        />
-
-                        <x-admin::form.control-group.error control-name="email" />
-                    </x-admin::form.control-group>
-
-                    <x-admin::form.control-group class="relative w-full">
-                        <x-admin::form.control-group.label class="required">
-                            @lang('admin::app.users.sessions.password')
-                        </x-admin::form.control-group.label>
-
-                        <x-admin::form.control-group.control
-                            type="password"
-                            class="w-full ltr:pr-10 rtl:pl-10"
-                            id="password"
-                            name="password"
-                            rules="required"
-                            :label="trans('admin::app.users.sessions.password')"
-                            :placeholder="trans('admin::app.users.sessions.password')"
-                            autocomplete="current-password"
-                        />
-
-                        <span
-                            class="text-2xl cursor-pointer absolute top-[42px] -translate-y-2/4 ltr:right-2 rtl:left-2 icon-view text-gray-500"
-                            onclick="switchVisibility()"
-                            id="visibilityIcon"
-                            role="button"
-                            tabindex="0"
-                            aria-label="{{ trans('admin::app.users.sessions.toggle-password') }}"
-                        >
-                        </span>
-
-                        <x-admin::form.control-group.error control-name="password" />
-                    </x-admin::form.control-group>
-
-                    <div class="flex justify-between items-center mt-1 mb-5">
-                        <x-admin::form.control-group class="flex gap-2 items-center !mb-0">
                             <x-admin::form.control-group.control
-                                type="checkbox"
-                                id="remember"
-                                name="remember"
-                                value="1"
-                                for="remember"
+                                type="email"
+                                class="w-full"
+                                id="email"
+                                name="email"
+                                rules="required|email"
+                                :value="old('email')"
+                                :label="trans('admin::app.users.sessions.email')"
+                                :placeholder="trans('admin::app.users.sessions.email')"
+                                autocomplete="username"
+                                autofocus
                             />
 
-                            <label
-                                class="text-sm text-gray-700 dark:text-gray-300 font-medium cursor-pointer select-none"
-                                for="remember"
-                            >
-                                @lang('admin::app.users.sessions.remember-me')
-                            </label>
+                            <x-admin::form.control-group.error control-name="email" />
                         </x-admin::form.control-group>
 
-                        <a
-                            class="text-sm text-primary-700 dark:text-primary-400 font-semibold hover:underline"
-                            href="{{ route('admin.forget_password.create') }}"
+                        <x-admin::form.control-group class="relative w-full">
+                            <x-admin::form.control-group.label class="required">
+                                @lang('admin::app.users.sessions.password')
+                            </x-admin::form.control-group.label>
+
+                            <x-admin::form.control-group.control
+                                type="password"
+                                class="w-full ltr:pr-10 rtl:pl-10"
+                                id="password"
+                                name="password"
+                                rules="required"
+                                :label="trans('admin::app.users.sessions.password')"
+                                :placeholder="trans('admin::app.users.sessions.password')"
+                                autocomplete="current-password"
+                            />
+
+                            <span
+                                class="text-2xl cursor-pointer absolute top-[42px] -translate-y-2/4 ltr:right-2 rtl:left-2 icon-view text-gray-500"
+                                onclick="switchVisibility()"
+                                id="visibilityIcon"
+                                role="button"
+                                tabindex="0"
+                                aria-label="{{ trans('admin::app.users.sessions.toggle-password') }}"
+                            >
+                            </span>
+
+                            <x-admin::form.control-group.error control-name="password" />
+                        </x-admin::form.control-group>
+
+                        <div class="flex justify-between items-center mt-1 mb-5">
+                            <x-admin::form.control-group class="flex gap-2 items-center !mb-0">
+                                <x-admin::form.control-group.control
+                                    type="checkbox"
+                                    id="remember"
+                                    name="remember"
+                                    value="1"
+                                    for="remember"
+                                />
+
+                                <label
+                                    class="text-sm text-gray-700 dark:text-gray-300 font-medium cursor-pointer select-none"
+                                    for="remember"
+                                >
+                                    @lang('admin::app.users.sessions.remember-me')
+                                </label>
+                            </x-admin::form.control-group>
+
+                            <a
+                                class="text-sm text-primary-700 dark:text-primary-400 font-semibold hover:underline"
+                                href="{{ route('admin.forget_password.create') }}"
+                            >
+                                @lang('admin::app.users.sessions.forget-password-link')
+                            </a>
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="primary-button w-full justify-center py-2.5"
+                            aria-label="{{ trans('admin::app.users.sessions.submit-btn') }}"
                         >
-                            @lang('admin::app.users.sessions.forget-password-link')
-                        </a>
-                    </div>
+                            @lang('admin::app.users.sessions.submit-btn')
+                        </button>
+                    </x-admin::form>
+                @endif
 
-                    <button
-                        type="submit"
-                        class="primary-button w-full justify-center py-2.5"
-                        aria-label="{{ trans('admin::app.users.sessions.submit-btn') }}"
-                    >
-                        @lang('admin::app.users.sessions.submit-btn')
-                    </button>
-                </x-admin::form>
-
-                <x-admin::sso.buttons :providers="$ssoProviders ?? collect()" />
+                <x-admin::sso.buttons
+                    :providers="$ssoProviders ?? collect()"
+                    :divider="$passwordSignIn ?? true"
+                />
             </div>
 
             <div class="mt-6 text-center text-xs text-gray-500 dark:text-gray-400">

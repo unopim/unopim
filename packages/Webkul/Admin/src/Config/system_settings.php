@@ -49,6 +49,7 @@ return [
         'icon'         => 'icon-at',
         'config_group' => 'emails.configure.email_settings',
         'acl'          => 'configuration.system_settings.email',
+        'full_access'  => true,
         'sort'         => 2,
     ],
 
@@ -69,6 +70,18 @@ return [
         'icon'         => 'icon-configuration',
         'config_group' => 'general.microsoft_sso.settings',
         'acl'          => 'configuration.system_settings.microsoft_sso',
+        'full_access'  => true,
+        'sort'         => 4,
+    ],
+
+    [
+        'key'          => 'system.oidc_sso',
+        'name'         => 'admin::app.settings.system-settings.oidc-sso.title',
+        'info'         => 'admin::app.settings.system-settings.oidc-sso.info',
+        'icon'         => 'icon-configuration',
+        'config_group' => 'general.oidc_sso.settings',
+        'acl'          => 'configuration.system_settings.oidc_sso',
+        'full_access'  => true,
         'sort'         => 4,
     ],
 

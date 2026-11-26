@@ -51,4 +51,20 @@ return [
         'allowed_tenants' => env('MICROSOFT_SSO_ALLOWED_TENANTS', ''),
     ],
 
+    'oidc_sso' => [
+        'enabled'                => env('UNOPIM_OIDC_ENABLED'),
+        'issuer'                 => env('UNOPIM_OIDC_ISSUER'),
+        'client_id'              => env('UNOPIM_OIDC_CLIENT_ID'),
+        'client_secret'          => env('UNOPIM_OIDC_CLIENT_SECRET'),
+        'scopes'                 => env('UNOPIM_OIDC_SCOPES'),
+        'label'                  => env('UNOPIM_OIDC_LABEL'),
+        'require_verified_email' => env('UNOPIM_OIDC_REQUIRE_VERIFIED_EMAIL'),
+        'auto_provision'         => env('UNOPIM_OIDC_AUTO_PROVISION'),
+        'default_role'           => env('UNOPIM_OIDC_DEFAULT_ROLE'),
+        'groups_claim'           => env('UNOPIM_OIDC_GROUPS_CLAIM'),
+        'role_map'               => env('UNOPIM_OIDC_ROLE_MAP'),
+        'rp_logout'              => env('UNOPIM_OIDC_RP_LOGOUT'),
+        'sso_only'               => env('UNOPIM_OIDC_ONLY'),
+    ],
+
 ];

@@ -13,6 +13,8 @@ return [
             'password'                   => 'Passord',
             'sso-divider'                => 'or',
             'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'sso-sign-in-with-oidc'      => 'Logg inn med OpenID Connect',
+            'sso-only'                   => 'Innlogging med passord er slått av. Bruk enkel pålogging.',
             'submit-btn'                 => 'Logg inn',
             'title'                      => 'Logg inn',
             'powered-by'                 => 'Drevet av :unopim,',
@@ -2073,6 +2075,10 @@ return [
                 'title' => 'Microsoft SSO',
                 'info'  => 'Microsoft Entra ID enkel pålogging for administratorinnlogging.',
             ],
+            'oidc-sso'           => [
+                'title' => 'OpenID Connect SSO',
+                'info'  => 'Enkel pålogging for administratorinnlogging med en hvilken som helst OpenID Connect-leverandør.',
+            ],
         ],
 
         'appearance' => [
@@ -2149,6 +2155,7 @@ return [
     'configuration' => [
         'index' => [
             'delete'          => 'Slett',
+            'env-locked'      => 'Satt av en miljøvariabel på serveren og kan ikke endres her.',
             'no-result-found' => 'Ingen resultater funnet',
             'save-btn'        => 'Lagre konfigurasjon',
             'save-message'    => 'Konfigurasjonen ble lagret med suksess',
@@ -2227,6 +2234,35 @@ return [
                         'redirect-uri-info'   => 'Registrer nøyaktig denne URL-en i Microsoft Entra ID-appregistreringen under Autentisering → Omdirigerings-URI-er, med Web-plattformen.',
                         'redirect-uri-copy'   => 'Kopier',
                         'redirect-uri-copied' => 'Kopiert til utklippstavlen',
+                    ],
+                ],
+
+                'oidc-sso' => [
+                    'info'   => 'Konfigurer enkel pålogging med OpenID Connect for administratorinnlogging, f.eks. med Authentik eller Keycloak.',
+                    'title'  => 'OpenID Connect SSO',
+
+                    'settings' => [
+                        'title'               => 'OpenID Connect SSO-innstillinger',
+                        'info'                => 'Oppgi klientopplysningene fra identitetsleverandøren din. Verdier satt via miljøvariabler UNOPIM_OIDC_* har forrang og er skrivebeskyttet her.',
+                        'enabled'             => 'Aktiver OpenID Connect SSO',
+                        'redirect-uri-info'   => 'Registrer nøyaktig denne URL-en som omdirigerings-URI for klienten hos identitetsleverandøren din.',
+                        'issuer'              => 'Utsteder-URL',
+                        'issuer-info'         => 'Utsteder-URL-en til leverandøren din. Discovery-dokumentet leses fra /.well-known/openid-configuration.',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'scopes'              => 'Omfang',
+                        'label'               => 'Knappetekst',
+                        'verified-email'      => 'Krev bekreftet e-post',
+                        'verified-email-info' => 'Avvis innlogginger der e-postadressen ikke er merket som bekreftet. Å koble en eksisterende bruker via e-post krever alltid en bekreftet adresse.',
+                        'auto-provision'      => 'Opprett brukere ved første innlogging',
+                        'auto-provision-info' => 'Opprett en administratorbruker når en ukjent person logger inn for første gang. Krever en rolletilordning eller en standardrolle.',
+                        'default-role'        => 'Standardrolle',
+                        'default-role-info'   => 'Navnet på rollen nye brukere får når ingen rolletilordning er konfigurert.',
+                        'groups-claim'        => 'Gruppe-claim',
+                        'role-map'            => 'Rolletilordning',
+                        'role-map-info'       => 'JSON-objekt som knytter leverandørens grupper til rollenavn. Hvis satt, avvises innlogginger uten tilordnet gruppe, og rollen oppdateres ved hver innlogging; den første samsvarende oppføringen gjelder.',
+                        'rp-logout'           => 'Logg også ut hos leverandøren',
+                        'rp-logout-info'      => 'Avslutt også økten hos identitetsleverandøren etter utlogging fra UnoPim.',
                     ],
                 ],
 

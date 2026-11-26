@@ -5,7 +5,10 @@ namespace Webkul\Admin\Http\Controllers\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use Webkul\Admin\Contracts\SsoLogoutProvider;
+use Webkul\Admin\Contracts\SsoProvider;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Sso\OidcSettings;
 use Webkul\Admin\Sso\SsoManager;
 use Webkul\Admin\Traits\ResolvesLandingUrl;
 
@@ -13,7 +16,10 @@ class SessionController extends Controller
 {
     use ResolvesLandingUrl;
 
-    public function __construct(protected readonly SsoManager $ssoManager) {}
+    public function __construct(
+        protected readonly SsoManager $ssoManager,
+        protected readonly OidcSettings $oidcSettings,
+    ) {}
 
     /**
      * Show the form for creating a new resource.
@@ -41,7 +47,8 @@ class SessionController extends Controller
         }
 
         return view('admin::users.sessions.create', [
-            'ssoProviders' => $this->ssoManager->enabled(),
+            'ssoProviders'   => $this->ssoManager->enabled(),
+            'passwordSignIn' => ! $this->oidcSettings->isSsoOnly(),
         ]);
     }
 
@@ -109,12 +116,27 @@ class SessionController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * End the admin session and replace the session id, so a request still in
+     * flight from the old page cannot write the signed-in state back. When the
+     * session was opened through a driver that supports RP-initiated logout,
+     * the visitor is then sent on to end the identity provider's session too.
      */
     public function destroy(): RedirectResponse
     {
+        $logoutUrl = $this->ssoManager->enabled()
+            ->filter(fn (SsoProvider $provider): bool => $provider instanceof SsoLogoutProvider)
+            ->map(fn (SsoLogoutProvider $provider): ?string => $provider->logoutUrl(request()))
+            ->filter()
+            ->first();
+
         auth()->guard('admin')->logout();
 
-        return redirect()->route('admin.session.create');
+        request()->session()->invalidate();
+
+        request()->session()->regenerateToken();
+
+        return $logoutUrl
+            ? redirect()->away($logoutUrl)
+            : redirect()->route('admin.session.create');
     }
 }

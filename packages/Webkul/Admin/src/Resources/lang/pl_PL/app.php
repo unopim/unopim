@@ -13,6 +13,8 @@ return [
             'password'                   => 'Hasło',
             'sso-divider'                => 'or',
             'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'sso-sign-in-with-oidc'      => 'Zaloguj się przez OpenID Connect',
+            'sso-only'                   => 'Logowanie hasłem jest wyłączone. Użyj logowania jednokrotnego.',
             'submit-btn'                 => 'Zaloguj się',
             'title'                      => 'Zaloguj się',
             'powered-by'                 => 'Zasilane przez :unopim,',
@@ -2073,6 +2075,10 @@ return [
                 'title' => 'Microsoft SSO',
                 'info'  => 'Logowanie jednokrotne Microsoft Entra ID dla logowania administratora.',
             ],
+            'oidc-sso'           => [
+                'title' => 'OpenID Connect SSO',
+                'info'  => 'Logowanie jednokrotne do panelu administracyjnego z dowolnym dostawcą OpenID Connect.',
+            ],
         ],
 
         'appearance' => [
@@ -2149,6 +2155,7 @@ return [
     'configuration' => [
         'index' => [
             'delete'          => 'Usuń',
+            'env-locked'      => 'Ustawione przez zmienną środowiskową na serwerze i nie można tego tutaj zmienić.',
             'no-result-found' => 'Brak wyników',
             'save-btn'        => 'Zapisz konfigurację',
             'save-message'    => 'Konfiguracja zapisano pomyślnie',
@@ -2227,6 +2234,35 @@ return [
                         'redirect-uri-info'   => 'Zarejestruj dokładnie ten adres URL w rejestracji aplikacji Microsoft Entra ID w sekcji Uwierzytelnianie → Identyfikatory URI przekierowania, używając platformy Web.',
                         'redirect-uri-copy'   => 'Kopiuj',
                         'redirect-uri-copied' => 'Skopiowano do schowka',
+                    ],
+                ],
+
+                'oidc-sso' => [
+                    'info'   => 'Skonfiguruj logowanie jednokrotne OpenID Connect do panelu administracyjnego, np. z Authentik lub Keycloak.',
+                    'title'  => 'OpenID Connect SSO',
+
+                    'settings' => [
+                        'title'               => 'Ustawienia OpenID Connect SSO',
+                        'info'                => 'Wprowadź dane klienta od swojego dostawcy tożsamości. Wartości ustawione zmiennymi środowiskowymi UNOPIM_OIDC_* mają pierwszeństwo i są tutaj tylko do odczytu.',
+                        'enabled'             => 'Włącz OpenID Connect SSO',
+                        'redirect-uri-info'   => 'Zarejestruj dokładnie ten adres URL jako URI przekierowania klienta u swojego dostawcy tożsamości.',
+                        'issuer'              => 'URL wystawcy',
+                        'issuer-info'         => 'Adres URL wystawcy Twojego dostawcy. Jego dokument discovery jest odczytywany z /.well-known/openid-configuration.',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'scopes'              => 'Zakresy',
+                        'label'               => 'Etykieta przycisku',
+                        'verified-email'      => 'Wymagaj zweryfikowanego e-maila',
+                        'verified-email-info' => 'Odrzucaj logowania, w których e-mail nie jest oznaczony jako zweryfikowany. Powiązanie istniejącego użytkownika przez e-mail zawsze wymaga zweryfikowanego adresu.',
+                        'auto-provision'      => 'Twórz użytkowników przy pierwszym logowaniu',
+                        'auto-provision-info' => 'Utwórz użytkownika administracyjnego, gdy nieznana osoba loguje się po raz pierwszy. Wymaga mapowania ról lub roli domyślnej.',
+                        'default-role'        => 'Rola domyślna',
+                        'default-role-info'   => 'Nazwa roli nadawanej nowym użytkownikom, gdy nie skonfigurowano mapowania ról.',
+                        'groups-claim'        => 'Claim grup',
+                        'role-map'            => 'Mapowanie ról',
+                        'role-map-info'       => 'Obiekt JSON przypisujący grupy dostawcy do nazw ról. Jeśli jest ustawiony, logowania bez przypisanej grupy są odrzucane, a rola jest aktualizowana przy każdym logowaniu; decyduje pierwszy pasujący wpis.',
+                        'rp-logout'           => 'Wyloguj także u dostawcy',
+                        'rp-logout-info'      => 'Po wylogowaniu z UnoPim zakończ również sesję u dostawcy tożsamości.',
                     ],
                 ],
 

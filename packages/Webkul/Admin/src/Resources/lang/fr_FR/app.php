@@ -13,6 +13,8 @@ return [
             'password'                   => 'Mot de passe',
             'sso-divider'                => 'ou',
             'sso-sign-in-with-microsoft' => 'Se connecter avec Microsoft',
+            'sso-sign-in-with-oidc'      => 'Se connecter avec OpenID Connect',
+            'sso-only'                   => 'La connexion par mot de passe est désactivée. Veuillez utiliser l’authentification unique.',
             'submit-btn'                 => 'Se connecter',
             'title'                      => 'Se connecter',
             'powered-by'                 => 'Propulsé par :unopim,',
@@ -2071,6 +2073,10 @@ return [
                 'title' => 'Microsoft SSO',
                 'info'  => 'Authentification unique Microsoft Entra ID pour la connexion administrateur.',
             ],
+            'oidc-sso'           => [
+                'title' => 'OpenID Connect SSO',
+                'info'  => 'Authentification unique pour la connexion admin avec tout fournisseur OpenID Connect.',
+            ],
         ],
         'appearance' => [
             'title'             => 'Apparence',
@@ -2146,6 +2152,7 @@ return [
     'configuration' => [
         'index' => [
             'delete'          => 'Supprimer',
+            'env-locked'      => 'Défini par une variable d’environnement du serveur et non modifiable ici.',
             'no-result-found' => 'Aucun résultat trouvé',
             'save-btn'        => 'Enregistrer la configuration',
             'save-message'    => 'Configuration enregistrée avec succès',
@@ -2224,6 +2231,35 @@ return [
                         'redirect-uri-info'   => 'Enregistrez exactement cette URL dans votre inscription d\'application Microsoft Entra ID sous Authentification → URI de redirection, avec la plateforme Web.',
                         'redirect-uri-copy'   => 'Copier',
                         'redirect-uri-copied' => 'Copié dans le presse-papiers',
+                    ],
+                ],
+
+                'oidc-sso' => [
+                    'info'   => 'Configurez l’authentification unique OpenID Connect pour la connexion admin, par exemple avec Authentik ou Keycloak.',
+                    'title'  => 'OpenID Connect SSO',
+
+                    'settings' => [
+                        'title'               => 'Paramètres OpenID Connect SSO',
+                        'info'                => 'Saisissez les informations du client de votre fournisseur d’identité. Les valeurs définies par les variables d’environnement UNOPIM_OIDC_* sont prioritaires et sont ici en lecture seule.',
+                        'enabled'             => 'Activer OpenID Connect SSO',
+                        'redirect-uri-info'   => 'Enregistrez cette URL exacte comme URI de redirection du client chez votre fournisseur d’identité.',
+                        'issuer'              => 'URL de l’émetteur',
+                        'issuer-info'         => 'L’URL de l’émetteur de votre fournisseur. Son document de découverte est lu depuis /.well-known/openid-configuration.',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'scopes'              => 'Portées',
+                        'label'               => 'Libellé du bouton',
+                        'verified-email'      => 'Exiger un e-mail vérifié',
+                        'verified-email-info' => 'Refuser les connexions dont l’e-mail n’est pas marqué comme vérifié. Associer un utilisateur existant par e-mail exige toujours un e-mail vérifié.',
+                        'auto-provision'      => 'Créer les utilisateurs à la première connexion',
+                        'auto-provision-info' => 'Créer un utilisateur admin lorsqu’une personne inconnue se connecte pour la première fois. Nécessite une correspondance de rôles ou un rôle par défaut.',
+                        'default-role'        => 'Rôle par défaut',
+                        'default-role-info'   => 'Nom du rôle attribué aux nouveaux utilisateurs lorsqu’aucune correspondance de rôles n’est configurée.',
+                        'groups-claim'        => 'Claim des groupes',
+                        'role-map'            => 'Correspondance des rôles',
+                        'role-map-info'       => 'Objet JSON associant les groupes du fournisseur à des noms de rôles. S’il est défini, les connexions sans groupe associé sont refusées et le rôle est mis à jour à chaque connexion ; la première entrée correspondante l’emporte.',
+                        'rp-logout'           => 'Se déconnecter chez le fournisseur',
+                        'rp-logout-info'      => 'Après la déconnexion d’UnoPim, mettre aussi fin à la session chez le fournisseur d’identité.',
                     ],
                 ],
 

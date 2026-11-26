@@ -13,6 +13,8 @@ return [
             'password'                   => 'Mật khẩu',
             'sso-divider'                => 'or',
             'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'sso-sign-in-with-oidc'      => 'Đăng nhập bằng OpenID Connect',
+            'sso-only'                   => 'Đăng nhập bằng mật khẩu đã bị tắt. Vui lòng dùng đăng nhập một lần.',
             'submit-btn'                 => 'Đăng nhập',
             'title'                      => 'Đăng nhập',
             'powered-by'                 => 'Được cung cấp bởi :unopim,',
@@ -2073,6 +2075,10 @@ return [
                 'title' => 'Microsoft SSO',
                 'info'  => 'Đăng nhập một lần của Microsoft Entra ID cho đăng nhập quản trị viên.',
             ],
+            'oidc-sso'           => [
+                'title' => 'OpenID Connect SSO',
+                'info'  => 'Đăng nhập một lần cho quản trị viên với bất kỳ nhà cung cấp OpenID Connect nào.',
+            ],
         ],
 
         'appearance' => [
@@ -2149,6 +2155,7 @@ return [
     'configuration' => [
         'index' => [
             'delete'          => 'Xóa',
+            'env-locked'      => 'Được đặt bằng biến môi trường trên máy chủ và không thể thay đổi tại đây.',
             'no-result-found' => 'Không tìm thấy kết quả nào',
             'save-btn'        => 'Lưu cấu hình',
             'save-message'    => 'Cấu hình đã được lưu thành công',
@@ -2227,6 +2234,35 @@ return [
                         'redirect-uri-info'   => 'Đăng ký chính xác URL này trong đăng ký ứng dụng Microsoft Entra ID tại Xác thực → URI chuyển hướng, với nền tảng Web.',
                         'redirect-uri-copy'   => 'Sao chép',
                         'redirect-uri-copied' => 'Đã sao chép vào bảng nhớ tạm',
+                    ],
+                ],
+
+                'oidc-sso' => [
+                    'info'   => 'Cấu hình đăng nhập một lần OpenID Connect cho quản trị viên, ví dụ với Authentik hoặc Keycloak.',
+                    'title'  => 'OpenID Connect SSO',
+
+                    'settings' => [
+                        'title'               => 'Cài đặt OpenID Connect SSO',
+                        'info'                => 'Nhập thông tin client từ nhà cung cấp danh tính của bạn. Giá trị đặt qua biến môi trường UNOPIM_OIDC_* được ưu tiên và chỉ đọc tại đây.',
+                        'enabled'             => 'Bật OpenID Connect SSO',
+                        'redirect-uri-info'   => 'Đăng ký chính xác URL này làm URI chuyển hướng của client tại nhà cung cấp danh tính.',
+                        'issuer'              => 'URL nhà phát hành',
+                        'issuer-info'         => 'URL nhà phát hành của nhà cung cấp. Tài liệu khám phá được đọc từ /.well-known/openid-configuration.',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'scopes'              => 'Phạm vi',
+                        'label'               => 'Nhãn nút',
+                        'verified-email'      => 'Yêu cầu email đã xác minh',
+                        'verified-email-info' => 'Từ chối đăng nhập có email chưa được đánh dấu là đã xác minh. Liên kết người dùng hiện có qua email luôn yêu cầu email đã xác minh.',
+                        'auto-provision'      => 'Tạo người dùng khi đăng nhập lần đầu',
+                        'auto-provision-info' => 'Tạo người dùng quản trị khi một người chưa biết đăng nhập lần đầu. Cần ánh xạ vai trò hoặc vai trò mặc định.',
+                        'default-role'        => 'Vai trò mặc định',
+                        'default-role-info'   => 'Tên vai trò gán cho người dùng mới khi chưa cấu hình ánh xạ vai trò.',
+                        'groups-claim'        => 'Claim nhóm',
+                        'role-map'            => 'Ánh xạ vai trò',
+                        'role-map-info'       => 'Đối tượng JSON ánh xạ nhóm của nhà cung cấp sang tên vai trò. Nếu được đặt, đăng nhập không có nhóm được ánh xạ sẽ bị từ chối và vai trò được cập nhật mỗi lần đăng nhập; mục khớp đầu tiên được áp dụng.',
+                        'rp-logout'           => 'Đăng xuất cả ở nhà cung cấp',
+                        'rp-logout-info'      => 'Sau khi đăng xuất khỏi UnoPim, kết thúc cả phiên tại nhà cung cấp danh tính.',
                     ],
                 ],
 
