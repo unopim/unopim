@@ -82,6 +82,7 @@ most often bite:
 | Menu parents with no visible child | A parent menu item now disappears when the platform module gate removed all of its children, even if it has its own route. Parents whose children were only hidden by role permissions stay as before. |
 | Platform module tags on Magic AI tools | Tools registered in `ai-agent.tools` without a `module` key are always offered. Product, category and family tools in core are tagged `'module' => 'pim'` and are hidden while PIM is switched off; tag your own product tools the same way. |
 | Platform module route gating | `platform_modules.<module>.route_prefixes` and ACL routes only gate named routes. Name every route your package wants hidden with its module. |
+| DataGrid request input | Grids ignore a requested sort column, page size or `productIds` they do not support and use their defaults. A custom grid must set `$acceptsProductIds = true` to filter by `productIds`, list extra page sizes in `$perPageOptions`, and override `isSortableColumn()` to sort by fields that are not columns. |
 | Dropdown alignment in RTL | `x-admin::dropdown` now mirrors `position` itself when the admin page is right-to-left, for both inline and teleported panels. A plugin that picks `bottom-left` or `bottom-right` (or `top-*`) from the locale direction gets flipped twice and opens outward. Pass the LTR position and drop the direction check. |
 
 ### Take a backup you have restored before

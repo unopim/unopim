@@ -1,10 +1,12 @@
 <?php
 
 use Illuminate\Database\Events\QueryExecuted;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 use Webkul\Attribute\Models\Attribute;
+use Webkul\Core\Facades\ElasticSearch;
 use Webkul\Core\Models\Locale;
 use Webkul\DataGrid\DataGrid;
 use Webkul\Product\Models\Product;
@@ -19,6 +21,8 @@ beforeEach(function (): void {
 
 /**
  * Request a datagrid the way its own JavaScript does.
+ *
+ * @param  array<string, mixed>  $query
  */
 function requestDatagrid(string $route, array $query = []): TestResponse
 {
@@ -27,6 +31,8 @@ function requestDatagrid(string $route, array $query = []): TestResponse
 
 /**
  * Request a datagrid and return the ORDER BY clause of the query that loaded its records.
+ *
+ * @param  array<string, mixed>  $query
  */
 function datagridOrderBy(string $route, array $query, string $table): string
 {
@@ -46,6 +52,29 @@ function datagridOrderBy(string $route, array $query, string $table): string
 }
 
 /**
+ * Request a datagrid with Elasticsearch on once per query and return the body of each search it sends.
+ *
+ * @param  array<string, mixed>  ...$queries
+ * @return array<int, array<string, mixed>>
+ */
+function datagridElasticSearchBodies(string $route, array ...$queries): array
+{
+    $bodies = [];
+
+    ElasticSearch::shouldReceive('search')->andReturnUsing(function (array $request) use (&$bodies): array {
+        $bodies[] = $request['body'];
+
+        return ['hits' => ['total' => ['value' => 0], 'hits' => []]];
+    });
+
+    foreach ($queries ?: [[]] as $query) {
+        requestDatagrid($route, $query)->assertOk();
+    }
+
+    return $bodies;
+}
+
+/**
  * Build a grid whose default sort column is not one of its columns and whose default page size is not a shared option.
  */
 function gridWithOwnDefaults(): DataGrid
@@ -56,11 +85,19 @@ function gridWithOwnDefaults(): DataGrid
 
         protected $itemsPerPage = 25;
 
+        /**
+         * Prepare query builder.
+         *
+         * @return Builder
+         */
         public function prepareQueryBuilder()
         {
             return DB::table('locales')->select('id', 'code');
         }
 
+        /**
+         * Add columns.
+         */
         public function prepareColumns(): void
         {
             $this->addColumn([
@@ -218,4 +255,53 @@ describe('DataGrid productIds input', function (): void {
         expect($response->json('meta.total'))->toBe(1)
             ->and($response->json('records.0.product_id'))->toBe($products->first()->id);
     });
+});
+
+dataset('elasticsearch grids', [
+    'product grid'  => 'admin.catalog.products.index',
+    'category grid' => 'admin.catalog.categories.index',
+]);
+
+describe('DataGrid request input with Elasticsearch', function (): void {
+    beforeEach(function (): void {
+        config([
+            'elasticsearch.enabled'                     => true,
+            'elasticsearch.prefix'                      => 'testing',
+            'elasticsearch.connection'                  => 'default',
+            'elasticsearch.connections.default.hosts.0' => 'testhost:9200',
+        ]);
+
+        ElasticSearch::shouldReceive('makeConnection')->andReturn(Mockery::mock('Webkul\ElasticSearch\Client\Fake\FakeElasticClient'));
+    });
+
+    it('caps the page size the grid asks Elasticsearch for', function (string $route): void {
+        [$body] = datagridElasticSearchBodies($route, ['pagination' => ['per_page' => 1000000]]);
+
+        expect($body['size'])->toBe(10)
+            ->and($body['from'])->toBe(0);
+    })->with('elasticsearch grids');
+
+    it('keeps a page size from the grid options for Elasticsearch', function (string $route): void {
+        [$body] = datagridElasticSearchBodies($route, ['pagination' => ['per_page' => 50, 'page' => 2]]);
+
+        expect($body['size'])->toBe(50)
+            ->and($body['from'])->toBe(50);
+    })->with('elasticsearch grids');
+
+    it('sends the default Elasticsearch sort field for a column the grid cannot sort by', function (string $route): void {
+        [$defaultBody, $body] = datagridElasticSearchBodies($route, [], ['sort' => ['column' => 'password', 'order' => 'asc']]);
+
+        expect(array_keys($body['sort']))->toBe(array_keys($defaultBody['sort']))
+            ->and(json_encode($body['sort']))->not->toContain('password');
+    })->with('elasticsearch grids');
+
+    it('sends a sortable column to Elasticsearch', function (string $route, string $column, string $sortField): void {
+        [$body] = datagridElasticSearchBodies($route, ['sort' => ['column' => $column, 'order' => 'asc']]);
+
+        expect(array_keys($body['sort']))->toBe([$sortField])
+            ->and($body['sort'][$sortField]['order'])->toBe('asc');
+    })->with([
+        'product grid by sku'   => ['admin.catalog.products.index', 'sku', 'sku'],
+        'category grid by code' => ['admin.catalog.categories.index', 'code', 'code.keyword'],
+    ]);
 });

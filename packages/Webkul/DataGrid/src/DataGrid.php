@@ -287,6 +287,9 @@ abstract class DataGrid
 
     /**
      * Keep only the sort, pagination and product ids this grid supports.
+     *
+     * @param  array<string, mixed>  $requestedParams
+     * @return array<string, mixed>
      */
     protected function sanitizeRequestedParams(array $requestedParams): array
     {
@@ -307,6 +310,9 @@ abstract class DataGrid
 
     /**
      * Drop a sort column the grid cannot sort by and an order other than asc or desc, so the default applies.
+     *
+     * @param  array<string, mixed>  $requestedSort
+     * @return array{column?: string, order?: string}
      */
     protected function sanitizeRequestedSort(array $requestedSort): array
     {
@@ -322,6 +328,9 @@ abstract class DataGrid
 
     /**
      * Drop a page size outside the grid's options and a page number below one, so the defaults apply.
+     *
+     * @param  array<string, mixed>  $requestedPagination
+     * @return array{per_page?: int, page?: int}
      */
     protected function sanitizeRequestedPagination(array $requestedPagination): array
     {
