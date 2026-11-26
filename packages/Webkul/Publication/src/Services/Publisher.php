@@ -233,7 +233,7 @@ class Publisher
     }
 
     /**
-     * Moves the publication between statuses under a row lock. The status is re-read from the locked row,
+     * Move the publication between statuses under a row lock. The status is re-read from the locked row,
      * not taken from the passed model, so a stale instance (e.g. one loaded before a concurrent redaction)
      * can never overwrite the current status. The caller's model is refreshed to the stored state.
      *
