@@ -184,7 +184,7 @@ it('renders templates in quick exports when Elasticsearch is enabled', function 
         ->and($queued['de_DE']['tpl_qexp_title'])->toBe('Sonnenbrille by Acme');
 });
 
-it('renders a variant template with values inherited from its parent and exports every inherited value', function () {
+it('renders a variant template with values inherited from its parent and exports every inherited value', function (): void {
     $parent = Product::factory()->configurable()->create(['values' => [
         'common' => [
             'tpl_qexp_brand' => 'Acme',
