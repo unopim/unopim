@@ -116,9 +116,7 @@ class DashboardController extends Controller
 
         // Attempt to rollback product changes
         $rolledBack = 0;
-        if (! empty($changes['product_id']) && ! empty($changes['previous_values'])) {
-            $repo = resolve(ProductRepository::class);
-            $repo->updateWithValues(['values' => $changes['previous_values']], $changes['product_id']);
+        if (! empty($changes['product_id']) && $this->restorePreviousValues((int) $changes['product_id'], $changes['previous_values'] ?? null)) {
             $rolledBack++;
         }
 
@@ -134,6 +132,52 @@ class DashboardController extends Controller
             'rolled_back' => true,
             'affected'    => $rolledBack,
         ]);
+    }
+
+    /**
+     * Put back only the keys a changeset generated, so edits made after it survive the rollback.
+     */
+    protected function restorePreviousValues(int $productId, mixed $previous): bool
+    {
+        if (! is_array($previous) || ! is_array($previous['values'] ?? null) || ! isset($previous['channel'], $previous['locale'])) {
+            return false;
+        }
+
+        $repo = resolve(ProductRepository::class);
+
+        $product = $repo->find($productId);
+
+        if (! $product) {
+            return false;
+        }
+
+        $values = $product->values ?? [];
+        $channel = (string) $previous['channel'];
+        $locale = (string) $previous['locale'];
+
+        foreach ($previous['values'] as $key => $value) {
+            if ($value === null) {
+                unset($values['channel_locale_specific'][$channel][$locale][$key]);
+            } else {
+                $values['channel_locale_specific'][$channel][$locale][$key] = $value;
+            }
+        }
+
+        if (($values['channel_locale_specific'][$channel][$locale] ?? null) === []) {
+            unset($values['channel_locale_specific'][$channel][$locale]);
+        }
+
+        if (($values['channel_locale_specific'][$channel] ?? null) === []) {
+            unset($values['channel_locale_specific'][$channel]);
+        }
+
+        if (($values['channel_locale_specific'] ?? null) === []) {
+            unset($values['channel_locale_specific']);
+        }
+
+        $repo->updateWithValues(['values' => $values], $productId);
+
+        return true;
     }
 
     /**

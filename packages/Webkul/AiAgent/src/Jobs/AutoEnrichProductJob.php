@@ -138,7 +138,11 @@ class AutoEnrichProductJob implements ShouldQueue
                     'product_id'      => $product->id,
                     'sku'             => $product->sku,
                     'generated'       => $generated,
-                    'previous_values' => $values,
+                    'previous_values' => [
+                        'channel' => $this->channel,
+                        'locale'  => $this->locale,
+                        'values'  => array_replace(array_fill_keys(array_keys($generated), null), array_intersect_key($cl, $generated)),
+                    ],
                 ]),
                 'status'         => 'applied',
                 'affected_count' => 1,
