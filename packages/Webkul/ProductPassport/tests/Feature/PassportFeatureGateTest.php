@@ -76,3 +76,21 @@ it('404s the passports grid once the global switch is turned off', function (): 
 
     $this->get(route('admin.catalog.passports.index'))->assertNotFound();
 });
+
+it('hides the passports menu item from a role that has the parent permission but not the view one', function (): void {
+    setPassportEnabled(null, '1');
+
+    $this->loginWithPermissions('custom', ['dashboard', 'catalog', 'catalog.passport', 'catalog.passport.template.view']);
+
+    expect(passportMenuItems())->not->toHaveKey('passport');
+
+    $this->get(route('admin.catalog.passports.index'))->assertForbidden();
+});
+
+it('shows the passports menu item to a role that can view passports', function (): void {
+    setPassportEnabled(null, '1');
+
+    $this->loginWithPermissions('custom', ['dashboard', 'catalog', 'catalog.passport', 'catalog.passport.view']);
+
+    expect(passportMenuItems())->toHaveKey('passport');
+});

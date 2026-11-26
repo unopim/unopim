@@ -199,7 +199,37 @@ class AdminServiceProvider extends ServiceProvider
 
         $visible = array_filter($items, fn (array $item): bool => $gate->allowsKey($item['key']));
 
-        $allowed = array_filter($visible, fn (array $item): bool => bouncer()->hasPermission($item['key']));
+        $acl = resolve('acl');
+
+        $allowed = array_filter($visible, function (array $item) use ($acl, $gate, $items): bool {
+            if (! bouncer()->hasPermission($item['key'])) {
+                return false;
+            }
+
+            /**
+             * The page behind the item may demand a narrower permission than the
+             * item's own key (e.g. `catalog.passport.view`); hide the item when the
+             * user would only hit a 403 there.
+             */
+            $route = $item['route'] ?? null;
+
+            $prefix = $item['key'].'.';
+
+            // A parent takes its URL from its first allowed child, so only leaves are checked.
+            $isParent = array_any($items, fn (array $other): bool => str_starts_with((string) $other['key'], $prefix));
+
+            if ($isParent || ! $acl || ! $route || ! isset($acl->roles[$route])) {
+                return true;
+            }
+
+            foreach ([$acl->roles[$route], ...($acl->alternateRoles[$route] ?? [])] as $permission) {
+                if ($gate->allowsKey($permission) && bouncer()->hasPermission($permission)) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
 
         $visibleKeys = array_column($visible, 'key');
 
