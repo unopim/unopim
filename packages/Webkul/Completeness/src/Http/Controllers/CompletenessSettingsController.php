@@ -8,6 +8,7 @@ use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Completeness\DataGrids\AttributeCompletenessDataGrid;
 use Webkul\Completeness\Http\Requests\MassUpdateCompletenessRequest;
+use Webkul\Completeness\Http\Requests\UpdateCompletenessRequest;
 use Webkul\Completeness\Jobs\BulkProductCompletenessJob;
 use Webkul\Completeness\Repositories\CompletenessSettingsRepository;
 use Webkul\Core\Repositories\ChannelRepository;
@@ -81,19 +82,12 @@ class CompletenessSettingsController extends Controller
         return resolve(AttributeCompletenessDataGrid::class)->setAttributeFamilyId($familyId)->toJson();
     }
 
-    public function update()
+    public function update(UpdateCompletenessRequest $request)
     {
-        $data = request()->only(['channel_requirements', 'familyId', 'attributeId']);
+        $data = $request->only(['channel_requirements', 'familyId', 'attributeId']);
 
         $familyId = (int) $data['familyId'];
         $attributeId = (int) $data['attributeId'];
-
-        if ($this->completenessSettingsRepository->attributeIdsOutsideFamily($familyId, [$attributeId]) !== []) {
-            return response()->json([
-                'success' => false,
-                'message' => trans('validation.exists', ['attribute' => 'attributeId']),
-            ], 422);
-        }
 
         $newCodes = array_filter(explode(',', $data['channel_requirements'] ?? ''));
 

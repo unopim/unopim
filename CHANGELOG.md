@@ -6,6 +6,7 @@
 
 ## Bug fixes
 
+- Fixed completeness settings being accepted for attributes that are not assigned to the family, on both the single and the mass update. Such a setting could never be satisfied and lowered the completeness score of every product in the family; both requests now answer 422. A migration deletes the settings saved this way before, in chunks. Scores already stored are not recalculated by it, so run `php artisan unopim:completeness:recalculate --all` afterwards.
 - Fixed a product quick search none of whose fields resolves to an attribute returning the entire catalogue instead of no products. The database path dropped the empty condition group; the Elasticsearch path emitted an empty `should`, which Elasticsearch answers with a match_all because it applies `minimum_should_match` only once there are `should` clauses to count. Both now refuse the term, with `1 = 0` and with `match_none`.
 
 ## New features

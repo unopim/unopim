@@ -451,6 +451,35 @@ class AttributeFamilyRepository extends Repository
     }
 
     /**
+     * Get the given attribute ids that are not assigned to the family.
+     *
+     * @param  iterable<int|string>  $attributeIds
+     * @return array<int, int>
+     */
+    public function attributeIdsOutsideFamily(int $familyId, iterable $attributeIds): array
+    {
+        $requested = collect($attributeIds)->map(fn (int|string $id): int => (int) $id)->unique()->values();
+
+        if ($requested->isEmpty()) {
+            return [];
+        }
+
+        $assigned = DB::table('attribute_group_mappings')
+            ->join(
+                'attribute_family_group_mappings',
+                'attribute_family_group_mappings.id',
+                '=',
+                'attribute_group_mappings.attribute_family_group_id'
+            )
+            ->where('attribute_family_group_mappings.attribute_family_id', $familyId)
+            ->whereIn('attribute_group_mappings.attribute_id', $requested->all())
+            ->pluck('attribute_group_mappings.attribute_id')
+            ->map(fn (int|string $id): int => (int) $id);
+
+        return $requested->diff($assigned)->values()->all();
+    }
+
+    /**
      * Query builder with translations and family group mappings eager-loaded.
      *
      * @return Builder

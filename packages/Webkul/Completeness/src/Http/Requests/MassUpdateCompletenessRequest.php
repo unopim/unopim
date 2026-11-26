@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\LazyCollection;
 use Webkul\Admin\Http\Requests\Concerns\SelectsAllMatching;
 use Webkul\Completeness\DataGrids\AttributeCompletenessDataGrid;
-use Webkul\Completeness\Repositories\CompletenessSettingsRepository;
+use Webkul\Completeness\Rules\AttributeInFamily;
 
 class MassUpdateCompletenessRequest extends FormRequest
 {
@@ -27,18 +27,7 @@ class MassUpdateCompletenessRequest extends FormRequest
             'channel_requirements' => ['nullable', 'string'],
         ]);
 
-        $rules['indices'][] = function (string $attribute, mixed $value, \Closure $fail): void {
-            if (! is_array($value) || ! $this->filled('familyId')) {
-                return;
-            }
-
-            $outside = resolve(CompletenessSettingsRepository::class)
-                ->attributeIdsOutsideFamily($this->integer('familyId'), $value);
-
-            if ($outside !== []) {
-                $fail(trans('validation.exists', ['attribute' => $attribute]));
-            }
-        };
+        $rules['indices'][] = new AttributeInFamily($this->integer('familyId'));
 
         return $rules;
     }
