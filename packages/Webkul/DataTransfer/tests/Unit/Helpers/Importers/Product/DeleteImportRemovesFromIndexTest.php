@@ -1,7 +1,9 @@
 <?php
 
 use Elastic\Transport\Exception\NoNodeAvailableException;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Psr\Log\LoggerInterface;
 use Webkul\Core\Facades\ElasticSearch;
 use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Helpers\Importers\Product\Importer;
@@ -25,11 +27,20 @@ beforeEach(function (): void {
 });
 
 /**
- * Run one delete-import batch for the given SKUs.
+ * Delete importer that sends the index deletes in chunks of two, so a few products span several bulk calls.
+ */
+class TwoPerChunkDeleteImporter extends Importer
+{
+    protected const INDEX_DELETE_CHUNK_SIZE = 2;
+}
+
+/**
+ * Run one delete-import batch for the given SKUs and return the processed batch.
  *
  * @param  array<int, string>  $skus
+ * @param  class-string<Importer>  $importerClass
  */
-function runDeleteImportBatch(array $skus): void
+function runDeleteImportBatch(array $skus, string $importerClass = Importer::class, ?LoggerInterface $logger = null): JobTrackBatch
 {
     $jobTrack = JobTrack::factory()->create(['type' => 'import', 'action' => Import::ACTION_DELETE]);
 
@@ -38,7 +49,15 @@ function runDeleteImportBatch(array $skus): void
         'data'         => array_map(fn (string $sku): array => ['sku' => $sku], $skus),
     ]);
 
-    app(Importer::class)->setImport($jobTrack)->importBatch($batch->refresh());
+    $importer = app($importerClass)->setImport($jobTrack);
+
+    if ($logger) {
+        $importer->setLogger($logger);
+    }
+
+    $importer->importBatch($batch->refresh());
+
+    return $batch->refresh();
 }
 
 /**
@@ -150,19 +169,63 @@ it('still finishes the batch and removes the images when elasticsearch is unreac
         ->once()
         ->andThrow(new NoNodeAvailableException('No alive nodes. All the 1 nodes seem to be down.'));
 
-    $jobTrack = JobTrack::factory()->create(['type' => 'import', 'action' => Import::ACTION_DELETE]);
+    $jobLogger = Mockery::spy(LoggerInterface::class);
 
-    $batch = JobTrackBatch::factory()->create([
-        'job_track_id' => $jobTrack->id,
-        'data'         => [['sku' => $product->sku]],
-    ]);
+    $batch = runDeleteImportBatch([$product->sku], logger: $jobLogger);
 
-    app(Importer::class)->setImport($jobTrack)->importBatch($batch->refresh());
-
-    expect($batch->refresh()->state)->toBe(Import::STATE_PROCESSED)
+    expect($batch->state)->toBe(Import::STATE_PROCESSED)
         ->and(Storage::exists('product/'.$product->id))->toBeFalse();
 
+    $jobLogger->shouldHaveReceived('warning')->once()->with(trans('data_transfer::app.job.search-index-out-of-sync', ['count' => 1]));
+
     assertDatabaseMissing($this->getFullTableName(Product::class), ['id' => $product->id]);
+});
+
+it('sends the index deletes in several bulk requests when they exceed one chunk', function (): void {
+    $products = Product::factory()->count(5)->create();
+
+    config(['elasticsearch.enabled' => true]);
+
+    $chunks = [];
+
+    ElasticSearch::shouldReceive('bulk')
+        ->times(3)
+        ->withArgs(function (array $args) use (&$chunks): bool {
+            $chunks[] = deletedDocumentIds($args);
+
+            return true;
+        })
+        ->andReturn(['errors' => false, 'items' => []]);
+
+    runDeleteImportBatch($products->pluck('sku')->all(), TwoPerChunkDeleteImporter::class);
+
+    expect(array_map(count(...), $chunks))->toBe([2, 2, 1])
+        ->and(collect($chunks)->flatten()->sort()->values()->all())->toBe($products->pluck('id')->sort()->values()->all());
+});
+
+it('logs the documents elasticsearch failed to delete in every chunk', function (): void {
+    $products = Product::factory()->count(3)->create();
+
+    config(['elasticsearch.enabled' => true]);
+
+    $failedIds = $products->pluck('id')->all();
+
+    ElasticSearch::shouldReceive('bulk')
+        ->times(2)
+        ->andReturnUsing(fn (array $args): array => [
+            'errors' => true,
+            'items'  => array_map(fn (int $id): array => ['delete' => ['_id' => $id, 'error' => ['type' => 'version_conflict']]], deletedDocumentIds($args)),
+        ]);
+
+    $logger = Mockery::spy();
+
+    Log::shouldReceive('channel')->with('elasticsearch')->andReturn($logger);
+
+    runDeleteImportBatch($products->pluck('sku')->all(), TwoPerChunkDeleteImporter::class);
+
+    foreach ($failedIds as $id) {
+        $logger->shouldHaveReceived('error')->withArgs(fn (string $message): bool => str_contains($message, 'product id: '.$id.' '));
+    }
 });
 
 it('does not call elasticsearch when it is disabled', function (): void {

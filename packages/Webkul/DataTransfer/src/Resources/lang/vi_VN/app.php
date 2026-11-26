@@ -317,11 +317,12 @@ return [
         ],
     ],
     'job' => [
-        'started'         => 'Bắt đầu công việc',
-        'completed'       => 'Công việc đã hoàn thành',
-        'stalled'         => 'Tác vụ đã ngừng phản hồi hơn :minutes phút và được đánh dấu là thất bại. Tiến trình chạy nó nhiều khả năng đã bị dừng.',
-        'reaped'          => 'Đã đánh dấu :count tác vụ bị treo là thất bại.',
-        'stopped'         => 'Đã dừng nhập sau khi xác thực có :count lỗi. Không có dòng nào được nhập.',
-        'module-disabled' => 'Loại tác vụ :type thuộc về một mô-đun nền tảng đang bị tắt nên không thể chạy.',
+        'started'                  => 'Bắt đầu công việc',
+        'completed'                => 'Công việc đã hoàn thành',
+        'stalled'                  => 'Tác vụ đã ngừng phản hồi hơn :minutes phút và được đánh dấu là thất bại. Tiến trình chạy nó nhiều khả năng đã bị dừng.',
+        'reaped'                   => 'Đã đánh dấu :count tác vụ bị treo là thất bại.',
+        'stopped'                  => 'Đã dừng nhập sau khi xác thực có :count lỗi. Không có dòng nào được nhập.',
+        'module-disabled'          => 'Loại tác vụ :type thuộc về một mô-đun nền tảng đang bị tắt nên không thể chạy.',
+        'search-index-out-of-sync' => 'Không thể cập nhật chỉ mục tìm kiếm cho :count sản phẩm đã xóa. Hãy chạy lập chỉ mục lại sản phẩm để xóa chúng khỏi kết quả tìm kiếm.',
     ],
 ];

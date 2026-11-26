@@ -317,11 +317,12 @@ return [
         ],
     ],
     'job' => [
-        'started'         => 'Start executie job',
-        'completed'       => 'Finalizare executie job',
-        'stalled'         => 'Sarcina nu a mai răspuns timp de peste :minutes minute și a fost marcată ca eșuată. Procesul care o executa a fost probabil oprit.',
-        'reaped'          => 'Au fost marcate :count sarcini blocate ca eșuate.',
-        'stopped'         => 'Importul a fost oprit după validare cu :count erori. Niciun rând nu a fost importat.',
-        'module-disabled' => 'Tipul de job :type aparține unui modul al platformei care este dezactivat, așa că nu poate rula.',
+        'started'                  => 'Start executie job',
+        'completed'                => 'Finalizare executie job',
+        'stalled'                  => 'Sarcina nu a mai răspuns timp de peste :minutes minute și a fost marcată ca eșuată. Procesul care o executa a fost probabil oprit.',
+        'reaped'                   => 'Au fost marcate :count sarcini blocate ca eșuate.',
+        'stopped'                  => 'Importul a fost oprit după validare cu :count erori. Niciun rând nu a fost importat.',
+        'module-disabled'          => 'Tipul de job :type aparține unui modul al platformei care este dezactivat, așa că nu poate rula.',
+        'search-index-out-of-sync' => 'Indexul de căutare nu a putut fi actualizat pentru :count produse șterse. Rulați reindexarea produselor pentru a le elimina din căutare.',
     ],
 ];

@@ -1947,35 +1947,30 @@ class Importer extends AbstractImporter
 
         $productIndex = strtolower(config('elasticsearch.prefix').'_products');
 
-        $items = [];
-        $errors = false;
-
         try {
-            foreach (array_chunk($productIds, self::INDEX_DELETE_CHUNK_SIZE) as $productIdChunk) {
+            foreach (array_chunk($productIds, static::INDEX_DELETE_CHUNK_SIZE) as $productIdChunk) {
                 $body = array_map(fn (int $productId): array => ['delete' => ['_index' => $productIndex, '_id' => $productId]], $productIdChunk);
 
                 $response = ElasticSearch::bulk(['body' => $body]);
 
-                $errors = $errors || ! empty($response['errors']);
+                if (empty($response['errors'])) {
+                    continue;
+                }
 
-                $items = [...$items, ...($response['items'] ?? [])];
+                foreach ($response['items'] ?? [] as $result) {
+                    if (isset($result['delete']['error'])) {
+                        Log::channel('elasticsearch')->error('Error while deleting product id: '.$result['delete']['_id'].' from '.$productIndex.' index: ', [
+                            'error' => $result['delete']['error'],
+                        ]);
+                    }
+                }
             }
         } catch (ElasticsearchException|TransportException $e) {
             Log::channel('elasticsearch')->error('Exception while deleting imported products from '.$productIndex.' index: ', [
                 'error' => $e->getMessage(),
             ]);
 
-            return;
-        }
-
-        if ($errors) {
-            foreach ($items as $result) {
-                if (isset($result['delete']['error'])) {
-                    Log::channel('elasticsearch')->error('Error while deleting product id: '.$result['delete']['_id'].' from '.$productIndex.' index: ', [
-                        'error' => $result['delete']['error'],
-                    ]);
-                }
-            }
+            $this->jobLogger?->warning(trans('data_transfer::app.job.search-index-out-of-sync', ['count' => count($productIds)]));
         }
     }
 

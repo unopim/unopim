@@ -317,11 +317,12 @@ return [
         ],
     ],
     'job' => [
-        'started'         => 'Esecuzione del lavoro iniziata',
-        'completed'       => 'Esecuzione del lavoro completata',
-        'stalled'         => 'Il processo non ha risposto per più di :minutes minuti ed è stato contrassegnato come fallito. Il worker che lo eseguiva è stato probabilmente terminato.',
-        'reaped'          => 'Contrassegnati :count processi bloccati come falliti.',
-        'stopped'         => 'Importazione interrotta dopo la convalida con :count errori. Nessuna riga è stata importata.',
-        'module-disabled' => 'Il tipo di job :type appartiene a un modulo della piattaforma disattivato, quindi non può essere eseguito.',
+        'started'                  => 'Esecuzione del lavoro iniziata',
+        'completed'                => 'Esecuzione del lavoro completata',
+        'stalled'                  => 'Il processo non ha risposto per più di :minutes minuti ed è stato contrassegnato come fallito. Il worker che lo eseguiva è stato probabilmente terminato.',
+        'reaped'                   => 'Contrassegnati :count processi bloccati come falliti.',
+        'stopped'                  => 'Importazione interrotta dopo la convalida con :count errori. Nessuna riga è stata importata.',
+        'module-disabled'          => 'Il tipo di job :type appartiene a un modulo della piattaforma disattivato, quindi non può essere eseguito.',
+        'search-index-out-of-sync' => 'Impossibile aggiornare l’indice di ricerca per :count prodotti eliminati. Esegui la reindicizzazione dei prodotti per rimuoverli dalla ricerca.',
     ],
 ];

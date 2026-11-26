@@ -317,11 +317,12 @@ return [
         ],
     ],
     'job' => [
-        'started'         => 'Jobbutførelse startet',
-        'completed'       => 'Jobbutførelse fullført',
-        'stalled'         => 'Jobben sluttet å svare i mer enn :minutes minutter og ble markert som mislykket. Prosessen som kjørte den ble sannsynligvis avbrutt.',
-        'reaped'          => ':count fastlåste jobber ble markert som mislykkede.',
-        'stopped'         => 'Importen ble stoppet etter validering med :count feil. Ingen rader ble importert.',
-        'module-disabled' => 'Jobbtypen :type tilhører en plattformmodul som er slått av, så den kan ikke kjøres.',
+        'started'                  => 'Jobbutførelse startet',
+        'completed'                => 'Jobbutførelse fullført',
+        'stalled'                  => 'Jobben sluttet å svare i mer enn :minutes minutter og ble markert som mislykket. Prosessen som kjørte den ble sannsynligvis avbrutt.',
+        'reaped'                   => ':count fastlåste jobber ble markert som mislykkede.',
+        'stopped'                  => 'Importen ble stoppet etter validering med :count feil. Ingen rader ble importert.',
+        'module-disabled'          => 'Jobbtypen :type tilhører en plattformmodul som er slått av, så den kan ikke kjøres.',
+        'search-index-out-of-sync' => 'Søkeindeksen kunne ikke oppdateres for :count slettede produkter. Kjør produktreindekseringen for å fjerne dem fra søket.',
     ],
 ];
