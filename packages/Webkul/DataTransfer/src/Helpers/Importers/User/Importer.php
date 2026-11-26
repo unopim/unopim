@@ -228,6 +228,11 @@ class Importer extends AbstractImporter
             return ['columnName' => 'role_name', 'error' => $error];
         }
 
+        if (! empty($permissionType)
+            && $error = $this->importAccessError(fn ($admin): ?string => $this->roleAccessGuard->currentAccessError($admin, $role))) {
+            return ['columnName' => 'role_name', 'error' => $error];
+        }
+
         $error = $this->importAccessError(fn ($admin): ?string => empty($permissionType)
             ? $this->roleAccessGuard->assignmentError($admin, $role)
             : $this->roleAccessGuard->grantError(

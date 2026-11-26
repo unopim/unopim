@@ -124,3 +124,51 @@ it('lets an API key holding the create and delete permissions change options thr
     expect(apiOptionOwner('api_full_added'))->toBe([$this->attribute->id])
         ->and(AttributeOption::whereKey($option->id)->exists())->toBeFalse();
 });
+
+it('does not let a labels wrapper smuggle options past the edit-only gate on the REST attribute update', function () {
+    $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.attributes.edit']);
+
+    $this->withHeaders($headers)
+        ->json('PUT', route('admin.api.attributes.update', $this->attribute->code), [
+            'labels' => ['options' => ['code' => 'api_labels_smuggled', 'isNew' => true, 'isDelete' => false]],
+        ]);
+
+    expect(apiOptionOwner('api_labels_smuggled'))->toBe([]);
+});
+
+it('does not let a labels wrapper change immutable attribute fields on the REST attribute update', function () {
+    $this->withHeaders($this->headers)
+        ->json('PUT', route('admin.api.attributes.update', $this->attribute->code), [
+            'labels' => ['code' => 'api_labels_renamed', 'type' => 'text', 'en_US' => 'Relabelled'],
+        ]);
+
+    $attribute = $this->attribute->fresh();
+
+    expect($attribute->code)->toBe($this->attribute->code)
+        ->and($attribute->type)->toBe('select');
+});
+
+it('validates options carried by the REST attribute update like the option routes', function () {
+    $existing = AttributeOption::create(['code' => 'api_valid_existing', 'sort_order' => 1, 'attribute_id' => $this->attribute->id]);
+
+    $this->withHeaders($this->headers)
+        ->json('PUT', route('admin.api.attributes.update', $this->attribute->code), [
+            'options' => ['option_0' => ['code' => 'bad code!', 'isNew' => true, 'isDelete' => false]],
+        ])
+        ->assertUnprocessable();
+
+    $this->withHeaders($this->headers)
+        ->json('PUT', route('admin.api.attributes.update', $this->attribute->code), [
+            'options' => ['option_0' => ['code' => 'api_valid_existing', 'isNew' => true, 'isDelete' => false]],
+        ])
+        ->assertUnprocessable();
+
+    $this->withHeaders($this->headers)
+        ->json('PUT', route('admin.api.attributes.update', $this->attribute->code), [
+            'options' => [$existing->id => ['code' => 'bad code!', 'isNew' => false, 'isDelete' => false]],
+        ])
+        ->assertUnprocessable();
+
+    expect(apiOptionOwner('bad code!'))->toBe([])
+        ->and(apiOptionOwner('api_valid_existing'))->toBe([$this->attribute->id]);
+});

@@ -59,3 +59,32 @@ it('does not let an edit-only API key add or delete options through the REST cat
     expect(apiCategoryFieldOptionOwner('api_cf_edit_only_added'))->toBe([])
         ->and(CategoryFieldOption::whereKey($option->id)->exists())->toBeTrue();
 });
+
+it('does not let a labels wrapper smuggle options past the edit-only gate on the REST category field update', function () {
+    $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.category_fields.edit']);
+
+    $this->withHeaders($headers)
+        ->json('PUT', route('admin.api.category-fields.update', $this->field->code), [
+            'labels' => ['options' => ['code' => 'api_cf_labels_smuggled', 'isNew' => true, 'isDelete' => false]],
+        ]);
+
+    expect(apiCategoryFieldOptionOwner('api_cf_labels_smuggled'))->toBe([]);
+});
+
+it('validates options carried by the REST category field update like the option routes', function () {
+    $existing = CategoryFieldOption::factory()->create(['code' => 'api_cf_valid_existing', 'category_field_id' => $this->field->id]);
+
+    $this->withHeaders($this->headers)
+        ->json('PUT', route('admin.api.category-fields.update', $this->field->code), [
+            'options' => ['option_0' => ['code' => 'bad code!', 'isNew' => true, 'isDelete' => false]],
+        ])
+        ->assertUnprocessable();
+
+    $this->withHeaders($this->headers)
+        ->json('PUT', route('admin.api.category-fields.update', $this->field->code), [
+            'options' => [$existing->id => ['code' => 'bad code!', 'isNew' => false, 'isDelete' => false]],
+        ])
+        ->assertUnprocessable();
+
+    expect(apiCategoryFieldOptionOwner('bad code!'))->toBe([]);
+});

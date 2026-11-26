@@ -1,4 +1,5 @@
 const { test, expect } = require('@playwright/test');
+const { fillSecret } = require('../../utils/secret-helpers');
 
 // This suite targets the working-dir app directly and logs in itself, so it
 // does not depend on the shared saved auth state (which is for another origin).
@@ -11,7 +12,7 @@ test.describe('admin ajax navigation', () => {
 
         await page.goto('/admin/login');
         await page.getByRole('textbox', { name: 'Email Address' }).fill(email);
-        await page.getByRole('textbox', { name: 'Password' }).fill(password);
+        await fillSecret(page.getByRole('textbox', { name: 'Password' }), password);
         await page.getByRole('button', { name: 'Sign In' }).click();
         await page.waitForURL(/\/admin\/dashboard/, { timeout: 20000 });
 

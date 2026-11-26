@@ -8,13 +8,13 @@ it('applies overrides only for the duration of the callback', function () {
     $insideKey = null;
     $insideUrl = null;
 
-    ScopedProviderConfig::run('openai', ['key' => 'scoped-key', 'url' => 'https://example.test/v1'], function () use (&$insideKey, &$insideUrl) {
+    ScopedProviderConfig::run('openai', ['key' => 'scoped-key', 'url' => 'https://1.1.1.1/v1'], function () use (&$insideKey, &$insideUrl) {
         $insideKey = config('ai.providers.openai.key');
         $insideUrl = config('ai.providers.openai.url');
     });
 
     expect($insideKey)->toBe('scoped-key');
-    expect($insideUrl)->toBe('https://example.test/v1');
+    expect($insideUrl)->toBe('https://1.1.1.1/v1');
     expect(config('ai.providers.openai.key'))->toBe('original-key');
     expect(config('ai.providers.openai.url'))->toBeNull();
 });
