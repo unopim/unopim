@@ -1,4 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
+const { fillSecret } = require('../../utils/secret-helpers');
 
 /**
  * Security-focused coverage for the admin login endpoint.
@@ -168,7 +169,7 @@ test.describe('Login Page — Security', () => {
     // Unknown email + valid password
     const first = await freshLoginPage(browser);
     await first.page.fill('input[name=email]', 'definitely-not-a-user@example.com');
-    await first.page.fill('input[name=password]', VALID_PASSWORD);
+    await fillSecret(first.page.locator('input[name=password]'), VALID_PASSWORD);
     await first.page.press('input[name=password]', 'Enter');
     await expect(first.page.getByRole('alert')).toContainText(CREDENTIAL_ERROR);
     await first.context.close();

@@ -5,8 +5,10 @@ namespace Webkul\Attribute\Repositories;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Webkul\Attribute\Contracts\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Core\Eloquent\Repository;
@@ -16,7 +18,9 @@ class AttributeRepository extends Repository
 {
     use HtmlPurifier;
 
-    const BOOLEAN_FIELDS = ['is_required', 'is_unique', 'enable_wysiwyg', 'is_filterable', 'ai_translate'];
+    const BOOLEAN_FIELDS = ['is_required', 'is_unique', 'enable_wysiwyg', 'is_filterable', 'ai_translate', 'enable_templates'];
+
+    const TEMPLATE_SETTINGS = ['type', 'validation', 'is_unique', 'enable_templates'];
 
     protected $attributes = [];
 
@@ -47,6 +51,8 @@ class AttributeRepository extends Repository
     {
         $validatedData = $this->validateUserInput($data);
 
+        $this->ensureTemplatesAreSupported($validatedData);
+
         $options = $validatedData['options'] ?? [];
 
         unset($validatedData['options']);
@@ -55,9 +61,9 @@ class AttributeRepository extends Repository
 
         if (in_array($attribute->type, ['select', 'multiselect', 'checkbox']) && $options) {
             foreach ($options as $optionInputs) {
-                $this->attributeOptionRepository->create(array_merge([
+                $this->attributeOptionRepository->create(array_merge($optionInputs, [
                     'attribute_id' => $attribute->id,
-                ], $optionInputs));
+                ]));
             }
         }
 
@@ -77,25 +83,35 @@ class AttributeRepository extends Repository
 
         $attribute = $this->find($id);
 
+        $this->ensureTemplatesAreSupported($validatedData, $attribute);
+
+        $hasOptions = in_array($attribute->type, ['select', 'multiselect', 'checkbox']) && isset($data['options']);
+
+        if ($hasOptions) {
+            $this->ensureOptionsBelongToAttribute($data['options'], $attribute);
+        }
+
         if ($attribute->code === 'sku' && isset($data['is_filterable']) && $data['is_filterable'] === 0) {
             $data['is_filterable'] = 1;
         }
 
         $attribute->update($this->withoutUnchangedFlags($validatedData, $attribute));
 
-        if (in_array($attribute->type, ['select', 'multiselect', 'checkbox']) && isset($data['options'])) {
+        if ($hasOptions) {
             foreach ($data['options'] as $optionId => $optionInputs) {
                 if ($optionInputs['isNew'] == 'true') {
                     if (empty($optionInputs['code'])) {
                         $optionInputs['code'] = 'option_'.strtolower(Str::random(8));
                     }
-                    $this->attributeOptionRepository->create(array_merge([
+                    $this->attributeOptionRepository->create(array_merge($optionInputs, [
                         'attribute_id' => $attribute->id,
-                    ], $optionInputs));
+                    ]));
                 } elseif ($optionInputs['isDelete'] == 'true') {
                     $this->attributeOptionRepository->delete($optionId);
                 } else {
-                    $this->attributeOptionRepository->update($optionInputs, $optionId);
+                    $this->attributeOptionRepository->update(array_merge($optionInputs, [
+                        'attribute_id' => $attribute->id,
+                    ]), $optionId);
                 }
             }
         }
@@ -123,6 +139,53 @@ class AttributeRepository extends Repository
         }
 
         return $data;
+    }
+
+    /**
+     * Determine if the given settings leave templates disabled or describe an attribute that can hold them.
+     */
+    public function supportsTemplates(array $data, ?Attribute $attribute = null): bool
+    {
+        $candidate = ($attribute ? clone $attribute : $this->model->newInstance())
+            ->forceFill(Arr::only($data, self::TEMPLATE_SETTINGS));
+
+        return ! $candidate->enable_templates || $candidate->canHoldTemplate();
+    }
+
+    /**
+     * Reject existing option ids that do not belong to the attribute, before anything is written.
+     */
+    private function ensureOptionsBelongToAttribute(array $options, Attribute $attribute): void
+    {
+        $optionIds = array_keys(array_filter(
+            $options,
+            fn (mixed $optionInputs): bool => ($optionInputs['isNew'] ?? null) != 'true',
+        ));
+
+        if ($optionIds === []) {
+            return;
+        }
+
+        $ownedIds = $attribute->options()
+            ->whereIn('id', $optionIds)
+            ->pluck('id')
+            ->map(fn (mixed $id): int => (int) $id)
+            ->all();
+
+        if (array_diff(array_map(intval(...), $optionIds), $ownedIds) !== []) {
+            throw ValidationException::withMessages([
+                'options' => trans('validation.exists', ['attribute' => 'options']),
+            ]);
+        }
+    }
+
+    private function ensureTemplatesAreSupported(array $data, ?Attribute $attribute = null): void
+    {
+        if (! $this->supportsTemplates($data, $attribute)) {
+            throw ValidationException::withMessages([
+                'enable_templates' => trans('admin::app.catalog.attributes.create.templates-unsupported'),
+            ]);
+        }
     }
 
     /**

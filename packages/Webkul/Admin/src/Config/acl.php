@@ -77,6 +77,16 @@ return [
         'route' => 'admin.catalog.products.attribute_group_fields',
         'sort'  => 3,
     ], [
+        'key'   => 'catalog.products.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.products.template_suggestions',
+        'sort'  => 3,
+    ], [
+        'key'   => 'catalog.products.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.products.template_preview',
+        'sort'  => 3,
+    ], [
         'key'   => 'catalog.products.delete',
         'name'  => 'admin::app.acl.delete',
         'route' => 'admin.catalog.products.delete',
@@ -726,11 +736,6 @@ return [
         'name'  => 'admin::app.acl.tracker',
         'route' => 'admin.settings.data_transfer.tracker.log.download',
         'sort'  => 1,
-    ], [
-        'key'   => 'data_transfer',
-        'name'  => 'admin::app.acl.data-transfer',
-        'route' => 'admin.settings.data_transfer.systems.edit',
-        'sort'  => 8,
     ],
 
     /*

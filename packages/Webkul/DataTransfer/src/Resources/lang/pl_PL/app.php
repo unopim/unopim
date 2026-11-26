@@ -32,6 +32,8 @@ return [
                     'incorrect-family-for-variant'             => 'Rodzina musi być taka sama jak rodzina główna',
                     'parent-not-exist'                         => 'Rodzic nie istnieje.',
                     'variant-structure-not-found'              => 'Struktura wariantów :code nie istnieje dla tej rodziny atrybutów.',
+                    'variant-structure-levels-mismatch'        => 'Struktura wariantów :code ma tylko jeden poziom, więc nie może zawierać wierszy variant_group. Ustaw jej poziomy na 2 lub zaimportuj warianty jako produkty proste w ramach produktu konfigurowalnego.',
+                    'variant-structure-two-levels-mismatch'    => 'Struktura wariantów :code ma dwa poziomy, więc wiersze produktów prostych muszą znajdować się pod wierszem variant_group, a nie bezpośrednio pod produktem konfigurowalnym.',
                 ],
             ],
         ],
@@ -59,6 +61,7 @@ return [
                     'duplicate-code'                       => 'Kod atrybutu :code jest już w użyciu.',
                     'code_not_found_to_delete'             => 'Nie znaleziono kodu atrybutu do usunięcia.',
                     'code_is_system_and_cannot_be_deleted' => 'Nie można usunąć atrybutu systemowego.',
+                    'templates-unsupported'                => 'Szablony można włączyć tylko dla atrybutów typu tekst i pole tekstowe, które nie mają weryfikacji danych wejściowych i nie są unikalne.',
                 ],
             ],
         ],
@@ -174,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Ten eksport jest zbyt duży, aby go uruchomić: szacunkowo :rows wierszy × :columns kolumn (~:estimated) przekracza dostępne miejsce (~:available). Zawęź eksport, wybierając mniej kanałów/lokalizacji (i atrybutów), i spróbuj ponownie.',
-        'fields'           => [
+        'export-too-large'      => 'Ten eksport jest zbyt duży, aby go uruchomić: szacunkowo :rows wierszy × :columns kolumn (~:estimated) przekracza dostępne miejsce (~:available). Zawęź eksport, wybierając mniej kanałów/lokalizacji (i atrybutów), i spróbuj ponownie.',
+        'xls-too-many-columns'  => 'Ten eksport ma więcej niż :limit kolumn, czyli maksimum, jakie może pomieścić plik XLS. Wybierz XLSX lub CSV albo mniej atrybutów i spróbuj ponownie.',
+        'xls-too-many-rows'     => 'Ten eksport ma więcej niż :limit wierszy, czyli maksimum, jakie może pomieścić plik XLS. Wybierz XLSX lub CSV albo zawęź eksport i spróbuj ponownie.',
+        'xls-too-large'         => 'Ten eksport jest zbyt duży, aby przekonwertować go do XLS: :rows wierszy × :columns kolumn przekracza :limit komórek, które ten serwer może przekonwertować. Wybierz XLSX lub CSV albo zawęź eksport i spróbuj ponownie.',
+        'xls-conversion-failed' => 'Nie udało się zastąpić pliku eksportu jego wersją XLS. Spróbuj ponownie albo wybierz XLSX lub CSV.',
+        'fields'                => [
             'file-format'            => 'Format pliku',
             'with-media'             => 'Z multimediami',
             'with-associations'      => 'Z powiązaniami',
@@ -184,6 +191,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'Renderuj szablony',
+            'render-templates-info'  => 'Eksportuj wyrenderowane wartości szablonów zamiast surowego źródła szablonu. Ponowny import wyrenderowanego pliku zastępuje zapisane źródło szablonu zwykłym tekstem.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

@@ -8,8 +8,8 @@ use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Services\LaravelAiAdapter;
 
 /**
- * Reasoning models (o-series, gpt-5*) reject `temperature` — only the default
- * is allowed. Sending temperature triggers a 400 invalid_request_error.
+ * Reasoning models (o-series, gpt-5 and later) reject `temperature` — only the
+ * default is allowed. Sending temperature triggers a 400 invalid_request_error.
  * This test pins the LaravelAiAdapter behaviour so a regression breaks loudly.
  */
 beforeEach(function () {
@@ -86,6 +86,55 @@ it('does NOT send temperature for gpt-5* reasoning models', function () {
             && ! array_key_exists('temperature', $body);
     });
 });
+
+it('does NOT send temperature for gpt-6 and later reasoning models', function (string $model): void {
+    (new LaravelAiAdapter(
+        platform: $this->platform,
+        model: $model,
+        prompt: 'hi',
+        temperature: 0.42,
+    ))->ask();
+
+    Http::assertSent(function (Request $request) use ($model): bool {
+        $body = json_decode($request->body(), true);
+
+        return $body['model'] === $model
+            && ! array_key_exists('temperature', $body);
+    });
+})->with([
+    'gpt-6',
+    'gpt-6.1-terra',
+    'gpt-6-mini',
+    'GPT-6.5',
+    'gpt-7',
+    'gpt-10-mini',
+    'gpt-20',
+    'gpt-21-mini',
+]);
+
+it('sends temperature for chat and pre-reasoning OpenAI models', function (string $model): void {
+    (new LaravelAiAdapter(
+        platform: $this->platform,
+        model: $model,
+        prompt: 'hi',
+        temperature: 0.42,
+    ))->ask();
+
+    Http::assertSent(function (Request $request) use ($model): bool {
+        $body = json_decode($request->body(), true);
+
+        return $body['model'] === $model
+            && ($body['temperature'] ?? null) === 0.42;
+    });
+})->with([
+    'gpt-4o',
+    'gpt-4.1-mini',
+    'gpt-3.5-turbo',
+    'gpt-35-turbo',
+    'gpt-5-chat-latest',
+    'gpt-5.1-chat-latest',
+    'gpt-6-chat',
+]);
 
 it('raises max_output_tokens to at least 16000 for reasoning models', function () {
     (new LaravelAiAdapter(

@@ -122,7 +122,7 @@ it('shows the family and unit panel on the edit page only for measurement backed
         ->assertDontSee('<v-measurement', false);
 });
 
-it('warns to set the family and unit after creating a measurement backed attribute', function (string $type) {
+it('reminds to set the family and unit after creating a measurement backed attribute', function (string $type) {
     $response = postJson(route('admin.catalog.attributes.store'), [
         'code' => 'created_'.$type,
         'type' => $type,
@@ -132,7 +132,20 @@ it('warns to set the family and unit after creating a measurement backed attribu
 
     $response->assertRedirect(route('admin.catalog.attributes.edit', $attribute->id))
         ->assertSessionHas('success')
-        ->assertSessionHas('warning', trans('measurement::app.messages.attribute.family_unit_required'));
+        ->assertSessionHas('info', trans('measurement::app.messages.attribute.family_unit_required'));
+})->with(['measurement', 'conditional_measurement']);
+
+it('redirects the ajax create form to the edit page of a new measurement backed attribute', function (string $type) {
+    $response = postJson(route('admin.catalog.attributes.store'), [
+        'code' => 'ajax_'.$type,
+        'type' => $type,
+    ], ['X-Ajax-Form' => '1']);
+
+    $attribute = Attribute::where('code', 'ajax_'.$type)->firstOrFail();
+
+    $response->assertOk()
+        ->assertJsonPath('redirect_url', route('admin.catalog.attributes.edit', $attribute->id))
+        ->assertSessionHas('info', trans('measurement::app.messages.attribute.family_unit_required'));
 })->with(['measurement', 'conditional_measurement']);
 
 it('does not warn after creating an attribute that is not measurement backed', function () {
@@ -141,5 +154,5 @@ it('does not warn after creating an attribute that is not measurement backed', f
         'type' => 'plain_custom',
     ])
         ->assertSessionHas('success')
-        ->assertSessionMissing('warning');
+        ->assertSessionMissing('info');
 });

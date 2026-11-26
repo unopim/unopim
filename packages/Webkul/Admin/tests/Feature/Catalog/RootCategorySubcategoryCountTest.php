@@ -7,6 +7,8 @@ use Webkul\Installer\Database\Seeders\Demo\DemoCategorySeeder;
 
 function seedInstallerRoot(): object
 {
+    DB::table('categories')->delete();
+
     resolve(CategoryTableSeeder::class)->run();
 
     return DB::table('categories')->where('code', 'root')->first();

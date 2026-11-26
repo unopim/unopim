@@ -51,6 +51,10 @@ class DeleteProducts implements PimTool
 
                 $skuList = array_map(trim(...), explode(',', $skus));
 
+                if ($denied = $this->denyMultiProductUnlessAllowed($this->context, $skuList, 'catalog.products.mass_delete')) {
+                    return $denied;
+                }
+
                 if (count($skuList) > 20) {
                     return json_encode(['error' => trans('ai-agent::app.common.bulk-delete-limit')]);
                 }

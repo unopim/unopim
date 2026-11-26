@@ -25,7 +25,8 @@ class RoleController extends Controller
      */
     public function __construct(
         protected RoleRepository $roleRepository,
-        protected AdminRepository $adminRepository
+        protected AdminRepository $adminRepository,
+        protected RoleAccessGuard $roleAccessGuard,
     ) {}
 
     /**
@@ -92,6 +93,10 @@ class RoleController extends Controller
      */
     public function update(RoleForm $request, int $id): JsonResponse|RedirectResponse
     {
+        if ($error = $this->roleAccessGuard->currentAccessError(auth()->guard('admin')->user(), $this->roleRepository->findOrFail($id))) {
+            return $this->respondError(trans($error), JsonResponse::HTTP_FORBIDDEN, route('admin.settings.roles.index'));
+        }
+
         $data = $request->only([
             'name',
             'description',
@@ -138,6 +143,10 @@ class RoleController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $role = $this->roleRepository->findOrFail($id);
+
+        if ($error = $this->roleAccessGuard->currentAccessError(auth()->guard('admin')->user(), $role)) {
+            return new JsonResponse(['message' => trans($error)], JsonResponse::HTTP_FORBIDDEN);
+        }
 
         if ($role->admins()->exists()) {
             return new JsonResponse([

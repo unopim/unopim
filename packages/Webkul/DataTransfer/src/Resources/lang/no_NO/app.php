@@ -32,6 +32,8 @@ return [
                     'incorrect-family-for-variant'             => 'Familien må være den samme som foreldrefamilien',
                     'parent-not-exist'                         => 'Forelderen eksisterer ikke.',
                     'variant-structure-not-found'              => 'Variantstrukturen :code finnes ikke for denne attributtfamilien.',
+                    'variant-structure-levels-mismatch'        => 'Variantstrukturen :code har bare ett nivå, så den kan ikke inneholde variant_group-rader. Sett nivåene til 2, eller importer variantene som enkle produkter under det konfigurerbare produktet.',
+                    'variant-structure-two-levels-mismatch'    => 'Variantstrukturen :code har to nivåer, så enkle rader må ligge under en variant_group-rad og ikke direkte under det konfigurerbare produktet.',
                 ],
             ],
         ],
@@ -59,6 +61,7 @@ return [
                     'duplicate-code'                       => 'Attributtkoden :code er allerede i bruk.',
                     'code_not_found_to_delete'             => 'Attributtkoden ble ikke funnet for sletting.',
                     'code_is_system_and_cannot_be_deleted' => 'Systemattributt kan ikke slettes.',
+                    'templates-unsupported'                => 'Maler kan bare aktiveres for tekst- og tekstområdeattributter som ikke har inndatavalidering og ikke er unike.',
                 ],
             ],
         ],
@@ -174,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'Denne eksporten er for stor til å kjøre: anslåtte :rows rader × :columns kolonner (~:estimated) overskrider tilgjengelig plass (~:available). Begrens eksporten ved å velge færre kanaler/språk (og attributter), og prøv igjen.',
-        'fields'           => [
+        'export-too-large'      => 'Denne eksporten er for stor til å kjøre: anslåtte :rows rader × :columns kolonner (~:estimated) overskrider tilgjengelig plass (~:available). Begrens eksporten ved å velge færre kanaler/språk (og attributter), og prøv igjen.',
+        'xls-too-many-columns'  => 'Denne eksporten har mer enn :limit kolonner, som er det meste en XLS-fil kan inneholde. Velg XLSX eller CSV, eller velg færre attributter, og prøv igjen.',
+        'xls-too-many-rows'     => 'Denne eksporten har mer enn :limit rader, som er det meste en XLS-fil kan inneholde. Velg XLSX eller CSV, eller begrens eksporten, og prøv igjen.',
+        'xls-too-large'         => 'Denne eksporten er for stor til å konverteres til XLS: :rows rader × :columns kolonner er mer enn de :limit cellene denne serveren kan konvertere. Velg XLSX eller CSV, eller begrens eksporten, og prøv igjen.',
+        'xls-conversion-failed' => 'Eksportfilen kunne ikke erstattes med XLS-versjonen. Prøv igjen, eller velg XLSX eller CSV.',
+        'fields'                => [
             'file-format'            => 'Filformat',
             'with-media'             => 'Med medier',
             'with-associations'      => 'Med koblinger',
@@ -184,6 +191,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'Gjengi maler',
+            'render-templates-info'  => 'Eksporter gjengitte malverdier i stedet for den rå malkilden. Reimport av en gjengitt fil erstatter den lagrede malkilden med ren tekst.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

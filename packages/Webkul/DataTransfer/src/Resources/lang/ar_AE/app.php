@@ -32,6 +32,8 @@ return [
                     'incorrect-family-for-variant'             => 'يجب أن تكون العائلة هي نفس عائلة الوالدين',
                     'parent-not-exist'                         => 'الوالد غير موجود.',
                     'variant-structure-not-found'              => 'بنية المتغيرات :code غير موجودة لعائلة السمات هذه.',
+                    'variant-structure-levels-mismatch'        => 'بنية المتغيرات :code تحتوي على مستوى واحد فقط، لذلك لا يمكنها استيعاب صفوف variant_group. اضبط مستوياتها على 2 أو استورد المتغيرات كمنتجات بسيطة ضمن المنتج القابل للتهيئة.',
+                    'variant-structure-two-levels-mismatch'    => 'بنية المتغيرات :code تحتوي على مستويين، لذلك يجب وضع صفوف المنتجات البسيطة ضمن صف variant_group وليس مباشرة ضمن المنتج القابل للتهيئة.',
                 ],
             ],
         ],
@@ -59,6 +61,7 @@ return [
                     'duplicate-code'                       => 'كود السمة :code مستخدم بالفعل.',
                     'code_not_found_to_delete'             => 'لم يتم العثور على كود السمة للحذف.',
                     'code_is_system_and_cannot_be_deleted' => 'لا يمكن حذف سمة النظام.',
+                    'templates-unsupported'                => 'يمكن تفعيل القوالب فقط على سمات النص ومنطقة النص التي لا تحتوي على تحقق من صحة المدخلات وليست فريدة.',
                 ],
             ],
         ],
@@ -174,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'هذا التصدير كبير جدًا بحيث لا يمكن تشغيله: العدد التقديري :rows صف × :columns عمود (~:estimated) يتجاوز المساحة المتاحة (~:available). قلّص نطاق التصدير باختيار عدد أقل من القنوات/اللغات (والسمات) ثم حاول مرة أخرى.',
-        'fields'           => [
+        'export-too-large'      => 'هذا التصدير كبير جدًا بحيث لا يمكن تشغيله: العدد التقديري :rows صف × :columns عمود (~:estimated) يتجاوز المساحة المتاحة (~:available). قلّص نطاق التصدير باختيار عدد أقل من القنوات/اللغات (والسمات) ثم حاول مرة أخرى.',
+        'xls-too-many-columns'  => 'يحتوي هذا التصدير على أكثر من :limit عمودًا، وهو الحد الأقصى الذي يمكن أن يحتويه ملف XLS. اختر XLSX أو CSV، أو حدد سمات أقل، ثم حاول مرة أخرى.',
+        'xls-too-many-rows'     => 'يحتوي هذا التصدير على أكثر من :limit صفًا، وهو الحد الأقصى الذي يمكن أن يحتويه ملف XLS. اختر XLSX أو CSV، أو قلّص نطاق التصدير، ثم حاول مرة أخرى.',
+        'xls-too-large'         => 'هذا التصدير كبير جدًا بحيث لا يمكن تحويله إلى XLS: :rows صفًا × :columns عمودًا يتجاوز :limit خلية يمكن لهذا الخادم تحويلها. اختر XLSX أو CSV، أو قلّص نطاق التصدير، ثم حاول مرة أخرى.',
+        'xls-conversion-failed' => 'تعذّر استبدال ملف التصدير بنسخة XLS منه. حاول مرة أخرى، أو اختر XLSX أو CSV.',
+        'fields'                => [
             'file-format'            => 'تنسيق الملف',
             'with-media'             => 'مع الوسائط',
             'with-associations'      => 'مع الارتباطات',
@@ -184,6 +191,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'عرض القوالب',
+            'render-templates-info'  => 'تصدير قيم القوالب المعروضة بدلاً من مصدر القالب الخام. إعادة استيراد ملف معروض تستبدل مصدر القالب المحفوظ بنص عادي.',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',

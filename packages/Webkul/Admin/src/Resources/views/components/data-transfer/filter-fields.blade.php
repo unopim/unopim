@@ -40,6 +40,7 @@
 @pushOnce('scripts')
     <script type="text/x-template" id="v-filter-fields-template">
         <v-field-set
+            :key="resetCount"
             :fields="fields"
             :initial-values="initialValues"
             name-prefix="filters"
@@ -70,15 +71,18 @@
                 return {
                     entity: this.resolveEntity(this.entityType),
                     initialValues: { ...this.savedValues, ...(this.oldValues?.filters ?? {}) },
+                    resetCount: 0,
                 };
             },
 
             mounted() {
                 this.$emitter.on('entity-type-changed', this.changeEntityType);
+                this.$emitter.on('filter-values-reset', this.resetValues);
             },
 
             beforeUnmount() {
                 this.$emitter.off('entity-type-changed', this.changeEntityType);
+                this.$emitter.off('filter-values-reset', this.resetValues);
             },
 
             computed: {
@@ -108,6 +112,12 @@
                     } catch (exception) {
                         return value;
                     }
+                },
+
+                resetValues(values) {
+                    this.initialValues = { ...values };
+
+                    this.resetCount++;
                 },
 
                 changeEntityType(value) {

@@ -5,6 +5,7 @@ use Webkul\Attribute\Models\AttributeOption;
 
 use function Pest\Laravel\deleteJson;
 use function Pest\Laravel\getJson;
+use function Pest\Laravel\putJson;
 
 /*
  * Option endpoints are nested under {attribute_id}; they must resolve the option
@@ -51,4 +52,18 @@ it('does not delete an option belonging to a different attribute', function () {
         ->assertStatus(404);
 
     $this->assertDatabaseHas('attribute_options', ['id' => $optionB->id]);
+});
+
+it('does not move an option to a different attribute through the locales payload', function () {
+    $this->loginWithPermissions('all', ['dashboard']);
+
+    $attributeA = Attribute::factory()->create(['type' => 'select']);
+    $attributeB = Attribute::factory()->create(['type' => 'select']);
+    $optionA = AttributeOption::create(['code' => 'own', 'sort_order' => 1, 'attribute_id' => $attributeA->id]);
+
+    putJson(route('admin.catalog.attributes.options.update', ['attribute_id' => $attributeA->id, 'id' => $optionA->id]), [
+        'locales' => ['attribute_id' => $attributeB->id, 'en_US' => ['label' => 'Own']],
+    ])->assertOk();
+
+    expect((int) $optionA->fresh()->attribute_id)->toBe($attributeA->id);
 });

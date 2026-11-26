@@ -49,6 +49,18 @@ class RoleAccessGuard
     }
 
     /**
+     * Translation key explaining why the actor cannot change or remove the role's current access, or null when it can.
+     */
+    public function currentAccessError(?Admin $actor, ?Role $role): ?string
+    {
+        if (! $role instanceof Role) {
+            return null;
+        }
+
+        return $this->grantError($actor, $role->permission_type, (array) ($role->permissions ?? []));
+    }
+
+    /**
      * Translation key explaining why the actor cannot assign the role to a user, or null when it can.
      */
     public function assignmentError(?Admin $actor, ?Role $targetRole): ?string

@@ -32,6 +32,8 @@ return [
                     'incorrect-family-for-variant'             => 'ファミリーは親ファミリーと同じでなければなりません',
                     'parent-not-exist'                         => '親が存在しません。',
                     'variant-structure-not-found'              => 'バリアント構造 :code はこの属性ファミリーに存在しません。',
+                    'variant-structure-levels-mismatch'        => 'バリアント構造 :code にはレベルが1つしかないため、variant_group 行を保持できません。レベルを2に設定するか、バリアントを設定可能商品の配下にシンプル商品としてインポートしてください。',
+                    'variant-structure-two-levels-mismatch'    => 'バリアント構造 :code には2つのレベルがあるため、シンプル商品の行は設定可能商品の直下ではなく、variant_group 行の配下に配置する必要があります。',
                 ],
             ],
         ],
@@ -59,6 +61,7 @@ return [
                     'duplicate-code'                       => '属性コード :code はすでに使用されています。',
                     'code_not_found_to_delete'             => '削除する属性コードが見つかりません。',
                     'code_is_system_and_cannot_be_deleted' => 'システム属性は削除できません。',
+                    'templates-unsupported'                => 'テンプレートは、入力検証がなく、一意ではないテキストおよびテキストエリア属性でのみ有効にできます。',
                 ],
             ],
         ],
@@ -174,8 +177,12 @@ return [
         ],
     ],
     'exporters' => [
-        'export-too-large' => 'このエクスポートは大きすぎて実行できません：推定 :rows 行 × :columns 列（~:estimated）が利用可能な容量（~:available）を超えています。チャネル／ロケール（および属性）を絞り込んでから再試行してください。',
-        'fields'           => [
+        'export-too-large'      => 'このエクスポートは大きすぎて実行できません：推定 :rows 行 × :columns 列（~:estimated）が利用可能な容量（~:available）を超えています。チャネル／ロケール（および属性）を絞り込んでから再試行してください。',
+        'xls-too-many-columns'  => 'このエクスポートには :limit 列を超える列があり、XLS ファイルで扱える上限を超えています。XLSX または CSV を選択するか、属性を減らしてから再試行してください。',
+        'xls-too-many-rows'     => 'このエクスポートには :limit 行を超える行があり、XLS ファイルで扱える上限を超えています。XLSX または CSV を選択するか、エクスポートを絞り込んでから再試行してください。',
+        'xls-too-large'         => 'このエクスポートは大きすぎるため XLS に変換できません: :rows 行 × :columns 列は、このサーバーで変換できる :limit セルを超えています。XLSX または CSV を選択するか、エクスポートを絞り込んでから再試行してください。',
+        'xls-conversion-failed' => 'エクスポートファイルを XLS 版に置き換えられませんでした。再試行するか、XLSX または CSV を選択してください。',
+        'fields'                => [
             'file-format'            => 'ファイル形式',
             'with-media'             => 'メディアを含む',
             'with-associations'      => '関連付けを含む',
@@ -184,6 +191,8 @@ return [
             'header-row-info'        => 'Write attribute codes as the first line',
             'use-labels'             => 'Use Labels',
             'use-labels-info'        => 'Export readable labels instead of codes',
+            'render-templates'       => 'テンプレートをレンダリング',
+            'render-templates-info'  => '生のテンプレートソースではなく、レンダリング後のテンプレート値をエクスポートします。レンダリング済みのファイルを再インポートすると、保存されているテンプレートソースがプレーンテキストに置き換えられます。',
             'date-format'            => 'Date Format',
             'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
