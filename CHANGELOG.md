@@ -37,6 +37,7 @@
 
 ## Bug fixes
 
+- Magic AI prompts and system prompts have their own create, edit and delete permissions. A migration grants the new create permission to custom roles that already held edit. The generate, execute, credentials, agents and dashboard permissions are no longer assignable in the role form, and the migration removes them from custom roles, so only full-access roles reach those pages. Rolling the migration back also removes any create permission granted through the role form since.
 - Fixed saving a new export failing with "The File Format field is required" after changing its job type. Filters that the new job type also supports, such as the file format, are now kept.
 - Fixed exports in the XLS format writing an XLSX workbook with an `.xls` name, which Excel opened with a format warning. The file is now a genuine Excel 97-2003 workbook. An XLS export is rejected before any batch runs when it needs more than 65,536 rows, 256 columns or 500,000 cells, the most that can be converted within a queue worker's timeout and memory, and the export is marked as failed with the reason. Larger product exports, such as about 3,300 products with 150 columns in one channel and locale, that previously produced the mislabelled XLSX file must use the XLSX or CSV format.
 - Fixed saving a product with an unchanged status recording a status change in its history on PostgreSQL. `status` is now cast to a boolean on every database, so code comparing it with `=== 1` or `=== 0` should use a truthy check instead.

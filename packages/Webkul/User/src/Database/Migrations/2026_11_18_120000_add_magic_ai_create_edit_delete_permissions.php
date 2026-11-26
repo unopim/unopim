@@ -5,7 +5,10 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Backfill: Magic AI prompts and system prompts gained their own create / edit / delete
- * permissions. Roles that could already perform those actions keep them.
+ * permissions. Roles that could already perform those actions keep them, and the Magic AI
+ * permissions that are no longer assignable are removed from custom roles.
+ *
+ * The keys are plain strings, so the migration also runs on installs without the AiAgent package.
  */
 return new class extends Migration
 {
@@ -15,11 +18,20 @@ return new class extends Migration
         'ai-agent.system-prompt.create' => 'ai-agent.system-prompt.edit',
     ];
 
-    /** Grant each new create permission to the custom roles that already hold the edit one. */
+    /** Permissions that are hidden from the role form now; only full-access roles pass them. */
+    private const HIDDEN = [
+        'ai-agent.generate',
+        'ai-agent.execute',
+        'ai-agent.credentials',
+        'ai-agent.agents',
+        'ai-agent.dashboard',
+    ];
+
+    /** Grant each new create permission to the custom roles holding the edit one, and strip the hidden keys. */
     public function up(): void
     {
         $this->eachCustomRole(function (object $role, array $permissions): void {
-            $updated = $permissions;
+            $updated = array_values(array_diff($permissions, self::HIDDEN));
 
             foreach (self::GRANTS as $granted => $required) {
                 if (in_array($required, $permissions, true) && ! in_array($granted, $updated, true)) {
@@ -33,7 +45,7 @@ return new class extends Migration
         });
     }
 
-    /** Remove the create permissions again. */
+    /** Remove the create permissions again, including any granted through the role form since up(). */
     public function down(): void
     {
         $this->eachCustomRole(function (object $role, array $permissions): void {
