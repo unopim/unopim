@@ -10,11 +10,10 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Catalog\AttributeDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Http\Requests\AttributeForm;
 use Webkul\Admin\Http\Requests\SelectableMassDestroyRequest;
 use Webkul\Attribute\Enums\SwatchTypeEnum;
 use Webkul\Attribute\Repositories\AttributeRepository;
-use Webkul\Attribute\Rules\AttributeTypes;
-use Webkul\Attribute\Rules\NotSupportedAttributes;
 use Webkul\Attribute\Rules\SwatchTypes;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Core\Rules\Code;
@@ -68,19 +67,9 @@ class AttributeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(): RedirectResponse
+    public function store(AttributeForm $request): RedirectResponse
     {
-        $this->validate(request(), [
-            'code'        => ['required', 'unique:attributes,code', new Code, new NotSupportedAttributes],
-            'type'        => ['required', 'string', new AttributeTypes],
-            'swatch_type' => [
-                'required_if:type,select,multiselect',
-                'prohibited_unless:type,select,multiselect',
-                new SwatchTypes,
-            ],
-        ]);
-
-        $requestData = request()->all();
+        $requestData = $request->all();
 
         if (($requestData['validation'] ?? null) === 'none') {
             $requestData['validation'] = null;
