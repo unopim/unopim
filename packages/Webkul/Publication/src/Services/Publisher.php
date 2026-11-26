@@ -237,7 +237,7 @@ class Publisher
      * not taken from the passed model, so a stale instance (e.g. one loaded before a concurrent redaction)
      * can never overwrite the current status. The caller's model is refreshed to the stored state.
      *
-     * @param  class-string  $event
+     * @param  class-string<PublicationWithdrawn|PublicationReinstated>  $event
      */
     private function transition(Publication $publication, PublicationStatus $from, PublicationStatus $to, string $message, string $event): void
     {
