@@ -245,6 +245,8 @@ class CoreServiceProvider extends ServiceProvider
 
         $this->mergeConfigFrom(dirname(__DIR__).'/Config/platform_modules.php', 'platform_modules');
 
+        $this->mergeConfigFrom(dirname(__DIR__).'/Config/rich_text.php', 'rich_text');
+
         $this->app->bind(Blueprint::class, PrefixedIndexNameBlueprint::class);
 
         $this->app->singleton('image_manager', function ($app): ImageManager {

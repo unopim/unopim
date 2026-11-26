@@ -22,7 +22,8 @@ it('sanitizes content set into or pasted into the editor', function () {
     expect($component)
         ->toContain("editor.on('BeforeSetContent'")
         ->toContain("editor.on('PastePreProcess'")
-        ->toContain('DOMPurify.sanitize(html')
+        ->toContain('editorPurifier = DOMPurify(window)')
+        ->toContain('purifier.sanitize(html')
         ->toContain("FORBID_TAGS: ['svg', 'math', 'object', 'embed']")
         ->toContain('ALLOW_DATA_ATTR: false');
 });

@@ -272,6 +272,54 @@
     </script>
 
     <script type="module">
+        const editorEmbedPrefixes = @json(\Webkul\Core\HtmlPurifier\RichTextEmbeds::prefixes());
+
+        let editorPurifier = null;
+
+        /**
+         * A DOMPurify instance of the editor's own, so its embed and link hooks never reach other sanitizers,
+         * enforcing the same rules the server applies on save.
+         */
+        const getEditorPurifier = () => {
+            if (editorPurifier || typeof DOMPurify === 'undefined') {
+                return editorPurifier;
+            }
+
+            editorPurifier = DOMPurify(window);
+
+            editorPurifier.addHook('uponSanitizeElement', (node, data) => {
+                if (data.tagName !== 'iframe') {
+                    return;
+                }
+
+                const src = (node.getAttribute('src') || '').trim();
+
+                if (! editorEmbedPrefixes.some((prefix) => src.startsWith(prefix))) {
+                    node.parentNode?.removeChild(node);
+                }
+            });
+
+            editorPurifier.addHook('afterSanitizeAttributes', (node) => {
+                if (node.tagName === 'IFRAME') {
+                    node.removeAttribute('srcdoc');
+                    node.setAttribute('sandbox', @json(\Webkul\Core\HtmlPurifier\SandboxIframe::SANDBOX));
+                    node.setAttribute('referrerpolicy', @json(\Webkul\Core\HtmlPurifier\SandboxIframe::REFERRER_POLICY));
+                    node.setAttribute('allowfullscreen', 'allowfullscreen');
+                    node.setAttribute('loading', 'lazy');
+                }
+
+                if (node.tagName === 'A' && node.hasAttribute('target')) {
+                    if (node.getAttribute('target') === '_blank') {
+                        node.setAttribute('rel', 'noopener noreferrer');
+                    } else {
+                        node.removeAttribute('target');
+                    }
+                }
+            });
+
+            return editorPurifier;
+        };
+
         app.component('v-tinymce', {
             template: '#v-tinymce-template',
 
@@ -526,16 +574,21 @@
                 /**
                  * TinyMCE 6.8 is the last MIT release, so the XSS fixes Tiny shipped later
                  * (nested SVG, data-mce-* attributes, unsafe embeds) are re-applied here
-                 * before any markup reaches the editor.
+                 * before any markup reaches the editor. Allowed video embeds and new-window
+                 * links follow the same rules the server applies on save.
                  */
                 sanitizeEditorHtml(html) {
-                    if (typeof html !== 'string' || typeof DOMPurify === 'undefined') {
+                    const purifier = getEditorPurifier();
+
+                    if (typeof html !== 'string' || ! purifier) {
                         return html;
                     }
 
-                    return DOMPurify.sanitize(html, {
+                    return purifier.sanitize(html, {
                         FORBID_TAGS: ['svg', 'math', 'object', 'embed'],
                         ADD_FORBID_CONTENTS: ['svg', 'math', 'object', 'embed'],
+                        ADD_TAGS: ['iframe'],
+                        ADD_ATTR: ['target', 'frameborder'],
                         ALLOW_DATA_ATTR: false,
                         ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|blob):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
                     });
