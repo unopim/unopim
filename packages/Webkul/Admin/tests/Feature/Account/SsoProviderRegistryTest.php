@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Hash;
+use Webkul\Admin\Sso\OidcProvider;
 use Webkul\Admin\Sso\SsoManager;
 use Webkul\Admin\Tests\Support\FakeSsoProvider;
 use Webkul\User\Models\Admin;
@@ -13,6 +14,7 @@ beforeEach(function () {
 
     config()->set('sso.providers.fake', FakeSsoProvider::class);
     config()->set('services.microsoft_sso.enabled', false);
+    config()->set('services.oidc_sso.enabled', false);
 
     app()->forgetInstance(SsoManager::class);
 });
@@ -88,4 +90,9 @@ it('hides a driver and refuses its routes once it reports itself disabled', func
 it('refuses an unregistered driver code', function () {
     get(route('admin.session.sso.redirect', ['provider' => 'nope']))
         ->assertRedirect(route('admin.session.create'));
+});
+
+it('registers the generic openid connect driver', function () {
+    expect(app(SsoManager::class)->get('oidc'))->toBeInstanceOf(OidcProvider::class)
+        ->and(app(SsoManager::class)->enabled()->has('oidc'))->toBeFalse();
 });

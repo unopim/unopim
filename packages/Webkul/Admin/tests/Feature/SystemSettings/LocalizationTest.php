@@ -45,4 +45,9 @@ it('renders configuration fields in the requested locale', function (string $pat
         ['टेनेंट ID', 'क्लाइंट ID', 'क्लाइंट सीक्रेट'],
         ['Tenant ID', 'Client ID', 'Client Secret'],
     ],
+    'oidc sso' => [
+        'system.oidc_sso',
+        ['जारीकर्ता URL', 'बटन का लेबल', 'डिफ़ॉल्ट रोल', 'रोल मैपिंग'],
+        ['Issuer URL', 'Button Label', 'Default Role', 'Role Mapping'],
+    ],
 ]);

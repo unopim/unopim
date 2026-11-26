@@ -13,6 +13,8 @@ return [
             'password'                   => 'Passwort',
             'sso-divider'                => 'or',
             'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'sso-sign-in-with-oidc'      => 'Mit OpenID Connect anmelden',
+            'sso-only'                   => 'Die Anmeldung mit Passwort ist deaktiviert. Bitte Single Sign-On verwenden.',
             'submit-btn'                 => 'Anmelden',
             'title'                      => 'Anmelden',
             'powered-by'                 => 'Bereitgestellt von :unopim,',
@@ -2071,6 +2073,10 @@ return [
                 'title' => 'Microsoft SSO',
                 'info'  => 'Microsoft Entra ID Single Sign-On für die Administratoranmeldung.',
             ],
+            'oidc-sso'           => [
+                'title' => 'OpenID Connect SSO',
+                'info'  => 'Single Sign-On für die Admin-Anmeldung mit jedem OpenID-Connect-Anbieter.',
+            ],
         ],
 
         'appearance' => [
@@ -2147,6 +2153,7 @@ return [
     'configuration' => [
         'index' => [
             'delete'          => 'Löschen',
+            'env-locked'      => 'Durch eine Umgebungsvariable auf dem Server gesetzt und hier nicht änderbar.',
             'no-result-found' => 'Kein Ergebnis gefunden',
             'save-btn'        => 'Konfiguration speichern',
             'save-message'    => 'Konfiguration erfolgreich gespeichert',
@@ -2225,6 +2232,35 @@ return [
                         'redirect-uri-info'   => 'Registrieren Sie genau diese URL in Ihrer Microsoft Entra ID-App-Registrierung unter Authentifizierung → Umleitungs-URIs mit der Plattform Web.',
                         'redirect-uri-copy'   => 'Kopieren',
                         'redirect-uri-copied' => 'In die Zwischenablage kopiert',
+                    ],
+                ],
+
+                'oidc-sso' => [
+                    'info'   => 'OpenID-Connect-Single-Sign-On für die Admin-Anmeldung einrichten, z. B. mit Authentik oder Keycloak.',
+                    'title'  => 'OpenID Connect SSO',
+
+                    'settings' => [
+                        'title'               => 'OpenID Connect SSO-Einstellungen',
+                        'info'                => 'Tragen Sie die Client-Daten Ihres Identitätsanbieters ein. Über UNOPIM_OIDC_*-Umgebungsvariablen gesetzte Werte haben Vorrang und sind hier schreibgeschützt.',
+                        'enabled'             => 'OpenID Connect SSO aktivieren',
+                        'redirect-uri-info'   => 'Tragen Sie genau diese URL als Redirect-URI des Clients bei Ihrem Identitätsanbieter ein.',
+                        'issuer'              => 'Issuer-URL',
+                        'issuer-info'         => 'Die Issuer-URL Ihres Anbieters. Das Discovery-Dokument wird unter /.well-known/openid-configuration gelesen.',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'scopes'              => 'Scopes',
+                        'label'               => 'Beschriftung der Schaltfläche',
+                        'verified-email'      => 'Bestätigte E-Mail-Adresse verlangen',
+                        'verified-email-info' => 'Anmeldungen ablehnen, deren E-Mail-Adresse nicht als bestätigt markiert ist. Das Verknüpfen eines bestehenden Benutzers per E-Mail verlangt immer eine bestätigte Adresse.',
+                        'auto-provision'      => 'Benutzer bei der ersten Anmeldung anlegen',
+                        'auto-provision-info' => 'Einen Admin-Benutzer anlegen, wenn sich eine unbekannte Person zum ersten Mal anmeldet. Erfordert eine Rollenzuordnung oder eine Standardrolle.',
+                        'default-role'        => 'Standardrolle',
+                        'default-role-info'   => 'Name der Rolle für neue Benutzer, wenn keine Rollenzuordnung konfiguriert ist.',
+                        'groups-claim'        => 'Gruppen-Claim',
+                        'role-map'            => 'Rollenzuordnung',
+                        'role-map-info'       => 'JSON-Objekt, das Gruppen des Anbieters Rollennamen zuordnet. Wenn gesetzt, werden Anmeldungen ohne zugeordnete Gruppe abgelehnt und die Rolle wird bei jeder Anmeldung aktualisiert; der erste passende Eintrag gewinnt.',
+                        'rp-logout'           => 'Beim Anbieter abmelden',
+                        'rp-logout-info'      => 'Nach der Abmeldung von UnoPim auch die Sitzung beim Identitätsanbieter beenden.',
                     ],
                 ],
 

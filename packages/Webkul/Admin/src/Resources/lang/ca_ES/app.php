@@ -13,6 +13,8 @@ return [
             'password'                   => 'Contrasenya',
             'sso-divider'                => 'or',
             'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'sso-sign-in-with-oidc'      => 'Inicia la sessió amb OpenID Connect',
+            'sso-only'                   => 'L’inici de sessió amb contrasenya està desactivat. Utilitzeu l’inici de sessió únic.',
             'submit-btn'                 => 'Iniciar sessió',
             'title'                      => 'Iniciar sessió',
             'powered-by'                 => 'Funciona amb :unopim,',
@@ -2071,6 +2073,10 @@ return [
                 'title' => 'Microsoft SSO',
                 'info'  => 'Inici de sessió únic de Microsoft Entra ID per a l\'accés d\'administrador.',
             ],
+            'oidc-sso'           => [
+                'title' => 'OpenID Connect SSO',
+                'info'  => 'Inici de sessió únic per a l’accés d’administració amb qualsevol proveïdor OpenID Connect.',
+            ],
         ],
 
         'appearance' => [
@@ -2147,6 +2153,7 @@ return [
     'configuration' => [
         'index' => [
             'delete'          => 'Eliminar',
+            'env-locked'      => 'Definit per una variable d’entorn del servidor; no es pot canviar aquí.',
             'no-result-found' => 'Nenhum resultado encontrado',
             'save-btn'        => 'Salvar configuração',
             'save-message'    => 'Configuração salva com sucesso',
@@ -2225,6 +2232,35 @@ return [
                         'redirect-uri-info'   => 'Registreu aquest URL exacte al registre d\'aplicacions de Microsoft Entra ID a Autenticació → URI de redirecció, amb la plataforma Web.',
                         'redirect-uri-copy'   => 'Copia',
                         'redirect-uri-copied' => 'Copiat al porta-retalls',
+                    ],
+                ],
+
+                'oidc-sso' => [
+                    'info'   => 'Configureu l’inici de sessió únic OpenID Connect per a l’accés d’administració, per exemple amb Authentik o Keycloak.',
+                    'title'  => 'OpenID Connect SSO',
+
+                    'settings' => [
+                        'title'               => 'Configuració de OpenID Connect SSO',
+                        'info'                => 'Introduïu les dades del client del vostre proveïdor d’identitat. Els valors definits amb variables d’entorn UNOPIM_OIDC_* tenen prioritat i aquí són només de lectura.',
+                        'enabled'             => 'Activa OpenID Connect SSO',
+                        'redirect-uri-info'   => 'Registreu exactament aquesta URL com a URI de redirecció del client al vostre proveïdor d’identitat.',
+                        'issuer'              => 'URL de l’emissor',
+                        'issuer-info'         => 'La URL de l’emissor del vostre proveïdor. El seu document de descobriment es llegeix des de /.well-known/openid-configuration.',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'scopes'              => 'Àmbits',
+                        'label'               => 'Text del botó',
+                        'verified-email'      => 'Exigeix un correu verificat',
+                        'verified-email-info' => 'Rebutja els inicis de sessió amb un correu no marcat com a verificat. Vincular un usuari existent per correu sempre exigeix un correu verificat.',
+                        'auto-provision'      => 'Crea usuaris en el primer inici de sessió',
+                        'auto-provision-info' => 'Crea un usuari administrador quan una persona desconeguda inicia sessió per primera vegada. Cal una assignació de rols o un rol per defecte.',
+                        'default-role'        => 'Rol per defecte',
+                        'default-role-info'   => 'Nom del rol assignat als usuaris nous quan no hi ha cap assignació de rols configurada.',
+                        'groups-claim'        => 'Claim de grups',
+                        'role-map'            => 'Assignació de rols',
+                        'role-map-info'       => 'Objecte JSON que assigna grups del proveïdor a noms de rol. Si es defineix, es rebutgen els inicis de sessió sense grup assignat i el rol s’actualitza a cada inici de sessió; guanya la primera entrada coincident.',
+                        'rp-logout'           => 'Tanca la sessió al proveïdor',
+                        'rp-logout-info'      => 'Després de tancar la sessió a UnoPim, tanca també la sessió al proveïdor d’identitat.',
                     ],
                 ],
 

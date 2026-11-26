@@ -13,6 +13,8 @@ return [
             'password'                   => 'Parolă',
             'sso-divider'                => 'or',
             'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'sso-sign-in-with-oidc'      => 'Conectare cu OpenID Connect',
+            'sso-only'                   => 'Conectarea cu parolă este dezactivată. Folosiți autentificarea unică.',
             'submit-btn'                 => 'Conectare',
             'title'                      => 'Conectare',
             'powered-by'                 => 'Alimentat de :unopim,',
@@ -2073,6 +2075,10 @@ return [
                 'title' => 'Microsoft SSO',
                 'info'  => 'Autentificare unică Microsoft Entra ID pentru autentificarea administratorului.',
             ],
+            'oidc-sso'           => [
+                'title' => 'OpenID Connect SSO',
+                'info'  => 'Autentificare unică pentru conectarea administratorilor cu orice furnizor OpenID Connect.',
+            ],
         ],
 
         'appearance' => [
@@ -2149,6 +2155,7 @@ return [
     'configuration' => [
         'index' => [
             'delete'          => 'Șterge',
+            'env-locked'      => 'Setat printr-o variabilă de mediu pe server și nu poate fi modificat aici.',
             'no-result-found' => 'Nicio rezultată găsită',
             'save-btn'        => 'Salvează Configurația',
             'save-message'    => 'Configurația salvată cu succes',
@@ -2227,6 +2234,35 @@ return [
                         'redirect-uri-info'   => 'Înregistrați exact acest URL în înregistrarea aplicației Microsoft Entra ID la Autentificare → URI-uri de redirecționare, folosind platforma Web.',
                         'redirect-uri-copy'   => 'Copiază',
                         'redirect-uri-copied' => 'Copiat în clipboard',
+                    ],
+                ],
+
+                'oidc-sso' => [
+                    'info'   => 'Configurați autentificarea unică OpenID Connect pentru conectarea administratorilor, de exemplu cu Authentik sau Keycloak.',
+                    'title'  => 'OpenID Connect SSO',
+
+                    'settings' => [
+                        'title'               => 'Setări OpenID Connect SSO',
+                        'info'                => 'Introduceți datele clientului de la furnizorul de identitate. Valorile setate prin variabilele de mediu UNOPIM_OIDC_* au prioritate și aici sunt doar în citire.',
+                        'enabled'             => 'Activați OpenID Connect SSO',
+                        'redirect-uri-info'   => 'Înregistrați exact acest URL ca URI de redirecționare al clientului la furnizorul de identitate.',
+                        'issuer'              => 'URL emitent',
+                        'issuer-info'         => 'URL-ul emitentului furnizorului dvs. Documentul de descoperire este citit din /.well-known/openid-configuration.',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'scopes'              => 'Domenii de acces',
+                        'label'               => 'Textul butonului',
+                        'verified-email'      => 'Solicită e-mail verificat',
+                        'verified-email-info' => 'Respinge conectările al căror e-mail nu este marcat ca verificat. Asocierea unui utilizator existent prin e-mail necesită întotdeauna un e-mail verificat.',
+                        'auto-provision'      => 'Creează utilizatori la prima conectare',
+                        'auto-provision-info' => 'Creează un utilizator administrator când o persoană necunoscută se conectează prima dată. Necesită o mapare de roluri sau un rol implicit.',
+                        'default-role'        => 'Rol implicit',
+                        'default-role-info'   => 'Numele rolului atribuit utilizatorilor noi când nu este configurată nicio mapare de roluri.',
+                        'groups-claim'        => 'Claim pentru grupuri',
+                        'role-map'            => 'Mapare roluri',
+                        'role-map-info'       => 'Obiect JSON care asociază grupurile furnizorului cu nume de roluri. Dacă este setat, conectările fără un grup mapat sunt respinse, iar rolul este actualizat la fiecare conectare; prima intrare potrivită are prioritate.',
+                        'rp-logout'           => 'Deconectare și la furnizor',
+                        'rp-logout-info'      => 'După deconectarea din UnoPim, încheie și sesiunea la furnizorul de identitate.',
                     ],
                 ],
 

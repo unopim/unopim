@@ -2,6 +2,7 @@
 
 use Illuminate\Mail\MailManager;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Crypt;
 use Webkul\Core\Models\CoreConfig;
 use Webkul\Core\Providers\CoreServiceProvider;
 use Webkul\Core\Repositories\CoreConfigRepository;
@@ -92,7 +93,7 @@ it('keeps the stored password when the masked value is posted back', function (s
         'emails' => ['configure' => ['email_settings' => ['mail_password' => $mask]]],
     ]);
 
-    expect(CoreConfig::where('code', 'emails.configure.email_settings.mail_password')->value('value'))
+    expect(Crypt::decryptString(CoreConfig::where('code', 'emails.configure.email_settings.mail_password')->value('value')))
         ->toBe('a-long-secret-password');
 })->with(['****', '********', '************']);
 
@@ -108,7 +109,7 @@ it('stores a genuinely new password instead of treating it as unchanged', functi
         'emails' => ['configure' => ['email_settings' => ['mail_password' => 'a-brand-new-secret']]],
     ]);
 
-    expect(CoreConfig::where('code', 'emails.configure.email_settings.mail_password')->value('value'))
+    expect(Crypt::decryptString(CoreConfig::where('code', 'emails.configure.email_settings.mail_password')->value('value')))
         ->toBe('a-brand-new-secret');
 });
 

@@ -121,6 +121,12 @@ class ConfigurationController extends Controller
                 403,
                 trans('admin::app.errors.403.message')
             );
+
+            abort_if(
+                $this->systemSettings->requiresFullAccess($aclKey) && ! $this->systemSettings->currentAdminHasFullAccess(),
+                403,
+                trans('admin::app.errors.403.message')
+            );
         }
     }
 

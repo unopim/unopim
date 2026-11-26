@@ -13,6 +13,8 @@ return [
             'password'                   => 'Salasana',
             'sso-divider'                => 'or',
             'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'sso-sign-in-with-oidc'      => 'Kirjaudu OpenID Connectilla',
+            'sso-only'                   => 'Salasanalla kirjautuminen on poistettu käytöstä. Käytä kertakirjautumista.',
             'submit-btn'                 => 'Kirjaudu sisään',
             'title'                      => 'Kirjaudu sisään',
             'powered-by'                 => 'Toimii :unopim:lla,',
@@ -2071,6 +2073,10 @@ return [
                 'title' => 'Microsoft SSO',
                 'info'  => 'Microsoft Entra ID -kertakirjautuminen järjestelmänvalvojan kirjautumiseen.',
             ],
+            'oidc-sso'           => [
+                'title' => 'OpenID Connect SSO',
+                'info'  => 'Kertakirjautuminen ylläpitäjän kirjautumiseen millä tahansa OpenID Connect -palveluntarjoajalla.',
+            ],
         ],
 
         'appearance' => [
@@ -2147,6 +2153,7 @@ return [
     'configuration' => [
         'index' => [
             'delete'          => 'Poista',
+            'env-locked'      => 'Asetettu palvelimen ympäristömuuttujalla, eikä sitä voi muuttaa täällä.',
             'no-result-found' => 'Ei tuloksia löytynyt',
             'save-btn'        => 'Tallenna konfiguraatio',
             'save-message'    => 'Konfiguraatio tallennettiin onnistuneesti',
@@ -2225,6 +2232,35 @@ return [
                         'redirect-uri-info'   => 'Rekisteröi täsmälleen tämä URL-osoite Microsoft Entra ID -sovellusrekisteröinnissä kohdassa Todennus → Uudelleenohjaus-URIt käyttäen Web-alustaa.',
                         'redirect-uri-copy'   => 'Kopioi',
                         'redirect-uri-copied' => 'Kopioitu leikepöydälle',
+                    ],
+                ],
+
+                'oidc-sso' => [
+                    'info'   => 'Määritä OpenID Connect -kertakirjautuminen ylläpitäjän kirjautumiseen, esimerkiksi Authentikilla tai Keycloakilla.',
+                    'title'  => 'OpenID Connect SSO',
+
+                    'settings' => [
+                        'title'               => 'OpenID Connect SSO -asetukset',
+                        'info'                => 'Anna tunnistuspalvelun asiakastiedot. UNOPIM_OIDC_*-ympäristömuuttujilla asetetut arvot ovat etusijalla ja näkyvät täällä vain luku -tilassa.',
+                        'enabled'             => 'Ota OpenID Connect SSO käyttöön',
+                        'redirect-uri-info'   => 'Rekisteröi täsmälleen tämä URL asiakkaan uudelleenohjaus-URI:ksi tunnistuspalvelussa.',
+                        'issuer'              => 'Myöntäjän URL',
+                        'issuer-info'         => 'Palveluntarjoajan myöntäjän URL. Sen discovery-dokumentti luetaan osoitteesta /.well-known/openid-configuration.',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'scopes'              => 'Laajuudet',
+                        'label'               => 'Painikkeen teksti',
+                        'verified-email'      => 'Vaadi vahvistettu sähköposti',
+                        'verified-email-info' => 'Hylkää kirjautumiset, joiden sähköpostia ei ole merkitty vahvistetuksi. Olemassa olevan käyttäjän yhdistäminen sähköpostilla vaatii aina vahvistetun osoitteen.',
+                        'auto-provision'      => 'Luo käyttäjät ensimmäisellä kirjautumisella',
+                        'auto-provision-info' => 'Luo ylläpitäjäkäyttäjä, kun tuntematon henkilö kirjautuu ensimmäistä kertaa. Vaatii roolimäärityksen tai oletusroolin.',
+                        'default-role'        => 'Oletusrooli',
+                        'default-role-info'   => 'Uusille käyttäjille annettavan roolin nimi, kun roolimääritystä ei ole asetettu.',
+                        'groups-claim'        => 'Ryhmät-claim',
+                        'role-map'            => 'Roolimääritys',
+                        'role-map-info'       => 'JSON-objekti, joka liittää palveluntarjoajan ryhmät roolien nimiin. Jos se on asetettu, kirjautumiset ilman määritettyä ryhmää hylätään ja rooli päivitetään jokaisella kirjautumisella; ensimmäinen vastaava merkintä ratkaisee.',
+                        'rp-logout'           => 'Kirjaudu ulos myös palveluntarjoajalta',
+                        'rp-logout-info'      => 'Kun kirjaudut ulos UnoPimista, päätä myös istunto tunnistuspalvelussa.',
                     ],
                 ],
 

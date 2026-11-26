@@ -13,6 +13,8 @@ return [
             'password'                   => 'Şifre',
             'sso-divider'                => 'or',
             'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'sso-sign-in-with-oidc'      => 'OpenID Connect ile giriş yap',
+            'sso-only'                   => 'Parola ile giriş devre dışı. Lütfen çoklu oturum açmayı kullanın.',
             'submit-btn'                 => 'Giriş Yap',
             'title'                      => 'Giriş Yap',
             'powered-by'                 => ':unopim tarafından desteklenmektedir,',
@@ -2073,6 +2075,10 @@ return [
                 'title' => 'Microsoft SSO',
                 'info'  => 'Yönetici girişi için Microsoft Entra ID çoklu oturum açma.',
             ],
+            'oidc-sso'           => [
+                'title' => 'OpenID Connect SSO',
+                'info'  => 'Herhangi bir OpenID Connect sağlayıcısıyla yönetici girişi için çoklu oturum açma.',
+            ],
         ],
 
         'appearance' => [
@@ -2149,6 +2155,7 @@ return [
     'configuration' => [
         'index' => [
             'delete'          => 'Sil',
+            'env-locked'      => 'Sunucudaki bir ortam değişkeniyle ayarlanmıştır ve burada değiştirilemez.',
             'no-result-found' => 'Sonuç bulunamadı',
             'save-btn'        => 'Konfigürasyonu Kaydet',
             'save-message'    => 'Konfigürasyon başarıyla kaydedildi',
@@ -2227,6 +2234,35 @@ return [
                         'redirect-uri-info'   => 'Bu URL\'yi aynen Microsoft Entra ID uygulama kaydınızda Kimlik Doğrulama → Yönlendirme URI\'leri altında Web platformunu seçerek kaydedin.',
                         'redirect-uri-copy'   => 'Kopyala',
                         'redirect-uri-copied' => 'Panoya kopyalandı',
+                    ],
+                ],
+
+                'oidc-sso' => [
+                    'info'   => 'Yönetici girişi için OpenID Connect çoklu oturum açmayı yapılandırın, örneğin Authentik veya Keycloak ile.',
+                    'title'  => 'OpenID Connect SSO',
+
+                    'settings' => [
+                        'title'               => 'OpenID Connect SSO Ayarları',
+                        'info'                => 'Kimlik sağlayıcınızdaki istemci bilgilerini girin. UNOPIM_OIDC_* ortam değişkenleriyle ayarlanan değerler önceliklidir ve burada salt okunurdur.',
+                        'enabled'             => 'OpenID Connect SSO\'yu etkinleştir',
+                        'redirect-uri-info'   => 'Bu URL’yi aynen kimlik sağlayıcınızdaki istemcinin yönlendirme URI’si olarak kaydedin.',
+                        'issuer'              => 'Yayıncı URL’si',
+                        'issuer-info'         => 'Sağlayıcınızın yayıncı URL’si. Keşif belgesi /.well-known/openid-configuration adresinden okunur.',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'scopes'              => 'Kapsamlar',
+                        'label'               => 'Düğme etiketi',
+                        'verified-email'      => 'Doğrulanmış e-posta zorunlu',
+                        'verified-email-info' => 'E-postası doğrulanmış olarak işaretlenmemiş girişleri reddet. Mevcut bir kullanıcıyı e-postayla bağlamak her zaman doğrulanmış bir e-posta gerektirir.',
+                        'auto-provision'      => 'İlk girişte kullanıcı oluştur',
+                        'auto-provision-info' => 'Tanınmayan bir kişi ilk kez giriş yaptığında bir yönetici kullanıcısı oluştur. Rol eşlemesi veya varsayılan rol gerektirir.',
+                        'default-role'        => 'Varsayılan rol',
+                        'default-role-info'   => 'Rol eşlemesi yapılandırılmadığında yeni kullanıcılara verilen rolün adı.',
+                        'groups-claim'        => 'Grup claim’i',
+                        'role-map'            => 'Rol eşlemesi',
+                        'role-map-info'       => 'Sağlayıcı gruplarını rol adlarıyla eşleyen JSON nesnesi. Ayarlanırsa eşlenmiş grubu olmayan girişler reddedilir ve rol her girişte güncellenir; ilk eşleşen kayıt geçerlidir.',
+                        'rp-logout'           => 'Sağlayıcıda da oturumu kapat',
+                        'rp-logout-info'      => 'UnoPim’den çıkış yaptıktan sonra kimlik sağlayıcısındaki oturumu da sonlandır.',
                     ],
                 ],
 

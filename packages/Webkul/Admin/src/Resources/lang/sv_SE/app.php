@@ -13,6 +13,8 @@ return [
             'password'                   => 'Lösenord',
             'sso-divider'                => 'or',
             'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'sso-sign-in-with-oidc'      => 'Logga in med OpenID Connect',
+            'sso-only'                   => 'Inloggning med lösenord är avstängd. Använd enkel inloggning.',
             'submit-btn'                 => 'Logga in',
             'title'                      => 'Logga in',
             'powered-by'                 => 'Drivs av :unopim,',
@@ -2073,6 +2075,10 @@ return [
                 'title' => 'Microsoft SSO',
                 'info'  => 'Microsoft Entra ID enkel inloggning för administratörsinloggning.',
             ],
+            'oidc-sso'           => [
+                'title' => 'OpenID Connect SSO',
+                'info'  => 'Enkel inloggning för administratörsinloggning med valfri OpenID Connect-leverantör.',
+            ],
         ],
 
         'appearance' => [
@@ -2149,6 +2155,7 @@ return [
     'configuration' => [
         'index' => [
             'delete'          => 'Radera',
+            'env-locked'      => 'Angiven av en miljövariabel på servern och kan inte ändras här.',
             'no-result-found' => 'Inget resultat hittades',
             'save-btn'        => 'Spara Konfiguration',
             'save-message'    => 'Konfigurationen sparades framgångsrikt',
@@ -2227,6 +2234,35 @@ return [
                         'redirect-uri-info'   => 'Registrera exakt denna URL i din Microsoft Entra ID-appregistrering under Autentisering → Omdirigerings-URI:er, med plattformen Web.',
                         'redirect-uri-copy'   => 'Kopiera',
                         'redirect-uri-copied' => 'Kopierat till urklipp',
+                    ],
+                ],
+
+                'oidc-sso' => [
+                    'info'   => 'Konfigurera enkel inloggning med OpenID Connect för administratörsinloggning, t.ex. med Authentik eller Keycloak.',
+                    'title'  => 'OpenID Connect SSO',
+
+                    'settings' => [
+                        'title'               => 'OpenID Connect SSO-inställningar',
+                        'info'                => 'Ange klientuppgifterna från din identitetsleverantör. Värden som anges via miljövariabler UNOPIM_OIDC_* har företräde och är skrivskyddade här.',
+                        'enabled'             => 'Aktivera OpenID Connect SSO',
+                        'redirect-uri-info'   => 'Registrera exakt denna URL som omdirigerings-URI för klienten hos din identitetsleverantör.',
+                        'issuer'              => 'Utfärdar-URL',
+                        'issuer-info'         => 'Utfärdar-URL:en för din leverantör. Dess discovery-dokument läses från /.well-known/openid-configuration.',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'scopes'              => 'Omfång',
+                        'label'               => 'Knapptext',
+                        'verified-email'      => 'Kräv verifierad e-post',
+                        'verified-email-info' => 'Neka inloggningar där e-postadressen inte är markerad som verifierad. Att koppla en befintlig användare via e-post kräver alltid en verifierad adress.',
+                        'auto-provision'      => 'Skapa användare vid första inloggning',
+                        'auto-provision-info' => 'Skapa en administratörsanvändare när en okänd person loggar in första gången. Kräver en rollmappning eller en standardroll.',
+                        'default-role'        => 'Standardroll',
+                        'default-role-info'   => 'Namnet på rollen som nya användare får när ingen rollmappning är konfigurerad.',
+                        'groups-claim'        => 'Grupp-claim',
+                        'role-map'            => 'Rollmappning',
+                        'role-map-info'       => 'JSON-objekt som mappar leverantörens grupper till rollnamn. Om det anges nekas inloggningar utan mappad grupp och rollen uppdateras vid varje inloggning; den första matchande posten gäller.',
+                        'rp-logout'           => 'Logga även ut hos leverantören',
+                        'rp-logout-info'      => 'Avsluta även sessionen hos identitetsleverantören efter utloggning från UnoPim.',
                     ],
                 ],
 

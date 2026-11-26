@@ -121,6 +121,53 @@ it('matches on the subject id after the directory changes the email', function (
     $this->assertAuthenticatedAs($admin, 'admin');
 });
 
+it('never links an admin whose email only collates with the directory address', function () {
+    $admin = Admin::factory()->create([
+        'email'    => 'jose@corp.com',
+        'password' => Hash::make('password'),
+        'status'   => 1,
+    ]);
+
+    microsoftSsoConfig();
+
+    fakeMicrosoftEndpoints([
+        'id'                => 'object-id-look-alike',
+        'mail'              => 'jose@cörp.com',
+        'userPrincipalName' => 'jose@cörp.com',
+    ]);
+
+    callbackWith(ssoHandshake())->assertRedirect(route('admin.session.create'));
+
+    $this->assertGuest('admin');
+
+    expect($admin->fresh()->sso_identifier)->toBeNull();
+});
+
+it('refuses to re-bind an admin linked through another sso driver', function () {
+    $admin = Admin::factory()->create([
+        'email'          => 'oidc-bound@example.com',
+        'password'       => Hash::make('password'),
+        'status'         => 1,
+        'sso_provider'   => 'oidc',
+        'sso_identifier' => 'oidc-subject',
+    ]);
+
+    microsoftSsoConfig();
+
+    fakeMicrosoftEndpoints([
+        'id'                => 'object-id-other',
+        'mail'              => 'oidc-bound@example.com',
+        'userPrincipalName' => 'oidc-bound@example.com',
+    ]);
+
+    callbackWith(ssoHandshake())->assertRedirect(route('admin.session.create'));
+
+    $this->assertGuest('admin');
+
+    expect($admin->fresh()->sso_provider)->toBe('oidc')
+        ->and($admin->fresh()->sso_identifier)->toBe('oidc-subject');
+});
+
 it('refuses a reassigned email that belongs to another linked subject id', function () {
     Admin::factory()->create([
         'email'          => 'recycled@example.com',
@@ -392,7 +439,31 @@ it('does not allow inactive matched admin via microsoft sso', function () {
     $response->assertSessionHas('warning', trans('admin::app.settings.users.activate-warning'));
     $this->assertGuest('admin');
 
-    expect($admin->status)->toBe(0);
+    expect($admin->status)->toBe(0)
+        ->and($admin->fresh()->sso_identifier)->toBeNull();
+});
+
+it('never links an api user matched by email', function () {
+    microsoftSsoConfig();
+
+    $admin = Admin::factory()->create([
+        'email'    => 'api-sso-user@example.com',
+        'password' => Hash::make('password'),
+        'status'   => 1,
+        'type'     => 'api',
+    ]);
+
+    fakeMicrosoftEndpoints([
+        'id'                => 'object-id-api',
+        'mail'              => 'api-sso-user@example.com',
+        'userPrincipalName' => 'api-sso-user@example.com',
+    ]);
+
+    callbackWith(ssoHandshake())->assertRedirect(route('admin.session.create'));
+
+    $this->assertGuest('admin');
+
+    expect($admin->fresh()->sso_identifier)->toBeNull();
 });
 
 it('matches microsoft sso email in a case-insensitive way', function () {

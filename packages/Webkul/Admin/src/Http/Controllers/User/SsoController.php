@@ -21,10 +21,17 @@ class SsoController extends Controller
     ) {}
 
     /**
-     * Hand the visitor off to the identity provider.
+     * Hand the visitor off to the identity provider. The route is a plain GET that
+     * needs no prior visit to the login page, so an identity provider's app tile
+     * can link to it directly; an admin who is already signed in is sent straight
+     * to their landing page instead of starting a new sign-in.
      */
     public function redirect(Request $request, string $provider): RedirectResponse
     {
+        if (auth()->guard('admin')->check()) {
+            return redirect()->to($this->firstAllowedUrl());
+        }
+
         $driver = $this->resolveProvider($provider);
 
         if (! $driver) {

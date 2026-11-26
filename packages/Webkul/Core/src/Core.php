@@ -656,6 +656,10 @@ class Core
             return $this->getDefaultConfig($field);
         }
 
+        if (($this->getConfigField($field)['type'] ?? null) === 'password') {
+            return $this->coreConfigRepository->decryptSecret($coreConfig->value);
+        }
+
         return $coreConfig->value;
     }
 

@@ -13,6 +13,8 @@ return [
             'password'                   => '密码',
             'sso-divider'                => 'or',
             'sso-sign-in-with-microsoft' => 'Sign in with Microsoft',
+            'sso-sign-in-with-oidc'      => '使用 OpenID Connect 登录',
+            'sso-only'                   => '已禁用密码登录。请使用单点登录。',
             'submit-btn'                 => '登入',
             'title'                      => '登入',
             'powered-by'                 => '由 :unopim 提供支持,',
@@ -2073,6 +2075,10 @@ return [
                 'title' => 'Microsoft SSO',
                 'info'  => '用于管理员登录的 Microsoft Entra ID 单点登录。',
             ],
+            'oidc-sso'           => [
+                'title' => 'OpenID Connect SSO',
+                'info'  => '通过任意 OpenID Connect 提供商实现管理员单点登录。',
+            ],
         ],
 
         'appearance' => [
@@ -2149,6 +2155,7 @@ return [
     'configuration' => [
         'index' => [
             'delete'          => '删除',
+            'env-locked'      => '由服务器环境变量设置，无法在此更改。',
             'no-result-found' => '找不到结果',
             'save-btn'        => '保存配置',
             'save-message'    => '配置成功保存',
@@ -2227,6 +2234,35 @@ return [
                         'redirect-uri-info'   => '请将此 URL 原样注册到 Microsoft Entra ID 应用注册的“身份验证”→“重定向 URI”中，平台选择 Web。',
                         'redirect-uri-copy'   => '复制',
                         'redirect-uri-copied' => '已复制到剪贴板',
+                    ],
+                ],
+
+                'oidc-sso' => [
+                    'info'   => '为管理员登录配置 OpenID Connect 单点登录，例如使用 Authentik 或 Keycloak。',
+                    'title'  => 'OpenID Connect SSO',
+
+                    'settings' => [
+                        'title'               => 'OpenID Connect SSO 设置',
+                        'info'                => '请输入身份提供商中的客户端信息。通过 UNOPIM_OIDC_* 环境变量设置的值优先，并在此处为只读。',
+                        'enabled'             => '启用 OpenID Connect SSO',
+                        'redirect-uri-info'   => '请将此 URL 原样注册为身份提供商中该客户端的重定向 URI。',
+                        'issuer'              => '签发者 URL',
+                        'issuer-info'         => '提供商的签发者 URL。将从 /.well-known/openid-configuration 读取其发现文档。',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'scopes'              => '作用域',
+                        'label'               => '按钮文字',
+                        'verified-email'      => '要求已验证的邮箱',
+                        'verified-email-info' => '拒绝邮箱未标记为已验证的登录。通过邮箱关联现有用户始终要求邮箱已验证。',
+                        'auto-provision'      => '首次登录时创建用户',
+                        'auto-provision-info' => '未知人员首次登录时创建管理员用户。需要角色映射或默认角色。',
+                        'default-role'        => '默认角色',
+                        'default-role-info'   => '未配置角色映射时分配给新用户的角色名称。',
+                        'groups-claim'        => '用户组声明',
+                        'role-map'            => '角色映射',
+                        'role-map-info'       => '将提供商用户组映射到角色名称的 JSON 对象。设置后，没有已映射用户组的登录将被拒绝，并在每次登录时更新角色；以第一个匹配项为准。',
+                        'rp-logout'           => '同时在提供商处退出',
+                        'rp-logout-info'      => '退出 UnoPim 后，同时结束身份提供商处的会话。',
                     ],
                 ],
 
