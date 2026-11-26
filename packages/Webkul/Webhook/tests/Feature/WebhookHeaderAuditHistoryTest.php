@@ -76,7 +76,7 @@ it('masks header values in the audit written on create and keeps the header name
         'X-Shop'        => Webhook::MASKED_VALUE,
     ])
         ->and($created->new_values)->not->toContain('create-secret')
-        ->and(json_decode($created->new_values, true)['url'])->toBe('https://8.8.8.8/hook');
+        ->and(json_decode($created->new_values, true)['url'])->toBe('https://8.8.8.8/'.Webhook::MASKED_VALUE);
 });
 
 it('masks both the old and the new header values in the audit written on update', function (): void {
@@ -272,7 +272,7 @@ it('masks the credentials and query values of the URL in the audit written on cr
     [$created] = webhookAuditRows($webhook);
     $mask = Webhook::MASKED_VALUE;
 
-    expect(json_decode($created->new_values, true)['url'])->toBe("https://{$mask}@8.8.8.8/hook?token={$mask}")
+    expect(json_decode($created->new_values, true)['url'])->toBe("https://{$mask}@8.8.8.8/{$mask}?token={$mask}")
         ->and($created->new_values)->not->toContain('hook-user')
         ->and($created->new_values)->not->toContain('hook-pass')
         ->and($created->new_values)->not->toContain('url-secret');
@@ -284,7 +284,7 @@ it('masks both the old and the new URL in the audit written on update', function
     $webhook->update(['url' => 'https://8.8.8.8/hook?token=new-url-secret']);
 
     $updated = collect(webhookAuditRows($webhook))->firstWhere('event', 'updated');
-    $masked = 'https://8.8.8.8/hook?token='.Webhook::MASKED_VALUE;
+    $masked = 'https://8.8.8.8/'.Webhook::MASKED_VALUE.'?token='.Webhook::MASKED_VALUE;
 
     expect(json_decode($updated->old_values, true)['url'])->toBe($masked)
         ->and(json_decode($updated->new_values, true)['url'])->toBe($masked)
@@ -294,29 +294,42 @@ it('masks both the old and the new URL in the audit written on update', function
 it('masks every credential a URL may carry', function (string $url, string $expected): void {
     expect(Webhook::maskUrl($url))->toBe(str_replace('MASK', Webhook::MASKED_VALUE, $expected));
 })->with([
-    'user and password'  => ['https://user:pass@example.com/hook', 'https://MASK@example.com/hook'],
-    'user only'          => ['https://token@example.com/hook', 'https://MASK@example.com/hook'],
-    'query token'        => ['https://example.com/hook?token=abc', 'https://example.com/hook?token=MASK'],
-    'several values'     => ['https://example.com/hook?a=1&secret=2', 'https://example.com/hook?a=MASK&secret=MASK'],
-    'value without key'  => ['https://example.com/hook?=abc', 'https://example.com/hook?=MASK'],
-    'everything'         => ['http://u:p@example.com:8080/a/b?key=v#part', 'http://MASK@example.com:8080/a/b?key=MASK#part'],
-    'chat path token'    => ['https://chat.example.com/services/T0A1B2C3D/B0E4F5G6H/Xy12AbCdEf34GhIjKl56MnOp', 'https://chat.example.com/services/T0A1B2C3D/B0E4F5G6H/MASK'],
-    'id and token path'  => ['https://example.com/api/webhooks/123456789012345678/AbCdEf_12-GhIjKlMnOpQrStUvWxYz0123456789', 'https://example.com/api/webhooks/123456789012345678/MASK'],
-    'uuid path segment'  => ['https://example.com/hook/0f8fad5b-d9cb-469f-a165-70867728950e/', 'https://example.com/hook/MASK/'],
+    'user and password'      => ['https://user:pass@example.com/hook', 'https://MASK@example.com/MASK'],
+    'user only'              => ['https://token@example.com/hook', 'https://MASK@example.com/MASK'],
+    'at sign in password'    => ['https://user:p@ss@example.com/hook', 'https://MASK@example.com/MASK'],
+    'query token'            => ['https://example.com/hook?token=abc', 'https://example.com/MASK?token=MASK'],
+    'several values'         => ['https://example.com/hook?a=1&secret=2', 'https://example.com/MASK?a=MASK&secret=MASK'],
+    'value without key'      => ['https://example.com/hook?=abc', 'https://example.com/MASK?=MASK'],
+    'item without value'     => ['https://example.com/?abc123secret&debug', 'https://example.com/?MASK&MASK'],
+    'everything'             => ['http://u:p@example.com:8080/a/b?key=v#part', 'http://MASK@example.com:8080/MASK/MASK?key=MASK#part'],
+    'chat path token'        => ['https://chat.example.com/services/T0A1B2C3D/B0E4F5G6H/Xy12AbCdEf34GhIjKl56MnOp', 'https://chat.example.com/MASK/MASK/MASK/MASK'],
+    'id and token path'      => ['https://example.com/api/webhooks/123456789012345678/AbCdEf_12-GhIjKlMnOpQrStUvWxYz0123456789', 'https://example.com/MASK/MASK/MASK/MASK'],
+    'uuid path segment'      => ['https://example.com/hook/0f8fad5b-d9cb-469f-a165-70867728950e/', 'https://example.com/MASK/MASK/'],
+    'word-like path secret'  => ['https://example.com/hooks/plainlowercasesecret', 'https://example.com/MASK/MASK'],
+    'short path secret'      => ['https://example.com/k9', 'https://example.com/MASK'],
+    'at sign in path'        => ['https://example.com/p@th/hook', 'https://example.com/MASK/MASK'],
+    'not an absolute url'    => ['example.com/hook/secret', 'MASK'],
 ]);
 
-it('leaves a URL without credentials readable', function (mixed $url): void {
+it('leaves the scheme, host, port and fragment of a URL readable', function (mixed $url): void {
     expect(Webhook::maskUrl($url))->toBe($url);
 })->with([
-    'plain url'       => ['https://8.8.8.8/hook'],
-    'at sign in path' => ['https://example.com/p@th/hook'],
-    'query flag'      => ['https://example.com/hook?debug'],
-    'readable path'   => ['https://8.8.8.8/api/v1/webhooks/orders'],
-    'long word'       => ['https://example.com/notifications-receiver-endpoint'],
-    'numeric id'      => ['https://example.com/api/webhooks/123456789012345678'],
-    'token-like host' => ['https://wh824cd96eb956450f94.free.beeceptor.com/hook'],
-    'null'            => [null],
-    'not a string'    => [42],
+    'host only'         => ['https://8.8.8.8'],
+    'root path'         => ['https://8.8.8.8/'],
+    'port and fragment' => ['https://example.com:8443/#part'],
+    'empty query'       => ['https://example.com/?'],
+    'token-like host'   => ['https://wh824cd96eb956450f94.free.beeceptor.com/'],
+    'null'              => [null],
+    'not a string'      => [42],
+]);
+
+it('masks a URL that is already masked to the same value', function (string $url): void {
+    $masked = Webhook::maskUrl($url);
+
+    expect(Webhook::maskUrl($masked))->toBe($masked);
+})->with([
+    'userinfo, path and query' => ['https://user:p@ss@example.com/a/b?token=abc&flag#part'],
+    'not an absolute url'      => ['example.com/hook'],
 ]);
 
 it('still stores and calls the real URL with its credentials', function (): void {
@@ -344,7 +357,7 @@ it('masks the URL token an admin saves through the webhook edit form', function 
     $updated = collect(webhookAuditRows($webhook))->firstWhere('event', 'updated');
 
     expect($webhook->fresh()->url)->toBe('https://8.8.8.8/hook?token=form-url-secret')
-        ->and(json_decode($updated->new_values, true)['url'])->toBe('https://8.8.8.8/hook?token='.Webhook::MASKED_VALUE)
+        ->and(json_decode($updated->new_values, true)['url'])->toBe('https://8.8.8.8/'.Webhook::MASKED_VALUE.'?token='.Webhook::MASKED_VALUE)
         ->and($updated->old_values.$updated->new_values)->not->toContain('form-url-secret');
 });
 
@@ -363,8 +376,8 @@ it('masks URL credentials already stored in webhook audits and is safe to run tw
     $migration->up();
     $afterSecondRun = DB::table('audits')->find($auditId);
 
-    expect(json_decode($afterFirstRun->old_values, true)['url'])->toBe("https://{$mask}@8.8.8.8/hook")
-        ->and(json_decode($afterFirstRun->new_values, true)['url'])->toBe("https://8.8.8.8/hook?token={$mask}")
+    expect(json_decode($afterFirstRun->old_values, true)['url'])->toBe("https://{$mask}@8.8.8.8/{$mask}")
+        ->and(json_decode($afterFirstRun->new_values, true)['url'])->toBe("https://8.8.8.8/{$mask}?token={$mask}")
         ->and(json_decode($afterFirstRun->new_values, true)['name'])->toBe('Stored hook')
         ->and($afterFirstRun->old_values.$afterFirstRun->new_values)->not->toContain('stored-')
         ->and($afterSecondRun->new_values)->toBe($afterFirstRun->new_values)
@@ -372,7 +385,7 @@ it('masks URL credentials already stored in webhook audits and is safe to run tw
 });
 
 it('leaves stored URLs without credentials untouched', function (): void {
-    $auditId = insertRawAudit(Webhook::class, ['url' => 'https://8.8.8.8/old'], ['url' => 'https://8.8.8.8/new']);
+    $auditId = insertRawAudit(Webhook::class, ['url' => 'https://8.8.8.8'], ['url' => 'https://8.8.4.4/']);
     $before = DB::table('audits')->find($auditId);
 
     maskWebhookHeadersMigration()->up();
@@ -383,12 +396,15 @@ it('leaves stored URLs without credentials untouched', function (): void {
         ->and($after->new_values)->toBe($before->new_values);
 });
 
-it('masks a token in the URL path in the audit written on create', function (): void {
-    $webhook = createAuditedWebhook([], 'https://8.8.8.8/services/T0A1B2C3D/B0E4F5G6H/PathToken12Secret34Value');
+it('masks every path segment and an at sign password in the audit written on create', function (): void {
+    $webhook = createAuditedWebhook([], 'https://hook-user:p@ss-secret@8.8.8.8/services/plainpathsecret/PathToken12Secret34Value');
+    $mask = Webhook::MASKED_VALUE;
 
     [$created] = webhookAuditRows($webhook);
 
-    expect(json_decode($created->new_values, true)['url'])->toBe('https://8.8.8.8/services/T0A1B2C3D/B0E4F5G6H/'.Webhook::MASKED_VALUE)
+    expect(json_decode($created->new_values, true)['url'])->toBe("https://{$mask}@8.8.8.8/{$mask}/{$mask}/{$mask}")
+        ->and($created->new_values)->not->toContain('plainpathsecret')
+        ->and($created->new_values)->not->toContain('ss-secret')
         ->and($created->new_values)->not->toContain('PathToken12Secret34Value')
-        ->and($webhook->fresh()->url)->toBe('https://8.8.8.8/services/T0A1B2C3D/B0E4F5G6H/PathToken12Secret34Value');
+        ->and($webhook->fresh()->url)->toBe('https://hook-user:p@ss-secret@8.8.8.8/services/plainpathsecret/PathToken12Secret34Value');
 });

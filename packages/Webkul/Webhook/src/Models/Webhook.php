@@ -84,7 +84,9 @@ class Webhook extends Model implements HistoryAuditable, PresentableHistoryInter
     }
 
     /**
-     * Mask the userinfo, token-like path segments and query-string values of a URL, keeping scheme, host and readable path parts.
+     * Mask everything in a URL that can carry a credential: userinfo, every path segment and every query value.
+     *
+     * Scheme, host, port, query keys and the fragment stay readable. A string that is not an absolute URL is masked whole.
      */
     public static function maskUrl(mixed $url): mixed
     {
@@ -92,33 +94,37 @@ class Webhook extends Model implements HistoryAuditable, PresentableHistoryInter
             return $url;
         }
 
-        $url = preg_replace_callback(
-            '#^([a-z][a-z0-9+.-]*://)([^/@?\#]+@)?([^/?\#]*)([^?\#]*)#i',
-            fn (array $parts): string => $parts[1]
-                .($parts[2] !== '' ? self::MASKED_VALUE.'@' : '')
-                .$parts[3]
-                .static::maskPathTokens($parts[4]),
-            $url,
-        );
+        if (! preg_match('#^([a-z][a-z0-9+.-]*://)([^/?\#]*@)?([^/?\#]*)([^?\#]*)(\?[^\#]*)?(\#.*)?$#is', $url, $parts)) {
+            return self::MASKED_VALUE;
+        }
 
-        return preg_replace('/([?&][^=&#]*)=[^&#]*/', '$1='.self::MASKED_VALUE, $url);
+        return $parts[1]
+            .(($parts[2] ?? '') !== '' ? self::MASKED_VALUE.'@' : '')
+            .$parts[3]
+            .preg_replace('#[^/]+#', self::MASKED_VALUE, $parts[4])
+            .static::maskQuery($parts[5] ?? '')
+            .($parts[6] ?? '');
     }
 
     /**
-     * Mask path segments that look like generated tokens, as in Slack or Discord webhook URLs.
-     *
-     * A token segment is at least 16 URL-safe characters mixing letters and digits, so readable
-     * words and numeric ids stay visible.
+     * Mask every value of a query string, keeping its keys; an item without a key is masked whole.
      */
-    protected static function maskPathTokens(string $path): string
+    protected static function maskQuery(string $query): string
     {
-        return preg_replace_callback(
-            '#(?<=/)[A-Za-z0-9_-]{16,}(?=/|$)#',
-            fn (array $segment): string => preg_match('/\d/', $segment[0]) && preg_match('/[A-Za-z]/', $segment[0])
-                ? self::MASKED_VALUE
-                : $segment[0],
-            $path,
+        if ($query === '' || $query === '?') {
+            return $query;
+        }
+
+        $items = array_map(
+            fn (string $item): string => match (true) {
+                $item === ''               => '',
+                str_contains($item, '=')   => strstr($item, '=', true).'='.self::MASKED_VALUE,
+                default                    => self::MASKED_VALUE,
+            },
+            explode('&', substr($query, 1)),
         );
+
+        return '?'.implode('&', $items);
     }
 
     protected function casts(): array
