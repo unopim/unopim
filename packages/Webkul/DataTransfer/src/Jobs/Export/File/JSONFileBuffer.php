@@ -25,6 +25,21 @@ class JSONFileBuffer implements \Iterator
         return new self($filename);
     }
 
+    /**
+     * Whether the path is a buffer file this class created for the given export.
+     */
+    public static function belongsTo(string $path, $export): bool
+    {
+        $realPath = realpath($path);
+
+        if ($realPath === false || ! is_file($realPath)) {
+            return false;
+        }
+
+        return dirname($realPath) === realpath(sys_get_temp_dir())
+            && str_starts_with(basename($realPath), sprintf('%s%s_', self::FILE_PREFIX, $export->id));
+    }
+
     protected function openFile(): void
     {
         $this->file = new \SplFileObject($this->filename, 'a+');

@@ -229,6 +229,8 @@ class Export
 
         $typeExporter = $this->getTypeExporter()->setSource($this->source);
 
+        $typeExporter->resetExportBuffer();
+
         $typeExporter->initializeBatches();
     }
 
