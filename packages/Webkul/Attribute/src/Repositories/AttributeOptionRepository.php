@@ -57,27 +57,80 @@ class AttributeOptionRepository extends Repository
 
     /**
      * Determine whether any product holds the option as a value of its attribute, in any scope.
-     *
-     * A text match narrows the candidates portably across database engines; the decoded values
-     * then confirm the code belongs to this attribute, as a single value, a list or a comma-separated string.
      */
     public function isUsedByProducts(AttributeOption $option): bool
     {
-        $attributeCode = $option->attribute->code;
+        return $this->usedByProducts([$option->id]) !== [];
+    }
 
-        $optionCode = mb_strtolower($option->code);
+    /**
+     * Return the ids of the given options that any product holds as a value of their attribute, in any scope.
+     *
+     * A text match on the option code and the attribute key narrows the candidates portably across
+     * database engines; the decoded values then confirm the code belongs to that attribute, as a single
+     * value, a list or a comma-separated string.
+     *
+     * @param  array<int, int|string>  $optionIds
+     * @return array<int, int>
+     */
+    public function usedByProducts(array $optionIds): array
+    {
+        $usedIds = [];
 
-        $valuesColumn = DB::rawQueryGrammar()->castToText(DB::getQueryGrammar()->wrap('values'));
+        $valuesColumn = 'LOWER('.DB::rawQueryGrammar()->castToText(DB::getQueryGrammar()->wrap('values')).')';
 
-        return DB::table('products')
-            ->select('id', 'values')
-            ->whereRaw("LOWER({$valuesColumn}) LIKE ?", ['%'.$optionCode.'%'])
-            ->lazyById(200)
-            ->contains(fn (object $product): bool => in_array(
-                $optionCode,
-                $this->productOptionCodes(json_decode((string) $product->values, true) ?? [], $attributeCode),
-                true,
-            ));
+        foreach (array_chunk(array_unique($optionIds), 100) as $optionIdChunk) {
+            $optionsByAttribute = [];
+
+            foreach ($this->model->newQuery()->with('attribute:id,code')->whereIn('id', $optionIdChunk)->get(['id', 'code', 'attribute_id']) as $option) {
+                if ($option->attribute) {
+                    $optionsByAttribute[$option->attribute->code][mb_strtolower($option->code)] = (int) $option->id;
+                }
+            }
+
+            if ($optionsByAttribute === []) {
+                continue;
+            }
+
+            $pending = array_fill_keys(array_merge(...array_map(array_values(...), array_values($optionsByAttribute))), true);
+
+            DB::table('products')
+                ->select('id', 'values')
+                ->where(function ($query) use ($optionsByAttribute, $valuesColumn): void {
+                    foreach ($optionsByAttribute as $attributeCode => $codes) {
+                        foreach (array_keys($codes) as $optionCode) {
+                            $query->orWhere(function ($match) use ($attributeCode, $optionCode, $valuesColumn): void {
+                                $match->whereRaw("{$valuesColumn} LIKE ?", ['%'.$this->escapeLike((string) $optionCode).'%'])
+                                    ->whereRaw("{$valuesColumn} LIKE ?", ['%"'.$this->escapeLike(mb_strtolower($attributeCode)).'"%']);
+                            });
+                        }
+                    }
+                })
+                ->lazyById(200)
+                ->each(function (object $product) use ($optionsByAttribute, &$pending, &$usedIds): bool {
+                    $values = json_decode((string) $product->values, true) ?? [];
+
+                    foreach ($optionsByAttribute as $attributeCode => $codes) {
+                        foreach (array_intersect_key($codes, array_flip($this->productOptionCodes($values, $attributeCode))) as $optionId) {
+                            $usedIds[] = $optionId;
+
+                            unset($pending[$optionId]);
+                        }
+                    }
+
+                    return $pending !== [];
+                });
+        }
+
+        return array_values(array_unique($usedIds));
+    }
+
+    /**
+     * Escape the LIKE wildcards in a value so it matches literally.
+     */
+    protected function escapeLike(string $value): string
+    {
+        return str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $value);
     }
 
     /**

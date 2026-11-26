@@ -89,6 +89,8 @@ class AttributeRepository extends Repository
 
         if ($hasOptions) {
             $this->ensureOptionsBelongToAttribute($data['options'], $attribute);
+
+            $this->ensureUsedOptionsAreKept($data['options']);
         }
 
         if ($attribute->code === 'sku' && isset($data['is_filterable']) && $data['is_filterable'] === 0) {
@@ -175,6 +177,25 @@ class AttributeRepository extends Repository
         if (array_diff(array_map(intval(...), $optionIds), $ownedIds) !== []) {
             throw ValidationException::withMessages([
                 'options' => trans('validation.exists', ['attribute' => 'options']),
+            ]);
+        }
+    }
+
+    /**
+     * Reject an update that deletes an option products still hold, reading the flags as the option loop does.
+     */
+    private function ensureUsedOptionsAreKept(array $options): void
+    {
+        $deletedIds = array_keys(array_filter(
+            $options,
+            fn (mixed $optionInputs): bool => is_array($optionInputs)
+                && ($optionInputs['isNew'] ?? null) != 'true'
+                && ($optionInputs['isDelete'] ?? null) == 'true',
+        ));
+
+        if ($deletedIds !== [] && $this->attributeOptionRepository->usedByProducts($deletedIds) !== []) {
+            throw ValidationException::withMessages([
+                'options' => trans('admin::app.catalog.attributes.edit.option.delete-in-use'),
             ]);
         }
     }

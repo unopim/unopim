@@ -535,7 +535,7 @@ class CategoryRepository extends Repository
      */
     public function isUsedByProducts(int $categoryId): bool
     {
-        $codes = $this->model->descendantsAndSelf($categoryId)->pluck('code');
+        $codes = $this->model->descendantsAndSelf($categoryId, ['code'])->pluck('code');
 
         foreach ($codes->chunk(100) as $chunk) {
             $isUsed = ProductProxy::query()

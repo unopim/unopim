@@ -110,8 +110,7 @@ class AttributeController extends ApiController
                 $requestData['options'] ?? null,
                 fn (array $option): ValidatorContract => $this->optionValidate($option, $attribute->id),
                 ['swatch_value' => [new ValidSwatchValue($attribute->id)]],
-            )
-            ?? $this->inUseOptionDeletes($requestData['options'] ?? null, $attribute->id);
+            );
 
         if ($denied) {
             return $denied;
@@ -328,32 +327,6 @@ class AttributeController extends ApiController
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);
         }
-    }
-
-    /**
-     * Refuse an update that removes an option products still hold as a value.
-     */
-    private function inUseOptionDeletes(mixed $options, int $attributeId): ?JsonResponse
-    {
-        foreach (is_array($options) ? $options : [] as $optionId => $entry) {
-            if (
-                ! is_array($entry)
-                || filter_var($entry['isNew'] ?? false, FILTER_VALIDATE_BOOLEAN)
-                || ! filter_var($entry['isDelete'] ?? false, FILTER_VALIDATE_BOOLEAN)
-            ) {
-                continue;
-            }
-
-            $option = $this->attributeOptionRepository->findOneWhere(['id' => $optionId, 'attribute_id' => $attributeId]);
-
-            if ($option && $this->attributeOptionRepository->isUsedByProducts($option)) {
-                return $this->validateErrorResponse([
-                    'options' => [trans('admin::app.catalog.attributes.edit.option.delete-in-use')],
-                ]);
-            }
-        }
-
-        return null;
     }
 
     /**

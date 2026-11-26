@@ -70,6 +70,13 @@ class Importer extends AbstractImporter
 
     protected array $locales = [];
 
+    /**
+     * Ids of the options listed for deletion that products still hold, keyed by id.
+     *
+     * @var array<int, true>
+     */
+    protected array $usedOptionIds = [];
+
     public function __construct(
         protected JobTrackBatchRepository $importBatchRepository,
         protected AttributeOptionRepository $attributeOptionRepository,
@@ -104,7 +111,35 @@ class Importer extends AbstractImporter
             ? ['code']
             : ['code', 'attribute_code', 'locale'];
 
+        $this->usedOptionIds = $this->import->action == Import::ACTION_DELETE
+            ? array_fill_keys($this->usedOptionIdsInSource(), true)
+            : [];
+
         parent::validateData();
+    }
+
+    /**
+     * Check every option the delete file lists against the products in one pass.
+     *
+     * @return array<int, int>
+     */
+    protected function usedOptionIdsInSource(): array
+    {
+        $source = $this->getSource();
+
+        $optionIds = [];
+
+        for ($source->rewind(); $source->valid(); $source->next()) {
+            $rowData = $source->current();
+
+            $id = isset($rowData['code']) ? $this->getAttributeOptionIdForDelete($rowData) : null;
+
+            if ($id) {
+                $optionIds[] = $id;
+            }
+        }
+
+        return $optionIds === [] ? [] : $this->attributeOptionRepository->usedByProducts($optionIds);
     }
 
     public function validateRow(array $rowData, int $rowNumber): bool
@@ -119,9 +154,7 @@ class Importer extends AbstractImporter
             $id = $this->getAttributeOptionIdForDelete($rowData);
 
             if ($id) {
-                $option = $this->attributeOptionRepository->find($id);
-
-                if ($option && $this->attributeOptionRepository->isUsedByProducts($option)) {
+                if (isset($this->usedOptionIds[$id])) {
                     $this->skipRow(
                         $rowNumber,
                         self::ERROR_USED_BY_PRODUCTS,
