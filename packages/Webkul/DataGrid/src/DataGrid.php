@@ -24,6 +24,13 @@ abstract class DataGrid
     const MASS_ACTION_ID_LIMIT = 10000;
 
     /**
+     * The page sizes the grid toolbar offers; the largest is also the most a request may ask for.
+     *
+     * @var list<int>
+     */
+    public const array PER_PAGE_OPTIONS = [10, 20, 30, 40, 50];
+
+    /**
      * Rows fetched per round trip while streaming the ids behind a "select all matching" mass action.
      */
     const MATCHING_IDS_BATCH_SIZE = 1000;
@@ -260,12 +267,15 @@ abstract class DataGrid
     {
         request()->validate([
             'filters'             => ['sometimes', 'required', 'array'],
+            'filters.*'           => ['array'],
             'sort'                => ['sometimes', 'required', 'array'],
+            'sort.column'         => ['sometimes', 'nullable', 'string', 'max:255'],
+            'sort.order'          => ['sometimes', 'nullable', 'in:asc,desc'],
             'pagination'          => ['sometimes', 'required', 'array'],
-            'pagination.per_page' => ['sometimes', 'integer', 'min:1', 'max:50'],
+            'pagination.per_page' => ['sometimes', 'integer', 'min:1', 'max:'.max(static::PER_PAGE_OPTIONS)],
             'pagination.page'     => ['sometimes', 'integer', 'min:1'],
             'export'              => ['sometimes', 'required', 'boolean'],
-            'format'              => ['sometimes', 'required', 'in:csv,xls,xlsx'],
+            'format'              => ['required_with:export', 'in:csv,xls,xlsx'],
             'productIds'          => ['sometimes', 'array'],
             'mass_action_ids'     => ['sometimes', 'required', 'boolean'],
         ]);
@@ -634,7 +644,7 @@ abstract class DataGrid
                 'from'                 => $paginator['from'],
                 'to'                   => $paginator['to'],
                 'total'                => $paginator['total'],
-                'per_page_options'     => [10, 20, 30, 40, 50],
+                'per_page_options'     => static::PER_PAGE_OPTIONS,
                 'per_page'             => $paginator['per_page'],
                 'current_page'         => $paginator['current_page'],
                 'last_page'            => $paginator['last_page'],

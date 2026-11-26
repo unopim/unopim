@@ -3,6 +3,7 @@
 namespace Webkul\Admin\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Webkul\DataGrid\DataGrid;
 
 class ProductGridViewForm extends FormRequest
 {
@@ -34,7 +35,7 @@ class ProductGridViewForm extends FormRequest
             'payload.sort'                  => ['present', 'array'],
             'payload.sort.column'           => ['nullable', 'string', 'max:255'],
             'payload.sort.order'            => ['nullable', 'in:asc,desc'],
-            'payload.perPage'               => ['required', 'integer', 'min:1', 'max:100'],
+            'payload.perPage'               => ['required', 'integer', 'min:1', 'max:'.max(DataGrid::PER_PAGE_OPTIONS)],
             'payload.channel'               => ['nullable', 'string', 'max:50'],
             'payload.locale'                => ['nullable', 'string', 'max:50'],
         ];
