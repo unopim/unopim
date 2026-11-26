@@ -6,15 +6,21 @@ use DebugBar\DataCollector\AssetProvider;
 use DebugBar\DataCollector\DataCollector;
 use DebugBar\DataCollector\DataCollectorInterface;
 use DebugBar\DataCollector\Renderable;
-use Illuminate\Contracts\Events\Dispatcher;
+use DebugBar\DataCollector\Resettable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use Konekt\Concord\Facades\Concord;
 
 /**
- * Collector for UnoPim's Module Collector
+ * Groups the models, views and queries of the current request by Concord module.
+ *
+ * The collector only stores data; DebugBarServiceProvider registers the listeners once per
+ * worker and feeds the collector of the enabled debugbar, so nothing is recorded while the
+ * bar is off and nothing survives the reset between Octane requests.
  */
-class ModuleCollector extends DataCollector implements AssetProvider, DataCollectorInterface, Renderable
+class ModuleCollector extends DataCollector implements AssetProvider, DataCollectorInterface, Renderable, Resettable
 {
     public $models = [];
 
@@ -24,34 +30,50 @@ class ModuleCollector extends DataCollector implements AssetProvider, DataCollec
 
     public $count = 0;
 
-    public function __construct(Dispatcher $events)
+    /**
+     * Count the models retrieved by an `eloquent.retrieved` event.
+     *
+     * @param  array<int, Model|null>  $models
+     */
+    public function recordModels(array $models): void
     {
-        $events->listen('eloquent.*', function ($event, $models): void {
-            if (Str::contains($event, 'eloquent.retrieved')) {
-                foreach (array_filter($models) as $model) {
-                    $class = $model::class;
-                    $this->models[$class] = ($this->models[$class] ?? 0) + 1;
-                    $this->count++;
-                }
-            }
-        });
+        foreach (array_filter($models) as $model) {
+            $class = $model::class;
+            $this->models[$class] = ($this->models[$class] ?? 0) + 1;
+            $this->count++;
+        }
+    }
 
-        $events->listen('composing:*', function ($view, $data = []): void {
-            $view = $data ? $data[0] : $view;
+    /**
+     * Record a view that is being composed.
+     */
+    public function recordView(View $view): void
+    {
+        $this->views[] = $this->trimViewName($view->getName(), $view->getPath());
+    }
 
-            $this->views[] = $this->trimViewName($view->getName(), $view->getPath());
-        });
+    /**
+     * Record an executed query with its bindings inlined.
+     */
+    public function recordQuery(QueryExecuted $query): void
+    {
+        $this->queries[] = [
+            'sql'          => $this->addQueryBindings($query),
+            'duration'     => $query->time,
+            'duration_str' => $this->getDataFormatter()->formatDuration($query->time / 1000),
+            'connection'   => $query->connection->getDatabaseName(),
+        ];
+    }
 
-        app()['db']->listen(
-            function (QueryExecuted $query): void {
-                $this->queries[] = [
-                    'sql'          => $this->addQueryBindings($query),
-                    'duration'     => $query->time,
-                    'duration_str' => $this->getDataFormatter()->formatDuration($query->time / 1000),
-                    'connection'   => $query->connection->getDatabaseName(),
-                ];
-            }
-        );
+    /**
+     * Clear everything collected so a long-running worker starts each request empty.
+     */
+    public function reset(): void
+    {
+        $this->models = [];
+        $this->views = [];
+        $this->queries = [];
+        $this->count = 0;
     }
 
     /**
