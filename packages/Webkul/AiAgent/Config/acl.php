@@ -350,6 +350,24 @@ return [
     [
         'key'   => 'ai-agent',
         'name'  => 'ai-agent::app.acl.ai-agent',
+        'route' => 'ai-agent.chat.send-async',
+        'sort'  => 7,
+    ],
+    [
+        'key'   => 'ai-agent',
+        'name'  => 'ai-agent::app.acl.ai-agent',
+        'route' => 'ai-agent.chat.reply',
+        'sort'  => 7,
+    ],
+    [
+        'key'   => 'ai-agent',
+        'name'  => 'ai-agent::app.acl.ai-agent',
+        'route' => 'ai-agent.chat.reply.cancel',
+        'sort'  => 7,
+    ],
+    [
+        'key'   => 'ai-agent',
+        'name'  => 'ai-agent::app.acl.ai-agent',
         'route' => 'ai-agent.chat.rate',
         'sort'  => 7,
     ],
