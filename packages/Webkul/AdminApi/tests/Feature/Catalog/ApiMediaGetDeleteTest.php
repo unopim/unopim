@@ -183,3 +183,91 @@ it('rejects unauthenticated product media get', function () {
         'Accept' => 'application/json',
     ])->assertUnauthorized();
 });
+
+it('deletes only the files inside the category field folder and still clears the value', function (): void {
+    $field = CategoryField::factory()->create(['type' => 'image', 'value_per_locale' => 0]);
+    $category = Category::factory()->create();
+    $owned = 'category/'.$category->id.'/'.$field->code.'/own.jpg';
+    $foreign = ['product/1/gallery/kept.png', 'category/'.($category->id + 1).'/'.$field->code.'/other.jpg', 'channel/logo.png'];
+    $stored = [$owned, ...$foreign, 'category/'.$category->id.'/'.$field->code.'/../../../channel/logo.png'];
+
+    foreach ([$owned, ...$foreign] as $path) {
+        Storage::put($path, 'x');
+    }
+
+    $category->additional_data = ['common' => [$field->code => implode(',', $stored)]];
+    $category->save();
+
+    $this->withHeaders($this->headers)
+        ->json('DELETE', route('admin.api.media-files.category.delete', ['code' => $category->code, 'category_field' => $field->code]))
+        ->assertOk();
+
+    Storage::assertMissing($owned);
+    Storage::assertExists($foreign);
+    expect($category->fresh()->additional_data['common'][$field->code] ?? null)->toBeNull();
+});
+
+it('refuses to read or delete category media through a field that does not hold media', function (string $method, string $route, string $type): void {
+    $field = CategoryField::factory()->create(['type' => $type, 'value_per_locale' => 0]);
+    $category = Category::factory()->create();
+    $path = 'product/1/gallery/kept.png';
+    Storage::put($path, 'x');
+    $category->additional_data = ['common' => [$field->code => $path]];
+    $category->save();
+
+    $this->withHeaders($this->headers)
+        ->json($method, route($route, ['code' => $category->code, 'category_field' => $field->code]))
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['category_field']);
+
+    Storage::assertExists($path);
+    expect($category->fresh()->additional_data['common'][$field->code])->toBe($path);
+})->with([
+    'get text field'      => ['GET', 'admin.api.media-files.category.get', 'text'],
+    'delete text field'   => ['DELETE', 'admin.api.media-files.category.delete', 'text'],
+    'delete select field' => ['DELETE', 'admin.api.media-files.category.delete', 'select'],
+]);
+
+it('refuses category media of a field that does not exist', function (): void {
+    $category = Category::factory()->create();
+
+    $this->withHeaders($this->headers)
+        ->json('DELETE', route('admin.api.media-files.category.delete', ['code' => $category->code, 'category_field' => 'missing_media_field']))
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['category_field']);
+});
+
+it('refuses a category upload to a field that does not hold media', function (): void {
+    $field = CategoryField::factory()->create(['type' => 'text', 'value_per_locale' => 0]);
+    $category = Category::factory()->create();
+
+    $this->withHeaders($this->headers)
+        ->post(route('admin.api.media-files.category.store'), [
+            'code'           => $category->code,
+            'category_field' => $field->code,
+            'file'           => UploadedFile::fake()->image('first.png'),
+        ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['category_field']);
+});
+
+it('deletes a swatch stored by the admin form and leaves a swatch value pointing outside the swatch folder on disk', function (string $stored, bool $deleted): void {
+    $attribute = Attribute::factory()->create(['type' => 'select', 'swatch_type' => 'image']);
+    $option = AttributeOption::factory()->create(['attribute_id' => $attribute->id]);
+    Storage::put('channel/logo.png', 'x');
+    Storage::put($stored, 'x');
+    $option->swatch_value = $stored;
+    $option->save();
+
+    $this->withHeaders($this->headers)
+        ->json('DELETE', route('admin.api.media-files.attribute.options.delete', ['attribute_code' => $attribute->code, 'code' => $option->code]))
+        ->assertOk();
+
+    expect(Storage::exists($stored))->toBe(! $deleted)
+        ->and($option->fresh()->swatch_value)->toBeNull();
+    Storage::assertExists('channel/logo.png');
+})->with([
+    'admin form swatch'   => ['attribute_option/AbCdEf0123456789.png', true],
+    'product image'       => ['product/1/gallery/kept.png', false],
+    'path stepping out'   => ['attribute_option/../channel/logo.png', false],
+]);
