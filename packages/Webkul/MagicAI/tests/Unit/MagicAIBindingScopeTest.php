@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Facade;
 use Webkul\MagicAI\Facades\MagicAI as MagicAIFacade;
 use Webkul\MagicAI\MagicAI;
 
+/**
+ * Read a protected builder property.
+ */
 function magicAiState(MagicAI $magicAi, string $property): mixed
 {
     return (new ReflectionProperty($magicAi, $property))->getValue($magicAi);
@@ -19,7 +22,7 @@ function endRequestScope(): void
     Facade::clearResolvedInstances();
 }
 
-it('gives the next request or job a clean magic ai builder', function () {
+it('gives the next request or job a clean magic ai builder', function (): void {
     MagicAIFacade::setModel('model-from-request-one')
         ->setSystemPrompt('system prompt from request one')
         ->setTemperature(0.1)
@@ -40,7 +43,7 @@ it('gives the next request or job a clean magic ai builder', function () {
         ->and(magicAiState($next, 'platformRecord'))->toBeNull();
 });
 
-it('does not hand the same instance to the next request or job', function () {
+it('does not hand the same instance to the next request or job', function (): void {
     $first = magic_ai();
 
     endRequestScope();
@@ -48,7 +51,7 @@ it('does not hand the same instance to the next request or job', function () {
     expect(magic_ai())->not->toBe($first);
 });
 
-it('shares one instance between the facade and the helper within a request', function () {
+it('shares one instance between the facade and the helper within a request', function (): void {
     expect(MagicAIFacade::getFacadeRoot())->toBe(magic_ai())
         ->and(magic_ai())->toBeInstanceOf(MagicAI::class);
 });
