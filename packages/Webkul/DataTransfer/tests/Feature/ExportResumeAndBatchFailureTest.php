@@ -9,6 +9,9 @@ use Webkul\DataTransfer\Models\JobTrack;
 use Webkul\DataTransfer\Models\JobTrackBatch;
 use Webkul\DataTransfer\Services\JobLogger;
 
+/**
+ * Read the JSON buffer the type exporter of the given helper holds.
+ */
 function exportBufferOf(Export $helper): JSONFileBuffer
 {
     $property = new ReflectionProperty($helper->getTypeExporter(), 'exportBuffer');
@@ -16,6 +19,9 @@ function exportBufferOf(Export $helper): JSONFileBuffer
     return $property->getValue($helper->getTypeExporter());
 }
 
+/**
+ * Build an export helper for a fresh copy of the job track.
+ */
 function freshExportHelper(JobTrack $jobTrack): Export
 {
     return resolve(Export::class)
@@ -23,13 +29,13 @@ function freshExportHelper(JobTrack $jobTrack): Export
         ->setLogger(JobLogger::make($jobTrack->id));
 }
 
-beforeEach(function () {
+beforeEach(function (): void {
     Storage::fake();
     Bus::fake();
     config(['elasticsearch.enabled' => false]);
 });
 
-it('keeps the rows buffered before a pause when the export is resumed', function () {
+it('keeps the rows buffered before a pause when the export is resumed', function (): void {
     $jobTrack = JobTrack::factory()->export()->create(['state' => Export::STATE_PROCESSING]);
 
     JobTrackBatch::factory()->create(['job_track_id' => $jobTrack->id, 'state' => Export::STATE_PENDING]);
@@ -57,7 +63,32 @@ it('keeps the rows buffered before a pause when the export is resumed', function
     $resumedBuffer->delete();
 });
 
-it('starts a fresh buffer when the export is started again from scratch', function () {
+it('exports the processed batches again when the buffer is gone on resume', function (): void {
+    $jobTrack = JobTrack::factory()->export()->create(['state' => Export::STATE_PROCESSING]);
+
+    $processed = JobTrackBatch::factory()->create(['job_track_id' => $jobTrack->id, 'state' => Export::STATE_PROCESSED]);
+    $pending = JobTrackBatch::factory()->create(['job_track_id' => $jobTrack->id, 'state' => Export::STATE_PENDING]);
+
+    $firstRun = freshExportHelper($jobTrack);
+    $firstRun->start();
+
+    $lostBuffer = exportBufferOf($firstRun)->getFilename();
+
+    $firstRun->pause();
+
+    unlink($lostBuffer);
+
+    $resumed = freshExportHelper($jobTrack);
+    $resumed->resume();
+
+    expect(exportBufferOf($resumed)->getFilename())->not->toBe($lostBuffer)
+        ->and($processed->fresh()->state)->toBe(Export::STATE_PENDING)
+        ->and($pending->fresh()->state)->toBe(Export::STATE_PENDING);
+
+    exportBufferOf($resumed)->delete();
+});
+
+it('starts a fresh buffer when the export is started again from scratch', function (): void {
     $jobTrack = JobTrack::factory()->export()->create(['state' => Export::STATE_PROCESSING]);
 
     JobTrackBatch::factory()->create(['job_track_id' => $jobTrack->id, 'state' => Export::STATE_PENDING]);
@@ -82,7 +113,7 @@ it('starts a fresh buffer when the export is started again from scratch', functi
     $freshBuffer->delete();
 });
 
-it('ignores a stored buffer path that does not belong to the export', function () {
+it('ignores a stored buffer path that does not belong to the export', function (): void {
     $jobTrack = JobTrack::factory()->export()->create(['state' => Export::STATE_PROCESSING]);
 
     JobTrackBatch::factory()->create(['job_track_id' => $jobTrack->id, 'state' => Export::STATE_PENDING]);
@@ -103,7 +134,7 @@ it('ignores a stored buffer path that does not belong to the export', function (
     $buffer->delete();
 });
 
-it('fails the export job when an export batch fails', function () {
+it('fails the export job when an export batch fails', function (): void {
     $jobTrack = JobTrack::factory()->export()->create(['state' => Export::STATE_PROCESSING]);
 
     $batch = JobTrackBatch::factory()->create(['job_track_id' => $jobTrack->id, 'state' => Export::STATE_PENDING]);

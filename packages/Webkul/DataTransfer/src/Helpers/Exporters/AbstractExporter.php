@@ -13,6 +13,7 @@ use Webkul\DataTransfer\Contracts\JobTrackBatch;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
 use Webkul\DataTransfer\Helpers\Concerns\TracksJobHeartbeat;
 use Webkul\DataTransfer\Helpers\Error;
+use Webkul\DataTransfer\Helpers\Export;
 use Webkul\DataTransfer\Jobs\Export\Completed as CompletedJob;
 use Webkul\DataTransfer\Jobs\Export\ExportBatch as ExportBatchJob;
 use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
@@ -440,6 +441,10 @@ abstract class AbstractExporter
             return JSONFileBuffer::load($storedPath);
         }
 
+        if ($storedPath !== null) {
+            $this->requeueProcessedBatches();
+        }
+
         $buffer = JSONFileBuffer::initialize($this->export);
 
         $this->export->forceFill([
@@ -447,6 +452,19 @@ abstract class AbstractExporter
         ])->save();
 
         return $buffer;
+    }
+
+    /**
+     * Export the already processed batches again when the buffer holding their rows is gone,
+     * e.g. the temp directory was cleaned or the export resumed on another host.
+     */
+    protected function requeueProcessedBatches(): void
+    {
+        $requeued = $this->export->batches()
+            ->where('state', Export::STATE_PROCESSED)
+            ->update(['state' => Export::STATE_PENDING]);
+
+        $this->jobLogger?->warning("Export buffer missing on resume; re-exporting {$requeued} processed batches.");
     }
 
     /**
