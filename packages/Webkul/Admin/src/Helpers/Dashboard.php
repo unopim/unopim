@@ -13,7 +13,6 @@ use Webkul\Admin\Helpers\Reporting\Channel;
 use Webkul\Admin\Helpers\Reporting\Currency;
 use Webkul\Admin\Helpers\Reporting\Locale;
 use Webkul\Admin\Helpers\Reporting\Product;
-use Webkul\Core\Models\Channel as ChannelModel;
 use Webkul\Product\Enums\ProductType;
 
 class Dashboard
@@ -275,7 +274,7 @@ class Dashboard
      */
     public function getChannelReadiness()
     {
-        $readiness = Cache::remember('dashboard.channel_readiness_by_locale', self::CACHE_TTL, function () {
+        $readiness = Cache::remember('dashboard.channel_readiness_by_locale', self::CACHE_TTL, function (): array {
             if (! Schema::hasTable('product_completeness')) {
                 return [];
             }
@@ -310,10 +309,11 @@ class Dashboard
     /**
      * Reduce the per channel and locale counts to the one locale each channel's drill-down lands in.
      *
-     * Reads channels straight off the model rather than `core()->getAllChannels()`,
-     * which goes through a repository-level cache that a direct `Channel::factory()`
-     * write (as opposed to `ChannelRepository::create()`/`update()`) never busts —
-     * a newly created channel could otherwise be silently missing from this list.
+     * Completeness data can lag behind a channel's locale membership (e.g. a
+     * locale just added to the channel has no `product_completeness` row
+     * yet). Falling back to any row the channel does have, rather than
+     * dropping it, keeps the channel visible; the link always uses the
+     * locale of the row actually displayed, so the two stay in agreement.
      */
     protected function channelReadinessInDrilldownLocale(array $readiness): array
     {
@@ -321,22 +321,14 @@ class Dashboard
 
         $rowsByChannel = collect($readiness)->groupBy('channel');
 
-        return ChannelModel::with('locales')->get()
-            ->map(function (ChannelModel $channel) use ($rowsByChannel, $requestedLocaleCode): ?array {
+        return core()->getAllChannels()->loadMissing('locales')
+            ->map(function ($channel) use ($rowsByChannel, $requestedLocaleCode): ?array {
                 $channelRows = $rowsByChannel->get($channel->code, collect());
 
                 $localeCode = $channel->locales->contains('code', $requestedLocaleCode)
                     ? $requestedLocaleCode
                     : core()->getLocaleCodeInChannel($channel);
 
-                /**
-                 * Completeness data can lag behind a channel's locale
-                 * membership (e.g. a locale just added to the channel has no
-                 * `product_completeness` row yet). Falling back to any row
-                 * the channel does have, rather than dropping it, keeps the
-                 * channel visible; the link below always uses the locale of
-                 * the row actually displayed, so the two stay in agreement.
-                 */
                 $row = $channelRows->firstWhere('locale', $localeCode) ?? $channelRows->first();
 
                 if (! $row) {

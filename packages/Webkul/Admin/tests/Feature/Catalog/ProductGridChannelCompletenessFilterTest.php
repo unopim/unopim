@@ -2,11 +2,25 @@
 
 use Illuminate\Support\Facades\DB;
 use Webkul\Attribute\Models\AttributeFamilyProxy;
+use Webkul\Category\Models\Category;
 use Webkul\Completeness\Models\ProductCompletenessScore;
 use Webkul\Core\Models\Channel;
+use Webkul\Core\Models\Currency;
+use Webkul\Core\Models\Locale;
+use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\ProductProxy;
 use Webkul\Product\Services\ChannelCompletenessColumn;
+
+function channelReadyForTest(string $code): Channel
+{
+    return app(ChannelRepository::class)->create([
+        'code'             => $code,
+        'root_category_id' => Category::whereIsRoot()->first()->id,
+        'locales'          => Locale::where('status', 1)->limit(1)->pluck('id')->all(),
+        'currencies'       => Currency::where('status', 1)->limit(1)->pluck('id')->all(),
+    ])->load('locales');
+}
 
 function drilldownProduct(Channel $channel, int $locale_id, int $channelScore, int $avgScore): Product
 {
@@ -31,14 +45,14 @@ function drilldownProduct(Channel $channel, int $locale_id, int $channelScore, i
     return $product;
 }
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->loginAsAdmin();
 
     config(['elasticsearch.enabled' => false]);
 });
 
-it('filters by the requested channel\'s own completeness score, not the cross-channel average', function () {
-    $channel = Channel::factory()->create(['code' => 'erp']);
+it('filters by the requested channel\'s own completeness score, not the cross-channel average', function (): void {
+    $channel = channelReadyForTest('erp');
     $locale = $channel->locales()->first();
 
     $incompleteForChannel = drilldownProduct($channel, $locale->id, channelScore: 50, avgScore: 100);
@@ -62,8 +76,8 @@ it('filters by the requested channel\'s own completeness score, not the cross-ch
     expect($skus)->not->toContain($readyForChannel->sku);
 });
 
-it('keeps using the cross-channel average when no channel is requested', function () {
-    $channel = Channel::factory()->create(['code' => 'print']);
+it('keeps using the cross-channel average when no channel is requested', function (): void {
+    $channel = channelReadyForTest('print');
     $locale = $channel->locales()->first();
 
     $product = drilldownProduct($channel, $locale->id, channelScore: 95, avgScore: 40);
@@ -82,8 +96,8 @@ it('keeps using the cross-channel average when no channel is requested', functio
         ->toContain($product->sku);
 });
 
-it('drops the per-channel scoping while Elasticsearch is enabled, so the displayed column and the filtered rows stay on the average it indexes', function () {
-    $channel = Channel::factory()->create(['code' => 'marketplace']);
+it('drops the per-channel scoping while Elasticsearch is enabled, so the displayed column and the filtered rows stay on the average it indexes', function (): void {
+    $channel = channelReadyForTest('marketplace');
     $locale = $channel->locales()->first();
 
     request()->merge(['channel' => $channel->code, 'locale' => $locale->code]);

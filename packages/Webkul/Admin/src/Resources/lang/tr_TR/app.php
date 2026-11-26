@@ -162,7 +162,7 @@ return [
             'of'                           => '/',
             'products-ready'               => 'ürün hazır',
             'no-readiness-data'            => 'Henüz tamlık verisi yok.',
-            'channel-readiness-drilldown'  => ':channel kanalı için kalan eksik ürünleri görüntüle',
+            'readiness-drilldown'          => ':channel kanalı için kalan eksik ürünleri görüntüle',
             'no-products'                  => 'Henüz ürün yok.',
             'last-7-days'                  => 'Son 7 gün',
             'days'                         => [

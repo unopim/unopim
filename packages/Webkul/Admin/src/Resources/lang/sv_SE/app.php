@@ -162,7 +162,7 @@ return [
             'of'                           => 'of',
             'products-ready'               => 'produkter redo',
             'no-readiness-data'            => 'Ingen fullständighetsdata tillgänglig ännu.',
-            'channel-readiness-drilldown'  => 'Visa återstående ofullständiga produkter för kanalen :channel',
+            'readiness-drilldown'          => 'Visa återstående ofullständiga produkter för kanalen :channel',
             'no-products'                  => 'Inga produkter ännu.',
             'last-7-days'                  => 'Senaste 7 dagarna',
             'days'                         => [

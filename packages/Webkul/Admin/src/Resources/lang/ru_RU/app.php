@@ -162,7 +162,7 @@ return [
             'of'                           => 'из',
             'products-ready'               => 'товаров готово',
             'no-readiness-data'            => 'Данных о полноте пока нет.',
-            'channel-readiness-drilldown'  => 'Просмотреть оставшиеся незавершённые товары для канала :channel',
+            'readiness-drilldown'          => 'Просмотреть оставшиеся незавершённые товары для канала :channel',
             'no-products'                  => 'Товаров пока нет.',
             'last-7-days'                  => 'Последние 7 дней',
             'days'                         => [

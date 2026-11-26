@@ -996,7 +996,7 @@
                  */
                 parseUrlFilters() {
                     const filters = {};
-                    const conditions = {};
+                    const conditions = Object.create(null);
                     const params = new URLSearchParams(window.location.search);
 
                     for (const [key, value] of params.entries()) {

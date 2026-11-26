@@ -9,6 +9,8 @@ use Webkul\Core\Repositories\LocaleRepository;
 
 /**
  * Resolves the channel/locale scope the completeness property is read in.
+ * Bound scoped per request (see `ProductServiceProvider::registerBindings()`)
+ * so the product grid and the completeness filter share one resolution.
  */
 class ChannelCompletenessColumn
 {

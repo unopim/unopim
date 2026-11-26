@@ -162,7 +162,7 @@ return [
             'of'                           => 'of',
             'products-ready'               => 'бүтээгдэхүүн бэлэн',
             'no-readiness-data'            => 'Бүрэн байдалтай мэдээлэл одоогоор байхгүй.',
-            'channel-readiness-drilldown'  => ':channel сувгийн дутуу бүтээгдэхүүнийг харах',
+            'readiness-drilldown'          => ':channel сувгийн дутуу бүтээгдэхүүнийг харах',
             'no-products'                  => 'Одоогоор бүтээгдэхүүн алга.',
             'last-7-days'                  => 'Сүүлийн 7 хоног',
 

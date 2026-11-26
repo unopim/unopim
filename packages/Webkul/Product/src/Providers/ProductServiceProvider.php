@@ -105,8 +105,6 @@ class ProductServiceProvider extends ServiceProvider
         $this->app->bind(TemplateRendererContract::class, TemplateRenderer::class);
         $this->app->bind(TemplateValidatorContract::class, TemplateValidator::class);
         $this->app->singleton(FilterRegistry::class);
-
-        // Scoped so the product grid and the completeness filter share one resolution per request.
         $this->app->scoped(ChannelCompletenessColumn::class);
     }
 

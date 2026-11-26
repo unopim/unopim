@@ -3,9 +3,12 @@
 use Illuminate\Support\Facades\Cache;
 use Webkul\Admin\Helpers\Dashboard;
 use Webkul\Attribute\Models\AttributeFamilyProxy;
+use Webkul\Category\Models\Category;
 use Webkul\Completeness\Models\ProductCompletenessScore;
 use Webkul\Core\Models\Channel;
+use Webkul\Core\Models\Currency;
 use Webkul\Core\Models\Locale;
+use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Product\Models\ProductProxy;
 
 function scoreProductIn(Channel $channel, Locale $locale, int $score): void
@@ -25,9 +28,14 @@ function scoreProductIn(Channel $channel, Locale $locale, int $score): void
 
 function channelWithLocales(string $code, int $localeCount = 1): Channel
 {
-    $channel = Channel::factory()->create(['code' => $code]);
+    $locales = Locale::query()->orderBy('id')->limit($localeCount)->get();
 
-    $channel->locales()->sync(Locale::query()->orderBy('id')->limit($localeCount)->pluck('id'));
+    $channel = app(ChannelRepository::class)->create([
+        'code'             => $code,
+        'root_category_id' => Category::whereIsRoot()->first()->id,
+        'locales'          => $locales->pluck('id')->all(),
+        'currencies'       => Currency::where('status', 1)->limit(1)->pluck('id')->all(),
+    ]);
 
     return $channel->load('locales');
 }
@@ -41,11 +49,11 @@ function readinessFor(string $channelCode, ?string $localeCode = null): ?array
     return collect(app(Dashboard::class)->getChannelReadiness())->firstWhere('channel', $channelCode);
 }
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->loginAsAdmin();
 });
 
-it('counts readiness in the requested locale only, not across every locale of the channel', function () {
+it('counts readiness in the requested locale only, not across every locale of the channel', function (): void {
     $channel = channelWithLocales('multi-locale', 2);
 
     [$ready, $incomplete] = $channel->locales->values()->all();
@@ -58,9 +66,9 @@ it('counts readiness in the requested locale only, not across every locale of th
 
     expect(readinessFor('multi-locale', $incomplete->code))
         ->toMatchArray(['locale' => $incomplete->code, 'total' => 1, 'ready' => 0]);
-})->skip(fn () => Locale::query()->count() < 2, 'needs at least two locales');
+})->skip(fn (): bool => Locale::query()->count() < 2, 'needs at least two locales');
 
-it('reports the locale the drill-down link has to filter by', function () {
+it('reports the locale the drill-down link has to filter by', function (): void {
     $channel = channelWithLocales('reports-locale');
 
     $locale = $channel->locales->first();
@@ -71,7 +79,7 @@ it('reports the locale the drill-down link has to filter by', function () {
         ->toMatchArray(['locale' => $locale->code, 'total' => 1, 'ready' => 0]);
 });
 
-it('falls back to a locale the channel carries when the requested one is foreign to it', function () {
+it('falls back to a locale the channel carries when the requested one is foreign to it', function (): void {
     $channel = channelWithLocales('foreign-locale');
 
     $locale = $channel->locales->first();
@@ -82,9 +90,9 @@ it('falls back to a locale the channel carries when the requested one is foreign
 
     expect(readinessFor('foreign-locale', $foreign->code))
         ->toHaveKey('locale', core()->getLocaleCodeInChannel($channel));
-})->skip(fn () => Locale::query()->count() < 2, 'needs at least two locales');
+})->skip(fn (): bool => Locale::query()->count() < 2, 'needs at least two locales');
 
-it('serves the channel readiness payload from the dashboard stats endpoint', function () {
+it('serves the channel readiness payload from the dashboard stats endpoint', function (): void {
     Cache::forget('dashboard.channel_readiness_by_locale');
 
     $this->getJson(route('admin.dashboard.stats', ['type' => 'channel-readiness']))
@@ -92,7 +100,7 @@ it('serves the channel readiness payload from the dashboard stats endpoint', fun
         ->assertJsonStructure(['statistics']);
 });
 
-it('renders the drill-down as a plain link when Elasticsearch is disabled', function () {
+it('renders the drill-down as a plain link when Elasticsearch is disabled', function (): void {
     config(['elasticsearch.enabled' => false]);
 
     $this->get(route('admin.dashboard.index'))
@@ -100,7 +108,7 @@ it('renders the drill-down as a plain link when Elasticsearch is disabled', func
         ->assertSee('esEnabled: false', false);
 });
 
-it('hides the drill-down link when Elasticsearch is enabled, since the list would use the average', function () {
+it('hides the drill-down link when Elasticsearch is enabled, since the list would use the average', function (): void {
     config(['elasticsearch.enabled' => true]);
 
     $this->get(route('admin.dashboard.index'))

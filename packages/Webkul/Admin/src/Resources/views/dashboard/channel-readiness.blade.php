@@ -19,11 +19,11 @@
                 <template v-if="channels.length > 0">
                     <div class="space-y-4">
                         <component
-                            :is="esEnabled ? 'div' : 'a'"
+                            :is="esEnabled || !canViewProducts ? 'div' : 'a'"
                             v-for="ch in channels"
                             :key="ch.channel"
-                            :href="esEnabled ? undefined : productsUrl(ch)"
-                            :title="esEnabled ? undefined : incompleteLinkTitle(ch)"
+                            :href="esEnabled || !canViewProducts ? undefined : productsUrl(ch)"
+                            :title="esEnabled || !canViewProducts ? undefined : incompleteLinkTitle(ch)"
                             class="block rounded-md -m-1 p-1 transition-colors hover:bg-gray-50 dark:hover:bg-cherry-800"
                         >
                             <div class="flex items-center justify-between mb-1.5">
@@ -76,6 +76,7 @@
                     channels: [],
                     isLoading: true,
                     esEnabled: @json((bool) config('elasticsearch.enabled')),
+                    canViewProducts: @json(bouncer()->hasPermission('catalog.products')),
                 }
             },
 
@@ -130,8 +131,8 @@
                 },
 
                 incompleteLinkTitle(ch) {
-                    return @json(trans('admin::app.dashboard.index.channel-readiness-drilldown'))
-                        .replace(':channel', ch.channel);
+                    return @json(trans('admin::app.dashboard.index.readiness-drilldown'))
+                        .replace(':channel', ch.label);
                 }
             }
         });
