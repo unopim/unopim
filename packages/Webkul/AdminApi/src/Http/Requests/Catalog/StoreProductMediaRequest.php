@@ -2,10 +2,7 @@
 
 namespace Webkul\AdminApi\Http\Requests\Catalog;
 
-use Illuminate\Validation\Rule;
-use Webkul\AdminApi\Http\Requests\ApiFormRequest;
-
-class StoreProductMediaRequest extends ApiFormRequest
+class StoreProductMediaRequest extends ProductMediaRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -18,8 +15,7 @@ class StoreProductMediaRequest extends ApiFormRequest
             'file'      => 'required',
             'sku'       => 'required',
             'attribute' => 'required',
-            'channel'   => ['nullable', 'string', Rule::exists('channels', 'code')],
-            'locale'    => ['nullable', 'string', Rule::exists('locales', 'code')->where('status', 1)],
+            ...parent::rules(),
         ];
     }
 }
