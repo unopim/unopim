@@ -1,3 +1,9 @@
+# Unreleased
+
+## Bug fixes
+
+- Fixed REST API uploads to a product gallery replacing the images already in it. Each upload is now appended to the gallery and stored as a list, the same way the product form saves it, in its own folder so two files with the same name are both kept. An upload that would take the gallery past `media.gallery.max_files` or `max_total_size_kilobytes` is rejected with 422. Integrations that relied on an upload replacing the gallery must now `DELETE` the gallery media first, or `PATCH` the product's gallery value with the full list. Getting or deleting the media of a gallery saved from the product form no longer returns a server error. Uploading, getting and deleting media with a `channel` or `locale` that does not exist, or with a locale the channel does not hold for an attribute stored per channel and locale, is now rejected with 422.
+
 # 3.1.4 — November 23rd, 2026
 
 This is a security release. Upgrade promptly and follow the upgrade steps: several actions now require a permission they did not check before, and some Magic AI platform and import settings that were accepted before are now refused.

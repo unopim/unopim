@@ -7,12 +7,14 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
 use Symfony\Component\HttpFoundation\Response;
 use Webkul\AdminApi\Http\Controllers\API\ApiController;
+use Webkul\AdminApi\Http\Requests\Catalog\ProductMediaRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\StoreCategoryMediaRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\StoreProductMediaRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\StoreSwatchMediaRequest;
@@ -67,6 +69,9 @@ class MediaFileController extends ApiController
 
         $attributeValue = $requestData['file'];
         $attribute = $requestData['attribute'];
+        $storeOptions = $this->attributeRepository->findOneByField('code', $attribute)?->type === AttributeTypes::GALLERY_ATTRIBUTE_TYPE
+            ? [FileStorer::HASHED_FOLDER_NAME_KEY => true]
+            : [];
 
         try {
             $attributeValue = is_array($attributeValue) ? $attributeValue : [$attributeValue];
@@ -76,14 +81,22 @@ class MediaFileController extends ApiController
                 if ($value instanceof UploadedFile) {
                     $filePath[] = $this->fileStorer->store(
                         path: 'product'.DIRECTORY_SEPARATOR.$productId.DIRECTORY_SEPARATOR.$attribute,
-                        file: $value
+                        file: $value,
+                        options: $storeOptions,
                     );
                 }
             }
 
+            $storedPaths = $filePath;
             $filePath = implode(',', $filePath);
 
-            $this->assignMediaToProductAttribute($product, $attribute, $filePath);
+            try {
+                $this->assignMediaToProductAttribute($product, $attribute, $filePath);
+            } catch (ValidationException $e) {
+                $this->deleteFiles($storedPaths);
+
+                return $this->validateErrorResponse($e->validator->errors()->messages());
+            }
 
             return $this->successResponse(
                 trans('admin::app.catalog.products.upload-success'),
@@ -216,7 +229,7 @@ class MediaFileController extends ApiController
     /**
      * Return the stored media path(s) for a product attribute at the resolved scope.
      */
-    public function getProductMedia(): JsonResponse
+    public function getProductMedia(ProductMediaRequest $request): JsonResponse
     {
         $product = $this->productRepository->findByField('sku', request('sku'))->first();
         if (! $product) {
@@ -233,7 +246,7 @@ class MediaFileController extends ApiController
     /**
      * Delete a product attribute's media file(s) from storage and clear the value.
      */
-    public function deleteProductMedia(): JsonResponse
+    public function deleteProductMedia(ProductMediaRequest $request): JsonResponse
     {
         $product = $this->productRepository->findByField('sku', request('sku'))->first();
         if (! $product) {
@@ -377,7 +390,7 @@ class MediaFileController extends ApiController
      *
      * @return array{0: mixed, 1: array<string, mixed>, 2: string}
      */
-    private function resolveProductMediaSlot($product, string $attributeCode): array
+    private function resolveProductMediaSlot(Product $product, string $attributeCode): array
     {
         $attribute = $this->attributeRepository->findOneByField('code', $attributeCode);
         $values = $product->values ?? [];
@@ -398,6 +411,8 @@ class MediaFileController extends ApiController
     }
 
     /**
+     * Split a stored media value, list or comma string, into trimmed paths.
+     *
      * @return array<int, string>
      */
     private function splitPaths(mixed $value): array
@@ -425,25 +440,64 @@ class MediaFileController extends ApiController
 
     /**
      * Persist the uploaded file paths at the attribute's scope, appending to a gallery and replacing any other media.
+     *
+     * @throws ValidationException when the gallery would exceed its file count or total size limit
      */
-    protected function assignMediaToProductAttribute($product, string $attributeCode, string $filePath): void
+    protected function assignMediaToProductAttribute(Product $product, string $attributeCode, string $filePath): void
     {
         if ($filePath === '') {
             return;
         }
 
-        [$attribute, $values, $path] = $this->resolveProductMediaSlot($product, $attributeCode);
+        DB::transaction(function () use ($product, $attributeCode, $filePath): void {
+            $lockedProduct = $this->productRepository->getModel()::query()->whereKey($product->id)->lockForUpdate()->first();
 
-        if (! $attribute) {
-            return;
+            [$attribute, $values, $path] = $this->resolveProductMediaSlot($lockedProduct, $attributeCode);
+
+            if (! $attribute) {
+                return;
+            }
+
+            if ($attribute->type === AttributeTypes::GALLERY_ATTRIBUTE_TYPE) {
+                $gallery = array_values(array_unique([...$this->splitPaths(Arr::get($values, $path)), ...$this->splitPaths($filePath)]));
+
+                $this->ensureGalleryWithinLimits($gallery);
+
+                Arr::set($values, $path, $gallery);
+            } else {
+                Arr::set($values, $path, $filePath);
+            }
+
+            $product->values = $values;
+            $product->save();
+        });
+    }
+
+    /**
+     * Refuse a gallery holding more files or bytes than the product form accepts.
+     *
+     * @param  array<int, string>  $paths
+     *
+     * @throws ValidationException
+     */
+    private function ensureGalleryWithinLimits(array $paths): void
+    {
+        $maxFiles = (int) config('media.gallery.max_files', 50);
+
+        if (count($paths) > $maxFiles) {
+            throw ValidationException::withMessages([
+                'file' => trans('validation.max.array', ['attribute' => 'file', 'max' => $maxFiles]),
+            ]);
         }
 
-        Arr::set($values, $path, $attribute->type === AttributeTypes::GALLERY_ATTRIBUTE_TYPE
-            ? array_values(array_unique([...$this->splitPaths(Arr::get($values, $path)), ...$this->splitPaths($filePath)]))
-            : $filePath);
+        $maxTotalKilobytes = (int) config('media.gallery.max_total_size_kilobytes', 51200);
+        $totalBytes = array_sum(array_map(fn (string $path): int => Storage::exists($path) ? Storage::size($path) : 0, $paths));
 
-        $product->values = $values;
-        $product->save();
+        if ($maxTotalKilobytes > 0 && $totalBytes > $maxTotalKilobytes * 1024) {
+            throw ValidationException::withMessages([
+                'file' => trans('validation.max.file', ['attribute' => 'file', 'max' => $maxTotalKilobytes]),
+            ]);
+        }
     }
 
     /**

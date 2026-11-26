@@ -3,7 +3,9 @@
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\TestResponse;
+use Webkul\AdminApi\Http\Controllers\API\Catalog\MediaFileController;
 use Webkul\Attribute\Models\Attribute;
+use Webkul\Core\Models\Locale;
 use Webkul\Product\Models\Product;
 
 beforeEach(function (): void {
@@ -18,7 +20,7 @@ beforeEach(function (): void {
 /**
  * Create a media attribute of the given type and scope.
  */
-function createMediaAttribute(string $type, bool $perChannel = false, bool $perLocale = false): Attribute
+function apiGalleryMediaAttribute(string $type, bool $perChannel = false, bool $perLocale = false): Attribute
 {
     return Attribute::factory()->create([
         'type'              => $type,
@@ -30,9 +32,10 @@ function createMediaAttribute(string $type, bool $perChannel = false, bool $perL
 /**
  * Upload one or more files to a product media attribute through the REST API.
  *
+ * @param  array<int, string>  $fileNames
  * @param  array<string, string>  $scope
  */
-function uploadProductMedia(string $sku, string $attributeCode, array $fileNames, array $scope = []): TestResponse
+function apiGalleryUploadMedia(string $sku, string $attributeCode, array $fileNames, array $scope = []): TestResponse
 {
     $files = array_map(fn (string $name): UploadedFile => UploadedFile::fake()->image($name), $fileNames);
 
@@ -47,86 +50,118 @@ function uploadProductMedia(string $sku, string $attributeCode, array $fileNames
 /**
  * Store a product value directly, the way the admin form or an earlier release saved it.
  */
-function storeProductValue(Product $product, string $attributeCode, mixed $value): void
+function apiGalleryStoreValue(Product $product, string $attributeCode, mixed $value): void
 {
     $product->values = array_merge($product->values ?? [], ['common' => [...($product->values['common'] ?? []), $attributeCode => $value]]);
     $product->save();
 }
 
-it('keeps every image when gallery images are uploaded one request at a time', function (): void {
-    $gallery = createMediaAttribute('gallery');
+/**
+ * The file names of gallery paths, after checking each one sits in its own hashed folder under the base path.
+ *
+ * @param  array<int, string>  $paths
+ * @return array<int, string>
+ */
+function apiGalleryUploadedNames(array $paths, string $base): array
+{
+    foreach ($paths as $path) {
+        expect($path)->toMatch('#^'.preg_quote($base, '#').'/[A-Za-z0-9]{40}/[^/]+$#');
+    }
 
-    uploadProductMedia($this->product->sku, $gallery->code, ['first.png']);
-    uploadProductMedia($this->product->sku, $gallery->code, ['second.png']);
+    return array_map(basename(...), $paths);
+}
+
+it('keeps every image when gallery images are uploaded one request at a time', function (): void {
+    $gallery = apiGalleryMediaAttribute('gallery');
+
+    apiGalleryUploadMedia($this->product->sku, $gallery->code, ['first.png']);
+    apiGalleryUploadMedia($this->product->sku, $gallery->code, ['second.png']);
 
     $base = 'product/'.$this->product->id.'/'.$gallery->code;
 
-    expect($this->product->fresh()->values['common'][$gallery->code])->toBe([$base.'/first.png', $base.'/second.png']);
+    expect(apiGalleryUploadedNames($this->product->fresh()->values['common'][$gallery->code], $base))->toBe(['first.png', 'second.png']);
 });
 
 it('appends an upload to a gallery saved as a list by the admin form', function (): void {
-    $gallery = createMediaAttribute('gallery');
+    $gallery = apiGalleryMediaAttribute('gallery');
 
-    storeProductValue($this->product, $gallery->code, ['product/existing/one.png', 'product/existing/two.png']);
+    apiGalleryStoreValue($this->product, $gallery->code, ['product/existing/one.png', 'product/existing/two.png']);
 
-    uploadProductMedia($this->product->sku, $gallery->code, ['third.png']);
+    apiGalleryUploadMedia($this->product->sku, $gallery->code, ['third.png']);
 
-    expect($this->product->fresh()->values['common'][$gallery->code])->toBe([
-        'product/existing/one.png',
-        'product/existing/two.png',
-        'product/'.$this->product->id.'/'.$gallery->code.'/third.png',
-    ]);
+    $stored = $this->product->fresh()->values['common'][$gallery->code];
+
+    expect(array_slice($stored, 0, 2))->toBe(['product/existing/one.png', 'product/existing/two.png'])
+        ->and(apiGalleryUploadedNames(array_slice($stored, 2), 'product/'.$this->product->id.'/'.$gallery->code))->toBe(['third.png']);
 });
 
 it('converts a comma separated gallery written by an earlier release into a list when appending', function (): void {
-    $gallery = createMediaAttribute('gallery');
+    $gallery = apiGalleryMediaAttribute('gallery');
 
-    storeProductValue($this->product, $gallery->code, 'product/legacy/one.png,product/legacy/two.png');
+    apiGalleryStoreValue($this->product, $gallery->code, 'product/legacy/one.png,product/legacy/two.png');
 
-    uploadProductMedia($this->product->sku, $gallery->code, ['three.png']);
+    apiGalleryUploadMedia($this->product->sku, $gallery->code, ['three.png']);
 
-    expect($this->product->fresh()->values['common'][$gallery->code])->toBe([
-        'product/legacy/one.png',
-        'product/legacy/two.png',
-        'product/'.$this->product->id.'/'.$gallery->code.'/three.png',
-    ]);
+    $stored = $this->product->fresh()->values['common'][$gallery->code];
+
+    expect(array_slice($stored, 0, 2))->toBe(['product/legacy/one.png', 'product/legacy/two.png'])
+        ->and(apiGalleryUploadedNames(array_slice($stored, 2), 'product/'.$this->product->id.'/'.$gallery->code))->toBe(['three.png']);
 });
 
 it('appends every file of a multi file upload to the existing gallery', function (): void {
-    $gallery = createMediaAttribute('gallery');
+    $gallery = apiGalleryMediaAttribute('gallery');
 
-    storeProductValue($this->product, $gallery->code, ['product/existing/one.png']);
+    apiGalleryStoreValue($this->product, $gallery->code, ['product/existing/one.png']);
 
-    uploadProductMedia($this->product->sku, $gallery->code, ['two.png', 'three.png']);
+    apiGalleryUploadMedia($this->product->sku, $gallery->code, ['two.png', 'three.png']);
 
-    $base = 'product/'.$this->product->id.'/'.$gallery->code;
+    $stored = $this->product->fresh()->values['common'][$gallery->code];
 
-    expect($this->product->fresh()->values['common'][$gallery->code])->toBe(['product/existing/one.png', $base.'/two.png', $base.'/three.png']);
+    expect($stored[0])->toBe('product/existing/one.png')
+        ->and(apiGalleryUploadedNames(array_slice($stored, 1), 'product/'.$this->product->id.'/'.$gallery->code))->toBe(['two.png', 'three.png']);
 });
 
-it('does not list the same gallery path twice when a file is uploaded again', function (): void {
-    $gallery = createMediaAttribute('gallery');
+it('keeps two different files uploaded under the same name as two gallery images', function (): void {
+    $gallery = apiGalleryMediaAttribute('gallery');
 
-    uploadProductMedia($this->product->sku, $gallery->code, ['same.png']);
-    uploadProductMedia($this->product->sku, $gallery->code, ['same.png']);
+    apiGalleryUploadMedia($this->product->sku, $gallery->code, ['same.png']);
+    apiGalleryUploadMedia($this->product->sku, $gallery->code, ['same.png']);
 
-    expect($this->product->fresh()->values['common'][$gallery->code])->toBe(['product/'.$this->product->id.'/'.$gallery->code.'/same.png']);
+    $stored = $this->product->fresh()->values['common'][$gallery->code];
+
+    expect(apiGalleryUploadedNames($stored, 'product/'.$this->product->id.'/'.$gallery->code))->toBe(['same.png', 'same.png'])
+        ->and($stored[0])->not->toBe($stored[1]);
+
+    Storage::assertExists($stored);
+});
+
+it('does not list the same gallery path twice', function (): void {
+    $gallery = apiGalleryMediaAttribute('gallery');
+
+    apiGalleryStoreValue($this->product, $gallery->code, ['product/existing/one.png', 'product/existing/one.png']);
+
+    apiGalleryUploadMedia($this->product->sku, $gallery->code, ['two.png']);
+
+    $stored = $this->product->fresh()->values['common'][$gallery->code];
+
+    expect($stored)->toHaveCount(2)
+        ->and($stored[0])->toBe('product/existing/one.png');
 });
 
 it('appends gallery uploads at the scope the attribute is stored in', function (bool $perChannel, bool $perLocale, string $scopePath): void {
-    $gallery = createMediaAttribute('gallery', $perChannel, $perLocale);
+    $gallery = apiGalleryMediaAttribute('gallery', $perChannel, $perLocale);
 
     $channel = core()->getDefaultChannelCode();
     $locale = core()->getDefaultLocaleCodeFromDefaultChannel();
     $scope = ['channel' => $channel, 'locale' => $locale];
 
-    uploadProductMedia($this->product->sku, $gallery->code, ['first.png'], $scope);
-    uploadProductMedia($this->product->sku, $gallery->code, ['second.png'], $scope);
+    apiGalleryUploadMedia($this->product->sku, $gallery->code, ['first.png'], $scope);
+    apiGalleryUploadMedia($this->product->sku, $gallery->code, ['second.png'], $scope);
 
     $base = 'product/'.$this->product->id.'/'.$gallery->code;
     $values = $this->product->fresh()->values;
 
-    expect(data_get($values, [...explode('.', strtr($scopePath, ['{channel}' => $channel, '{locale}' => $locale])), $gallery->code]))->toBe([$base.'/first.png', $base.'/second.png'])
+    expect(apiGalleryUploadedNames(data_get($values, [...explode('.', strtr($scopePath, ['{channel}' => $channel, '{locale}' => $locale])), $gallery->code]), $base))->toBe(['first.png', 'second.png'])
         ->and($values['common'][$gallery->code] ?? null)->toBeNull();
 })->with([
     'per channel and locale' => [true, true, 'channel_locale_specific.{channel}.{locale}'],
@@ -135,7 +170,7 @@ it('appends gallery uploads at the scope the attribute is stored in', function (
 ]);
 
 it('rejects a channel or locale that does not exist without touching the product', function (string $field, string $code): void {
-    $gallery = createMediaAttribute('gallery', perChannel: true, perLocale: true);
+    $gallery = apiGalleryMediaAttribute('gallery', perChannel: true, perLocale: true);
 
     $valuesBefore = $this->product->fresh()->values;
 
@@ -153,18 +188,18 @@ it('rejects a channel or locale that does not exist without touching the product
 ]);
 
 it('still replaces the value of an image attribute on a new upload', function (): void {
-    $image = createMediaAttribute('image');
+    $image = apiGalleryMediaAttribute('image');
 
-    uploadProductMedia($this->product->sku, $image->code, ['first.png']);
-    uploadProductMedia($this->product->sku, $image->code, ['second.png']);
+    apiGalleryUploadMedia($this->product->sku, $image->code, ['first.png']);
+    apiGalleryUploadMedia($this->product->sku, $image->code, ['second.png']);
 
     expect($this->product->fresh()->values['common'][$image->code])->toBe('product/'.$this->product->id.'/'.$image->code.'/second.png');
 });
 
 it('returns every path of a gallery saved as a list', function (): void {
-    $gallery = createMediaAttribute('gallery');
+    $gallery = apiGalleryMediaAttribute('gallery');
 
-    storeProductValue($this->product, $gallery->code, ['product/existing/one.png', 'product/existing/two.png']);
+    apiGalleryStoreValue($this->product, $gallery->code, ['product/existing/one.png', 'product/existing/two.png']);
 
     $this->withHeaders($this->headers)
         ->json('GET', route('admin.api.media-files.product.get', ['sku' => $this->product->sku, 'attribute' => $gallery->code]))
@@ -173,7 +208,7 @@ it('returns every path of a gallery saved as a list', function (): void {
 });
 
 it('deletes every file of a gallery saved as a list', function (): void {
-    $gallery = createMediaAttribute('gallery');
+    $gallery = apiGalleryMediaAttribute('gallery');
 
     $paths = ['product/existing/one.png', 'product/existing/two.png'];
 
@@ -181,7 +216,7 @@ it('deletes every file of a gallery saved as a list', function (): void {
         Storage::put($path, 'x');
     }
 
-    storeProductValue($this->product, $gallery->code, $paths);
+    apiGalleryStoreValue($this->product, $gallery->code, $paths);
 
     $this->withHeaders($this->headers)
         ->json('DELETE', route('admin.api.media-files.product.delete', ['sku' => $this->product->sku, 'attribute' => $gallery->code]))
@@ -192,3 +227,113 @@ it('deletes every file of a gallery saved as a list', function (): void {
 
     expect($this->product->fresh()->values['common'][$gallery->code] ?? null)->toBeNull();
 });
+
+it('refuses an upload that would take a gallery past its file limit and keeps the gallery', function (): void {
+    config(['media.gallery.max_files' => 2]);
+
+    $gallery = apiGalleryMediaAttribute('gallery');
+
+    apiGalleryStoreValue($this->product, $gallery->code, ['product/existing/one.png', 'product/existing/two.png']);
+
+    $this->withHeaders($this->headers)->post(route('admin.api.media-files.product.store'), [
+        'sku'       => $this->product->sku,
+        'attribute' => $gallery->code,
+        'file'      => UploadedFile::fake()->image('three.png'),
+    ])->assertUnprocessable();
+
+    expect($this->product->fresh()->values['common'][$gallery->code])->toBe(['product/existing/one.png', 'product/existing/two.png'])
+        ->and(Storage::allFiles('product/'.$this->product->id))->toBe([]);
+});
+
+it('accepts an upload that fills a gallery exactly to its file limit', function (): void {
+    config(['media.gallery.max_files' => 2]);
+
+    $gallery = apiGalleryMediaAttribute('gallery');
+
+    apiGalleryStoreValue($this->product, $gallery->code, ['product/existing/one.png']);
+
+    apiGalleryUploadMedia($this->product->sku, $gallery->code, ['two.png']);
+
+    expect($this->product->fresh()->values['common'][$gallery->code])->toHaveCount(2);
+});
+
+it('refuses an upload that would take a gallery past its total size limit', function (): void {
+    config(['media.gallery.max_total_size_kilobytes' => 10]);
+
+    $gallery = apiGalleryMediaAttribute('gallery');
+
+    Storage::put('product/existing/large.png', str_repeat('x', 10 * 1024));
+    apiGalleryStoreValue($this->product, $gallery->code, ['product/existing/large.png']);
+
+    $this->withHeaders($this->headers)->post(route('admin.api.media-files.product.store'), [
+        'sku'       => $this->product->sku,
+        'attribute' => $gallery->code,
+        'file'      => UploadedFile::fake()->image('two.png'),
+    ])->assertUnprocessable();
+
+    expect($this->product->fresh()->values['common'][$gallery->code])->toBe(['product/existing/large.png'])
+        ->and(Storage::allFiles('product/'.$this->product->id))->toBe([]);
+});
+
+it('merges into the gallery stored now, not the one the request loaded', function (): void {
+    $gallery = apiGalleryMediaAttribute('gallery');
+
+    $loaded = Product::query()->findOrFail($this->product->id);
+
+    apiGalleryStoreValue($this->product, $gallery->code, ['product/existing/one.png']);
+
+    $controller = app(MediaFileController::class);
+
+    (new ReflectionMethod($controller, 'assignMediaToProductAttribute'))->invoke($controller, $loaded, $gallery->code, 'product/'.$this->product->id.'/'.$gallery->code.'/two.png');
+
+    expect($this->product->fresh()->values['common'][$gallery->code])->toBe([
+        'product/existing/one.png',
+        'product/'.$this->product->id.'/'.$gallery->code.'/two.png',
+    ]);
+});
+
+it('rejects a locale the channel does not hold for a channel and locale scoped attribute', function (string $method, string $route): void {
+    $gallery = apiGalleryMediaAttribute('gallery', perChannel: true, perLocale: true);
+    $locale = Locale::factory()->create(['status' => 1]);
+
+    $payload = ['sku' => $this->product->sku, 'attribute' => $gallery->code, 'channel' => core()->getDefaultChannelCode(), 'locale' => $locale->code];
+
+    if ($method === 'POST') {
+        $payload['file'] = UploadedFile::fake()->image('first.png');
+    }
+
+    $this->withHeaders($this->headers)->json($method, route($route), $payload)
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['locale']);
+})->with([
+    'upload' => ['POST', 'admin.api.media-files.product.store'],
+    'get'    => ['GET', 'admin.api.media-files.product.get'],
+    'delete' => ['DELETE', 'admin.api.media-files.product.delete'],
+]);
+
+it('accepts a locale outside the channel for an attribute stored per locale only', function (): void {
+    $gallery = apiGalleryMediaAttribute('gallery', perLocale: true);
+    $locale = Locale::factory()->create(['status' => 1]);
+
+    apiGalleryUploadMedia($this->product->sku, $gallery->code, ['first.png'], ['locale' => $locale->code]);
+
+    expect($this->product->fresh()->values['locale_specific'][$locale->code][$gallery->code])->toHaveCount(1);
+});
+
+it('rejects an unknown channel or locale when reading or deleting media', function (string $method, string $route, string $field, string $code): void {
+    $gallery = apiGalleryMediaAttribute('gallery');
+
+    apiGalleryStoreValue($this->product, $gallery->code, ['product/existing/one.png']);
+
+    $this->withHeaders($this->headers)
+        ->json($method, route($route, ['sku' => $this->product->sku, 'attribute' => $gallery->code, $field => $code]))
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors([$field]);
+
+    expect($this->product->fresh()->values['common'][$gallery->code])->toBe(['product/existing/one.png']);
+})->with([
+    'get unknown channel'    => ['GET', 'admin.api.media-files.product.get', 'channel', 'default.sku'],
+    'get unknown locale'     => ['GET', 'admin.api.media-files.product.get', 'locale', 'xx_XX'],
+    'delete unknown channel' => ['DELETE', 'admin.api.media-files.product.delete', 'channel', 'default.sku'],
+    'delete unknown locale'  => ['DELETE', 'admin.api.media-files.product.delete', 'locale', 'xx_XX'],
+]);
