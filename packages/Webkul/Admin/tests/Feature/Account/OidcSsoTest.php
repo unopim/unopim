@@ -769,6 +769,24 @@ it('refuses an inactive admin', function (): void {
     $response->assertSessionHas('warning');
 });
 
+it('never links an email-matched admin whose login is refused', function (array $attributes, string $flash): void {
+    $admin = oidcAdmin($attributes);
+
+    oidcFakeIdp();
+
+    $response = oidcCallback();
+
+    oidcAssertRejected($response);
+
+    $response->assertSessionHas($flash);
+
+    expect($admin->fresh()->sso_provider)->toBeNull()
+        ->and($admin->fresh()->sso_identifier)->toBeNull();
+})->with([
+    'inactive admin' => [['status' => 0], 'warning'],
+    'api user'       => [['type' => 'api'], 'error'],
+]);
+
 it('refuses an api user and leaves its role alone', function (): void {
     $role = oidcRole();
 

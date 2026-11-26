@@ -52,6 +52,8 @@ class SsoAuthenticator
      * address would otherwise inherit the previous holder's admin account. An
      * account already bound to a subject, by this or any other driver, is never
      * re-bound by email, so one driver cannot take over another driver's binding.
+     * The link is only written for an account that may sign in, so a refused
+     * login never leaves a binding behind.
      */
     protected function resolveAdmin(SsoIdentity $identity, SsoProvider $provider): ?Admin
     {
@@ -67,9 +69,7 @@ class SsoAuthenticator
             return null;
         }
 
-        if ($admin->sso_identifier !== null) {
-            throw SsoAuthenticationException::rejected($identity->email);
-        }
+        $this->ensureLinkable($admin, $identity);
 
         $admin->forceFill([
             'sso_provider'   => $provider->getCode(),
@@ -77,6 +77,23 @@ class SsoAuthenticator
         ])->save();
 
         return $admin;
+    }
+
+    /**
+     * Refuse linking an email-matched admin by subject when the account is
+     * already bound, is an API user or is inactive, before anything is written.
+     *
+     * @throws SsoAuthenticationException
+     */
+    public function ensureLinkable(Admin $admin, SsoIdentity $identity): void
+    {
+        if ($admin->sso_identifier !== null || $admin->isApiUser()) {
+            throw SsoAuthenticationException::rejected($identity->email);
+        }
+
+        if (! $admin->status) {
+            throw SsoAuthenticationException::inactive($identity->email);
+        }
     }
 
     /**

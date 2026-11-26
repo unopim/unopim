@@ -42,7 +42,8 @@ class OidcIdentityListener
      * address (`email_verified === true`), whatever the verified-email switch
      * says, so registering someone else's address at the provider cannot take
      * over their account. An admin already bound to another subject, by any
-     * driver, is refused rather than re-bound. Without any match the account is
+     * driver, an API user or an inactive admin is refused before any link is
+     * written. Without any match the account is
      * provisioned when enabled. With a role map configured, a login matching no
      * mapped group is refused and the role is synced on every login.
      *
@@ -61,9 +62,7 @@ class OidcIdentityListener
                 throw SsoAuthenticationException::rejected($identity->email);
             }
 
-            if ($admin->sso_identifier !== null) {
-                throw SsoAuthenticationException::rejected($identity->email);
-            }
+            $this->authenticator->ensureLinkable($admin, $identity);
         }
 
         $role = $this->settings->hasRoleMap() ? $this->mappedRole($identity) : null;

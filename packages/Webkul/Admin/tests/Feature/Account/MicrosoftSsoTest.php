@@ -439,7 +439,31 @@ it('does not allow inactive matched admin via microsoft sso', function () {
     $response->assertSessionHas('warning', trans('admin::app.settings.users.activate-warning'));
     $this->assertGuest('admin');
 
-    expect($admin->status)->toBe(0);
+    expect($admin->status)->toBe(0)
+        ->and($admin->fresh()->sso_identifier)->toBeNull();
+});
+
+it('never links an api user matched by email', function () {
+    microsoftSsoConfig();
+
+    $admin = Admin::factory()->create([
+        'email'    => 'api-sso-user@example.com',
+        'password' => Hash::make('password'),
+        'status'   => 1,
+        'type'     => 'api',
+    ]);
+
+    fakeMicrosoftEndpoints([
+        'id'                => 'object-id-api',
+        'mail'              => 'api-sso-user@example.com',
+        'userPrincipalName' => 'api-sso-user@example.com',
+    ]);
+
+    callbackWith(ssoHandshake())->assertRedirect(route('admin.session.create'));
+
+    $this->assertGuest('admin');
+
+    expect($admin->fresh()->sso_identifier)->toBeNull();
 });
 
 it('matches microsoft sso email in a case-insensitive way', function () {
