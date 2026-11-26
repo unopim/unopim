@@ -31,7 +31,7 @@ it('renders the canonical locale url with a cacheable, status-bound etag and set
 
     $response = $this->get('/p/'.$version->publication->uuid.'/'.$version->locale->code);
 
-    $response->assertOk()->assertSee('lang="'.$version->locale->code.'"', false);
+    $response->assertOk()->assertSee('lang="'.str_replace('_', '-', $version->locale->code).'"', false);
 
     expect($response->headers->get('ETag'))->not->toBeEmpty()
         ->and(app()->getLocale())->toBe($version->locale->code)

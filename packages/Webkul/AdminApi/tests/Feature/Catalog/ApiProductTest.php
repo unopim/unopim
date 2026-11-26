@@ -96,13 +96,13 @@ it('should give warning if simple product sku does not exists', function () {
         ->assertJsonFragment(['success' => false]);
 });
 
-it('should create the product', function () {
+it('should create the product', function (array $parentField): void {
     $family = AttributeFamily::first();
     $sku = fake()->word();
 
     $product = [
         'sku'    => $sku,
-        'parent' => null,
+        ...$parentField,
         'family' => $family->code,
         'values' => [
             'common' => [
@@ -119,8 +119,11 @@ it('should create the product', function () {
         ])
         ->assertJsonFragment(['success' => true]);
 
-    $this->assertDatabaseHas($this->getFullTableName(Product::class), ['sku' => $product['sku']]);
-});
+    $this->assertDatabaseHas($this->getFullTableName(Product::class), ['sku' => $product['sku'], 'parent_id' => null]);
+})->with([
+    'parent sent as null' => [['parent' => null]],
+    'parent key omitted'  => [[]],
+]);
 
 it('should give validation message when sku is not unique during create the product', function () {
     $product = Product::factory()->simple()->create([
