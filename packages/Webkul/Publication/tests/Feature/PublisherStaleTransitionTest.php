@@ -22,7 +22,6 @@ it('does not let a stale Published model withdraw a publication redacted meanwhi
 
     $version = $publisher->publish($product, $channel, $complete, 'dpp');
 
-    // Request A loads the publication while it is Published.
     $stale = $version->publication->fresh();
     expect($stale->status)->toBe(PublicationStatus::Published);
 
