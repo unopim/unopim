@@ -4,7 +4,7 @@
     $hasOperator = trim(($operator['name'] ?? '').($operator['address'] ?? '').($operator['eu_representative'] ?? '')) !== '';
 @endphp
 <!doctype html>
-<html lang="{{ $locale }}">
+<html lang="{{ str_replace('_', '-', $locale) }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">

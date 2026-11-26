@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html
-    lang="{{ app()->getLocale() }}"
+    lang="{{ str_replace('_', '-', app()->getLocale()) }}"
     dir="{{ in_array(app()->getLocale(), ['ar_AE']) ? 'rtl' : 'ltr' }}"
 >
     <head>

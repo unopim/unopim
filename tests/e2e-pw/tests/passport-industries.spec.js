@@ -156,11 +156,11 @@ test.describe.serial('DPP industry use cases', () => {
 
       // Switch locale via the template switcher and confirm html lang follows.
       await page.goto(`/p/${uuid}`, { waitUntil: 'domcontentloaded' });
-      const current = await page.getAttribute('html', 'lang');
+      const current = (await page.getAttribute('html', 'lang')).replace('-', '_');
       const target = current === 'en_US' ? other : 'en_US';
       await page.locator('.switcher summary').click();
       await page.locator('.switcher .locale-list').getByRole('link', { name: target, exact: true }).click();
-      await expect(page.locator('html')).toHaveAttribute('lang', target, { timeout: 15000 });
+      await expect(page.locator('html')).toHaveAttribute('lang', target.replace('_', '-'), { timeout: 15000 });
     }
   });
 
