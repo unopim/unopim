@@ -2,6 +2,7 @@
 
 namespace Webkul\Admin\DataGrids\Catalog;
 
+use Illuminate\Pagination\AbstractPaginator;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Crypt;
@@ -1129,7 +1130,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $channelsAndLocales = $this->getAllChannelsAndLocales();
 
-        $inheritedValues = $this->resolveInheritedValues($gridData);
+        $inheritedValues = $this->resolveMergedValuesForPage(
+            $gridData instanceof AbstractPaginator ? $gridData->items() : $gridData,
+            'values'
+        );
 
         $templateContexts = $this->resolveTemplateContexts($gridData, $inheritedValues);
 
@@ -1165,30 +1169,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'columns' => $columns,
             'records' => $exportableData,
         ];
-    }
-
-    /**
-     * Resolve the values a variant inherits from its parent chain (own, parent, grandparent), keyed by product id.
-     *
-     * Only rows that have a parent are returned; every other row exports its own values.
-     */
-    protected function resolveInheritedValues(iterable $products): array
-    {
-        $rows = [];
-
-        foreach ($products as $product) {
-            if (empty($product->parent_id)) {
-                continue;
-            }
-
-            $rows[] = [
-                'id'        => $product->product_id,
-                'parent_id' => $product->parent_id,
-                'values'    => $product->values,
-            ];
-        }
-
-        return $rows === [] ? [] : $this->variantValueResolver->resolveBatch($rows);
     }
 
     /**
@@ -1463,14 +1443,16 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
      * to `VariantValueResolver::resolveBatch()` -- shared with the AdminApi
      * and export paths so there is one merge implementation, not several.
      *
+     * @param  string  $valuesKey  Property holding the row's stored values: `raw_values` for
+     *                             the grid page, `values` for the export rows.
      * @return array<int, array>
      */
-    protected function resolveMergedValuesForPage(iterable $records): array
+    protected function resolveMergedValuesForPage(iterable $records, string $valuesKey = 'raw_values'): array
     {
         $rows = collect($records)->map(fn ($record) => [
             'id'        => $record->product_id,
             'parent_id' => $record->parent_id ?? null,
-            'values'    => $record->raw_values ?? null,
+            'values'    => $record->{$valuesKey} ?? null,
         ]);
 
         return $this->variantValueResolver->resolveBatch($rows);
