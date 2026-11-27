@@ -5,7 +5,6 @@ namespace Webkul\Product\Filter\Database;
 use Illuminate\Support\Facades\DB;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\ElasticSearch\Enums\FilterOperators;
-use Webkul\ElasticSearch\QueryString;
 
 /**
  * Text filter for an Database query
@@ -49,11 +48,11 @@ class TextFilter extends AbstractDatabaseAttributeFilter
         match ($operator) {
             FilterOperators::IN => $this->queryBuilder->whereRaw(
                 $searchPath.' '.$grammar->getRegexOperator().' ?',
-                is_array($value) ? implode('|', $value) : $value
+                $this->listPattern($value)
             ),
             FilterOperators::CONTAINS => $this->queryBuilder->where(function ($query) use ($searchPath, $value): void {
                 foreach ($value as $val) {
-                    $escapedValue = strtolower(QueryString::escapeValue($val));
+                    $escapedValue = addcslashes(strtolower((string) $val), '%_\\');
 
                     $query->orWhereRaw(
                         "LOWER($searchPath) LIKE ?",
@@ -62,8 +61,8 @@ class TextFilter extends AbstractDatabaseAttributeFilter
                 }
             }),
             FilterOperators::NOT_IN => $this->queryBuilder->whereRaw(
-                $searchPath.' NOT '.$grammar->getRegexOperator().' ?',
-                is_array($value) ? implode('|', $value) : $value
+                "NOT (COALESCE($searchPath, '') ".$grammar->getRegexOperator().' ?)',
+                $this->listPattern($value)
             ),
             FilterOperators::EQUAL => $this->queryBuilder->whereRaw(
                 "LOWER($searchPath) = ?",
@@ -75,5 +74,18 @@ class TextFilter extends AbstractDatabaseAttributeFilter
         };
 
         return $this;
+    }
+
+    /**
+     * Build a pattern matching any of the values as a whole entry of a comma-separated value.
+     *
+     * Values are quoted so they never act as regex syntax, and anchored so `red` does not
+     * match `red_dark`, the same exact-term semantics as the Elasticsearch filters.
+     */
+    protected function listPattern(mixed $value): string
+    {
+        $values = array_map(fn (mixed $item): string => preg_quote((string) $item), (array) $value);
+
+        return '(^|,)('.implode('|', $values).')(,|$)';
     }
 }
