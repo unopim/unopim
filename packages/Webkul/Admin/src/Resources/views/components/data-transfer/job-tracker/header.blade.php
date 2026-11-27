@@ -1,7 +1,7 @@
 <div class="flex gap-4 justify-between items-center max-sm:flex-wrap">
     <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
         <a
-            href="{{ route('admin.settings.data_transfer.imports.index') }}"
+            href="{{ route('admin.settings.data_transfer.tracker.index') }}"
             class="text-gray-600 hover:bg-primary-100 dark:hover:bg-gray-800 dark:text-white"
         >
             @lang('admin::app.settings.data-transfer.tracker.index.title')
