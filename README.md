@@ -171,6 +171,8 @@ Also included: **Digital Product Passports** with QR carriers and a public tier,
 
 ## Extensions
 
+Free, open-source and MIT licensed.
+
 <table>
   <tr>
     <td width="50%" valign="top">
@@ -184,12 +186,17 @@ Also included: **Digital Product Passports** with QR carriers and a public tier,
       Sync products, prices, descriptions and images to a Shopify store.
     </td>
   </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <b><a href="https://github.com/unopim/master-data-management">Master Data Management</a></b> <sup>NEW</sup><br>
+      Governed master records, matching, approvals and code lists, alongside the PIM or standalone.
+    </td>
+    <td width="50%" valign="top">
+      <b><a href="https://github.com/unopim/bagisto-connector">Bagisto Connector</a></b><br>
+      Sync products, attributes and media to a <a href="https://bagisto.com/">Bagisto</a> store, with customizable mappings.
+    </td>
+  </tr>
 </table>
-
-Also free and open source:
-
-- **New:** [Master Data Management](https://github.com/unopim/master-data-management): governed master records, matching, approvals and code lists, alongside the PIM or standalone.
-- [Bagisto Connector](https://github.com/unopim/bagisto-connector): sync products, attributes and media to a [Bagisto](https://bagisto.com/) store.
 
 Browse more on the [extensions marketplace](https://unopim.com/extensions/), or [build your own](https://devdocs.unopim.com/3.1/plugins/).
 
