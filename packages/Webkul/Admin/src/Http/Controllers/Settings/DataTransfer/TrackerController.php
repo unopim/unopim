@@ -6,6 +6,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use League\Flysystem\FilesystemException;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\JobTrackerGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Traits\GatesJobTypes;
@@ -132,7 +133,11 @@ class TrackerController extends Controller
     }
 
     /**
-     * Download
+     * Download the file a job wrote, or an archive of its folder.
+     *
+     * The public disk is still checked because jobs tracked by earlier releases stored their files there.
+     * A tracked path that climbs out of the disk root (e.g. "../../.env") is reported by Flysystem as a
+     * path-traversal attempt rather than a missing file, so it is treated the same as "not found" below.
      */
     public function download(int $id)
     {
@@ -144,10 +149,16 @@ class TrackerController extends Controller
 
         $this->abortIfDownloadForbidden($jobTrack);
 
-        $disk = Storage::disk('private');
+        try {
+            foreach (filled($jobTrack->file_path) ? ['private', 'public'] : [] as $diskName) {
+                $disk = Storage::disk($diskName);
 
-        if (filled($jobTrack->file_path) && $disk->fileExists($jobTrack->file_path)) {
-            return $disk->download($jobTrack->file_path);
+                if ($disk->fileExists($jobTrack->file_path)) {
+                    return $disk->download($jobTrack->file_path);
+                }
+            }
+        } catch (FilesystemException $e) {
+            abort(404);
         }
 
         return $this->archiveJobFiles($jobTrack);
@@ -215,7 +226,11 @@ class TrackerController extends Controller
 
         $disk = Storage::disk('private');
 
-        $files = $disk->allFiles($folderPath);
+        try {
+            $files = $disk->allFiles($folderPath);
+        } catch (FilesystemException $e) {
+            abort(404, trans('admin::app.settings.data-transfer.tracker.nothing-to-archive'));
+        }
 
         if (empty($files)) {
             abort(404, trans('admin::app.settings.data-transfer.tracker.nothing-to-archive'));
