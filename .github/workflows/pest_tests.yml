@@ -1,9 +1,7 @@
 name: Pest Tests
 
-# A pull request gets the fast signal (code style, static analysis, translations
-# and Pest on MySQL); the full database matrix and the end-to-end suite run in
-# the merge queue and on the release lines, so they gate every merge without
-# holding up review.
+# Every pull request runs the full database matrix and the end-to-end suite, so
+# nothing reaches a release line without passing them.
 #
 # A branch push and its own pull request are the same commit, so pushes are
 # limited to the release lines and everything else arrives through the PR event.
@@ -108,7 +106,7 @@ jobs:
           if-no-files-found: ignore
 
   pest-elasticsearch:
-    if: github.repository == 'unopim/unopim' && github.event_name != 'pull_request'
+    if: github.repository == 'unopim/unopim'
     runs-on: ubuntu-24.04
     name: Pest Tests (MySQL + Elasticsearch)
 

@@ -82,3 +82,60 @@ it('gives an attribute shared by several groups to the first group only', functi
     expect($family->customAttributesForGroup($first->id)->pluck('code')->all())->toBe([$shared->code])
         ->and($family->customAttributesForGroup($second->id)->pluck('code')->all())->toBe([$ownOnly->code]);
 });
+
+it('orders attributes that share a mapping position by attribute id on every database', function () {
+    $family = AttributeFamily::factory()->create();
+    $group = AttributeGroup::factory()->create();
+
+    [$first, $second] = Attribute::factory()->count(2)->create()->all();
+
+    $mappingId = assignFamilyGroup($family, $group, []);
+
+    foreach ([$second, $first] as $attribute) {
+        DB::table('attribute_group_mappings')->insert([
+            'attribute_family_group_id' => $mappingId,
+            'attribute_id'              => $attribute->id,
+            'position'                  => 1,
+        ]);
+    }
+
+    $expected = [$first->code, $second->code];
+
+    expect($family->customAttributesForGroup($group->id)->pluck('code')->all())->toBe($expected)
+        ->and($family->customAttributesByGroup()->get($group->id)->pluck('code')->all())->toBe($expected)
+        ->and($family->attributeSummariesByGroup('en_US', $group->id)->get($group->id)->pluck('code')->all())->toBe($expected);
+});
+
+it('orders groups that share a family position by mapping id', function () {
+    $family = AttributeFamily::factory()->create();
+
+    $first = AttributeGroup::factory()->create();
+    $second = AttributeGroup::factory()->create();
+
+    $firstMappingId = assignFamilyGroup($family, $first, [], 1);
+    $secondMappingId = assignFamilyGroup($family, $second, [], 1);
+
+    expect($family->groupSummaryByCode('en_US')->id)->toBe($first->id)
+        ->and($family->groupSummaries('en_US')->pluck('id')->all())->toBe([$first->id, $second->id])
+        ->and($family->attributeFamilyGroupMappings()->pluck('id')->all())->toBe([$firstMappingId, $secondMappingId]);
+});
+
+it('orders a group mapping\'s attributes that share a position by attribute id', function () {
+    $family = AttributeFamily::factory()->create();
+
+    [$first, $second] = Attribute::factory()->count(2)->create()->all();
+
+    $mappingId = assignFamilyGroup($family, AttributeGroup::factory()->create(), []);
+
+    foreach ([$second, $first] as $attribute) {
+        DB::table('attribute_group_mappings')->insert([
+            'attribute_family_group_id' => $mappingId,
+            'attribute_id'              => $attribute->id,
+            'position'                  => 1,
+        ]);
+    }
+
+    $mapping = $family->attributeFamilyGroupMappings()->first();
+
+    expect($mapping->customAttributes()->get()->pluck('code')->all())->toBe([$first->code, $second->code]);
+});
