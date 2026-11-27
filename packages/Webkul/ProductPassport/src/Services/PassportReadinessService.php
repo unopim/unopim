@@ -2,7 +2,9 @@
 
 namespace Webkul\ProductPassport\Services;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Webkul\Core\Models\Channel;
 use Webkul\Core\Models\Locale;
 use Webkul\Product\Models\Product;
@@ -83,6 +85,116 @@ class PassportReadinessService
         return $locales->mapWithKeys(
             fn (Locale $locale): array => [$locale->id => $this->assessValues($template, $values, $channel, $locale)]
         );
+    }
+
+    /**
+     * What the product edit panel shows per locale id: whether the locale can be published, which required
+     * fields are still missing (each with a link to fix it), and the "Required for DPP" badge of every
+     * required attribute. Shared by the initial render and the JSON endpoint the panel re-reads after a save.
+     *
+     * @return Collection<int, array{ready: bool, missing_count: ?int, missing_fields: list<array<string, mixed>>, requirements: array<int, array{variant: string, title: string}>, template_url: ?string}>
+     */
+    public function rowsFor(Product $product, Channel $channel): Collection
+    {
+        $assessments = $this->assessMany($product, $channel, $channel->locales);
+
+        $attributeGroupCodes = $this->attributeGroupCodes(
+            (int) $product->attribute_family_id,
+            $assessments
+                ->flatMap(fn (PassportReadiness $assessment): Collection => $assessment->missingFields)
+                ->where('source_type', PassportFieldSource::Attribute)
+                ->pluck('attribute_id')
+                ->filter()
+                ->map(fn (mixed $id): int => (int) $id)
+                ->unique()
+                ->values()
+                ->all(),
+        );
+
+        $canEditTemplate = bouncer()->hasPermission('catalog.passport.template.edit');
+        $canViewTemplate = bouncer()->hasPermission('catalog.passport.template.view');
+
+        return $channel->locales->mapWithKeys(function (Locale $locale) use ($product, $channel, $assessments, $attributeGroupCodes, $canEditTemplate, $canViewTemplate): array {
+            $assessment = $assessments->get($locale->id);
+            $templateEditUrl = $assessment->template !== null && $canEditTemplate
+                ? route('admin.catalog.passports.templates.edit', $assessment->template->id)
+                : null;
+            $missingFields = $assessment->missingFields->map(function (PassportTemplateFieldContract $field) use ($product, $channel, $locale, $attributeGroupCodes, $templateEditUrl): array {
+                $attributeId = $field->source_type === PassportFieldSource::Attribute
+                    ? (int) $field->attribute_id
+                    : null;
+                $groupCode = $attributeId !== null ? ($attributeGroupCodes[$attributeId] ?? null) : null;
+
+                return [
+                    'code'         => $field->code,
+                    'attribute_id' => $attributeId,
+                    'label'        => $field->getTranslatedValueWithFallback('label', $locale->code) ?: $field->code,
+                    'source'       => $field->source_type->label(),
+                    'action_url'   => $attributeId !== null && $groupCode !== null
+                        ? route('admin.catalog.products.edit', [
+                            'id'      => $product->id,
+                            'channel' => $channel->code,
+                            'locale'  => $locale->code,
+                            'group'   => $groupCode,
+                        ]).'#attribute-'.$attributeId
+                        : $templateEditUrl,
+                ];
+            })->all();
+
+            $missingAttributeIds = array_column($missingFields, 'attribute_id');
+
+            $requirements = $assessment->template === null ? [] : $assessment->template->fields
+                ->where('is_required', true)
+                ->where('source_type', PassportFieldSource::Attribute)
+                ->whereNotNull('attribute_id')
+                ->unique('attribute_id')
+                ->mapWithKeys(fn (PassportTemplateFieldContract $field): array => [
+                    (int) $field->attribute_id => Arr::only(
+                        PassportAttributeRequirements::indicator(in_array((int) $field->attribute_id, $missingAttributeIds, true)),
+                        ['variant', 'title'],
+                    ),
+                ])
+                ->all();
+
+            return [$locale->id => [
+                'ready'          => $assessment->isReady(),
+                'missing_count'  => $assessment->template === null ? null : count($missingFields),
+                'missing_fields' => $missingFields,
+                'requirements'   => $requirements,
+                'template_url'   => $templateEditUrl
+                    ?? ($canViewTemplate
+                        ? route('admin.catalog.passports.templates.index')
+                        : null),
+            ]];
+        });
+    }
+
+    /**
+     * @param  list<int>  $attributeIds
+     * @return array<int, string>
+     */
+    private function attributeGroupCodes(int $familyId, array $attributeIds): array
+    {
+        if ($attributeIds === []) {
+            return [];
+        }
+
+        return DB::table('attribute_group_mappings as mappings')
+            ->join(
+                'attribute_family_group_mappings as family_groups',
+                'family_groups.id',
+                '=',
+                'mappings.attribute_family_group_id',
+            )
+            ->join('attribute_groups as groups', 'groups.id', '=', 'family_groups.attribute_group_id')
+            ->where('family_groups.attribute_family_id', $familyId)
+            ->whereIn('mappings.attribute_id', $attributeIds)
+            ->orderBy('family_groups.position')
+            ->orderBy('mappings.position')
+            ->get(['mappings.attribute_id', 'groups.code'])
+            ->unique('attribute_id')
+            ->mapWithKeys(fn (object $row): array => [(int) $row->attribute_id => $row->code])
+            ->all();
     }
 
     /**

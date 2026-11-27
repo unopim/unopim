@@ -23,6 +23,23 @@ class PassportAttributeRequirements
     }
 
     /**
+     * The "Required for DPP" badge of one attribute: danger while the attribute still blocks publishing, info once it does not.
+     *
+     * @return array{key: string, label: string, title: string, variant: string}
+     */
+    public static function indicator(bool $missing): array
+    {
+        return [
+            'key'     => 'dpp',
+            'label'   => trans('passport::app.catalog.products.edit.passport.required-badge'),
+            'title'   => trans($missing
+                ? 'passport::app.catalog.products.edit.passport.publish-blocked'
+                : 'passport::app.catalog.products.edit.passport.required-badge'),
+            'variant' => $missing ? 'danger' : 'info',
+        ];
+    }
+
+    /**
      * @return array<int, list<array{key: string, label: string, title: string, variant: string}>>
      */
     public function for(Product $product, Channel $channel, Locale $locale): array
@@ -65,16 +82,7 @@ class PassportAttributeRequirements
             ->mapWithKeys(function ($field) use ($missingAttributeIds): array {
                 $missing = in_array((int) $field->attribute_id, $missingAttributeIds, true);
 
-                return [
-                    (int) $field->attribute_id => [[
-                        'key'     => 'dpp',
-                        'label'   => trans('passport::app.catalog.products.edit.passport.required-badge'),
-                        'title'   => trans($missing
-                            ? 'passport::app.catalog.products.edit.passport.publish-blocked'
-                            : 'passport::app.catalog.products.edit.passport.required-badge'),
-                        'variant' => $missing ? 'danger' : 'info',
-                    ]],
-                ];
+                return [(int) $field->attribute_id => [self::indicator($missing)]];
             })
             ->all();
 

@@ -1,7 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Queue;
+use Webkul\Admin\Helpers\BadgeVariants;
 use Webkul\Attribute\Models\AttributeFamilyProxy;
+use Webkul\Attribute\Models\AttributeProxy;
 use Webkul\Core\Models\ChannelProxy;
 use Webkul\Core\Models\CoreConfig;
 use Webkul\Core\Models\Locale;
@@ -85,6 +87,82 @@ it('shows per-locale passport status with missing field counts', function (): vo
         ]);
 });
 
+it('returns the missing fields themselves so the panel can refresh without a reload', function (): void {
+    [$product, $channel, $incomplete, $complete] = $this->productWithTwoDppLocales();
+
+    $this->enablePassportPublishing($channel->code);
+
+    $this->loginWithPermissions('all');
+
+    $rows = collect($this->getJson(route('admin.catalog.products.passport.show', ['product' => $product, 'channel' => $channel->code]))
+        ->assertOk()
+        ->json('rows'));
+
+    $blocked = $rows->firstWhere('locale_code', $incomplete->code);
+    $ready = $rows->firstWhere('locale_code', $complete->code);
+
+    expect($blocked['missing_fields'])->toHaveCount($blocked['missing_count'])
+        ->and($blocked['missing_fields'][0])->toHaveKeys(['code', 'label', 'source', 'action_url', 'attribute_id'])
+        ->and($blocked['locale_id'])->toBe($incomplete->id)
+        ->and($ready['missing_fields'])->toBe([]);
+});
+
+it('returns the required-attribute badge per locale and the shared variant classes', function (): void {
+    [$product, $channel, $incomplete, $complete] = $this->productWithTwoDppLocales();
+
+    $this->enablePassportPublishing($channel->code);
+
+    $this->loginWithPermissions('all');
+
+    $response = $this->getJson(route('admin.catalog.products.passport.show', ['product' => $product, 'channel' => $channel->code]))->assertOk();
+
+    $rows = collect($response->json('rows'));
+    $attributeId = passportMaterialAttributeId();
+
+    expect($rows->firstWhere('locale_code', $incomplete->code)['requirements'][$attributeId]['variant'])->toBe('danger')
+        ->and($rows->firstWhere('locale_code', $complete->code)['requirements'][$attributeId]['variant'])->toBe('info')
+        ->and($rows->firstWhere('locale_code', $incomplete->code)['missing_fields'][0]['attribute_id'])->toBe($attributeId)
+        ->and($response->json('variants'))->toBe(BadgeVariants::all());
+});
+
+it('gives an admin without template permissions no template link', function (): void {
+    [$product, $channel] = $this->productWithTwoDppLocales();
+
+    $this->enablePassportPublishing($channel->code);
+
+    $this->loginWithPermissions('custom', ['dashboard', 'catalog', 'catalog.passport', 'catalog.passport.view']);
+
+    $rows = $this->getJson(route('admin.catalog.products.passport.show', ['product' => $product, 'channel' => $channel->code]))
+        ->assertOk()
+        ->json('rows');
+
+    foreach ($rows as $row) {
+        expect($row['template_url'])->toBeNull();
+
+        foreach ($row['missing_fields'] as $field) {
+            expect($field['action_url'])->not->toContain('/templates/');
+        }
+    }
+});
+
+it('renders the missing-fields cell as a component that re-reads readiness after a save', function (): void {
+    [$product, $channel, $incomplete] = $this->productWithTwoDppLocales();
+
+    $this->enablePassportPublishing($channel->code);
+
+    $this->loginWithPermissions('all');
+
+    $this->get(route('admin.catalog.products.edit', [
+        'id'      => $product->id,
+        'channel' => $channel->code,
+        'locale'  => $incomplete->code,
+    ]))
+        ->assertOk()
+        ->assertSee('<v-passport-missing', false)
+        ->assertSee(':initial="JSON.parse(', false)
+        ->assertSee(json_encode(route('admin.catalog.products.passport.show', ['product' => $product->id, 'channel' => $channel->code])), false);
+});
+
 it('refuses to publish a locale that fails the completeness gate', function (): void {
     [$product, $channel, $incomplete] = $this->productWithTwoDppLocales();
 
@@ -142,6 +220,7 @@ it('shows actionable DPP requirements and disables blocked publish actions', fun
     ]))
         ->assertOk()
         ->assertSee('data-requirement="dpp"', false)
+        ->assertSee('data-attribute-id="'.passportMaterialAttributeId().'"', false)
         ->assertSee(trans('passport::app.catalog.products.edit.passport.required-badge'))
         ->assertSee('Material Composition')
         ->assertSee('passport-publish-all-btn primary-button shrink-0', false)
@@ -250,3 +329,8 @@ it('explains that an enabled template is required before publishing', function (
 
     $this->assertDatabaseMissing('publications', ['product_id' => $product->id]);
 });
+
+function passportMaterialAttributeId(): int
+{
+    return (int) AttributeProxy::modelClass()::query()->where('code', 'like', 'src\_%')->value('id');
+}

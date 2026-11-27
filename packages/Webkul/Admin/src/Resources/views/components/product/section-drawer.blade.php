@@ -261,6 +261,18 @@
                 this.$emitter.on('section-drawer:touch', this._onSectionTouch);
 
                 /**
+                 * Lets content elsewhere on the page dismiss a drawer, e.g. a link inside
+                 * it that jumps to a field on the page behind.
+                 */
+                this._onSectionClose = (id) => {
+                    if (id === this.id) {
+                        this.close();
+                    }
+                };
+
+                this.$emitter.on('section-drawer:close', this._onSectionClose);
+
+                /**
                  * Collapsing the sidebar resizes main-content without resizing the
                  * window, so the panel has to track the element itself or it keeps
                  * the geometry it was opened with. The observer also fires through
@@ -278,6 +290,7 @@
                 window.removeEventListener('resize', this._reflow);
 
                 this.$emitter.off('section-drawer:touch', this._onSectionTouch);
+                this.$emitter.off('section-drawer:close', this._onSectionClose);
 
                 this._observer?.disconnect();
                 this._fieldObserver?.disconnect();
