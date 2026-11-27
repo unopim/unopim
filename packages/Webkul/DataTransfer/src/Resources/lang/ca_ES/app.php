@@ -317,11 +317,12 @@ return [
         ],
     ],
     'job' => [
-        'started'         => 'Inici de l\'execució de la feina',
-        'completed'       => 'Finalització de l\'execució de la feina',
-        'stalled'         => 'La tasca ha deixat de respondre durant més de :minutes minuts i s\'ha marcat com a fallida. Probablement el procés que l\'executava s\'ha aturat.',
-        'reaped'          => 'S\'han marcat :count tasques aturades com a fallides.',
-        'stopped'         => 'La importació s\'ha aturat després de la validació amb :count errors. No s\'ha importat cap fila.',
-        'module-disabled' => 'El tipus de tasca :type pertany a un mòdul de la plataforma que està desactivat, per això no es pot executar.',
+        'started'                  => 'Inici de l\'execució de la feina',
+        'completed'                => 'Finalització de l\'execució de la feina',
+        'stalled'                  => 'La tasca ha deixat de respondre durant més de :minutes minuts i s\'ha marcat com a fallida. Probablement el procés que l\'executava s\'ha aturat.',
+        'reaped'                   => 'S\'han marcat :count tasques aturades com a fallides.',
+        'stopped'                  => 'La importació s\'ha aturat després de la validació amb :count errors. No s\'ha importat cap fila.',
+        'module-disabled'          => 'El tipus de tasca :type pertany a un mòdul de la plataforma que està desactivat, per això no es pot executar.',
+        'search-index-out-of-sync' => 'No s’ha pogut actualitzar l’índex de cerca per a :count productes eliminats. Executeu la reindexació de productes per treure’ls de la cerca.',
     ],
 ];

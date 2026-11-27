@@ -317,11 +317,12 @@ return [
         ],
     ],
     'job' => [
-        'started'         => 'Nagsimula ang trabaho sa trabaho',
-        'completed'       => 'Nagtapos ang trabaho sa trabaho',
-        'stalled'         => 'Huminto sa pagtugon ang trabaho nang mahigit :minutes minuto at minarkahan itong nabigo. Malamang na natapos ang proseso na nagpapatakbo nito.',
-        'reaped'          => 'Minarkahang nabigo ang :count na na-stuck na trabaho.',
-        'stopped'         => 'Itinigil ang import pagkatapos ng validation na may :count na error. Walang row na na-import.',
-        'module-disabled' => 'Ang uri ng job na :type ay kabilang sa isang platform module na naka-off, kaya hindi ito maaaring patakbuhin.',
+        'started'                  => 'Nagsimula ang trabaho sa trabaho',
+        'completed'                => 'Nagtapos ang trabaho sa trabaho',
+        'stalled'                  => 'Huminto sa pagtugon ang trabaho nang mahigit :minutes minuto at minarkahan itong nabigo. Malamang na natapos ang proseso na nagpapatakbo nito.',
+        'reaped'                   => 'Minarkahang nabigo ang :count na na-stuck na trabaho.',
+        'stopped'                  => 'Itinigil ang import pagkatapos ng validation na may :count na error. Walang row na na-import.',
+        'module-disabled'          => 'Ang uri ng job na :type ay kabilang sa isang platform module na naka-off, kaya hindi ito maaaring patakbuhin.',
+        'search-index-out-of-sync' => 'Hindi na-update ang search index para sa :count na binurang produkto. Patakbuhin ang product reindex para alisin ang mga ito sa search.',
     ],
 ];

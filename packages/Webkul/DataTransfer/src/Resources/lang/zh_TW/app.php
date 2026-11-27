@@ -317,11 +317,12 @@ return [
         ],
     ],
     'job' => [
-        'started'         => '任務已開始',
-        'completed'       => '任務已完成',
-        'stalled'         => '此工作超過 :minutes 分鐘沒有回應，已標記為失敗。執行它的工作程序很可能已被終止。',
-        'reaped'          => '已將 :count 個停滯的工作標記為失敗。',
-        'stopped'         => '驗證發現 :count 個錯誤，匯入已停止。未匯入任何資料列。',
-        'module-disabled' => ':type 工作類型屬於已關閉的平台模組，因此無法執行。',
+        'started'                  => '任務已開始',
+        'completed'                => '任務已完成',
+        'stalled'                  => '此工作超過 :minutes 分鐘沒有回應，已標記為失敗。執行它的工作程序很可能已被終止。',
+        'reaped'                   => '已將 :count 個停滯的工作標記為失敗。',
+        'stopped'                  => '驗證發現 :count 個錯誤，匯入已停止。未匯入任何資料列。',
+        'module-disabled'          => ':type 工作類型屬於已關閉的平台模組，因此無法執行。',
+        'search-index-out-of-sync' => '無法為 :count 個已刪除的產品更新搜尋索引。請執行產品重建索引，將其從搜尋中移除。',
     ],
 ];
