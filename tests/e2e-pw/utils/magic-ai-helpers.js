@@ -48,7 +48,7 @@ async function ensureAiPlatform(page, apiKey) {
  * which avoids racing the Vue toggle's render. Store-wide: a spec calling this
  * carries @global-state.
  * @param {import('@playwright/test').Page} page
- * @param {'settings'|'translation'} section
+ * @param {'settings'|'translation'|'agentic_pim'} section
  * @param {boolean} enabled
  */
 async function setMagicAISection(page, section, enabled) {
@@ -98,6 +98,9 @@ const ensureMagicAITextEnabled = (page) => setMagicAISection(page, 'settings', t
 /** Turn on Magic AI translation, which gates the product "More" actions. */
 const ensureMagicAITranslationEnabled = (page) => setMagicAISection(page, 'translation', true);
 
+/** Turn on Agentic PIM, which gates the chat widget. */
+const ensureAgenticPimEnabled = (page) => setMagicAISection(page, 'agentic_pim', true);
+
 /**
  * Turn off Magic AI translation. Enabled translation makes its channel and
  * locale pickers required, so a spec saving the settings form through the UI
@@ -107,6 +110,7 @@ const ensureMagicAITranslationDisabled = (page) => setMagicAISection(page, 'tran
 
 module.exports = {
   ensureAiPlatform,
+  ensureAgenticPimEnabled,
   ensureMagicAITextEnabled,
   ensureMagicAITranslationEnabled,
   ensureMagicAITranslationDisabled,

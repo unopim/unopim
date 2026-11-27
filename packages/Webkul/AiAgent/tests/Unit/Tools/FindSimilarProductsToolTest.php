@@ -164,6 +164,19 @@ it('suggests close skus regardless of letter case', function () {
     expect($result['did_you_mean'])->toBe(['qorvel-lumen-pendant']);
 });
 
+it('finds the source product when the sku is given in a different letter case', function () {
+    $source = Product::factory()->simple()->create(['sku' => 'Qorvel-T-Shirt']);
+
+    Product::factory()->simple()->create(['sku' => 'qorvel-t-shirt-blue', 'attribute_family_id' => $source->attribute_family_id]);
+
+    $result = runFindSimilar(similarPlatform('anthropic'), ['sku' => 'qorvel-t-shirt']);
+
+    expect($result)->not->toHaveKey('error')
+        ->and($result['scoped_to_same_family'])->toBeTrue()
+        ->and(array_column($result['products'], 'sku'))->toContain('qorvel-t-shirt-blue')
+        ->and(array_column($result['products'], 'sku'))->not->toContain('Qorvel-T-Shirt');
+});
+
 it('ranks by keyword overlap and explains why when no platform can produce embeddings', function () {
     Embeddings::fake();
 
