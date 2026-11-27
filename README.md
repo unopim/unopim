@@ -32,7 +32,7 @@
 </p>
 
 <p align="center">
-  <a href="https://demo.unopim.com/"><img src="https://raw.githubusercontent.com/unopim/temp-media/main/readme-hero-dashboard.png" alt="UnoPim admin dashboard" width="640"></a>
+  <a href="https://demo.unopim.com/"><img src="https://raw.githubusercontent.com/unopim/temp-media/main/readme-hero-agentic-pim.png" alt="UnoPim Agentic PIM: creating a product from a chat prompt" width="640"></a>
 </p>
 
 ## What is UnoPim?
@@ -95,38 +95,38 @@ Full guides: [requirements](https://devdocs.unopim.com/3.1/introduction/requirem
 <table>
   <tr>
     <td width="50%" valign="top">
-      <img src="https://raw.githubusercontent.com/unopim/temp-media/main/ai-agent-chat.png" alt="AI agent chat"><br>
-      <b>AI agent</b><br>
-      Manage the catalogue in plain language: search, create, bulk edit, categorize, export and write copy, with multi-step tool calling.
-    </td>
-    <td width="50%" valign="top">
       <img src="https://raw.githubusercontent.com/unopim/temp-media/main/magic-ai-with-multi-platform-support.png" alt="Magic AI"><br>
       <b>Magic AI</b><br>
       Generate descriptions, images and translations with 10+ AI providers, each with encrypted credentials and model selection.
     </td>
-  </tr>
-  <tr>
     <td width="50%" valign="top">
       <img src="https://raw.githubusercontent.com/unopim/temp-media/main/catalog-management.png" alt="Catalog management"><br>
       <b>Catalogue management</b><br>
       Families, attributes, categories, configurable products with multi-level variants, and association types.
     </td>
+  </tr>
+  <tr>
     <td width="50%" valign="top">
       <img src="https://raw.githubusercontent.com/unopim/temp-media/main/data-enrichment.png" alt="Data enrichment"><br>
       <b>Enrichment and completeness</b><br>
       Enrich values per channel and locale, and score every product against the attributes its family requires.
     </td>
-  </tr>
-  <tr>
     <td width="50%" valign="top">
       <img src="https://raw.githubusercontent.com/unopim/temp-media/main/data-transfer.png" alt="Import and export"><br>
       <b>Import and export</b><br>
       CSV, XLSX and ZIP jobs on a queue, with live step-by-step progress and per-job logs.
     </td>
+  </tr>
+  <tr>
     <td width="50%" valign="top">
       <img src="https://raw.githubusercontent.com/unopim/temp-media/main/api-integration.png" alt="REST API"><br>
       <b>REST API and webhooks</b><br>
       OAuth2 REST API (<a href="https://documenter.getpostman.com/view/37137259/2sBXVhEWjS">docs</a>, <a href="https://www.postman.com/unopim/unopim-apis/collection/kzy03uh/official-unopim-apis">Postman</a>) and asynchronous webhooks on product events.
+    </td>
+    <td width="50%" valign="top">
+      <img src="https://raw.githubusercontent.com/unopim/temp-media/main/dashboard-with-analytics.png" alt="Dashboard with analytics"><br>
+      <b>Dashboard and analytics</b><br>
+      Channel readiness, product trends, recent activity and items needing attention at a glance.
     </td>
   </tr>
   <tr>
@@ -134,6 +134,18 @@ Full guides: [requirements](https://devdocs.unopim.com/3.1/introduction/requirem
       <img src="https://raw.githubusercontent.com/unopim/temp-media/main/localization-and-channels.png" alt="Localization"><br>
       <b>Localization</b><br>
       Enrich content per locale, with the admin itself translated into 33 languages.
+    </td>
+    <td width="50%" valign="top">
+      <img src="https://raw.githubusercontent.com/unopim/temp-media/main/multi-channel-support.png" alt="Multi-channel"><br>
+      <b>Multi-channel</b><br>
+      Scope attribute values and completeness to each sales channel.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <img src="https://raw.githubusercontent.com/unopim/temp-media/main/multi-currency-support.png" alt="Multi-currency"><br>
+      <b>Multi-currency</b><br>
+      Price products in every currency your channels sell in.
     </td>
     <td width="50%" valign="top">
       <img src="https://raw.githubusercontent.com/unopim/temp-media/main/version-control.png" alt="Version history"><br>
@@ -151,18 +163,6 @@ Full guides: [requirements](https://devdocs.unopim.com/3.1/introduction/requirem
       <img src="https://raw.githubusercontent.com/unopim/temp-media/main/user-interface.png" alt="Light and dark themes"><br>
       <b>Light and dark themes</b><br>
       A themeable admin interface that follows the system colour scheme.
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" valign="top">
-      <img src="https://raw.githubusercontent.com/unopim/temp-media/main/multi-channel-support.png" alt="Channels and currencies"><br>
-      <b>Channels and currencies</b><br>
-      Scope values per sales channel and price products in multiple currencies.
-    </td>
-    <td width="50%" valign="top">
-      <img src="https://raw.githubusercontent.com/unopim/temp-media/main/dashboard-with-analytics.png" alt="Dashboard with analytics"><br>
-      <b>Dashboard and analytics</b><br>
-      Channel readiness, product trends, recent activity and items needing attention at a glance.
     </td>
   </tr>
 </table>
