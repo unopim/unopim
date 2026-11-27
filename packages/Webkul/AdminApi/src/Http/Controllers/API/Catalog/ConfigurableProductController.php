@@ -15,6 +15,7 @@ use Webkul\AdminApi\Http\Requests\Catalog\StoreConfigurableProductRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\UpdateConfigurableProductRequest;
 use Webkul\Core\Rules\Sku;
 use Webkul\Product\Enums\ProductType;
+use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\VariantStructureRepository;
 use Webkul\Product\Services\VariantStructurePlanner;
 use Webkul\Product\Type\AbstractType;
@@ -154,11 +155,7 @@ class ConfigurableProductController extends ProductController
 
             $this->validateRichAssociationsBeforeCreate($data);
 
-            Event::dispatch('catalog.product.create.before');
-            $product = $this->productRepository->create($data);
-            Event::dispatch('catalog.product.create.after', $product);
-
-            $product = $this->updateProduct($data, $product);
+            $this->persistNewProductAsOneUnit(fn (): Product => $this->persistNewConfigurableProduct($data));
 
             return $this->successResponse(
                 trans('admin::app.catalog.products.create-success'),
@@ -167,6 +164,20 @@ class ConfigurableProductController extends ProductController
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);
         }
+    }
+
+    /**
+     * Create the configurable product with its variants and save its values.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    protected function persistNewConfigurableProduct(array $data): Product
+    {
+        Event::dispatch('catalog.product.create.before');
+        $product = $this->productRepository->create($data);
+        Event::dispatch('catalog.product.create.after', $product);
+
+        return $this->updateProduct($data, $product);
     }
 
     /**
