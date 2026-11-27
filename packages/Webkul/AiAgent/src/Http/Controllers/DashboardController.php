@@ -114,12 +114,13 @@ class DashboardController extends Controller
 
         $changes = json_decode((string) $changeset->changes, true) ?? [];
 
-        // Attempt to rollback product changes
-        $rolledBack = 0;
-        if (! empty($changes['product_id']) && ! empty($changes['previous_values'])) {
-            $repo = resolve(ProductRepository::class);
-            $repo->updateWithValues(['values' => $changes['previous_values']], $changes['product_id']);
-            $rolledBack++;
+        $restored = ! empty($changes['product_id'])
+            && $this->restorePreviousValues((int) $changes['product_id'], $changes['previous_values'] ?? null, (array) ($changes['generated'] ?? []));
+
+        if (! $restored) {
+            return new JsonResponse([
+                'message' => trans('ai-agent::app.common.rollback-nothing-restored'),
+            ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         DB::table('ai_agent_changesets')
@@ -132,8 +133,68 @@ class DashboardController extends Controller
 
         return new JsonResponse([
             'rolled_back' => true,
-            'affected'    => $rolledBack,
+            'affected'    => 1,
         ]);
+    }
+
+    /**
+     * Put back only the keys a changeset generated and nobody has edited since, so later edits survive the rollback.
+     *
+     * @param  array<string, mixed>  $generated
+     */
+    protected function restorePreviousValues(int $productId, mixed $previous, array $generated): bool
+    {
+        if (! is_array($previous) || ! is_array($previous['values'] ?? null) || ! isset($previous['channel'], $previous['locale'])) {
+            return false;
+        }
+
+        $repo = resolve(ProductRepository::class);
+
+        $product = $repo->find($productId);
+
+        if (! $product) {
+            return false;
+        }
+
+        $values = $product->values ?? [];
+        $channel = (string) $previous['channel'];
+        $locale = (string) $previous['locale'];
+
+        $restoredKeys = 0;
+
+        foreach ($previous['values'] as $key => $value) {
+            if (($values['channel_locale_specific'][$channel][$locale][$key] ?? null) !== ($generated[$key] ?? null)) {
+                continue;
+            }
+
+            $restoredKeys++;
+
+            if ($value === null) {
+                unset($values['channel_locale_specific'][$channel][$locale][$key]);
+            } else {
+                $values['channel_locale_specific'][$channel][$locale][$key] = $value;
+            }
+        }
+
+        if ($restoredKeys === 0) {
+            return false;
+        }
+
+        if (($values['channel_locale_specific'][$channel][$locale] ?? null) === []) {
+            unset($values['channel_locale_specific'][$channel][$locale]);
+        }
+
+        if (($values['channel_locale_specific'][$channel] ?? null) === []) {
+            unset($values['channel_locale_specific'][$channel]);
+        }
+
+        if (($values['channel_locale_specific'] ?? null) === []) {
+            unset($values['channel_locale_specific']);
+        }
+
+        $repo->updateWithValues(['values' => $values], $productId);
+
+        return true;
     }
 
     /**

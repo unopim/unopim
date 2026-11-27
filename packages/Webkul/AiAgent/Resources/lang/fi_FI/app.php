@@ -77,6 +77,7 @@ return [
         'no-platform'                   => 'AI-alustaa ei ole määritetty. Määritä alusta Magic AI -asetuksissa.',
         'process-attached-files'        => 'Käsittele liitetyt tiedostot.',
         'token-budget-exhausted'        => 'Päivittäinen AI-tokenbudjetti käytetty loppuun (:used/:budget tokenia). Budjetti nollautuu huomenna. Ota yhteyttä järjestelmänvalvojaan rajan nostamiseksi.',
+        'rollback-nothing-restored'     => 'Ei mitään palautettavaa: tuotetta ei enää ole, luotuja arvoja on muokattu sen jälkeen tai tälle muutokselle ei ole tallennettu palautettavia arvoja.',
     ],
 
     'credentials' => [

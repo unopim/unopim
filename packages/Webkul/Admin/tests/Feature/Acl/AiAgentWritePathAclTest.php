@@ -8,12 +8,22 @@ use Webkul\Product\Models\Product;
 
 function appliedRollbackChangeset(Product $product): int
 {
+    $values = $product->values ?? [];
+    $values['channel_locale_specific']['default']['en_US']['name'] = 'AI name';
+
+    DB::table('products')->where('id', $product->id)->update(['values' => json_encode($values)]);
+
     return DB::table('ai_agent_changesets')->insertGetId([
         'user_id'        => null,
         'description'    => 'AI edit',
         'changes'        => json_encode([
             'product_id'      => $product->id,
-            'previous_values' => ['common' => ['sku' => 'rolled-back-sku']],
+            'generated'       => ['name' => 'AI name'],
+            'previous_values' => [
+                'channel' => 'default',
+                'locale'  => 'en_US',
+                'values'  => ['name' => null],
+            ],
         ]),
         'status'         => 'applied',
         'affected_count' => 1,

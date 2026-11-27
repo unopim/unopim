@@ -77,6 +77,7 @@ return [
         'no-platform'                   => '未配置 AI 平台。请在 Magic AI 设置中配置平台。',
         'process-attached-files'        => '处理附件。',
         'token-budget-exhausted'        => '每日 AI 令牌预算已耗尽（:used/:budget 令牌）。预算将于明天重置。请联系管理员提高限额。',
+        'rollback-nothing-restored'     => '没有可回滚的内容：产品已不存在、生成的值之后已被编辑，或此更改没有可恢复的已保存值。',
     ],
 
     'credentials' => [

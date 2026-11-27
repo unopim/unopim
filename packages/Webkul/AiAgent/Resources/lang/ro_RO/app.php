@@ -77,6 +77,7 @@ return [
         'no-platform'                   => 'Nicio platformă AI configurată. Configurați o platformă în setările Magic AI.',
         'process-attached-files'        => 'Procesează fișierul(ele) atașat(e).',
         'token-budget-exhausted'        => 'Bugetul zilnic de tokeni AI epuizat (:used/:budget tokeni). Bugetul se resetează mâine. Contactați administratorul pentru a crește limita.',
+        'rollback-nothing-restored'     => 'Nu există nimic de anulat: produsul nu mai există, valorile generate au fost modificate între timp sau această modificare nu are valori salvate de restaurat.',
     ],
 
     'credentials' => [

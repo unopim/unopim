@@ -77,6 +77,7 @@ return [
         'no-platform'                   => 'Nije konfigurirana AI platforma. Molimo postavite platformu u postavkama Magic AI.',
         'process-attached-files'        => 'Obradi priložene datoteke.',
         'token-budget-exhausted'        => 'Dnevni budžet AI tokena je iscrpljen (:used/:budget tokena). Budžet se resetira sutra. Obratite se administratoru za povećanje ograničenja.',
+        'rollback-nothing-restored'     => 'Nema se što poništiti: proizvod više ne postoji, generirane vrijednosti su u međuvremenu izmijenjene ili ova promjena nema spremljene vrijednosti za vraćanje.',
     ],
 
     'credentials' => [

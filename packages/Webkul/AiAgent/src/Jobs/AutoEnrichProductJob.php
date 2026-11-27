@@ -122,7 +122,7 @@ class AutoEnrichProductJob implements ShouldQueue
             }
 
             // Apply generated content
-            $productValues = json_decode((string) $product->values, true) ?? [];
+            $productValues = $values;
             foreach ($generated as $key => $value) {
                 $productValues['channel_locale_specific'][$this->channel][$this->locale][$key] = $value;
             }
@@ -135,9 +135,14 @@ class AutoEnrichProductJob implements ShouldQueue
                 'user_id'        => null,
                 'description'    => "Auto-enriched product {$product->sku}: ".implode(', ', array_keys($generated)),
                 'changes'        => json_encode([
-                    'product_id' => $product->id,
-                    'sku'        => $product->sku,
-                    'generated'  => $generated,
+                    'product_id'      => $product->id,
+                    'sku'             => $product->sku,
+                    'generated'       => $generated,
+                    'previous_values' => [
+                        'channel' => $this->channel,
+                        'locale'  => $this->locale,
+                        'values'  => array_replace(array_fill_keys(array_keys($generated), null), array_intersect_key($cl, $generated)),
+                    ],
                 ]),
                 'status'         => 'applied',
                 'affected_count' => 1,

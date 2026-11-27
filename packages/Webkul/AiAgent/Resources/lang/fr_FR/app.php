@@ -77,6 +77,7 @@ return [
         'no-platform'                   => 'Aucune plateforme IA configurée. Veuillez configurer une plateforme dans les paramètres de Magic AI.',
         'process-attached-files'        => 'Traiter le(s) fichier(s) joint(s).',
         'token-budget-exhausted'        => 'Budget quotidien de jetons IA épuisé (:used/:budget jetons). Le budget se réinitialise demain. Contactez votre administrateur pour augmenter la limite.',
+        'rollback-nothing-restored'     => 'Rien à annuler : le produit n’existe plus, les valeurs générées ont été modifiées depuis ou cette modification ne contient aucune valeur enregistrée à restaurer.',
     ],
 
     'credentials' => [

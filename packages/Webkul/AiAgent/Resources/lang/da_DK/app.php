@@ -77,6 +77,7 @@ return [
         'no-platform'                   => 'Ingen AI-platform konfigureret. Konfigurer venligst en platform under Magic AI-indstillinger.',
         'process-attached-files'        => 'Behandl de vedhæftede filer.',
         'token-budget-exhausted'        => 'Det daglige AI-tokenbudget er opbrugt (:used/:budget tokens). Budgettet nulstilles i morgen. Kontakt din administrator for at øge grænsen.',
+        'rollback-nothing-restored'     => 'Intet at rulle tilbage: Produktet findes ikke længere, de genererede værdier er blevet redigeret siden, eller ændringen har ingen gemte værdier at gendanne.',
     ],
 
     'credentials' => [

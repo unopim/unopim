@@ -77,6 +77,7 @@ return [
         'no-platform'                   => 'Tidak ada platform AI yang dikonfigurasi. Silakan siapkan platform di pengaturan Magic AI.',
         'process-attached-files'        => 'Proses file yang dilampirkan.',
         'token-budget-exhausted'        => 'Anggaran token AI harian habis (:used/:budget token). Anggaran akan direset besok. Hubungi administrator Anda untuk meningkatkan batas.',
+        'rollback-nothing-restored'     => 'Tidak ada yang dapat dikembalikan: produk sudah tidak ada, nilai yang dihasilkan telah diubah sejak itu, atau perubahan ini tidak memiliki nilai tersimpan untuk dipulihkan.',
     ],
 
     'credentials' => [
