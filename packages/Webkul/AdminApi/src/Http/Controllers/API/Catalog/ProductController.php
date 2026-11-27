@@ -2,6 +2,7 @@
 
 namespace Webkul\AdminApi\Http\Controllers\API\Catalog;
 
+use Closure;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -372,6 +373,19 @@ class ProductController extends ApiController
         foreach ($previousVariantIds as $variantId) {
             $this->productRepository->delete($variantId);
         }
+    }
+
+    /**
+     * Run a product create as one unit and announce it only after every write has committed.
+     *
+     * @param  Closure(): Product  $persist
+     */
+    protected function persistNewProductAsOneUnit(Closure $persist): Product
+    {
+        return Event::defer(
+            fn (): Product => DB::transaction($persist),
+            ['catalog.product.create.after', 'catalog.product.update.after']
+        );
     }
 
     /**

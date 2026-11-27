@@ -144,3 +144,84 @@ it('keeps the group-owned axis value when the leaf repeats it unchanged', functi
 
     expect(Product::where('sku', 'vrb-same-leaf')->exists())->toBeTrue();
 });
+
+/**
+ * Build a configurable create payload with one variant that uses the given SKU.
+ *
+ * @return array<string, mixed>
+ */
+function apiVariantRollbackConfigurablePayload(AttributeFamily $family, string $parentSku, string $variantSku): array
+{
+    $configurableAttributes = $family->getConfigurableAttributes();
+    $first = $configurableAttributes->first();
+    $second = $configurableAttributes->skip(1)->first();
+
+    return [
+        'status'           => true,
+        'parent'           => null,
+        'family'           => $family->code,
+        'additional'       => null,
+        'values'           => ['common' => ['sku' => $parentSku]],
+        'super_attributes' => [$first->code, $second->code],
+        'variants'         => [[
+            'sku'        => $variantSku,
+            'attributes' => [$first->code => $first->options->first()->code, $second->code => $second->options->first()->code],
+        ]],
+    ];
+}
+
+/**
+ * Return the family the configurable create tests build on.
+ */
+function apiVariantRollbackConfigurableFamily(): AttributeFamily
+{
+    return AttributeFamily::where('code', 'default')->first()
+        ?? AttributeFamily::factory()->withMinimalAttributesForProductTypes()->create();
+}
+
+it('announces a simple product without a parent exactly once after its create succeeds', function (): void {
+    $announced = apiVariantRollbackAnnouncedSkus();
+
+    $this->withHeaders($this->headers)
+        ->json('POST', route('admin.api.products.store'), [
+            'family' => AttributeFamily::first()->code,
+            'values' => ['common' => ['sku' => 'vrb-plain-simple']],
+        ])
+        ->assertCreated();
+
+    $this->assertDatabaseHas('products', ['sku' => 'vrb-plain-simple', 'parent_id' => null]);
+
+    expect(array_count_values($announced->getArrayCopy())['vrb-plain-simple'] ?? 0)->toBe(1);
+});
+
+it('rolls back a configurable product whose variant cannot be created', function (): void {
+    Product::factory()->simple()->create(['sku' => 'vrb-taken-variant', 'values' => ['common' => ['sku' => 'vrb-taken-variant']]]);
+
+    $announced = apiVariantRollbackAnnouncedSkus();
+
+    $response = $this->withHeaders($this->headers)
+        ->json('POST', route('admin.api.configurable_products.store'), apiVariantRollbackConfigurablePayload(apiVariantRollbackConfigurableFamily(), 'vrb-config-rollback', 'vrb-taken-variant'));
+
+    expect($response->isSuccessful())->toBeFalse()
+        ->and($announced->getArrayCopy())->not->toContain('vrb-config-rollback');
+
+    $this->assertDatabaseMissing('products', ['sku' => 'vrb-config-rollback']);
+});
+
+it('creates the configurable product when the rejected request is retried with a free variant sku', function (): void {
+    Product::factory()->simple()->create(['sku' => 'vrb-taken-retry', 'values' => ['common' => ['sku' => 'vrb-taken-retry']]]);
+
+    $family = apiVariantRollbackConfigurableFamily();
+
+    $this->withHeaders($this->headers)
+        ->json('POST', route('admin.api.configurable_products.store'), apiVariantRollbackConfigurablePayload($family, 'vrb-config-retry', 'vrb-taken-retry'));
+
+    $this->withHeaders($this->headers)
+        ->json('POST', route('admin.api.configurable_products.store'), apiVariantRollbackConfigurablePayload($family, 'vrb-config-retry', 'vrb-free-variant'))
+        ->assertCreated();
+
+    $parent = Product::where('sku', 'vrb-config-retry')->first();
+
+    expect($parent)->not->toBeNull()
+        ->and(Product::where('sku', 'vrb-free-variant')->value('parent_id'))->toBe($parent->id);
+});

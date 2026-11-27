@@ -42,7 +42,7 @@ class Product
     public function created(Products $product): void
     {
         if (self::$isEnabled) {
-            dispatch(new ProductCompletenessJob([$product->id]));
+            dispatch(new ProductCompletenessJob([$product->id]))->afterCommit();
         }
     }
 
@@ -52,7 +52,7 @@ class Product
     public function updated(Products $product): void
     {
         if (self::$isEnabled) {
-            dispatch(new ProductCompletenessJob([$product->id]));
+            dispatch(new ProductCompletenessJob([$product->id]))->afterCommit();
         }
     }
 }

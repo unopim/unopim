@@ -3,7 +3,6 @@
 namespace Webkul\AdminApi\Http\Controllers\API\Catalog;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
@@ -97,10 +96,7 @@ class SimpleProductController extends ProductController
 
             $this->validateRichAssociationsBeforeCreate($data);
 
-            Event::defer(
-                fn (): Product => DB::transaction(fn (): Product => $this->persistNewSimpleProduct($data)),
-                ['catalog.product.create.after', 'catalog.product.update.after']
-            );
+            $this->persistNewProductAsOneUnit(fn (): Product => $this->persistNewSimpleProduct($data));
 
             return $this->successResponse(
                 trans('admin::app.catalog.products.create-success'),
