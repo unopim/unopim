@@ -462,6 +462,7 @@ return [
                     'change'                      => '변경',
                     'overwrite-warning'           => '선택한 대상 로케일의 기존 콘텐츠가 대체됩니다.',
                     'incomplete-source'           => '계속하려면 소스 채널, 로케일 및 하나 이상의 속성을 선택하세요.',
+                    'model-required'              => '번역하기 전에 AI 모델을 선택하거나 Magic AI 구성에서 기본 번역 모델을 설정하세요.',
                 ],
                 'product-info' => [
                     'title'        => '제품 정보',

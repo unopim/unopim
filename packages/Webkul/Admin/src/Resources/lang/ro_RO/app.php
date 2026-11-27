@@ -462,6 +462,7 @@ return [
                     'change'                      => 'Modifică',
                     'overwrite-warning'           => 'Conținutul existent în limbile țintă selectate va fi înlocuit.',
                     'incomplete-source'           => 'Selectați un canal sursă, o limbă și cel puțin un atribut pentru a continua.',
+                    'model-required'              => 'Selectați un model AI înainte de a traduce sau setați un model de traducere implicit în configurația Magic AI.',
                 ],
                 'product-info' => [
                     'title'        => 'Informații Produs',

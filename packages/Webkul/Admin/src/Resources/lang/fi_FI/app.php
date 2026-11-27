@@ -461,6 +461,7 @@ return [
                     'change'                      => 'Muuta',
                     'overwrite-warning'           => 'Valittujen kohdekielten nykyinen sisältö korvataan.',
                     'incomplete-source'           => 'Valitse lähdekanava, kieli ja vähintään yksi attribuutti jatkaaksesi.',
+                    'model-required'              => 'Valitse tekoälymalli ennen kääntämistä tai määritä oletuskäännösmalli Magic AI -asetuksissa.',
                 ],
                 'product-info' => [
                     'title'        => 'Tuotetiedot',

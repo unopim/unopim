@@ -461,6 +461,7 @@ return [
                     'change'                      => 'Change',
                     'overwrite-warning'           => 'Existing content in the selected target locales will be replaced.',
                     'incomplete-source'           => 'Select a source channel, a locale and at least one attribute to continue.',
+                    'model-required'              => 'Select an AI model before translating, or set a default translation model in the Magic AI configuration.',
                 ],
                 'product-info' => [
                     'title'        => 'Product Info',

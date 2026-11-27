@@ -461,6 +461,7 @@ return [
                     'change'                      => '變更',
                     'overwrite-warning'           => '所選目標語系中的現有內容將被取代。',
                     'incomplete-source'           => '請選擇來源管道、語系和至少一個屬性以繼續。',
+                    'model-required'              => '請在翻譯前選擇一個 AI 模型，或在 Magic AI 設定中設定預設翻譯模型。',
                 ],
                 'product-info' => [
                     'title'        => '產品資訊',

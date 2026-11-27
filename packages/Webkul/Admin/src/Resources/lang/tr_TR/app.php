@@ -461,6 +461,7 @@ return [
                     'change'                      => 'Değiştir',
                     'overwrite-warning'           => 'Seçili hedef dillerdeki mevcut içerik değiştirilecek.',
                     'incomplete-source'           => 'Devam etmek için bir kaynak kanal, dil ve en az bir nitelik seçin.',
+                    'model-required'              => 'Çeviri yapmadan önce bir yapay zekâ modeli seçin veya Magic AI yapılandırmasında varsayılan bir çeviri modeli belirleyin.',
                 ],
                 'product-info' => [
                     'title'        => 'Ürün Bilgisi',

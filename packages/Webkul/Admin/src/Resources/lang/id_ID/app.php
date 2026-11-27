@@ -461,6 +461,7 @@ return [
                     'change'                      => 'Ubah',
                     'overwrite-warning'           => 'Konten yang ada pada bahasa tujuan terpilih akan diganti.',
                     'incomplete-source'           => 'Pilih saluran sumber, bahasa, dan minimal satu atribut untuk melanjutkan.',
+                    'model-required'              => 'Pilih model AI sebelum menerjemahkan, atau atur model terjemahan default di konfigurasi Magic AI.',
                 ],
                 'product-info' => [
                     'title'        => 'Informasi Produk',

@@ -771,6 +771,13 @@
                             if (setErrors) {
                                 setErrors(error.response?.data?.errors || {});
                             }
+
+                            if (error.response?.data?.message) {
+                                this.$emitter.emit('add-flash', {
+                                    type: 'error',
+                                    message: error.response.data.message,
+                                });
+                            }
                         });
                 },
 

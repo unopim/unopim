@@ -462,6 +462,7 @@ return [
                     'change'                      => 'Wijzigen',
                     'overwrite-warning'           => 'Bestaande inhoud in de geselecteerde doeltalen wordt vervangen.',
                     'incomplete-source'           => 'Selecteer een bronkanaal, een taal en minstens één kenmerk om door te gaan.',
+                    'model-required'              => 'Selecteer een AI-model voordat u vertaalt, of stel een standaard vertaalmodel in bij de Magic AI-configuratie.',
                 ],
                 'product-info' => [
                     'title'        => 'Productinformatie',

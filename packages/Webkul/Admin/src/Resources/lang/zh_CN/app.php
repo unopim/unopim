@@ -461,6 +461,7 @@ return [
                     'change'                      => '更改',
                     'overwrite-warning'           => '所选目标区域设置中的现有内容将被替换。',
                     'incomplete-source'           => '请选择源渠道、区域设置和至少一个属性以继续。',
+                    'model-required'              => '请在翻译前选择一个 AI 模型，或在 Magic AI 配置中设置默认翻译模型。',
                 ],
                 'product-info' => [
                     'title'        => '产品信息',
