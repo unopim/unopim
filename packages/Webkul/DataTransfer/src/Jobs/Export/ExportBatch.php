@@ -62,6 +62,9 @@ class ExportBatch implements ShouldQueue
         $logger->info("ExportBatch #{$this->exportBatch->id} completed.");
     }
 
+    /**
+     * Mark the batch and its export job as failed so the tracker stops showing it as processing.
+     */
     public function failed(\Throwable $exception): void
     {
         JobLogger::make($this->jobTrackId)->error("ExportBatch #{$this->exportBatch->id} failed: {$exception->getMessage()}", [
@@ -69,7 +72,17 @@ class ExportBatch implements ShouldQueue
             'exception' => $exception->getTraceAsString(),
         ]);
 
-        $this->exportBatch->state = 'failed';
+        $this->exportBatch->state = ExportHelper::STATE_FAILED;
         $this->exportBatch->save();
+
+        $jobTrack = $this->exportBatch->jobTrack()->first();
+
+        if ($jobTrack && $jobTrack->state !== ExportHelper::STATE_FAILED) {
+            $jobTrack->forceFill([
+                'state'        => ExportHelper::STATE_FAILED,
+                'errors'       => array_merge((array) $jobTrack->errors, [$exception->getMessage()]),
+                'completed_at' => now(),
+            ])->save();
+        }
     }
 }

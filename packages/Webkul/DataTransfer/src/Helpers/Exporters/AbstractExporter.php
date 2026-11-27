@@ -13,6 +13,7 @@ use Webkul\DataTransfer\Contracts\JobTrackBatch;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
 use Webkul\DataTransfer\Helpers\Concerns\TracksJobHeartbeat;
 use Webkul\DataTransfer\Helpers\Error;
+use Webkul\DataTransfer\Helpers\Export;
 use Webkul\DataTransfer\Jobs\Export\Completed as CompletedJob;
 use Webkul\DataTransfer\Jobs\Export\ExportBatch as ExportBatchJob;
 use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
@@ -75,6 +76,11 @@ abstract class AbstractExporter
     ];
 
     public const BATCH_SIZE = 1000;
+
+    /**
+     * Job track meta key that remembers the export's buffer file across a pause.
+     */
+    public const BUFFER_META_KEY = 'export_buffer';
 
     protected const ESTIMATED_BYTES_PER_CELL = 32;
 
@@ -385,7 +391,7 @@ abstract class AbstractExporter
             $this->filters = $this->export->jobInstance->filters ?? [];
 
             if ($this->exportsFile) {
-                $this->exportBuffer = JSONFileBuffer::initialize($this->export);
+                $this->exportBuffer = $this->resolveExportBuffer();
             }
 
             $fileBuffer = $this->initializeFileBuffer();
@@ -422,6 +428,64 @@ abstract class AbstractExporter
         }
 
         return true;
+    }
+
+    /**
+     * Reopen the buffer of an interrupted run so a resumed export keeps its earlier rows.
+     */
+    protected function resolveExportBuffer(): JSONFileBuffer
+    {
+        $storedPath = $this->export->meta[self::BUFFER_META_KEY] ?? null;
+
+        if (is_string($storedPath) && JSONFileBuffer::belongsTo($storedPath, $this->export)) {
+            return JSONFileBuffer::load($storedPath);
+        }
+
+        if ($storedPath !== null) {
+            $this->requeueProcessedBatches();
+        }
+
+        $buffer = JSONFileBuffer::initialize($this->export);
+
+        $this->export->forceFill([
+            'meta' => array_merge((array) $this->export->meta, [self::BUFFER_META_KEY => $buffer->getFilename()]),
+        ])->save();
+
+        return $buffer;
+    }
+
+    /**
+     * Export the already processed batches again when the buffer holding their rows is gone,
+     * e.g. the temp directory was cleaned or the export resumed on another host.
+     */
+    protected function requeueProcessedBatches(): void
+    {
+        $requeued = $this->export->batches()
+            ->where('state', Export::STATE_PROCESSED)
+            ->update(['state' => Export::STATE_PENDING]);
+
+        $this->jobLogger?->warning("Export buffer missing on resume; re-exporting {$requeued} processed batches.");
+    }
+
+    /**
+     * Discard the buffer left by an earlier run before the export starts from scratch.
+     */
+    public function resetExportBuffer(): void
+    {
+        $meta = (array) $this->export->meta;
+        $storedPath = $meta[self::BUFFER_META_KEY] ?? null;
+
+        if (! array_key_exists(self::BUFFER_META_KEY, $meta)) {
+            return;
+        }
+
+        if (is_string($storedPath) && JSONFileBuffer::belongsTo($storedPath, $this->export)) {
+            JSONFileBuffer::load($storedPath)->delete();
+        }
+
+        unset($meta[self::BUFFER_META_KEY]);
+
+        $this->export->forceFill(['meta' => $meta])->save();
     }
 
     /**

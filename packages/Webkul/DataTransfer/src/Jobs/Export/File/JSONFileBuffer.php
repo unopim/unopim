@@ -2,6 +2,8 @@
 
 namespace Webkul\DataTransfer\Jobs\Export\File;
 
+use Webkul\DataTransfer\Contracts\JobTrack as JobTrackContract;
+
 class JSONFileBuffer implements \Iterator
 {
     const FILE_PREFIX = 'unopim_buffer_';
@@ -23,6 +25,21 @@ class JSONFileBuffer implements \Iterator
         $filename = sprintf('%s%s_', JSONFileBuffer::FILE_PREFIX, $export->id);
 
         return new self($filename);
+    }
+
+    /**
+     * Whether the path is a buffer file this class created for the given export.
+     */
+    public static function belongsTo(string $path, JobTrackContract $export): bool
+    {
+        $realPath = realpath($path);
+
+        if ($realPath === false || ! is_file($realPath)) {
+            return false;
+        }
+
+        return dirname($realPath) === realpath(sys_get_temp_dir())
+            && str_starts_with(basename($realPath), sprintf('%s%s_', self::FILE_PREFIX, $export->id));
     }
 
     protected function openFile(): void
