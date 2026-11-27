@@ -10,8 +10,11 @@ beforeEach(function (): void {
 
 /**
  * Write a worker result payload and return what the importer makes of it.
+ *
+ * @param  array<string, mixed>|string|null  $payload
+ * @return array{invalid: array<int, int>, processed?: int, visited: int}|null
  */
-function workerResultFor(?int $exitStatus, array|string|null $payload, int $expectedRows): ?array
+function parallelValidationWorkerResult(?int $exitStatus, array|string|null $payload, int $expectedRows): ?array
 {
     $resultFile = sys_get_temp_dir().'/parallel-validation-worker-'.uniqid().'.json';
 
@@ -31,41 +34,45 @@ function workerResultFor(?int $exitStatus, array|string|null $payload, int $expe
 /**
  * Build the wait status a child that exited normally with the given code reports.
  */
-function exitedWithCode(int $code): int
+function parallelValidationExitStatus(int $code): int
 {
     return $code << 8;
 }
 
 it('trusts a worker that exited cleanly and reported its whole slice', function (): void {
-    $result = workerResultFor(exitedWithCode(0), ['invalid' => [10, 20], 'processed' => 1250, 'visited' => 1250], 1250);
+    $result = parallelValidationWorkerResult(parallelValidationExitStatus(0), ['invalid' => [10, 20], 'processed' => 1250, 'visited' => 1250], 1250);
 
     expect($result['invalid'])->toBe([10, 20]);
 });
 
 it('rejects a worker that was killed even when it left a result file', function (): void {
-    expect(workerResultFor(SIGKILL, ['invalid' => [], 'processed' => 1250, 'visited' => 1250], 1250))->toBeNull();
+    expect(parallelValidationWorkerResult(SIGKILL, ['invalid' => [], 'processed' => 1250, 'visited' => 1250], 1250))->toBeNull();
 });
 
 it('rejects a worker that exited with an error code', function (): void {
-    expect(workerResultFor(exitedWithCode(1), ['invalid' => [], 'processed' => 0, 'visited' => 0], 1250))->toBeNull();
+    expect(parallelValidationWorkerResult(parallelValidationExitStatus(1), ['invalid' => [], 'processed' => 0, 'visited' => 0], 1250))->toBeNull();
 });
 
 it('rejects a worker whose exit status was never collected', function (): void {
-    expect(workerResultFor(null, ['invalid' => [], 'processed' => 1250, 'visited' => 1250], 1250))->toBeNull();
+    expect(parallelValidationWorkerResult(null, ['invalid' => [], 'processed' => 1250, 'visited' => 1250], 1250))->toBeNull();
 });
 
 it('rejects a worker that left no result file', function (): void {
-    expect(workerResultFor(exitedWithCode(0), null, 1250))->toBeNull();
+    expect(parallelValidationWorkerResult(parallelValidationExitStatus(0), null, 1250))->toBeNull();
 });
 
 it('rejects a worker whose result file is not valid JSON', function (): void {
-    expect(workerResultFor(exitedWithCode(0), '{"invalid": [', 1250))->toBeNull();
+    expect(parallelValidationWorkerResult(parallelValidationExitStatus(0), '{"invalid": [', 1250))->toBeNull();
 });
 
 it('rejects a worker that read fewer rows than its slice holds', function (): void {
-    expect(workerResultFor(exitedWithCode(0), ['invalid' => [], 'processed' => 78, 'visited' => 78], 1250))->toBeNull();
+    expect(parallelValidationWorkerResult(parallelValidationExitStatus(0), ['invalid' => [], 'processed' => 78, 'visited' => 78], 1250))->toBeNull();
 });
 
 it('rejects a result written by a worker from before the visited count existed', function (): void {
-    expect(workerResultFor(exitedWithCode(0), ['invalid' => [], 'processed' => 1250], 1250))->toBeNull();
+    expect(parallelValidationWorkerResult(parallelValidationExitStatus(0), ['invalid' => [], 'processed' => 1250], 1250))->toBeNull();
+});
+
+it('rejects a worker whose result has no list of invalid rows', function (): void {
+    expect(parallelValidationWorkerResult(parallelValidationExitStatus(0), ['invalid' => 'none', 'processed' => 1250, 'visited' => 1250], 1250))->toBeNull();
 });

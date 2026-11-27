@@ -105,7 +105,7 @@ function parallelValidationImporter(array $badSkus, ?string $faultySku = null, s
 /**
  * Open the CSV as a source whose forked readers stop at the given row, as a reader that loses its place would.
  */
-function shortReadingSource(string $fileName, int $stopAtRow): CSV
+function parallelValidationShortReadingSource(string $fileName, int $stopAtRow): CSV
 {
     return new class($fileName, $stopAtRow) extends CSV
     {
@@ -123,6 +123,42 @@ function shortReadingSource(string $fileName, int $stopAtRow): CSV
             parent::next();
 
             if (getmypid() !== $this->parentPid && $this->currentRowNumber >= $this->stopAtRow) {
+                $this->currentRowNumber = -1;
+            }
+        }
+    };
+}
+
+/**
+ * Open the CSV as a source whose forked readers see no rows unless they reopened it first.
+ */
+function parallelValidationSharedHandleSource(string $fileName): CSV
+{
+    return new class($fileName) extends CSV
+    {
+        protected int $parentPid;
+
+        protected bool $reopened = false;
+
+        public function __construct(string $fileName)
+        {
+            parent::__construct($fileName, ',');
+
+            $this->parentPid = getmypid();
+        }
+
+        public function reopen(): void
+        {
+            parent::reopen();
+
+            $this->reopened = true;
+        }
+
+        public function next(): void
+        {
+            parent::next();
+
+            if (getmypid() !== $this->parentPid && ! $this->reopened) {
                 $this->currentRowNumber = -1;
             }
         }
@@ -166,6 +202,19 @@ it('re-validates only the rows healthy workers flagged as invalid', function ():
         ->and($importer->parentValidatedSkus)->toBe($this->badSkus)
         ->and($importer->processedRows())->toBe(40)
         ->and($importer->validatedRowCount())->toBe(40);
+
+    Log::shouldNotHaveReceived('warning');
+});
+
+it('gives every worker its own read offset by reopening the source', function (): void {
+    Log::spy();
+    writeParallelValidationCsv($this->fileName, 40);
+
+    $importer = parallelValidationImporter($this->badSkus);
+
+    expect(runParallelValidation($importer, parallelValidationSharedHandleSource($this->fileName), 40))->toBeFalse()
+        ->and($importer->invalidSkus)->toBe($this->badSkus)
+        ->and($importer->parentValidatedSkus)->toBe($this->badSkus);
 
     Log::shouldNotHaveReceived('warning');
 });
@@ -218,7 +267,7 @@ it('validates the slices of workers that read fewer rows than assigned', functio
 
     $importer = parallelValidationImporter($this->badSkus);
 
-    expect(runParallelValidation($importer, shortReadingSource($this->fileName, 13), 40))->toBeFalse()
+    expect(runParallelValidation($importer, parallelValidationShortReadingSource($this->fileName, 13), 40))->toBeFalse()
         ->and($importer->invalidSkus)->toBe($this->badSkus)
         ->and($importer->processedRows())->toBe(40)
         ->and($importer->validatedRowCount())->toBe(40);

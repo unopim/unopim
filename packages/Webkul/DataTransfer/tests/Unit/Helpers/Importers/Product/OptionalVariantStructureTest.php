@@ -78,7 +78,7 @@ it('still rejects a missing required product header', function (string $missing)
  *
  * @param  array<int, array<string, string>>  $rows
  */
-function arrayImportSource(array $rows): AbstractSource
+function optionalVariantStructureSource(array $rows): AbstractSource
 {
     return new class($rows) extends AbstractSource
     {
@@ -138,7 +138,7 @@ it('does not inherit variant_structure as an attribute from a parent row', funct
     $skuStorage->shouldReceive('load')->once()->with(['parent']);
     (new ReflectionProperty(Importer::class, 'skuStorage'))->setValue($importer, $skuStorage);
 
-    $source = arrayImportSource([['sku' => 'parent', 'type' => $type, 'parent' => '', 'attribute_family' => 'default', 'variant_structure' => 'by_color', 'name' => 'Example parent']]);
+    $source = optionalVariantStructureSource([['sku' => 'parent', 'type' => $type, 'parent' => '', 'attribute_family' => 'default', 'variant_structure' => 'by_color', 'name' => 'Example parent']]);
 
     $importer->setSource($source)->setErrorHelper(new Error);
     (new ReflectionMethod(Importer::class, 'saveValidatedBatches'))->invoke($importer);
