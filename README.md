@@ -37,7 +37,7 @@
 
 ## What is UnoPim?
 
-UnoPim is a Product Information Management (PIM) platform. It gives your team one place to model products, enrich them per channel and locale, manage their media, and send them to every storefront, marketplace and system that needs them.
+UnoPim is a Product Information Management (PIM) and [Digital Asset Management (DAM)](https://github.com/unopim/unopim-digital-asset-management) platform. It gives your team one place to model products, enrich them per channel and locale, manage their media, and send them to every storefront, marketplace and system that needs them.
 
 - **Built to scale.** [Tested to 10 million products](https://unopim.com/scaling-unopim-for-10-million-products/), with queued imports and exports and optional Elasticsearch.
 - **AI built in.** Chat with an agent to search, create, bulk edit and translate products, using OpenAI, Gemini, Groq, Ollama and other providers.
