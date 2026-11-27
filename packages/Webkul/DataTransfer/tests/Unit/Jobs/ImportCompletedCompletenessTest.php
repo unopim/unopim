@@ -69,6 +69,20 @@ it('collects skus across several processed batches without duplicates', function
     expect(importCompletedCompletenessDispatchedIds())->toBe($products->pluck('id')->sort()->values()->all());
 });
 
+it('collects skus from batches beyond the first batch read chunk', function (): void {
+    $products = Product::factory()->count(2)->create();
+
+    $import = JobTrack::factory()->create();
+
+    JobTrackBatch::factory()->processed()->create(['job_track_id' => $import->id, 'data' => [['sku' => $products[0]->sku]]]);
+    JobTrackBatch::factory()->processed()->count(50)->create(['job_track_id' => $import->id, 'data' => [['sku' => 'icc-missing-sku']]]);
+    JobTrackBatch::factory()->processed()->create(['job_track_id' => $import->id, 'data' => [['sku' => $products[1]->sku]]]);
+
+    importCompletedCompletenessRun($import);
+
+    expect(importCompletedCompletenessDispatchedIds())->toBe($products->pluck('id')->sort()->values()->all());
+});
+
 it('ignores batches that were not processed', function (): void {
     $product = Product::factory()->create();
 
