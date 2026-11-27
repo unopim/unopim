@@ -32,7 +32,7 @@
 </p>
 
 <p align="center">
-  <a href="https://demo.unopim.com/"><img src="https://raw.githubusercontent.com/unopim/temp-media/main/readme-hero-agentic-pim.png" alt="UnoPim Agentic PIM: creating a product from a chat prompt" width="640"></a>
+  <a href="https://demo.unopim.com/"><img src="https://raw.githubusercontent.com/unopim/temp-media/main/readme-hero.png" alt="UnoPim dashboard with the Agentic PIM assistant writing an SEO description" width="860"></a>
 </p>
 
 ## What is UnoPim?
