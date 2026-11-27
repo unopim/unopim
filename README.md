@@ -165,7 +165,7 @@ Also included: **Digital Product Passports** with QR carriers and a public tier,
 | [Shopify Connector](https://github.com/unopim/shopify-connector) | Sync products, prices, descriptions and images to Shopify. |
 | [Bagisto Connector](https://github.com/unopim/bagisto-connector) | Sync products, attributes and media to a [Bagisto](https://bagisto.com/) store. |
 
-Browse more on the [extensions marketplace](https://unopim.com/extensions/), or [build your own](https://devdocs.unopim.com/master/plugins/).
+Browse more on the [extensions marketplace](https://unopim.com/extensions/), or [build your own](https://devdocs.unopim.com/3.1/plugins/).
 
 ## Hosting
 
