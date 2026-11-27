@@ -3257,6 +3257,7 @@ return [
         'passports'                => 'Product Passports',
         'publish'                  => 'Publish',
         'withdraw'                 => 'Withdraw',
+        'redact'                   => 'Redact (irreversible)',
         'addresses'                => 'Addresses',
         'attribute-families'       => 'Attribute Families',
         'attribute-groups'         => 'Attribute Groups',

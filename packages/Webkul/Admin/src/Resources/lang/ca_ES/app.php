@@ -3065,6 +3065,7 @@ return [
         'passports'                => 'Passaports de producte',
         'publish'                  => 'Publica',
         'withdraw'                 => 'Retira',
+        'redact'                   => 'Esborra definitivament (irreversible)',
         'addresses'                => 'Adreces',
         'attribute-families'       => 'Famílies d\'atributs',
         'attribute-groups'         => 'Grups d\'atributs',

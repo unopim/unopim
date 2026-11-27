@@ -3065,6 +3065,7 @@ return [
         'passports'                => 'Tuotepassit',
         'publish'                  => 'Julkaise',
         'withdraw'                 => 'Peru',
+        'redact'                   => 'Poista tiedot (peruuttamaton)',
         'addresses'                => 'Osoitteet',
         'attribute-families'       => 'Attribuuttiperheet',
         'attribute-groups'         => 'Attribuuttiryhmät',

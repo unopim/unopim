@@ -3068,6 +3068,7 @@ return [
         'passports'                => 'Produktpass',
         'publish'                  => 'Publicera',
         'withdraw'                 => 'Dra tillbaka',
+        'redact'                   => 'Maskera (oåterkalleligt)',
         'addresses'                => 'Adresser',
         'attribute-families'       => 'Attributfamiljer',
         'attribute-groups'         => 'Attributgrupper',

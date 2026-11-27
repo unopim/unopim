@@ -3068,6 +3068,7 @@ return [
         'passports'                => 'Hộ chiếu sản phẩm',
         'publish'                  => 'Xuất bản',
         'withdraw'                 => 'Thu hồi',
+        'redact'                   => 'Xóa dữ liệu (không thể hoàn tác)',
         'addresses'                => 'Địa chỉ',
         'attribute-families'       => 'Nhóm thuộc tính',
         'attribute-groups'         => 'Nhóm thuộc tính',

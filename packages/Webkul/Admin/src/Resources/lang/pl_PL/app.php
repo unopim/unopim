@@ -3068,6 +3068,7 @@ return [
         'passports'                => 'Paszporty produktu',
         'publish'                  => 'Opublikuj',
         'withdraw'                 => 'Wycofaj',
+        'redact'                   => 'Utajnij (nieodwracalne)',
         'addresses'                => 'Adresy',
         'attribute-families'       => 'Rodziny atrybutów',
         'attribute-groups'         => 'Grupy atrybutów',

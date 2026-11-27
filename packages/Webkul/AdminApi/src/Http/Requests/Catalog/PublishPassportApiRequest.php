@@ -2,6 +2,7 @@
 
 namespace Webkul\AdminApi\Http\Requests\Catalog;
 
+use Illuminate\Validation\Rule;
 use Webkul\AdminApi\Http\Requests\ApiFormRequest;
 
 class PublishPassportApiRequest extends ApiFormRequest
@@ -14,7 +15,12 @@ class PublishPassportApiRequest extends ApiFormRequest
         return [
             'channel_id'   => ['required', 'integer', 'exists:channels,id'],
             'locale_ids'   => ['required', 'array', 'min:1'],
-            'locale_ids.*' => ['integer', 'exists:locales,id'],
+            'locale_ids.*' => [
+                'integer',
+                'distinct',
+                Rule::exists('channel_locales', 'locale_id')
+                    ->where('channel_id', $this->integer('channel_id')),
+            ],
         ];
     }
 }

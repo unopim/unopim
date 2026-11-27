@@ -3065,6 +3065,7 @@ return [
         'passports'                => 'Paspor Produk',
         'publish'                  => 'Terbitkan',
         'withdraw'                 => 'Tarik',
+        'redact'                   => 'Hapus permanen (tidak dapat dibatalkan)',
         'addresses'                => 'Alamat',
         'attribute-families'       => 'Keluarga atribut',
         'attribute-groups'         => 'Grup atribut',

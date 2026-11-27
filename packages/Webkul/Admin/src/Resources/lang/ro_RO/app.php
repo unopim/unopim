@@ -3068,6 +3068,7 @@ return [
         'passports'                => 'Pașapoarte produs',
         'publish'                  => 'Publică',
         'withdraw'                 => 'Retrage',
+        'redact'                   => 'Șterge definitiv (ireversibil)',
         'addresses'                => 'Adrese',
         'attribute-families'       => 'Familii de Atribute',
         'attribute-groups'         => 'Grupuri de Atribute',

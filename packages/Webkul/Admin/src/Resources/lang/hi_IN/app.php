@@ -3065,6 +3065,7 @@ return [
         'passports'                => 'उत्पाद पासपोर्ट',
         'publish'                  => 'प्रकाशित करें',
         'withdraw'                 => 'वापस लें',
+        'redact'                   => 'स्थायी रूप से मिटाएँ (अपरिवर्तनीय)',
         'addresses'                => 'पतों',
         'attribute-families'       => 'विशेषण परिवार',
         'attribute-groups'         => 'विशेषता समूह',

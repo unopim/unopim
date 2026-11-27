@@ -9,7 +9,9 @@ use Webkul\AdminApi\Http\Requests\Catalog\RedactPassportApiRequest;
 use Webkul\AdminApi\Http\Resources\PublicationResource;
 use Webkul\Core\Models\ChannelProxy;
 use Webkul\Product\Repositories\ProductRepository;
+use Webkul\ProductPassport\DataTransferObjects\PassportPublishRefusal;
 use Webkul\ProductPassport\Http\Controllers\PublicationController as PassportFeature;
+use Webkul\ProductPassport\Services\PassportPublishGuard;
 use Webkul\Publication\Exceptions\InvalidPublicationTransitionException;
 use Webkul\Publication\Jobs\PublishPassportForProductChannelJob;
 use Webkul\Publication\Models\Publication;
@@ -64,8 +66,11 @@ class PassportController extends ApiController
     /**
      * Queue passport publication for a product on the given channel/locales.
      */
-    public function publish(PublishPassportApiRequest $request, string $sku): JsonResponse
-    {
+    public function publish(
+        PublishPassportApiRequest $request,
+        string $sku,
+        PassportPublishGuard $publishGuard,
+    ): JsonResponse {
         abort_unless(PassportFeature::featureEnabled(), 404);
 
         $product = $this->productRepository->findByField('sku', $sku)->first();
@@ -80,11 +85,19 @@ class PassportController extends ApiController
             403,
         );
 
+        $localeIds = $request->collect('locale_ids')->map(fn (mixed $id): int => (int) $id)->values()->all();
+
+        $refusal = $publishGuard->refusal($product, $channel, $localeIds);
+
+        if ($refusal instanceof PassportPublishRefusal) {
+            return response()->json(['success' => false, ...$refusal->toArray()], 422);
+        }
+
         PublishPassportForProductChannelJob::dispatch(
             $product->id,
             $channel->id,
             'dpp',
-            $request->collect('locale_ids')->map(fn ($id): int => (int) $id)->all(),
+            $localeIds,
             auth()->guard('api')->id(),
         );
 

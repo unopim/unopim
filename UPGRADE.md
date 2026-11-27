@@ -300,6 +300,17 @@ deliberately:
 
 Remove `RESPONSE_CACHE_ENABLED`. It no longer has any effect.
 
+### Passport API changes
+
+- Redact now needs its own **Redact** permission. The upgrade grants it to integrations
+  that have **Withdraw**; untick it for any that should only withdraw. Rolling the
+  migration back removes **Redact** from every integration, including ones ticked
+  after the upgrade.
+- Reinstate now needs **Withdraw** instead of **Publish**, as in the admin panel. An
+  integration that only has **Publish** can no longer reinstate; tick **Withdraw** for it.
+- Publish now returns 422 instead of 202 for the same requests the admin refuses, and
+  `locale_ids` must be distinct locales of the given `channel_id`.
+
 ### Re-cache configuration and routes
 
 The upgrade runs `optimize:clear` and does not re-cache, so the new release

@@ -3068,6 +3068,7 @@ return [
         'passports'                => 'Mga Pasaporte ng Produkto',
         'publish'                  => 'I-publish',
         'withdraw'                 => 'Bawiin',
+        'redact'                   => 'I-redact (hindi na maibabalik)',
         'addresses'                => 'Mga Address',
         'attribute-families'       => 'Mga Pamilya ng Katangian',
         'attribute-groups'         => 'Mga Grupo ng Katangian',
