@@ -84,6 +84,12 @@
 - Fixed re-seeding the demo catalog failing once a publication release existed.
 - Fixed the install tracker always reporting the country as India; it is now derived from the admin timezone.
 
+## BC Breaks
+
+### Classes
+
+- `Webkul\AdminApi\Http\Controllers\API\Catalog\MediaFileController::assignMediaToProductAttribute()` now takes `Product $product` and `array $filePaths` instead of an untyped product and a comma-joined `string $filePath`, and throws `ValidationException` when a gallery would exceed its limits. Update overrides and callers.
+
 # 3.1.3 — September 29th, 2026
 
 ## Improvements

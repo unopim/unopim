@@ -15,7 +15,7 @@ class FileNameWithoutComma implements ValidationRule
     {
         foreach (is_array($value) ? $value : [$value] as $file) {
             if ($file instanceof UploadedFile && str_contains($file->getClientOriginalName(), ',')) {
-                $fail(trans('core::validation.file-name-comma', ['attribute' => $attribute]));
+                $fail('core::validation.file-name-comma')->translate();
 
                 return;
             }
