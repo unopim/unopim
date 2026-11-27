@@ -84,26 +84,6 @@ class Bouncer
      */
     public function checkIfAuthorized(): void
     {
-        $acl = resolve('acl');
-
-        if (! $acl) {
-            return;
-        }
-
-        $routeName = Route::currentRouteName();
-
-        if (! isset($acl->roles[$routeName])) {
-            return;
-        }
-
-        $gate = resolve(ModuleGate::class);
-
-        foreach ($acl->alternateRoles[$routeName] ?? [] as $permission) {
-            if ($gate->allowsKey($permission) && bouncer()->hasPermission($permission)) {
-                return;
-            }
-        }
-
-        bouncer()->allow($acl->roles[$routeName]);
+        abort_unless(bouncer()->canAccessRoute(Route::currentRouteName()), 403, 'This action is unauthorized');
     }
 }
