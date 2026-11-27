@@ -31,6 +31,10 @@
   <a href="https://github.com/unopim/unopim/discussions"><b>Discussions</b></a>
 </p>
 
+<p align="center">
+  <a href="https://demo.unopim.com/"><img src="https://raw.githubusercontent.com/unopim/temp-media/main/readme-hero-dashboard.png" alt="UnoPim admin dashboard" width="640"></a>
+</p>
+
 ## What is UnoPim?
 
 UnoPim is a Product Information Management (PIM) platform. It gives your team one place to model products, enrich them per channel and locale, manage their media, and send them to every storefront, marketplace and system that needs them.
