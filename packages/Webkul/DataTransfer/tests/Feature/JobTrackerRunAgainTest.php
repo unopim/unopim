@@ -1,20 +1,21 @@
 <?php
 
+use Webkul\DataTransfer\Enums\JobType;
 use Webkul\DataTransfer\Models\JobTrack;
 
 /**
  * Create a completed job track of the given type with a job instance of the same type.
  */
-function runAgainCompletedTrack(string $type): JobTrack
+function runAgainCompletedTrack(JobType $type): JobTrack
 {
-    $jobTrack = $type === 'export'
+    $jobTrack = $type->isExport()
         ? JobTrack::factory()->export()->completed()->create()
         : JobTrack::factory()->completed()->create();
 
-    if ($type === 'system') {
-        $jobTrack->jobInstance()->update(['type' => 'system']);
+    if ($type === JobType::SYSTEM) {
+        $jobTrack->jobInstance()->update(['type' => JobType::SYSTEM->value]);
 
-        $jobTrack->update(['type' => 'system']);
+        $jobTrack->update(['type' => JobType::SYSTEM->value]);
     }
 
     return $jobTrack;
@@ -47,7 +48,7 @@ function runAgainLabel(): string
 }
 
 describe('Run Again on a completed job', function (): void {
-    it('links a completed job to its own job page for a full-access admin', function (string $type, string $route, string $otherRoute): void {
+    it('links a completed job to its own job page for a full-access admin', function (JobType $type, string $route, string $otherRoute): void {
         $jobTrack = runAgainCompletedTrack($type);
 
         expect(runAgainTrackerPage($jobTrack))
@@ -55,12 +56,12 @@ describe('Run Again on a completed job', function (): void {
             ->toContain(route($route, $jobTrack->job_instances_id))
             ->not->toContain(route($otherRoute, $jobTrack->job_instances_id));
     })->with([
-        'export' => ['export', 'admin.settings.data_transfer.exports.export-view', 'admin.settings.data_transfer.imports.import-view'],
-        'import' => ['import', 'admin.settings.data_transfer.imports.import-view', 'admin.settings.data_transfer.exports.export-view'],
+        'export' => [JobType::EXPORT, 'admin.settings.data_transfer.exports.export-view', 'admin.settings.data_transfer.imports.import-view'],
+        'import' => [JobType::IMPORT, 'admin.settings.data_transfer.imports.import-view', 'admin.settings.data_transfer.exports.export-view'],
     ]);
 
     it('hides Run Again on a system job, which has no job page', function (): void {
-        $jobTrack = runAgainCompletedTrack('system');
+        $jobTrack = runAgainCompletedTrack(JobType::SYSTEM);
 
         expect(runAgainTrackerPage($jobTrack))
             ->not->toContain(runAgainLabel())
@@ -68,28 +69,28 @@ describe('Run Again on a completed job', function (): void {
             ->not->toContain(route('admin.settings.data_transfer.exports.export-view', $jobTrack->job_instances_id));
     });
 
-    it('shows Run Again when the role can open and execute the job', function (string $type, array $permissions, string $route): void {
+    it('shows Run Again when the role can open and execute the job', function (JobType $type, array $permissions, string $route): void {
         $jobTrack = runAgainCompletedTrack($type);
 
         expect(runAgainTrackerPage($jobTrack, $permissions))
             ->toContain(runAgainLabel())
             ->toContain(route($route, $jobTrack->job_instances_id));
     })->with([
-        'export' => ['export', ['data_transfer.export', 'data_transfer.export.execute'], 'admin.settings.data_transfer.exports.export-view'],
-        'import' => ['import', ['data_transfer.imports', 'data_transfer.imports.execute'], 'admin.settings.data_transfer.imports.import-view'],
+        'export' => [JobType::EXPORT, ['data_transfer.export', 'data_transfer.export.execute'], 'admin.settings.data_transfer.exports.export-view'],
+        'import' => [JobType::IMPORT, ['data_transfer.imports', 'data_transfer.imports.execute'], 'admin.settings.data_transfer.imports.import-view'],
     ]);
 
-    it('hides Run Again when the role cannot both open and execute the job', function (string $type, array $permissions, string $route): void {
+    it('hides Run Again when the role cannot both open and execute the job', function (JobType $type, array $permissions, string $route): void {
         $jobTrack = runAgainCompletedTrack($type);
 
         expect(runAgainTrackerPage($jobTrack, $permissions))
             ->not->toContain(runAgainLabel())
             ->not->toContain(route($route, $jobTrack->job_instances_id));
     })->with([
-        'export without execute'  => ['export', ['data_transfer.export'], 'admin.settings.data_transfer.exports.export-view'],
-        'export without view'     => ['export', ['data_transfer.export.execute'], 'admin.settings.data_transfer.exports.export-view'],
-        'import without execute'  => ['import', ['data_transfer.imports'], 'admin.settings.data_transfer.imports.import-view'],
-        'import without view'     => ['import', ['data_transfer.imports.execute'], 'admin.settings.data_transfer.imports.import-view'],
-        'export with import only' => ['export', ['data_transfer.imports', 'data_transfer.imports.execute'], 'admin.settings.data_transfer.exports.export-view'],
+        'export without execute'  => [JobType::EXPORT, ['data_transfer.export'], 'admin.settings.data_transfer.exports.export-view'],
+        'export without view'     => [JobType::EXPORT, ['data_transfer.export.execute'], 'admin.settings.data_transfer.exports.export-view'],
+        'import without execute'  => [JobType::IMPORT, ['data_transfer.imports'], 'admin.settings.data_transfer.imports.import-view'],
+        'import without view'     => [JobType::IMPORT, ['data_transfer.imports.execute'], 'admin.settings.data_transfer.imports.import-view'],
+        'export with import only' => [JobType::EXPORT, ['data_transfer.imports', 'data_transfer.imports.execute'], 'admin.settings.data_transfer.exports.export-view'],
     ]);
 });

@@ -35,9 +35,8 @@ enum JobType: string
     }
 
     /**
-     * Export permissions are grouped under the singular `data_transfer.export` key in acl.php.
-     */
-    /**
+     * Return the pause, resume and cancel failure messages for this job type.
+     *
      * @return array<string, string>
      */
     public function trackerMessages(): array
@@ -61,6 +60,9 @@ enum JobType: string
         };
     }
 
+    /**
+     * Export permissions are grouped under the singular `data_transfer.export` key in acl.php.
+     */
     public function editPermission(): ?string
     {
         return match ($this) {
@@ -82,6 +84,9 @@ enum JobType: string
         };
     }
 
+    /**
+     * Return the permission that opens the job page; system jobs have none.
+     */
     public function viewPermission(): ?string
     {
         return match ($this) {
