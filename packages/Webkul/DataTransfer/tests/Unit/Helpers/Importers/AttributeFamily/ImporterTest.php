@@ -238,6 +238,7 @@ describe('saveAttributeFamilies', function () {
     it('creates new family', function () {
         ['importer' => $importer, 'familyRepo' => $repo, 'storage' => $storage] = makeImporter();
 
+        DB::shouldReceive('table->where->get')->andReturn(collect());
         DB::shouldReceive('table->where->delete');
         DB::shouldReceive('table->insert');
 
@@ -263,6 +264,7 @@ describe('saveAttributeFamilies', function () {
     it('updates existing family', function () {
         ['importer' => $importer, 'familyRepo' => $repo, 'storage' => $storage] = makeImporter();
 
+        DB::shouldReceive('table->where->get')->andReturn(collect());
         DB::shouldReceive('table->where->delete');
         DB::shouldReceive('table->insert');
 

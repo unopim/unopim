@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeGroupRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
+use Webkul\Completeness\Jobs\BulkProductCompletenessJob;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Core\Rules\Code;
@@ -473,15 +474,32 @@ class Importer extends AbstractImporter
             }
         }
 
+        $rows = array_map(unserialize(...), array_unique(array_map(serialize(...), $incoming)));
+
+        $existingKeys = DB::table('completeness_settings')
+            ->where('family_id', $familyId)
+            ->get(['attribute_id', 'channel_id'])
+            ->map(fn ($row): string => $row->attribute_id.'-'.$row->channel_id)
+            ->sort()
+            ->values()
+            ->all();
+
+        $incomingKeys = collect($rows)
+            ->map(fn (array $row): string => $row['attribute_id'].'-'.$row['channel_id'])
+            ->sort()
+            ->values()
+            ->all();
+
         DB::table('completeness_settings')
             ->where('family_id', $familyId)
             ->delete();
 
-        if ($incoming !== []) {
-            $unique = array_unique(array_map(serialize(...), $incoming));
-            $rows = array_map(unserialize(...), $unique);
-
+        if ($rows !== []) {
             DB::table('completeness_settings')->insert($rows);
+        }
+
+        if ($existingKeys !== $incomingKeys) {
+            dispatch(new BulkProductCompletenessJob([], $familyId));
         }
     }
 
