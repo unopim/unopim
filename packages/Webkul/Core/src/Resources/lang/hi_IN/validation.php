@@ -18,6 +18,7 @@ return [
     'not-supported'                    => ':attribute निम्नलिखित मानों का समर्थन नहीं करता है (:unsupported)।',
     'seperator-not-supported'          => 'केवल , या ; या | को विभाजक के रूप में समर्थित किया जाता है।',
     'file-type'                        => 'फ़ाइल csv,xls,xlsx प्रकार की होनी चाहिए',
+    'file-name-comma'                  => 'फ़ील्ड :attribute के फ़ाइल नाम में अल्पविराम नहीं होना चाहिए।',
     'file-mime-extension-mismatch'     => 'फ़ाइल एक्सटेंशन और MIME प्रकार :attribute फ़ील्ड के लिए मेल नहीं खाते। फ़ाइल एक्सटेंशन :extension और MIME प्रकार :mimeType है।',
     'file-not-exists'                  => 'चयनित फ़ाइल मौजूद नहीं है :value फ़ील्ड :attribute के लिए।',
     'pdf-active-content'               => 'इस PDF में एम्बेडेड स्क्रिप्ट या क्रियाएँ हैं और इसे अपलोड नहीं किया जा सकता।',

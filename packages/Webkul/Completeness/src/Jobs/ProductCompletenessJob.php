@@ -91,8 +91,10 @@ class ProductCompletenessJob implements ShouldQueue
             $deleteQueue = array_merge($deleteQueue, $deletes);
         }
 
+        $removedRows = 0;
+
         foreach ($deleteQueue as [$productId, $channelId]) {
-            DB::table('product_completeness')
+            $removedRows += DB::table('product_completeness')
                 ->where('product_id', $productId)
                 ->where('channel_id', $channelId)
                 ->delete();
@@ -121,7 +123,7 @@ class ProductCompletenessJob implements ShouldQueue
             DB::statement("UPDATE {$prefix}products SET avg_completeness_score = CAST(CASE id {$cases} END AS {$castType}) WHERE id IN ({$idList})");
         }
 
-        if ($changedRows !== [] || $deleteQueue !== []) {
+        if ($changedRows !== [] || $removedRows > 0) {
             Event::dispatch('completeness.product.calculate.after', ['ids' => array_keys($avgScores)]);
         }
     }

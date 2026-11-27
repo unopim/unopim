@@ -18,6 +18,7 @@ return [
     'not-supported'                    => ':attribute 不支持以下值 (:unsupported)。',
     'seperator-not-supported'          => '仅支持 , 或 ; 或 | 作为分隔符。',
     'file-type'                        => '文件必须为 csv、xls、xlsx 类型',
+    'file-name-comma'                  => ':attribute 的文件名不能包含逗号。',
     'file-mime-extension-mismatch'     => ':attribute 文件扩展名和 MIME 类型不匹配。文件扩展名是 :extension，MIME 类型是 :mimeType。',
     'file-not-exists'                  => '所选文件 :value 在字段 :attribute 中不存在。',
     'pdf-active-content'               => '该 PDF 包含嵌入的脚本或动作，无法上传。',

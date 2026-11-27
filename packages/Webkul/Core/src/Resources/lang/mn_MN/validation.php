@@ -18,6 +18,7 @@ return [
     'not-supported'                    => ':attribute дараах утгуудыг (:unsupported) дэмждэггүй.',
     'seperator-not-supported'          => 'Зөвхөн, эсвэл; эсвэл | тусгаарлагч болгон дэмждэг.',
     'file-type'                        => 'Файл нь csv, xls, xlsx төрлийн байх ёстой',
+    'file-name-comma'                  => ':attribute-ийн файлын нэр таслал агуулж болохгүй.',
     'file-mime-extension-mismatch'     => 'Файлын өргөтгөл болон MIME төрөл нь :attribute талбарт тохирохгүй байна. Файлын өргөтгөл :extension бөгөөд MIME төрөл :mimeType байна.',
     'file-not-exists'                  => ':attribute талбарт сонгосон файл :value байхгүй байна.',
     'pdf-active-content'               => 'Энэ PDF нь суулгагдсан скрипт эсвэл үйлдэл агуулсан тул байршуулах боломжгүй.',

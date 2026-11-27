@@ -2,9 +2,9 @@
 
 namespace Webkul\AdminApi\Http\Requests\Catalog;
 
-use Webkul\AdminApi\Http\Requests\ApiFormRequest;
+use Webkul\Core\Rules\FileNameWithoutComma;
 
-class StoreCategoryMediaRequest extends ApiFormRequest
+class StoreCategoryMediaRequest extends CategoryMediaRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -14,9 +14,8 @@ class StoreCategoryMediaRequest extends ApiFormRequest
     public function rules(): array
     {
         return [
-            'file'           => 'required',
-            'code'           => 'required',
-            'category_field' => 'required',
+            'file' => ['required', new FileNameWithoutComma],
+            ...parent::rules(),
         ];
     }
 }

@@ -18,6 +18,7 @@ return [
     'not-supported'                    => 'Поле :attribute не підтримує такі значення (:unsupported).',
     'seperator-not-supported'          => 'Тільки , або ; або | підтримуються як роздільник.',
     'file-type'                        => 'Файл повинен бути типу csv, xls, xlsx.',
+    'file-name-comma'                  => 'Назва файлу для :attribute не повинна містити коми.',
     'file-mime-extension-mismatch'     => 'Розширення файлу та MIME-тип не відповідають для поля :attribute. Розширення файлу: :extension, MIME-тип: :mimeType.',
     'file-not-exists'                  => 'Вибраний файл не існує :value для поля :attribute.',
     'pdf-active-content'               => 'PDF-файл містить вбудовані скрипти або дії та не може бути завантажений.',

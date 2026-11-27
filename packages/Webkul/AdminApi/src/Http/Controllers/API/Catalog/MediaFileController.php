@@ -7,18 +7,22 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
 use Symfony\Component\HttpFoundation\Response;
 use Webkul\AdminApi\Http\Controllers\API\ApiController;
+use Webkul\AdminApi\Http\Requests\Catalog\CategoryMediaRequest;
+use Webkul\AdminApi\Http\Requests\Catalog\ProductMediaRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\StoreCategoryMediaRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\StoreProductMediaRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\StoreSwatchMediaRequest;
 use Webkul\Attribute\Contracts\AttributeOption;
 use Webkul\Attribute\Repositories\AttributeOptionRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
+use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Category\Validator\Catalog\CategoryMediaValidator;
 use Webkul\Core\Filesystem\FileStorer;
@@ -66,6 +70,9 @@ class MediaFileController extends ApiController
 
         $attributeValue = $requestData['file'];
         $attribute = $requestData['attribute'];
+        $storeOptions = $this->attributeRepository->findOneByField('code', $attribute)?->type === AttributeTypes::GALLERY_ATTRIBUTE_TYPE
+            ? [FileStorer::HASHED_FOLDER_NAME_KEY => true]
+            : [];
 
         try {
             $attributeValue = is_array($attributeValue) ? $attributeValue : [$attributeValue];
@@ -74,15 +81,20 @@ class MediaFileController extends ApiController
             foreach ($attributeValue as $value) {
                 if ($value instanceof UploadedFile) {
                     $filePath[] = $this->fileStorer->store(
-                        path: 'product'.DIRECTORY_SEPARATOR.$productId.DIRECTORY_SEPARATOR.$attribute,
-                        file: $value
+                        path: $this->productMediaFolder($productId, $attribute),
+                        file: $value,
+                        options: $storeOptions,
                     );
                 }
             }
 
-            $filePath = implode(',', $filePath);
+            try {
+                $this->assignMediaToProductAttribute($product, $attribute, $filePath);
+            } catch (ValidationException $e) {
+                $this->deleteFiles($filePath, $this->productMediaFolder($productId, $attribute).'/');
 
-            $this->assignMediaToProductAttribute($product, $attribute, $filePath);
+                return $this->validateErrorResponse($e->validator->errors()->messages());
+            }
 
             return $this->successResponse(
                 trans('admin::app.catalog.products.upload-success'),
@@ -90,7 +102,7 @@ class MediaFileController extends ApiController
                 [
                     'attribute' => $attribute,
                     'sku'       => $requestData['sku'],
-                    'filePath'  => $filePath,
+                    'filePath'  => implode(',', $filePath),
                 ]
             );
         } catch (\Exception $e) {
@@ -215,14 +227,14 @@ class MediaFileController extends ApiController
     /**
      * Return the stored media path(s) for a product attribute at the resolved scope.
      */
-    public function getProductMedia(): JsonResponse
+    public function getProductMedia(ProductMediaRequest $request): JsonResponse
     {
-        $product = $this->productRepository->findByField('sku', request('sku'))->first();
+        $product = $this->productRepository->findByField('sku', $request->input('sku'))->first();
         if (! $product) {
-            return $this->modelNotFoundResponse(trans('admin::app.catalog.products.product-not-found', ['sku' => request('sku')]));
+            return $this->modelNotFoundResponse(trans('admin::app.catalog.products.product-not-found', ['sku' => $request->input('sku')]));
         }
 
-        [, $values, $path] = $this->resolveProductMediaSlot($product, (string) request('attribute'));
+        [, $values, $path] = $this->resolveProductMediaSlot($product, (string) $request->input('attribute'));
 
         return response()->json([
             'data' => $this->splitPaths(Arr::get($values, $path)),
@@ -232,14 +244,14 @@ class MediaFileController extends ApiController
     /**
      * Delete a product attribute's media file(s) from storage and clear the value.
      */
-    public function deleteProductMedia(): JsonResponse
+    public function deleteProductMedia(ProductMediaRequest $request): JsonResponse
     {
-        $product = $this->productRepository->findByField('sku', request('sku'))->first();
+        $product = $this->productRepository->findByField('sku', $request->input('sku'))->first();
         if (! $product) {
-            return $this->modelNotFoundResponse(trans('admin::app.catalog.products.product-not-found', ['sku' => request('sku')]));
+            return $this->modelNotFoundResponse(trans('admin::app.catalog.products.product-not-found', ['sku' => $request->input('sku')]));
         }
 
-        [, $values, $path] = $this->resolveProductMediaSlot($product, (string) request('attribute'));
+        [, $values, $path] = $this->resolveProductMediaSlot($product, (string) $request->input('attribute'));
 
         $stored = $this->splitPaths(Arr::get($values, $path));
         if ($stored === []) {
@@ -247,7 +259,7 @@ class MediaFileController extends ApiController
         }
 
         try {
-            $this->deleteFiles($stored);
+            $this->deleteFiles($stored, $this->productMediaFolder($product->id, (string) $request->input('attribute')).'/');
             Arr::forget($values, $path);
             $product->values = $values;
             $product->save();
@@ -261,14 +273,14 @@ class MediaFileController extends ApiController
     /**
      * Return the stored media path for a category field.
      */
-    public function getCategoryMedia(): JsonResponse
+    public function getCategoryMedia(CategoryMediaRequest $request): JsonResponse
     {
-        $category = $this->categoryRepository->findOneByField('code', request('code'));
+        $category = $this->categoryRepository->findOneByField('code', $request->input('code'));
         if (! $category) {
-            return $this->modelNotFoundResponse(trans('admin::app.catalog.categories.not-found', ['code' => request('code')]));
+            return $this->modelNotFoundResponse(trans('admin::app.catalog.categories.not-found', ['code' => $request->input('code')]));
         }
 
-        $field = (string) request('category_field');
+        $field = (string) $request->input('category_field');
         $values = $category->additional_data ?? [];
 
         return response()->json([
@@ -279,14 +291,14 @@ class MediaFileController extends ApiController
     /**
      * Delete a category field's media file(s) from storage and clear the value.
      */
-    public function deleteCategoryMedia(): JsonResponse
+    public function deleteCategoryMedia(CategoryMediaRequest $request): JsonResponse
     {
-        $category = $this->categoryRepository->findOneByField('code', request('code'));
+        $category = $this->categoryRepository->findOneByField('code', $request->input('code'));
         if (! $category) {
-            return $this->modelNotFoundResponse(trans('admin::app.catalog.categories.not-found', ['code' => request('code')]));
+            return $this->modelNotFoundResponse(trans('admin::app.catalog.categories.not-found', ['code' => $request->input('code')]));
         }
 
-        $field = (string) request('category_field');
+        $field = (string) $request->input('category_field');
         $values = $category->additional_data ?? [];
         $locale = core()->getDefaultLocaleCodeFromDefaultChannel();
         $key = Arr::has($values, "common.$field") ? "common.$field" : "locale_specific.$locale.$field";
@@ -297,7 +309,7 @@ class MediaFileController extends ApiController
         }
 
         try {
-            $this->deleteFiles($stored);
+            $this->deleteFiles($stored, 'category/'.$category->id.'/'.$field.'/');
             Arr::forget($values, $key);
             $category->additional_data = $values;
             $category->save();
@@ -337,7 +349,7 @@ class MediaFileController extends ApiController
         }
 
         try {
-            $this->deleteFiles($stored);
+            $this->deleteFiles($stored, 'attribute_option/');
             $this->attributeOptionRepository->update(['swatch_value' => null], $option->id);
 
             return $this->successResponse(trans('admin::app.catalog.attribute-options.delete-success'));
@@ -376,7 +388,7 @@ class MediaFileController extends ApiController
      *
      * @return array{0: mixed, 1: array<string, mixed>, 2: string}
      */
-    private function resolveProductMediaSlot($product, string $attributeCode): array
+    private function resolveProductMediaSlot(Product $product, string $attributeCode): array
     {
         $attribute = $this->attributeRepository->findOneByField('code', $attributeCode);
         $values = $product->values ?? [];
@@ -397,6 +409,8 @@ class MediaFileController extends ApiController
     }
 
     /**
+     * Split a stored media value, list or comma string, into trimmed paths.
+     *
      * @return array<int, string>
      */
     private function splitPaths(mixed $value): array
@@ -405,55 +419,105 @@ class MediaFileController extends ApiController
             return [];
         }
 
-        return array_values(array_filter(array_map('trim', explode(',', (string) $value))));
+        $paths = is_array($value) ? $value : explode(',', (string) $value);
+
+        return array_values(array_filter(array_map(fn (mixed $path): string => trim((string) $path), $paths)));
     }
 
     /**
+     * Whether a stored path points to a file inside the given folder, with no way to step out of it.
+     */
+    private function isInsideFolder(string $path, string $folder): bool
+    {
+        return str_starts_with($path, $folder)
+            && ! str_contains($path, '..')
+            && ! str_contains($path, '\\');
+    }
+
+    /**
+     * Delete the stored files that sit inside the record's own media folder, leaving any other path on disk.
+     *
      * @param  array<int, string>  $paths
      */
-    private function deleteFiles(array $paths): void
+    private function deleteFiles(array $paths, string $folder): void
     {
         foreach ($paths as $path) {
-            if (Storage::exists($path)) {
+            if ($this->isInsideFolder($path, $folder) && Storage::exists($path)) {
                 Storage::delete($path);
             }
         }
     }
 
     /**
-     * Persist the uploaded file path into the product's values JSON under the
-     * correct scope (common / locale / channel / channel-locale), using the
-     * attribute's scope flags and the request's channel/locale (falling back
-     * to defaults).
+     * Persist the uploaded file paths at the attribute's scope, appending to a gallery and replacing any other media.
+     *
+     * @param  array<int, string>  $filePaths
+     *
+     * @throws ValidationException when the gallery would exceed its file count or total size limit
      */
-    protected function assignMediaToProductAttribute($product, string $attributeCode, string $filePath): void
+    protected function assignMediaToProductAttribute(Product $product, string $attributeCode, array $filePaths): void
     {
-        if ($filePath === '') {
+        if ($filePaths === []) {
             return;
         }
 
-        $attribute = $this->attributeRepository->findOneByField('code', $attributeCode);
+        DB::transaction(function () use ($product, $attributeCode, $filePaths): void {
+            $lockedProduct = $this->productRepository->getModel()::query()->whereKey($product->id)->lockForUpdate()->first();
 
-        if (! $attribute) {
-            return;
+            [$attribute, $values, $path] = $this->resolveProductMediaSlot($lockedProduct, $attributeCode);
+
+            if (! $attribute) {
+                return;
+            }
+
+            if ($attribute->type === AttributeTypes::GALLERY_ATTRIBUTE_TYPE) {
+                $gallery = array_values(array_unique([...$this->splitPaths(Arr::get($values, $path)), ...$filePaths]));
+
+                $this->ensureGalleryWithinLimits($gallery);
+
+                Arr::set($values, $path, $gallery);
+            } else {
+                Arr::set($values, $path, implode(',', $filePaths));
+            }
+
+            $lockedProduct->values = $values;
+            $lockedProduct->save();
+        });
+    }
+
+    /**
+     * Return the folder a product attribute's media files are stored in.
+     */
+    private function productMediaFolder(int $productId, string $attributeCode): string
+    {
+        return 'product/'.$productId.'/'.$attributeCode;
+    }
+
+    /**
+     * Refuse a gallery holding more files or bytes than the product form accepts.
+     *
+     * @param  array<int, string>  $paths
+     *
+     * @throws ValidationException
+     */
+    private function ensureGalleryWithinLimits(array $paths): void
+    {
+        $maxFiles = (int) config('media.gallery.max_files', 50);
+
+        if (count($paths) > $maxFiles) {
+            throw ValidationException::withMessages([
+                'file' => trans('validation.max.array', ['attribute' => 'file', 'max' => $maxFiles]),
+            ]);
         }
 
-        $values = $product->values ?? [];
-        $channel = request()->input('channel') ?: core()->getDefaultChannelCode();
-        $locale = request()->input('locale') ?: core()->getDefaultLocaleCodeFromDefaultChannel();
+        $maxTotalKilobytes = (int) config('media.gallery.max_total_size_kilobytes', 51200);
+        $totalBytes = array_sum(array_map(fn (string $path): int => Storage::exists($path) ? Storage::size($path) : 0, $paths));
 
-        if ($attribute->value_per_channel && $attribute->value_per_locale) {
-            $values['channel_locale_specific'][$channel][$locale][$attributeCode] = $filePath;
-        } elseif ($attribute->value_per_channel) {
-            $values['channel_specific'][$channel][$attributeCode] = $filePath;
-        } elseif ($attribute->value_per_locale) {
-            $values['locale_specific'][$locale][$attributeCode] = $filePath;
-        } else {
-            $values['common'][$attributeCode] = $filePath;
+        if ($maxTotalKilobytes > 0 && $totalBytes > $maxTotalKilobytes * 1024) {
+            throw ValidationException::withMessages([
+                'file' => trans('validation.max.file', ['attribute' => 'file', 'max' => $maxTotalKilobytes]),
+            ]);
         }
-
-        $product->values = $values;
-        $product->save();
     }
 
     /**

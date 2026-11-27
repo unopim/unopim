@@ -18,6 +18,7 @@ return [
     'not-supported'                    => 'Das :attribute unterstützt die folgenden Werte nicht (:unsupported).',
     'seperator-not-supported'          => 'Nur , oder ; oder | werden als Trennzeichen unterstützt.',
     'file-type'                        => 'Die Datei muss vom Typ csv, xls, xlsx sein.',
+    'file-name-comma'                  => 'Der Dateiname von :attribute darf kein Komma enthalten.',
     'file-mime-extension-mismatch'     => 'Die Dateiendung und der MIME-Typ stimmen nicht überein für das Feld :attribute. Die Dateiendung ist :extension und der MIME-Typ ist :mimeType.',
     'file-not-exists'                  => 'Die ausgewählte Datei existiert nicht :value für das Feld :attribute.',
     'pdf-active-content'               => 'Das PDF enthält eingebettete Skripte oder Aktionen und kann nicht hochgeladen werden.',

@@ -1,3 +1,16 @@
+# Unreleased
+
+## Bug fixes
+
+- Fixed REST API uploads to a product gallery replacing the images already in it. Each upload is now appended to the gallery and stored as a list, the same way the product form saves it, in its own folder so two files with the same name are both kept. An upload that would take the gallery past `media.gallery.max_files` or `max_total_size_kilobytes` is rejected with 422. Integrations that relied on an upload replacing the gallery must now `DELETE` the gallery media first, or `PATCH` the product's gallery value with the full list. Getting or deleting the media of a gallery saved from the product form no longer returns a server error. Uploading, getting and deleting media with a `channel` or `locale` that does not exist, or with a locale the channel does not hold for an attribute stored per channel and locale, is now rejected with 422. The `attribute` of these three endpoints must be an existing image, file or gallery attribute, otherwise they return 422, and deleting media only removes files stored in that product's own media folder. Category and swatch media deletes likewise only remove files in the category field's or swatch's own folder, and the category media endpoints return 422 for a field that is not an image or file field. Product, category and swatch media uploads whose file name contains a comma are rejected with 422, since stored media lists are comma separated.
+- Fixed a completeness recalculation that changed no score still flushing the dashboard product statistics whenever a channel had no completeness settings. Only rows actually removed or rescored now count as a change.
+
+## BC Breaks
+
+### Classes
+
+- `Webkul\AdminApi\Http\Controllers\API\Catalog\MediaFileController::assignMediaToProductAttribute()` now takes `Product $product` and `array $filePaths` instead of an untyped product and a comma-joined `string $filePath`, and throws `ValidationException` when a gallery would exceed its limits. Update overrides and callers.
+
 # 3.1.4 — November 23rd, 2026
 
 This is a security release. Upgrade promptly and follow the upgrade steps: several actions now require a permission they did not check before, and some Magic AI platform and import settings that were accepted before are now refused.
