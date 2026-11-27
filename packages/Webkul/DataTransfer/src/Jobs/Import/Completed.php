@@ -14,6 +14,16 @@ class Completed implements ShouldQueue
     use Queueable;
 
     /**
+     * Number of SKUs resolved per product lookup, kept well under the database placeholder limit.
+     */
+    protected const SKU_LOOKUP_CHUNK_SIZE = 1000;
+
+    /**
+     * Number of import batches read into memory at a time while collecting SKUs.
+     */
+    protected const BATCH_READ_CHUNK_SIZE = 50;
+
+    /**
      * Create a new job instance.
      *
      * @param  mixed  $import
@@ -74,28 +84,39 @@ class Completed implements ShouldQueue
             return;
         }
 
-        // Collect all SKUs from all processed batches in a single query
-        $skus = $this->import->batches()
-            ->where('state', ImportHelper::STATE_PROCESSED)
-            ->get('data')
-            ->flatMap(fn ($batch): array => array_column($batch->data ?? [], 'sku'))
-            ->filter()
-            ->unique()
-            ->values()
-            ->toArray();
+        $ids = [];
 
-        if (empty($skus)) {
-            return;
+        foreach (array_chunk($this->processedSkus(), self::SKU_LOOKUP_CHUNK_SIZE) as $skus) {
+            array_push($ids, ...DB::table('products')->whereIn('sku', $skus)->pluck('id')->all());
         }
 
-        // Resolve product IDs from SKUs in one query
-        $ids = DB::table('products')
-            ->whereIn('sku', $skus)
-            ->pluck('id')
-            ->toArray();
-
-        if (! empty($ids)) {
+        if ($ids !== []) {
             dispatch(new BulkProductCompletenessJob($ids));
         }
+    }
+
+    /**
+     * Collect the unique SKUs of every processed batch, reading the batches one chunk at a time.
+     *
+     * @return array<int, string>
+     */
+    protected function processedSkus(): array
+    {
+        $skus = [];
+
+        $batches = $this->import->batches()
+            ->where('state', ImportHelper::STATE_PROCESSED)
+            ->select(['id', 'data'])
+            ->lazyById(self::BATCH_READ_CHUNK_SIZE);
+
+        foreach ($batches as $batch) {
+            foreach (array_column($batch->data ?? [], 'sku') as $sku) {
+                if (filled($sku)) {
+                    $skus[$sku] = true;
+                }
+            }
+        }
+
+        return array_map(strval(...), array_keys($skus));
     }
 }
