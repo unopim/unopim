@@ -1,10 +1,8 @@
 name: Playwright Tests
 
-# A pull request runs a short smoke pass over the core admin save flows so a
-# broken create/edit page shows up in review. The full suite gates the merge
-# queue and runs on every push to a release line. Specs that call a live AI
-# provider only get credentials on the nightly run, so a provider renaming or
-# retiring a model cannot block a merge.
+# Every pull request runs the full suite, as do the merge queue and every push
+# to a release line. Specs that call a live AI provider only get credentials on
+# the nightly run, so a provider renaming or retiring a model cannot block a merge.
 #
 # A branch push and its own pull request are the same commit, so pushes are
 # limited to the release lines and everything else arrives through the PR event.
@@ -32,7 +30,7 @@ env:
 
 jobs:
   playwright_tests:
-    if: github.repository == 'unopim/unopim' && github.event_name != 'pull_request'
+    if: github.repository == 'unopim/unopim'
     name: Playwright E2E | Shard ${{ matrix.shard-index }}/${{ matrix.shard-total }}
     runs-on: ubuntu-24.04
 
@@ -123,82 +121,6 @@ jobs:
           name: playwright-report-shard-${{ matrix.shard-index }}-${{ github.run_id }}
           path: ${{ steps.scrub.outputs.paths }}
           retention-days: 7
-
-  # A short pass over the admin flows every change can break: sign-in, ajax
-  # navigation, the shared ajax form save and the catalog create/edit pages.
-  playwright_smoke:
-    if: github.repository == 'unopim/unopim' && github.event_name == 'pull_request'
-    name: Playwright E2E | Smoke
-    runs-on: ubuntu-24.04
-
-    services:
-      mysql: *mysql-service
-
-    env:
-      WEBHOOK_ALLOW_LOOPBACK: 'true'
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Set up UnoPim
-        uses: ./.github/actions/e2e-setup
-        with:
-          admin-email: ${{ secrets.INSTALLER_ADMIN_EMAIL || 'admin@example.com' }}
-          admin-password: ${{ secrets.INSTALLER_ADMIN_PASSWORD || 'admin123' }}
-
-      - name: Run Playwright smoke specs
-        env:
-          PASSPORT_E2E_LOCAL: '1'
-          PW_WORKERS: '3'
-        run: |
-          cd tests/e2e-pw
-          npx playwright test \
-            tests/07-ui-loginpage/loginpage.spec.js \
-            tests/10-navigation/ajax-nav.spec.js \
-            tests/form-save-feedback.spec.js \
-            tests/01-catalog/attribute.spec.js \
-            tests/01-catalog/attributefamily.spec.js \
-            tests/01-catalog/category.spec.js \
-            tests/01-catalog/products.spec.js
-
-      - name: Scrub credentials from test results
-        id: scrub
-        if: failure()
-        env:
-          INSTALLER_ADMIN_PASSWORD: ${{ secrets.INSTALLER_ADMIN_PASSWORD }}
-          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
-          INVALID_ADMIN_PASSWORD: ${{ secrets.INVALID_ADMIN_PASSWORD }}
-        run: |
-          bash .github/scripts/scrub-e2e-artifacts.sh \
-            tests/e2e-pw/playwright-report \
-            tests/e2e-pw/test-results \
-            storage/logs/laravel.log \
-            /tmp/server.log \
-            /tmp/queue.log
-
-      - name: Upload test results
-        if: failure() && steps.scrub.outcome == 'success' && steps.scrub.outputs.paths != ''
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: playwright-report-smoke-${{ github.run_id }}
-          path: ${{ steps.scrub.outputs.paths }}
-          retention-days: 7
-
-  # A skipped matrix job reports its check under the unexpanded name, which can
-  # never satisfy a required check. This stand-in reports the expanded names on
-  # a pull request so it can enter the merge queue, where the real job runs.
-  playwright_tests_pull_request:
-    if: github.repository == 'unopim/unopim' && github.event_name == 'pull_request'
-    runs-on: ubuntu-24.04
-    name: Playwright E2E | Shard ${{ matrix.shard-index }}/${{ matrix.shard-total }}
-    strategy:
-      matrix:
-        shard-index: [1,2,3,4,5,6,7,8]
-        shard-total: [8]
-    steps:
-      - name: Defer to the merge queue
-        run: echo "::notice::Playwright E2E runs in the merge queue and on the release lines."
 
   # The nightly run is the only one with live AI credentials and nobody watches
   # it, so a failure opens (or comments on) a tracking issue.
