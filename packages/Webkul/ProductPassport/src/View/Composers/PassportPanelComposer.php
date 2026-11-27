@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Illuminate\View\View;
 use Webkul\Core\Models\ChannelProxy;
+use Webkul\Product\Contracts\VariantStructurePlanner;
 use Webkul\ProductPassport\DataTransferObjects\PassportReadiness;
 use Webkul\ProductPassport\Enums\PassportFieldSource;
 use Webkul\ProductPassport\Services\PassportFeature;
@@ -27,6 +28,7 @@ class PassportPanelComposer
         private readonly PassportReadinessService $readiness,
         private readonly PassportFeature $feature,
         private readonly PublicAccessGate $publicAccess,
+        private readonly VariantStructurePlanner $variantStructurePlanner,
     ) {}
 
     public function compose(View $view): void
@@ -69,7 +71,7 @@ class PassportPanelComposer
 
         $assessments = $this->readiness->assessMany($product, $channel, $channel->locales);
 
-        $attributeGroupCodes = $this->attributeGroupCodes(
+        $attributeGroups = $this->attributeGroups(
             (int) $product->attribute_family_id,
             $assessments
                 ->flatMap(fn (PassportReadiness $assessment): Collection => $assessment->missingFields)
@@ -82,20 +84,30 @@ class PassportPanelComposer
                 ->all(),
         );
 
+        $attributeGroupCodes = array_map(fn (array $row): string => $row['group'], $attributeGroups);
+
+        $hiddenAttributeIds = array_keys(array_filter(
+            $attributeGroups,
+            fn (array $row): bool => ! $this->variantStructurePlanner->ownsAttribute($product, $row['attribute']),
+        ));
+
         $canEditTemplate = bouncer()->hasPermission('catalog.passport.template.edit');
         $canViewTemplate = bouncer()->hasPermission('catalog.passport.template.view');
 
-        $rows = $channel->locales->map(function ($locale) use ($product, $channel, $currentByLocale, $signedLink, $carrierLink, $assessments, $attributeGroupCodes, $canEditTemplate, $canViewTemplate): array {
+        $editingLocaleCode = core()->getRequestedLocaleCode();
+
+        $rows = $channel->locales->map(function ($locale) use ($product, $channel, $currentByLocale, $signedLink, $carrierLink, $assessments, $attributeGroupCodes, $hiddenAttributeIds, $canEditTemplate, $canViewTemplate, $editingLocaleCode): array {
             $version = $currentByLocale->get($locale->id);
             $assessment = $assessments->get($locale->id);
             $templateEditUrl = $assessment->template !== null && $canEditTemplate
                 ? route('admin.catalog.passports.templates.edit', $assessment->template->id)
                 : null;
-            $missingFields = $assessment->missingFields->map(function ($field) use ($product, $channel, $locale, $attributeGroupCodes, $templateEditUrl): array {
+            $missingFields = $assessment->missingFields->map(function ($field) use ($product, $channel, $locale, $attributeGroupCodes, $hiddenAttributeIds, $templateEditUrl, $editingLocaleCode): array {
                 $attributeId = $field->source_type === PassportFieldSource::Attribute
                     ? (int) $field->attribute_id
                     : null;
-                $groupCode = $attributeId !== null ? ($attributeGroupCodes[$attributeId] ?? null) : null;
+                $isHidden = $attributeId !== null && in_array($attributeId, $hiddenAttributeIds, true);
+                $groupCode = $attributeId !== null && ! $isHidden ? ($attributeGroupCodes[$attributeId] ?? null) : null;
 
                 return [
                     'code'       => $field->code,
@@ -108,7 +120,10 @@ class PassportPanelComposer
                             'locale'  => $locale->code,
                             'group'   => $groupCode,
                         ]).'#attribute-'.$attributeId
-                        : $templateEditUrl,
+                        : ($isHidden ? null : $templateEditUrl),
+                    'field_anchor' => $groupCode !== null && $locale->code === $editingLocaleCode
+                        ? 'attribute-'.$attributeId
+                        : null,
                 ];
             })->all();
 
@@ -171,10 +186,12 @@ class PassportPanelComposer
     }
 
     /**
+     * Attributes a product's variant level does not hold are hidden on its edit page, so callers drop those before linking.
+     *
      * @param  list<int>  $attributeIds
-     * @return array<int, string>
+     * @return array<int, array{group: string, attribute: string}>
      */
-    private function attributeGroupCodes(int $familyId, array $attributeIds): array
+    private function attributeGroups(int $familyId, array $attributeIds): array
     {
         if ($attributeIds === []) {
             return [];
@@ -188,13 +205,14 @@ class PassportPanelComposer
                 'mappings.attribute_family_group_id',
             )
             ->join('attribute_groups as groups', 'groups.id', '=', 'family_groups.attribute_group_id')
+            ->join('attributes', 'attributes.id', '=', 'mappings.attribute_id')
             ->where('family_groups.attribute_family_id', $familyId)
             ->whereIn('mappings.attribute_id', $attributeIds)
             ->orderBy('family_groups.position')
             ->orderBy('mappings.position')
-            ->get(['mappings.attribute_id', 'groups.code'])
+            ->get(['mappings.attribute_id', 'groups.code', 'attributes.code as attribute_code'])
             ->unique('attribute_id')
-            ->mapWithKeys(fn ($row): array => [(int) $row->attribute_id => $row->code])
+            ->mapWithKeys(fn ($row): array => [(int) $row->attribute_id => ['group' => $row->code, 'attribute' => $row->attribute_code]])
             ->all();
     }
 }

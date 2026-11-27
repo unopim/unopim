@@ -260,6 +260,14 @@
 
                 this.$emitter.on('section-drawer:touch', this._onSectionTouch);
 
+                this._onSectionClose = (id) => {
+                    if (id === this.id && this.isOpen) {
+                        this.close();
+                    }
+                };
+
+                this.$emitter.on('section-drawer:close', this._onSectionClose);
+
                 /**
                  * Collapsing the sidebar resizes main-content without resizing the
                  * window, so the panel has to track the element itself or it keeps
@@ -278,6 +286,7 @@
                 window.removeEventListener('resize', this._reflow);
 
                 this.$emitter.off('section-drawer:touch', this._onSectionTouch);
+                this.$emitter.off('section-drawer:close', this._onSectionClose);
 
                 this._observer?.disconnect();
                 this._fieldObserver?.disconnect();

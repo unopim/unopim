@@ -455,6 +455,6 @@ class ProductPassportTestCase extends TestCase
             'values'              => ['locale_specific' => [$complete->code => [$material->code => 'Recycled cotton, 80%']]],
         ]);
 
-        return [$product, $channel->refresh(), $incomplete, $complete];
+        return [$product, $channel->refresh(), $incomplete, $complete, $material];
     }
 }
