@@ -205,7 +205,9 @@ Free, open-source and MIT licensed.
 | Managed hosting | [UnoPim Cloud](https://unopim.com/cloud-hosting) or [AWS Marketplace](https://aws.amazon.com/marketplace/pp/prodview-rhsm6cbxqkm6i) images, or self-host |
 | Storefront connectors | Shopify and Bagisto (free), plus [Magento 2, WooCommerce and Shopware 6](https://unopim.com/extensions/) |
 | ERP integration | [Odoo connector](https://unopim.com/extensions/odoo-pim-integration/), REST API and webhooks |
-| Governance and approvals | Role-based access control in core, plus approvals and matching in [MDM](https://github.com/unopim/master-data-management) |
+| Approval workflows | [Maker Checker Workflow](https://store.webkul.com/unopim-maker-checker-workflow.html): drafts, side-by-side review and multi-level approval for products and assets |
+| Supplier onboarding | [Supplier Data Portal](https://store.webkul.com/unopim-supplier-data-portal.html): suppliers sign in to their own portal and submit products for your approval |
+| Governance | Role-based access control in core, plus approvals and matching in [MDM](https://github.com/unopim/master-data-management) |
 | Channel syndication | Publication channels that push per-channel payloads downstream on a queue |
 | Automation and AI agents | [n8n nodes](https://github.com/unopim/n8n-nodes-unopim), the [MCP server](https://github.com/unopim/unopim-mcp) and the built-in AI agent |
 
