@@ -4,8 +4,9 @@
 # The current release line `3.x` only accepts patch bumps: a minor release can
 # change framework internals the codebase extends (Laravel 13.32 changed the
 # queue worker's protected timeout handler), so minor and major bumps target
-# `master`, the next-major integration branch. Dependabot reads this file from
-# the default branch only.
+# `master`, the next-major integration branch. The maintained `3.1` line gets
+# patch bumps for Composer, Docker and Actions only. Dependabot reads this file
+# from the default branch only, so every branch it serves is listed here.
 
 version: 2
 updates:
@@ -235,3 +236,87 @@ updates:
       - dependency-name: "*"
         update-types:
           - "version-update:semver-patch"
+
+  # composer — maintained 3.1 line: patch only
+  - package-ecosystem: "composer"
+    directory: "/"
+    target-branch: "3.1"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Asia/Kolkata"
+    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 7
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+    labels:
+      - "dependencies"
+      - "php"
+      - "3.1"
+    commit-message:
+      prefix: "chore(deps-3.1)"
+      include: "scope"
+    groups:
+      laravel:
+        patterns:
+          - "laravel/*"
+          - "illuminate/*"
+      symfony:
+        patterns:
+          - "symfony/*"
+      dev-dependencies:
+        dependency-type: "development"
+
+  # docker — maintained 3.1 line: patch only
+  - package-ecosystem: "docker"
+    directory: "/dockerfiles"
+    target-branch: "3.1"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Asia/Kolkata"
+    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 7
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+    labels:
+      - "dependencies"
+      - "3.1"
+    commit-message:
+      prefix: "chore(docker-3.1)"
+      include: "scope"
+
+  # github-actions — maintained 3.1 line: patch only
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    target-branch: "3.1"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Asia/Kolkata"
+    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 7
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+    labels:
+      - "dependencies"
+      - "ci"
+      - "3.1"
+    commit-message:
+      prefix: "chore(ci-3.1)"
+      include: "scope"
