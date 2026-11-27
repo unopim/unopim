@@ -41,7 +41,7 @@ UnoPim is a Product Information Management (PIM) platform. It gives your team on
 
 - **Built to scale.** [Tested to 10 million products](https://unopim.com/scaling-unopim-for-10-million-products/), with queued imports and exports and optional Elasticsearch.
 - **AI built in.** Chat with an agent to search, create, bulk edit and translate products, using OpenAI, Gemini, Groq, Ollama and other providers.
-- **Runs your way.** MySQL, MariaDB or PostgreSQL, behind Nginx or Apache, on bare metal, Docker or Kubernetes.
+- **Runs your way.** MySQL, MariaDB or PostgreSQL, behind Nginx or Apache, on bare metal or in containers.
 - **MIT licensed.** No open-core lock-in. Extend it with ordinary Laravel packages.
 
 ## Security and trust
@@ -53,8 +53,8 @@ UnoPim is a Product Information Management (PIM) platform. It gives your team on
 </p>
 
 - **Audited openly.** Meets the [OpenSSF Best Practices](https://www.bestpractices.dev/projects/16085) criteria and is scored weekly by [OpenSSF Scorecard](https://scorecard.dev/viewer/?uri=github.com/unopim/unopim).
-- **Verifiable releases.** Every tagged release ships a source archive with SLSA build provenance.
-- **Tested on every change.** Pest suites on MySQL, MariaDB and PostgreSQL, Playwright end-to-end tests, and Larastan static analysis run in CI.
+- **Verifiable releases.** Every published release ships a source archive with SLSA build provenance.
+- **Continuously tested.** CI runs Pest suites on MySQL, MariaDB and PostgreSQL, Playwright end-to-end tests, and Larastan static analysis.
 - **Patched dependencies.** Dependabot keeps Composer, npm, Docker and GitHub Actions dependencies current.
 - **Responsible disclosure.** Report vulnerabilities privately through the [security policy](SECURITY.md), never in a public issue.
 
@@ -67,13 +67,13 @@ curl -O https://raw.githubusercontent.com/unopim/unopim/3.x/compose.yaml
 docker compose up -d
 ```
 
-Open <http://localhost:8000/admin>. The generated admin password is in the container:
+Open <http://localhost:8000/admin>. Unless you set `INSTALLER_ADMIN_EMAIL` and `INSTALLER_ADMIN_PASSWORD` before the first start, the generated admin login is in the container:
 
 ```bash
 docker compose exec unopim cat storage/app/admin-credentials.txt
 ```
 
-**Composer** (PHP 8.4+, MySQL 8 / MariaDB 10.11+ / PostgreSQL 16):
+**Composer** (PHP 8.4.1+, MySQL 8.0.32+ / MariaDB 10.11+ / PostgreSQL 16):
 
 ```bash
 composer create-project unopim/unopim
@@ -82,7 +82,7 @@ php artisan unopim:install
 php artisan serve
 ```
 
-Then start a queue worker for imports, exports, AI tasks, webhooks and passport publishing:
+Open <http://localhost:8000/admin>, then start a queue worker for imports, exports, AI tasks, webhooks and passport publishing:
 
 ```bash
 php artisan queue:work --queue=webhooks,system,completeness,default,publication
@@ -186,7 +186,7 @@ Also included: **Digital Product Passports** with QR carriers and a public tier,
   </tr>
 </table>
 
-Also free: the [Bagisto Connector](https://github.com/unopim/bagisto-connector) syncs products, attributes and media to a [Bagisto](https://bagisto.com/) store.
+The [Bagisto Connector](https://github.com/unopim/bagisto-connector) syncs products, attributes and media to a [Bagisto](https://bagisto.com/) store.
 
 Browse more on the [extensions marketplace](https://unopim.com/extensions/), or [build your own](https://devdocs.unopim.com/3.1/plugins/).
 
