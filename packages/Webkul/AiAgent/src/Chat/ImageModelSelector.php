@@ -12,6 +12,8 @@ class ImageModelSelector
 {
     /**
      * Select a current image model for the provider, or the chat model when the provider has no image models.
+     *
+     * @param  array<int, string>  $platformModels
      */
     public static function select(string $provider, string $chatModel, array $platformModels): string
     {
@@ -39,7 +41,13 @@ class ImageModelSelector
             }
         }
 
-        return (string) $settings['fallback'];
+        $fallback = (string) $settings['fallback'];
+
+        if (! self::isRetired($fallback)) {
+            return $fallback;
+        }
+
+        return array_find($settings['preferred'] ?? [], fn (string $model): bool => ! self::isRetired($model)) ?? $fallback;
     }
 
     /**
@@ -64,6 +72,8 @@ class ImageModelSelector
 
     /**
      * Get the image model settings of the provider, or null when it has none.
+     *
+     * @return array{patterns?: array<int, string>, preferred?: array<int, string>, fallback: string}|null
      */
     protected static function providerSettings(string $provider): ?array
     {
@@ -74,6 +84,8 @@ class ImageModelSelector
 
     /**
      * Determine whether the model matches any of the patterns.
+     *
+     * @param  array<int, string>  $patterns
      */
     protected static function matchesAny(array $patterns, string $model): bool
     {

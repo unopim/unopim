@@ -212,3 +212,20 @@ it('falls back to the image model an install configures for the provider', funct
     expect((new GenerateImage)->resolveImageModel(imageChatContext($platform, 'gemini-3-flash'), $platform))->toBe('gemini-nano-banana-3')
         ->and((new EditImage)->resolveImageModel(imageChatContext($platform, 'gemini-3-flash')))->toBe('gemini-nano-banana-3');
 });
+
+it('ignores the chat model of another platform when a dedicated image platform is set', function (): void {
+    $chatPlatform = imagePlatform(['id' => 7, 'provider' => 'gemini', 'models' => 'gemini-2.5-flash-image']);
+    $imagePlatform = imagePlatform(['id' => 405, 'provider' => 'xai', 'models' => 'grok-4']);
+
+    expect((new GenerateImage)->resolveImageModel(imageChatContext($chatPlatform, 'gemini-2.5-flash-image'), $imagePlatform))
+        ->toBe('grok-imagine-image-2.0');
+});
+
+it('skips a fallback model an install retires in config', function (): void {
+    config(['ai-agent.image_models.retired' => [...config('ai-agent.image_models.retired'), '/^gpt-image-2\.6-flare$/']]);
+
+    $platform = imagePlatform(['provider' => 'openai', 'models' => 'gpt-5.4']);
+
+    expect((new GenerateImage)->resolveImageModel(imageChatContext($platform, 'gpt-5.4'), $platform))->toBe('gpt-image-2.6-sunburst')
+        ->and((new EditImage)->resolveImageModel(imageChatContext($platform, 'gpt-5.4')))->toBe('gpt-image-2.6-sunburst');
+});

@@ -204,8 +204,8 @@ class GenerateImage implements PimTool
     /**
      * Resolve an image-generation capable model for the provider.
      *
-     * Priority: user-selected model (if image-capable) → known valid models
-     * from the platform list → fallback defaults.
+     * The configured image generation model wins when the platform lists it and it is not retired;
+     * otherwise ImageModelSelector picks one, using the chat model only when it belongs to this platform.
      */
     public function resolveImageModel(ChatContext $context, ?MagicAIPlatform $platform = null): string
     {
@@ -221,6 +221,8 @@ class GenerateImage implements PimTool
             return $configuredModel;
         }
 
-        return ImageModelSelector::select($provider, $context->model, $platform->model_list ?? []);
+        $chatModel = $platform->is($context->platform) ? $context->model : '';
+
+        return ImageModelSelector::select($provider, $chatModel, $platform->model_list ?? []);
     }
 }
