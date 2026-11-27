@@ -14,6 +14,7 @@ use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
+use Webkul\AiAgent\Chat\ImageModelSelector;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Core\Filesystem\FileStorer;
 use Webkul\Core\Helpers\Database\GrammarQueryManager;
@@ -353,51 +354,10 @@ class EditImage implements PimTool
      */
     public function resolveImageModel(ChatContext $context): string
     {
-        $provider = $context->platform->provider;
-
-        $imageModelPatterns = match ($provider) {
-            'openai' => ['dall-e', 'gpt-image'],
-            'gemini' => ['gemini-2', 'imagen'],
-            'xai'    => ['grok'],
-            default  => [],
-        };
-
-        if ($context->model !== '' && $context->model !== '0') {
-            foreach ($imageModelPatterns as $pattern) {
-                if (stripos($context->model, $pattern) !== false) {
-                    return $context->model;
-                }
-            }
-        }
-
-        $knownImageModels = match ($provider) {
-            'openai' => ['gpt-image-1', 'gpt-image-1-mini', 'gpt-image-1.5', 'dall-e-3', 'dall-e-2'],
-            'gemini' => ['gemini-2.0-flash-preview-image-generation', 'gemini-2.5-flash-image'],
-            'xai'    => ['grok-2-image'],
-            default  => [],
-        };
-
-        $models = $context->platform->model_list ?? [];
-
-        foreach ($knownImageModels as $known) {
-            if (in_array($known, $models, true)) {
-                return $known;
-            }
-        }
-
-        foreach ($models as $model) {
-            foreach ($imageModelPatterns as $pattern) {
-                if (stripos((string) $model, $pattern) !== false) {
-                    return $model;
-                }
-            }
-        }
-
-        return match ($provider) {
-            'openai' => 'gpt-image-1',
-            'gemini' => 'gemini-2.0-flash-preview-image-generation',
-            'xai'    => 'grok-2-image',
-            default  => $context->model,
-        };
+        return ImageModelSelector::select(
+            $context->platform->provider,
+            $context->model,
+            $context->platform->model_list ?? [],
+        );
     }
 }
