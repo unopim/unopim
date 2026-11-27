@@ -184,12 +184,13 @@ it('renders templates in quick exports when Elasticsearch is enabled', function 
         ->and($queued['de_DE']['tpl_qexp_title'])->toBe('Sonnenbrille by Acme');
 });
 
-it('renders a variant template with values inherited from its parent while exporting own values only', function () {
+it('renders a variant template with values inherited from its parent and exports every inherited value', function (): void {
     $parent = Product::factory()->configurable()->create(['values' => [
         'common' => [
             'tpl_qexp_brand' => 'Acme',
             'tpl_qexp_title' => '{{ tpl_qexp_brand }}!',
         ],
+        'categories' => ['parent_cat'],
     ]]);
 
     $variant = Product::factory()->create([
@@ -208,9 +209,38 @@ it('renders a variant template with values inherited from its parent while expor
 
     expect($variantRows['en_US']['tpl_qexp_title'])->toBe('Acme Blue')
         ->and($variantRows['de_DE']['tpl_qexp_title'])->toBe('Acme Blau')
-        ->and($variantRows['en_US']['tpl_qexp_brand'])->toBe('')
+        ->and($variantRows['en_US']['tpl_qexp_brand'])->toBe('Acme')
+        ->and($variantRows['en_US']['categories'])->toBe('parent_cat')
         ->and($rows[$parent->sku][$this->channel->code]['en_US']['tpl_qexp_title'])->toBe('Acme!')
         ->and($variant->fresh()->values)->toBe($storedVariant);
+});
+
+it('exports values a two-level variant inherits from its root, including a locale-scoped one', function (): void {
+    $root = Product::factory()->configurable()->create(['values' => [
+        'common'                  => ['tpl_qexp_brand' => 'Acme'],
+        'channel_locale_specific' => [$this->channel->code => [
+            'en_US' => ['tpl_qexp_headline' => 'Root headline'],
+        ]],
+        'categories'              => ['root_cat'],
+    ]]);
+
+    $middle = Product::factory()->configurable()->create([
+        'parent_id' => $root->id,
+        'values'    => ['common' => ['tpl_qexp_color' => 'blue']],
+    ]);
+
+    $leaf = Product::factory()->create([
+        'parent_id' => $middle->id,
+        'values'    => ['common' => ['tpl_qexp_title' => 'Leaf title']],
+    ]);
+
+    $row = quickTemplateDownloadRows([$leaf->id])[$leaf->sku][$this->channel->code]['en_US'];
+
+    expect($row['tpl_qexp_title'])->toBe('Leaf title')
+        ->and($row['tpl_qexp_color'])->toBe('blue')
+        ->and($row['tpl_qexp_brand'])->toBe('Acme')
+        ->and($row['tpl_qexp_headline'])->toBe('Root headline')
+        ->and($row['categories'])->toBe('root_cat');
 });
 
 it('empties missing or unknown references and keeps the source of a broken template', function () {

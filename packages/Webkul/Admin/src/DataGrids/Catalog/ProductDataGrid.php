@@ -2,6 +2,7 @@
 
 namespace Webkul\Admin\DataGrids\Catalog;
 
+use Illuminate\Pagination\AbstractPaginator;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Crypt;
@@ -1129,7 +1130,12 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $channelsAndLocales = $this->getAllChannelsAndLocales();
 
-        $templateContexts = $this->resolveTemplateContexts($gridData);
+        $inheritedValues = $this->resolveMergedValuesForPage(
+            $gridData instanceof AbstractPaginator ? $gridData->items() : $gridData,
+            'values'
+        );
+
+        $templateContexts = $this->resolveTemplateContexts($gridData, $inheritedValues);
 
         foreach ($gridData as $product) {
             $productArray = (array) $product;
@@ -1137,7 +1143,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 $productArray['values'] = json_decode($productArray['values'], true);
             }
 
-            $productValues = $this->getProductValues($productArray);
+            $productValues = $inheritedValues[$productArray['product_id']] ?? $this->getProductValues($productArray);
 
             $templateContext = $templateContexts[$productArray['product_id']] ?? null;
 
@@ -1168,30 +1174,20 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     /**
      * Resolve the merged parent and variant values of the rows that hold a template, keyed by product id.
      */
-    protected function resolveTemplateContexts(iterable $products): array
+    protected function resolveTemplateContexts(iterable $products, array $inheritedValues = []): array
     {
-        $rows = [];
+        $contexts = [];
 
         foreach ($products as $product) {
-            if (is_string($product->values ?? null) && str_contains($product->values, '{{')) {
-                $rows[$product->product_id] = [
-                    'id'        => $product->product_id,
-                    'parent_id' => $product->parent_id ?? null,
-                    'values'    => $product->values,
-                ];
+            if (! is_string($product->values ?? null) || ! str_contains($product->values, '{{')) {
+                continue;
             }
+
+            $contexts[$product->product_id] = $inheritedValues[$product->product_id]
+                ?? $this->getProductValues(['values' => $product->values]);
         }
 
-        if ($rows === []) {
-            return [];
-        }
-
-        $mergedValues = $this->variantValueResolver->resolveBatch($rows);
-
-        return array_map(
-            fn (array $row): array => $mergedValues[$row['id']] ?? $this->getProductValues($row),
-            $rows,
-        );
+        return $contexts;
     }
 
     /**
@@ -1447,14 +1443,16 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
      * to `VariantValueResolver::resolveBatch()` -- shared with the AdminApi
      * and export paths so there is one merge implementation, not several.
      *
+     * @param  string  $valuesKey  Property holding the row's stored values: `raw_values` for
+     *                             the grid page, `values` for the export rows.
      * @return array<int, array>
      */
-    protected function resolveMergedValuesForPage(iterable $records): array
+    protected function resolveMergedValuesForPage(iterable $records, string $valuesKey = 'raw_values'): array
     {
         $rows = collect($records)->map(fn ($record) => [
             'id'        => $record->product_id,
             'parent_id' => $record->parent_id ?? null,
-            'values'    => $record->raw_values ?? null,
+            'values'    => $record->{$valuesKey} ?? null,
         ]);
 
         return $this->variantValueResolver->resolveBatch($rows);
