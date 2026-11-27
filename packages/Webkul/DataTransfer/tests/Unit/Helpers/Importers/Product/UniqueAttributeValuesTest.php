@@ -2,6 +2,8 @@
 
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
+use Webkul\Core\Models\Channel;
+use Webkul\Core\Models\Locale;
 use Webkul\DataTransfer\Helpers\Error;
 use Webkul\DataTransfer\Helpers\Importers\Product\Importer;
 use Webkul\DataTransfer\Models\JobTrack;
@@ -15,12 +17,13 @@ beforeEach(function (): void {
 });
 
 /**
+ * @param  array<string, mixed>  $scope
  * @return array{0: AttributeFamily, 1: Attribute, 2: Attribute}
  */
-function familyWithTwoUniqueAttributes(): array
+function familyWithTwoUniqueAttributes(array $scope = []): array
 {
-    $first = Attribute::factory()->create(['type' => 'text', 'is_unique' => 1]);
-    $second = Attribute::factory()->create(['type' => 'text', 'is_unique' => 1]);
+    $first = Attribute::factory()->create(['type' => 'text', 'is_unique' => 1, ...$scope]);
+    $second = Attribute::factory()->create(['type' => 'text', 'is_unique' => 1, ...$scope]);
 
     $family = AttributeFamily::factory()->create();
     AttributeFamily::factory()->linkAttributeGroupToFamily($family);
@@ -68,4 +71,40 @@ it('rejects an in-file duplicate of any unique attribute, not only the last one 
     expect($importer->validateRow($original, 1))->toBeTrue()
         ->and($importer->validateRow($duplicateOfFirst, 2))->toBeFalse()
         ->and($importer->validateRow($duplicateOfSecond, 3))->toBeFalse();
+});
+
+it('rejects an in-file duplicate of a scoped unique attribute within the same scope', function (array $scope): void {
+    [$family, $first] = familyWithTwoUniqueAttributes($scope);
+
+    $importer = uniqueValuesImporter();
+
+    expect($importer->validateRow(uniqueValuesRow($family, [$first->code => 'scoped-a']), 1))->toBeTrue()
+        ->and($importer->validateRow(uniqueValuesRow($family, [$first->code => 'scoped-a']), 2))->toBeFalse();
+})->with([
+    'per locale'             => [['value_per_locale' => 1]],
+    'per channel'            => [['value_per_channel' => 1]],
+    'per channel and locale' => [['value_per_locale' => 1, 'value_per_channel' => 1]],
+]);
+
+it('accepts the same scoped unique value in a different locale', function (): void {
+    [$family, $first] = familyWithTwoUniqueAttributes(['value_per_locale' => 1]);
+
+    $otherLocale = Locale::factory()->create(['status' => 1]);
+    Channel::where('code', 'default')->firstOrFail()->locales()->attach($otherLocale);
+
+    $importer = uniqueValuesImporter();
+
+    expect($importer->validateRow(uniqueValuesRow($family, [$first->code => 'scoped-a']), 1))->toBeTrue()
+        ->and($importer->validateRow([...uniqueValuesRow($family, [$first->code => 'scoped-a']), 'locale' => $otherLocale->code], 2))->toBeTrue();
+});
+
+it('accepts the same unique value on another row of the same product', function (): void {
+    [$family, $first] = familyWithTwoUniqueAttributes(['value_per_locale' => 1]);
+
+    $importer = uniqueValuesImporter();
+
+    $row = uniqueValuesRow($family, [$first->code => 'scoped-a']);
+
+    expect($importer->validateRow($row, 1))->toBeTrue()
+        ->and($importer->validateRow($row, 2))->toBeTrue();
 });

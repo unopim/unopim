@@ -3379,12 +3379,12 @@ class Importer extends AbstractImporter
             }
 
             if ($attribute->isLocaleAndChannelBasedAttribute()) {
-                foreach ($this->channelLocaleCachedValues[$rowData['channel']][$rowData['locale']] ?? [] as $productData) {
-                    if (! isset($productData[$rowData['channel']][$rowData['locale']][$attributeCode])) {
+                foreach ($this->channelLocaleCachedValues[$rowData['channel']][$rowData['locale']] ?? [] as $sku => $productData) {
+                    if (! isset($productData[$attributeCode])) {
                         continue;
                     }
 
-                    if ($productData[$rowData['channel']][$rowData['locale']][$attributeCode] == $rowData[$attributeCode]) {
+                    if ($productData[$attributeCode] == $rowData[$attributeCode] && $sku != $rowData['sku']) {
                         $this->skipRow($rowNumber, self::ERROR_NOT_UNIQUE_VALUE, $attributeCode, trans($this->messages[self::ERROR_NOT_UNIQUE_VALUE], ['code' => $attributeCode]));
 
                         $hasError = true;
@@ -3394,19 +3394,19 @@ class Importer extends AbstractImporter
                 }
 
                 if (! $hasError && ! empty($rowData[$attributeCode])) {
-                    $this->channelLocaleCachedValues[$rowData['channel']][$rowData['locale']] = [$attributeCode => $rowData[$attributeCode]];
+                    $this->channelLocaleCachedValues[$rowData['channel']][$rowData['locale']][$rowData['sku']][$attributeCode] = $rowData[$attributeCode];
                 }
 
                 continue;
             }
 
             if ($attribute->isChannelBasedAttribute()) {
-                foreach ($this->channelCachedValues[$rowData['channel']] ?? [] as $productData) {
-                    if (! isset($productData[$rowData['channel']][$attributeCode])) {
+                foreach ($this->channelCachedValues[$rowData['channel']] ?? [] as $sku => $productData) {
+                    if (! isset($productData[$attributeCode])) {
                         continue;
                     }
 
-                    if ($productData[$rowData['channel']][$attributeCode] == $rowData[$attributeCode]) {
+                    if ($productData[$attributeCode] == $rowData[$attributeCode] && $sku != $rowData['sku']) {
                         $this->skipRow($rowNumber, self::ERROR_NOT_UNIQUE_VALUE, $attributeCode, trans($this->messages[self::ERROR_NOT_UNIQUE_VALUE], ['code' => $attributeCode]));
 
                         $hasError = true;
@@ -3416,19 +3416,19 @@ class Importer extends AbstractImporter
                 }
 
                 if (! $hasError && ! empty($rowData[$attributeCode])) {
-                    $this->channelCachedValues[$rowData['channel']] = [$attributeCode => $rowData[$attributeCode]];
+                    $this->channelCachedValues[$rowData['channel']][$rowData['sku']][$attributeCode] = $rowData[$attributeCode];
                 }
 
                 continue;
             }
 
             if ($attribute->isLocaleBasedAttribute()) {
-                foreach ($this->localeCachedValues[$rowData['locale']] ?? [] as $productData) {
-                    if (! isset($productData[$rowData['locale']][$attributeCode])) {
+                foreach ($this->localeCachedValues[$rowData['locale']] ?? [] as $sku => $productData) {
+                    if (! isset($productData[$attributeCode])) {
                         continue;
                     }
 
-                    if ($productData[$rowData['locale']][$attributeCode] == $rowData[$attributeCode]) {
+                    if ($productData[$attributeCode] == $rowData[$attributeCode] && $sku != $rowData['sku']) {
                         $this->skipRow($rowNumber, self::ERROR_NOT_UNIQUE_VALUE, $attributeCode, trans($this->messages[self::ERROR_NOT_UNIQUE_VALUE], ['code' => $attributeCode]));
 
                         $hasError = true;
@@ -3438,7 +3438,7 @@ class Importer extends AbstractImporter
                 }
 
                 if (! $hasError && ! empty($rowData[$attributeCode])) {
-                    $this->localeCachedValues[$rowData['locale']] = [$attributeCode => $rowData[$attributeCode]];
+                    $this->localeCachedValues[$rowData['locale']][$rowData['sku']][$attributeCode] = $rowData[$attributeCode];
                 }
 
                 continue;
