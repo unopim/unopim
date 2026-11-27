@@ -68,12 +68,14 @@ function apiVariantRollbackPayload(string $sku, AttributeFamily $family, Product
 
 /**
  * Record the SKU of every product announced through the create-after event.
+ *
+ * @return ArrayObject<int, string>
  */
 function apiVariantRollbackAnnouncedSkus(): ArrayObject
 {
     $announced = new ArrayObject;
 
-    Event::listen('catalog.product.create.after', function ($product) use ($announced): void {
+    Event::listen('catalog.product.create.after', function (Product $product) use ($announced): void {
         $announced[] = $product->sku;
     });
 

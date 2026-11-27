@@ -20,6 +20,8 @@ afterEach(function (): void {
 
 /**
  * Record the product ids of every completeness job that reaches the queue.
+ *
+ * @return ArrayObject<int, int>
  */
 function completenessAfterCommitQueuedProductIds(): ArrayObject
 {
