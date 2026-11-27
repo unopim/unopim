@@ -2,6 +2,7 @@
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
@@ -132,6 +133,47 @@ it('lists a variant_group\'s direct simple children when parent_id is passed', f
         ->and($options[0]['id'])->toBe($leaf->id)
         ->and($options[0]['axisValues'])->toHaveKey($sizeCode)
         ->and($options[0]['sku'])->toBe($leaf->sku);
+});
+
+it('shows the configurable\'s inherited image on a variant_group child with none of its own', function (): void {
+    [$configurable, $color, , $colorCode] = makeConfigurableForVariantChildren();
+
+    Storage::fake('public');
+
+    $imageAttribute = Attribute::factory()->create(['code' => 'image_'.Str::random(8), 'type' => 'image']);
+
+    $family = $configurable->attribute_family;
+    $family->factory()->linkAttributeGroupToFamily($family);
+    $family->refresh();
+    $family->factory()->linkAttributesToFamily($family, $imageAttribute);
+
+    $configurable->values = array_merge($configurable->values ?? [], [
+        'common' => array_merge($configurable->values['common'] ?? [], [$imageAttribute->code => 'product/configurable/image.jpg']),
+    ]);
+    $configurable->save();
+
+    $redOptionCode = $color->options->first()->code;
+
+    $group = $configurable->getTypeInstance()->createVariantGroup($configurable->refresh(), [
+        'group_axis_code'   => $colorCode,
+        'group_axis_option' => $redOptionCode,
+        'group_values'      => [],
+        'sku'               => $configurable->sku.'-'.$redOptionCode,
+    ]);
+
+    $admin = Admin::factory()->create();
+
+    $response = $this->actingAs($admin, 'admin')
+        ->getJson(route('admin.catalog.products.variant_children', $configurable->id).'?'.http_build_query([
+            'axis' => $colorCode,
+        ]))
+        ->assertOk();
+
+    $options = $response->json('options');
+
+    expect($options)->toHaveCount(1)
+        ->and($options[0]['id'])->toBe($group->id)
+        ->and($options[0]['image'])->toBe(Storage::url('product/configurable/image.jpg'));
 });
 
 it('paginates children according to page/perPage', function () {

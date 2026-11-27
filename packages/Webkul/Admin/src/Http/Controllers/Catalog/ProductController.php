@@ -426,6 +426,10 @@ class ProductController extends Controller
 
         $paginator = $childrenQuery->orderBy('id')->paginate($perPage, ['*'], 'page', $page);
 
+        $parent->loadMissing('parent');
+
+        $paginator->getCollection()->each(fn (Product $child): Product => $child->setRelation('parent', $parent));
+
         $optionCodes = $paginator->getCollection()
             ->flatMap(fn (Product $child) => array_map(
                 fn (string $axisCode) => $child->values['common'][$axisCode] ?? null,
