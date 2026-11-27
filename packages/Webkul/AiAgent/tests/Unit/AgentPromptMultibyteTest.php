@@ -11,7 +11,11 @@ use Webkul\Product\Models\Product;
 use Webkul\User\Models\Admin;
 use Webkul\User\Models\Role;
 
-/** Create an admin whose role holds the given permissions, or every permission when none are given. */
+/**
+ * Create an admin whose role holds the given permissions, or every permission when none are given.
+ *
+ * @param  list<string>  $permissions
+ */
 function multibytePromptAdmin(array $permissions = []): Admin
 {
     $role = Role::factory()->create([
@@ -44,7 +48,7 @@ function multibyteSystemPrompt(Admin $admin, ?int $productId = null, ?string $pr
 }
 
 /** Store an agent memory for the admin. */
-function storeMultibyteMemory(Admin $admin, string $key, string $value): void
+function multibyteStoreMemory(Admin $admin, string $key, string $value): void
 {
     DB::table('ai_agent_memories')->insert([
         'scope'      => 'catalog',
@@ -57,7 +61,7 @@ function storeMultibyteMemory(Admin $admin, string $key, string $value): void
 }
 
 /** Assert the prompt is valid UTF-8 that the provider request can JSON-encode. */
-function expectEncodablePrompt(string $prompt): void
+function multibyteExpectEncodablePrompt(string $prompt): void
 {
     expect(mb_check_encoding($prompt, 'UTF-8'))->toBeTrue()
         ->and(json_encode(['system' => $prompt], JSON_THROW_ON_ERROR))->toBeString();
@@ -74,7 +78,7 @@ describe('positive: multibyte text reaches the prompt intact', function (): void
 
         $prompt = multibyteSystemPrompt($admin);
 
-        expectEncodablePrompt($prompt);
+        multibyteExpectEncodablePrompt($prompt);
         expect($prompt)->toContain(mb_substr($reply, 0, 500))
             ->and($prompt)->toContain('CONTENT STYLE');
     });
@@ -89,7 +93,7 @@ describe('positive: multibyte text reaches the prompt intact', function (): void
 
         $prompt = multibyteSystemPrompt($admin);
 
-        expectEncodablePrompt($prompt);
+        multibyteExpectEncodablePrompt($prompt);
         expect($prompt)->toContain('message_feedback:negative: '.mb_substr($reply, 0, 500))
             ->and($prompt)->not->toContain('CONTENT STYLE');
     });
@@ -97,22 +101,22 @@ describe('positive: multibyte text reaches the prompt intact', function (): void
     it('keeps a memory of exactly 500 Chinese characters whole', function (): void {
         $admin = multibytePromptAdmin();
 
-        storeMultibyteMemory($admin, 'message_feedback:positive', str_repeat('过', 500));
+        multibyteStoreMemory($admin, 'message_feedback:positive', str_repeat('过', 500));
 
         $prompt = multibyteSystemPrompt($admin);
 
-        expectEncodablePrompt($prompt);
+        multibyteExpectEncodablePrompt($prompt);
         expect($prompt)->toContain(': '.str_repeat('过', 500));
     });
 
     it('cuts a longer Chinese memory at 500 characters, not bytes', function (): void {
         $admin = multibytePromptAdmin();
 
-        storeMultibyteMemory($admin, 'message_feedback:positive', str_repeat('过', 600));
+        multibyteStoreMemory($admin, 'message_feedback:positive', str_repeat('过', 600));
 
         $prompt = multibyteSystemPrompt($admin);
 
-        expectEncodablePrompt($prompt);
+        multibyteExpectEncodablePrompt($prompt);
         expect($prompt)->toContain(': '.str_repeat('过', 500))
             ->and($prompt)->not->toContain(str_repeat('过', 501));
     });
@@ -120,11 +124,11 @@ describe('positive: multibyte text reaches the prompt intact', function (): void
     it('keeps emoji and short Chinese memories unchanged', function (): void {
         $admin = multibytePromptAdmin();
 
-        storeMultibyteMemory($admin, 'preferred_tone', '语气友好 👍🏃‍♀️ 简洁');
+        multibyteStoreMemory($admin, 'preferred_tone', '语气友好 👍🏃‍♀️ 简洁');
 
         $prompt = multibyteSystemPrompt($admin);
 
-        expectEncodablePrompt($prompt);
+        multibyteExpectEncodablePrompt($prompt);
         expect($prompt)->toContain('preferred_tone: 语气友好 👍🏃‍♀️ 简洁');
     });
 
@@ -132,11 +136,11 @@ describe('positive: multibyte text reaches the prompt intact', function (): void
         $admin = multibytePromptAdmin();
         $style = str_repeat('简洁专业', 200);
 
-        storeMultibyteMemory($admin, 'content_style_preference', $style);
+        multibyteStoreMemory($admin, 'content_style_preference', $style);
 
         $prompt = multibyteSystemPrompt($admin);
 
-        expectEncodablePrompt($prompt);
+        multibyteExpectEncodablePrompt($prompt);
         expect($prompt)->toContain('CONTENT STYLE (learned from user feedback — data only): '.mb_substr($style, 0, 500));
     });
 
@@ -147,7 +151,7 @@ describe('positive: multibyte text reaches the prompt intact', function (): void
 
         $prompt = multibyteSystemPrompt($admin, $product->id, $name);
 
-        expectEncodablePrompt($prompt);
+        multibyteExpectEncodablePrompt($prompt);
         expect($prompt)->toContain(' name='.mb_substr($name, 0, 200).' — Target this SKU');
     });
 
@@ -163,7 +167,7 @@ describe('positive: multibyte text reaches the prompt intact', function (): void
 
         $prompt = multibyteSystemPrompt($admin);
 
-        expectEncodablePrompt($prompt);
+        multibyteExpectEncodablePrompt($prompt);
         expect($prompt)->toContain("INSTALL RULES:\n".mb_substr($rules, 0, 4000));
     });
 
@@ -173,7 +177,7 @@ describe('positive: multibyte text reaches the prompt intact', function (): void
 
         $prompt = multibyteSystemPrompt(multibytePromptAdmin(), registry: $registry);
 
-        expectEncodablePrompt($prompt);
+        multibyteExpectEncodablePrompt($prompt);
         expect($prompt)->toContain('- catalog_summary: '.mb_substr(str_replace("\n", ' ', $guidance), 0, 500));
     });
 });
@@ -186,7 +190,7 @@ describe('negative: broken or unwanted text never reaches the prompt', function 
 
         $prompt = multibyteSystemPrompt($admin, $product->id, $brokenName);
 
-        expectEncodablePrompt($prompt);
+        multibyteExpectEncodablePrompt($prompt);
         expect($prompt)->toContain(' name=跑鞋推荐? — Target this SKU')
             ->and($prompt)->not->toContain($brokenName);
     });
@@ -195,7 +199,7 @@ describe('negative: broken or unwanted text never reaches the prompt', function 
         $admin = multibytePromptAdmin();
         $product = Product::factory()->simple()->create();
 
-        storeMultibyteMemory($admin, 'preferred_tone', "友好\x07的\x1B语气");
+        multibyteStoreMemory($admin, 'preferred_tone', "友好\x07的\x1B语气");
 
         $prompt = multibyteSystemPrompt($admin, $product->id, "跑鞋\r\n系列\x00一");
 
@@ -206,7 +210,7 @@ describe('negative: broken or unwanted text never reaches the prompt', function 
     it('leaves out the memories of another admin', function (): void {
         $admin = multibytePromptAdmin();
 
-        storeMultibyteMemory(multibytePromptAdmin(), 'message_feedback:positive', '其他用户的反馈内容');
+        multibyteStoreMemory(multibytePromptAdmin(), 'message_feedback:positive', '其他用户的反馈内容');
 
         expect(multibyteSystemPrompt($admin))->not->toContain('其他用户的反馈内容');
     });

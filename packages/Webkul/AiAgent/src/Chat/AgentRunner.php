@@ -491,10 +491,9 @@ You may ONLY suggest changes — never execute them.
 MODE;
         }
 
-        // Inject relevant memories — prefer keyword-matched, fallback to recent
         $keywords = array_filter(
             array_unique(preg_split('/\s+/', mb_strtolower($context->message))),
-            fn ($w): bool => mb_strlen((string) $w) >= 3
+            fn (string $w): bool => mb_strlen($w) >= 3
         );
         $keywords = array_slice($keywords, 0, 5);
 
@@ -523,7 +522,7 @@ MODE;
         if ($memories->count() < 5) {
             $existingIds = $memories->pluck('id')->toArray();
             $remaining = (clone $baseQuery)
-                ->unless(empty($existingIds), fn ($q) => $q->whereNotIn('id', $existingIds))
+                ->unless(empty($existingIds), fn (Builder $q): Builder => $q->whereNotIn('id', $existingIds))
                 ->latest('updated_at')
                 ->limit(5 - $memories->count())
                 ->get();
