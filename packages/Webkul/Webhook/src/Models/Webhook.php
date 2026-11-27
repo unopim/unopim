@@ -22,7 +22,11 @@ use Webkul\Webhook\Presenters\WebhookPresenter;
 #[Table(name: 'webhooks')]
 class Webhook extends Model implements HistoryAuditable, PresentableHistoryInterface
 {
-    use HistoryTrait;
+    use HistoryTrait {
+        transformAudit as protected transformHistoryAudit;
+    }
+
+    public const string MASKED_VALUE = '••••••••';
 
     protected $auditExclude = ['secret'];
 
@@ -40,6 +44,95 @@ class Webhook extends Model implements HistoryAuditable, PresentableHistoryInter
     public function getPrimaryModelIdForHistory(): int
     {
         return $this->id;
+    }
+
+    /**
+     * Mask custom header values and URL credentials before they reach the audit trail, keeping header names and readable URL parts.
+     *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    public function transformAudit(array $data): array
+    {
+        $data = $this->transformHistoryAudit($data);
+
+        foreach (['old_values', 'new_values'] as $bucket) {
+            if (isset($data[$bucket]['headers'])) {
+                $data[$bucket]['headers'] = static::maskHeaders($data[$bucket]['headers']);
+            }
+
+            if (isset($data[$bucket]['url'])) {
+                $data[$bucket]['url'] = static::maskUrl($data[$bucket]['url']);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Replace every value in a header map with a mask; any other non-empty value is masked whole.
+     */
+    public static function maskHeaders(mixed $headers): mixed
+    {
+        if (is_array($headers)) {
+            return array_map(fn (): string => self::MASKED_VALUE, $headers);
+        }
+
+        if (! is_string($headers) || $headers === '') {
+            return $headers;
+        }
+
+        $decoded = json_decode($headers, true);
+
+        if (! is_array($decoded)) {
+            return self::MASKED_VALUE;
+        }
+
+        return json_encode(array_map(fn (): string => self::MASKED_VALUE, $decoded), JSON_UNESCAPED_UNICODE);
+    }
+
+    /**
+     * Mask everything in a URL that can carry a credential: userinfo, every path segment and every query value.
+     *
+     * Scheme, host, port, query keys and the fragment stay readable. A string that is not an absolute URL is masked whole.
+     */
+    public static function maskUrl(mixed $url): mixed
+    {
+        if (! is_string($url)) {
+            return $url;
+        }
+
+        if (! preg_match('#^([a-z][a-z0-9+.-]*://)([^/?\#]*@)?([^/?\#]*)([^?\#]*)(\?[^\#]*)?(\#.*)?$#is', $url, $parts)) {
+            return self::MASKED_VALUE;
+        }
+
+        return $parts[1]
+            .(($parts[2] ?? '') !== '' ? self::MASKED_VALUE.'@' : '')
+            .$parts[3]
+            .preg_replace('#[^/]+#', self::MASKED_VALUE, $parts[4])
+            .static::maskQuery($parts[5] ?? '')
+            .($parts[6] ?? '');
+    }
+
+    /**
+     * Mask every value of a query string, keeping its keys; an item without a key is masked whole.
+     */
+    protected static function maskQuery(string $query): string
+    {
+        if ($query === '' || $query === '?') {
+            return $query;
+        }
+
+        $items = array_map(
+            fn (string $item): string => match (true) {
+                $item === ''               => '',
+                str_contains($item, '=')   => strstr($item, '=', true).'='.self::MASKED_VALUE,
+                default                    => self::MASKED_VALUE,
+            },
+            explode('&', substr($query, 1)),
+        );
+
+        return '?'.implode('&', $items);
     }
 
     protected function casts(): array
