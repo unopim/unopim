@@ -41,3 +41,15 @@ it('marks the default platform with an asterisk in every platform field', functi
 
     expect(magicAiPlatformHintRender($field))->toContain(e(json_encode($platform->label.' (Openai) *')));
 })->with('magic ai platform fields');
+
+it('keeps the config field name, id and change event of each platform field', function (string $field, string $section): void {
+    $html = magicAiPlatformHintRender($field);
+
+    expect($html)->toContain('name="general[magic_ai]['.$section.'][ai_platform]"')
+        ->toContain('id="general_magic_ai_'.$section.'_ai_platform"')
+        ->toContain("magic-ai-platform-changed:general_magic_ai_{$section}_ai_platform");
+})->with([
+    'text generation'  => ['text-generation-platform', 'settings'],
+    'image generation' => ['image-generation-platform', 'image_generation'],
+    'translation'      => ['translation-platform', 'translation'],
+]);
