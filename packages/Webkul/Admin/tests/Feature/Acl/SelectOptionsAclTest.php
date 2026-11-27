@@ -61,8 +61,22 @@ it('still filters on a plain column name', function (): void {
     ]))->assertOk()->assertJsonPath('options.0.code', 'sku');
 });
 
-it('keeps the datagrid column picker open to an admin without catalog permissions', function (): void {
+it('denies an entity name sent in a json body without a matching permission', function (string $entityName): void {
     $this->loginWithPermissions(permissions: ['dashboard']);
+
+    $this->json('GET', route('admin.vue_js_select.select.options'), ['entityName' => $entityName])
+        ->assertForbidden();
+})->with('select option entities');
+
+it('denies the datagrid column picker to an admin without a matching permission', function (): void {
+    $this->loginWithPermissions(permissions: ['dashboard']);
+
+    $this->getJson(route('admin.datagrid.available_columns', ['entityName' => 'attributes', 'source' => 'product']))
+        ->assertForbidden();
+});
+
+it('allows the datagrid column picker to an admin who can view products', function (): void {
+    $this->loginWithPermissions(permissions: ['dashboard', 'catalog', 'catalog.products']);
 
     $this->getJson(route('admin.datagrid.available_columns', ['entityName' => 'attributes', 'source' => 'product']))
         ->assertOk();
