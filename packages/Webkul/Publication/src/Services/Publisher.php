@@ -221,15 +221,7 @@ class Publisher
      */
     public function withdraw(Publication $publication): void
     {
-        if ($publication->status !== PublicationStatus::Published) {
-            throw new InvalidPublicationTransitionException(
-                'Publication '.$publication->id.' is not published; only a published publication can be withdrawn.'
-            );
-        }
-
-        $publication->update(['status' => PublicationStatus::Withdrawn]);
-
-        DB::afterCommit(fn () => PublicationWithdrawn::dispatch($publication));
+        $this->transition($publication, PublicationStatus::Published, PublicationStatus::Withdrawn, 'is not published; only a published publication can be withdrawn.', PublicationWithdrawn::class);
     }
 
     /**
@@ -237,15 +229,33 @@ class Publisher
      */
     public function reinstate(Publication $publication): void
     {
-        if ($publication->status !== PublicationStatus::Withdrawn) {
-            throw new InvalidPublicationTransitionException(
-                'Publication '.$publication->id.' is not withdrawn; only a withdrawn publication can be reinstated.'
-            );
-        }
+        $this->transition($publication, PublicationStatus::Withdrawn, PublicationStatus::Published, 'is not withdrawn; only a withdrawn publication can be reinstated.', PublicationReinstated::class);
+    }
 
-        $publication->update(['status' => PublicationStatus::Published]);
+    /**
+     * Move the publication between statuses under a row lock. The status is re-read from the locked row,
+     * not taken from the passed model, so a stale instance (e.g. one loaded before a concurrent redaction)
+     * can never overwrite the current status. The caller's model is refreshed to the stored state.
+     *
+     * @param  class-string<PublicationWithdrawn|PublicationReinstated>  $event
+     */
+    private function transition(Publication $publication, PublicationStatus $from, PublicationStatus $to, string $message, string $event): void
+    {
+        DB::transaction(function () use ($publication, $from, $to, $message, $event): void {
+            $locked = Publication::query()->whereKey($publication->id)->lockForUpdate()->firstOrFail();
 
-        DB::afterCommit(fn () => PublicationReinstated::dispatch($publication));
+            if ($locked->status !== $from) {
+                $publication->setRawAttributes($locked->getAttributes(), true);
+
+                throw new InvalidPublicationTransitionException('Publication '.$publication->id.' '.$message);
+            }
+
+            $locked->update(['status' => $to]);
+
+            $publication->setRawAttributes($locked->getAttributes(), true);
+
+            DB::afterCommit(fn (): mixed => $event::dispatch($publication));
+        });
     }
 
     /**
