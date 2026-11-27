@@ -258,6 +258,19 @@ it('accepts an upload that fills a gallery exactly to its file limit', function 
     expect($this->product->fresh()->values['common'][$gallery->code])->toHaveCount(2);
 });
 
+it('accepts any gallery size when the total size limit is switched off', function (): void {
+    config(['media.gallery.max_total_size_kilobytes' => 0]);
+
+    $gallery = apiGalleryMediaAttribute('gallery');
+
+    Storage::put('product/existing/large.png', str_repeat('x', 10 * 1024));
+    apiGalleryStoreValue($this->product, $gallery->code, ['product/existing/large.png']);
+
+    apiGalleryUploadMedia($this->product->sku, $gallery->code, ['two.png']);
+
+    expect($this->product->fresh()->values['common'][$gallery->code])->toHaveCount(2);
+});
+
 it('refuses an upload that would take a gallery past its total size limit', function (): void {
     config(['media.gallery.max_total_size_kilobytes' => 10]);
 

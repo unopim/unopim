@@ -81,7 +81,7 @@ class MediaFileController extends ApiController
             foreach ($attributeValue as $value) {
                 if ($value instanceof UploadedFile) {
                     $filePath[] = $this->fileStorer->store(
-                        path: 'product'.DIRECTORY_SEPARATOR.$productId.DIRECTORY_SEPARATOR.$attribute,
+                        path: $this->productMediaFolder($productId, $attribute),
                         file: $value,
                         options: $storeOptions,
                     );
@@ -91,7 +91,7 @@ class MediaFileController extends ApiController
             try {
                 $this->assignMediaToProductAttribute($product, $attribute, $filePath);
             } catch (ValidationException $e) {
-                $this->deleteFiles($filePath, 'product/'.$productId.'/'.$attribute.'/');
+                $this->deleteFiles($filePath, $this->productMediaFolder($productId, $attribute).'/');
 
                 return $this->validateErrorResponse($e->validator->errors()->messages());
             }
@@ -229,12 +229,12 @@ class MediaFileController extends ApiController
      */
     public function getProductMedia(ProductMediaRequest $request): JsonResponse
     {
-        $product = $this->productRepository->findByField('sku', request('sku'))->first();
+        $product = $this->productRepository->findByField('sku', $request->input('sku'))->first();
         if (! $product) {
-            return $this->modelNotFoundResponse(trans('admin::app.catalog.products.product-not-found', ['sku' => request('sku')]));
+            return $this->modelNotFoundResponse(trans('admin::app.catalog.products.product-not-found', ['sku' => $request->input('sku')]));
         }
 
-        [, $values, $path] = $this->resolveProductMediaSlot($product, (string) request('attribute'));
+        [, $values, $path] = $this->resolveProductMediaSlot($product, (string) $request->input('attribute'));
 
         return response()->json([
             'data' => $this->splitPaths(Arr::get($values, $path)),
@@ -246,12 +246,12 @@ class MediaFileController extends ApiController
      */
     public function deleteProductMedia(ProductMediaRequest $request): JsonResponse
     {
-        $product = $this->productRepository->findByField('sku', request('sku'))->first();
+        $product = $this->productRepository->findByField('sku', $request->input('sku'))->first();
         if (! $product) {
-            return $this->modelNotFoundResponse(trans('admin::app.catalog.products.product-not-found', ['sku' => request('sku')]));
+            return $this->modelNotFoundResponse(trans('admin::app.catalog.products.product-not-found', ['sku' => $request->input('sku')]));
         }
 
-        [, $values, $path] = $this->resolveProductMediaSlot($product, (string) request('attribute'));
+        [, $values, $path] = $this->resolveProductMediaSlot($product, (string) $request->input('attribute'));
 
         $stored = $this->splitPaths(Arr::get($values, $path));
         if ($stored === []) {
@@ -259,7 +259,7 @@ class MediaFileController extends ApiController
         }
 
         try {
-            $this->deleteFiles($stored, 'product/'.$product->id.'/'.request('attribute').'/');
+            $this->deleteFiles($stored, $this->productMediaFolder($product->id, (string) $request->input('attribute')).'/');
             Arr::forget($values, $path);
             $product->values = $values;
             $product->save();
@@ -275,12 +275,12 @@ class MediaFileController extends ApiController
      */
     public function getCategoryMedia(CategoryMediaRequest $request): JsonResponse
     {
-        $category = $this->categoryRepository->findOneByField('code', request('code'));
+        $category = $this->categoryRepository->findOneByField('code', $request->input('code'));
         if (! $category) {
-            return $this->modelNotFoundResponse(trans('admin::app.catalog.categories.not-found', ['code' => request('code')]));
+            return $this->modelNotFoundResponse(trans('admin::app.catalog.categories.not-found', ['code' => $request->input('code')]));
         }
 
-        $field = (string) request('category_field');
+        $field = (string) $request->input('category_field');
         $values = $category->additional_data ?? [];
 
         return response()->json([
@@ -293,12 +293,12 @@ class MediaFileController extends ApiController
      */
     public function deleteCategoryMedia(CategoryMediaRequest $request): JsonResponse
     {
-        $category = $this->categoryRepository->findOneByField('code', request('code'));
+        $category = $this->categoryRepository->findOneByField('code', $request->input('code'));
         if (! $category) {
-            return $this->modelNotFoundResponse(trans('admin::app.catalog.categories.not-found', ['code' => request('code')]));
+            return $this->modelNotFoundResponse(trans('admin::app.catalog.categories.not-found', ['code' => $request->input('code')]));
         }
 
-        $field = (string) request('category_field');
+        $field = (string) $request->input('category_field');
         $values = $category->additional_data ?? [];
         $locale = core()->getDefaultLocaleCodeFromDefaultChannel();
         $key = Arr::has($values, "common.$field") ? "common.$field" : "locale_specific.$locale.$field";
@@ -480,9 +480,17 @@ class MediaFileController extends ApiController
                 Arr::set($values, $path, implode(',', $filePaths));
             }
 
-            $product->values = $values;
-            $product->save();
+            $lockedProduct->values = $values;
+            $lockedProduct->save();
         });
+    }
+
+    /**
+     * Return the folder a product attribute's media files are stored in.
+     */
+    private function productMediaFolder(int $productId, string $attributeCode): string
+    {
+        return 'product/'.$productId.'/'.$attributeCode;
     }
 
     /**

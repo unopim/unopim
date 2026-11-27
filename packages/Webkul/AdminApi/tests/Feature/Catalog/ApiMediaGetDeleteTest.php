@@ -8,12 +8,12 @@ use Webkul\Category\Models\Category;
 use Webkul\Category\Models\CategoryField;
 use Webkul\Product\Models\Product;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->headers = $this->getAuthenticationHeaders();
     Storage::fake();
 });
 
-it('gets and deletes product media', function () {
+it('gets and deletes product media', function (): void {
     $attribute = Attribute::factory()->create(['type' => 'image', 'value_per_channel' => 0, 'value_per_locale' => 0]);
     $product = Product::factory()->create();
     $path = 'product/'.$product->id.'/'.$attribute->code.'/file.jpg';
@@ -35,7 +35,7 @@ it('gets and deletes product media', function () {
     expect($product->fresh()->values['common'][$attribute->code] ?? null)->toBeNull();
 });
 
-it('returns 404 deleting product media that does not exist', function () {
+it('returns 404 deleting product media that does not exist', function (): void {
     $attribute = Attribute::factory()->create(['type' => 'image', 'value_per_channel' => 0, 'value_per_locale' => 0]);
     $product = Product::factory()->create();
 
@@ -44,7 +44,7 @@ it('returns 404 deleting product media that does not exist', function () {
         ->assertNotFound();
 });
 
-it('returns 404 for product media on an unknown sku', function () {
+it('returns 404 for product media on an unknown sku', function (): void {
     $attribute = Attribute::factory()->create(['type' => 'image', 'value_per_channel' => 0, 'value_per_locale' => 0]);
 
     $this->withHeaders($this->headers)
@@ -130,7 +130,7 @@ it('deletes only the files inside the product media folder and still clears the 
     expect($product->fresh()->values['common'][$attribute->code] ?? null)->toBeNull();
 });
 
-it('gets and deletes swatch media', function () {
+it('gets and deletes swatch media', function (): void {
     $attribute = Attribute::factory()->create(['type' => 'select', 'swatch_type' => 'image']);
     $option = AttributeOption::factory()->create(['attribute_id' => $attribute->id]);
     $path = 'attribute_option/'.$option->id.'/swatch.png';
@@ -151,7 +151,7 @@ it('gets and deletes swatch media', function () {
     expect($option->fresh()->swatch_value)->toBeNull();
 });
 
-it('deletes category media', function () {
+it('deletes category media', function (): void {
     $field = CategoryField::factory()->create(['type' => 'image', 'value_per_locale' => 0]);
     $category = Category::factory()->create();
     $path = 'category/'.$category->id.'/'.$field->code.'/file.jpg';
@@ -166,7 +166,7 @@ it('deletes category media', function () {
     Storage::assertMissing($path);
 });
 
-it('forbids product media delete without permission', function () {
+it('forbids product media delete without permission', function (): void {
     $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.products']);
     $attribute = Attribute::factory()->create(['type' => 'image', 'value_per_channel' => 0, 'value_per_locale' => 0]);
     $product = Product::factory()->create();
@@ -176,7 +176,7 @@ it('forbids product media delete without permission', function () {
         ->assertForbidden();
 });
 
-it('rejects unauthenticated product media get', function () {
+it('rejects unauthenticated product media get', function (): void {
     $product = Product::factory()->create();
 
     $this->json('GET', route('admin.api.media-files.product.get', ['sku' => $product->sku, 'attribute' => 'x']), [], [
