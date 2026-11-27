@@ -14,7 +14,9 @@ function importCompletedCompletenessRun(JobTrack $import): void
 {
     $job = new ImportCompleted($import, $import->id);
 
-    (fn () => $this->dispatchPostImportCompleteness())->call($job);
+    (function (): void {
+        $this->dispatchPostImportCompleteness();
+    })->call($job);
 }
 
 /**
@@ -35,14 +37,15 @@ beforeEach(function (): void {
     Bus::fake([BulkProductCompletenessJob::class]);
 });
 
-it('resolves completeness for every imported product when the import holds more skus than the placeholder limit', function (): void {
+it('resolves completeness for products found in different sku chunks when the import holds more skus than the placeholder limit', function (): void {
     $products = Product::factory()->count(3)->create();
 
-    $rows = array_map(fn (int $index): array => ['sku' => 'icc-missing-'.$index], range(1, 66000));
-
-    foreach ($products as $product) {
-        $rows[] = ['sku' => $product->sku];
-    }
+    $rows = [
+        ['sku' => $products[0]->sku],
+        ...array_map(fn (int $index): array => ['sku' => 'icc-missing-'.$index], range(1, 66000)),
+        ['sku' => $products[1]->sku],
+        ['sku' => $products[2]->sku],
+    ];
 
     $import = JobTrack::factory()->create();
 
