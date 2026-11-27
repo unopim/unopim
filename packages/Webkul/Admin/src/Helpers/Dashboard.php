@@ -31,7 +31,7 @@ class Dashboard
         'dashboard.total_catalogs',
         'dashboard.product_stats',
         'dashboard.needs_attention',
-        'dashboard.channel_readiness',
+        'dashboard.channel_readiness_by_locale',
     ];
 
     /**
@@ -270,11 +270,11 @@ class Dashboard
     }
 
     /**
-     * Get channel readiness data.
+     * Get channel readiness data, counted in the same locale the drill-down link filters by.
      */
     public function getChannelReadiness()
     {
-        $readiness = Cache::remember('dashboard.channel_readiness', self::CACHE_TTL, function () {
+        $readiness = Cache::remember('dashboard.channel_readiness_by_locale', self::CACHE_TTL, function (): array {
             if (! Schema::hasTable('product_completeness')) {
                 return [];
             }
@@ -282,23 +282,21 @@ class Dashboard
             $productIdColumn = DB::getQueryGrammar()->wrap('product_completeness.product_id');
             $scoreColumn = DB::getQueryGrammar()->wrap('product_completeness.score');
 
-            $readiness = DB::table('product_completeness')
+            return DB::table('product_completeness')
                 ->join('channels', 'channels.id', '=', 'product_completeness.channel_id')
+                ->join('locales', 'locales.id', '=', 'product_completeness.locale_id')
                 ->select(
                     'channels.code as channel',
+                    'locales.code as locale',
                     DB::raw("COUNT(DISTINCT {$productIdColumn}) as total"),
                     DB::raw("COUNT(DISTINCT CASE WHEN {$scoreColumn} >= 80 THEN {$productIdColumn} END) as ready")
                 )
-                ->groupBy('channels.code')
-                ->get();
-
-            return $readiness->map(fn ($row) => [
-                'channel'    => $row->channel,
-                'total'      => (int) $row->total,
-                'ready'      => (int) $row->ready,
-                'percentage' => $row->total > 0 ? round(($row->ready / $row->total) * 100) : 0,
-            ])->toArray();
+                ->groupBy('channels.code', 'locales.code')
+                ->get()
+                ->all();
         });
+
+        $readiness = $this->channelReadinessInDrilldownLocale($readiness);
 
         $labelsByCode = $this->channel->getLabelsByCode();
 
@@ -306,6 +304,48 @@ class Dashboard
             ...$row,
             'label' => $labelsByCode[$row['channel']] ?? "[{$row['channel']}]",
         ], $readiness);
+    }
+
+    /**
+     * Reduce the per channel and locale counts to the one locale each channel's drill-down lands in.
+     *
+     * Completeness data can lag behind a channel's locale membership (e.g. a
+     * locale just added to the channel has no `product_completeness` row
+     * yet). Falling back to any row the channel does have, rather than
+     * dropping it, keeps the channel visible; the link always uses the
+     * locale of the row actually displayed, so the two stay in agreement.
+     */
+    protected function channelReadinessInDrilldownLocale(array $readiness): array
+    {
+        $requestedLocaleCode = core()->getRequestedLocaleCode();
+
+        $rowsByChannel = collect($readiness)->groupBy('channel');
+
+        return core()->getAllChannels()->loadMissing('locales')
+            ->map(function ($channel) use ($rowsByChannel, $requestedLocaleCode): ?array {
+                $channelRows = $rowsByChannel->get($channel->code, collect());
+
+                $localeCode = $channel->locales->contains('code', $requestedLocaleCode)
+                    ? $requestedLocaleCode
+                    : core()->getLocaleCodeInChannel($channel);
+
+                $row = $channelRows->firstWhere('locale', $localeCode) ?? $channelRows->first();
+
+                if (! $row) {
+                    return null;
+                }
+
+                return [
+                    'channel'    => $channel->code,
+                    'locale'     => $row->locale,
+                    'total'      => (int) $row->total,
+                    'ready'      => (int) $row->ready,
+                    'percentage' => $row->total > 0 ? round(($row->ready / $row->total) * 100) : 0,
+                ];
+            })
+            ->filter()
+            ->values()
+            ->all();
     }
 
     /**

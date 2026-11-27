@@ -4,19 +4,37 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Webkul\Attribute\Models\AttributeFamilyProxy;
+use Webkul\Category\Models\Category;
 use Webkul\Completeness\Models\ProductCompletenessScore;
 use Webkul\Core\Models\Channel;
+use Webkul\Core\Models\Currency;
 use Webkul\Core\Models\Locale;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Product\Models\ProductProxy;
 
 use function Pest\Laravel\getJson;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->admin = $this->loginAsAdmin();
 
-    Cache::forget('dashboard.channel_readiness');
+    Cache::forget('dashboard.channel_readiness_by_locale');
 });
+
+/**
+ * Creates a channel through the repository, so the repository-level cache
+ * `core()->getAllChannels()` reads from is invalidated the way it would be
+ * in production (a bare `Channel::factory()->create()` skips the repository
+ * and never busts that cache).
+ */
+function createReadinessChannel(string $code): Channel
+{
+    return app(ChannelRepository::class)->create([
+        'code'             => $code,
+        'root_category_id' => Category::whereIsRoot()->first()->id,
+        'locales'          => Locale::where('status', 1)->limit(1)->pluck('id')->all(),
+        'currencies'       => Currency::where('status', 1)->limit(1)->pluck('id')->all(),
+    ])->load('locales');
+}
 
 /**
  * Seeds one completeness row for the given channel so it appears in the
@@ -51,8 +69,8 @@ function fetchReadinessByCode(): Collection
     return collect($response->json('statistics'))->keyBy('channel');
 }
 
-it('labels each channel with its translated name instead of the raw code', function () {
-    $channel = Channel::factory()->create(['code' => 'erp']);
+it('labels each channel with its translated name instead of the raw code', function (): void {
+    $channel = createReadinessChannel('erp');
 
     DB::table('channel_translations')->updateOrInsert(
         ['channel_id' => $channel->id, 'locale' => 'en_US'],
@@ -64,8 +82,8 @@ it('labels each channel with its translated name instead of the raw code', funct
     expect(fetchReadinessByCode()['erp']['label'])->toBe('ERP System');
 });
 
-it('falls back to [code] when the channel has no translation for the current locale', function () {
-    $channel = Channel::factory()->create(['code' => 'rawcode']);
+it('falls back to [code] when the channel has no translation for the current locale', function (): void {
+    $channel = createReadinessChannel('rawcode');
 
     DB::table('channel_translations')->where('channel_id', $channel->id)->delete();
 
@@ -74,8 +92,8 @@ it('falls back to [code] when the channel has no translation for the current loc
     expect(fetchReadinessByCode()['rawcode']['label'])->toBe('[rawcode]');
 });
 
-it('resolves labels for the requesting admin locale even when the cache was warmed in another locale', function () {
-    $channel = Channel::factory()->create(['code' => 'erp']);
+it('resolves labels for the requesting admin locale even when the cache was warmed in another locale', function (): void {
+    $channel = createReadinessChannel('erp');
 
     DB::table('channel_translations')->updateOrInsert(
         ['channel_id' => $channel->id, 'locale' => 'en_US'],
@@ -90,7 +108,7 @@ it('resolves labels for the requesting admin locale even when the cache was warm
     seedReadinessRow($channel);
 
     expect(fetchReadinessByCode()['erp']['label'])->toBe('ERP System')
-        ->and(Cache::has('dashboard.channel_readiness'))->toBeTrue();
+        ->and(Cache::has('dashboard.channel_readiness_by_locale'))->toBeTrue();
 
     $germanLocale = Locale::where('code', 'de_DE')->first()
         ?? Locale::factory()->create(['code' => 'de_DE']);
@@ -100,8 +118,8 @@ it('resolves labels for the requesting admin locale even when the cache was warm
     expect(fetchReadinessByCode()['erp']['label'])->toBe('ERP-System DE');
 });
 
-it('shows a renamed channel without waiting for the readiness cache to expire', function () {
-    $channel = Channel::factory()->create(['code' => 'erp']);
+it('shows a renamed channel without waiting for the readiness cache to expire', function (): void {
+    $channel = createReadinessChannel('erp');
 
     DB::table('channel_translations')->updateOrInsert(
         ['channel_id' => $channel->id, 'locale' => 'en_US'],

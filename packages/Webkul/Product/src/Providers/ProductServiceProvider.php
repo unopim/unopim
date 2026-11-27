@@ -46,6 +46,7 @@ use Webkul\Product\Models\ProductProxy;
 use Webkul\Product\Observers\ProductObserver;
 use Webkul\Product\ProductImage;
 use Webkul\Product\ProductVideo;
+use Webkul\Product\Services\ChannelCompletenessColumn;
 use Webkul\Product\Services\ProductValueMapper;
 use Webkul\Product\Services\VariantStructurePlanner;
 use Webkul\Product\Services\VariantValueResolver;
@@ -104,6 +105,7 @@ class ProductServiceProvider extends ServiceProvider
         $this->app->bind(TemplateRendererContract::class, TemplateRenderer::class);
         $this->app->bind(TemplateValidatorContract::class, TemplateValidator::class);
         $this->app->singleton(FilterRegistry::class);
+        $this->app->scoped(ChannelCompletenessColumn::class);
     }
 
     /**
