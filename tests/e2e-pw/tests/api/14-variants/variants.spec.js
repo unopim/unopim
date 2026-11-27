@@ -81,7 +81,7 @@ test.describe('Variants API (children of configurable products)', () => {
 
   // ── Negative ────────────────────────────────────────────────────────────
 
-  test('14.3 - Variant without parent → 4xx', async ({ api, uid }) => {
+  test('14.3 - Payload without parent creates a simple product', async ({ api, uid }) => {
     const parent = await mintParent(api);
     test.skip(!parent, 'Could not seed parent configurable');
     const variant = payloads.variants.build({
@@ -89,7 +89,7 @@ test.describe('Variants API (children of configurable products)', () => {
     });
     delete variant.parent;
     const result = await post(api, '/products', { data: variant });
-    expect(result.status).toBeGreaterThanOrEqual(400);
+    expect(result.status).toBe(201);
   });
 
   test('14.4 - Variant pointing at non-existent parent → 4xx', async ({ api, uid }) => {

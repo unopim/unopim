@@ -12,7 +12,7 @@ test.describe('Catalog Locale - Fallback When Not Configured (#1247)', () => {
     await adminPage.waitForTimeout(1000);
 
     const appLocale = await adminPage.evaluate(
-      () => document.querySelector('meta[http-equiv="content-language"]')?.content
+      () => document.querySelector('meta[http-equiv="content-language"]')?.content?.replace('-', '_')
     );
 
     expect(appLocale).toBeTruthy();
