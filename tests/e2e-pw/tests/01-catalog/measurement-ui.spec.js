@@ -231,8 +231,9 @@ function measurementContainer(page) {
 }
 
 /**
- * The unit list can open upward underneath the sticky page header, so the first
- * unit is chosen with Enter on the highlighted option instead of a pointer click.
+ * The unit list can open upward underneath the sticky page header, so the unit is
+ * chosen with the keyboard instead of a pointer click. The attribute's default unit
+ * is preselected and Enter on it would deselect it, so the first unselected unit is picked.
  */
 async function setMeasurementValue(page, amount) {
   const valueInput = page.locator('input[placeholder="Enter value"]').first();
@@ -247,12 +248,22 @@ async function setMeasurementValue(page, amount) {
   await unitSelect.locator('.multiselect__tags').click();
   await unitSelect.locator('.multiselect__content-wrapper').first().waitFor({ state: 'visible', timeout: 10000 });
 
-  const firstOption = unitSelect.locator('li.multiselect__element').first();
-  await firstOption.waitFor({ state: 'visible', timeout: 12000 });
+  const options = unitSelect.locator('li.multiselect__element');
+  await options.first().waitFor({ state: 'visible', timeout: 12000 });
 
-  const unitLabel = cleanOptionLabel(await firstOption.innerText());
+  const target = await options.evaluateAll((items) => items.findIndex(
+    (item) => !item.querySelector('.multiselect__option--selected'),
+  ));
+  expect(target, 'every measurement unit is already selected').toBeGreaterThanOrEqual(0);
 
-  await unitSelect.locator('input.multiselect__input').press('Enter');
+  const unitLabel = cleanOptionLabel(await options.nth(target).innerText());
+  const search = unitSelect.locator('input.multiselect__input');
+
+  for (let step = 0; step < target; step++) {
+    await search.press('ArrowDown');
+  }
+
+  await search.press('Enter');
   await expect(unitSelect.locator('.multiselect__single')).toContainText(unitLabel, { timeout: 10000 });
   await closeDropdown(page);
 
