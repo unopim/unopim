@@ -79,7 +79,7 @@ class MagicAIServiceProvider extends ServiceProvider
 
         $loader->alias('magic_ai', MagicAIFacade::class);
 
-        $this->app->singleton('magic_ai', fn (): MagicAI => new MagicAI);
+        $this->app->scoped('magic_ai', fn (): MagicAI => new MagicAI);
 
         $this->app->scoped(ProviderCallGuard::class);
 
