@@ -49,6 +49,7 @@ runs:
       run: |
         cd tests/e2e-pw
         npm ci --no-progress --prefer-offline
+        sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
         npx playwright install --with-deps chromium
 
     - name: Setting Environment
