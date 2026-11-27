@@ -3,11 +3,11 @@
 namespace Webkul\Admin\Http\Controllers\VueJsSelect;
 
 use Illuminate\Http\JsonResponse;
-use Webkul\Admin\Http\Requests\SelectOptionsForm;
+use Webkul\Admin\Http\Requests\EntitySelectOptionsForm;
 
 class SelectOptionsController extends AbstractOptionsController
 {
-    public function getOptions(SelectOptionsForm $request): JsonResponse
+    public function getOptions(EntitySelectOptionsForm $request): JsonResponse
     {
         $entityName = $request->validated('entityName');
         $page = $request->validated('page') ?? 1;
