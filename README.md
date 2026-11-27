@@ -42,7 +42,39 @@ UnoPim is a Product Information Management (PIM) and [Digital Asset Management (
 - **Built to scale.** [Tested to 10 million products](https://unopim.com/scaling-unopim-for-10-million-products/), with queued imports and exports and optional Elasticsearch.
 - **AI built in.** Chat with an agent to search, create, bulk edit and translate products, using OpenAI, Gemini, Groq, Ollama and other providers.
 - **Runs your way.** MySQL, MariaDB or PostgreSQL, behind Nginx or Apache, on bare metal or in containers.
-- **MIT licensed.** No open-core lock-in. Extend it with ordinary Laravel packages.
+- **MIT licensed.** The full core is open source; extend it with ordinary Laravel packages.
+
+## Quick start
+
+**Docker** (pre-built images, nothing to clone):
+
+```bash
+curl -O https://raw.githubusercontent.com/unopim/unopim/3.x/compose.yaml
+docker compose up -d
+```
+
+Open <http://localhost:8000/admin>. The generated admin login is in the container:
+
+```bash
+docker compose exec unopim cat storage/app/admin-credentials.txt
+```
+
+**Composer** (PHP 8.4.1+, MySQL 8.0.32+ / MariaDB 10.11+ / PostgreSQL 16):
+
+```bash
+composer create-project unopim/unopim
+cd unopim
+php artisan unopim:install
+php artisan serve
+```
+
+Open <http://localhost:8000/admin>, then start a queue worker for imports, exports, AI tasks, webhooks and Digital Product Passport publishing:
+
+```bash
+php artisan queue:work --queue=webhooks,system,completeness,default,publication
+```
+
+Full guides: [requirements](https://devdocs.unopim.com/3.1/introduction/requirements.html) · [installation](https://devdocs.unopim.com/3.1/introduction/installation.html) · [Docker](https://devdocs.unopim.com/3.1/introduction/installation-docker.html) · [MariaDB](https://devdocs.unopim.com/3.1/introduction/installation-with-mariadb.html) · [upgrading](UPGRADE.md) · [changelog](CHANGELOG.md)
 
 ## Security and trust
 
@@ -58,38 +90,6 @@ UnoPim is a Product Information Management (PIM) and [Digital Asset Management (
 - **Patched dependencies.** Dependabot keeps Composer, npm, Docker and GitHub Actions dependencies current.
 - **Responsible disclosure.** Report vulnerabilities privately through the [security policy](SECURITY.md), never in a public issue.
 
-## Quick start
-
-**Docker** (pre-built images, nothing to clone):
-
-```bash
-curl -O https://raw.githubusercontent.com/unopim/unopim/3.x/compose.yaml
-docker compose up -d
-```
-
-Open <http://localhost:8000/admin>. Unless you set `INSTALLER_ADMIN_EMAIL` and `INSTALLER_ADMIN_PASSWORD` before the first start, the generated admin login is in the container:
-
-```bash
-docker compose exec unopim cat storage/app/admin-credentials.txt
-```
-
-**Composer** (PHP 8.4.1+, MySQL 8.0.32+ / MariaDB 10.11+ / PostgreSQL 16):
-
-```bash
-composer create-project unopim/unopim
-cd unopim
-php artisan unopim:install
-php artisan serve
-```
-
-Open <http://localhost:8000/admin>, then start a queue worker for imports, exports, AI tasks, webhooks and passport publishing:
-
-```bash
-php artisan queue:work --queue=webhooks,system,completeness,default,publication
-```
-
-Full guides: [requirements](https://devdocs.unopim.com/3.1/introduction/requirements.html) · [installation](https://devdocs.unopim.com/3.1/introduction/installation.html) · [Docker](https://devdocs.unopim.com/3.1/introduction/installation-docker.html) · [MariaDB](https://devdocs.unopim.com/3.1/introduction/installation-with-mariadb.html) · [upgrading](UPGRADE.md)
-
 ## Features
 
 <table>
@@ -101,7 +101,7 @@ Full guides: [requirements](https://devdocs.unopim.com/3.1/introduction/requirem
     </td>
     <td width="50%" valign="top">
       <img src="https://raw.githubusercontent.com/unopim/temp-media/main/catalog-management.png" alt="Catalog management"><br>
-      <b>Catalogue management</b><br>
+      <b>Catalog management</b><br>
       Families, attributes, categories, configurable products with multi-level variants, and association types.
     </td>
   </tr>
@@ -162,7 +162,7 @@ Full guides: [requirements](https://devdocs.unopim.com/3.1/introduction/requirem
     <td width="50%" valign="top">
       <img src="https://raw.githubusercontent.com/unopim/temp-media/main/user-interface.png" alt="Light and dark themes"><br>
       <b>Light and dark themes</b><br>
-      A themeable admin interface that follows the system colour scheme.
+      A themeable admin interface that follows the system color scheme.
     </td>
   </tr>
 </table>
@@ -198,18 +198,14 @@ Free, open-source and MIT licensed.
   </tr>
 </table>
 
-### Covers the whole stack
+### Paid extensions for common needs
 
 | You need | UnoPim gives you |
 | --- | --- |
-| Managed hosting | [UnoPim Cloud](https://unopim.com/cloud-hosting) or [AWS Marketplace](https://aws.amazon.com/marketplace/pp/prodview-rhsm6cbxqkm6i) images, or self-host |
-| Storefront connectors | Shopify and Bagisto (free), plus [Magento 2, WooCommerce and Shopware 6](https://unopim.com/extensions/) |
-| ERP integration | [Odoo connector](https://unopim.com/extensions/odoo-pim-integration/), REST API and webhooks |
-| Approval workflows | [Maker Checker Workflow](https://store.webkul.com/unopim-maker-checker-workflow.html): drafts, side-by-side review and multi-level approval for products and assets |
-| Supplier onboarding | [Supplier Data Portal](https://store.webkul.com/unopim-supplier-data-portal.html): suppliers sign in to their own portal and submit products for your approval |
-| Governance | Role-based access control in core, plus approvals and matching in [MDM](https://github.com/unopim/master-data-management) |
-| Channel syndication | Publication channels that push per-channel payloads downstream on a queue |
-| Automation and AI agents | [n8n nodes](https://github.com/unopim/n8n-nodes-unopim), the [MCP server](https://github.com/unopim/unopim-mcp) and the built-in AI agent |
+| Storefront connectors | Shopify and Bagisto (free), plus [Magento 2, WooCommerce and Shopware 6](https://unopim.com/extensions/) (paid) |
+| ERP integration | [Odoo connector](https://unopim.com/extensions/odoo-pim-integration/) (paid), or the REST API and webhooks |
+| Approval workflows | [Maker Checker Workflow](https://store.webkul.com/unopim-maker-checker-workflow.html) (paid): drafts, side-by-side review and multi-level approval for products and assets |
+| Supplier onboarding | [Supplier Data Portal](https://store.webkul.com/unopim-supplier-data-portal.html) (paid): suppliers sign in to their own portal and submit products for your approval |
 
 Browse more on the [extensions marketplace](https://unopim.com/extensions/), or [build your own](https://devdocs.unopim.com/3.1/plugins/).
 
@@ -219,10 +215,10 @@ All MIT licensed.
 
 | Project | What it does |
 | --- | --- |
-| [MCP server](https://github.com/unopim/unopim-mcp) | Let ChatGPT, Claude, Copilot, Cursor and other AI agents search and enrich your catalogue, with ACL-enforced tools. |
-| [Claude plugin](https://github.com/unopim/claude-plugin) | Connect Claude to a self-hosted UnoPim, with skills for catalogue audits and product enrichment. |
+| [MCP server](https://github.com/unopim/unopim-mcp) | Let ChatGPT, Claude, Copilot, Cursor and other AI agents search and enrich your catalog, with ACL-enforced tools. |
+| [Claude plugin](https://github.com/unopim/claude-plugin) | Connect Claude to a self-hosted UnoPim, with skills for catalog audits and product enrichment. |
 | [Agent skills](https://github.com/unopim/agent-skills) | UnoPim context for coding agents working in an UnoPim codebase. |
-| [n8n nodes](https://github.com/unopim/n8n-nodes-unopim) | Use your UnoPim catalogue in n8n workflows. |
+| [n8n nodes](https://github.com/unopim/n8n-nodes-unopim) | Use your UnoPim catalog in n8n workflows. |
 | [PHP API client](https://github.com/unopim/api-php-client) | Framework-agnostic, PSR-18 client for the UnoPim REST API. |
 
 ## Hosting
@@ -233,10 +229,9 @@ All MIT licensed.
 
 ## Learn more
 
-| | |
+| Introducing UnoPim | Can an open-source PIM handle 10M products? |
 | --- | --- |
 | [![Introducing UnoPim](https://img.youtube.com/vi/_P1zt4BxJK0/mqdefault.jpg)](https://www.youtube.com/watch?v=_P1zt4BxJK0) | [![10M products](https://img.youtube.com/vi/n76bJmdZkL8/mqdefault.jpg)](https://www.youtube.com/watch?v=n76bJmdZkL8) |
-| Introducing UnoPim | Can an open-source PIM handle 10M products? |
 
 Read the [UnoPim at Scale whitepaper (PDF)](https://unopim.com/wp-content/uploads/2026/08/unopim-at-scale-10m-whitepaper.pdf) for full benchmarks.
 
