@@ -126,6 +126,36 @@ return [
     [
         'key'   => 'ai-agent.credentials',
         'name'  => 'ai-agent::app.acl.credentials',
+        'route' => 'ai-agent.credentials.create',
+        'sort'  => 7,
+    ],
+    [
+        'key'   => 'ai-agent.credentials',
+        'name'  => 'ai-agent::app.acl.credentials',
+        'route' => 'ai-agent.credentials.store',
+        'sort'  => 7,
+    ],
+    [
+        'key'   => 'ai-agent.credentials',
+        'name'  => 'ai-agent::app.acl.credentials',
+        'route' => 'ai-agent.credentials.edit',
+        'sort'  => 7,
+    ],
+    [
+        'key'   => 'ai-agent.credentials',
+        'name'  => 'ai-agent::app.acl.credentials',
+        'route' => 'ai-agent.credentials.update',
+        'sort'  => 7,
+    ],
+    [
+        'key'   => 'ai-agent.credentials',
+        'name'  => 'ai-agent::app.acl.credentials',
+        'route' => 'ai-agent.credentials.destroy',
+        'sort'  => 7,
+    ],
+    [
+        'key'   => 'ai-agent.credentials',
+        'name'  => 'ai-agent::app.acl.credentials',
         'route' => 'ai-agent.credentials.index',
         'sort'  => 7,
     ],
@@ -315,6 +345,24 @@ return [
         'key'   => 'ai-agent',
         'name'  => 'ai-agent::app.acl.ai-agent',
         'route' => 'ai-agent.chat.stream',
+        'sort'  => 7,
+    ],
+    [
+        'key'   => 'ai-agent',
+        'name'  => 'ai-agent::app.acl.ai-agent',
+        'route' => 'ai-agent.chat.send-async',
+        'sort'  => 7,
+    ],
+    [
+        'key'   => 'ai-agent',
+        'name'  => 'ai-agent::app.acl.ai-agent',
+        'route' => 'ai-agent.chat.reply',
+        'sort'  => 7,
+    ],
+    [
+        'key'   => 'ai-agent',
+        'name'  => 'ai-agent::app.acl.ai-agent',
+        'route' => 'ai-agent.chat.reply.cancel',
         'sort'  => 7,
     ],
     [

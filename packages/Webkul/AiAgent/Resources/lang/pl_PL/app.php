@@ -87,6 +87,7 @@ return [
         'create-success' => 'Poświadczenie zostało utworzone pomyślnie.',
         'update-success' => 'Poświadczenie zostało zaktualizowane pomyślnie.',
         'delete-success' => 'Poświadczenie zostało usunięte pomyślnie.',
+        'delete-in-use'  => 'Te dane uwierzytelniające są używane przez co najmniej jednego agenta i nie można ich usunąć.',
         'test-success'   => 'Połączenie zweryfikowane pomyślnie.',
         'test-failed'    => 'Połączenie nie powiodło się. Sprawdź swoje poświadczenia.',
         'general'        => 'Ogólne',

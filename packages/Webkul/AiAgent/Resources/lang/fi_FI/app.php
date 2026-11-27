@@ -87,6 +87,7 @@ return [
         'create-success' => 'Tunnistetiedot luotu onnistuneesti.',
         'update-success' => 'Tunnistetiedot päivitetty onnistuneesti.',
         'delete-success' => 'Tunnistetiedot poistettu onnistuneesti.',
+        'delete-in-use'  => 'Yksi tai useampi agentti käyttää näitä tunnistetietoja, joten niitä ei voi poistaa.',
         'test-success'   => 'Yhteys vahvistettu onnistuneesti.',
         'test-failed'    => 'Yhteys epäonnistui. Tarkista tunnistetietosi.',
         'general'        => 'Yleinen',

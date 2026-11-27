@@ -87,6 +87,7 @@ return [
         'create-success' => 'Zugangsdaten erfolgreich erstellt.',
         'update-success' => 'Zugangsdaten erfolgreich aktualisiert.',
         'delete-success' => 'Zugangsdaten erfolgreich gelöscht.',
+        'delete-in-use'  => 'Diese Zugangsdaten werden von einem oder mehreren Agenten verwendet und können nicht gelöscht werden.',
         'test-success'   => 'Verbindung erfolgreich verifiziert.',
         'test-failed'    => 'Verbindung fehlgeschlagen. Bitte überprüfen Sie Ihre Zugangsdaten.',
         'general'        => 'Allgemein',

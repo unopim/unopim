@@ -87,6 +87,7 @@ return [
         'create-success' => 'Credential created successfully.',
         'update-success' => 'Credential updated successfully.',
         'delete-success' => 'Credential deleted successfully.',
+        'delete-in-use'  => 'This credential is used by one or more agents and cannot be deleted.',
         'test-success'   => 'Connection verified successfully.',
         'test-failed'    => 'Connection failed. Please check your credentials.',
         'general'        => 'General',

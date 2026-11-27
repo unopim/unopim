@@ -87,6 +87,7 @@ return [
         'create-success' => 'Legitimasjon opprettet.',
         'update-success' => 'Legitimasjon oppdatert.',
         'delete-success' => 'Legitimasjon slettet.',
+        'delete-in-use'  => 'Denne legitimasjonen brukes av én eller flere agenter og kan ikke slettes.',
         'test-success'   => 'Tilkobling verifisert.',
         'test-failed'    => 'Tilkobling mislyktes. Vennligst kontroller legitimasjonen din.',
         'general'        => 'Generelt',

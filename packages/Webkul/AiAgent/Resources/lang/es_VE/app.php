@@ -87,6 +87,7 @@ return [
         'create-success' => 'Credencial creada exitosamente.',
         'update-success' => 'Credencial actualizada exitosamente.',
         'delete-success' => 'Credencial eliminada exitosamente.',
+        'delete-in-use'  => 'Esta credencial la usan uno o más agentes y no se puede eliminar.',
         'test-success'   => 'Conexión verificada exitosamente.',
         'test-failed'    => 'La conexión falló. Por favor, verifique sus credenciales.',
         'general'        => 'General',

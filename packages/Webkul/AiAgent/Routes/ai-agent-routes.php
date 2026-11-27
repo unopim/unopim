@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Webkul\AiAgent\Http\Controllers\AgentController;
 use Webkul\AiAgent\Http\Controllers\ChatController;
 use Webkul\AiAgent\Http\Controllers\ConversationController;
+use Webkul\AiAgent\Http\Controllers\CredentialController;
 use Webkul\AiAgent\Http\Controllers\DashboardController;
 use Webkul\AiAgent\Http\Controllers\ExecutionController;
 use Webkul\AiAgent\Http\Controllers\ExportController;
@@ -41,6 +42,27 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
         Route::delete('agents/{id}', [AgentController::class, 'destroy'])
             ->name('agents.destroy')
+            ->whereNumber('id');
+
+        Route::get('credentials', [CredentialController::class, 'index'])
+            ->name('credentials.index');
+
+        Route::get('credentials/create', [CredentialController::class, 'create'])
+            ->name('credentials.create');
+
+        Route::post('credentials', [CredentialController::class, 'store'])
+            ->name('credentials.store');
+
+        Route::get('credentials/{id}/edit', [CredentialController::class, 'edit'])
+            ->name('credentials.edit')
+            ->whereNumber('id');
+
+        Route::put('credentials/{id}', [CredentialController::class, 'update'])
+            ->name('credentials.update')
+            ->whereNumber('id');
+
+        Route::delete('credentials/{id}', [CredentialController::class, 'destroy'])
+            ->name('credentials.destroy')
             ->whereNumber('id');
 
         // ── Generate (Image → Product) ─────────────────────

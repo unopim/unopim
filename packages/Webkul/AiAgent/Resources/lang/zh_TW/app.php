@@ -87,6 +87,7 @@ return [
         'create-success' => '憑證建立成功。',
         'update-success' => '憑證更新成功。',
         'delete-success' => '憑證刪除成功。',
+        'delete-in-use'  => '此憑證正由一個或多個代理程式使用，無法刪除。',
         'test-success'   => '連線驗證成功。',
         'test-failed'    => '連線失敗，請檢查您的憑證。',
         'general'        => '一般',

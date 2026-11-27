@@ -87,6 +87,7 @@ return [
         'create-success' => 'Vjerodajnica uspješno stvorena.',
         'update-success' => 'Vjerodajnica uspješno ažurirana.',
         'delete-success' => 'Vjerodajnica uspješno izbrisana.',
+        'delete-in-use'  => 'Ove vjerodajnice koristi jedan ili više agenata pa se ne mogu izbrisati.',
         'test-success'   => 'Veza uspješno provjerena.',
         'test-failed'    => 'Veza nije uspjela. Molimo provjerite svoje vjerodajnice.',
         'general'        => 'Općenito',
