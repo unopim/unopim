@@ -668,7 +668,7 @@
                                                     <x-installer::form.control-group.control
                                                         type="text"
                                                         name="admin"
-                                                        rules="required"
+                                                        rules="required|max:191|regex:^[^<>&&quot;]+$"
                                                         value="Admin"
                                                         :label="trans('installer::app.installer.index.create-administrator.admin')"
                                                         :placeholder="trans('installer::app.installer.index.create-administrator.unopim')"
@@ -686,7 +686,7 @@
                                                     <x-installer::form.control-group.control
                                                         type="text"
                                                         name="email"
-                                                        rules="required"
+                                                        rules="required|email|max:191"
                                                         value="admin@example.com"
                                                         :label="trans('installer::app.installer.index.create-administrator.email')"
                                                         :placeholder="trans('installer::app.installer.index.create-administrator.email-address')"
@@ -704,7 +704,7 @@
                                                     <x-installer::form.control-group.control
                                                         type="password"
                                                         name="password"
-                                                        rules="required|min:{{ config('admin.auth.password_min') }}"
+                                                        rules="required|min:{{ config('admin.auth.password_min', 8) }}|max:72|regex:^\S(.*\S)?$"
                                                         :value="old('password')"
                                                         :label="trans('installer::app.installer.index.create-administrator.password')"
                                                     />
