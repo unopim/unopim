@@ -61,10 +61,10 @@ async function createMeasurementAttribute(page, { familyCode = MEASUREMENT_FAMIL
 
   await page.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
   await page.locator('input[name="type"][type="text"]').fill('Measurement');
-  await page.waitForTimeout(500);
 
   const measOption = page.getByRole('option', { name: 'Measurement' }).first();
-  if (await measOption.isVisible().catch(() => false)) {
+  const measOptionShown = await measOption.waitFor({ state: 'visible', timeout: 5000 }).then(() => true).catch(() => false);
+  if (measOptionShown) {
     await measOption.click();
   } else {
     await page.keyboard.press('Enter');
@@ -128,7 +128,7 @@ async function selectUnassignedAttribute(page, matchText) {
     }
 
     await checkbox.dispatchEvent('click').catch(() => {});
-    await page.waitForTimeout(400);
+    await row.locator('button.icon-checkbox-check').waitFor({ state: 'attached', timeout: 2000 }).catch(() => {});
   }
 
   if (!(await row.locator('button.icon-checkbox-check').count())) {
@@ -153,7 +153,6 @@ async function assignAttributesToFamily(page, familyId, entries, group = 'Genera
   for (const entry of entries) {
     await search.fill(entry.query);
     await page.keyboard.press('Enter');
-    await page.waitForTimeout(1500);
 
     await selectUnassignedAttribute(page, entry.match);
   }
@@ -176,10 +175,9 @@ async function assignAttributesToFamily(page, familyId, entries, group = 'Genera
     } else {
       await groupMs.locator('.multiselect__select').first().click({ force: true }).catch(() => {});
     }
-    await page.waitForTimeout(500);
 
     const opt = page.getByRole('option', { name: group }).first();
-    if (await opt.isVisible({ timeout: 2000 }).catch(() => false)) {
+    if (await opt.waitFor({ state: 'visible', timeout: 2500 }).then(() => true).catch(() => false)) {
       await opt.click();
       picked = true;
     }
@@ -190,7 +188,6 @@ async function assignAttributesToFamily(page, familyId, entries, group = 'Genera
   }
 
   await bulkBox.getByRole('button', { name: /Assign/ }).first().click();
-  await page.waitForTimeout(500);
 
   const bar = page.getByRole('button', { name: 'Save changes' });
   const named = page.getByRole('button', { name: 'Save Attribute Family' });
@@ -245,7 +242,6 @@ async function setMeasurementValue(page, amount) {
 
   await unitSelect.locator('.multiselect__tags').click();
   await unitSelect.locator('.multiselect__content-wrapper').first().waitFor({ state: 'visible', timeout: 10000 });
-  await page.waitForTimeout(900);
 
   const options = unitSelect.locator('li.multiselect__element');
   await options.first().waitFor({ state: 'visible', timeout: 12000 });
@@ -308,7 +304,6 @@ test.describe('Measurement - Attribute Family', () => {
     await addVariant.click();
 
     await openMultiselect(adminPage, 'draft_axis_leaf');
-    await adminPage.waitForTimeout(500);
 
     const variantModal = adminPage.locator('.fixed').filter({ hasText: 'Add Variant' }).last();
 

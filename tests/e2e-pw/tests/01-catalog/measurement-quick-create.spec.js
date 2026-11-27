@@ -1,6 +1,7 @@
 const { test, expect } = require('../../utils/fixtures');
 const {
   clickSave,
+  waitForAppReady,
   generateUid,
   fillLocalizedField,
   selectMultiselectOption,
@@ -14,6 +15,7 @@ const MEASUREMENT_FAMILY = 'Length';
  */
 async function openQuickCreate(page, code, type) {
   await page.goto('/admin/catalog/attributes', { waitUntil: 'domcontentloaded' });
+  await waitForAppReady(page);
   await page.getByRole('button', { name: 'Create Attribute' }).click();
   await page.getByRole('textbox', { name: 'Code' }).waitFor({ state: 'visible', timeout: 20000 });
   await page.getByRole('textbox', { name: 'Code' }).fill(code);

@@ -20,7 +20,7 @@ class MeasurementEventServiceProvider extends ServiceProvider
     {
         Event::listen(
             'unopim.admin.catalog.attributes.edit.card.label.after',
-            function ($viewRenderEventManager, $attribute = null): void {
+            function (ViewRenderEventManager $viewRenderEventManager): void {
                 $viewRenderEventManager->addTemplate(
                     'measurement::catalog.attributes.edit'
                 );
@@ -29,7 +29,7 @@ class MeasurementEventServiceProvider extends ServiceProvider
 
         Event::listen(
             'unopim.admin.products.dynamic-attribute-fields.control.measurement.before',
-            function ($viewRenderEventManager): void {
+            function (ViewRenderEventManager $viewRenderEventManager): void {
                 $viewRenderEventManager->addTemplate(
                     'measurement::catalog.products.edit'
                 );

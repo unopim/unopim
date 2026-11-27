@@ -1,5 +1,9 @@
 @pushOnce('scripts')
     <script type="module">
+        /**
+         * Shared family/unit behaviour for the attribute create and edit forms:
+         * per-family unit fetching (cached), mixed into both so it can't drift.
+         */
         window.unopim = window.unopim || {};
 
         window.unopim.measurementUnits = {
@@ -11,6 +15,12 @@
             },
 
             methods: {
+                /**
+                 * Normalise a multiselect value (JSON string or object) to the
+                 * selected family. Returns `undefined` when a string cannot be
+                 * parsed so the caller can abort, and `null` when nothing is
+                 * selected.
+                 */
                 parseSelectedFamily(value) {
                     if (
                         typeof value === 'string'
@@ -33,6 +43,10 @@
                     return null;
                 },
 
+                /**
+                 * Units belong to one family and are fetched per selection, so the
+                 * page does not carry the units of every family in the catalogue.
+                 */
                 async fetchUnits(familyCode) {
                     if (! familyCode) {
                         this.unitsList = [];

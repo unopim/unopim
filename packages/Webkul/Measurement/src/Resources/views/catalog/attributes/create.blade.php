@@ -120,6 +120,10 @@
             },
 
             methods: {
+                /**
+                 * Families are loaded once, the first time a measurement type is
+                 * picked, so the attributes index never queries them up front.
+                 */
                 async fetchFamilyOptions() {
                     if (this.familyOptions !== null) {
                         return;
