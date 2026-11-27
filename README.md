@@ -198,6 +198,10 @@ Browse more on the [extensions marketplace](https://unopim.com/extensions/), or 
 
 ## Learn more
 
+<p align="center">
+  <a href="https://unopim.com/scaling-unopim-for-10-million-products/"><img src="https://github.com/user-attachments/assets/c264d658-3723-46ff-8b60-2b9506a7a412" alt="Scaling UnoPim to 10 million products" width="720"></a>
+</p>
+
 | | |
 | --- | --- |
 | [![Introducing UnoPim](https://img.youtube.com/vi/_P1zt4BxJK0/mqdefault.jpg)](https://www.youtube.com/watch?v=_P1zt4BxJK0) | [![10M products](https://img.youtube.com/vi/n76bJmdZkL8/mqdefault.jpg)](https://www.youtube.com/watch?v=n76bJmdZkL8) |
