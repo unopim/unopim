@@ -56,6 +56,11 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     protected const MAX_SEARCH_FIELDS = 10;
 
     /**
+     * Whether a request may narrow the grid to the products listed in `productIds`.
+     */
+    protected bool $acceptsProductIds = true;
+
+    /**
      * Prepare query builder.
      *
      * @var object
@@ -680,6 +685,14 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $this->processFilters($requestedFilters);
 
         return $this->prepareQuery->getQueryManager();
+    }
+
+    /**
+     * Allow sorting by any existing attribute too, since products sort by attributes that are not shown as columns.
+     */
+    protected function isSortableColumn(string $column): bool
+    {
+        return parent::isSortableColumn($column) || $this->attributeService->findAttributeByCode($column) !== null;
     }
 
     /**
@@ -1363,9 +1376,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     public function formatData(): array
     {
         $paginator = $this->paginator->toArray();
-        /**
-         * TODO: need to handle this...
-         */
         foreach ($this->columns as $column) {
             $column->input_type = $column->getFormInputType();
 
@@ -1426,7 +1436,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'from'                 => $paginator['from'],
                 'to'                   => $paginator['to'],
                 'total'                => $paginator['total'],
-                'per_page_options'     => [10, 20, 30, 40, 50],
+                'per_page_options'     => $this->getPerPageOptions(),
                 'per_page'             => $paginator['per_page'],
                 'current_page'         => $paginator['current_page'],
                 'last_page'            => $paginator['last_page'],

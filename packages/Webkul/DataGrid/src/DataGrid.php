@@ -72,6 +72,18 @@ abstract class DataGrid
     protected $itemsPerPage = 10;
 
     /**
+     * Page sizes a request may ask for.
+     *
+     * @var array<int, int>
+     */
+    protected array $perPageOptions = [10, 20, 30, 40, 50];
+
+    /**
+     * Whether a request may narrow the grid to the products listed in `productIds`.
+     */
+    protected bool $acceptsProductIds = false;
+
+    /**
      * Columns.
      *
      * @var array
@@ -254,7 +266,9 @@ abstract class DataGrid
     }
 
     /**
-     * Validated request.
+     * Validate the request and keep only the input this grid supports.
+     *
+     * @return array<string, mixed>
      */
     public function validatedRequest(): array
     {
@@ -268,7 +282,108 @@ abstract class DataGrid
             'mass_action_ids' => ['sometimes', 'required', 'boolean'],
         ]);
 
-        return request()->only(['filters', 'sort', 'pagination', 'export', 'format', 'productIds', 'mass_action_ids']);
+        return $this->sanitizeRequestedParams(
+            request()->only(['filters', 'sort', 'pagination', 'export', 'format', 'productIds', 'mass_action_ids'])
+        );
+    }
+
+    /**
+     * Keep only the sort, pagination and product ids this grid supports.
+     *
+     * @param  array<string, mixed>  $requestedParams
+     * @return array<string, mixed>
+     */
+    protected function sanitizeRequestedParams(array $requestedParams): array
+    {
+        if (isset($requestedParams['sort'])) {
+            $requestedParams['sort'] = $this->sanitizeRequestedSort($requestedParams['sort']);
+        }
+
+        if (isset($requestedParams['pagination'])) {
+            $requestedParams['pagination'] = $this->sanitizeRequestedPagination($requestedParams['pagination']);
+        }
+
+        if (! $this->acceptsProductIds) {
+            unset($requestedParams['productIds']);
+        }
+
+        return $requestedParams;
+    }
+
+    /**
+     * Drop a sort column the grid cannot sort by and an order other than asc or desc, so the default applies.
+     *
+     * @param  array<string, mixed>  $requestedSort
+     * @return array{column?: string, order?: string}
+     */
+    protected function sanitizeRequestedSort(array $requestedSort): array
+    {
+        $column = $requestedSort['column'] ?? null;
+
+        $order = is_string($requestedSort['order'] ?? null) ? strtolower($requestedSort['order']) : null;
+
+        return array_filter([
+            'column' => is_string($column) && $this->isSortableColumn($column) ? $column : null,
+            'order'  => in_array($order, ['asc', 'desc'], true) ? $order : null,
+        ], fn (?string $value): bool => $value !== null);
+    }
+
+    /**
+     * Drop a page size outside the grid's options and a page number below one, so the defaults apply.
+     *
+     * @param  array<string, mixed>  $requestedPagination
+     * @return array{per_page?: int, page?: int}
+     */
+    protected function sanitizeRequestedPagination(array $requestedPagination): array
+    {
+        $perPage = filter_var($requestedPagination['per_page'] ?? null, FILTER_VALIDATE_INT);
+
+        $page = filter_var($requestedPagination['page'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+
+        return array_filter([
+            'per_page' => in_array($perPage, $this->getPerPageOptions(), true) ? $perPage : null,
+            'page'     => $page === false ? null : $page,
+        ], fn (?int $value): bool => $value !== null);
+    }
+
+    /**
+     * Whether a request may sort the grid by the given column index.
+     */
+    protected function isSortableColumn(string $column): bool
+    {
+        return in_array($column, $this->getSortableColumns(), true);
+    }
+
+    /**
+     * Column indexes a request may sort by: the sortable columns plus the grid's default sort and primary columns.
+     *
+     * @return array<int, string>
+     */
+    protected function getSortableColumns(): array
+    {
+        return collect($this->columns)
+            ->filter(fn (Column $column): bool => $column->sortable)
+            ->map(fn (Column $column): string => $column->index)
+            ->push($this->sortColumn, $this->primaryColumn)
+            ->filter(fn (mixed $index): bool => is_string($index) && $index !== '')
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Page sizes a request may ask for, always including the grid's default page size.
+     *
+     * @return array<int, int>
+     */
+    protected function getPerPageOptions(): array
+    {
+        return collect($this->perPageOptions)
+            ->push((int) $this->itemsPerPage)
+            ->unique()
+            ->sort()
+            ->values()
+            ->all();
     }
 
     /**
@@ -574,9 +689,6 @@ abstract class DataGrid
     {
         $paginator = $this->paginator->toArray();
 
-        /**
-         * TODO: need to handle this...
-         */
         foreach ($this->columns as $column) {
             $column->input_type = $column->getFormInputType();
 
@@ -632,7 +744,7 @@ abstract class DataGrid
                 'from'                 => $paginator['from'],
                 'to'                   => $paginator['to'],
                 'total'                => $paginator['total'],
-                'per_page_options'     => [10, 20, 30, 40, 50],
+                'per_page_options'     => $this->getPerPageOptions(),
                 'per_page'             => $paginator['per_page'],
                 'current_page'         => $paginator['current_page'],
                 'last_page'            => $paginator['last_page'],
