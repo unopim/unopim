@@ -188,7 +188,7 @@ Also included: **Digital Product Passports** with QR carriers and a public tier,
 
 Also free and open source:
 
-- [Master Data Management](https://github.com/unopim/master-data-management): governed master records, matching, approvals and code lists, alongside the PIM or standalone.
+- **New:** [Master Data Management](https://github.com/unopim/master-data-management): governed master records, matching, approvals and code lists, alongside the PIM or standalone.
 - [Bagisto Connector](https://github.com/unopim/bagisto-connector): sync products, attributes and media to a [Bagisto](https://bagisto.com/) store.
 
 Browse more on the [extensions marketplace](https://unopim.com/extensions/), or [build your own](https://devdocs.unopim.com/3.1/plugins/).
