@@ -70,14 +70,22 @@ class Webhook extends Model implements HistoryAuditable, PresentableHistoryInter
     }
 
     /**
-     * Replace every value in a JSON header map with a mask; anything that is not a JSON map is returned as is.
+     * Replace every value in a header map with a mask; any other non-empty value is masked whole.
      */
     public static function maskHeaders(mixed $headers): mixed
     {
-        $decoded = is_string($headers) ? json_decode($headers, true) : null;
+        if (is_array($headers)) {
+            return array_map(fn (): string => self::MASKED_VALUE, $headers);
+        }
+
+        if (! is_string($headers) || $headers === '') {
+            return $headers;
+        }
+
+        $decoded = json_decode($headers, true);
 
         if (! is_array($decoded)) {
-            return $headers;
+            return self::MASKED_VALUE;
         }
 
         return json_encode(array_map(fn (): string => self::MASKED_VALUE, $decoded), JSON_UNESCAPED_UNICODE);

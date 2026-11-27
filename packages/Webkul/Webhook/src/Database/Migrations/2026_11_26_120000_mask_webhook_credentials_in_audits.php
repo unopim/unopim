@@ -25,6 +25,8 @@ return new class extends Migration
     public function down(): void {}
 
     /**
+     * Mask the header values and URL credentials in both value columns of a webhook audit row.
+     *
      * @return array<string, string>
      */
     private function maskedColumns(object $audit): array
