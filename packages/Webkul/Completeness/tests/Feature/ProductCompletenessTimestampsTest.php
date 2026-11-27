@@ -119,3 +119,36 @@ it('stays quiet when a recalculation changes no score', function () {
 
     Event::assertNotDispatched('completeness.product.calculate.after');
 });
+
+it('stays quiet on a recalculation when another channel has no completeness settings', function (): void {
+    ChannelProxy::factory()->create();
+
+    ProductCompletenessJob::dispatchSync([$this->product->id]);
+
+    Event::fake(['completeness.product.calculate.after']);
+
+    ProductCompletenessJob::dispatchSync([$this->product->id]);
+
+    Event::assertNotDispatched('completeness.product.calculate.after');
+});
+
+it('announces a recalculation that removes the rows of a channel without completeness settings', function (): void {
+    $otherChannel = ChannelProxy::factory()->create();
+
+    ProductCompletenessJob::dispatchSync([$this->product->id]);
+
+    DB::table('product_completeness')->insert([
+        'product_id'    => $this->product->id,
+        'channel_id'    => $otherChannel->id,
+        'locale_id'     => $this->channel->locales()->first()->id,
+        'score'         => 50,
+        'missing_count' => 1,
+    ]);
+
+    Event::fake(['completeness.product.calculate.after']);
+
+    ProductCompletenessJob::dispatchSync([$this->product->id]);
+
+    Event::assertDispatched('completeness.product.calculate.after');
+    expect(completenessRows($this->product->id)->where('channel_id', $otherChannel->id))->toBeEmpty();
+});
