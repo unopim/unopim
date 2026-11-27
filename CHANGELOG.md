@@ -85,6 +85,12 @@
 - Fixed re-seeding the demo catalog failing once a publication release existed.
 - Fixed the install tracker always reporting the country as India; it is now derived from the admin timezone.
 
+## BC Breaks
+
+### Classes
+
+- `Webkul\ProductPassport\Http\Controllers\PublicationController` now takes `PassportPublishGuard` instead of `PassportReadinessService` in its constructor (`PassportFeature $feature, PublicAccessGate $publicAccess, PassportPublishGuard $publishGuard`). Subclasses calling `parent::__construct()` must pass the new arguments.
+
 # 3.1.3 — September 29th, 2026
 
 ## Improvements

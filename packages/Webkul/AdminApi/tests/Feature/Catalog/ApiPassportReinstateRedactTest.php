@@ -16,7 +16,7 @@ function enablePassport(): void
 /**
  * Create a published publication with a current version.
  */
-function publishedPublicationWithCurrentVersion(): Publication
+function apiPassportPublishedPublication(): Publication
 {
     $publication = Publication::factory()->create(['status' => PublicationStatus::Published]);
     PublicationVersion::factory()->create(['publication_id' => $publication->id, 'is_current' => true]);
@@ -24,12 +24,12 @@ function publishedPublicationWithCurrentVersion(): Publication
     return $publication;
 }
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->headers = $this->getAuthenticationHeaders();
     enablePassport();
 });
 
-it('reinstates a withdrawn publication', function () {
+it('reinstates a withdrawn publication', function (): void {
     $publication = Publication::factory()->create(['status' => PublicationStatus::Withdrawn]);
 
     $this->withHeaders($this->headers)
@@ -40,7 +40,7 @@ it('reinstates a withdrawn publication', function () {
     expect($publication->fresh()->status)->toBe(PublicationStatus::Published);
 });
 
-it('rejects reinstating a non-withdrawn publication', function () {
+it('rejects reinstating a non-withdrawn publication', function (): void {
     $publication = Publication::factory()->create(['status' => PublicationStatus::Published]);
 
     $this->withHeaders($this->headers)
@@ -48,14 +48,14 @@ it('rejects reinstating a non-withdrawn publication', function () {
         ->assertStatus(422);
 });
 
-it('returns 404 reinstating an unknown publication', function () {
+it('returns 404 reinstating an unknown publication', function (): void {
     $this->withHeaders($this->headers)
         ->json('POST', route('admin.api.passports.reinstate', 999999))
         ->assertNotFound();
 });
 
-it('redacts a publication with a current version', function () {
-    $publication = publishedPublicationWithCurrentVersion();
+it('redacts a publication with a current version', function (): void {
+    $publication = apiPassportPublishedPublication();
 
     $this->withHeaders($this->headers)
         ->json('POST', route('admin.api.passports.redact', $publication->id), ['reason' => 'GDPR request'])
@@ -65,7 +65,7 @@ it('redacts a publication with a current version', function () {
     expect($publication->fresh()->status)->toBe(PublicationStatus::Redacted);
 });
 
-it('requires a reason to redact', function () {
+it('requires a reason to redact', function (): void {
     $publication = Publication::factory()->create(['status' => PublicationStatus::Published]);
 
     $this->withHeaders($this->headers)
@@ -73,7 +73,7 @@ it('requires a reason to redact', function () {
         ->assertStatus(422);
 });
 
-it('rejects redacting a publication with no current versions', function () {
+it('rejects redacting a publication with no current versions', function (): void {
     $publication = Publication::factory()->create(['status' => PublicationStatus::Published]);
 
     $this->withHeaders($this->headers)
@@ -81,7 +81,7 @@ it('rejects redacting a publication with no current versions', function () {
         ->assertStatus(422);
 });
 
-it('forbids reinstate with a view-only key', function () {
+it('forbids reinstate with a view-only key', function (): void {
     $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.passports']);
     $publication = Publication::factory()->create(['status' => PublicationStatus::Withdrawn]);
 
@@ -126,7 +126,7 @@ it('reinstates with a withdraw-only key', function (): void {
 
 it('forbids redact with a withdraw-only key and keeps the payload', function (): void {
     $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.passports.withdraw']);
-    $publication = publishedPublicationWithCurrentVersion();
+    $publication = apiPassportPublishedPublication();
 
     $this->withHeaders($headers)
         ->json('POST', route('admin.api.passports.redact', $publication->id), ['reason' => 'GDPR request'])
@@ -149,7 +149,7 @@ it('still lets a withdraw-only key withdraw', function (): void {
 
 it('redacts with a key holding the dedicated redact scope', function (): void {
     $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.passports.redact']);
-    $publication = publishedPublicationWithCurrentVersion();
+    $publication = apiPassportPublishedPublication();
 
     $this->withHeaders($headers)
         ->json('POST', route('admin.api.passports.redact', $publication->id), ['reason' => 'GDPR request'])
@@ -170,7 +170,7 @@ it('forbids withdraw with a redact-only key', function (): void {
     expect($publication->fresh()->status)->toBe(PublicationStatus::Published);
 });
 
-it('rejects unauthenticated redact', function () {
+it('rejects unauthenticated redact', function (): void {
     $publication = Publication::factory()->create();
 
     $this->json('POST', route('admin.api.passports.redact', $publication->id), ['reason' => 'x'], [

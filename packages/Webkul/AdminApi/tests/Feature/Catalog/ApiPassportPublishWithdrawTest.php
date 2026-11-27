@@ -112,7 +112,7 @@ function postApiPassportPublish(mixed $test, Product $product, int $channelId, a
         ]);
 }
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->headers = $this->getAuthenticationHeaders();
 });
 
@@ -241,7 +241,7 @@ it('refuses with the same body as the admin publish', function (string $case): v
     Queue::assertNotPushed(PublishPassportForProductChannelJob::class);
 })->with(['public tier off', 'blocked locale', 'withdrawn']);
 
-it('validates the publish payload', function () {
+it('validates the publish payload', function (): void {
     enablePassportFeatureGlobally();
     $product = Product::factory()->create();
 
@@ -264,7 +264,7 @@ it('returns 404 publishing an unknown sku', function (): void {
         ->assertNotFound();
 });
 
-it('withdraws a publication', function () {
+it('withdraws a publication', function (): void {
     enablePassportFeatureGlobally();
     $publication = Publication::factory()->create(['status' => PublicationStatus::Published]);
 
@@ -276,7 +276,7 @@ it('withdraws a publication', function () {
     expect($publication->fresh()->status)->toBe(PublicationStatus::Withdrawn);
 });
 
-it('returns 404 withdrawing an unknown publication', function () {
+it('returns 404 withdrawing an unknown publication', function (): void {
     enablePassportFeatureGlobally();
 
     $this->withHeaders($this->headers)
@@ -284,7 +284,7 @@ it('returns 404 withdrawing an unknown publication', function () {
         ->assertNotFound();
 });
 
-it('forbids publish without the publish permission', function () {
+it('forbids publish without the publish permission', function (): void {
     enablePassportFeatureGlobally();
     $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.passports']);
     $product = Product::factory()->create();
@@ -299,7 +299,7 @@ it('forbids publish without the publish permission', function () {
         ->assertForbidden();
 });
 
-it('rejects unauthenticated withdraw', function () {
+it('rejects unauthenticated withdraw', function (): void {
     enablePassportFeatureGlobally();
     $publication = Publication::factory()->create();
 
