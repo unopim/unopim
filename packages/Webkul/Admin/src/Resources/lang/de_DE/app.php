@@ -461,6 +461,7 @@ return [
                     'change'                      => 'Ändern',
                     'overwrite-warning'           => 'Vorhandene Inhalte in den ausgewählten Zielsprachen werden ersetzt.',
                     'incomplete-source'           => 'Wählen Sie einen Quellkanal, eine Sprache und mindestens ein Attribut aus, um fortzufahren.',
+                    'model-required'              => 'Wählen Sie vor dem Übersetzen ein KI-Modell aus oder legen Sie in der Magic-AI-Konfiguration ein Standardmodell für Übersetzungen fest.',
                 ],
                 'product-info' => [
                     'title'        => 'Produktinformationen',

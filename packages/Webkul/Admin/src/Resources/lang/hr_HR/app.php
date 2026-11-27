@@ -461,6 +461,7 @@ return [
                     'change'                      => 'Promijeni',
                     'overwrite-warning'           => 'Postojeći sadržaj na odabranim ciljnim jezicima bit će zamijenjen.',
                     'incomplete-source'           => 'Odaberite izvorni kanal, jezik i barem jedan atribut za nastavak.',
+                    'model-required'              => 'Odaberite AI model prije prevođenja ili postavite zadani model za prijevod u konfiguraciji Magic AI.',
                 ],
                 'product-info' => [
                     'title'        => 'Informacije o proizvodu',

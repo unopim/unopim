@@ -461,6 +461,7 @@ return [
                     'change'                      => 'Thay đổi',
                     'overwrite-warning'           => 'Nội dung hiện có ở các ngôn ngữ đích đã chọn sẽ bị thay thế.',
                     'incomplete-source'           => 'Chọn kênh nguồn, ngôn ngữ và ít nhất một thuộc tính để tiếp tục.',
+                    'model-required'              => 'Hãy chọn một mô hình AI trước khi dịch, hoặc đặt mô hình dịch mặc định trong cấu hình Magic AI.',
                 ],
                 'product-info' => [
                     'title'        => 'Thông tin sản phẩm',

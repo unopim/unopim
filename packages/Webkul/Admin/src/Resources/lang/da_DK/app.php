@@ -461,6 +461,7 @@ return [
                     'change'                      => 'Skift',
                     'overwrite-warning'           => 'Eksisterende indhold i de valgte målsprog bliver erstattet.',
                     'incomplete-source'           => 'Vælg en kildekanal, et sprog og mindst én attribut for at fortsætte.',
+                    'model-required'              => 'Vælg en AI-model, før du oversætter, eller angiv en standardmodel til oversættelse i Magic AI-konfigurationen.',
                 ],
                 'product-info' => [
                     'title'        => 'Produktinformation',

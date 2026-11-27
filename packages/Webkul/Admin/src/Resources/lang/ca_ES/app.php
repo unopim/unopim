@@ -461,6 +461,7 @@ return [
                     'change'                      => 'Canvia',
                     'overwrite-warning'           => 'El contingut existent als idiomes de destinació seleccionats se substituirà.',
                     'incomplete-source'           => 'Selecciona un canal d\'origen, un idioma i com a mínim un atribut per continuar.',
+                    'model-required'              => 'Selecciona un model d\'IA abans de traduir o defineix un model de traducció predeterminat a la configuració de Magic AI.',
                 ],
                 'product-info' => [
                     'title'        => 'Informació del producte',

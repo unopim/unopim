@@ -461,6 +461,7 @@ return [
                     'change'                      => '変更',
                     'overwrite-warning'           => '選択したターゲットロケールの既存のコンテンツは置き換えられます。',
                     'incomplete-source'           => '続行するには、ソースチャンネル、ロケール、少なくとも1つの属性を選択してください。',
+                    'model-required'              => '翻訳する前に AI モデルを選択するか、Magic AI の設定でデフォルトの翻訳モデルを設定してください。',
                 ],
                 'product-info' => [
                     'title'        => '製品情報',

@@ -433,3 +433,21 @@ it('treats plain and rich text attributes separately when translating all attrib
 
     expect($fieldTypes)->toBe(['text', 'tinymce']);
 });
+
+it('asks for an ai model instead of failing when none is configured or selected', function (string $route) {
+    $product = Product::factory()->simple()->create();
+
+    $this->postJson(route($route), [
+        'resource_id'   => $product->id,
+        'resource_type' => 'product',
+        'field'         => 'name',
+        'attributes'    => 'name',
+        'model'         => '',
+        'targetLocale'  => 'fr_FR',
+    ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['model' => trans('admin::app.catalog.products.edit.translate.model-required')]);
+})->with([
+    'translate to many locales' => 'admin.magic_ai.translate',
+    'translate all attributes'  => 'admin.magic_ai.translate.all.attribute',
+]);

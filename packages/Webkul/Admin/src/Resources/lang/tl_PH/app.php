@@ -461,6 +461,7 @@ return [
                     'change'                      => 'Baguhin',
                     'overwrite-warning'           => 'Papalitan ang kasalukuyang nilalaman sa mga napiling target na lokal.',
                     'incomplete-source'           => 'Pumili ng pinagmulang channel, lokal, at kahit isang katangian upang magpatuloy.',
+                    'model-required'              => 'Pumili ng AI model bago magsalin, o magtakda ng default na translation model sa configuration ng Magic AI.',
                 ],
                 'product-info' => [
                     'title'        => 'Impormasyon ng Produkto',

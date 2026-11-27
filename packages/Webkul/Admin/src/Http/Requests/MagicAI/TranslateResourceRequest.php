@@ -21,6 +21,19 @@ class TranslateResourceRequest extends FormRequest
             'resource_id'   => ['required', 'integer', 'min:1'],
             'resource_type' => ['required', 'in:product,category'],
             'targetLocale'  => ['required', 'string'],
+            'model'         => ['required', 'string', 'max:100'],
+        ];
+    }
+
+    /**
+     * Get the validation messages.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'model.required' => trans('admin::app.catalog.products.edit.translate.model-required'),
         ];
     }
 
