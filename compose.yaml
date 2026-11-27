@@ -9,6 +9,10 @@
 # Every setting has a working default. To change one, export it or drop it in a
 # .env file next to this one — Compose interpolates it automatically.
 #
+# First admin login: set INSTALLER_ADMIN_EMAIL and INSTALLER_ADMIN_PASSWORD
+# before the first start. Left blank, a random password is written to
+# storage/app/admin-credentials.txt inside the unopim container.
+#
 # MySQL instead of PostgreSQL:
 #   curl -O https://raw.githubusercontent.com/unopim/unopim/master/compose.mysql.yaml
 #   docker compose -f compose.yaml -f compose.mysql.yaml up -d
@@ -82,6 +86,8 @@ services:
     environment:
       <<: *app-environment
       UNOPIM_SKIP_MIGRATIONS: "${UNOPIM_SKIP_MIGRATIONS:-false}"
+      INSTALLER_ADMIN_EMAIL: "${INSTALLER_ADMIN_EMAIL:-}"
+      INSTALLER_ADMIN_PASSWORD: "${INSTALLER_ADMIN_PASSWORD:-}"
     depends_on: *app-depends
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://localhost/up > /dev/null || exit 1"]
