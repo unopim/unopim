@@ -644,7 +644,7 @@
                                     v-if="currentStep == 'createAdmin'"
                                 >
                                     <x-installer::form
-                                        v-slot="{ meta, errors, handleSubmit }"
+                                        v-slot="{ meta, errors, handleSubmit, setFieldValue }"
                                         as="div"
                                         ref="createAdmin"
                                     >
@@ -701,16 +701,55 @@
                                                         @lang('installer::app.installer.index.create-administrator.password')
                                                     </x-installer::form.control-group.label>
 
-                                                    <x-installer::form.control-group.control
-                                                        type="password"
-                                                        name="password"
-                                                        rules="required|min:{{ config('admin.auth.password_min') }}"
-                                                        :value="old('password')"
-                                                        :label="trans('installer::app.installer.index.create-administrator.password')"
-                                                    />
+                                                    <div style="position:relative;">
+                                                        <v-field
+                                                            name="password"
+                                                            rules="required|min:{{ config('admin.auth.password_min') }}"
+                                                            value=""
+                                                            label="{{ trans('installer::app.installer.index.create-administrator.password') }}"
+                                                            v-slot="{ field }"
+                                                        >
+                                                            <input
+                                                                :type="showPassword ? 'text' : 'password'"
+                                                                name="password"
+                                                                v-bind="field"
+                                                                autocomplete="new-password"
+                                                                :class="[errors['password'] ? 'border border-red-600 hover:border-red-600' : '']"
+                                                                class="text-[14px] text-gray-600 appearance-none border rounded-md w-full py-2 px-3 transition-all hover:border-gray-400"
+                                                                style="padding-right:2.5rem;"
+                                                            >
+                                                        </v-field>
+
+                                                        <button
+                                                            type="button"
+                                                            style="position:absolute;top:0;bottom:0;right:0;display:flex;align-items:center;padding:0 12px;background:none;border:0;cursor:pointer;color:#6b7280;"
+                                                            :aria-label="showPassword ? @js(trans('installer::app.installer.index.create-administrator.hide-password')) : @js(trans('installer::app.installer.index.create-administrator.show-password'))"
+                                                            :title="showPassword ? @js(trans('installer::app.installer.index.create-administrator.hide-password')) : @js(trans('installer::app.installer.index.create-administrator.show-password'))"
+                                                            @click="showPassword = ! showPassword"
+                                                        >
+                                                            <svg v-if="!showPassword" xmlns="http://www.w3.org/2000/svg" style="width:20px;height:20px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M2.04 12.32a1 1 0 0 1 0-.64C3.42 7.51 7.36 4.5 12 4.5s8.58 3.01 9.96 7.18a1 1 0 0 1 0 .64C20.58 16.49 16.64 19.5 12 19.5s-8.58-3.01-9.96-7.18Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>
+                                                            <svg v-else xmlns="http://www.w3.org/2000/svg" style="width:20px;height:20px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.22A10.48 10.48 0 0 0 2.04 12c1.39 4.17 5.33 7.18 9.96 7.18 1.99 0 3.84-.55 5.42-1.51M6.23 6.23A10.45 10.45 0 0 1 12 4.82c4.64 0 8.58 3.01 9.96 7.18a10.5 10.5 0 0 1-4.29 5.41M6.23 6.23 3 3m3.23 3.23 3.65 3.65m7.79 7.79L21 21m-3.33-3.33-3.55-3.55m0 0a3 3 0 1 0-4.24-4.24m4.24 4.24L9.88 9.88"/></svg>
+                                                        </button>
+                                                    </div>
 
                                                     <x-installer::form.control-group.error control-name="password" />
                                                 </x-installer::form.control-group>
+
+                                                <!-- Suggest strong password -->
+                                                <div style="display:flex;flex-direction:column;align-items:flex-start;gap:4px;margin:-4px 0 10px;">
+                                                    <button
+                                                        type="button"
+                                                        class="text-[13px] font-semibold text-primary-700 hover:underline cursor-pointer"
+                                                        style="background:none;border:0;padding:0;"
+                                                        @click="suggestPassword(setFieldValue)"
+                                                    >
+                                                        @lang('installer::app.installer.index.create-administrator.suggest-password')
+                                                    </button>
+
+                                                    <p class="text-[12px] text-gray-500">
+                                                        @lang('installer::app.installer.index.create-administrator.suggest-password-hint')
+                                                    </p>
+                                                </div>
 
                                                 <!-- Confirm Password -->
                                                 <x-installer::form.control-group class="mb-2.5">
@@ -718,13 +757,36 @@
                                                         @lang('installer::app.installer.index.create-administrator.confirm-password')
                                                     </x-installer::form.control-group.label>
 
-                                                    <x-installer::form.control-group.control
-                                                        type="password"
-                                                        name="confirm_password"
-                                                        rules="required|confirmed:@password"
-                                                        :value="old('confirm_password')"
-                                                        :label="trans('installer::app.installer.index.create-administrator.confirm-password')"
-                                                    />
+                                                    <div style="position:relative;">
+                                                        <v-field
+                                                            name="confirm_password"
+                                                            rules="required|confirmed:@password"
+                                                            value=""
+                                                            label="{{ trans('installer::app.installer.index.create-administrator.confirm-password') }}"
+                                                            v-slot="{ field }"
+                                                        >
+                                                            <input
+                                                                :type="showPassword ? 'text' : 'password'"
+                                                                name="confirm_password"
+                                                                v-bind="field"
+                                                                autocomplete="new-password"
+                                                                :class="[errors['confirm_password'] ? 'border border-red-600 hover:border-red-600' : '']"
+                                                                class="text-[14px] text-gray-600 appearance-none border rounded-md w-full py-2 px-3 transition-all hover:border-gray-400"
+                                                                style="padding-right:2.5rem;"
+                                                            >
+                                                        </v-field>
+
+                                                        <button
+                                                            type="button"
+                                                            style="position:absolute;top:0;bottom:0;right:0;display:flex;align-items:center;padding:0 12px;background:none;border:0;cursor:pointer;color:#6b7280;"
+                                                            :aria-label="showPassword ? @js(trans('installer::app.installer.index.create-administrator.hide-password')) : @js(trans('installer::app.installer.index.create-administrator.show-password'))"
+                                                            :title="showPassword ? @js(trans('installer::app.installer.index.create-administrator.hide-password')) : @js(trans('installer::app.installer.index.create-administrator.show-password'))"
+                                                            @click="showPassword = ! showPassword"
+                                                        >
+                                                            <svg v-if="!showPassword" xmlns="http://www.w3.org/2000/svg" style="width:20px;height:20px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M2.04 12.32a1 1 0 0 1 0-.64C3.42 7.51 7.36 4.5 12 4.5s8.58 3.01 9.96 7.18a1 1 0 0 1 0 .64C20.58 16.49 16.64 19.5 12 19.5s-8.58-3.01-9.96-7.18Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>
+                                                            <svg v-else xmlns="http://www.w3.org/2000/svg" style="width:20px;height:20px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.22A10.48 10.48 0 0 0 2.04 12c1.39 4.17 5.33 7.18 9.96 7.18 1.99 0 3.84-.55 5.42-1.51M6.23 6.23A10.45 10.45 0 0 1 12 4.82c4.64 0 8.58 3.01 9.96 7.18a10.5 10.5 0 0 1-4.29 5.41M6.23 6.23 3 3m3.23 3.23 3.65 3.65m7.79 7.79L21 21m-3.33-3.33-3.55-3.55m0 0a3 3 0 1 0-4.24-4.24m4.24 4.24L9.88 9.88"/></svg>
+                                                        </button>
+                                                    </div>
 
                                                     <x-installer::form.control-group.error control-name="confirm_password" />
                                                 </x-installer::form.control-group>
@@ -1116,6 +1178,8 @@
 
                             installStage: '',
 
+                            showPassword: false,
+
                             seedSampleData: false,
 
                             seedSampleDataMessage: '',
@@ -1190,6 +1254,54 @@
                     },
 
                     methods: {
+                        /**
+                         * Fill password + confirmation with a cryptographically
+                         * random strong password and reveal it so it can be saved.
+                         */
+                        suggestPassword(setFieldValue) {
+                            const sets = {
+                                upper: 'ABCDEFGHJKLMNPQRSTUVWXYZ',
+                                lower: 'abcdefghijkmnpqrstuvwxyz',
+                                digit: '23456789',
+                                symbol: '!@#$%^&*-_=+?',
+                            };
+
+                            const all = Object.values(sets).join('');
+                            const length = 16;
+
+                            const rand = (max) => {
+                                const limit = Math.floor(0x100000000 / max) * max;
+                                const buf = new Uint32Array(1);
+
+                                do {
+                                    crypto.getRandomValues(buf);
+                                } while (buf[0] >= limit);
+
+                                return buf[0] % max;
+                            };
+
+                            const pick = (chars) => chars[rand(chars.length)];
+
+                            const chars = Object.values(sets).map(pick);
+
+                            while (chars.length < length) {
+                                chars.push(pick(all));
+                            }
+
+                            for (let i = chars.length - 1; i > 0; i--) {
+                                const j = rand(i + 1);
+
+                                [chars[i], chars[j]] = [chars[j], chars[i]];
+                            }
+
+                            const password = chars.join('');
+
+                            setFieldValue('password', password);
+                            setFieldValue('confirm_password', password);
+
+                            this.showPassword = true;
+                        },
+
                         togglePackage(key) {
                             const index = this.selectedPackages.indexOf(key);
 
