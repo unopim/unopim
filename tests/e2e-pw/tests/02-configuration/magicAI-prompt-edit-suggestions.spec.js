@@ -68,7 +68,14 @@ test.describe('Magic AI prompt — attribute suggestions', () => {
 
       await expect(page.locator('textarea[name="prompt"]')).toHaveValue(/@name/);
 
+      const saved = page.waitForResponse(
+        (r) => r.url().includes('/magic-ai/edit') && r.request().method() !== 'GET',
+        { timeout: 20000 },
+      );
+
       await clickSave(page, 'Save Prompt');
+      expect((await saved).ok()).toBe(true);
+
       await page.reload({ waitUntil: 'networkidle' });
 
       await expect(page.locator('textarea[name="prompt"]')).toHaveValue(/Describe the product @name/);
