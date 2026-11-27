@@ -37,13 +37,5 @@
         @input="document.dispatchEvent(new CustomEvent('magic-ai-platform-changed:general_magic_ai_settings_ai_platform', { detail: $event }))"
     />
 
-    @if(empty($platforms))
-        <p class="mt-1 text-xs text-amber-600">
-            @lang('admin::app.configuration.platform.setup.no-platform-hint')
-        </p>
-    @else
-        <p class="mt-1 text-xs text-gray-500">
-            @lang('admin::app.configuration.platform.fields.use-default-hint')
-        </p>
-    @endif
+    @include('admin::configuration.magic-ai.field.platform-hint', ['platforms' => $platforms])
 </x-admin::form.control-group>

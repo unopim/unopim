@@ -11,7 +11,7 @@
     foreach ($platforms as $platform) {
         $options[] = [
             'id'    => (string) $platform['id'],
-            'label' => $platform['label'],
+            'label' => $platform['label'] . ($platform['is_default'] ? ' *' : ''),
         ];
     }
 
@@ -36,4 +36,6 @@
         label-by="label"
         @input="document.dispatchEvent(new CustomEvent('magic-ai-platform-changed:general_magic_ai_translation_ai_platform', { detail: $event }))"
     />
+
+    @include('admin::configuration.magic-ai.field.platform-hint', ['platforms' => $platforms])
 </x-admin::form.control-group>
