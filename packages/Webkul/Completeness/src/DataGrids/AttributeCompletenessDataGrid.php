@@ -4,8 +4,14 @@ namespace Webkul\Completeness\DataGrids;
 
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
+use Webkul\Attribute\Support\AttributeTypeRegistry;
 use Webkul\DataGrid\DataGrid;
 
+/**
+ * Attribute types whose values cannot be filled in are excluded from this
+ * grid: a requirement on one could never be satisfied, and the grid is also
+ * what resolves ids for the mass-update "select all".
+ */
 class AttributeCompletenessDataGrid extends DataGrid
 {
     protected $familyId;
@@ -58,6 +64,7 @@ class AttributeCompletenessDataGrid extends DataGrid
                 "),
                 DB::raw(DB::rawQueryGrammar()->groupConcat($channelCodeColumn, 'channel_required', $channelCodeColumn, true)),
             )
+            ->whereNotIn('attributes.type', AttributeTypeRegistry::nonFillableTypes())
             ->groupBy(
                 'attributes.id',
                 'attributes.code',

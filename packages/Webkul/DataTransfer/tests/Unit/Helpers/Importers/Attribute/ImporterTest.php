@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Event;
 use Mockery;
 use stdClass;
 use Webkul\Attribute\Repositories\AttributeRepository;
+use Webkul\Attribute\Support\AttributeDeletionGuard;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\DataTransfer\Contracts\JobTrack as JobTrackContract;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
@@ -35,6 +36,8 @@ function makeImporter(array $overrides = []): array
     $errorHelper->shouldReceive('addError')->byDefault();
     $errorHelper->shouldReceive('addRowToSkip')->byDefault();
     $errorHelper->shouldReceive('isRowInvalid')->andReturn(false)->byDefault();
+
+    Event::forget(AttributeDeletionGuard::EVENT);
 
     $importer = new Importer($batchRepo, $attributeRepo, $attributeStorage, $localeRepo);
     $importer->setErrorHelper($errorHelper);
@@ -108,6 +111,24 @@ describe('validateRow', function () {
         $result = $importer->validateRow(['code' => 'color'], 1);
 
         expect($result)->toBeTrue();
+    });
+
+    it('skips row when action is DELETE and a deletion guard objects', function () {
+        ['importer' => $importer, 'attributeStorage' => $storage, 'errorHelper' => $errorHelper] = makeImporter();
+
+        Event::listen(AttributeDeletionGuard::EVENT, fn (object $attribute): ?string => $attribute->code === 'manufacturer'
+            ? 'Used by 100% of article_key'
+            : null);
+
+        $importer->setImport(makeImport(Import::ACTION_DELETE));
+
+        $storage->shouldReceive('get')->with('manufacturer')->andReturn(7);
+
+        $errorHelper->shouldReceive('addError')
+            ->once()
+            ->with(Importer::ERROR_CODE_IS_REFERENCED, 1, 'code', 'Used by 100%% of article_key');
+
+        expect($importer->validateRow(['code' => 'manufacturer'], 1))->toBeFalse();
     });
 
     it('fails validation when locale is missing', function () {
@@ -532,6 +553,33 @@ describe('importBatch', function () {
         $result = $importer->importBatch($batch);
 
         expect($result)->toBeTrue();
+    });
+
+    it('does not delete an attribute a deletion guard objects to', function () {
+        ['importer' => $importer, 'batchRepo' => $batchRepo, 'attributeStorage' => $storage, 'attributeRepo' => $repo] = makeImporter();
+
+        Event::listen(AttributeDeletionGuard::EVENT, fn (object $attribute): ?string => $attribute->code === 'manufacturer'
+            ? 'Used by article_key'
+            : null);
+
+        $batch = makeAttributeImportBatch(Import::ACTION_DELETE, [
+            ['code' => 'manufacturer'],
+            ['code' => 'obsolete'],
+        ]);
+
+        $storage->shouldReceive('load')->with(['manufacturer', 'obsolete']);
+        $storage->shouldReceive('has')->andReturn(true);
+        $storage->shouldReceive('get')->with('manufacturer')->andReturn(7);
+        $storage->shouldReceive('get')->with('obsolete')->andReturn(42);
+
+        $repo->shouldReceive('deleteWhere')
+            ->once()
+            ->with([['id', 'IN', [42]]]);
+
+        $batchRepo->shouldReceive('update')->andReturn($batch);
+
+        expect($importer->importBatch($batch))->toBeTrue()
+            ->and($importer->getDeletedItemsCount())->toBe(1);
     });
 
     it('skips "sku" attribute during delete batch and deletes nothing', function () {

@@ -10,13 +10,13 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Catalog\AttributeDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Http\Requests\AttributeStoreForm;
+use Webkul\Admin\Http\Requests\AttributeUpdateForm;
 use Webkul\Admin\Http\Requests\SelectableMassDestroyRequest;
 use Webkul\Attribute\Enums\SwatchTypeEnum;
 use Webkul\Attribute\Repositories\AttributeRepository;
-use Webkul\Attribute\Rules\NotSupportedAttributes;
-use Webkul\Attribute\Rules\SwatchTypes;
+use Webkul\Attribute\Support\AttributeDeletionGuard;
 use Webkul\Core\Repositories\LocaleRepository;
-use Webkul\Core\Rules\Code;
 use Webkul\Product\Repositories\ProductRepository;
 
 class AttributeController extends Controller
@@ -67,19 +67,9 @@ class AttributeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(): RedirectResponse
+    public function store(AttributeStoreForm $request): RedirectResponse
     {
-        $this->validate(request(), [
-            'code'        => ['required', 'unique:attributes,code', new Code, new NotSupportedAttributes],
-            'type'        => 'required',
-            'swatch_type' => [
-                'required_if:type,select,multiselect',
-                'prohibited_unless:type,select,multiselect',
-                new SwatchTypes,
-            ],
-        ]);
-
-        $requestData = request()->all();
+        $requestData = $request->all();
 
         if (($requestData['validation'] ?? null) === 'none') {
             $requestData['validation'] = null;
@@ -123,19 +113,9 @@ class AttributeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(int $id): RedirectResponse
+    public function update(AttributeUpdateForm $request, int $id): RedirectResponse
     {
-        $this->validate(request(), [
-            'code'        => ['required', 'unique:attributes,code,'.$id, new Code],
-            'type'        => 'required',
-            'swatch_type' => [
-                'required_if:type,select,multiselect',
-                'prohibited_unless:type,select,multiselect',
-                new SwatchTypes,
-            ],
-        ]);
-
-        $requestData = request()->except(['type', 'code', 'value_per_locale', 'value_per_channel', 'is_unique']);
+        $requestData = $request->except(['type', 'code', 'value_per_locale', 'value_per_channel', 'is_unique']);
 
         if (empty($requestData['ai_translate'])) {
             $requestData['ai_translate'] = self::AI_TRANSLATE_DISABLED;
@@ -169,6 +149,12 @@ class AttributeController extends Controller
             return new JsonResponse([
                 'message' => trans('admin::app.catalog.attributes.index.datagrid.delete-attribute-failure'),
             ], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        $objection = AttributeDeletionGuard::reason($attribute);
+
+        if ($objection !== null) {
+            return new JsonResponse(['message' => $objection], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         try {
@@ -228,6 +214,12 @@ class AttributeController extends Controller
                 }
 
                 if ($superAttributeIds->has($index)) {
+                    $inUse++;
+
+                    continue;
+                }
+
+                if (AttributeDeletionGuard::reason($attribute) !== null) {
                     $inUse++;
 
                     continue;

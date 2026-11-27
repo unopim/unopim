@@ -75,6 +75,8 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
 
     const MEASUREMENT_FIELD_TYPE = 'measurement';
 
+    const CALCULATED_FIELD_TYPE = 'calculated';
+
     public $translatedAttributes = ['name', 'instructions'];
 
     protected $historyTags = ['attribute'];

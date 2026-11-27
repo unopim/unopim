@@ -17,6 +17,7 @@ use Webkul\AdminApi\Http\Requests\Catalog\UpdateAttributeRequest;
 use Webkul\Attribute\Repositories\AttributeOptionRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Rules\ValidSwatchValue;
+use Webkul\Attribute\Support\AttributeDeletionGuard;
 use Webkul\Core\Rules\Code;
 
 class AttributeController extends ApiController
@@ -157,6 +158,12 @@ class AttributeController extends ApiController
                 ['code' => [trans('admin::app.catalog.attributes.index.datagrid.delete-failed')]],
                 trans('admin::app.catalog.attributes.index.datagrid.delete-failed')
             );
+        }
+
+        $objection = AttributeDeletionGuard::reason($attribute);
+
+        if ($objection !== null) {
+            return $this->validateErrorResponse(['code' => [$objection]], $objection);
         }
 
         try {

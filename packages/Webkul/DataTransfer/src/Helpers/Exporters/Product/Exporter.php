@@ -6,9 +6,11 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Event;
 use Webkul\Attribute\Contracts\Attribute as AttributeContract;
+use Webkul\Attribute\Contracts\DerivedValueResolver;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Rules\AttributeTypes;
+use Webkul\Attribute\Support\ProductContext;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
 use Webkul\DataTransfer\Enums\ProductExportScope;
@@ -109,6 +111,8 @@ class Exporter extends AbstractExporter
     protected ?TemplateRenderer $templateRenderer = null;
 
     protected array $templateProblems = [];
+
+    protected ?DerivedValueResolver $derivedValueResolver = null;
 
     /**
      * Create a new instance.
@@ -647,6 +651,8 @@ class Exporter extends AbstractExporter
             $commonFields = $this->getCommonFields($rowData);
             unset($commonFields['sku']);
 
+            $derivedValues = $this->derivedValuesForProduct($rowData, $productValues);
+
             foreach ($this->channelsAndLocales as $channel => $locales) {
                 foreach ($locales as $locale) {
                     $localeSpecificFields = $this->getLocaleSpecificFields($rowData, $locale);
@@ -663,6 +669,8 @@ class Exporter extends AbstractExporter
                     if ($renderTemplates) {
                         $mergedFields = $this->renderTemplateValues($mergedFields, $productValues, $product->sku, $channel, $locale);
                     }
+
+                    $mergedFields = array_merge($mergedFields, $derivedValues[$channel][$locale] ?? []);
 
                     $values = $this->setAttributesValues($mergedFields, $filePath, $locale);
 
@@ -681,6 +689,43 @@ class Exporter extends AbstractExporter
         }
 
         $this->logTemplateProblems();
+    }
+
+    /**
+     * The product's derived attribute values for every exported scope,
+     * computed once per product before its rows are written.
+     *
+     * Only the selected attribute codes are derived (all of them when the
+     * profile selects none), and a value is computed once for every scope the
+     * attribute does not vary by. The result is overlaid on each row after the
+     * scopes have been flattened, so setAttributesValues() treats derived and
+     * stored values alike — same escaping, same column filtering.
+     *
+     * Skipped outright when nothing is derived, so an installation without
+     * such attributes pays one memoised check per batch.
+     *
+     * @param  array<string, mixed>  $rowData  the product's export row data
+     * @param  array<string, mixed>  $productValues  variant-resolved product values
+     * @return array<string, array<string, array<string, mixed>>> channel => locale => code => value
+     */
+    protected function derivedValuesForProduct(array $rowData, array $productValues): array
+    {
+        $resolver = $this->derivedValueResolver();
+
+        if (! $resolver->hasDerivedValues()) {
+            return [];
+        }
+
+        return $resolver->resolveScopes(
+            ProductContext::fromExportRow($rowData, $productValues),
+            $this->channelsAndLocales,
+            $this->selectedAttributeCodes === [] ? null : $this->selectedAttributeCodes,
+        );
+    }
+
+    protected function derivedValueResolver(): DerivedValueResolver
+    {
+        return $this->derivedValueResolver ??= resolve(DerivedValueResolver::class);
     }
 
     public function getSuperAttributes(array $data): ?string
