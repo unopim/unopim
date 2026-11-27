@@ -3,9 +3,10 @@
 namespace Webkul\Admin\Http\Requests\MagicAI;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Arr;
 use Webkul\Admin\Http\Requests\MagicAI\Concerns\AuthorizesPlatformCredentials;
 use Webkul\Admin\Http\Requests\MagicAI\Concerns\GuardsManagedPlatform;
-use Webkul\MagicAI\Rules\SafeProviderExtras;
+use Webkul\MagicAI\Validator\PlatformValidator;
 
 class PlatformTestRequest extends FormRequest
 {
@@ -21,18 +22,13 @@ class PlatformTestRequest extends FormRequest
     }
 
     /**
-     * Get the validation rules.
+     * Get the validation rules, reusing the platform form's rules for the
+     * fields a connection test receives.
      *
      * @return array<string, mixed>
      */
     public function rules(): array
     {
-        return [
-            'provider' => 'required|string',
-            'api_key'  => 'nullable|string',
-            'api_url'  => 'nullable',
-            'models'   => 'required|string',
-            'extras'   => ['nullable', new SafeProviderExtras],
-        ];
+        return Arr::only(app(PlatformValidator::class)->rules(), ['provider', 'api_key', 'api_url', 'models', 'extras']);
     }
 }
