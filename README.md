@@ -198,6 +198,17 @@ Free, open-source and MIT licensed.
   </tr>
 </table>
 
+### Covers the whole stack
+
+| You need | UnoPim gives you |
+| --- | --- |
+| Managed hosting | [UnoPim Cloud](https://unopim.com/cloud-hosting) or [AWS Marketplace](https://aws.amazon.com/marketplace/pp/prodview-rhsm6cbxqkm6i) images, or self-host |
+| Storefront connectors | Shopify and Bagisto (free), plus [Magento 2, WooCommerce and Shopware 6](https://unopim.com/extensions/) |
+| ERP integration | [Odoo connector](https://unopim.com/extensions/odoo-pim-integration/), REST API and webhooks |
+| Governance and approvals | Role-based access control in core, plus approvals and matching in [MDM](https://github.com/unopim/master-data-management) |
+| Channel syndication | Publication channels that push per-channel payloads downstream on a queue |
+| Automation and AI agents | [n8n nodes](https://github.com/unopim/n8n-nodes-unopim), the [MCP server](https://github.com/unopim/unopim-mcp) and the built-in AI agent |
+
 Browse more on the [extensions marketplace](https://unopim.com/extensions/), or [build your own](https://devdocs.unopim.com/3.1/plugins/).
 
 ## AI and developer tools
