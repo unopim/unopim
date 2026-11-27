@@ -68,6 +68,16 @@ function regenerateSecretStoredHash(Client $client): string
     return DB::table('oauth_clients')->where('id', $client->getKey())->value('secret');
 }
 
+/** Delete the integration of the given OAuth client through the admin route and return its stored row. */
+function regenerateSecretDeleteIntegration(Client $client): Apikey
+{
+    $apiKey = Apikey::where('oauth_client_id', $client->getKey())->sole();
+
+    test()->delete(route('admin.configuration.integrations.delete', $apiKey->id))->assertOk();
+
+    return $apiKey->fresh();
+}
+
 it('regenerates the secret of an integration owned by an api user and revokes its tokens', function (): void {
     $client = regenerateSecretIntegrationClient('api');
 
@@ -101,19 +111,9 @@ it('refuses to regenerate the secret of a client that is not an api user integra
     'integration owned by a human admin'   => fn (): Client => regenerateSecretIntegrationClient('user'),
 ]);
 
-/** Delete the integration of the given OAuth client through the admin route and return its stored row. */
-function deleteRegenerateSecretIntegration(Client $client): Apikey
-{
-    $apiKey = Apikey::where('oauth_client_id', $client->getKey())->sole();
-
-    test()->delete(route('admin.configuration.integrations.delete', $apiKey->id))->assertOk();
-
-    return $apiKey->fresh();
-}
-
 it('refuses to regenerate the secret of a deleted integration', function (): void {
     $client = regenerateSecretIntegrationClient('api');
-    $apiKey = deleteRegenerateSecretIntegration($client);
+    $apiKey = regenerateSecretDeleteIntegration($client);
     $storedHash = regenerateSecretStoredHash($client);
 
     $this->post(route('admin.configuration.integrations.re_generate_secret_key'), [
@@ -129,7 +129,7 @@ it('refuses to regenerate the secret of a deleted integration', function (): voi
 
 it('refuses to generate a new client for a deleted integration', function (): void {
     $client = regenerateSecretIntegrationClient('api');
-    $apiKey = deleteRegenerateSecretIntegration($client);
+    $apiKey = regenerateSecretDeleteIntegration($client);
     $clientCount = Client::count();
 
     $this->post(route('admin.configuration.integrations.generate_key'), ['name' => $apiKey->name, 'apiId' => $apiKey->id])->assertNotFound();
@@ -140,7 +140,7 @@ it('refuses to generate a new client for a deleted integration', function (): vo
 
 it('refuses to regenerate the robot password of a deleted integration', function (): void {
     $client = regenerateSecretIntegrationClient('api');
-    $apiKey = deleteRegenerateSecretIntegration($client);
+    $apiKey = regenerateSecretDeleteIntegration($client);
     $passwordHash = $apiKey->admins->password;
 
     $this->post(route('admin.configuration.integrations.re_generate_password'), ['apiId' => $apiKey->id])->assertNotFound();
@@ -169,4 +169,14 @@ it('still regenerates the robot password of a live api user integration', functi
     $response->assertOk();
 
     expect(Hash::check($response->json('password'), $apiKey->admins->fresh()->password))->toBeTrue();
+});
+
+it('refuses to open or update a deleted integration', function (): void {
+    $apiKey = regenerateSecretDeleteIntegration(regenerateSecretIntegrationClient('api'));
+
+    $this->get(route('admin.configuration.integrations.edit', $apiKey->id))->assertNotFound();
+
+    $this->put(route('admin.configuration.integrations.update', $apiKey->id), ['name' => 'Renamed integration', 'permission_type' => 'all'])->assertNotFound();
+
+    expect($apiKey->fresh()->name)->not->toBe('Renamed integration');
 });

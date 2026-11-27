@@ -100,6 +100,8 @@ class ApiKeysController extends Controller
     {
         $apiKey = $this->apiKeyRepository->findOrFail($id);
 
+        abort_if($apiKey->revoked, 404);
+
         return view('admin_api::integrations.api-keys.edit', $this->getDefaultDetails($apiKey));
     }
 
@@ -113,6 +115,8 @@ class ApiKeysController extends Controller
         }
 
         $apiKey = $this->apiKeyRepository->findOrFail($id);
+
+        abort_if($apiKey->revoked, 404);
 
         $data = array_merge($request->only([
             'name',
@@ -158,13 +162,7 @@ class ApiKeysController extends Controller
     }
 
     /**
-     * Generates a new client ID and secret key for the API key.
-     *
-     * This function is responsible for creating a new OAuth client ID and secret key
-     * for the specified admin user and API key. The client ID and secret key are then
-     * associated with the API key in the database.
-     *
-     * @return JsonResponse The JSON response containing the new client ID and secret key.
+     * Generate a new OAuth client for a live integration owned by an API user.
      */
     public function generateKey(GenerateKeyRequest $request): JsonResponse
     {
@@ -213,8 +211,6 @@ class ApiKeysController extends Controller
 
         $client = $this->regenerateSecret($client);
 
-        // Invalidate any access tokens issued against the previous secret so old clients
-        // stop working immediately after a regenerate (security best practice).
         Token::where('client_id', $client->getKey())->update(['revoked' => true]);
 
         return new JsonResponse([
@@ -223,14 +219,7 @@ class ApiKeysController extends Controller
     }
 
     /**
-     * Regenerates the robot admin's password for the specified API key.
-     *
-     * This is the recovery path for a lost robot password: the plaintext is only
-     * shown once at creation time, so regenerating issues a fresh one. Rotates
-     * the OAuth client's tokens too, since a leaked/lost password should not
-     * leave existing access tokens valid.
-     *
-     * @return JsonResponse The JSON response containing the robot's username and the new plaintext password.
+     * Regenerate the robot password of a live integration owned by an API user and revoke its tokens.
      */
     public function regeneratePassword(RegeneratePasswordRequest $request): JsonResponse
     {
