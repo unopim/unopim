@@ -31,10 +31,6 @@
   <a href="https://github.com/unopim/unopim/discussions"><b>Discussions</b></a>
 </p>
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/unopim/temp-media/main/dashboard-with-analytics.png" alt="UnoPim admin dashboard" width="860">
-</p>
-
 ## What is UnoPim?
 
 UnoPim is a Product Information Management (PIM) platform. It gives your team one place to model products, enrich them per channel and locale, manage their media, and send them to every storefront, marketplace and system that needs them.
@@ -131,9 +127,9 @@ Full guides: [requirements](https://devdocs.unopim.com/3.1/introduction/requirem
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <img src="https://raw.githubusercontent.com/unopim/temp-media/main/localization-and-channels.png" alt="Locales and channels"><br>
-      <b>Channels, locales and currencies</b><br>
-      Multiple sales channels and currencies, with the admin translated into 33 locales.
+      <img src="https://raw.githubusercontent.com/unopim/temp-media/main/localization-and-channels.png" alt="Localization"><br>
+      <b>Localization</b><br>
+      Enrich content per locale, with the admin itself translated into 33 languages.
     </td>
     <td width="50%" valign="top">
       <img src="https://raw.githubusercontent.com/unopim/temp-media/main/version-control.png" alt="Version history"><br>
@@ -153,17 +149,40 @@ Full guides: [requirements](https://devdocs.unopim.com/3.1/introduction/requirem
       A themeable admin interface that follows the system colour scheme.
     </td>
   </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <img src="https://raw.githubusercontent.com/unopim/temp-media/main/multi-channel-support.png" alt="Channels and currencies"><br>
+      <b>Channels and currencies</b><br>
+      Scope values per sales channel and price products in multiple currencies.
+    </td>
+    <td width="50%" valign="top">
+      <img src="https://raw.githubusercontent.com/unopim/temp-media/main/dashboard-with-analytics.png" alt="Dashboard with analytics"><br>
+      <b>Dashboard and analytics</b><br>
+      Channel readiness, product trends, recent activity and items needing attention at a glance.
+    </td>
+  </tr>
 </table>
 
-Also included: **Digital Product Passports** with QR carriers and a public tier, **publication channels** that push payloads downstream on a queue, **measurement families** with unit conversion, and an **analytics dashboard** for channel readiness.
+Also included: **Digital Product Passports** with QR carriers and a public tier, **publication channels** that push payloads downstream on a queue, and **measurement families** with unit conversion.
 
 ## Extensions
 
-| Extension | What it does |
-| --- | --- |
-| [Digital Asset Management](https://github.com/unopim/unopim-digital-asset-management) | Upload, preview, tag and organize assets, and assign them to products in bulk. |
-| [Shopify Connector](https://github.com/unopim/shopify-connector) | Sync products, prices, descriptions and images to Shopify. |
-| [Bagisto Connector](https://github.com/unopim/bagisto-connector) | Sync products, attributes and media to a [Bagisto](https://bagisto.com/) store. |
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="https://github.com/unopim/unopim-digital-asset-management"><img src="https://raw.githubusercontent.com/unopim/temp-media/main/dam-ai-auto-tagging.png" alt="UnoPim DAM AI auto-tagging"></a><br>
+      <b><a href="https://github.com/unopim/unopim-digital-asset-management">Digital Asset Management</a></b><br>
+      Upload, preview, tag and organize assets, with AI auto-tagging on upload and bulk assignment to products.
+    </td>
+    <td width="50%" valign="top">
+      <a href="https://github.com/unopim/shopify-connector"><img src="https://raw.githubusercontent.com/unopim/temp-media/main/Shopify-Connector/Export%20Product.png" alt="Shopify Connector product export"></a><br>
+      <b><a href="https://github.com/unopim/shopify-connector">Shopify Connector</a></b><br>
+      Sync products, prices, descriptions and images to a Shopify store.
+    </td>
+  </tr>
+</table>
+
+Also free: the [Bagisto Connector](https://github.com/unopim/bagisto-connector) syncs products, attributes and media to a [Bagisto](https://bagisto.com/) store.
 
 Browse more on the [extensions marketplace](https://unopim.com/extensions/), or [build your own](https://devdocs.unopim.com/3.1/plugins/).
 
