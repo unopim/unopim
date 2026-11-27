@@ -230,6 +230,10 @@ function measurementContainer(page) {
     .locator('xpath=ancestor::div[contains(concat(" ", normalize-space(@class), " "), " grid ") and contains(concat(" ", normalize-space(@class), " "), " gap-4 ")][1]');
 }
 
+/**
+ * The unit list can open upward underneath the sticky page header, so the first
+ * unit is chosen with Enter on the highlighted option instead of a pointer click.
+ */
 async function setMeasurementValue(page, amount) {
   const valueInput = page.locator('input[placeholder="Enter value"]').first();
   await valueInput.waitFor({ state: 'visible', timeout: 20000 });
@@ -243,21 +247,13 @@ async function setMeasurementValue(page, amount) {
   await unitSelect.locator('.multiselect__tags').click();
   await unitSelect.locator('.multiselect__content-wrapper').first().waitFor({ state: 'visible', timeout: 10000 });
 
-  const options = unitSelect.locator('li.multiselect__element');
-  await options.first().waitFor({ state: 'visible', timeout: 12000 });
+  const firstOption = unitSelect.locator('li.multiselect__element').first();
+  await firstOption.waitFor({ state: 'visible', timeout: 12000 });
 
-  const reachable = await unitSelect.evaluate((select) => {
-    const header = document.querySelector('.js-sticky-header');
-    const limit = header ? header.getBoundingClientRect().bottom : 0;
+  const unitLabel = cleanOptionLabel(await firstOption.innerText());
 
-    return [...select.querySelectorAll('li.multiselect__element')]
-      .findIndex((option) => option.getBoundingClientRect().top >= limit);
-  });
-
-  const option = options.nth(Math.max(reachable, 0));
-  const unitLabel = cleanOptionLabel(await option.innerText());
-
-  await option.click();
+  await unitSelect.locator('input.multiselect__input').press('Enter');
+  await expect(unitSelect.locator('.multiselect__single')).toContainText(unitLabel, { timeout: 10000 });
   await closeDropdown(page);
 
   return unitLabel;
