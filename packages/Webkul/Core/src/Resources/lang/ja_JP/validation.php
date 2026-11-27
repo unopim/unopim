@@ -18,6 +18,7 @@ return [
     'not-supported'                    => ':attribute は次の値 (:unsupported) をサポートしていません。',
     'seperator-not-supported'          => '区切り文字としてサポートされているのは、,、;、または | のみです。',
     'file-type'                        => 'ファイルのタイプは csv、xls、xlsx でなければなりません。',
+    'file-name-comma'                  => ':attributeのファイル名にカンマを含めることはできません。',
     'file-mime-extension-mismatch'     => 'ファイル拡張子とMIMEタイプが:attributeフィールドと一致しません。ファイル拡張子は:extension、MIMEタイプは:mimeTypeです。',
     'file-not-exists'                  => '選択されたファイルは:attributeフィールドの:valueが存在しません。',
     'pdf-active-content'               => 'この PDF には埋め込みスクリプトまたはアクションが含まれているためアップロードできません。',

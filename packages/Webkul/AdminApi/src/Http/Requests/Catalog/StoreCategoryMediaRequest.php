@@ -2,6 +2,8 @@
 
 namespace Webkul\AdminApi\Http\Requests\Catalog;
 
+use Webkul\Core\Rules\FileNameWithoutComma;
+
 class StoreCategoryMediaRequest extends CategoryMediaRequest
 {
     /**
@@ -12,7 +14,7 @@ class StoreCategoryMediaRequest extends CategoryMediaRequest
     public function rules(): array
     {
         return [
-            'file' => 'required',
+            'file' => ['required', new FileNameWithoutComma],
             ...parent::rules(),
         ];
     }

@@ -6,6 +6,7 @@ use Illuminate\Validation\Rule;
 use Webkul\AdminApi\Http\Requests\ApiFormRequest;
 use Webkul\Core\Rules\Code;
 use Webkul\Core\Rules\FileMimeExtensionMatch;
+use Webkul\Core\Rules\FileNameWithoutComma;
 
 class StoreSwatchMediaRequest extends ApiFormRequest
 {
@@ -35,6 +36,7 @@ class StoreSwatchMediaRequest extends ApiFormRequest
                 'mimes:jpeg,png,jpg,webp,svg',
                 'max:2048',
                 new FileMimeExtensionMatch,
+                new FileNameWithoutComma,
             ],
         ];
     }

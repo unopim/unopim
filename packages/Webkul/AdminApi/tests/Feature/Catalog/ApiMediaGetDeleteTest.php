@@ -271,3 +271,35 @@ it('deletes a swatch stored by the admin form and leaves a swatch value pointing
     'product image'       => ['product/1/gallery/kept.png', false],
     'path stepping out'   => ['attribute_option/../channel/logo.png', false],
 ]);
+
+it('refuses a category media upload whose file name contains a comma', function (): void {
+    $field = CategoryField::factory()->create(['type' => 'image', 'value_per_locale' => 0]);
+    $category = Category::factory()->create();
+
+    $this->withHeaders($this->headers)
+        ->post(route('admin.api.media-files.category.store'), [
+            'code'           => $category->code,
+            'category_field' => $field->code,
+            'file'           => UploadedFile::fake()->image('red,blue.png'),
+        ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['file']);
+
+    expect(Storage::allFiles('category/'.$category->id))->toBe([]);
+});
+
+it('refuses a swatch upload whose file name contains a comma', function (): void {
+    $attribute = Attribute::factory()->create(['type' => 'select', 'swatch_type' => 'image']);
+    $option = AttributeOption::factory()->create(['attribute_id' => $attribute->id]);
+
+    $this->withHeaders($this->headers)
+        ->post(route('admin.api.media-files.attribute.options.store'), [
+            'attribute_code' => $attribute->code,
+            'code'           => $option->code,
+            'file'           => UploadedFile::fake()->image('red,blue.png'),
+        ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['file']);
+
+    expect($option->fresh()->swatch_value)->toBeNull();
+});

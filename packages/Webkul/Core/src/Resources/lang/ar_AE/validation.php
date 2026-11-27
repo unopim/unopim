@@ -18,6 +18,7 @@ return [
     'not-supported'                    => 'لا يدعم :attribute القيم التالية (:unsupported).',
     'seperator-not-supported'          => 'فقط أو أو ; أو | مدعومة كفاصل.',
     'file-type'                        => 'يجب أن يكون الملف من النوع csv,xls,xlsx',
+    'file-name-comma'                  => 'يجب ألا يحتوي اسم الملف للحقل :attribute على فاصلة.',
     'file-mime-extension-mismatch'     => 'لا يتطابق امتداد الملف ونوع الـ MIME للحقل :attribute. امتداد الملف هو :extension ونوع الـ MIME هو :mimeType.',
     'file-not-exists'                  => 'الملف المحدد لا يوجد :value للحقل :attribute.',
     'pdf-active-content'               => 'يحتوي ملف PDF على نصوص برمجية أو إجراءات مضمّنة ولا يمكن رفعه.',

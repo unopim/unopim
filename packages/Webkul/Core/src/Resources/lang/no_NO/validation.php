@@ -18,6 +18,7 @@ return [
     'not-supported'                    => 'Feltet :attribute støtter ikke de følgende verdiene (:unsupported).',
     'seperator-not-supported'          => 'Kun , eller ; eller | er støttet som separator.',
     'file-type'                        => 'Filtypen må være csv, xls, xlsx.',
+    'file-name-comma'                  => 'Filnavnet til :attribute må ikke inneholde komma.',
     'file-mime-extension-mismatch'     => 'Filtypen og MIME-typen samsvarer ikke for feltet :attribute. Filtypen er :extension og MIME-typen er :mimeType.',
     'file-not-exists'                  => 'Den valgte filen finnes ikke :value for feltet :attribute.',
     'pdf-active-content'               => 'PDF-filen inneholder innebygde skript eller handlinger og kan ikke lastes opp.',

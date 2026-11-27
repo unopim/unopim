@@ -18,6 +18,7 @@ return [
     'not-supported'                    => ':attribute tidak mendukung nilai berikut (:unsupported).',
     'seperator-not-supported'          => 'Hanya , atau ; atau | yang didukung sebagai pemisah.',
     'file-type'                        => 'File harus bertipe csv, xls, xlsx',
+    'file-name-comma'                  => 'Nama file :attribute tidak boleh mengandung koma.',
     'file-mime-extension-mismatch'     => 'Ekstensi file dan tipe MIME tidak cocok untuk kolom :attribute. Ekstensi file adalah :extension dan tipe MIME adalah :mimeType.',
     'file-not-exists'                  => 'File yang dipilih tidak ada :value untuk kolom :attribute.',
     'pdf-active-content'               => 'PDF berisi skrip atau tindakan tersemat dan tidak dapat diunggah.',
