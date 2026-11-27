@@ -1376,9 +1376,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     public function formatData(): array
     {
         $paginator = $this->paginator->toArray();
-        /**
-         * TODO: need to handle this...
-         */
         foreach ($this->columns as $column) {
             $column->input_type = $column->getFormInputType();
 

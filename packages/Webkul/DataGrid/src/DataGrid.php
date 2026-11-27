@@ -266,7 +266,9 @@ abstract class DataGrid
     }
 
     /**
-     * Validated request.
+     * Validate the request and keep only the input this grid supports.
+     *
+     * @return array<string, mixed>
      */
     public function validatedRequest(): array
     {
@@ -687,9 +689,6 @@ abstract class DataGrid
     {
         $paginator = $this->paginator->toArray();
 
-        /**
-         * TODO: need to handle this...
-         */
         foreach ($this->columns as $column) {
             $column->input_type = $column->getFormInputType();
 

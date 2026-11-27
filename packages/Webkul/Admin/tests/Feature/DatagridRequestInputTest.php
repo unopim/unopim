@@ -24,7 +24,7 @@ beforeEach(function (): void {
  *
  * @param  array<string, mixed>  $query
  */
-function requestDatagrid(string $route, array $query = []): TestResponse
+function datagridInputRequest(string $route, array $query = []): TestResponse
 {
     return get(route($route, $query), ['X-Requested-With' => 'XMLHttpRequest', 'Accept' => 'application/json']);
 }
@@ -34,7 +34,7 @@ function requestDatagrid(string $route, array $query = []): TestResponse
  *
  * @param  array<string, mixed>  $query
  */
-function datagridOrderBy(string $route, array $query, string $table): string
+function datagridInputOrderBy(string $route, array $query, string $table): string
 {
     $orderBy = '';
 
@@ -46,7 +46,7 @@ function datagridOrderBy(string $route, array $query, string $table): string
         }
     });
 
-    requestDatagrid($route, $query)->assertOk();
+    datagridInputRequest($route, $query)->assertOk();
 
     return $orderBy;
 }
@@ -57,7 +57,7 @@ function datagridOrderBy(string $route, array $query, string $table): string
  * @param  array<string, mixed>  ...$queries
  * @return array<int, array<string, mixed>>
  */
-function datagridElasticSearchBodies(string $route, array ...$queries): array
+function datagridInputElasticSearchBodies(string $route, array ...$queries): array
 {
     $bodies = [];
 
@@ -68,7 +68,7 @@ function datagridElasticSearchBodies(string $route, array ...$queries): array
     });
 
     foreach ($queries ?: [[]] as $query) {
-        requestDatagrid($route, $query)->assertOk();
+        datagridInputRequest($route, $query)->assertOk();
     }
 
     return $bodies;
@@ -77,7 +77,7 @@ function datagridElasticSearchBodies(string $route, array ...$queries): array
 /**
  * Build a grid whose default sort column is not one of its columns and whose default page size is not a shared option.
  */
-function gridWithOwnDefaults(): DataGrid
+function datagridInputGridWithOwnDefaults(): DataGrid
 {
     $grid = new class extends DataGrid
     {
@@ -118,51 +118,51 @@ function gridWithOwnDefaults(): DataGrid
 
 describe('DataGrid sort input', function (): void {
     it('falls back to the default sort for a column the grid does not have', function (): void {
-        $orderBy = datagridOrderBy('admin.settings.locales.index', ['sort' => ['column' => 'password', 'order' => 'asc']], 'locales');
+        $orderBy = datagridInputOrderBy('admin.settings.locales.index', ['sort' => ['column' => 'password', 'order' => 'asc']], 'locales');
 
         expect($orderBy)->toStartWith('status asc')
             ->and($orderBy)->not->toContain('password');
     });
 
     it('does not sort by a table column that is not a sortable grid column', function (): void {
-        $orderBy = datagridOrderBy('admin.settings.users.index', ['sort' => ['column' => 'password', 'order' => 'asc']], 'admins');
+        $orderBy = datagridInputOrderBy('admin.settings.users.index', ['sort' => ['column' => 'password', 'order' => 'asc']], 'admins');
 
         expect($orderBy)->toStartWith('user_id asc')
             ->and($orderBy)->not->toContain('password');
     });
 
     it('does not sort by a grid column that is not sortable', function (): void {
-        $orderBy = datagridOrderBy('admin.settings.locales.index', ['sort' => ['column' => 'name', 'order' => 'asc']], 'locales');
+        $orderBy = datagridInputOrderBy('admin.settings.locales.index', ['sort' => ['column' => 'name', 'order' => 'asc']], 'locales');
 
         expect($orderBy)->toStartWith('status asc');
     });
 
     it('sorts by a sortable grid column', function (): void {
-        $orderBy = datagridOrderBy('admin.settings.locales.index', ['sort' => ['column' => 'code', 'order' => 'asc']], 'locales');
+        $orderBy = datagridInputOrderBy('admin.settings.locales.index', ['sort' => ['column' => 'code', 'order' => 'asc']], 'locales');
 
         expect($orderBy)->toStartWith('code asc');
     });
 
     it('accepts the sort order in any letter case', function (): void {
-        $orderBy = datagridOrderBy('admin.settings.locales.index', ['sort' => ['column' => 'code', 'order' => 'ASC']], 'locales');
+        $orderBy = datagridInputOrderBy('admin.settings.locales.index', ['sort' => ['column' => 'code', 'order' => 'ASC']], 'locales');
 
         expect($orderBy)->toStartWith('code asc');
     });
 
     it('falls back to the default order for an order other than asc or desc', function (): void {
-        $orderBy = datagridOrderBy('admin.settings.locales.index', ['sort' => ['column' => 'code', 'order' => 'sideways']], 'locales');
+        $orderBy = datagridInputOrderBy('admin.settings.locales.index', ['sort' => ['column' => 'code', 'order' => 'sideways']], 'locales');
 
         expect($orderBy)->toStartWith('code desc');
     });
 
     it('falls back to the default order for an order given as an array', function (): void {
-        $orderBy = datagridOrderBy('admin.settings.locales.index', ['sort' => ['column' => 'code', 'order' => ['asc']]], 'locales');
+        $orderBy = datagridInputOrderBy('admin.settings.locales.index', ['sort' => ['column' => 'code', 'order' => ['asc']]], 'locales');
 
         expect($orderBy)->toStartWith('code desc');
     });
 
     it('falls back to the default sort for a column given as an array', function (): void {
-        $orderBy = datagridOrderBy('admin.settings.locales.index', ['sort' => ['column' => ['code'], 'order' => 'asc']], 'locales');
+        $orderBy = datagridInputOrderBy('admin.settings.locales.index', ['sort' => ['column' => ['code'], 'order' => 'asc']], 'locales');
 
         expect($orderBy)->toStartWith('status asc');
     });
@@ -176,7 +176,7 @@ describe('Product grid sort input', function (): void {
 
         Product::factory()->simple()->create();
 
-        $orderBy = datagridOrderBy('admin.catalog.products.index', ['sort' => ['column' => $code, 'order' => 'asc']], 'products');
+        $orderBy = datagridInputOrderBy('admin.catalog.products.index', ['sort' => ['column' => $code, 'order' => 'asc']], 'products');
 
         expect($orderBy)->toContain($code)
             ->and($orderBy)->not->toStartWith(DB::getTablePrefix().'products.updated_at');
@@ -185,7 +185,7 @@ describe('Product grid sort input', function (): void {
     it('falls back to the default sort for a name that is neither a column nor an attribute', function (): void {
         Product::factory()->simple()->create();
 
-        $orderBy = datagridOrderBy('admin.catalog.products.index', ['sort' => ['column' => 'not_an_attribute', 'order' => 'asc']], 'products');
+        $orderBy = datagridInputOrderBy('admin.catalog.products.index', ['sort' => ['column' => 'not_an_attribute', 'order' => 'asc']], 'products');
 
         expect($orderBy)->toStartWith(DB::getTablePrefix().'products.updated_at asc')
             ->and($orderBy)->not->toContain('not_an_attribute');
@@ -194,14 +194,14 @@ describe('Product grid sort input', function (): void {
 
 describe('DataGrid pagination input', function (): void {
     it('falls back to the default page size for a size outside the grid options', function (): void {
-        $response = requestDatagrid('admin.settings.locales.index', ['pagination' => ['per_page' => 1000000]])->assertOk();
+        $response = datagridInputRequest('admin.settings.locales.index', ['pagination' => ['per_page' => 1000000]])->assertOk();
 
         expect($response->json('meta.per_page'))->toBe(10)
             ->and($response->json('records'))->toHaveCount(min(10, Locale::count()));
     });
 
     it('keeps a page size from the grid options', function (): void {
-        $response = requestDatagrid('admin.settings.locales.index', ['pagination' => ['per_page' => 50]])->assertOk();
+        $response = datagridInputRequest('admin.settings.locales.index', ['pagination' => ['per_page' => 50]])->assertOk();
 
         expect($response->json('meta.per_page'))->toBe(50)
             ->and($response->json('meta.per_page_options'))->toBe([10, 20, 30, 40, 50]);
@@ -210,14 +210,14 @@ describe('DataGrid pagination input', function (): void {
     it('caps the page size of the product grid', function (): void {
         Product::factory()->simple()->count(11)->create();
 
-        $response = requestDatagrid('admin.catalog.products.index', ['pagination' => ['per_page' => 1000000]])->assertOk();
+        $response = datagridInputRequest('admin.catalog.products.index', ['pagination' => ['per_page' => 1000000]])->assertOk();
 
         expect($response->json('meta.per_page'))->toBe(10)
             ->and($response->json('records'))->toHaveCount(10);
     });
 
     it('falls back to the first page for an invalid page number', function (mixed $page): void {
-        $response = requestDatagrid('admin.settings.locales.index', ['pagination' => ['page' => $page]])->assertOk();
+        $response = datagridInputRequest('admin.settings.locales.index', ['pagination' => ['page' => $page]])->assertOk();
 
         expect($response->json('meta.current_page'))->toBe(1);
     })->with(['text' => 'abc', 'zero' => 0, 'negative' => -3]);
@@ -227,7 +227,7 @@ describe('DataGrid own defaults', function (): void {
     it('accepts the grid default sort column and page size even when they are not columns or shared options', function (): void {
         request()->merge(['sort' => ['column' => 'locales.id', 'order' => 'asc'], 'pagination' => ['per_page' => 25]]);
 
-        $requestedParams = gridWithOwnDefaults()->validatedRequest();
+        $requestedParams = datagridInputGridWithOwnDefaults()->validatedRequest();
 
         expect($requestedParams['sort'])->toBe(['column' => 'locales.id', 'order' => 'asc'])
             ->and($requestedParams['pagination'])->toBe(['per_page' => 25]);
@@ -236,13 +236,25 @@ describe('DataGrid own defaults', function (): void {
     it('still drops a page size that is neither a shared option nor the grid default', function (): void {
         request()->merge(['pagination' => ['per_page' => 26]]);
 
-        expect(gridWithOwnDefaults()->validatedRequest()['pagination'])->toBe([]);
+        expect(datagridInputGridWithOwnDefaults()->validatedRequest()['pagination'])->toBe([]);
+    });
+
+    it('accepts the grid primary column as a sort column even when it is not a column', function (): void {
+        request()->merge(['sort' => ['column' => 'id', 'order' => 'desc']]);
+
+        expect(datagridInputGridWithOwnDefaults()->validatedRequest()['sort'])->toBe(['column' => 'id', 'order' => 'desc']);
+    });
+
+    it('offers the grid default page size among the page size options', function (): void {
+        $grid = datagridInputGridWithOwnDefaults();
+
+        expect((fn (): array => $this->getPerPageOptions())->call($grid))->toBe([10, 20, 25, 30, 40, 50]);
     });
 });
 
 describe('DataGrid productIds input', function (): void {
     it('ignores productIds on a grid that does not list products', function (): void {
-        $response = requestDatagrid('admin.settings.locales.index', ['productIds' => [1]])->assertOk();
+        $response = datagridInputRequest('admin.settings.locales.index', ['productIds' => [1]])->assertOk();
 
         expect($response->json('meta.total'))->toBe(Locale::count());
     });
@@ -250,7 +262,7 @@ describe('DataGrid productIds input', function (): void {
     it('still narrows the product grid to the requested product ids', function (): void {
         $products = Product::factory()->simple()->count(2)->create();
 
-        $response = requestDatagrid('admin.catalog.products.index', ['productIds' => [$products->first()->id]])->assertOk();
+        $response = datagridInputRequest('admin.catalog.products.index', ['productIds' => [$products->first()->id]])->assertOk();
 
         expect($response->json('meta.total'))->toBe(1)
             ->and($response->json('records.0.product_id'))->toBe($products->first()->id);
@@ -275,28 +287,28 @@ describe('DataGrid request input with Elasticsearch', function (): void {
     });
 
     it('caps the page size the grid asks Elasticsearch for', function (string $route): void {
-        [$body] = datagridElasticSearchBodies($route, ['pagination' => ['per_page' => 1000000]]);
+        [$body] = datagridInputElasticSearchBodies($route, ['pagination' => ['per_page' => 1000000]]);
 
         expect($body['size'])->toBe(10)
             ->and($body['from'])->toBe(0);
     })->with('elasticsearch grids');
 
     it('keeps a page size from the grid options for Elasticsearch', function (string $route): void {
-        [$body] = datagridElasticSearchBodies($route, ['pagination' => ['per_page' => 50, 'page' => 2]]);
+        [$body] = datagridInputElasticSearchBodies($route, ['pagination' => ['per_page' => 50, 'page' => 2]]);
 
         expect($body['size'])->toBe(50)
             ->and($body['from'])->toBe(50);
     })->with('elasticsearch grids');
 
     it('sends the default Elasticsearch sort field for a column the grid cannot sort by', function (string $route): void {
-        [$defaultBody, $body] = datagridElasticSearchBodies($route, [], ['sort' => ['column' => 'password', 'order' => 'asc']]);
+        [$defaultBody, $body] = datagridInputElasticSearchBodies($route, [], ['sort' => ['column' => 'password', 'order' => 'asc']]);
 
         expect(array_keys($body['sort']))->toBe(array_keys($defaultBody['sort']))
             ->and(json_encode($body['sort']))->not->toContain('password');
     })->with('elasticsearch grids');
 
     it('sends a sortable column to Elasticsearch', function (string $route, string $column, string $sortField): void {
-        [$body] = datagridElasticSearchBodies($route, ['sort' => ['column' => $column, 'order' => 'asc']]);
+        [$body] = datagridInputElasticSearchBodies($route, ['sort' => ['column' => $column, 'order' => 'asc']]);
 
         expect(array_keys($body['sort']))->toBe([$sortField])
             ->and($body['sort'][$sortField]['order'])->toBe('asc');
