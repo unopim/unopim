@@ -186,9 +186,24 @@ Also included: **Digital Product Passports** with QR carriers and a public tier,
   </tr>
 </table>
 
-Also free and open source: the [Bagisto Connector](https://github.com/unopim/bagisto-connector) syncs products, attributes and media to a [Bagisto](https://bagisto.com/) store.
+Also free and open source:
+
+- [Master Data Management](https://github.com/unopim/master-data-management): governed master records, matching, approvals and code lists, alongside the PIM or standalone.
+- [Bagisto Connector](https://github.com/unopim/bagisto-connector): sync products, attributes and media to a [Bagisto](https://bagisto.com/) store.
 
 Browse more on the [extensions marketplace](https://unopim.com/extensions/), or [build your own](https://devdocs.unopim.com/3.1/plugins/).
+
+## AI and developer tools
+
+All MIT licensed.
+
+| Project | What it does |
+| --- | --- |
+| [MCP server](https://github.com/unopim/unopim-mcp) | Let ChatGPT, Claude, Copilot, Cursor and other AI agents search and enrich your catalogue, with ACL-enforced tools. |
+| [Claude plugin](https://github.com/unopim/claude-plugin) | Connect Claude to a self-hosted UnoPim, with skills for catalogue audits and product enrichment. |
+| [Agent skills](https://github.com/unopim/agent-skills) | UnoPim context for coding agents working in an UnoPim codebase. |
+| [n8n nodes](https://github.com/unopim/n8n-nodes-unopim) | Use your UnoPim catalogue in n8n workflows. |
+| [PHP API client](https://github.com/unopim/api-php-client) | Framework-agnostic, PSR-18 client for the UnoPim REST API. |
 
 ## Hosting
 
