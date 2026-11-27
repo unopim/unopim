@@ -3459,7 +3459,7 @@ class Importer extends AbstractImporter
             }
 
             if (! $hasError && ! empty($rowData[$attributeCode])) {
-                $this->cachedUniqueValues[$rowData['sku']] = [$attributeCode => $rowData[$attributeCode]];
+                $this->cachedUniqueValues[$rowData['sku']][$attributeCode] = $rowData[$attributeCode];
             }
         }
 
