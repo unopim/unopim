@@ -25,11 +25,11 @@ it('should return completeness datagrid json for a family', function () {
         ]);
 });
 
-it('should insert and delete completeness settings on update', function () {
+it('should insert and delete completeness settings on update', function (): void {
     Queue::fake();
 
-    $family = AttributeFamily::factory()->create();
-    $attribute = Attribute::factory()->create();
+    [$family, [$attributeId]] = familyWithAttributes('upd_', 1);
+    $attribute = Attribute::find($attributeId);
 
     $channel1 = Channel::factory()->create(['code' => 'ch1']);
     $channel2 = Channel::factory()->create(['code' => 'ch2']);
@@ -65,17 +65,17 @@ it('should insert and delete completeness settings on update', function () {
         'channel_id'   => $channel2->id,
     ]);
 
-    Queue::assertPushed(BulkProductCompletenessJob::class, function ($job) use ($family) {
+    Queue::assertPushed(BulkProductCompletenessJob::class, function (BulkProductCompletenessJob $job) use ($family): bool {
         return $job->uniqueId() === 'completeness-job-'.$family->id;
     });
 });
 
-it('should apply channel requirements across multiple attributes on mass update', function () {
+it('should apply channel requirements across multiple attributes on mass update', function (): void {
     Queue::fake();
 
-    $family = AttributeFamily::factory()->create();
-    $attribute1 = Attribute::factory()->create();
-    $attribute2 = Attribute::factory()->create();
+    [$family, [$attribute1Id, $attribute2Id]] = familyWithAttributes('mass_', 2);
+    $attribute1 = Attribute::find($attribute1Id);
+    $attribute2 = Attribute::find($attribute2Id);
 
     $channel = Channel::factory()->create(['code' => 'mass_ch']);
 
@@ -100,17 +100,17 @@ it('should apply channel requirements across multiple attributes on mass update'
         ]);
     }
 
-    Queue::assertPushed(BulkProductCompletenessJob::class, function ($job) use ($family) {
+    Queue::assertPushed(BulkProductCompletenessJob::class, function (BulkProductCompletenessJob $job) use ($family): bool {
         return $job->uniqueId() === 'completeness-job-'.$family->id;
     });
 });
 
-it('should not dispatch job if mass update does not change any channel requirements', function () {
+it('should not dispatch job if mass update does not change any channel requirements', function (): void {
     Queue::fake();
 
-    $family = AttributeFamily::factory()->create();
-    $attribute1 = Attribute::factory()->create();
-    $attribute2 = Attribute::factory()->create();
+    [$family, [$attribute1Id, $attribute2Id]] = familyWithAttributes('mass_', 2);
+    $attribute1 = Attribute::find($attribute1Id);
+    $attribute2 = Attribute::find($attribute2Id);
 
     $channel = Channel::factory()->create(['code' => 'unchanged_mass']);
 
@@ -134,11 +134,11 @@ it('should not dispatch job if mass update does not change any channel requireme
     Queue::assertNotPushed(BulkProductCompletenessJob::class);
 });
 
-it('should dispatch job when a completeness setting is deleted via update', function () {
+it('should dispatch job when a completeness setting is deleted via update', function (): void {
     Queue::fake();
 
-    $family = AttributeFamily::factory()->create();
-    $attribute = Attribute::factory()->create();
+    [$family, [$attributeId]] = familyWithAttributes('keep_', 1);
+    $attribute = Attribute::find($attributeId);
 
     $channel1 = Channel::factory()->create(['code' => 'keep']);
     $channel2 = Channel::factory()->create(['code' => 'delete_me']);
@@ -166,17 +166,17 @@ it('should dispatch job when a completeness setting is deleted via update', func
     $this->postJson(route('admin.catalog.families.completeness.update'), $payload)
         ->assertOk();
 
-    Queue::assertPushed(BulkProductCompletenessJob::class, function ($job) use ($family) {
+    Queue::assertPushed(BulkProductCompletenessJob::class, function (BulkProductCompletenessJob $job) use ($family): bool {
         return $job->uniqueId() === 'completeness-job-'.$family->id;
     });
 });
 
-it('should dispatch job when completeness settings are deleted via mass update', function () {
+it('should dispatch job when completeness settings are deleted via mass update', function (): void {
     Queue::fake();
 
-    $family = AttributeFamily::factory()->create();
-    $attribute1 = Attribute::factory()->create();
-    $attribute2 = Attribute::factory()->create();
+    [$family, [$attribute1Id, $attribute2Id]] = familyWithAttributes('mass_', 2);
+    $attribute1 = Attribute::find($attribute1Id);
+    $attribute2 = Attribute::find($attribute2Id);
 
     $channelKeep = Channel::factory()->create(['code' => 'keep']);
     $channelDelete = Channel::factory()->create(['code' => 'delete_me']);
@@ -218,7 +218,7 @@ it('should dispatch job when completeness settings are deleted via mass update',
         ]);
     }
 
-    Queue::assertPushed(BulkProductCompletenessJob::class, function ($job) use ($family) {
+    Queue::assertPushed(BulkProductCompletenessJob::class, function (BulkProductCompletenessJob $job) use ($family): bool {
         return $job->uniqueId() === 'completeness-job-'.$family->id;
     });
 });
@@ -280,4 +280,81 @@ it('still requires an id list on completeness mass update when all matching are 
         'familyId'             => $family->id,
         'channel_requirements' => 'x',
     ])->assertUnprocessable()->assertJsonValidationErrors('indices');
+});
+
+it('rejects a mass update that includes an attribute from another family', function (): void {
+    Queue::fake();
+
+    [$familyA, [$ownAttribute]] = familyWithAttributes('own_', 1);
+    [, [$foreignAttribute]] = familyWithAttributes('foreign_', 1);
+
+    $channel = Channel::factory()->create(['code' => 'cross_family']);
+
+    $this->postJson(route('admin.catalog.families.completeness.mass_update'), [
+        'familyId'             => $familyA->id,
+        'indices'              => [$ownAttribute, $foreignAttribute],
+        'channel_requirements' => 'cross_family',
+    ])->assertUnprocessable()->assertJsonValidationErrors('indices');
+
+    foreach ([$ownAttribute, $foreignAttribute] as $attributeId) {
+        $this->assertDatabaseMissing('completeness_settings', [
+            'family_id'    => $familyA->id,
+            'attribute_id' => $attributeId,
+            'channel_id'   => $channel->id,
+        ]);
+    }
+
+    Queue::assertNotPushed(BulkProductCompletenessJob::class);
+});
+
+it('rejects a single update for an attribute that is not in the family', function (): void {
+    Queue::fake();
+
+    [$family] = familyWithAttributes('single_own_', 1);
+    [, [$foreignAttribute]] = familyWithAttributes('single_foreign_', 1);
+
+    $channel = Channel::factory()->create(['code' => 'cross_single']);
+
+    $this->postJson(route('admin.catalog.families.completeness.update'), [
+        'familyId'             => $family->id,
+        'attributeId'          => $foreignAttribute,
+        'channel_requirements' => 'cross_single',
+    ])->assertUnprocessable()->assertJsonValidationErrors('attributeId');
+
+    $this->assertDatabaseMissing('completeness_settings', [
+        'family_id'    => $family->id,
+        'attribute_id' => $foreignAttribute,
+        'channel_id'   => $channel->id,
+    ]);
+
+    Queue::assertNotPushed(BulkProductCompletenessJob::class);
+});
+
+it('answers a single update without a family or attribute with a validation error', function (): void {
+    Queue::fake();
+
+    $this->postJson(route('admin.catalog.families.completeness.update'), [
+        'channel_requirements' => 'whatever',
+    ])->assertUnprocessable()->assertJsonValidationErrors(['familyId', 'attributeId']);
+
+    Queue::assertNotPushed(BulkProductCompletenessJob::class);
+});
+
+it('deletes settings saved for an attribute outside their family and keeps the rest', function (): void {
+    [$family, [$own]] = familyWithAttributes('mig_own_', 1);
+    [, [$foreign]] = familyWithAttributes('mig_foreign_', 1);
+
+    $channel = Channel::factory()->create(['code' => 'mig_cleanup']);
+
+    foreach ([$own, $foreign] as $attributeId) {
+        DB::table('completeness_settings')->insert([
+            'family_id'    => $family->id,
+            'attribute_id' => $attributeId,
+            'channel_id'   => $channel->id,
+        ]);
+    }
+
+    (require base_path('packages/Webkul/Completeness/src/Database/Migrations/2026_11_26_120000_delete_completeness_settings_outside_their_family.php'))->up();
+
+    expect(DB::table('completeness_settings')->where('family_id', $family->id)->pluck('attribute_id')->all())->toBe([$own]);
 });
