@@ -32,7 +32,7 @@
 </p>
 
 <p align="center">
-  <a href="https://unopim.com/scaling-unopim-for-10-million-products/"><img src="https://github.com/user-attachments/assets/c264d658-3723-46ff-8b60-2b9506a7a412" alt="Scaling UnoPim to 10 million products" width="860"></a>
+  <a href="https://unopim.com/scaling-unopim-for-10-million-products/"><img src="https://github.com/user-attachments/assets/c264d658-3723-46ff-8b60-2b9506a7a412" alt="Scaling UnoPim to 10 million products" width="790"></a>
 </p>
 
 ## What is UnoPim?
