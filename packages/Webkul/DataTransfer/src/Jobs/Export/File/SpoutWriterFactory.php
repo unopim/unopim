@@ -27,18 +27,17 @@ final class SpoutWriterFactory
 
         switch ($type) {
             case self::CSV:
-                $options = new CsvOptions;
-                $options->FIELD_DELIMITER = $normalizedOptions['fieldDelimiter'] ?? $options->FIELD_DELIMITER;
-                $options->FIELD_ENCLOSURE = $normalizedOptions['fieldEnclosure'] ?? $options->FIELD_ENCLOSURE;
-                $options->SHOULD_ADD_BOM = $normalizedOptions['shouldAddBOM'] ?? $options->SHOULD_ADD_BOM;
+                $defaults = new CsvOptions;
 
-                return new CsvWriter($options);
+                return new CsvWriter(new CsvOptions(
+                    FIELD_DELIMITER: $normalizedOptions['fieldDelimiter'] ?? $defaults->FIELD_DELIMITER,
+                    FIELD_ENCLOSURE: $normalizedOptions['fieldEnclosure'] ?? $defaults->FIELD_ENCLOSURE,
+                    SHOULD_ADD_BOM: $normalizedOptions['shouldAddBOM'] ?? $defaults->SHOULD_ADD_BOM,
+                ));
 
             case self::XLSX:
             case self::XLS:
-                $options = new XlsxOptions;
-
-                return new XlsxWriter($options);
+                return new XlsxWriter(new XlsxOptions);
 
             default:
                 throw new \InvalidArgumentException(sprintf('"%s" is not a valid writer type', $type));

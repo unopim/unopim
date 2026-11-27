@@ -1,5 +1,6 @@
 <?php
 
+use OpenSpout\Common\Entity\Cell;
 use OpenSpout\Reader\CSV\Reader as CsvReader;
 use OpenSpout\Reader\XLSX\Reader as XlsxReader;
 use Webkul\Attribute\Models\Attribute;
@@ -177,8 +178,8 @@ function measurementReadExportFile(string $path, string $format): array
     foreach ($reader->getSheetIterator() as $sheet) {
         foreach ($sheet->getRowIterator() as $row) {
             $rows[] = array_map(
-                fn ($cell): string => (string) $cell->getValue(),
-                $row->getCells()
+                fn (Cell $cell): string => (string) $cell->getValue(),
+                $row->cells
             );
         }
 
