@@ -70,6 +70,27 @@ enum JobType: string
         };
     }
 
+    /**
+     * The job page runs a job again with its saved configuration; system jobs have no such page.
+     */
+    public function viewRouteName(): ?string
+    {
+        return match ($this) {
+            self::IMPORT => 'admin.settings.data_transfer.imports.import-view',
+            self::EXPORT => 'admin.settings.data_transfer.exports.export-view',
+            self::SYSTEM => null,
+        };
+    }
+
+    public function viewPermission(): ?string
+    {
+        return match ($this) {
+            self::IMPORT => 'data_transfer.imports',
+            self::EXPORT => 'data_transfer.export',
+            self::SYSTEM => null,
+        };
+    }
+
     public function executePermission(): string
     {
         return $this->isExport()

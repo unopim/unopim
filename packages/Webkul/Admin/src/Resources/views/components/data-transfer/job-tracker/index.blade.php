@@ -11,6 +11,12 @@
 @php
     $editRoute = $jobType->editRouteName();
 
+    $runAgainRoute = $jobType->viewRouteName();
+
+    $canRunAgain = $runAgainRoute
+        && bouncer()->hasPermission($jobType->viewPermission())
+        && bouncer()->hasPermission($jobType->executePermission());
+
     $canDownloadJobFiles = collect($jobType::downloadPermissions($jobTrack))->every(fn (string $permission): bool => bouncer()->hasPermission($permission));
 
     $endpoints = [

@@ -43,4 +43,16 @@ describe('JobType', function () {
         expect(JobType::IMPORT->editPermission())->toBe('data_transfer.imports.edit');
         expect(JobType::SYSTEM->editPermission())->toBeNull();
     });
+
+    it('opens each runnable type on its own job page', function (): void {
+        expect(JobType::EXPORT->viewRouteName())->toBe('admin.settings.data_transfer.exports.export-view');
+        expect(JobType::IMPORT->viewRouteName())->toBe('admin.settings.data_transfer.imports.import-view');
+        expect(JobType::SYSTEM->viewRouteName())->toBeNull();
+    });
+
+    it('authorizes each runnable type against its own job page permission', function (): void {
+        expect(JobType::EXPORT->viewPermission())->toBe('data_transfer.export');
+        expect(JobType::IMPORT->viewPermission())->toBe('data_transfer.imports');
+        expect(JobType::SYSTEM->viewPermission())->toBeNull();
+    });
 });
