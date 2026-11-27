@@ -19,13 +19,12 @@
   <a href="https://github.com/unopim/unopim/actions/workflows/pest_tests.yml"><img src="https://img.shields.io/github/actions/workflow/status/unopim/unopim/pest_tests.yml?branch=3.x&label=tests" alt="Tests"></a>
   <a href="https://packagist.org/packages/unopim/unopim"><img src="https://img.shields.io/packagist/dt/unopim/unopim" alt="Downloads"></a>
   <a href="https://hub.docker.com/r/webkul/unopim"><img src="https://img.shields.io/docker/pulls/webkul/unopim?label=docker%20pulls" alt="Docker pulls"></a>
-  <a href="https://www.bestpractices.dev/projects/16085"><img src="https://www.bestpractices.dev/projects/16085/badge" alt="OpenSSF Best Practices"></a>
-  <a href="https://scorecard.dev/viewer/?uri=github.com/unopim/unopim"><img src="https://api.scorecard.dev/projects/github.com/unopim/unopim/badge" alt="OpenSSF Scorecard"></a>
   <a href="LICENSE"><img src="https://img.shields.io/github/license/unopim/unopim" alt="MIT License"></a>
 </p>
 
 <p align="center">
   <a href="https://demo.unopim.com/"><b>Live demo</b></a> ·
+  <a href="https://devdocs.unopim.com/3.1/introduction/installation.html"><b>Installation</b></a> ·
   <a href="https://devdocs.unopim.com/"><b>Documentation</b></a> ·
   <a href="https://unopim.com/extensions/"><b>Extensions</b></a> ·
   <a href="https://unopim.com/cloud-hosting"><b>Cloud hosting</b></a> ·
@@ -44,6 +43,20 @@ UnoPim is a Product Information Management (PIM) platform. It gives your team on
 - **AI built in.** Chat with an agent to search, create, bulk edit and translate products, using OpenAI, Gemini, Groq, Ollama and other providers.
 - **Runs your way.** MySQL, MariaDB or PostgreSQL, behind Nginx or Apache, on bare metal, Docker or Kubernetes.
 - **MIT licensed.** No open-core lock-in. Extend it with ordinary Laravel packages.
+
+## Security and trust
+
+<p align="center">
+  <a href="https://www.bestpractices.dev/projects/16085"><img src="https://img.shields.io/cii/level/16085?style=for-the-badge&label=OpenSSF%20Best%20Practices" alt="OpenSSF Best Practices"></a>
+  <a href="https://scorecard.dev/viewer/?uri=github.com/unopim/unopim"><img src="https://img.shields.io/ossf-scorecard/github.com/unopim/unopim?style=for-the-badge&label=OpenSSF%20Scorecard" alt="OpenSSF Scorecard"></a>
+  <a href="https://sonarcloud.io/summary/new_code?id=unopim_unopim"><img src="https://img.shields.io/sonar/quality_gate/unopim_unopim?server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge&label=SonarCloud" alt="SonarCloud quality gate"></a>
+</p>
+
+- **Audited openly.** Meets the [OpenSSF Best Practices](https://www.bestpractices.dev/projects/16085) criteria and is scored weekly by [OpenSSF Scorecard](https://scorecard.dev/viewer/?uri=github.com/unopim/unopim).
+- **Verifiable releases.** Every tagged release ships a source archive with SLSA build provenance.
+- **Tested on every change.** Pest suites on MySQL, MariaDB and PostgreSQL, Playwright end-to-end tests, and Larastan static analysis run in CI.
+- **Patched dependencies.** Dependabot keeps Composer, npm, Docker and GitHub Actions dependencies current.
+- **Responsible disclosure.** Report vulnerabilities privately through the [security policy](SECURITY.md), never in a public issue.
 
 ## Quick start
 
@@ -182,10 +195,6 @@ Contributions are welcome. Read the [contributing guide](.github/CONTRIBUTING.md
 <a href="https://github.com/unopim/unopim/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=unopim/unopim" alt="Contributors">
 </a>
-
-## Security
-
-Please don't report vulnerabilities in public issues. Follow the [security policy](SECURITY.md).
 
 ## License
 
