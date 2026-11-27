@@ -445,8 +445,15 @@ class Importer extends AbstractImporter
         return $payload;
     }
 
+    /**
+     * Replace the family's completeness settings with the ones in the file, leaving them untouched when the file carries none.
+     */
     protected function syncCompletenessSettings(int $familyId, array $attributeGroups): void
     {
+        if (array_filter(array_column($attributeGroups, 'completeness')) === []) {
+            return;
+        }
+
         $incoming = [];
 
         foreach ($attributeGroups as $groupData) {
@@ -473,16 +480,17 @@ class Importer extends AbstractImporter
             }
         }
 
-        DB::table('completeness_settings')
-            ->where('family_id', $familyId)
-            ->delete();
+        $rows = array_map(unserialize(...), array_unique(array_map(serialize(...), $incoming)));
 
-        if ($incoming !== []) {
-            $unique = array_unique(array_map(serialize(...), $incoming));
-            $rows = array_map(unserialize(...), $unique);
+        DB::transaction(function () use ($familyId, $rows): void {
+            DB::table('completeness_settings')
+                ->where('family_id', $familyId)
+                ->delete();
 
-            DB::table('completeness_settings')->insert($rows);
-        }
+            if ($rows !== []) {
+                DB::table('completeness_settings')->insert($rows);
+            }
+        });
     }
 
     public function isAttributeFamilyExist(string $code): bool
