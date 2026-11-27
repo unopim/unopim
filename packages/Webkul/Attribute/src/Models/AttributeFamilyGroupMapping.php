@@ -33,7 +33,8 @@ class AttributeFamilyGroupMapping extends Model implements AttributeFamilyGroupM
     {
         return $this->belongsToMany(AttributeProxy::modelClass(), 'attribute_group_mappings', 'attribute_family_group_id')
             ->withPivot('position')
-            ->orderBy('pivot_position', 'asc');
+            ->orderBy('pivot_position', 'asc')
+            ->orderBy('attributes.id');
     }
 
     /**
@@ -54,7 +55,8 @@ class AttributeFamilyGroupMapping extends Model implements AttributeFamilyGroupM
                 'attribute_family_group_mappings.attribute_group_id',
                 'attribute_family_group_mappings.position'
             )
-            ->orderBy('attribute_family_group_mappings.position');
+            ->orderBy('attribute_family_group_mappings.position')
+            ->orderBy('attribute_groups.id');
 
         $query->groupBy(
             'attribute_groups.id',

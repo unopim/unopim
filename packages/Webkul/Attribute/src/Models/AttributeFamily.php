@@ -290,6 +290,7 @@ class AttributeFamily extends TranslatableModel implements AttributeFamilyContra
             )
             ->where('attribute_family_group_mappings.attribute_family_id', $this->id)
             ->orderBy('attribute_family_group_mappings.position')
+            ->orderBy('attribute_family_group_mappings.id')
             ->select([
                 'attribute_groups.id',
                 'attribute_groups.code',
@@ -404,6 +405,7 @@ class AttributeFamily extends TranslatableModel implements AttributeFamilyContra
             )
             ->where('attribute_family_group_mappings.attribute_family_id', $this->id)
             ->orderBy('attribute_family_group_mappings.position')
+            ->orderBy('attribute_family_group_mappings.id')
             ->select([
                 'attribute_groups.id',
                 'attribute_groups.code',
@@ -422,7 +424,8 @@ class AttributeFamily extends TranslatableModel implements AttributeFamilyContra
     public function attributeFamilyGroupMappings()
     {
         return $this->hasMany(AttributeFamilyGroupMappingProxy::modelClass())
-            ->orderBy('position');
+            ->orderBy('position')
+            ->orderBy('id');
     }
 
     public function familyGroups()
