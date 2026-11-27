@@ -100,6 +100,8 @@ class ApiKeysController extends Controller
     {
         $apiKey = $this->apiKeyRepository->findOrFail($id);
 
+        abort_if($apiKey->revoked, 404);
+
         return view('admin_api::integrations.api-keys.edit', $this->getDefaultDetails($apiKey));
     }
 
@@ -113,6 +115,8 @@ class ApiKeysController extends Controller
         }
 
         $apiKey = $this->apiKeyRepository->findOrFail($id);
+
+        abort_if($apiKey->revoked, 404);
 
         $data = array_merge($request->only([
             'name',
@@ -158,13 +162,7 @@ class ApiKeysController extends Controller
     }
 
     /**
-     * Generates a new client ID and secret key for the API key.
-     *
-     * This function is responsible for creating a new OAuth client ID and secret key
-     * for the specified admin user and API key. The client ID and secret key are then
-     * associated with the API key in the database.
-     *
-     * @return JsonResponse The JSON response containing the new client ID and secret key.
+     * Generate a new OAuth client for a live integration owned by an API user.
      */
     public function generateKey(GenerateKeyRequest $request): JsonResponse
     {
@@ -174,7 +172,7 @@ class ApiKeysController extends Controller
 
         $apiKey = $this->apiKeyRepository->findOrFail($request->input('apiId'));
 
-        if (! $apiKey->admins?->isApiUser()) {
+        if ($apiKey->revoked || ! $apiKey->admins?->isApiUser()) {
             abort(404);
         }
 
@@ -195,13 +193,7 @@ class ApiKeysController extends Controller
     }
 
     /**
-     * Regenerates the secret key for the specified OAuth client.
-     *
-     * This function retrieves the OAuth client ID from the request parameters,
-     * finds the corresponding client in the database, and then regenerates its secret key.
-     * If the client is not found, it returns a JSON response with a 404 status code and an error message.
-     *
-     * @return JsonResponse The JSON response containing the regenerated secret key.
+     * Regenerate the OAuth client secret of an integration owned by an API user.
      */
     public function regenerateSecretKey(RegenerateSecretKeyRequest $request): JsonResponse
     {
@@ -209,18 +201,16 @@ class ApiKeysController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $data = $request->validated();
+        $apiKey = $this->apiKeyRepository->findOneByField('oauth_client_id', $request->validated('oauth_client_id'));
 
-        $client = $this->clients->find($data['oauth_client_id']);
+        $client = $apiKey?->oauthClients;
 
-        if (! $client) {
-            return new JsonResponse(['message' => trans('admin::app.integrations.api-keys.client-not-found')], JsonResponse::HTTP_NOT_FOUND);
+        if (! $client || $apiKey->revoked || ! $apiKey->admins?->isApiUser()) {
+            return new JsonResponse(['message' => trans('admin::app.configuration.integrations.client-not-found')], JsonResponse::HTTP_NOT_FOUND);
         }
 
         $client = $this->regenerateSecret($client);
 
-        // Invalidate any access tokens issued against the previous secret so old clients
-        // stop working immediately after a regenerate (security best practice).
         Token::where('client_id', $client->getKey())->update(['revoked' => true]);
 
         return new JsonResponse([
@@ -229,14 +219,7 @@ class ApiKeysController extends Controller
     }
 
     /**
-     * Regenerates the robot admin's password for the specified API key.
-     *
-     * This is the recovery path for a lost robot password: the plaintext is only
-     * shown once at creation time, so regenerating issues a fresh one. Rotates
-     * the OAuth client's tokens too, since a leaked/lost password should not
-     * leave existing access tokens valid.
-     *
-     * @return JsonResponse The JSON response containing the robot's username and the new plaintext password.
+     * Regenerate the robot password of a live integration owned by an API user and revoke its tokens.
      */
     public function regeneratePassword(RegeneratePasswordRequest $request): JsonResponse
     {
@@ -248,7 +231,7 @@ class ApiKeysController extends Controller
 
         $robot = $apiKey->admins;
 
-        if (! $robot?->isApiUser()) {
+        if ($apiKey->revoked || ! $robot?->isApiUser()) {
             abort(404);
         }
 
