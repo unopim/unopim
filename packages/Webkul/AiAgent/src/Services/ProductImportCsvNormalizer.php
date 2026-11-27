@@ -81,7 +81,8 @@ class ProductImportCsvNormalizer
 
     /**
      * Compute the ordered header: structural columns, then attribute columns
-     * present across the rows (price attributes expanded per currency), then
+     * present across the rows (price attributes, given plain or per currency
+     * as core's `price (USD)`, expanded per currency), then
      * an auto url_key when the family defines one, then categories.
      *
      * @param  array<int, array<string, mixed>>  $rows
@@ -99,6 +100,8 @@ class ProductImportCsvNormalizer
 
         foreach ($rows as $row) {
             foreach (array_keys($this->normalizeKeys($row)) as $column) {
+                $column = preg_replace('/ \([a-z]{3}\)$/', '', $column);
+
                 if ($column === 'categories') {
                     $hasCategories = true;
 
@@ -179,7 +182,7 @@ class ProductImportCsvNormalizer
         }
 
         if (preg_match('/^(.+) \(([^)]+)\)$/', $column, $matches)) {
-            $raw = $row[$matches[1]] ?? null;
+            $raw = $row[strtolower($column)] ?? $row[$matches[1]] ?? null;
 
             return is_numeric($raw) ? (string) round((float) $raw, 2) : '';
         }
