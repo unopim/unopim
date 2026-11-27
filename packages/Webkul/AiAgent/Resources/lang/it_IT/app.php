@@ -4,7 +4,7 @@ return [
 
     'acl' => [
         'ai-agent'              => 'IA Magica',
-        'general'               => 'Generale',
+        'general'               => 'Impostazioni',
         'prompt'                => 'Prompt',
         'system-prompt'         => 'Prompt di Sistema',
         'execute'               => 'Esegui',
@@ -12,7 +12,7 @@ return [
         'credentials'           => 'Credenziali',
         'agents'                => 'Agenti',
         'dashboard'             => 'Dashboard',
-        'platform'              => 'Piattaforma',
+        'platform'              => 'Piattaforme',
         'create'                => 'Crea',
         'edit'                  => 'Modifica',
         'delete'                => 'Elimina',

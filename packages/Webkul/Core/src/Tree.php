@@ -62,11 +62,15 @@ class Tree
     }
 
     /**
-     * Add a Config item to the item stack
+     * Add a Config item to the item stack.
+     *
+     * An ACL item flagged `hidden` still guards its routes, but is not offered as an assignable
+     * permission checkbox, so no role form can grant it. Custom roles that stored the key before it
+     * was hidden would keep passing its routes, which is why a migration strips it from them.
      *
      * @param  array<string, mixed>  $item
      */
-    public function add(array $item, $type = ''): void
+    public function add(array $item, string $type = ''): void
     {
         $item['children'] = [];
 
@@ -90,6 +94,10 @@ class Tree
 
             foreach ($item['also_authorizes'] ?? [] as $route) {
                 $this->alternateRoles[$route][] = $item['key'];
+            }
+
+            if (! empty($item['hidden'])) {
+                return;
             }
         }
 

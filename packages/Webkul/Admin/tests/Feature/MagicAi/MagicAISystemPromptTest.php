@@ -199,8 +199,8 @@ it('forbids creating or updating a system prompt with only the view permission',
     expect($prompt->fresh()->max_tokens)->toBe(1000);
 });
 
-it('allows creating and updating a system prompt with the edit permission', function (): void {
-    $this->loginWithPermissions('custom', ['ai-agent', 'ai-agent.system-prompt', 'ai-agent.system-prompt.edit']);
+it('allows creating and updating a system prompt with the create and edit permissions', function (): void {
+    $this->loginWithPermissions('custom', ['ai-agent', 'ai-agent.system-prompt', 'ai-agent.system-prompt.create', 'ai-agent.system-prompt.edit']);
 
     $prompt = MagicAISystemPrompt::factory()->create(['max_tokens' => 1000]);
 

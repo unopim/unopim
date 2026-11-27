@@ -4,7 +4,7 @@ return [
 
     'acl' => [
         'ai-agent'              => 'マジック AI',
-        'general'               => '一般',
+        'general'               => '設定',
         'prompt'                => 'プロンプト',
         'system-prompt'         => 'システムプロンプト',
         'execute'               => '実行',

@@ -12,7 +12,11 @@ class SystemPromptRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return bouncer()->hasPermission('ai-agent.system-prompt.edit');
+        $permission = $this->routeIs('admin.magic_ai.system_prompt.store')
+            ? 'ai-agent.system-prompt.create'
+            : 'ai-agent.system-prompt.edit';
+
+        return bouncer()->hasPermission($permission);
     }
 
     /**

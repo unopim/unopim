@@ -5,12 +5,14 @@
     <v-create-prompt-form>
         <x-admin::page-header :title="trans('admin::app.configuration.prompt.index.title')">
             <x-slot:actions>
-                <button
-                    type="button"
-                    class="primary-button"
-                >
-                    @lang('admin::app.configuration.prompt.create.create-btn')
-                </button>
+                @if (bouncer()->hasPermission('ai-agent.prompt.create'))
+                    <button
+                        type="button"
+                        class="primary-button"
+                    >
+                        @lang('admin::app.configuration.prompt.create.create-btn')
+                    </button>
+                @endif
             </x-slot>
         </x-admin::page-header>
         <!-- DataGrid Shimmer -->
@@ -20,13 +22,15 @@
         <script type="text/x-template" id="v-create-prompt-form-template">
             <x-admin::page-header :title="trans('admin::app.configuration.prompt.index.title')">
                 <x-slot:actions>
-                    <button
-                        type="button"
-                        class="primary-button"
-                        @click="selectedPrompt=0;resetForm();$refs.promptUpdateOrCreateModal.toggle()"
-                    >
-                        @lang('admin::app.configuration.prompt.create.create-btn')
-                    </button>
+                    @if (bouncer()->hasPermission('ai-agent.prompt.create'))
+                        <button
+                            type="button"
+                            class="primary-button"
+                            @click="selectedPrompt=0;resetForm();$refs.promptUpdateOrCreateModal.toggle()"
+                        >
+                            @lang('admin::app.configuration.prompt.create.create-btn')
+                        </button>
+                    @endif
                 </x-slot>
             </x-admin::page-header>
             <x-admin::datagrid src="{{ route('admin.magic_ai.prompt.index') }}" ref="datagrid">
