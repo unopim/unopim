@@ -3,6 +3,7 @@
 namespace Webkul\AdminApi\Http\Controllers\API\Catalog;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,6 +12,7 @@ use Webkul\AdminApi\Http\Requests\Catalog\PartialUpdateSimpleProductRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\StoreSimpleProductRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\UpdateSimpleProductRequest;
 use Webkul\Product\Enums\ProductType;
+use Webkul\Product\Models\Product;
 use Webkul\Product\Type\AbstractType;
 
 class SimpleProductController extends ProductController
@@ -81,7 +83,6 @@ class SimpleProductController extends ProductController
 
         try {
             $family = $this->findFamilyOr404($data['family']);
-            $product = null;
             $data['attribute_family_id'] = $family->id;
             unset($data['family']);
 
@@ -96,23 +97,10 @@ class SimpleProductController extends ProductController
 
             $this->validateRichAssociationsBeforeCreate($data);
 
-            if (! empty($data['parent'])) {
-                $data[AbstractType::PRODUCT_VALUES_KEY][AbstractType::COMMON_VALUES_KEY] = array_merge(
-                    $data[AbstractType::PRODUCT_VALUES_KEY][AbstractType::COMMON_VALUES_KEY],
-                    ($data['variant']['attributes'] ?? [])
-                );
-
-                $product = $this->createOrUpdateVariant($data);
-                unset($data['variant']);
-            }
-
-            if (! $product) {
-                Event::dispatch('catalog.product.create.before');
-                $product = $this->productRepository->create($data);
-                Event::dispatch('catalog.product.create.after', $product);
-            }
-
-            $product = $this->updateProduct($data, $product);
+            Event::defer(
+                fn (): Product => DB::transaction(fn (): Product => $this->persistNewSimpleProduct($data)),
+                ['catalog.product.create.after', 'catalog.product.update.after']
+            );
 
             return $this->successResponse(
                 trans('admin::app.catalog.products.create-success'),
@@ -121,6 +109,34 @@ class SimpleProductController extends ProductController
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);
         }
+    }
+
+    /**
+     * Create the simple product, or its variant under the requested parent, and save its values.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    protected function persistNewSimpleProduct(array $data): Product
+    {
+        $product = null;
+
+        if (! empty($data['parent'])) {
+            $data[AbstractType::PRODUCT_VALUES_KEY][AbstractType::COMMON_VALUES_KEY] = array_merge(
+                $data[AbstractType::PRODUCT_VALUES_KEY][AbstractType::COMMON_VALUES_KEY],
+                ($data['variant']['attributes'] ?? [])
+            );
+
+            $product = $this->createOrUpdateVariant($data);
+            unset($data['variant']);
+        }
+
+        if (! $product) {
+            Event::dispatch('catalog.product.create.before');
+            $product = $this->productRepository->create($data);
+            Event::dispatch('catalog.product.create.after', $product);
+        }
+
+        return $this->updateProduct($data, $product);
     }
 
     /**
