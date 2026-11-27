@@ -32,7 +32,7 @@
 </p>
 
 <p align="center">
-  <a href="https://demo.unopim.com/"><img src="https://raw.githubusercontent.com/unopim/temp-media/main/readme-hero.png" alt="UnoPim dashboard with the Agentic PIM assistant writing an SEO description" width="860"></a>
+  <a href="https://unopim.com/scaling-unopim-for-10-million-products/"><img src="https://github.com/user-attachments/assets/c264d658-3723-46ff-8b60-2b9506a7a412" alt="Scaling UnoPim to 10 million products" width="860"></a>
 </p>
 
 ## What is UnoPim?
@@ -197,10 +197,6 @@ Browse more on the [extensions marketplace](https://unopim.com/extensions/), or 
 - **AWS Marketplace:** pre-configured AMIs for [x86_64](https://aws.amazon.com/marketplace/pp/prodview-rhsm6cbxqkm6i) and [ARM64 / Graviton](https://aws.amazon.com/marketplace/pp/prodview-flks5cupod5mi).
 
 ## Learn more
-
-<p align="center">
-  <a href="https://unopim.com/scaling-unopim-for-10-million-products/"><img src="https://github.com/user-attachments/assets/c264d658-3723-46ff-8b60-2b9506a7a412" alt="Scaling UnoPim to 10 million products" width="720"></a>
-</p>
 
 | | |
 | --- | --- |
