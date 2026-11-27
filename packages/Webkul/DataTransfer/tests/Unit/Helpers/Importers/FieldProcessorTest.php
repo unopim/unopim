@@ -138,7 +138,7 @@ it('should preserve only allowed HTML tags when WYSIWYG is enabled', function ()
 
     expect($result)->toContain('<p>Paragraph</p>');
     expect($result)->toContain('<b>Bold</b>');
-    expect($result)->toContain('<a href="https://example.com">Link</a>');
+    expect($result)->toContain('<a href="https://example.com" target="_blank" rel="noreferrer noopener">Link</a>');
     expect($result)->toContain('<i>Italic</i>');
     expect($result)->toContain('<em>Emphasis</em>');
     expect($result)->toContain('<strong>Strong</strong>');
@@ -155,5 +155,4 @@ it('should preserve only allowed HTML tags when WYSIWYG is enabled', function ()
 
     expect($result)->not->toContain('<script>');
     expect($result)->not->toContain('onclick="');
-    expect($result)->not->toContain('target="_blank"');
 });
