@@ -8,8 +8,8 @@ function jobTrackOfType(string $type): JobTrack
     return new JobTrack(['type' => $type]);
 }
 
-describe('JobType', function () {
-    it('resolves the type of a job track', function (string $type, JobType $expected) {
+describe('JobType', function (): void {
+    it('resolves the type of a job track', function (string $type, JobType $expected): void {
         expect(JobType::fromTrack(jobTrackOfType($type)))->toBe($expected);
     })->with([
         ['import', JobType::IMPORT],
@@ -17,11 +17,11 @@ describe('JobType', function () {
         ['system', JobType::SYSTEM],
     ]);
 
-    it('falls back to import for an unknown type', function () {
+    it('falls back to import for an unknown type', function (): void {
         expect(JobType::fromTrack(jobTrackOfType('something-else')))->toBe(JobType::IMPORT);
     });
 
-    it('reads export copy for exports and base copy for everything else', function () {
+    it('reads export copy for exports and base copy for everything else', function (): void {
         expect(JobType::EXPORT->trackerMessage('paused'))
             ->toBe(trans('admin::app.settings.data-transfer.tracker.paused-export'));
 
@@ -32,15 +32,27 @@ describe('JobType', function () {
             ->toBe(trans('admin::app.settings.data-transfer.tracker.paused'));
     });
 
-    it('authorizes each type against its own execute permission', function () {
+    it('authorizes each type against its own execute permission', function (): void {
         expect(JobType::EXPORT->executePermission())->toBe('data_transfer.export.execute');
         expect(JobType::IMPORT->executePermission())->toBe('data_transfer.imports.execute');
         expect(JobType::SYSTEM->executePermission())->toBe('data_transfer.imports.execute');
     });
 
-    it('authorizes each editable type against its own edit permission', function () {
+    it('authorizes each editable type against its own edit permission', function (): void {
         expect(JobType::EXPORT->editPermission())->toBe('data_transfer.export.edit');
         expect(JobType::IMPORT->editPermission())->toBe('data_transfer.imports.edit');
         expect(JobType::SYSTEM->editPermission())->toBeNull();
+    });
+
+    it('opens each runnable type on its own job page', function (): void {
+        expect(JobType::EXPORT->viewRouteName())->toBe('admin.settings.data_transfer.exports.export-view');
+        expect(JobType::IMPORT->viewRouteName())->toBe('admin.settings.data_transfer.imports.import-view');
+        expect(JobType::SYSTEM->viewRouteName())->toBeNull();
+    });
+
+    it('authorizes each runnable type against its own job page permission', function (): void {
+        expect(JobType::EXPORT->viewPermission())->toBe('data_transfer.export');
+        expect(JobType::IMPORT->viewPermission())->toBe('data_transfer.imports');
+        expect(JobType::SYSTEM->viewPermission())->toBeNull();
     });
 });

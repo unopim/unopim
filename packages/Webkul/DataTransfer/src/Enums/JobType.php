@@ -35,9 +35,8 @@ enum JobType: string
     }
 
     /**
-     * Export permissions are grouped under the singular `data_transfer.export` key in acl.php.
-     */
-    /**
+     * Return the pause, resume and cancel failure messages for this job type.
+     *
      * @return array<string, string>
      */
     public function trackerMessages(): array
@@ -61,11 +60,38 @@ enum JobType: string
         };
     }
 
+    /**
+     * Export permissions are grouped under the singular `data_transfer.export` key in acl.php.
+     */
     public function editPermission(): ?string
     {
         return match ($this) {
             self::IMPORT => 'data_transfer.imports.edit',
             self::EXPORT => 'data_transfer.export.edit',
+            self::SYSTEM => null,
+        };
+    }
+
+    /**
+     * The job page runs a job again with its saved configuration; system jobs have no such page.
+     */
+    public function viewRouteName(): ?string
+    {
+        return match ($this) {
+            self::IMPORT => 'admin.settings.data_transfer.imports.import-view',
+            self::EXPORT => 'admin.settings.data_transfer.exports.export-view',
+            self::SYSTEM => null,
+        };
+    }
+
+    /**
+     * Return the permission that opens the job page; system jobs have none.
+     */
+    public function viewPermission(): ?string
+    {
+        return match ($this) {
+            self::IMPORT => 'data_transfer.imports',
+            self::EXPORT => 'data_transfer.export',
             self::SYSTEM => null,
         };
     }
