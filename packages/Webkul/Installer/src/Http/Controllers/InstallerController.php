@@ -145,25 +145,35 @@ class InstallerController extends Controller
     }
 
     /**
-     * Reject an admin password that opens or closes with whitespace, before
-     * any install state is written.
+     * Validate the administrator name, email and password before any install
+     * state is written.
      *
-     * Every other password entry point (user forms, account settings, reset)
-     * applies the same rule, and the login page strips a leading space on the
-     * assumption that no stored password starts with one — so the installer
-     * must never mint the account that breaks that assumption.
+     * The password must not open or close with whitespace: every other password
+     * entry point (user forms, account settings, reset) applies the same rule,
+     * and the login page strips a leading space on the assumption that no
+     * stored password starts with one — so the installer must never mint the
+     * account that breaks that assumption.
+     *
+     * @param  string  $prefix  Payload key prefix, e.g. 'admin.' for nested payloads.
      */
-    protected function validateAdminPassword(array $payload, string $attribute): ?JsonResponse
+    protected function validateAdminCredentials(array $payload, string $prefix = ''): ?JsonResponse
     {
+        $passwordMin = (int) config('admin.auth.password_min', 8) ?: 8;
+        $label = fn (string $key): string => trans('installer::app.installer.index.create-administrator.'.$key);
+
         $validator = Validator::make($payload, [
-            $attribute => ['nullable', 'string', new PasswordWithoutSurroundingWhitespace],
+            $prefix.'admin'    => ['required', 'string', 'max:191', 'regex:/^[^<>&"]+$/u'],
+            $prefix.'email'    => ['required', 'string', 'email:rfc', 'max:191', 'regex:/@[^@\s]+\.[^@\s]+$/'],
+            $prefix.'password' => ['required', 'string', 'min:'.$passwordMin, 'max:72', new PasswordWithoutSurroundingWhitespace],
         ], [], [
-            $attribute => trans('installer::app.installer.index.create-administrator.password'),
+            $prefix.'admin'    => $label('admin'),
+            $prefix.'email'    => $label('email'),
+            $prefix.'password' => $label('password'),
         ]);
 
         if ($validator->fails()) {
             return response()->json([
-                'error'  => $validator->errors()->first($attribute),
+                'error'  => $validator->errors()->first(),
                 'errors' => $validator->errors()->toArray(),
             ], 422);
         }
@@ -404,7 +414,7 @@ class InstallerController extends Controller
         // Only ever promote the seeder's freshly-created default admin.
         $this->abortUnlessAdminIsFreshlySeeded();
 
-        if (($invalid = $this->validateAdminPassword(request()->all(), 'password')) instanceof JsonResponse) {
+        if (($invalid = $this->validateAdminCredentials(request()->all())) instanceof JsonResponse) {
             return $invalid;
         }
 
@@ -492,7 +502,7 @@ class InstallerController extends Controller
 
         $payload = $request->all();
 
-        if (($invalid = $this->validateAdminPassword($payload, 'admin.password')) instanceof JsonResponse) {
+        if (($invalid = $this->validateAdminCredentials($payload, 'admin.')) instanceof JsonResponse) {
             return $invalid;
         }
 
@@ -538,6 +548,21 @@ class InstallerController extends Controller
         @chmod($this->installerStatePath(), 0600);
 
         return new JsonResponse(['success' => true]);
+    }
+
+    /**
+     * Delete the transient installer state file (it holds the admin password
+     * in plaintext). Idempotent; a failed delete is logged rather than hidden.
+     */
+    protected function deleteInstallerState(string $path): void
+    {
+        if (! file_exists($path)) {
+            return;
+        }
+
+        if (! @unlink($path) && file_exists($path)) {
+            report(new \RuntimeException("Could not delete installer state file [{$path}]; remove it manually, it contains the admin password."));
+        }
     }
 
     /**
@@ -665,6 +690,8 @@ class InstallerController extends Controller
                 $emit(trans('installer::app.installer.index.terminal.creating-admin'));
                 $this->createAdminFromSession($admin);
                 $administratorCreated = true;
+
+                $this->deleteInstallerState($statePath);
                 $emit(trans('installer::app.installer.index.terminal.admin-created'));
 
                 // e. Sample data (optional)
@@ -716,9 +743,7 @@ class InstallerController extends Controller
                 @ob_flush();
                 @flush();
             } finally {
-                // Always remove the transient state file — it holds the admin
-                // password — whatever the outcome of the stream.
-                @unlink($statePath);
+                $this->deleteInstallerState($statePath);
             }
         });
 
