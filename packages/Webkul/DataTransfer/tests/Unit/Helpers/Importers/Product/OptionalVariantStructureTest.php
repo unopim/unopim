@@ -3,6 +3,7 @@
 use Webkul\DataTransfer\Helpers\Error;
 use Webkul\DataTransfer\Helpers\Importers\Product\Importer;
 use Webkul\DataTransfer\Helpers\Importers\Product\SKUStorage;
+use Webkul\DataTransfer\Helpers\Sources\AbstractSource;
 use Webkul\DataTransfer\Models\JobTrack;
 
 /**
@@ -73,6 +74,52 @@ it('still rejects a missing required product header', function (string $missing)
 })->with(['sku', 'locale', 'channel', 'type', 'parent', 'attribute_family']);
 
 /**
+ * Build an import source that reads the given rows, keyed by column name, after a header line.
+ *
+ * @param  array<int, array<string, string>>  $rows
+ */
+function optionalVariantStructureSource(array $rows): AbstractSource
+{
+    return new class($rows) extends AbstractSource
+    {
+        private int $cursor = 0;
+
+        /**
+         * @var array<int, array<int, string>>
+         */
+        private array $lines;
+
+        /**
+         * @param  array<int, array<string, string>>  $rows
+         */
+        public function __construct(array $rows)
+        {
+            $this->columnNames = array_keys($rows[0]);
+            $this->totalColumns = count($this->columnNames);
+            $this->lines = [$this->columnNames, ...array_map(array_values(...), $rows)];
+        }
+
+        /**
+         * Start reading again from the header line.
+         */
+        public function rewind(): void
+        {
+            $this->cursor = 0;
+
+            parent::rewind();
+        }
+
+        /**
+         * Return the next line, or false past the last one.
+         */
+        protected function getNextRow(): array|bool
+        {
+            return $this->lines[$this->cursor++] ?? false;
+        }
+    };
+}
+
+/**
  * Only external catalogue reads, row validation and batch writes are replaced;
  * the production parent-row collection and inheritance logic both run.
  */
@@ -91,13 +138,7 @@ it('does not inherit variant_structure as an attribute from a parent row', funct
     $skuStorage->shouldReceive('load')->once()->with(['parent']);
     (new ReflectionProperty(Importer::class, 'skuStorage'))->setValue($importer, $skuStorage);
 
-    $source = new class([['sku' => 'parent', 'type' => $type, 'parent' => '', 'attribute_family' => 'default', 'variant_structure' => 'by_color', 'name' => 'Example parent']]) extends ArrayIterator
-    {
-        public function getCurrentRowNumber(): int
-        {
-            return $this->key() + 1;
-        }
-    };
+    $source = optionalVariantStructureSource([['sku' => 'parent', 'type' => $type, 'parent' => '', 'attribute_family' => 'default', 'variant_structure' => 'by_color', 'name' => 'Example parent']]);
 
     $importer->setSource($source)->setErrorHelper(new Error);
     (new ReflectionMethod(Importer::class, 'saveValidatedBatches'))->invoke($importer);

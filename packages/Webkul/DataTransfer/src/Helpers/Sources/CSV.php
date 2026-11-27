@@ -17,13 +17,18 @@ class CSV extends AbstractSource
     protected int $maxLineLength = 0;
 
     /**
+     * Resolved path of the source file.
+     */
+    protected string $path;
+
+    /**
      * Create a new helper instance.
      */
     public function __construct(
         string $filePath,
         protected string $delimiter = ','
     ) {
-        $path = self::resolveReadablePath($filePath);
+        $path = $this->path = self::resolveReadablePath($filePath);
 
         $detectedSeparator = self::checkSeparator($path);
 
@@ -126,6 +131,24 @@ class CSV extends AbstractSource
         }
 
         return is_array($parsed) ? $parsed : [];
+    }
+
+    /**
+     * Open a fresh handle on the source file, replacing the current one.
+     */
+    public function reopen(): void
+    {
+        $reader = @fopen($this->path, 'r');
+
+        throw_unless(is_resource($reader), \LogicException::class, trans('data_transfer::app.validation.errors.file-missing'));
+
+        stream_set_read_buffer($reader, 65536);
+
+        if (is_resource($this->reader)) {
+            fclose($this->reader);
+        }
+
+        $this->reader = $reader;
     }
 
     /**

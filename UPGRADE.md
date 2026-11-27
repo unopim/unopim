@@ -83,6 +83,7 @@ most often bite:
 | Platform module tags on Magic AI tools | Tools registered in `ai-agent.tools` without a `module` key are always offered. Product, category and family tools in core are tagged `'module' => 'pim'` and are hidden while PIM is switched off; tag your own product tools the same way. |
 | Platform module route gating | `platform_modules.<module>.route_prefixes` and ACL routes only gate named routes. Name every route your package wants hidden with its module. |
 | Dropdown alignment in RTL | `x-admin::dropdown` now mirrors `position` itself when the admin page is right-to-left, for both inline and teleported panels. A plugin that picks `bottom-left` or `bottom-right` (or `top-*`) from the locale direction gets flipped twice and opens outward. Pass the LTR position and drop the direction check. |
+| Import sources in parallel validation | A custom source extending `AbstractSource` that reads from a file handle must override `reopen()` to open its own handle. Otherwise forked validation workers share one read offset and can validate each other's rows; the import process only re-validates a worker's slice when that worker runs out of rows early. The product importer's `sequentialValidateRows()`, `parallelValidateRows()` and `createBatchesFromValidRows()` now type `$source` as `AbstractSource`. |
 
 ### Take a backup you have restored before
 

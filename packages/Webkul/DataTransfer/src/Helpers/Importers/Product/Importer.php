@@ -33,6 +33,7 @@ use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
 use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Helpers\Importers\AbstractImporter;
 use Webkul\DataTransfer\Helpers\Importers\FieldProcessor;
+use Webkul\DataTransfer\Helpers\Sources\AbstractSource;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 use Webkul\ElasticSearch\Indexing\Normalizer\ProductNormalizer;
 use Webkul\ElasticSearch\Observers\Product as ElasticProductObserver;
@@ -721,7 +722,7 @@ class Importer extends AbstractImporter
     /**
      * Validate all rows sequentially (fallback/small import path).
      */
-    protected function sequentialValidateRows($source): void
+    protected function sequentialValidateRows(AbstractSource $source): void
     {
         $source->rewind();
 
@@ -747,12 +748,14 @@ class Importer extends AbstractImporter
      * Splits the CSV into N chunks (one per CPU core), forks child processes
      * that each validate their chunk independently. Children write invalid
      * row numbers to temp files. Parent merges results and re-validates
-     * only the invalid rows (~1% of total) to capture error details.
+     * the invalid rows (~1% of total) to capture error details. A chunk
+     * whose child crashed, failed or read fewer rows than assigned, and any
+     * row past the counted total, is validated in full by the parent.
      *
      * All preloaded caches (SKUs, products, categories, unique values) are
      * inherited by children via copy-on-write — no duplication overhead.
      */
-    protected function parallelValidateRows($source, int $totalRows, int $workerCount): void
+    protected function parallelValidateRows(AbstractSource $source, int $totalRows, int $workerCount): void
     {
         $chunkSize = (int) ceil($totalRows / $workerCount);
         $tempDir = storage_path('app/import_validation_'.$this->import->id.'_'.uniqid());
@@ -787,11 +790,16 @@ class Importer extends AbstractImporter
                  * Reconnect DB (connections can't be shared after fork).
                  * Validate assigned chunk, write results, exit.
                  */
+                $exitCode = 1;
+
                 try {
                     DB::reconnect();
 
+                    $source->reopen();
+
                     $invalidRows = [];
                     $processedCount = 0;
+                    $visitedCount = 0;
 
                     $source->rewind();
                     $idx = 0;
@@ -802,6 +810,8 @@ class Importer extends AbstractImporter
                         }
 
                         if ($idx >= $startIdx) {
+                            $visitedCount++;
+
                             try {
                                 $rowData = $source->current();
                                 $rowNumber = $source->getCurrentRowNumber();
@@ -820,46 +830,61 @@ class Importer extends AbstractImporter
                         $idx++;
                     }
 
-                    file_put_contents(
+                    $written = file_put_contents(
                         $tempDir.'/worker_'.$w.'.json',
-                        json_encode(['invalid' => $invalidRows, 'processed' => $processedCount])
+                        json_encode(['invalid' => $invalidRows, 'processed' => $processedCount, 'visited' => $visitedCount])
                     );
-                } catch (\Throwable $e) {
-                    file_put_contents(
-                        $tempDir.'/worker_'.$w.'.json',
-                        json_encode(['invalid' => [], 'processed' => 0, 'error' => $e->getMessage()])
-                    );
-                }
 
-                exit(0);
+                    if ($written !== false) {
+                        $exitCode = 0;
+                    }
+                } catch (\Throwable $e) {
+                    Log::error('Import validation worker failed.', [
+                        'import_id' => $this->import->id,
+                        'worker'    => $w,
+                        'error'     => $e->getMessage(),
+                    ]);
+                } finally {
+                    exit($exitCode);
+                }
             }
 
-            $children[] = $pid;
+            $children[$w] = $pid;
         }
 
         /**
          * === PARENT: Wait for all children to complete ===
          */
-        foreach ($children as $pid) {
-            pcntl_waitpid($pid, $status);
+        $exitStatuses = [];
+
+        foreach ($children as $w => $pid) {
+            $exitStatuses[$w] = pcntl_waitpid($pid, $status) === $pid ? $status : null;
         }
 
         /**
          * Merge child results: collect invalid row numbers and processed counts.
          */
         $allInvalidRows = [];
+        $verifiedWorkers = [];
 
         for ($w = 0; $w < $workerCount; $w++) {
-            $resultFile = $tempDir.'/worker_'.$w.'.json';
+            $expectedRows = max(0, min(($w + 1) * $chunkSize, $totalRows) - ($w * $chunkSize));
 
-            if (! file_exists($resultFile)) {
+            $result = $this->readWorkerResult($tempDir.'/worker_'.$w.'.json', $exitStatuses[$w] ?? null, $expectedRows);
+
+            if ($result === null) {
+                Log::warning('Import validation worker did not finish its rows; validating them in the import process.', [
+                    'import_id' => $this->import->id,
+                    'worker'    => $w,
+                ]);
+
                 continue;
             }
 
-            $result = json_decode(file_get_contents($resultFile), true);
-            $this->processedRowsCount += ($result['processed'] ?? 0);
+            $verifiedWorkers[$w] = true;
+            $this->processedRowsCount += (int) ($result['processed'] ?? 0);
 
-            foreach ($result['invalid'] ?? [] as $rowNumber) {
+            foreach ($result['invalid'] as $rowNumber) {
                 $allInvalidRows[$rowNumber] = true;
             }
         }
@@ -873,13 +898,19 @@ class Importer extends AbstractImporter
          *   (typically <1% of total rows, so overhead is negligible)
          */
         $source->rewind();
+        $idx = 0;
 
         while ($source->valid()) {
+            $verifiedByWorker = $idx < $totalRows && isset($verifiedWorkers[intdiv($idx, $chunkSize)]);
+
             try {
                 $rowData = $source->current();
                 $rowNumber = $source->getCurrentRowNumber();
 
-                if (isset($allInvalidRows[$rowNumber])) {
+                if (! $verifiedByWorker) {
+                    $this->validateRow($rowData, $rowNumber);
+                    $this->processedRowsCount++;
+                } elseif (isset($allInvalidRows[$rowNumber])) {
                     $this->validateRow($rowData, $rowNumber);
                 } else {
                     $this->validatedRows[$rowNumber] = true;
@@ -888,7 +919,32 @@ class Importer extends AbstractImporter
             }
 
             $source->next();
+            $idx++;
         }
+    }
+
+    /**
+     * Read a worker's result, or null when its exit status, payload or row count can't be trusted.
+     *
+     * @return array{invalid: array<int, int>, processed?: int, visited: int}|null
+     */
+    protected function readWorkerResult(string $resultFile, ?int $exitStatus, int $expectedRows): ?array
+    {
+        if ($exitStatus === null || ! pcntl_wifexited($exitStatus) || pcntl_wexitstatus($exitStatus) !== 0) {
+            return null;
+        }
+
+        if (! is_file($resultFile)) {
+            return null;
+        }
+
+        $result = json_decode((string) file_get_contents($resultFile), true);
+
+        if (! is_array($result) || ! is_array($result['invalid'] ?? null) || ($result['visited'] ?? null) !== $expectedRows) {
+            return null;
+        }
+
+        return $result;
     }
 
     /**
@@ -897,7 +953,7 @@ class Importer extends AbstractImporter
      * Re-reads source and creates DB batch records for all valid rows.
      * Replaces the parent::saveValidatedBatches() call.
      */
-    protected function createBatchesFromValidRows($source): void
+    protected function createBatchesFromValidRows(AbstractSource $source): void
     {
         $batchSize = $this->getEffectiveBatchSize();
 
