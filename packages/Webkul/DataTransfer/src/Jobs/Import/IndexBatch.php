@@ -39,7 +39,7 @@ class IndexBatch implements ShouldQueue
 
         $logger->info("IndexBatch #{$this->importBatch->id} started processing.");
 
-        $importHelper->getTypeImporter()->indexBatch($this->importBatch);
+        $importHelper->getTypeImporter()->indexData($this->importBatch);
 
         $logger->info("IndexBatch #{$this->importBatch->id} completed.");
     }
