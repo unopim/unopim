@@ -8,7 +8,7 @@ return [
         'key'       => 'system.completeness',
         'name'      => 'completeness::app.configuration.score-thresholds.title',
         'info'      => 'completeness::app.configuration.score-thresholds.info',
-        'icon'      => 'icon-activity',
+        'icon'      => 'icon-done',
         'acl'       => 'configuration.system_settings.completeness',
         'validator' => ScoreThresholdsValidator::class,
         'sort'      => 6,

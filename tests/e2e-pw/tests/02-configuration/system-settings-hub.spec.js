@@ -19,6 +19,21 @@ test.describe('System Settings hub', () => {
         await expect(adminPage).toHaveURL(/\/admin\/configuration\/system\/system\.appearance/);
     });
 
+    test('renders a glyph for every row icon', async ({ adminPage }) => {
+        await adminPage.goto('/admin/configuration/system-settings');
+
+        const row = adminPage.getByRole('link', { name: /Completeness Score Colors/i });
+        await expect(row).toBeVisible();
+
+        const emptyIcons = await adminPage.locator('a [class^="icon-"]').evaluateAll((icons) =>
+            icons
+                .filter((icon) => ['none', 'normal', '""'].includes(getComputedStyle(icon, '::before').content))
+                .map((icon) => icon.className),
+        );
+
+        expect(emptyIcons).toEqual([]);
+    });
+
     test('opens the generic fields editor for the debug row', async ({ adminPage }) => {
         await adminPage.goto('/admin/configuration/system-settings');
 
