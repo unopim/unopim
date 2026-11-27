@@ -18,6 +18,7 @@ return [
     'not-supported'                    => 'Het veld :attribute ondersteunt de volgende waarden niet: :unsupported.',
     'seperator-not-supported'          => 'Alleen , of ; of | wordt ondersteund als scheidingsteken.',
     'file-type'                        => 'Het bestand moet van het type CSV, XLS of XLSX zijn.',
+    'file-name-comma'                  => 'De bestandsnaam van :attribute mag geen komma bevatten.',
     'file-mime-extension-mismatch'     => 'De bestandsextensie en het MIME-type komen niet overeen voor het veld :attribute. De bestandsextensie is :extension en het MIME-type is :mimeType.',
     'file-not-exists'                  => 'Het geselecteerde bestand ":value" bestaat niet (veld :attribute).',
     'pdf-active-content'               => 'De pdf bevat ingesloten scripts of acties en kan niet worden geüpload.',

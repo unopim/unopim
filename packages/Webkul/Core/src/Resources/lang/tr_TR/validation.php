@@ -18,6 +18,7 @@ return [
     'not-supported'                    => 'Adres :attribute şu değerleri desteklemiyor (:unsupported).',
     'seperator-not-supported'          => 'Sadece , veya ; veya | birer ayırıcı olarak desteklenir.',
     'file-type'                        => 'Dosya csv, xls, xlsx türünde olmalıdır.',
+    'file-name-comma'                  => ':attribute dosya adı virgül içermemelidir.',
     'file-mime-extension-mismatch'     => 'Dosya uzantısı ve MIME türü :attribute alanı için eşleşmiyor. Dosya uzantısı :extension ve MIME türü :mimeType.',
     'file-not-exists'                  => 'Seçilen dosya :value için :attribute alanında mevcut değil.',
     'pdf-active-content'               => 'PDF gömülü betikler veya eylemler içeriyor ve yüklenemez.',

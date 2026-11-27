@@ -88,13 +88,10 @@ class MediaFileController extends ApiController
                 }
             }
 
-            $storedPaths = $filePath;
-            $filePath = implode(',', $filePath);
-
             try {
                 $this->assignMediaToProductAttribute($product, $attribute, $filePath);
             } catch (ValidationException $e) {
-                $this->deleteFiles($storedPaths, 'product/'.$productId.'/'.$attribute.'/');
+                $this->deleteFiles($filePath, 'product/'.$productId.'/'.$attribute.'/');
 
                 return $this->validateErrorResponse($e->validator->errors()->messages());
             }
@@ -105,7 +102,7 @@ class MediaFileController extends ApiController
                 [
                     'attribute' => $attribute,
                     'sku'       => $requestData['sku'],
-                    'filePath'  => $filePath,
+                    'filePath'  => implode(',', $filePath),
                 ]
             );
         } catch (\Exception $e) {
@@ -454,15 +451,17 @@ class MediaFileController extends ApiController
     /**
      * Persist the uploaded file paths at the attribute's scope, appending to a gallery and replacing any other media.
      *
+     * @param  array<int, string>  $filePaths
+     *
      * @throws ValidationException when the gallery would exceed its file count or total size limit
      */
-    protected function assignMediaToProductAttribute(Product $product, string $attributeCode, string $filePath): void
+    protected function assignMediaToProductAttribute(Product $product, string $attributeCode, array $filePaths): void
     {
-        if ($filePath === '') {
+        if ($filePaths === []) {
             return;
         }
 
-        DB::transaction(function () use ($product, $attributeCode, $filePath): void {
+        DB::transaction(function () use ($product, $attributeCode, $filePaths): void {
             $lockedProduct = $this->productRepository->getModel()::query()->whereKey($product->id)->lockForUpdate()->first();
 
             [$attribute, $values, $path] = $this->resolveProductMediaSlot($lockedProduct, $attributeCode);
@@ -472,13 +471,13 @@ class MediaFileController extends ApiController
             }
 
             if ($attribute->type === AttributeTypes::GALLERY_ATTRIBUTE_TYPE) {
-                $gallery = array_values(array_unique([...$this->splitPaths(Arr::get($values, $path)), ...$this->splitPaths($filePath)]));
+                $gallery = array_values(array_unique([...$this->splitPaths(Arr::get($values, $path)), ...$filePaths]));
 
                 $this->ensureGalleryWithinLimits($gallery);
 
                 Arr::set($values, $path, $gallery);
             } else {
-                Arr::set($values, $path, $filePath);
+                Arr::set($values, $path, implode(',', $filePaths));
             }
 
             $product->values = $values;

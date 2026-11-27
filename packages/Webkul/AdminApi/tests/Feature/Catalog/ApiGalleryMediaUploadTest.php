@@ -285,7 +285,7 @@ it('merges into the gallery stored now, not the one the request loaded', functio
 
     $controller = app(MediaFileController::class);
 
-    (new ReflectionMethod($controller, 'assignMediaToProductAttribute'))->invoke($controller, $loaded, $gallery->code, 'product/'.$this->product->id.'/'.$gallery->code.'/two.png');
+    (new ReflectionMethod($controller, 'assignMediaToProductAttribute'))->invoke($controller, $loaded, $gallery->code, ['product/'.$this->product->id.'/'.$gallery->code.'/two.png']);
 
     expect($this->product->fresh()->values['common'][$gallery->code])->toBe([
         'product/existing/one.png',
@@ -338,3 +338,36 @@ it('rejects an unknown channel or locale when reading or deleting media', functi
     'delete unknown channel' => ['DELETE', 'admin.api.media-files.product.delete', 'channel', 'default.sku'],
     'delete unknown locale'  => ['DELETE', 'admin.api.media-files.product.delete', 'locale', 'xx_XX'],
 ]);
+
+it('refuses a product media upload whose file name contains a comma and stores nothing', function (string $type, array $fileNames): void {
+    $attribute = apiGalleryMediaAttribute($type);
+
+    $this->withHeaders($this->headers)->post(route('admin.api.media-files.product.store'), [
+        'sku'       => $this->product->sku,
+        'attribute' => $attribute->code,
+        'file'      => count($fileNames) === 1
+            ? UploadedFile::fake()->image($fileNames[0])
+            : array_map(fn (string $name): UploadedFile => UploadedFile::fake()->image($name), $fileNames),
+    ])->assertUnprocessable()->assertJsonValidationErrors(['file']);
+
+    expect($this->product->fresh()->values['common'][$attribute->code] ?? null)->toBeNull()
+        ->and(Storage::allFiles('product/'.$this->product->id))->toBe([]);
+})->with([
+    'gallery single file'      => ['gallery', ['red,blue.png']],
+    'gallery one of two files' => ['gallery', ['plain.png', 'red,blue.png']],
+    'image attribute'          => ['image', ['red,blue.png']],
+]);
+
+it('keeps a stored gallery entry whose name holds a comma as one entry when appending', function (): void {
+    $gallery = apiGalleryMediaAttribute('gallery');
+
+    apiGalleryStoreValue($this->product, $gallery->code, ['product/existing/red,blue.png']);
+
+    apiGalleryUploadMedia($this->product->sku, $gallery->code, ['two.png']);
+
+    $stored = $this->product->fresh()->values['common'][$gallery->code];
+
+    expect($stored)->toHaveCount(2)
+        ->and($stored[0])->toBe('product/existing/red,blue.png')
+        ->and(apiGalleryUploadedNames([$stored[1]], 'product/'.$this->product->id.'/'.$gallery->code))->toBe(['two.png']);
+});

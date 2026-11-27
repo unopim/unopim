@@ -18,6 +18,7 @@ return [
     'not-supported'                    => ':attribute ei tue seuraavia arvoja (:unsupported).',
     'seperator-not-supported'          => 'Vain , tai ; tai | on tuettu erottimena.',
     'file-type'                        => 'Tiedoston tyyppi on oltava csv,xls,xlsx',
+    'file-name-comma'                  => 'Kentän :attribute tiedostonimi ei saa sisältää pilkkua.',
     'file-mime-extension-mismatch'     => 'Tiedostopääte ja MIME-tyyppi eivät täsmää kentälle :attribute. Tiedostopääte on :extension ja MIME-tyyppi on :mimeType.',
     'file-not-exists'                  => 'Valittu tiedosto ei ole olemassa :value kentälle :attribute.',
     'pdf-active-content'               => 'PDF sisältää upotettuja komentosarjoja tai toimintoja, eikä sitä voi ladata.',
