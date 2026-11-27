@@ -230,6 +230,11 @@ function measurementContainer(page) {
     .locator('xpath=ancestor::div[contains(concat(" ", normalize-space(@class), " "), " grid ") and contains(concat(" ", normalize-space(@class), " "), " gap-4 ")][1]');
 }
 
+/**
+ * The unit list can open upward underneath the sticky page header, so the unit is
+ * chosen with the keyboard instead of a pointer click. The attribute's default unit
+ * is preselected and Enter on it would deselect it, so the first unselected unit is picked.
+ */
 async function setMeasurementValue(page, amount) {
   const valueInput = page.locator('input[placeholder="Enter value"]').first();
   await valueInput.waitFor({ state: 'visible', timeout: 20000 });
@@ -246,18 +251,20 @@ async function setMeasurementValue(page, amount) {
   const options = unitSelect.locator('li.multiselect__element');
   await options.first().waitFor({ state: 'visible', timeout: 12000 });
 
-  const reachable = await unitSelect.evaluate((select) => {
-    const header = document.querySelector('.js-sticky-header');
-    const limit = header ? header.getBoundingClientRect().bottom : 0;
+  const target = await options.evaluateAll((items) => items.findIndex(
+    (item) => !item.querySelector('.multiselect__option--selected'),
+  ));
+  expect(target, 'every measurement unit is already selected').toBeGreaterThanOrEqual(0);
 
-    return [...select.querySelectorAll('li.multiselect__element')]
-      .findIndex((option) => option.getBoundingClientRect().top >= limit);
-  });
+  const unitLabel = cleanOptionLabel(await options.nth(target).innerText());
+  const search = unitSelect.locator('input.multiselect__input');
 
-  const option = options.nth(Math.max(reachable, 0));
-  const unitLabel = cleanOptionLabel(await option.innerText());
+  for (let step = 0; step < target; step++) {
+    await search.press('ArrowDown');
+  }
 
-  await option.click();
+  await search.press('Enter');
+  await expect(unitSelect.locator('.multiselect__single')).toContainText(unitLabel, { timeout: 10000 });
   await closeDropdown(page);
 
   return unitLabel;
