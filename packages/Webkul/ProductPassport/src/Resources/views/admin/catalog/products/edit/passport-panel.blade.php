@@ -168,6 +168,9 @@
                                                                         @if ($missingField['action_url'])
                                                                             <a
                                                                                 href="{{ $missingField['action_url'] }}"
+                                                                                @if ($missingField['field_anchor'])
+                                                                                    data-passport-field-anchor="{{ $missingField['field_anchor'] }}"
+                                                                                @endif
                                                                                 class="font-medium text-primary-600 hover:text-primary-700 dark:text-primary-300"
                                                                                 title="{{ trans('passport::app.templates.builder.edit') }}"
                                                                             >
@@ -389,6 +392,24 @@
             window.app.config.globalProperties.$emitter?.emit('add-flash', { type: type, message: message });
         }
 
+        function revealField(anchor) {
+            var field = document.getElementById(anchor);
+
+            if (! field) {
+                return false;
+            }
+
+            window.app.config.globalProperties.$emitter?.emit('section-drawer:close', 'passport');
+
+            window.revealInvalidField(field);
+
+            setTimeout(function () {
+                field.querySelector('input:not([type="hidden"]), select, textarea')?.focus({ preventScroll: true });
+            }, 300);
+
+            return true;
+        }
+
         function applyLocaleState(locales) {
             locales.forEach(function (locale) {
                 var version = document.querySelector('[data-passport-version="' + locale.locale_id + '"]');
@@ -558,6 +579,14 @@
         }
 
         document.addEventListener('click', function (event) {
+            var fieldLink = event.target.closest('[data-passport-field-anchor]');
+
+            if (fieldLink && revealField(fieldLink.dataset.passportFieldAnchor)) {
+                event.preventDefault();
+
+                return;
+            }
+
             var rollback = event.target.closest('.passport-republish-btn');
 
             if (rollback && ! rollback.disabled) {

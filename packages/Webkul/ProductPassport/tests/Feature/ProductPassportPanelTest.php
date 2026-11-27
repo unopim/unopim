@@ -5,6 +5,7 @@ use Webkul\Attribute\Models\AttributeFamilyProxy;
 use Webkul\Core\Models\ChannelProxy;
 use Webkul\Core\Models\CoreConfig;
 use Webkul\Core\Models\Locale;
+use Webkul\Product\Contracts\VariantStructurePlanner as VariantStructurePlannerContract;
 use Webkul\Product\Models\ProductProxy;
 use Webkul\ProductPassport\Services\PassportFeature;
 use Webkul\Publication\Jobs\PublishPassportForProductChannelJob;
@@ -249,4 +250,51 @@ it('explains that an enabled template is required before publishing', function (
         ->and($publishResponse->json('blocked_locales.0.status'))->toBe('missing_template');
 
     $this->assertDatabaseMissing('publications', ['product_id' => $product->id]);
+});
+
+it('links a missing field in the edited locale to its field on the page', function (): void {
+    [$product, $channel, $incomplete, , $material] = $this->productWithTwoDppLocales();
+
+    $this->enablePassportPublishing($channel->code);
+
+    $this->loginWithPermissions('all');
+
+    $attributeId = $material->id;
+
+    $this->get(route('admin.catalog.products.edit', ['id' => $product->id, 'channel' => $channel->code, 'locale' => $incomplete->code]))
+        ->assertOk()
+        ->assertSee('data-passport-field-anchor="attribute-'.$attributeId.'"', false)
+        ->assertSee('id="attribute-'.$attributeId.'"', false);
+});
+
+it('keeps a plain link for a missing field in another locale', function (): void {
+    [$product, $channel, , $complete] = $this->productWithTwoDppLocales();
+
+    $this->enablePassportPublishing($channel->code);
+
+    $this->loginWithPermissions('all');
+
+    $this->get(route('admin.catalog.products.edit', ['id' => $product->id, 'channel' => $channel->code, 'locale' => $complete->code]))
+        ->assertOk()
+        ->assertSee('#attribute-', false)
+        ->assertDontSee('data-passport-field-anchor="', false);
+});
+
+it('does not link a missing field the product does not hold at its variant level', function (): void {
+    [$product, $channel, $incomplete] = $this->productWithTwoDppLocales();
+
+    $this->enablePassportPublishing($channel->code);
+
+    $this->app->extend(VariantStructurePlannerContract::class, fn ($planner) => Mockery::mock($planner)
+        ->shouldReceive('ownsAttribute')
+        ->andReturnFalse()
+        ->getMock());
+
+    $this->loginWithPermissions('all');
+
+    $this->get(route('admin.catalog.products.edit', ['id' => $product->id, 'channel' => $channel->code, 'locale' => $incomplete->code]))
+        ->assertOk()
+        ->assertSee('Material Composition')
+        ->assertDontSee('#attribute-', false)
+        ->assertDontSee('data-passport-field-anchor="', false);
 });
