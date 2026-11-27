@@ -92,3 +92,9 @@ it('keeps applying a stored base currency symbol the locale does not use', funct
     expect(core()->formatBasePrice(10))->toContain('₴')
         ->not->toContain('UAH');
 });
+
+it('formats a price with the locale pattern when the stored symbol matches the locale symbol', function (): void {
+    currencySymbolTestCurrency('EUR', '€');
+
+    expect(core()->formatPrice(10, 'EUR'))->toBe((new NumberFormatter('en_US', NumberFormatter::CURRENCY))->formatCurrency(10, 'EUR'));
+});
