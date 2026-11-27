@@ -18,6 +18,7 @@ return [
     'not-supported'                    => 'El :attribute no admet els valors següents (:unsupported).',
     'seperator-not-supported'          => 'Només es recolzen , o ; o | com a separadors.',
     'file-type'                        => 'El fitxer ha de ser de tipus csv, xls, xlsx.',
+    'file-name-comma'                  => 'El nom del fitxer de :attribute no pot contenir cap coma.',
     'file-mime-extension-mismatch'     => 'L\'extensió del fitxer i el tipus MIME no coincideixen per al camp :attribute. L\'extensió del fitxer és :extension i el tipus MIME és :mimeType.',
     'file-not-exists'                  => 'El fitxer seleccionat no existeix :value per al camp :attribute.',
     'pdf-active-content'               => 'El PDF conté scripts o accions incrustats i no es pot penjar.',

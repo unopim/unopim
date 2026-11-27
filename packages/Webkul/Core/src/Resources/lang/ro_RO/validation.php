@@ -18,6 +18,7 @@ return [
     'not-supported'                    => 'Câmpul :attribute nu acceptă următoarele valori (:unsupported).',
     'seperator-not-supported'          => 'Doar , sau ; sau | sunt suportate ca separatori.',
     'file-type'                        => 'Fișierul trebuie să fie de tip csv, xls, xlsx.',
+    'file-name-comma'                  => 'Numele fișierului pentru :attribute nu trebuie să conțină virgulă.',
     'file-mime-extension-mismatch'     => 'Extensia fișierului și tipul MIME nu se potrivesc pentru câmpul :attribute. Extensia fișierului este :extension și tipul MIME este :mimeType.',
     'file-not-exists'                  => 'Fișierul selectat nu există :value pentru câmpul :attribute.',
     'pdf-active-content'               => 'PDF-ul conține scripturi sau acțiuni încorporate și nu poate fi încărcat.',

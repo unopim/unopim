@@ -18,6 +18,7 @@ return [
     'not-supported'                    => ':attribute는 다음 값을 지원하지 않습니다 (:unsupported).',
     'seperator-not-supported'          => '콤마, 세미콜론, 또는 파이프만 분리기로 사용할 수 있습니다.',
     'file-type'                        => '파일 유형은 csv, xls, xlsx여야 합니다.',
+    'file-name-comma'                  => ':attribute의 파일 이름에는 쉼표를 포함할 수 없습니다.',
     'file-mime-extension-mismatch'     => '파일 확장자와 MIME 유형이 :attribute 필드와 일치하지 않습니다. 파일 확장자는 :extension이고 MIME 유형은 :mimeType입니다.',
     'file-not-exists'                  => ':attribute 필드의 선택한 파일 :value가 존재하지 않습니다.',
     'pdf-active-content'               => '이 PDF에는 포함된 스크립트나 동작이 있어 업로드할 수 없습니다.',
