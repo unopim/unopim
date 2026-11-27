@@ -82,3 +82,26 @@ it('gives an attribute shared by several groups to the first group only', functi
     expect($family->customAttributesForGroup($first->id)->pluck('code')->all())->toBe([$shared->code])
         ->and($family->customAttributesForGroup($second->id)->pluck('code')->all())->toBe([$ownOnly->code]);
 });
+
+it('orders attributes that share a mapping position by attribute id on every database', function () {
+    $family = AttributeFamily::factory()->create();
+    $group = AttributeGroup::factory()->create();
+
+    [$first, $second] = Attribute::factory()->count(2)->create()->all();
+
+    $mappingId = assignFamilyGroup($family, $group, []);
+
+    foreach ([$second, $first] as $attribute) {
+        DB::table('attribute_group_mappings')->insert([
+            'attribute_family_group_id' => $mappingId,
+            'attribute_id'              => $attribute->id,
+            'position'                  => 1,
+        ]);
+    }
+
+    $expected = [$first->code, $second->code];
+
+    expect($family->customAttributesForGroup($group->id)->pluck('code')->all())->toBe($expected)
+        ->and($family->customAttributesByGroup()->get($group->id)->pluck('code')->all())->toBe($expected)
+        ->and($family->attributeSummariesByGroup('en_US', $group->id)->get($group->id)->pluck('code')->all())->toBe($expected);
+});

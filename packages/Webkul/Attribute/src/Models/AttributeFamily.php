@@ -84,6 +84,7 @@ class AttributeFamily extends TranslatableModel implements AttributeFamilyContra
     {
         return $this->customAttributesByGroup ??= $this->customAttributes()
             ->orderBy('attribute_group_mappings.position')
+            ->orderBy('attributes.id')
             ->get()
             ->groupBy('group_id');
     }
@@ -126,6 +127,7 @@ class AttributeFamily extends TranslatableModel implements AttributeFamilyContra
             ->where('attribute_family_group_mappings.attribute_family_id', $this->id)
             ->when($groupId, fn ($builder) => $builder->where('attribute_family_group_mappings.attribute_group_id', $groupId))
             ->orderBy('attribute_group_mappings.position')
+            ->orderBy('attributes.id')
             ->select([
                 'attributes.id',
                 'attributes.code',
@@ -202,6 +204,7 @@ class AttributeFamily extends TranslatableModel implements AttributeFamilyContra
         $attributes = $this->customAttributes()
             ->where('attribute_groups.id', $groupId)
             ->orderBy('attribute_group_mappings.position')
+            ->orderBy('attributes.id')
             ->get();
 
         if ($attributes->isEmpty()) {
