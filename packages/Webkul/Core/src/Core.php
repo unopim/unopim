@@ -464,7 +464,7 @@ class Core
     }
 
     /**
-     * Return currency symbol from currency code.
+     * Return the stored symbol of the given currency, or the locale symbol when none is stored.
      */
     public function currencySymbol(Contracts\Currency|string $currency): string
     {

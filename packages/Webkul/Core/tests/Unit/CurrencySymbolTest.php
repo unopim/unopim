@@ -1,11 +1,8 @@
 <?php
 
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use Webkul\Core\Models\Currency;
 use Webkul\Core\RequestMemo;
-
-uses(DatabaseTransactions::class);
 
 beforeEach(function (): void {
     app()->setLocale('en_US');
@@ -26,13 +23,11 @@ function currencySymbolTestResetCore(): void
  */
 function currencySymbolTestCurrency(string $code, string $symbol): Currency
 {
-    $currency = Currency::firstOrCreate(['code' => $code], ['symbol' => $symbol]);
-
-    $currency->update(['symbol' => $symbol]);
+    $currency = Currency::updateOrCreate(['code' => $code], ['symbol' => $symbol]);
 
     currencySymbolTestResetCore();
 
-    return $currency->fresh();
+    return $currency;
 }
 
 it('returns the stored symbol for a code the locale only knows by its ISO code', function (): void {
