@@ -581,12 +581,12 @@ class Importer extends AbstractImporter
             }
 
             if ($field->isLocaleBasedfield()) {
-                foreach ($this->localeCachedValues[$rowData['locale']] ?? [] as $categoryData) {
-                    if (! isset($categoryData[$rowData['locale']][$categoryFieldCode])) {
+                foreach ($this->localeCachedValues[$rowData['locale']] ?? [] as $categoryCode => $categoryData) {
+                    if (! isset($categoryData[$categoryFieldCode])) {
                         continue;
                     }
 
-                    if ($categoryData[$rowData['locale']][$categoryFieldCode] == $rowData[$categoryFieldCode]) {
+                    if ($categoryData[$categoryFieldCode] == $rowData[$categoryFieldCode] && $rowData['code'] != $categoryCode) {
                         $this->skipRow($rowNumber, self::ERROR_NOT_UNIQUE_VALUE, $categoryFieldCode, trans($this->messages[self::ERROR_NOT_UNIQUE_VALUE], ['code' => $categoryFieldCode]));
 
                         $hasError = true;
@@ -597,7 +597,7 @@ class Importer extends AbstractImporter
 
                 if (! $hasError) {
                     if (! empty($rowData[$categoryFieldCode])) {
-                        $this->localeCachedValues[$rowData['locale']] = [$categoryFieldCode => $rowData[$categoryFieldCode]];
+                        $this->localeCachedValues[$rowData['locale']][$rowData['code']][$categoryFieldCode] = $rowData[$categoryFieldCode];
                     }
 
                     $validations[$categoryFieldCode] = $field->getValidationRules($rowData['locale'], $existingCategoryId);
@@ -622,7 +622,7 @@ class Importer extends AbstractImporter
 
             if (! $hasError) {
                 if (! empty($rowData[$categoryFieldCode])) {
-                    $this->cachedUniqueValues[$rowData['code']] = [$categoryFieldCode => $rowData[$categoryFieldCode]];
+                    $this->cachedUniqueValues[$rowData['code']][$categoryFieldCode] = $rowData[$categoryFieldCode];
                 }
 
                 $validations[$categoryFieldCode] = $field->getValidationRules($rowData['locale'], $existingCategoryId);

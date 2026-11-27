@@ -46,3 +46,54 @@ it('validates a formula-escaped negative category field value as the number it w
 
     expect($isValid)->toBeTrue();
 });
+
+/**
+ * @param  array<string, mixed>  $attributes
+ * @return array{0: Importer, 1: CategoryField, 2: CategoryField}
+ */
+function categoryImporterWithTwoUniqueFields(array $attributes = []): array
+{
+    $first = CategoryField::factory()->create(['type' => 'text', 'is_unique' => 1, 'status' => 1, ...$attributes]);
+    $second = CategoryField::factory()->create(['type' => 'text', 'is_unique' => 1, 'status' => 1, ...$attributes]);
+
+    $importer = app(Importer::class)->setImport(JobTrack::factory()->create());
+    $importer->setErrorHelper(app(Error::class));
+    $importer->getCategoryFields();
+
+    return [$importer, $first, $second];
+}
+
+/**
+ * @param  array<string, string>  $values
+ * @return array<string, string>
+ */
+function uniqueCategoryRow(array $values): array
+{
+    return [
+        'code'   => 'unique_'.uniqid(),
+        'parent' => '',
+        'name'   => 'Unique value',
+        'locale' => 'en_US',
+        ...$values,
+    ];
+}
+
+it('rejects an in-file duplicate of any unique category field, not only the last one checked', function (array $attributes): void {
+    [$importer, $first, $second] = categoryImporterWithTwoUniqueFields($attributes);
+
+    expect($importer->validateRow(uniqueCategoryRow([$first->code => 'first-a', $second->code => 'second-a']), 1))->toBeTrue()
+        ->and($importer->validateRow(uniqueCategoryRow([$first->code => 'first-a', $second->code => 'second-b']), 2))->toBeFalse()
+        ->and($importer->validateRow(uniqueCategoryRow([$first->code => 'first-c', $second->code => 'second-a']), 3))->toBeFalse();
+})->with([
+    'common'     => [[]],
+    'per locale' => [['value_per_locale' => 1]],
+]);
+
+it('accepts the same unique category field value on another row of the same category', function (): void {
+    [$importer, $first] = categoryImporterWithTwoUniqueFields(['value_per_locale' => 1]);
+
+    $row = uniqueCategoryRow([$first->code => 'scoped-a']);
+
+    expect($importer->validateRow($row, 1))->toBeTrue()
+        ->and($importer->validateRow($row, 2))->toBeTrue();
+});
