@@ -4,6 +4,7 @@ use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Services\Normalizers\PriceNormalizer;
 use Webkul\Core\Models\Channel;
 use Webkul\Core\Models\Currency;
+use Webkul\Core\RequestMemo;
 
 beforeEach(function () {
     $this->normalizer = app(PriceNormalizer::class);
@@ -60,6 +61,14 @@ describe('PriceNormalizer - datagrid format', function () {
             ->and($result)->toContain('99.99')
             ->and($result)->toContain('89.99')
             ->and($result)->toContain(', ');
+    });
+
+    it('shows the stored currency symbol in the datagrid format', function (): void {
+        Currency::query()->updateOrCreate(['code' => 'UAH'], ['symbol' => '₴']);
+
+        app(RequestMemo::class)->forget('core.currency_symbols');
+
+        expect($this->normalizer->normalize(['UAH' => '10'], null, ['format' => 'datagrid']))->toBe('₴ 10');
     });
 
     it('returns non-array data unchanged in datagrid format', function () {

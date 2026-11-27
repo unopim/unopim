@@ -464,14 +464,38 @@ class Core
     }
 
     /**
-     * Return currency symbol from currency code.
-     *
-     * @param  string|Contracts\Currency  $currency
+     * Return the stored symbol of the given currency, or the locale symbol when none is stored.
      */
-    public function currencySymbol($currency): string
+    public function currencySymbol(Contracts\Currency|string $currency): string
     {
-        $code = $currency instanceof Contracts\Currency ? $currency->code : $currency;
+        if ($currency instanceof Contracts\Currency) {
+            return $currency->symbol ?: $this->localeCurrencySymbol($currency->code);
+        }
 
+        return ($this->storedCurrencySymbols()[$currency] ?? null) ?: $this->localeCurrencySymbol($currency);
+    }
+
+    /**
+     * Return the stored currency symbols keyed by currency code, read once per request.
+     *
+     * @return array<string, string|null>
+     */
+    protected function storedCurrencySymbols(): array
+    {
+        $memo = resolve(RequestMemo::class);
+
+        if (! $memo->has('core.currency_symbols')) {
+            $memo->set('core.currency_symbols', $this->getAllCurrencies()->pluck('symbol', 'code')->all());
+        }
+
+        return $memo->get('core.currency_symbols');
+    }
+
+    /**
+     * Return the symbol the current locale uses for the given currency code.
+     */
+    protected function localeCurrencySymbol(string $code): string
+    {
         $formatter = new \NumberFormatter(app()->getLocale().'@currency='.$code, \NumberFormatter::CURRENCY);
 
         return $formatter->getSymbol(\NumberFormatter::CURRENCY_SYMBOL);
@@ -502,7 +526,7 @@ class Core
         }
 
         if ($symbol = $currency->symbol) {
-            if ($this->currencySymbol($currency) == $symbol) {
+            if ($this->localeCurrencySymbol($currency->code) == $symbol) {
                 return $formatter->formatCurrency($price, $currency->code);
             }
 
@@ -531,7 +555,7 @@ class Core
         $formatter = new \NumberFormatter(app()->getLocale(), \NumberFormatter::CURRENCY);
 
         if ($symbol = $this->getBaseCurrency()->symbol) {
-            if ($this->currencySymbol($this->getBaseCurrencyCode()) == $symbol) {
+            if ($this->localeCurrencySymbol($this->getBaseCurrencyCode()) == $symbol) {
                 $content = $formatter->formatCurrency($price, $this->getBaseCurrencyCode());
             } else {
                 $formatter->setSymbol(\NumberFormatter::CURRENCY_SYMBOL, $symbol);
