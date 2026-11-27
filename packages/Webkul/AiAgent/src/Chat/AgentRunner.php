@@ -18,6 +18,7 @@ use Laravel\Ai\Streaming\Events\ToolResult as ToolResultEvent;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Webkul\AiAgent\Events\AgentSystemPromptBuilding;
 use Webkul\AiAgent\Events\AgentToolExecuted;
+use Webkul\AiAgent\Services\BulkEnrichmentEstimator;
 use Webkul\AiAgent\Services\TokenUsageRecorder;
 use Webkul\MagicAI\Enums\AiProvider;
 use Webkul\MagicAI\Services\ScopedProviderConfig;
@@ -703,7 +704,7 @@ MODE;
     /**
      * Pull special keys out of a tool result payload and merge them into the
      * response array. Widget uses these for action buttons (open product,
-     * download file, render table).
+     * download file, render table) and the bulk token estimate card.
      *
      * @param  array<string, mixed>  $result
      */
@@ -727,6 +728,10 @@ MODE;
 
         if (! empty($payload['result']) && is_array($payload['result'])) {
             $result['result'] = $payload['result'];
+        }
+
+        if ($estimate = BulkEnrichmentEstimator::normalize($payload['token_estimate'] ?? null)) {
+            $result['token_estimate'] = $estimate;
         }
     }
 

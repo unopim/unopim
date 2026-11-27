@@ -3,6 +3,7 @@
 namespace Webkul\AiAgent\Chat;
 
 use Illuminate\Validation\ValidationException;
+use Webkul\AiAgent\Services\BulkEnrichmentEstimator;
 
 /** Inert native result data only: never authorization or executable tool instructions. */
 class MessageDisplay
@@ -11,13 +12,13 @@ class MessageDisplay
      * Extract and validate the inert display fields of a widget message.
      *
      * @param  array<string, mixed>  $message
-     * @return array{result?: array<array-key, mixed>, product_url?: string, download_url?: string, _confirmed?: bool, action?: string}
+     * @return array{result?: array<array-key, mixed>, product_url?: string, download_url?: string, _confirmed?: bool, action?: string, token_estimate?: array<string, int|bool>}
      *
      * @throws ValidationException
      */
     public function normalize(array $message): array
     {
-        $data = array_intersect_key($message, array_flip(['result', 'product_url', 'download_url', '_confirmed', 'action']));
+        $data = array_intersect_key($message, array_flip(['result', 'product_url', 'download_url', '_confirmed', 'action', 'token_estimate']));
 
         if (isset($data['result'])) {
             if (! is_array($data['result']) || strlen(json_encode($data['result'])) > 65536) {
@@ -40,6 +41,10 @@ class MessageDisplay
 
         if (isset($data['action']) && (! is_string($data['action']) || ! preg_match('/^[a-zA-Z0-9_-]{1,64}$/', $data['action']))) {
             $this->invalid();
+        }
+
+        if (isset($data['token_estimate'])) {
+            $data['token_estimate'] = BulkEnrichmentEstimator::normalize($data['token_estimate']) ?? $this->invalid();
         }
 
         return array_filter($data, fn ($value) => $value !== null);
