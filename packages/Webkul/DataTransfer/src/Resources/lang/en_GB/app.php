@@ -42,6 +42,7 @@ return [
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'You cannot delete the root category that is associated with a channel',
+                    'used-by-products'              => 'This category or one of its child categories is assigned to products and cannot be deleted.',
                 ],
             ],
         ],
@@ -107,6 +108,7 @@ return [
                     'duplicate-code'           => 'Attribute option code :code is already in use.',
                     'code_not_found_to_delete' => 'Attribute option code not found for deletion.',
                     'ambiguous-code-to-delete' => 'Option code :code exists on more than one attribute; add attribute_code.',
+                    'used-by-products'         => 'Attribute option :code is used by products and cannot be deleted.',
                     'locale-not-exist'         => 'Locale ":code" does not exist.',
                     'invalid-attribute'        => 'Attribute ":code" does not exist.',
                 ],

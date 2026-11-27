@@ -119,6 +119,23 @@ foreach ($packageTestPaths as $testPath) {
 */
 
 /**
+ * Create a factory product whose values reference the given catalog codes.
+ *
+ * @param  array<string, mixed>  $values
+ */
+function productReferencingCatalogValues(array $values): Product
+{
+    $product = Product::factory()->create();
+
+    $values['common']['sku'] = $product->sku;
+
+    $product->values = $values;
+    $product->save();
+
+    return $product;
+}
+
+/**
  * Seed the family's required attribute values on a factory product.
  *
  * A save is checked against every required attribute of the family, not only the ones the request

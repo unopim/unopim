@@ -42,6 +42,7 @@ return [
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'Sie können die Stammkategorie, die einem Kanal zugeordnet ist, nicht löschen',
+                    'used-by-products'              => 'Cette catégorie ou l\'une de ses sous-catégories est attribuée à des produits et ne peut pas être supprimée.',
                 ],
             ],
         ],
@@ -107,6 +108,7 @@ return [
                     'duplicate-code'           => 'Le code de l\'option d\'attribut :code est déjà utilisé.',
                     'code_not_found_to_delete' => 'Code de l\'option d\'attribut introuvable pour la suppression.',
                     'ambiguous-code-to-delete' => 'Le code d\'option :code existe pour plusieurs attributs ; ajoutez attribute_code.',
+                    'used-by-products'         => 'L\'option d\'attribut :code est utilisée par des produits et ne peut pas être supprimée.',
                     'locale-not-exist'         => 'La langue ":code" n\'existe pas.',
                     'invalid-attribute'        => 'L\'attribut ":code" n\'existe pas.',
                 ],

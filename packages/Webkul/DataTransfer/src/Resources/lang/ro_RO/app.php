@@ -42,6 +42,7 @@ return [
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'Nu poți șterge categoria rădăcină asociată unui canal',
+                    'used-by-products'              => 'Această categorie sau una dintre subcategoriile ei este atribuită unor produse și nu poate fi ștearsă.',
                 ],
             ],
         ],
@@ -107,6 +108,7 @@ return [
                     'duplicate-code'           => 'Codul opțiunii atributului :code este deja utilizat.',
                     'code_not_found_to_delete' => 'Codul opțiunii atributului nu a fost găsit pentru ștergere.',
                     'ambiguous-code-to-delete' => 'Codul opțiunii :code există la mai multe atribute; adăugați attribute_code.',
+                    'used-by-products'         => 'Opțiunea de atribut :code este folosită de produse și nu poate fi ștearsă.',
                     'locale-not-exist'         => 'Numele de localizare ":code" nu există.',
                     'invalid-attribute'        => 'Atributul ":code" nu există.',
                 ],

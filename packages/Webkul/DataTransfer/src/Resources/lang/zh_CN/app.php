@@ -42,6 +42,7 @@ return [
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => '您无法删除与频道关联的根类别',
+                    'used-by-products'              => '此分类或其子分类已分配给商品，无法删除。',
                 ],
             ],
         ],
@@ -107,6 +108,7 @@ return [
                     'duplicate-code'           => '属性选项代码 :code 已被使用。',
                     'code_not_found_to_delete' => '未找到要删除的属性选项代码。',
                     'ambiguous-code-to-delete' => '选项代码 :code 存在于多个属性中；请添加 attribute_code。',
+                    'used-by-products'         => '属性选项 :code 正被商品使用，无法删除。',
                     'locale-not-exist'         => '区域设置“:code”不存在。',
                     'invalid-attribute'        => '属性“:code”不存在。',
                 ],

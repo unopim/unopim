@@ -150,9 +150,16 @@ class AttributeOptionController extends Controller
      */
     public function destroy(int $attributeId, int $id): JsonResponse
     {
-        abort_if(! $this->attributeOptionRepository->findOneWhere(['id' => $id, 'attribute_id' => $attributeId]), 404);
+        $option = $this->attributeOptionRepository->findOneWhere(['id' => $id, 'attribute_id' => $attributeId]);
 
-        // TODO: add validation before delete to check if it is not being used in any product
+        abort_if(! $option, 404);
+
+        if ($this->attributeOptionRepository->isUsedByProducts($option)) {
+            return new JsonResponse([
+                'message' => trans('admin::app.catalog.attributes.edit.option.delete-in-use'),
+            ], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
         try {
             Event::dispatch('catalog.attribute.option.delete.before', $id);
 

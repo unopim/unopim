@@ -313,6 +313,13 @@ class AttributeController extends ApiController
             );
         }
 
+        if ($this->attributeOptionRepository->isUsedByProducts($option)) {
+            return response()->json([
+                'success' => false,
+                'message' => trans('admin::app.catalog.attributes.edit.option.delete-in-use'),
+            ], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
         try {
             $this->attributeOptionRepository->delete($option->id);
 

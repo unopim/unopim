@@ -27,6 +27,8 @@ class Importer extends AbstractImporter
 
     public const ERROR_INVALID_ATTRIBUTE = 'invalid_attribute';
 
+    public const ERROR_USED_BY_PRODUCTS = 'option_used_by_products';
+
     /**
      * Permanent entity columns
      */
@@ -63,9 +65,17 @@ class Importer extends AbstractImporter
         self::ERROR_AMBIGUOUS_CODE_FOR_DELETE => 'data_transfer::app.importers.attribute-options.validation.errors.ambiguous-code-to-delete',
         self::ERROR_NOT_FOUND_LOCALE          => 'data_transfer::app.importers.attribute-options.validation.errors.locale-not-exist',
         self::ERROR_INVALID_ATTRIBUTE         => 'data_transfer::app.importers.attribute-options.validation.errors.invalid-attribute',
+        self::ERROR_USED_BY_PRODUCTS          => 'data_transfer::app.importers.attribute-options.validation.errors.used-by-products',
     ];
 
     protected array $locales = [];
+
+    /**
+     * Ids of the options listed for deletion that products still hold, keyed by id.
+     *
+     * @var array<int, true>
+     */
+    protected array $usedOptionIds = [];
 
     public function __construct(
         protected JobTrackBatchRepository $importBatchRepository,
@@ -101,7 +111,35 @@ class Importer extends AbstractImporter
             ? ['code']
             : ['code', 'attribute_code', 'locale'];
 
+        $this->usedOptionIds = $this->import->action == Import::ACTION_DELETE
+            ? array_fill_keys($this->usedOptionIdsInSource(), true)
+            : [];
+
         parent::validateData();
+    }
+
+    /**
+     * Check every option the delete file lists against the products in one pass.
+     *
+     * @return array<int, int>
+     */
+    protected function usedOptionIdsInSource(): array
+    {
+        $source = $this->getSource();
+
+        $optionIds = [];
+
+        for ($source->rewind(); $source->valid(); $source->next()) {
+            $rowData = $source->current();
+
+            $id = isset($rowData['code']) ? $this->getAttributeOptionIdForDelete($rowData) : null;
+
+            if ($id) {
+                $optionIds[] = $id;
+            }
+        }
+
+        return $optionIds === [] ? [] : $this->attributeOptionRepository->usedByProducts($optionIds);
     }
 
     public function validateRow(array $rowData, int $rowNumber): bool
@@ -116,6 +154,17 @@ class Importer extends AbstractImporter
             $id = $this->getAttributeOptionIdForDelete($rowData);
 
             if ($id) {
+                if (isset($this->usedOptionIds[$id])) {
+                    $this->skipRow(
+                        $rowNumber,
+                        self::ERROR_USED_BY_PRODUCTS,
+                        'code',
+                        trans($this->messages[self::ERROR_USED_BY_PRODUCTS], ['code' => $rowData['code']])
+                    );
+
+                    return false;
+                }
+
                 return true;
             }
 

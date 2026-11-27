@@ -42,6 +42,7 @@ return [
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'Hindi mo maaaring burahin ang ugat na kategorya na nauugnay sa isang channel',
+                    'used-by-products'              => 'Ang kategoryang ito o isa sa mga subkategorya nito ay nakatalaga sa mga produkto at hindi mabubura.',
                 ],
             ],
         ],
@@ -107,6 +108,7 @@ return [
                     'duplicate-code'           => 'Ang code ng opsyon ng tampok na :code ay ginagamit na.',
                     'code_not_found_to_delete' => 'Hindi natagpuan ang code ng opsyon ng tampok para burahin.',
                     'ambiguous-code-to-delete' => 'Ang code ng opsyon na :code ay nasa higit sa isang tampok; idagdag ang attribute_code.',
+                    'used-by-products'         => 'Ang opsyon ng attribute na :code ay ginagamit ng mga produkto at hindi mabubura.',
                     'locale-not-exist'         => 'Ang locale na ":code" ay hindi umiiral.',
                     'invalid-attribute'        => 'Ang tampok na ":code" ay hindi umiiral.',
                 ],

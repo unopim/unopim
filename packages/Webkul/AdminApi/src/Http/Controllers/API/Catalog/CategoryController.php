@@ -73,6 +73,14 @@ class CategoryController extends ApiController
             ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
+        if ($this->categoryRepository->isUsedByProducts($category->id)) {
+            return response()->json([
+                'success' => false,
+                'message' => trans('admin::app.catalog.categories.delete-category-in-use'),
+                'code'    => $code,
+            ], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
         try {
             $category->delete();
 

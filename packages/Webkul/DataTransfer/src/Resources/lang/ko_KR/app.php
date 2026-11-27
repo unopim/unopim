@@ -42,6 +42,7 @@ return [
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => '채널과 관련된 루트 카테고리를 삭제할 수 없음',
+                    'used-by-products'              => '이 카테고리 또는 하위 카테고리가 상품에 할당되어 있어 삭제할 수 없습니다.',
                 ],
             ],
         ],
@@ -107,6 +108,7 @@ return [
                     'duplicate-code'           => '속성 옵션 코드 :code는 이미 사용 중입니다.',
                     'code_not_found_to_delete' => '삭제할 속성 옵션 코드를 찾을 수 없습니다.',
                     'ambiguous-code-to-delete' => '옵션 코드 :code이(가) 둘 이상의 속성에 존재합니다. attribute_code를 추가하세요.',
+                    'used-by-products'         => '속성 옵션 :code은(는) 상품에서 사용 중이므로 삭제할 수 없습니다.',
                     'locale-not-exist'         => '로캘 ":code"가 존재하지 않습니다.',
                     'invalid-attribute'        => '속성 ":code"가 존재하지 않습니다.',
                 ],

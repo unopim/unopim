@@ -42,6 +42,7 @@ return [
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'Sie können die Stammkategorie, die einem Kanal zugeordnet ist, nicht löschen',
+                    'used-by-products'              => 'Diese Kategorie oder eine ihrer Unterkategorien ist Produkten zugeordnet und kann nicht gelöscht werden.',
                 ],
             ],
         ],
@@ -107,6 +108,7 @@ return [
                     'duplicate-code'           => 'Attributoptionscode :code wird bereits verwendet.',
                     'code_not_found_to_delete' => 'Attributoptionscode zum Löschen nicht gefunden.',
                     'ambiguous-code-to-delete' => 'Optionscode :code existiert bei mehr als einem Attribut; bitte attribute_code angeben.',
+                    'used-by-products'         => 'Die Attributoption :code wird von Produkten verwendet und kann nicht gelöscht werden.',
                     'locale-not-exist'         => 'Gebietsschema ":code" existiert nicht.',
                     'invalid-attribute'        => 'Attribut ":code" existiert nicht.',
                 ],

@@ -389,6 +389,12 @@ class CategoryController extends Controller
             ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
+        if ($this->categoryRepository->isUsedByProducts($category->id)) {
+            return new JsonResponse([
+                'message' => trans('admin::app.catalog.categories.delete-category-in-use'),
+            ], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
         try {
             Event::dispatch('catalog.category.delete.before', $id);
 
@@ -417,18 +423,23 @@ class CategoryController extends Controller
 
         $categoryIds = $massDestroyRequest->selectedIds(CategoryDataGrid::class);
 
-        foreach ($categoryIds as $categoryId) {
-            $category = $this->categoryRepository->find($categoryId);
+        $categories = $categoryIds
+            ->map(fn (int|string $categoryId) => $this->categoryRepository->find($categoryId))
+            ->filter()
+            ->collect();
 
-            if (! isset($category)) {
-                continue;
-            }
-
+        foreach ($categories as $category) {
             if ($this->isRelatedToChannel($category->id)) {
-                $suppressFlash = false;
-
                 return new JsonResponse(['message' => trans('admin::app.catalog.categories.delete-category-root')], JsonResponse::HTTP_BAD_REQUEST);
             }
+        }
+
+        if ($this->categoryRepository->isAnyUsedByProducts($categories->pluck('id')->all())) {
+            return new JsonResponse(['message' => trans('admin::app.catalog.categories.delete-category-in-use')], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        foreach ($categories as $category) {
+            $categoryId = $category->id;
 
             try {
                 $suppressFlash = true;

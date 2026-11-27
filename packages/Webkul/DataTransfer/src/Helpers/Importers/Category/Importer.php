@@ -46,6 +46,8 @@ class Importer extends AbstractImporter
 
     const ERROR_RELATED_TO_CHANNEL = 'channel_related_category_root';
 
+    const ERROR_USED_BY_PRODUCTS = 'category_used_by_products';
+
     /**
      * Permanent entity columns
      */
@@ -62,6 +64,13 @@ class Importer extends AbstractImporter
      * Current Batch Category codes
      */
     protected array $categoryCodesInBatch = [];
+
+    /**
+     * Ids of the categories in a delete file that products are assigned to, keyed by id.
+     *
+     * @var array<int, int>
+     */
+    protected array $usedCategoryIds = [];
 
     /**
      * Permanent entity columns
@@ -84,6 +93,7 @@ class Importer extends AbstractImporter
         self::ERROR_NOT_FOUND_LOCALE          => 'data_transfer::app.importers.products.validation.errors.locale-not-exist',
         self::ERROR_NOT_UNIQUE_VALUE          => 'data_transfer::app.importers.products.validation.errors.not-unique-value',
         self::ERROR_RELATED_TO_CHANNEL        => 'data_transfer::app.importers.categories.validation.errors.channel-related-category-root',
+        self::ERROR_USED_BY_PRODUCTS          => 'data_transfer::app.importers.categories.validation.errors.used-by-products',
     ];
 
     /**
@@ -160,7 +170,33 @@ class Importer extends AbstractImporter
 
         $this->getNonDeletableCategories();
 
+        $this->usedCategoryIds = $this->import->action == Import::ACTION_DELETE
+            ? array_fill_keys($this->usedCategoryIdsInSource(), true)
+            : [];
+
         parent::validateData();
+    }
+
+    /**
+     * Check every category the delete file lists against the products in one pass.
+     *
+     * @return array<int, int>
+     */
+    protected function usedCategoryIdsInSource(): array
+    {
+        $source = $this->getSource();
+
+        $categoryIds = [];
+
+        for ($source->rewind(); $source->valid(); $source->next()) {
+            $code = $source->current()['code'] ?? null;
+
+            if ($code && $id = $this->categoryStorage->get($code)) {
+                $categoryIds[] = $id;
+            }
+        }
+
+        return $categoryIds === [] ? [] : $this->categoryRepository->usedByProducts($categoryIds);
     }
 
     public function getCategoryFields(): array
@@ -203,6 +239,12 @@ class Importer extends AbstractImporter
 
             if (in_array($id, $this->nonDeletableCategories)) {
                 $this->skipRow($rowNumber, self::ERROR_RELATED_TO_CHANNEL, $rowData['code']);
+
+                return false;
+            }
+
+            if (isset($this->usedCategoryIds[$id])) {
+                $this->skipRow($rowNumber, self::ERROR_USED_BY_PRODUCTS, $rowData['code']);
 
                 return false;
             }
@@ -313,10 +355,16 @@ class Importer extends AbstractImporter
                 continue;
             }
 
-            $idsToDelete[] = $this->categoryStorage->get($rowData['code']);
+            $idsToDelete[$rowData['code']] = $this->categoryStorage->get($rowData['code']);
         }
 
-        $idsToDelete = array_unique($idsToDelete);
+        $usedIds = $idsToDelete === [] ? [] : $this->categoryRepository->usedByProducts(array_values($idsToDelete));
+
+        foreach (array_intersect($idsToDelete, $usedIds) as $code => $id) {
+            $this->jobLogger?->warning($code.': '.trans($this->messages[self::ERROR_USED_BY_PRODUCTS]));
+        }
+
+        $idsToDelete = array_unique(array_diff($idsToDelete, $usedIds));
 
         $this->deletedItemsCount = count($idsToDelete);
 

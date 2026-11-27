@@ -42,6 +42,7 @@ return [
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'No puedes eliminar la categoría raíz relacionada con un canal',
+                    'used-by-products'              => 'Esta categoría o alguna de sus subcategorías está asignada a productos y no se puede eliminar.',
                 ],
             ],
         ],
@@ -107,6 +108,7 @@ return [
                     'duplicate-code'           => 'El código de la opción de atributo :code ya está en uso.',
                     'code_not_found_to_delete' => 'Código de opción de atributo no encontrado para eliminación.',
                     'ambiguous-code-to-delete' => 'El código de opción :code existe en más de un atributo; agregue attribute_code.',
+                    'used-by-products'         => 'La opción de atributo :code la usan productos y no se puede eliminar.',
                     'locale-not-exist'         => 'La configuración regional ":code" no existe.',
                     'invalid-attribute'        => 'El atributo ":code" no existe.',
                 ],

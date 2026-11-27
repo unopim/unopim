@@ -34,6 +34,8 @@ function makeImporter(array $overrides = []): array
     $localeRepo->shouldReceive('getActiveLocales')
         ->andReturn(collect([(object) ['code' => 'en']]));
 
+    $optionRepo->shouldReceive('find')->andReturnNull()->byDefault();
+
     $storage->shouldReceive('init')->byDefault();
     $storage->shouldReceive('load')->byDefault();
     $storage->shouldReceive('isAmbiguous')->andReturn(false)->byDefault();

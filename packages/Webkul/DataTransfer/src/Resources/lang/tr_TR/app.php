@@ -42,6 +42,7 @@ return [
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'Bir kanal ile ilişkilendirilen kök kategoriyi silemezsiniz',
+                    'used-by-products'              => 'Bu kategori veya alt kategorilerinden biri ürünlere atanmış olduğundan silinemez.',
                 ],
             ],
         ],
@@ -107,6 +108,7 @@ return [
                     'duplicate-code'           => 'Nitelik seçenek kodu :code zaten kullanımda.',
                     'code_not_found_to_delete' => 'Silinecek nitelik seçenek kodu bulunamadı.',
                     'ambiguous-code-to-delete' => 'Seçenek kodu :code birden fazla nitelikte mevcut; attribute_code ekleyin.',
+                    'used-by-products'         => ':code özellik seçeneği ürünler tarafından kullanıldığı için silinemez.',
                     'locale-not-exist'         => 'Yerel ":code" mevcut değil.',
                     'invalid-attribute'        => 'Nitelik ":code" mevcut değil.',
                 ],

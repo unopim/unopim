@@ -42,6 +42,7 @@ return [
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'Je kunt de hoofdcategorie die aan een kanaal is gekoppeld niet verwijderen.',
+                    'used-by-products'              => 'Deze categorie of een van haar subcategorieën is aan producten toegewezen en kan niet worden verwijderd.',
                 ],
             ],
         ],
@@ -107,6 +108,7 @@ return [
                     'duplicate-code'           => 'Attribuutoptiecode :code is al in gebruik.',
                     'code_not_found_to_delete' => 'Attribuutoptiecode niet gevonden voor verwijdering.',
                     'ambiguous-code-to-delete' => 'Optiecode :code bestaat bij meer dan één attribuut; voeg attribute_code toe.',
+                    'used-by-products'         => 'Attribuutoptie :code wordt door producten gebruikt en kan niet worden verwijderd.',
                     'locale-not-exist'         => 'Landinstelling ":code" bestaat niet.',
                     'invalid-attribute'        => 'Attribuut ":code" bestaat niet.',
                 ],

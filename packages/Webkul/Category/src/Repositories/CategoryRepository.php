@@ -3,6 +3,7 @@
 namespace Webkul\Category\Repositories;
 
 use Illuminate\Contracts\Container\Container;
+use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Webkul\Category\Contracts\Category;
@@ -526,6 +527,124 @@ class CategoryRepository extends Repository
     {
         return $this->with(['parent_category']);
 
+    }
+
+    /**
+     * Determine whether any product is assigned to the category or to one of its descendants,
+     * which a delete of the category removes with it.
+     */
+    public function isUsedByProducts(int $categoryId): bool
+    {
+        return $this->isAnyUsedByProducts([$categoryId]);
+    }
+
+    /**
+     * Determine whether any product is assigned to one of the given categories or their descendants.
+     *
+     * @param  array<int, int|string>  $categoryIds
+     */
+    public function isAnyUsedByProducts(array $categoryIds): bool
+    {
+        $codes = array_keys($this->subtreeRootsByCode($categoryIds));
+
+        foreach (array_chunk($codes, 100) as $codeChunk) {
+            if ($this->productsAssignedToAny($codeChunk)->exists()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Return the ids of the given categories that any product is assigned to, directly or through a descendant.
+     *
+     * @param  array<int, int|string>  $categoryIds
+     * @return array<int, int>
+     */
+    public function usedByProducts(array $categoryIds): array
+    {
+        $rootsByCode = $this->subtreeRootsByCode($categoryIds);
+
+        $pending = array_fill_keys(array_merge([], ...array_values($rootsByCode)), true);
+
+        $usedIds = [];
+
+        foreach (array_chunk(array_keys($rootsByCode), 100) as $codeChunk) {
+            $this->productsAssignedToAny($codeChunk)
+                ->select('id', 'values->categories as categories')
+                ->lazyById(200)
+                ->each(function (object $product) use ($rootsByCode, &$pending, &$usedIds): bool {
+                    $codes = json_decode((string) $product->categories, true);
+
+                    foreach (is_array($codes) ? $codes : [] as $code) {
+                        foreach (is_string($code) ? ($rootsByCode[$code] ?? []) : [] as $rootId) {
+                            $usedIds[$rootId] = $rootId;
+
+                            unset($pending[$rootId]);
+                        }
+                    }
+
+                    return $pending !== [];
+                });
+
+            if ($pending === []) {
+                break;
+            }
+        }
+
+        return array_values($usedIds);
+    }
+
+    /**
+     * Map the code of every category in the given subtrees to the ids of the given categories that contain it.
+     *
+     * @param  array<int, int|string>  $categoryIds
+     * @return array<string, array<int, int>>
+     */
+    protected function subtreeRootsByCode(array $categoryIds): array
+    {
+        $rootsByCode = [];
+
+        $roots = $this->model->newQuery()
+            ->whereIn('id', array_unique($categoryIds))
+            ->get(['id', '_lft', '_rgt']);
+
+        foreach ($roots->chunk(100) as $rootChunk) {
+            $nodes = $this->model->newQuery()
+                ->where(function ($query) use ($rootChunk): void {
+                    foreach ($rootChunk as $root) {
+                        $query->orWhereBetween('_lft', [$root->_lft, $root->_rgt]);
+                    }
+                })
+                ->get(['code', '_lft']);
+
+            foreach ($nodes as $node) {
+                foreach ($rootChunk as $root) {
+                    if ($node->_lft >= $root->_lft && $node->_lft <= $root->_rgt) {
+                        $rootsByCode[$node->code][] = (int) $root->id;
+                    }
+                }
+            }
+        }
+
+        return $rootsByCode;
+    }
+
+    /**
+     * Build a query for the products assigned to any of the given category codes.
+     *
+     * @param  array<int, string>  $codes
+     */
+    protected function productsAssignedToAny(array $codes): Builder
+    {
+        return ProductProxy::query()
+            ->toBase()
+            ->where(function (Builder $query) use ($codes): void {
+                foreach ($codes as $code) {
+                    $query->orWhereJsonContains('values->categories', $code);
+                }
+            });
     }
 
     /**
