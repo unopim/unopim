@@ -51,5 +51,11 @@ return [
             'heading' => 'Dit paspoort is niet langer beschikbaar.',
             'notice'  => 'Dit record wordt bewaard omwille van transparantie, maar wordt niet langer actief bijgehouden.',
         ],
+        'release' => [
+            'banner'       => 'Publicatie :sequence van dit productpaspoort',
+            'superseded'   => 'Dit is een eerdere stand van het productpaspoort, precies bewaard zoals die is gepubliceerd. Er is een nieuwere stand.',
+            'current'      => 'Dit is de actuele stand van het productpaspoort.',
+            'view-current' => 'Bekijk het actuele productpaspoort',
+        ],
     ],
 ];

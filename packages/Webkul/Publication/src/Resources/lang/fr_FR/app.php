@@ -49,5 +49,11 @@ return [
             'heading' => 'Ce passeport n\'est plus disponible.',
             'notice'  => 'Cet enregistrement est conservé à des fins de transparence, mais n\'est plus activement maintenu.',
         ],
+        'release' => [
+            'banner'       => 'Publication :sequence de ce passeport',
+            'superseded'   => 'Ceci est un état antérieur du passeport, conservé exactement tel qu\'il a été publié. Un état plus récent existe.',
+            'current'      => 'Ceci est l\'état actuel du passeport.',
+            'view-current' => 'Voir le passeport actuel',
+        ],
     ],
 ];

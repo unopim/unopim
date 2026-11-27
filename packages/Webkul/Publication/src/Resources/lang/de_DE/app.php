@@ -51,5 +51,11 @@ return [
             'heading' => 'Dieser Produktpass ist nicht mehr verfügbar.',
             'notice'  => 'Dieser Datensatz wird aus Gründen der Transparenz aufbewahrt, wird jedoch nicht mehr aktiv gepflegt.',
         ],
+        'release' => [
+            'banner'       => 'Veröffentlichung :sequence dieses Produktpasses',
+            'superseded'   => 'Dies ist ein früherer Stand des Produktpasses, genau so aufbewahrt, wie er veröffentlicht wurde. Es gibt einen neueren Stand.',
+            'current'      => 'Dies ist der aktuelle Stand des Produktpasses.',
+            'view-current' => 'Aktuellen Produktpass ansehen',
+        ],
     ],
 ];
