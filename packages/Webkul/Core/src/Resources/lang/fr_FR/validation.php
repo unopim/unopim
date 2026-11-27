@@ -26,6 +26,7 @@ return [
     'password-whitespace-only'         => 'Le champ :attribute ne peut pas être composé uniquement d\'espaces.',
     'hideable-sections'                => 'Le champ :attribute contient une section qui ne peut pas être masquée.',
     'active-content-detected'          => 'Le fichier :attribute n\'a pas pu être téléversé car il contient du contenu actif (:reason).',
+    'uploaded-file-not-allowed'        => 'Le champ :attribute ne doit pas contenir de fichiers téléversés. Téléversez plutôt les fichiers via le point de terminaison des médias.',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'du JavaScript intégré ou une action PDF à exécution automatique',
         'embedded_vba_macro'            => 'une macro VBA intégrée',

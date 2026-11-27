@@ -26,6 +26,7 @@ return [
     'password-whitespace-only'         => 'Поле :attribute не может состоять только из пробелов.',
     'hideable-sections'                => 'Поле :attribute содержит раздел, который нельзя скрыть.',
     'active-content-detected'          => 'Не удалось загрузить :attribute, так как он содержит активное содержимое (:reason).',
+    'uploaded-file-not-allowed'        => 'Поле :attribute не должно содержать загруженные файлы. Загружайте файлы через эндпоинт медиафайлов.',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'встроенный JavaScript или автоматически запускаемое действие PDF',
         'embedded_vba_macro'            => 'встроенный макрос VBA',

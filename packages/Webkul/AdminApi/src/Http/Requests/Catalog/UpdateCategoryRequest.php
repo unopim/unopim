@@ -3,9 +3,12 @@
 namespace Webkul\AdminApi\Http\Requests\Catalog;
 
 use Webkul\AdminApi\Http\Requests\ApiFormRequest;
+use Webkul\AdminApi\Http\Requests\Concerns\ValidatesCategoryAdditionalData;
 
 class UpdateCategoryRequest extends ApiFormRequest
 {
+    use ValidatesCategoryAdditionalData;
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -14,8 +17,8 @@ class UpdateCategoryRequest extends ApiFormRequest
     public function rules(): array
     {
         return [
-            'additional_data' => ['sometimes', 'array'],
-            'parent'          => ['sometimes', 'nullable', 'string'],
+            ...$this->additionalDataRules(),
+            'parent' => ['sometimes', 'nullable', 'string'],
         ];
     }
 }

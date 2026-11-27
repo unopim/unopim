@@ -26,6 +26,7 @@ return [
     'password-whitespace-only'         => ':attribute केवल रिक्त स्थानों से नहीं बन सकता।',
     'hideable-sections'                => ':attribute में ऐसा अनुभाग है जिसे छिपाया नहीं जा सकता।',
     'active-content-detected'          => ':attribute अपलोड नहीं किया जा सका क्योंकि इसमें सक्रिय सामग्री (:reason) है।',
+    'uploaded-file-not-allowed'        => ':attribute में अपलोड की गई फ़ाइलें नहीं होनी चाहिए। इसके बजाय फ़ाइलें मीडिया एंडपॉइंट के माध्यम से अपलोड करें।',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'एम्बेडेड जावास्क्रिप्ट या स्वतः-चलने वाली PDF क्रिया',
         'embedded_vba_macro'            => 'एम्बेडेड VBA मैक्रो',

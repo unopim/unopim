@@ -72,16 +72,16 @@ class LocaleMiddleware
      * @param  string  $key  The key to search for.
      * @return array The unique keys of the nested arrays under the given key.
      */
-    public function checkKeyExists(array $array, string $key)
+    public function checkKeyExists(array $array, string $key): array
     {
         $locales = [];
         if (array_key_exists($key, $array)) {
-            return array_unique(array_keys($array[$key]));
+            return is_array($array[$key]) ? array_unique(array_keys($array[$key])) : [];
         }
         foreach ($array as $index => $element) {
             if (is_array($element)) {
                 if (array_key_exists($key, $element)) {
-                    $locales = array_merge($element[$key], $locales);
+                    $locales = array_merge(is_array($element[$key]) ? $element[$key] : [], $locales);
                 } else {
                     $this->checkKeyExists($element, $key);
                 }

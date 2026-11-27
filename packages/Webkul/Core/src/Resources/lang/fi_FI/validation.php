@@ -26,6 +26,7 @@ return [
     'password-whitespace-only'         => 'Kenttä :attribute ei voi koostua pelkistä välilyönneistä.',
     'hideable-sections'                => ':attribute sisältää osion, jota ei voi piilottaa.',
     'active-content-detected'          => ':attribute-tiedostoa ei voitu ladata, koska se sisältää aktiivista sisältöä (:reason).',
+    'uploaded-file-not-allowed'        => ':attribute ei saa sisältää ladattuja tiedostoja. Lataa tiedostot sen sijaan mediarajapinnan kautta.',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'upotettu JavaScript tai automaattisesti suoritettava PDF-toiminto',
         'embedded_vba_macro'            => 'upotettu VBA-makro',

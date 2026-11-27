@@ -26,6 +26,7 @@ return [
     'password-whitespace-only'         => ':attribute 不能只由空格組成。',
     'hideable-sections'                => ':attribute 包含無法隱藏的模組。',
     'active-content-detected'          => '無法上傳 :attribute，因為它包含主動內容 (:reason)。',
+    'uploaded-file-not-allowed'        => ':attribute 不能包含上傳的檔案。請改為透過媒體端點上傳檔案。',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => '嵌入的 JavaScript 或自動執行的 PDF 動作',
         'embedded_vba_macro'            => '嵌入的 VBA 巨集',

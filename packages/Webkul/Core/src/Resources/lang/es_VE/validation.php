@@ -26,6 +26,7 @@ return [
     'password-whitespace-only'         => 'El campo :attribute no puede estar compuesto solo por espacios.',
     'hideable-sections'                => 'El campo :attribute contiene una sección que no se puede ocultar.',
     'active-content-detected'          => 'No se pudo subir :attribute porque contiene contenido activo (:reason).',
+    'uploaded-file-not-allowed'        => 'El campo :attribute no puede contener archivos cargados. Carga los archivos a través del endpoint de medios.',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'JavaScript incrustado o una acción de PDF de ejecución automática',
         'embedded_vba_macro'            => 'una macro VBA incrustada',

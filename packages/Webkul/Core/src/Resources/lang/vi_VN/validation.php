@@ -26,6 +26,7 @@ return [
     'password-whitespace-only'         => ':attribute không được chỉ gồm khoảng trắng.',
     'hideable-sections'                => ':attribute chứa một mục không thể ẩn.',
     'active-content-detected'          => 'Không thể tải lên :attribute vì nó chứa nội dung hoạt động (:reason).',
+    'uploaded-file-not-allowed'        => ':attribute không được chứa tệp đã tải lên. Hãy tải tệp lên qua endpoint phương tiện.',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'JavaScript được nhúng hoặc một hành động PDF tự động chạy',
         'embedded_vba_macro'            => 'macro VBA được nhúng',

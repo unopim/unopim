@@ -26,6 +26,7 @@ return [
     'password-whitespace-only'         => 'Pole :attribute nie może składać się wyłącznie ze spacji.',
     'hideable-sections'                => 'Pole :attribute zawiera sekcję, której nie można ukryć.',
     'active-content-detected'          => 'Nie udało się przesłać :attribute, ponieważ zawiera aktywną zawartość (:reason).',
+    'uploaded-file-not-allowed'        => 'Pole :attribute nie może zawierać przesłanych plików. Prześlij pliki za pomocą punktu końcowego multimediów.',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'osadzony kod JavaScript lub automatycznie uruchamiana akcja PDF',
         'embedded_vba_macro'            => 'osadzone makro VBA',

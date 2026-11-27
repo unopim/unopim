@@ -26,6 +26,7 @@ return [
     'password-whitespace-only'         => ':attribute tidak boleh hanya berisi spasi.',
     'hideable-sections'                => ':attribute berisi bagian yang tidak dapat disembunyikan.',
     'active-content-detected'          => ':attribute tidak dapat diunggah karena berisi konten aktif (:reason).',
+    'uploaded-file-not-allowed'        => ':attribute tidak boleh berisi file yang diunggah. Unggah file melalui endpoint media sebagai gantinya.',
     'active-content-reasons'           => [
         'embedded_javascript_or_action' => 'JavaScript tersemat atau tindakan PDF yang berjalan otomatis',
         'embedded_vba_macro'            => 'makro VBA tersemat',
