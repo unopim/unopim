@@ -5,11 +5,12 @@ namespace Webkul\Measurement\Tests;
 use Tests\TestCase;
 use Webkul\Category\Models\Category;
 use Webkul\Core\Models\Channel;
+use Webkul\Measurement\Tests\Concerns\InteractsWithUnitSymbolDisplay;
 use Webkul\User\Tests\Concerns\UserAssertions;
 
 class MeasurementTestCase extends TestCase
 {
-    use UserAssertions;
+    use InteractsWithUnitSymbolDisplay, UserAssertions;
 
     protected function setUp(): void
     {

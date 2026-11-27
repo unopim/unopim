@@ -2,6 +2,7 @@
 
 namespace Webkul\Measurement\Services;
 
+use Webkul\Measurement\Models\MeasurementFamily;
 use Webkul\Measurement\Repositories\AttributeMeasurementRepository;
 use Webkul\Measurement\Repositories\MeasurementFamilyRepository;
 
@@ -32,24 +33,32 @@ class AttributeMeasurementService
 
         $savedFamily = $measurement->family_code ?? '';
 
-        $familyOptions = $this->familyRepository
+        return [
+            'familyOptions' => $this->familyOptions(),
+            'oldFamily'     => $savedFamily,
+            'oldUnit'       => $measurement->unit_code ?? '',
+            'units'         => $savedFamily === '' ? [] : $this->unitsForFamily($savedFamily),
+        ];
+    }
+
+    /**
+     * All measurement families as select options (code as both id and label).
+     *
+     * @return array<int, array{id: string, label: string}>
+     */
+    public function familyOptions(): array
+    {
+        return $this->familyRepository
             ->getModel()
             ->newQuery()
             ->orderBy('id')
             ->get(['id', 'code'])
-            ->map(fn ($family): array => [
+            ->map(fn (MeasurementFamily $family): array => [
                 'id'    => $family->code,
                 'label' => $family->code,
             ])
             ->values()
             ->toArray();
-
-        return [
-            'familyOptions' => $familyOptions,
-            'oldFamily'     => $savedFamily,
-            'oldUnit'       => $measurement->unit_code ?? '',
-            'units'         => $savedFamily === '' ? [] : $this->unitsForFamily($savedFamily),
-        ];
     }
 
     /**

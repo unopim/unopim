@@ -39,7 +39,7 @@ it('falls back to pim when nothing usable is stored', function (string $stored) 
     expect($this->setPlatformModules($stored)->modules())->toBe([Module::Pim->value]);
 })->with(['', 'unknown', 'shopify']);
 
-it('lists registered modules as setting options with pim first', function () {
+it('lists registered modules as setting options with pim first', function (): void {
     expect(array_column(app(ModuleGate::class)->moduleOptions(), 'value'))
         ->toBe(['pim', 'records', 'dam', 'shopify']);
 });

@@ -85,6 +85,23 @@ trait CoreConfigField
     }
 
     /**
+     * Whether a config field should render. A field may carry a `visible`
+     * callback (a `Class@method` string returning bool) to gate itself on
+     * runtime state; fields without one always render. Kept a string rather
+     * than a closure so `config:cache` can still serialize the config.
+     */
+    public function isFieldVisible(array $field): bool
+    {
+        if (! isset($field['visible'])) {
+            return true;
+        }
+
+        [$class, $method] = Str::parseCallback($field['visible']);
+
+        return (bool) resolve($class)->$method();
+    }
+
+    /**
      * The field's default value, resolved from its `default_repository` callback when it has one.
      */
     public function getDefaultValue(array $field): mixed

@@ -18,8 +18,10 @@ use Webkul\Measurement\Tests\Support\ChannelScopeMeasurementSpyExporter;
 use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->loginAsAdmin();
+
+    $this->enableUnitSymbolDisplay();
 
     $cache = new ReflectionProperty(Exporter::class, 'staticInitCache');
     $cache->setAccessible(true);
@@ -266,8 +268,8 @@ function channelScopeExportedCells(Product $product, Attribute $measurement, arr
     return $cells;
 }
 
-describe('Issue #1196 - channel scoped measurement values during product export', function () {
-    it('A1: writes each channel its own stored amount and unit for a channel scoped attribute', function () {
+describe('Issue #1196 - channel scoped measurement values during product export', function (): void {
+    it('A1: writes each channel its own stored amount and unit for a channel scoped attribute', function (): void {
         $measurement = channelScopeLengthAttribute($this->measurementFamily, perChannel: true);
         $family = channelScopeProductFamily($measurement);
 
@@ -285,12 +287,12 @@ describe('Issue #1196 - channel scoped measurement values during product export'
         $cells = channelScopeExportedCells($product, $measurement, [$this->channelA->code, $this->channelB->code]);
 
         expect($cells[$this->channelA->code]['en_US']['amount'])->toBe('2.5000')
-            ->and($cells[$this->channelA->code]['en_US']['unit'])->toBe('Meter')
+            ->and($cells[$this->channelA->code]['en_US']['unit'])->toBe('m')
             ->and($cells[$this->channelB->code]['en_US']['amount'])->toBe('250.0000')
-            ->and($cells[$this->channelB->code]['en_US']['unit'])->toBe('Centimeter');
+            ->and($cells[$this->channelB->code]['en_US']['unit'])->toBe('cm');
     });
 
-    it('A2: writes empty amount and unit cells for a channel holding no value', function () {
+    it('A2: writes empty amount and unit cells for a channel holding no value', function (): void {
         $measurement = channelScopeLengthAttribute($this->measurementFamily, perChannel: true);
         $family = channelScopeProductFamily($measurement);
 
@@ -305,12 +307,12 @@ describe('Issue #1196 - channel scoped measurement values during product export'
         $cells = channelScopeExportedCells($product, $measurement, [$this->channelA->code, $this->channelB->code]);
 
         expect($cells[$this->channelA->code]['en_US']['amount'])->toBe('2.5000')
-            ->and($cells[$this->channelA->code]['en_US']['unit'])->toBe('Meter')
+            ->and($cells[$this->channelA->code]['en_US']['unit'])->toBe('m')
             ->and($cells[$this->channelB->code]['en_US']['amount'])->toBe('')
             ->and($cells[$this->channelB->code]['en_US']['unit'])->toBe('');
     });
 
-    it('B1: writes each channel its own stored amount and unit for a channel and locale scoped attribute', function () {
+    it('B1: writes each channel its own stored amount and unit for a channel and locale scoped attribute', function (): void {
         $measurement = channelScopeLengthAttribute($this->measurementFamily, perChannel: true, perLocale: true);
         $family = channelScopeProductFamily($measurement);
 
@@ -332,12 +334,12 @@ describe('Issue #1196 - channel scoped measurement values during product export'
         $cells = channelScopeExportedCells($product, $measurement, [$this->channelA->code, $this->channelB->code]);
 
         expect($cells[$this->channelA->code]['en_US']['amount'])->toBe('2.5000')
-            ->and($cells[$this->channelA->code]['en_US']['unit'])->toBe('Meter')
+            ->and($cells[$this->channelA->code]['en_US']['unit'])->toBe('m')
             ->and($cells[$this->channelB->code]['en_US']['amount'])->toBe('250.0000')
-            ->and($cells[$this->channelB->code]['en_US']['unit'])->toBe('Centimeter');
+            ->and($cells[$this->channelB->code]['en_US']['unit'])->toBe('cm');
     });
 
-    it('B2: writes empty cells for a channel and locale pair holding no value', function () {
+    it('B2: writes empty cells for a channel and locale pair holding no value', function (): void {
         $measurement = channelScopeLengthAttribute($this->measurementFamily, perChannel: true, perLocale: true);
         $family = channelScopeProductFamily($measurement);
 
@@ -354,12 +356,12 @@ describe('Issue #1196 - channel scoped measurement values during product export'
         $cells = channelScopeExportedCells($product, $measurement, [$this->channelA->code, $this->channelB->code]);
 
         expect($cells[$this->channelA->code]['en_US']['amount'])->toBe('2.5000')
-            ->and($cells[$this->channelA->code]['en_US']['unit'])->toBe('Meter')
+            ->and($cells[$this->channelA->code]['en_US']['unit'])->toBe('m')
             ->and($cells[$this->channelB->code]['en_US']['amount'])->toBe('')
             ->and($cells[$this->channelB->code]['en_US']['unit'])->toBe('');
     });
 
-    it('C: repeats the single common value in every channel row for a common scoped attribute', function () {
+    it('C: repeats the single common value in every channel row for a common scoped attribute', function (): void {
         $measurement = channelScopeLengthAttribute($this->measurementFamily);
         $family = channelScopeProductFamily($measurement);
 
@@ -372,12 +374,12 @@ describe('Issue #1196 - channel scoped measurement values during product export'
         $cells = channelScopeExportedCells($product, $measurement, [$this->channelA->code, $this->channelB->code]);
 
         expect($cells[$this->channelA->code]['en_US']['amount'])->toBe('250.0000')
-            ->and($cells[$this->channelA->code]['en_US']['unit'])->toBe('Centimeter')
+            ->and($cells[$this->channelA->code]['en_US']['unit'])->toBe('cm')
             ->and($cells[$this->channelB->code]['en_US']['amount'])->toBe('250.0000')
-            ->and($cells[$this->channelB->code]['en_US']['unit'])->toBe('Centimeter');
+            ->and($cells[$this->channelB->code]['en_US']['unit'])->toBe('cm');
     });
 
-    it('D: exports the stored amount in the stored unit and never the base data or the attribute standard unit', function () {
+    it('D: exports the stored amount in the stored unit and never the base data or the attribute standard unit', function (): void {
         $measurement = channelScopeLengthAttribute($this->measurementFamily, perChannel: true);
         $family = channelScopeProductFamily($measurement);
 
@@ -406,7 +408,7 @@ describe('Issue #1196 - channel scoped measurement values during product export'
             ->and($cells[$this->channelB->code]['en_US']['unit'])->not->toBe('Meter');
     });
 
-    it('shape: hands extractMeasurement an already scope resolved flat array with no all_channels wrapper', function () {
+    it('shape: hands extractMeasurement an already scope resolved flat array with no all_channels wrapper', function (): void {
         $measurement = channelScopeLengthAttribute($this->measurementFamily, perChannel: true);
         $family = channelScopeProductFamily($measurement);
 
@@ -450,7 +452,7 @@ describe('Issue #1196 - channel scoped measurement values during product export'
             ->and($byUnit['centimeter']['amount'])->toBe('250.0000');
     });
 
-    it('shape: extractMeasurement returns nulls for a channel keyed array it is never actually given', function () {
+    it('shape: extractMeasurement returns nulls for a channel keyed array it is never actually given', function (): void {
         $exporter = app(Exporter::class);
 
         $method = new ReflectionMethod($exporter, 'extractMeasurement');
@@ -465,7 +467,7 @@ describe('Issue #1196 - channel scoped measurement values during product export'
             ->and($method->invoke($exporter, ['<all_channels>' => ['<all_locales>' => ['amount' => '7', 'unit' => 'centimeter']]]))->toBe(['7', 'centimeter']);
     });
 
-    it('exposes no per channel measurement unit configuration that an export could convert towards', function () {
+    it('exposes no per channel measurement unit configuration that an export could convert towards', function (): void {
         $channelColumns = Schema::getColumnListing((new Channel)->getTable());
 
         expect(implode(',', $channelColumns))->not->toContain('unit')

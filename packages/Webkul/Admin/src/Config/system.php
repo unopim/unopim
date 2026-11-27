@@ -290,6 +290,7 @@ return [
                 'type'               => 'multiselect',
                 'repository'         => ModuleGate::class.'@hideableSectionOptions',
                 'default_repository' => ModuleGate::class.'@defaultHiddenSections',
+                'visible'            => ModuleGate::class.'@hasMultipleModules',
                 'validation'         => ['nullable', HideableSections::class],
             ],
         ],

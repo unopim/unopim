@@ -14,18 +14,18 @@ class WarnMissingMeasurementConfigAfterCreate
     ) {}
 
     /**
-     * Remind the admin to set the measurement family and default unit, which
-     * the create form does not collect, so products can store a value.
+     * Remind the admin to set the measurement family and default unit when a
+     * measurement attribute is created without one, so products can store a
+     * value. The quick-create modal collects them, but other create paths may
+     * not; the reminder is skipped once a configuration has been saved.
      *
      * Flashed as `info` because the ajax form treats a flashed `warning` as a
      * rejected save and would keep the admin on the create page.
-     *
-     * @param  Attribute|null  $attribute
      */
-    public function handle($attribute): void
+    public function handle(?Attribute $attribute): void
     {
         if (
-            ! $attribute
+            ! $attribute instanceof Attribute
             || ! request()->hasSession()
             || ! $this->measurementHelper->isMeasurementBacked($attribute->type)
             || $this->attributeMeasurementRepository->getByAttributeId($attribute->id)

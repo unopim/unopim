@@ -9,7 +9,7 @@ use Webkul\Measurement\Models\MeasurementFamily;
 
 uses(ApiHelperTrait::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->headers = $this->getAuthenticationHeaders();
 });
 
@@ -26,10 +26,12 @@ function hardeningFamily(): MeasurementFamily
     ]);
 }
 
-it('M2: rejects assigning a unit that is not in the family to a measurement attribute', function () {
+it('M2: rejects assigning a unit that is not in the family to a measurement attribute', function (): void {
     $family = hardeningFamily();
 
     $attribute = Attribute::factory()->create(['code' => 'w_'.uniqid(), 'type' => 'measurement']);
+
+    request()->setLaravelSession(app('session.store'));
 
     request()->merge([
         'measurement_family' => $family->code,
@@ -40,10 +42,12 @@ it('M2: rejects assigning a unit that is not in the family to a measurement attr
         ->toThrow(HttpResponseException::class);
 });
 
-it('M2: accepts a unit that belongs to the family', function () {
+it('M2: accepts a unit that belongs to the family', function (): void {
     $family = hardeningFamily();
 
     $attribute = Attribute::factory()->create(['code' => 'w_'.uniqid(), 'type' => 'measurement']);
+
+    request()->setLaravelSession(app('session.store'));
 
     request()->merge([
         'measurement_family' => $family->code,
@@ -54,7 +58,7 @@ it('M2: accepts a unit that belongs to the family', function () {
         ->not->toThrow(HttpResponseException::class);
 });
 
-it('H1: blocks deleting a unit referenced by an attribute through the API', function () {
+it('H1: blocks deleting a unit referenced by an attribute through the API', function (): void {
     $family = hardeningFamily();
 
     $attribute = Attribute::factory()->create(['code' => 'w_'.uniqid(), 'type' => 'measurement']);
@@ -72,7 +76,7 @@ it('H1: blocks deleting a unit referenced by an attribute through the API', func
     expect(collect($family->fresh()->units)->contains('code', 'cm'))->toBeTrue();
 });
 
-it('H1: does not change a unit conversion through the API when the family is in use', function () {
+it('H1: does not change a unit conversion through the API when the family is in use', function (): void {
     $family = hardeningFamily();
 
     $attribute = Attribute::factory()->create(['code' => 'w_'.uniqid(), 'type' => 'measurement']);

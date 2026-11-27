@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Cache;
 use Webkul\Admin\Traits\AttributeColumnTrait;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
-use Webkul\Core\Models\CoreConfig;
 use Webkul\DataTransfer\Helpers\Exporters\Product\Exporter as CoreExporter;
 use Webkul\DataTransfer\Helpers\Importers\Product\Importer as CoreImporter;
 use Webkul\DataTransfer\Models\JobTrack;
@@ -15,7 +14,7 @@ use Webkul\Measurement\Services\Normalizers\MeasurementNormalizer;
 use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Normalizer\ProductAttributeValuesNormalizer;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->loginAsAdmin();
 
     Cache::flush();
@@ -25,16 +24,6 @@ beforeEach(function () {
         $cache->setValue(null, null);
     }
 });
-
-function enableUnitSymbolDisplay(): void
-{
-    CoreConfig::updateOrCreate(
-        ['code' => 'system.measurement.display_unit_symbol'],
-        ['value' => '1']
-    );
-
-    Cache::flush();
-}
 
 function temperatureAttribute(): Attribute
 {
@@ -86,39 +75,43 @@ function exportTemperatureUnitColumn(Attribute $attribute, string $unit): string
     return $columns[$attribute->code.'(unit)'];
 }
 
-it('registers the display unit symbol setting switched off by default', function () {
+it('registers the display unit symbol setting switched on by default', function (): void {
     $fields = collect(config('system_settings'))->firstWhere('key', 'system.measurement')['fields'];
 
     $field = collect($fields)->firstWhere('name', 'display_unit_symbol');
 
     expect($field['type'])->toBe('boolean')
-        ->and($field['default_value'])->toBe('0')
-        ->and(app(MeasurementHelper::class)->displaysUnitSymbol())->toBeFalse();
+        ->and($field['default_value'])->toBe('1')
+        ->and(app(MeasurementHelper::class)->displaysUnitSymbol())->toBeTrue();
 });
 
-it('shows the unit name while the setting is off', function () {
+it('shows the unit name while the setting is off', function (): void {
+    $this->disableUnitSymbolDisplay();
+
     $attribute = temperatureAttribute();
 
     expect(app(MeasurementHelper::class)->getUnitDisplayLabel('celsius', $attribute, 'en_US'))->toBe('Degree Celsius');
 });
 
-it('shows the unit symbol while the setting is on', function () {
-    enableUnitSymbolDisplay();
+it('shows the unit symbol while the setting is on', function (): void {
+    $this->enableUnitSymbolDisplay();
 
     $attribute = temperatureAttribute();
 
     expect(app(MeasurementHelper::class)->getUnitDisplayLabel('celsius', $attribute, 'en_US'))->toBe('°C');
 });
 
-it('falls back to the unit name when the setting is on but the unit has no symbol', function () {
-    enableUnitSymbolDisplay();
+it('falls back to the unit name when the setting is on but the unit has no symbol', function (): void {
+    $this->enableUnitSymbolDisplay();
 
     $attribute = temperatureAttribute();
 
     expect(app(MeasurementHelper::class)->getUnitDisplayLabel('kelvin', $attribute, 'en_US'))->toBe('Kelvin');
 });
 
-it('labels the product unit dropdown with the unit name while the setting is off', function () {
+it('labels the product unit dropdown with the unit name while the setting is off', function (): void {
+    $this->disableUnitSymbolDisplay();
+
     $attribute = temperatureAttribute();
 
     $this->getJson(route('admin.measurement.attribute.units', ['attribute_id' => $attribute->id]))
@@ -126,8 +119,8 @@ it('labels the product unit dropdown with the unit name while the setting is off
         ->assertJsonFragment(['id' => 'celsius', 'label' => 'Degree Celsius']);
 });
 
-it('labels the product unit dropdown with symbols while the setting is on', function () {
-    enableUnitSymbolDisplay();
+it('labels the product unit dropdown with symbols while the setting is on', function (): void {
+    $this->enableUnitSymbolDisplay();
 
     $attribute = temperatureAttribute();
 
@@ -138,7 +131,9 @@ it('labels the product unit dropdown with symbols while the setting is on', func
         ->assertJsonFragment(['id' => 'kelvin', 'label' => 'Kelvin']);
 });
 
-it('renders the datagrid value with the unit name while the setting is off', function () {
+it('renders the datagrid value with the unit name while the setting is off', function (): void {
+    $this->disableUnitSymbolDisplay();
+
     $attribute = temperatureAttribute();
 
     $displayed = app(MeasurementNormalizer::class)->getData(
@@ -150,8 +145,8 @@ it('renders the datagrid value with the unit name while the setting is off', fun
     expect($displayed)->toBe('100 Degree Celsius');
 });
 
-it('renders the datagrid value with the unit symbol while the setting is on', function () {
-    enableUnitSymbolDisplay();
+it('renders the datagrid value with the unit symbol while the setting is on', function (): void {
+    $this->enableUnitSymbolDisplay();
 
     $attribute = temperatureAttribute();
 
@@ -164,8 +159,8 @@ it('renders the datagrid value with the unit symbol while the setting is on', fu
     expect($displayed)->toBe('100 °C');
 });
 
-it('labels the product datagrid unit filter with symbols while the setting is on', function () {
-    enableUnitSymbolDisplay();
+it('labels the product datagrid unit filter with symbols while the setting is on', function (): void {
+    $this->enableUnitSymbolDisplay();
 
     $attribute = temperatureAttribute();
 
@@ -185,14 +180,16 @@ it('labels the product datagrid unit filter with symbols while the setting is on
     );
 });
 
-it('exports the unit column with the unit name while the setting is off', function () {
+it('exports the unit column with the unit name while the setting is off', function (): void {
+    $this->disableUnitSymbolDisplay();
+
     $attribute = temperatureAttribute();
 
     expect(exportTemperatureUnitColumn($attribute, 'celsius'))->toBe('Degree Celsius');
 });
 
-it('exports the unit column with the unit symbol while the setting is on', function () {
-    enableUnitSymbolDisplay();
+it('exports the unit column with the unit symbol while the setting is on', function (): void {
+    $this->enableUnitSymbolDisplay();
 
     $attribute = temperatureAttribute();
 
@@ -200,8 +197,8 @@ it('exports the unit column with the unit symbol while the setting is on', funct
         ->and(exportTemperatureUnitColumn($attribute, 'kelvin'))->toBe('Kelvin');
 });
 
-it('exports the datagrid quick export unit column with the unit symbol while the setting is on', function () {
-    enableUnitSymbolDisplay();
+it('exports the datagrid quick export unit column with the unit symbol while the setting is on', function (): void {
+    $this->enableUnitSymbolDisplay();
 
     $attribute = temperatureAttribute();
 
@@ -213,8 +210,8 @@ it('exports the datagrid quick export unit column with the unit symbol while the
     expect($values[$attribute->code.'(unit)'])->toBe('°C');
 });
 
-it('re-imports a symbol export to the original unit code', function () {
-    enableUnitSymbolDisplay();
+it('re-imports a symbol export to the original unit code', function (): void {
+    $this->enableUnitSymbolDisplay();
 
     $attribute = temperatureAttribute();
 

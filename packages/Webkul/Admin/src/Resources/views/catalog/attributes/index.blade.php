@@ -63,7 +63,11 @@
                     :swatch-options="$swatchOptions"
                     :toggles="$creationToggles"
                     :save-label="trans('admin::app.catalog.attributes.create.save-btn')"
-                />
+                >
+                    <x-slot:afterTypeFields>
+                        {!! view_render_event('unopim.admin.catalog.attributes.quick_create.type_fields.after') !!}
+                    </x-slot>
+                </x-admin::catalog.quick-create-modal>
             @endif
         </x-slot>
     </x-admin::layouts.page-header>

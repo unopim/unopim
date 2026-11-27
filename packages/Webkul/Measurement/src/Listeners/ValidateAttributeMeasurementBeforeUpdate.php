@@ -2,15 +2,16 @@
 
 namespace Webkul\Measurement\Listeners;
 
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Session;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Measurement\Helpers\MeasurementHelper;
 use Webkul\Measurement\Repositories\MeasurementFamilyRepository;
+use Webkul\Measurement\Traits\RejectsInvalidMeasurementConfig;
 
 class ValidateAttributeMeasurementBeforeUpdate
 {
+    use RejectsInvalidMeasurementConfig;
+
     public function __construct(
         protected AttributeRepository $attributeRepository,
         protected MeasurementFamilyRepository $measurementFamilyRepository,
@@ -22,11 +23,13 @@ class ValidateAttributeMeasurementBeforeUpdate
      *
      * The actual save happens in the "after" listener so the measurement audit
      * can be grouped into the same history version as the attribute update.
-     *
-     * @param  int|string  $attributeId
      */
-    public function handle($attributeId): void
+    public function handle(int|string $attributeId): void
     {
+        if (! request()->hasSession()) {
+            return;
+        }
+
         $attribute = $this->attributeRepository->find($attributeId);
 
         if (! $attribute || ! $this->measurementHelper->isMeasurementBacked($attribute->type)) {
@@ -37,27 +40,10 @@ class ValidateAttributeMeasurementBeforeUpdate
         $unitCode = request('measurement_unit');
 
         if (! $familyCode || ! $unitCode) {
-            Session::flash('error', trans('measurement::app.messages.attribute.family_unit_required'));
-            throw new HttpResponseException(
-                back()->withInput()
-            );
+            $this->rejectMeasurementConfig('measurement::app.messages.attribute.family_unit_required');
         }
 
-        $family = $this->measurementFamilyRepository->findOneByField('code', $familyCode);
-
-        if (! $family) {
-            Session::flash('error', trans('measurement::app.messages.attribute.family_not_found'));
-            throw new HttpResponseException(
-                back()->withInput()
-            );
-        }
-
-        if (! collect($family->units)->contains('code', $unitCode)) {
-            Session::flash('error', trans('measurement::app.messages.attribute.unit_not_in_family'));
-            throw new HttpResponseException(
-                back()->withInput()
-            );
-        }
+        $this->rejectUnlessUnitInFamily((string) $familyCode, (string) $unitCode);
 
         request()->attributes->set(
             'measurement_audit_baseline',

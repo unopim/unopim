@@ -21,12 +21,14 @@ class SaveAttributeMeasurementAfterUpdate
      * The attribute's own audit (and its translations) are created during the
      * update. We pin the measurement audit to that same timestamp so the audits
      * trigger assigns it the same version, keeping a single history entry.
-     *
-     * @param  Attribute  $attribute
      */
-    public function handle($attribute): void
+    public function handle(?Attribute $attribute): void
     {
-        if (! $attribute || ! $this->measurementHelper->isMeasurementBacked($attribute->type)) {
+        if (! request()->hasSession()) {
+            return;
+        }
+
+        if (! $attribute instanceof Attribute || ! $this->measurementHelper->isMeasurementBacked($attribute->type)) {
             return;
         }
 

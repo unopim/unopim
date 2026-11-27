@@ -27,7 +27,7 @@
                         type="button"
                         class="flex gap-x-2 items-center px-1 py-1.5 border-2 border-transparent rounded-md font-semibold whitespace-nowrap cursor-pointer appearance-none transition-all hover:bg-primary-50 dark:hover:bg-cherry-900 text-gray-600 dark:text-slate-50"
                     >
-                        <span class="icon-activity text-2xl"></span>
+                        <span class="icon-done text-2xl"></span>
 
                         <div class="font-semibold text-gray-600 dark:text-white">
                             <span class="text-xl">% </span> @lang('completeness::app.catalog.products.edit.completeness.title')

@@ -1,6 +1,14 @@
 const path = require('path');
 const { test, expect } = require('../../utils/fixtures');
-const { clickSave, generateUid, closeDropdown } = require('../../utils/helpers');
+const {
+  clickSave,
+  generateUid,
+  closeDropdown,
+  cleanOptionLabel,
+  openMultiselect,
+  selectMultiselectOption,
+  selectFirstMultiselectOption,
+} = require('../../utils/helpers');
 const { deleteProductBySku } = require('../../utils/product-helpers');
 
 const STORAGE_STATE = path.resolve(__dirname, '../..', process.env.PW_STATE_DIR || '.state', 'admin-auth.json');
@@ -31,57 +39,6 @@ async function gotoAdmin(page, p) {
   await page.waitForLoadState('load').catch(() => {});
 }
 
-async function openMultiselect(page, name) {
-  const input = page.locator(`input[name="${name}"]`).first();
-  await input.waitFor({ state: 'attached', timeout: 15000 });
-
-  const wrapper = input.locator(
-    'xpath=ancestor::div[contains(concat(" ", normalize-space(@class), " "), " multiselect ")][1]'
-  );
-
-  await wrapper.scrollIntoViewIfNeeded().catch(() => {});
-
-  const tags = wrapper.locator('.multiselect__tags');
-  await (await tags.count() ? tags.first() : wrapper).click();
-
-  await wrapper.locator('.multiselect__content-wrapper').first().waitFor({ state: 'visible', timeout: 10000 });
-
-  return wrapper;
-}
-
-function cleanOptionLabel(text) {
-  return (text || '').trim().replace(/\s*Press enter to select\s*$/i, '').trim();
-}
-
-async function selectMultiselectOption(page, name, label, { filter = true } = {}) {
-  const wrapper = await openMultiselect(page, name);
-
-  if (filter) {
-    await wrapper.locator('input.multiselect__input').first().fill(label).catch(() => {});
-    await page.waitForTimeout(400);
-  }
-
-  const option = page.getByRole('option', { name: label }).first();
-  await option.waitFor({ state: 'visible', timeout: 10000 });
-  await option.scrollIntoViewIfNeeded().catch(() => {});
-  await option.click();
-  await closeDropdown(page);
-}
-
-async function selectFirstMultiselectOption(page, name) {
-  await openMultiselect(page, name);
-  await page.waitForTimeout(600);
-
-  const first = page.locator('.multiselect__content-wrapper:visible li.multiselect__element').first();
-  await first.waitFor({ state: 'visible', timeout: 12000 });
-
-  const label = cleanOptionLabel(await first.innerText());
-  await first.click();
-  await closeDropdown(page);
-
-  return label;
-}
-
 async function clickCreate(page, label) {
   const control = page.getByRole('link', { name: label }).or(page.getByRole('button', { name: label }));
   await control.first().waitFor({ state: 'visible', timeout: 30000 });
@@ -104,21 +61,14 @@ async function createMeasurementAttribute(page, { familyCode = MEASUREMENT_FAMIL
 
   await page.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
   await page.locator('input[name="type"][type="text"]').fill('Measurement');
-  await page.waitForTimeout(500);
 
   const measOption = page.getByRole('option', { name: 'Measurement' }).first();
-  if (await measOption.isVisible().catch(() => false)) {
+  const measOptionShown = await measOption.waitFor({ state: 'visible', timeout: 5000 }).then(() => true).catch(() => false);
+  if (measOptionShown) {
     await measOption.click();
   } else {
     await page.keyboard.press('Enter');
   }
-
-  await Promise.all([
-    page.waitForURL(/\/attributes\/edit\//, { timeout: 30000 }),
-    page.getByRole('button', { name: 'Save Attribute' }).click(),
-  ]);
-
-  await expect(page.getByRole('heading', { name: 'Edit Attribute' })).toBeVisible({ timeout: 20000 });
 
   await page.locator('input[name="measurement_family"]').first().waitFor({ state: 'attached', timeout: 25000 });
   await selectMultiselectOption(page, 'measurement_family', familyCode);
@@ -126,8 +76,12 @@ async function createMeasurementAttribute(page, { familyCode = MEASUREMENT_FAMIL
   await page.locator('input[name="measurement_unit"]').first().waitFor({ state: 'attached', timeout: 15000 });
   const unitLabel = await selectFirstMultiselectOption(page, 'measurement_unit');
 
-  await clickSave(page, 'Save Attribute');
-  await expect(page.locator('#app').getByText(/updated successfully/i).first()).toBeVisible({ timeout: 25000 });
+  await Promise.all([
+    page.waitForURL(/\/attributes\/edit\//, { timeout: 30000 }),
+    page.getByRole('button', { name: 'Save Attribute' }).click(),
+  ]);
+
+  await expect(page.getByRole('heading', { name: 'Edit Attribute' })).toBeVisible({ timeout: 20000 });
 
   return { code, name, unitLabel };
 }
@@ -174,7 +128,7 @@ async function selectUnassignedAttribute(page, matchText) {
     }
 
     await checkbox.dispatchEvent('click').catch(() => {});
-    await page.waitForTimeout(400);
+    await row.locator('button.icon-checkbox-check').waitFor({ state: 'attached', timeout: 2000 }).catch(() => {});
   }
 
   if (!(await row.locator('button.icon-checkbox-check').count())) {
@@ -199,7 +153,6 @@ async function assignAttributesToFamily(page, familyId, entries, group = 'Genera
   for (const entry of entries) {
     await search.fill(entry.query);
     await page.keyboard.press('Enter');
-    await page.waitForTimeout(1500);
 
     await selectUnassignedAttribute(page, entry.match);
   }
@@ -222,10 +175,9 @@ async function assignAttributesToFamily(page, familyId, entries, group = 'Genera
     } else {
       await groupMs.locator('.multiselect__select').first().click({ force: true }).catch(() => {});
     }
-    await page.waitForTimeout(500);
 
     const opt = page.getByRole('option', { name: group }).first();
-    if (await opt.isVisible({ timeout: 2000 }).catch(() => false)) {
+    if (await opt.waitFor({ state: 'visible', timeout: 2500 }).then(() => true).catch(() => false)) {
       await opt.click();
       picked = true;
     }
@@ -236,7 +188,6 @@ async function assignAttributesToFamily(page, familyId, entries, group = 'Genera
   }
 
   await bulkBox.getByRole('button', { name: /Assign/ }).first().click();
-  await page.waitForTimeout(500);
 
   const bar = page.getByRole('button', { name: 'Save changes' });
   const named = page.getByRole('button', { name: 'Save Attribute Family' });
@@ -291,7 +242,6 @@ async function setMeasurementValue(page, amount) {
 
   await unitSelect.locator('.multiselect__tags').click();
   await unitSelect.locator('.multiselect__content-wrapper').first().waitFor({ state: 'visible', timeout: 10000 });
-  await page.waitForTimeout(900);
 
   const options = unitSelect.locator('li.multiselect__element');
   await options.first().waitFor({ state: 'visible', timeout: 12000 });
@@ -354,7 +304,6 @@ test.describe('Measurement - Attribute Family', () => {
     await addVariant.click();
 
     await openMultiselect(adminPage, 'draft_axis_leaf');
-    await adminPage.waitForTimeout(500);
 
     const variantModal = adminPage.locator('.fixed').filter({ hasText: 'Add Variant' }).last();
 

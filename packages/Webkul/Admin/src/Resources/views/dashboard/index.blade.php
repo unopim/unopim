@@ -1,5 +1,7 @@
 @php
-    $pimEnabled = app(\Webkul\Core\Platform\ModuleGate::class)->enabled(\Webkul\Core\Platform\Module::Pim);
+    $gate = app(\Webkul\Core\Platform\ModuleGate::class);
+
+    $pimEnabled = $gate->enabled(\Webkul\Core\Platform\Module::Pim);
 @endphp
 
 <x-admin::layouts>
@@ -28,7 +30,7 @@
                     </a>
                 @endif
 
-                @if (bouncer()->hasPermission('data_transfer.imports'))
+                @if ($gate->allowsKey('data_transfer.imports') && bouncer()->hasPermission('data_transfer.imports'))
                     <a
                         href="{{ route('admin.settings.data_transfer.imports.index') }}"
                         class="secondary-button text-xs no-underline"
@@ -38,7 +40,7 @@
                     </a>
                 @endif
 
-                @if (bouncer()->hasPermission('data_transfer.export'))
+                @if ($gate->allowsKey('data_transfer.export') && bouncer()->hasPermission('data_transfer.export'))
                     <a
                         href="{{ route('admin.settings.data_transfer.exports.index') }}"
                         class="secondary-button text-xs no-underline"

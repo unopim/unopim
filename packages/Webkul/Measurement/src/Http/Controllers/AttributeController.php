@@ -5,6 +5,7 @@ namespace Webkul\Measurement\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Measurement\Http\Requests\FamilyOptionsForm;
 use Webkul\Measurement\Http\Requests\FamilyUnitOptionsForm;
 use Webkul\Measurement\Services\AttributeMeasurementService;
 
@@ -13,6 +14,18 @@ class AttributeController extends Controller
     public function __construct(
         protected AttributeMeasurementService $attributeMeasurementService
     ) {}
+
+    /**
+     * Measurement family options for the attribute quick-create modal, fetched
+     * when a measurement type is picked so the attributes index does not query
+     * families on every load.
+     */
+    public function familyOptions(FamilyOptionsForm $request): JsonResponse
+    {
+        return new JsonResponse([
+            'families' => $this->attributeMeasurementService->familyOptions(),
+        ]);
+    }
 
     /**
      * Unit options of a single measurement family, for the attribute editor's

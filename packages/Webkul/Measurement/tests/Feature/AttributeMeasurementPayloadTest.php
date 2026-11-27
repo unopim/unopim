@@ -116,3 +116,34 @@ it('rejects a family that does not exist', function () {
         ->assertStatus(422)
         ->assertJsonValidationErrors('family');
 });
+
+it('serves the measurement family options for the quick-create modal', function (): void {
+    payloadFamilyWithUnits('payload_options', lengthUnits());
+
+    $this->getJson(route('admin.measurement.family.options'))
+        ->assertOk()
+        ->assertJsonFragment(['id' => 'payload_options', 'label' => 'payload_options']);
+});
+
+it('forbids the family options to an admin without the attributes permission', function (): void {
+    $this->loginWithPermissions(permissions: ['dashboard']);
+
+    $this->getJson(route('admin.measurement.family.options'))
+        ->assertForbidden();
+});
+
+it('does not query measurement families when the attributes index loads', function (): void {
+    payloadFamilyWithUnits('payload_index_probe', lengthUnits());
+
+    DB::enableQueryLog();
+
+    $this->get(route('admin.catalog.attributes.index'))
+        ->assertOk()
+        ->assertSee(route('admin.measurement.family.options'), false)
+        ->assertDontSee('payload_index_probe');
+
+    $familyQueries = collect(DB::getQueryLog())
+        ->filter(fn (array $query): bool => str_contains($query['query'], 'measurement_families'));
+
+    expect($familyQueries)->toBeEmpty();
+});

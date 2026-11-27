@@ -10,10 +10,10 @@ use Webkul\Measurement\Services\Normalizers\MeasurementNormalizer;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\ProductRepository;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->loginAsAdmin();
 
-    Cache::flush();
+    $this->enableUnitSymbolDisplay();
 });
 
 function measurementPrecisionSetting(string $field, string $value): void
@@ -61,7 +61,7 @@ function measurementPrecisionFixture(): array
     return [$attribute, $family];
 }
 
-it('reproduces the QA numbers through applyPrecision', function () {
+it('reproduces the QA numbers through applyPrecision', function (): void {
     measurementRoundingPreset();
 
     $helper = app(MeasurementHelper::class);
@@ -73,7 +73,7 @@ it('reproduces the QA numbers through applyPrecision', function () {
         ->and($base)->toBe('346.577');
 });
 
-it('stores one user entry as two differently rounded numbers on the product', function () {
+it('stores one user entry as two differently rounded numbers on the product', function (): void {
     measurementRoundingPreset();
 
     [$attribute] = measurementPrecisionFixture();
@@ -94,7 +94,7 @@ it('stores one user entry as two differently rounded numbers on the product', fu
         ->and($stored['base_data'])->toBe('346.577');
 });
 
-it('shows base_data is the converted value and not the entered value', function () {
+it('shows base_data is the converted value and not the entered value', function (): void {
     measurementRoundingPreset();
 
     [$attribute] = measurementPrecisionFixture();
@@ -116,7 +116,7 @@ it('shows base_data is the converted value and not the entered value', function 
         ->and($stored['base_unit'])->toBe('meter');
 });
 
-it('rounds only at persistence and not on the raw calculation', function () {
+it('rounds only at persistence and not on the raw calculation', function (): void {
     measurementRoundingPreset();
 
     [$attribute, $family] = measurementPrecisionFixture();
@@ -132,7 +132,7 @@ it('rounds only at persistence and not on the raw calculation', function () {
     expect($structure['base_data'])->toBe('3.466');
 });
 
-it('applies the trim strategy to both amount and base', function () {
+it('applies the trim strategy to both amount and base', function (): void {
     measurementPrecisionSetting('strategy', 'trim');
     measurementPrecisionSetting('amount', '2');
     measurementPrecisionSetting('base', '3');
@@ -146,7 +146,7 @@ it('applies the trim strategy to both amount and base', function () {
         ->and($base)->toBe('346.576');
 });
 
-it('documents the help text currently shipped for the three settings', function () {
+it('documents the help text currently shipped for the three settings', function (): void {
     $strings = [
         'strategy'      => trans('measurement::app.config.catalog.measurement.precision.strategy'),
         'strategy-info' => trans('measurement::app.config.catalog.measurement.precision.strategy-info'),
@@ -161,7 +161,7 @@ it('documents the help text currently shipped for the three settings', function 
         ->and($strings['base'])->toBe('Base value decimals');
 });
 
-it('shows fewer decimals than it stores because display formatting is hardcoded to four', function () {
+it('shows fewer decimals than it stores because display formatting is hardcoded to four', function (): void {
     measurementPrecisionSetting('strategy', 'round');
     measurementPrecisionSetting('amount', '6');
     measurementPrecisionSetting('base', '6');
@@ -187,10 +187,10 @@ it('shows fewer decimals than it stores because display formatting is hardcoded 
     );
 
     expect($stored['amount'])->toBe('1.234568')
-        ->and($displayed)->toBe('1.2346 Meter');
+        ->and($displayed)->toBe('1.2346 m');
 });
 
-it('renders the info tooltip for every precision field including the strategy field', function () {
+it('renders the info tooltip for every precision field including the strategy field', function (): void {
     measurementRoundingPreset();
 
     $html = $this->get(route('admin.settings.system.edit', ['key' => 'system.measurement']))
