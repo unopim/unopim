@@ -186,7 +186,7 @@ Also included: **Digital Product Passports** with QR carriers and a public tier,
   </tr>
 </table>
 
-The [Bagisto Connector](https://github.com/unopim/bagisto-connector) syncs products, attributes and media to a [Bagisto](https://bagisto.com/) store.
+Also free and open source: the [Bagisto Connector](https://github.com/unopim/bagisto-connector) syncs products, attributes and media to a [Bagisto](https://bagisto.com/) store.
 
 Browse more on the [extensions marketplace](https://unopim.com/extensions/), or [build your own](https://devdocs.unopim.com/3.1/plugins/).
 
