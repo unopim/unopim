@@ -20,7 +20,7 @@
 
                 <x-admin::form :action="route('admin.forget_password.store')" :track-dirty="false" ajax="true">
                     <x-admin::form.control-group>
-                        <x-admin::form.control-group.label class="required">
+                        <x-admin::form.control-group.label class="required" for="email">
                             @lang('admin::app.users.forget-password.create.email')
                         </x-admin::form.control-group.label>
 

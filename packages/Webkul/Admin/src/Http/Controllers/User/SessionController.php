@@ -26,17 +26,7 @@ class SessionController extends Controller
             return redirect()->to($this->firstAllowedUrl());
         }
 
-        $previous = url()->previous();
-        $appHost = parse_url(config('app.url'), PHP_URL_HOST);
-        $previousHost = parse_url($previous, PHP_URL_HOST);
-
-        if ($previousHost === $appHost && str_contains($previous, 'admin')) {
-            $intendedUrl = $previous;
-        } else {
-            $intendedUrl = null;
-        }
-
-        if ($intendedUrl) {
+        if ($intendedUrl = $this->safeIntendedUrl(url()->previous())) {
             session()->put('url.intended', $intendedUrl);
         }
 
@@ -99,13 +89,13 @@ class SessionController extends Controller
             return redirect()->route('admin.session.create')->withInput(request()->only('email'));
         }
 
+        $redirectUrl = $this->intendedOrLandingUrl();
+
         if ($wantsJson) {
-            return response()->json([
-                'redirect_url' => session()->pull('url.intended', $this->firstAllowedUrl()),
-            ]);
+            return response()->json(['redirect_url' => $redirectUrl]);
         }
 
-        return redirect()->intended($this->firstAllowedUrl());
+        return redirect()->to($redirectUrl);
     }
 
     /**
@@ -114,6 +104,10 @@ class SessionController extends Controller
     public function destroy(): RedirectResponse
     {
         auth()->guard('admin')->logout();
+
+        session()->invalidate();
+
+        session()->regenerateToken();
 
         return redirect()->route('admin.session.create');
     }
