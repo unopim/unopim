@@ -1022,3 +1022,18 @@ it('should return validation error if swatch_type is not image', function () {
     $response->assertStatus(422)
         ->assertJsonStructure(['errors' => ['file']]);
 });
+
+it('rejects a non-string attribute type on create', function (mixed $type): void {
+    $code = 'bad_type_'.uniqid();
+
+    $this->withHeaders($this->headers)
+        ->postJson(route('admin.api.attributes.store'), ['code' => $code, 'type' => $type])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors('type');
+
+    expect(Attribute::where('code', $code)->exists())->toBeFalse();
+})->with([
+    'boolean true' => true,
+    'integer'      => 1,
+    'array'        => [['text']],
+]);
